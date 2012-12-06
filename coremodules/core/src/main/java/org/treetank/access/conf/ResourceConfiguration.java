@@ -210,7 +210,7 @@ public final class ResourceConfiguration {
         try {
 
             final File file =
-                new File(new File(new File(pConfig.mProperties.getProperty(ContructorProps.DBFILE),
+                new File(new File(new File(pConfig.mProperties.getProperty(ContructorProps.STORAGEPATH),
                     StorageConfiguration.Paths.Data.getFile().getName()), pConfig.mProperties
                     .getProperty(ContructorProps.RESOURCE)), Paths.ConfigBinary.getFile().getName());
 

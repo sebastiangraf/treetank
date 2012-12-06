@@ -27,12 +27,9 @@
 
 package org.treetank.page;
 
-import java.util.Arrays;
-
 import org.treetank.access.PageWriteTrx;
 import org.treetank.exception.TTException;
 
-import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
@@ -45,9 +42,6 @@ import com.google.common.io.ByteStreams;
  */
 public final class UberPage implements IPage {
 
-    /** Offset of indirect page reference. */
-    private static final int INDIRECT_REFERENCE_OFFSET = 0;
-
     /** Number of revisions. */
     private final long mRevisionCount;
 
@@ -58,42 +52,13 @@ public final class UberPage implements IPage {
     private final long mRevision;
 
     /** Page references. */
-    private PageReference[] mReferences;
-
-    /**
-     * 
-     * Constructor.
-     * 
-     * @param pData
-     *            data within the page
-     */
-    public UberPage(final byte[] pData) {
-        final ByteArrayDataInput data = ByteStreams.newDataInput(pData);
-        mRevision = data.readLong();
-        mReferences = new PageReference[1];
-        mReferences[0] = new PageReference();
-
-        // Check if UberPage is new (pData contains only 1 longs) or is
-        // serialized(pData contains entire page)
-        if (pData.length > 8) {
-            mReferences[0].setKey(data.readLong());
-            mRevisionCount = data.readLong();
-            mBootstrap = false;
-        } else {
-            mRevisionCount = 0;
-        }
-    }
+    private PageReference mReference;
 
     /**
      * Create uber page.
      */
     public UberPage() {
-        mRevision = IConstants.UBP_ROOT_REVISION_NUMBER;
-        mReferences = new PageReference[1];
-        for (int i = 0; i < mReferences.length; i++) {
-            mReferences[i] = new PageReference();
-        }
-        mRevisionCount = IConstants.UBP_ROOT_REVISION_COUNT;
+        this(IConstants.UBP_ROOT_REVISION_NUMBER, IConstants.UBP_ROOT_REVISION_COUNT);
         mBootstrap = true;
 
         // --- Create revision tree
@@ -102,7 +67,7 @@ public final class UberPage implements IPage {
         // Initialize revision tree to guarantee that there is a revision root
         // page.
         IPage page = null;
-        PageReference reference = getReferences()[INDIRECT_REFERENCE_OFFSET];
+        PageReference reference = getReferences()[0];
 
         // Remaining levels.
         for (int i = 0, l = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i < l; i++) {
@@ -142,9 +107,24 @@ public final class UberPage implements IPage {
      * @param pRevToUse
      *            Revision number to use.
      */
+    public UberPage(final long pRevision, final long pRevisionCount) {
+        mRevision = pRevision;
+        mRevisionCount = pRevisionCount;
+        mReference = new PageReference();
+
+    }
+
+    /**
+     * Clone uber page.
+     * 
+     * @param paramCommittedUberPage
+     *            Page to clone.
+     * @param pRevToUse
+     *            Revision number to use.
+     */
     public UberPage(final UberPage paramCommittedUberPage, final long pRevToUse) {
         mRevision = pRevToUse;
-        mReferences = paramCommittedUberPage.getReferences();
+        mReference = paramCommittedUberPage.getReferences()[0];
         if (paramCommittedUberPage.isBootstrap()) {
             mRevisionCount = paramCommittedUberPage.mRevisionCount;
             mBootstrap = paramCommittedUberPage.mBootstrap;
@@ -160,7 +140,7 @@ public final class UberPage implements IPage {
      * @return Indirect page reference.
      */
     public PageReference getIndirectPageReference() {
-        return getReferences()[INDIRECT_REFERENCE_OFFSET];
+        return getReferences()[0];
     }
 
     /**
@@ -208,10 +188,10 @@ public final class UberPage implements IPage {
         final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
         pOutput.writeInt(IConstants.UBERPAGE);
         pOutput.writeLong(mRevision);
+        pOutput.writeLong(mRevisionCount);
         for (final PageReference reference : getReferences()) {
             pOutput.writeLong(reference.getKey());
         }
-        pOutput.writeLong(mRevisionCount);
         return pOutput.toByteArray();
     }
 
@@ -227,8 +207,8 @@ public final class UberPage implements IPage {
         builder.append(mBootstrap);
         builder.append(", mRevision=");
         builder.append(mRevision);
-        builder.append(", mReferences=");
-        builder.append(Arrays.toString(mReferences));
+        builder.append(", mReference=");
+        builder.append(mReference.toString());
         builder.append("]");
         return builder.toString();
     }
@@ -242,7 +222,9 @@ public final class UberPage implements IPage {
 
     @Override
     public PageReference[] getReferences() {
-        return mReferences;
+        return new PageReference[] {
+            mReference
+        };
     }
 
     @Override

@@ -57,7 +57,7 @@ import com.google.inject.assistedinject.Assisted;
 public final class FileStorage implements IBackend {
 
     /** private constant for fileName. */
-    private static final String FILENAME = "tt.tnk";
+    public static final String FILENAME = "tt.tnk";
 
     /** private constant for fileName. */
     protected static final int BUFFERSIZE = 32767;
@@ -90,10 +90,11 @@ public final class FileStorage implements IBackend {
         IByteHandlerPipeline pByteHandler) {
 
         mFile =
-            new File(new File(new File(pProperties.getProperty(ContructorProps.DBFILE),
+            new File(new File(new File(pProperties.getProperty(ContructorProps.STORAGEPATH),
                 StorageConfiguration.Paths.Data.getFile().getName()), pProperties
                 .getProperty(ContructorProps.RESOURCE)), new StringBuilder(ResourceConfiguration.Paths.Data
                 .getFile().getName()).append(File.separator).append(FILENAME).toString());
+        
         mFac = new PageFactory(pNodeFac);
         mByteHandler = (ByteHandlerPipeline)pByteHandler;
         mClosed = false;

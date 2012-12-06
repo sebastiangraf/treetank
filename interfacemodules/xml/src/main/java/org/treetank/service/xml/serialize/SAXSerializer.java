@@ -235,7 +235,7 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
         IBackendFactory backend = injector.getInstance(IBackendFactory.class);
         IRevisioningFactory revision = injector.getInstance(IRevisioningFactory.class);
         Properties props = new Properties();
-        props.setProperty(ContructorProps.DBFILE, storage.getLocation().getAbsolutePath());
+        props.setProperty(ContructorProps.STORAGEPATH, storage.getLocation().getAbsolutePath());
         props.setProperty(ContructorProps.RESOURCE, "shredded");
         storage.createResource(new ResourceConfiguration(props, backend, revision, new TreeNodeFactory()));
         final ISession session =

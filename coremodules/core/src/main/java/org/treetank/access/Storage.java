@@ -187,7 +187,7 @@ public final class Storage implements IStorage {
         // Setting the missing params in the settings, this overrides already
         // set data.
         final File path =
-            new File(new File(pResConf.mProperties.getProperty(ContructorProps.DBFILE),
+            new File(new File(pResConf.mProperties.getProperty(ContructorProps.STORAGEPATH),
                 StorageConfiguration.Paths.Data.getFile().getName()), pResConf.mProperties
                 .getProperty(ContructorProps.RESOURCE));
         // if file is existing, skipping
@@ -219,7 +219,7 @@ public final class Storage implements IStorage {
             // substructure
             if (!returnVal) {
                 throw new IllegalStateException(new StringBuilder("Failure, please remove folder ").append(
-                    pResConf.mProperties.getProperty(ContructorProps.DBFILE)).append(" manually!").toString());
+                    pResConf.mProperties.getProperty(ContructorProps.STORAGEPATH)).append(" manually!").toString());
             }
             return returnVal;
         }

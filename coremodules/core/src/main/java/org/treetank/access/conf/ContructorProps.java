@@ -9,7 +9,7 @@ package org.treetank.access.conf;
  */
 public interface ContructorProps {
 
-    public static final String DBFILE = "FILENAME";
+    public static final String STORAGEPATH = "FILENAME";
     
     public static final String RESOURCE = "RESOURCE";
 

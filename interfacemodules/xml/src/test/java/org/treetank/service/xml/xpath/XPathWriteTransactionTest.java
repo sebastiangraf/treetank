@@ -89,10 +89,10 @@ public final class XPathWriteTransactionTest {
         // Verify.
         storage = TestHelper.getDatabase(PATHS.PATH1.getFile());
         Properties props = new Properties();
-        props.put(ContructorProps.DBFILE, TestHelper.PATHS.PATH1.getFile().getAbsolutePath());
+        props.put(ContructorProps.STORAGEPATH, TestHelper.PATHS.PATH1.getFile().getAbsolutePath());
         props.put(ContructorProps.RESOURCE, "shredded");
         props.setProperty(FilesystemConstants.PROPERTY_BASEDIR, new File(new File(new File(props
-            .getProperty(ContructorProps.DBFILE), StorageConfiguration.Paths.Data.getFile().getName()), props
+            .getProperty(ContructorProps.STORAGEPATH), StorageConfiguration.Paths.Data.getFile().getName()), props
             .getProperty(ContructorProps.RESOURCE)), ResourceConfiguration.Paths.Data.getFile().getName())
             .getAbsolutePath());
         props.setProperty(Constants.PROPERTY_CREDENTIAL, "test");

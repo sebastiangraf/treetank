@@ -359,7 +359,7 @@ public class XMLShredder implements Callable<Void> {
         Storage.createStorage(config);
         final IStorage db = Storage.openStorage(target);
         Properties props = new Properties();
-        props.setProperty(org.treetank.access.conf.ContructorProps.DBFILE, target.getAbsolutePath());
+        props.setProperty(org.treetank.access.conf.ContructorProps.STORAGEPATH, target.getAbsolutePath());
         props.setProperty(org.treetank.access.conf.ContructorProps.RESOURCE, "shredded");
         props.setProperty(ContructorProps.NUMBERTORESTORE, Integer.toString(4));
         props.setProperty(Constants.PROPERTY_CREDENTIAL, "test");
