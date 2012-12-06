@@ -53,7 +53,7 @@ public class ResourceConfigurationTest {
         ResourceConfiguration resConf = mResourceConfig.create(props);
         TestHelper.createResource(resConf);
         ResourceConfiguration serializedConf =
-            ResourceConfiguration.deserialize(new File(props.getProperty(ContructorProps.DBFILE)), props
+            ResourceConfiguration.deserialize(new File(props.getProperty(ContructorProps.STORAGEPATH)), props
                 .getProperty(ContructorProps.RESOURCE));
         assertEquals(resConf.toString(), serializedConf.toString());
 

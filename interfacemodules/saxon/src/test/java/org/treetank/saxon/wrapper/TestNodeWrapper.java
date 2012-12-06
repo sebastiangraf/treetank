@@ -176,11 +176,11 @@ public class TestNodeWrapper {
         Storage.createStorage(db2);
         final IStorage storage = Storage.openStorage(TestHelper.PATHS.PATH2.getFile());
         Properties props = new Properties();
-        props.setProperty(org.treetank.access.conf.ContructorProps.DBFILE, TestHelper.PATHS.PATH2.getFile()
+        props.setProperty(org.treetank.access.conf.ContructorProps.STORAGEPATH, TestHelper.PATHS.PATH2.getFile()
             .getAbsolutePath());
         props.setProperty(org.treetank.access.conf.ContructorProps.RESOURCE, TestHelper.RESOURCENAME);
         props.setProperty(FilesystemConstants.PROPERTY_BASEDIR, new File(new File(new File(props
-            .getProperty(ContructorProps.DBFILE), StorageConfiguration.Paths.Data.getFile().getName()), props
+            .getProperty(ContructorProps.STORAGEPATH), StorageConfiguration.Paths.Data.getFile().getName()), props
             .getProperty(ContructorProps.RESOURCE)), ResourceConfiguration.Paths.Data.getFile().getName())
             .getAbsolutePath());
         props.setProperty(Constants.PROPERTY_CREDENTIAL, "test");

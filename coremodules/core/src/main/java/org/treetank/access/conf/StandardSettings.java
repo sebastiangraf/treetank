@@ -63,12 +63,12 @@ public class StandardSettings extends AbstractModule {
         install(new FactoryModuleBuilder().build(ISessionConfigurationFactory.class));
     }
 
-    public static Properties getStandardProperties(final String mDatabase, final String resource) {
+    public static Properties getStandardProperties(final String pathToStorage, final String resource) {
         Properties properties = new Properties();
-        properties.setProperty(ContructorProps.DBFILE, mDatabase);
+        properties.setProperty(ContructorProps.STORAGEPATH, pathToStorage);
         properties.setProperty(ContructorProps.RESOURCE, resource);
         properties.setProperty(FilesystemConstants.PROPERTY_BASEDIR, new File(new File(new File(properties
-            .getProperty(ContructorProps.DBFILE), StorageConfiguration.Paths.Data.getFile().getName()), properties
+            .getProperty(ContructorProps.STORAGEPATH), StorageConfiguration.Paths.Data.getFile().getName()), properties
             .getProperty(ContructorProps.RESOURCE)), ResourceConfiguration.Paths.Data.getFile().getName())
             .getAbsolutePath());
         properties.setProperty(ContructorProps.NUMBERTORESTORE, Integer.toString(4));
