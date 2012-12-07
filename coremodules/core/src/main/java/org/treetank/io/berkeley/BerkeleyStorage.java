@@ -43,8 +43,8 @@ import org.treetank.io.IBackendReader;
 import org.treetank.io.IBackend;
 import org.treetank.io.IBackendWriter;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
-import org.treetank.page.IPage;
 import org.treetank.page.PageFactory;
+import org.treetank.page.interfaces.IPage;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;

@@ -29,6 +29,8 @@ package org.treetank.page;
 
 import org.treetank.access.PageWriteTrx;
 import org.treetank.exception.TTException;
+import org.treetank.page.interfaces.IReferencePage;
+import org.treetank.page.interfaces.IRevisionPage;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
@@ -40,7 +42,7 @@ import com.google.common.io.ByteStreams;
  * Uber page holds a reference to the static revision root page tree.
  * </p>
  */
-public final class UberPage implements IPage {
+public final class UberPage implements IRevisionPage, IReferencePage {
 
     /** Number of revisions. */
     private final long mRevisionCount;
@@ -66,12 +68,12 @@ public final class UberPage implements IPage {
 
         // Initialize revision tree to guarantee that there is a revision root
         // page.
-        IPage page = null;
+        IReferencePage page = null;
         PageReference reference = getReferences()[0];
 
         // Remaining levels.
         for (int i = 0, l = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i < l; i++) {
-            page = new IndirectPage(IConstants.UBP_ROOT_REVISION_NUMBER);
+            page = new IndirectPage();
             reference.setPage(page);
             reference = page.getReferences()[0];
         }
@@ -89,12 +91,12 @@ public final class UberPage implements IPage {
 
         // Remaining levels.
         for (int i = 0, l = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i < l; i++) {
-            page = new IndirectPage(IConstants.UBP_ROOT_REVISION_NUMBER);
+            page = new IndirectPage();
             reference.setPage(page);
             reference = page.getReferences()[0];
         }
 
-        final NodePage ndp = new NodePage(0, IConstants.UBP_ROOT_REVISION_NUMBER);
+        final NodePage ndp = new NodePage(0);
         reference.setPage(ndp);
 
     }

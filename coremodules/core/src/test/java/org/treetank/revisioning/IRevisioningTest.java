@@ -62,8 +62,8 @@ public class IRevisioningTest {
         Class<IRevisionChecker> pRevisionCheckerClass, IRevisionChecker[] pRevisionChecker) {
         for (final IRevisioning handler : pRevisioning) {
             final NodePage[] pages = new NodePage[2];
-            pages[0] = getNodePage(1, 0, 128, 0);
-            pages[1] = getNodePage(0, 0, 128, 0);
+            pages[0] = getNodePage(1, 0, 128);
+            pages[1] = getNodePage(0, 0, 128);
 
             final NodePage page = handler.combinePages(pages);
 
@@ -172,10 +172,10 @@ public class IRevisioningTest {
     private static NodePage[] prepareNormal(final int length) {
         final NodePage[] pages = new NodePage[length];
         // filling one entire page with revision 0 and key 0
-        pages[pages.length - 1] = getNodePage(0, 0, 128, 0);
+        pages[pages.length - 1] = getNodePage(0, 0, 128);
         for (int i = 0; i < pages.length - 1; i++) {
             // filling nodepages from end to start with 32 elements each slot
-            pages[i] = getNodePage(pages.length - i - 1, i * 32, (i * 32) + 32, 0);
+            pages[i] = getNodePage(pages.length - i - 1, i * 32, (i * 32) + 32);
         }
         return pages;
     }

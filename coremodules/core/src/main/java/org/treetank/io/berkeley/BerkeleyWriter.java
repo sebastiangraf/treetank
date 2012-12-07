@@ -29,8 +29,8 @@ package org.treetank.io.berkeley;
 
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendWriter;
-import org.treetank.page.IPage;
 import org.treetank.page.PageReference;
+import org.treetank.page.interfaces.IPage;
 
 import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.je.Database;
