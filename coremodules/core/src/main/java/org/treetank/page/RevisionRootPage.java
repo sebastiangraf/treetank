@@ -29,6 +29,8 @@ package org.treetank.page;
 
 import org.treetank.access.PageWriteTrx;
 import org.treetank.exception.TTException;
+import org.treetank.page.interfaces.IReferencePage;
+import org.treetank.page.interfaces.IRevisionPage;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
@@ -40,7 +42,7 @@ import com.google.common.io.ByteStreams;
  * Revision root page holds a reference to the name page as well as the static node page tree.
  * </p>
  */
-public final class RevisionRootPage implements IPage {
+public final class RevisionRootPage implements IRevisionPage, IReferencePage {
 
     /** Offset of name page reference. */
     private static final int NAME_REFERENCE_OFFSET = 0;
@@ -74,7 +76,7 @@ public final class RevisionRootPage implements IPage {
         }
         mRevisionSize = 0L;
         final PageReference ref = getReferences()[NAME_REFERENCE_OFFSET];
-        ref.setPage(new NamePage(IConstants.UBP_ROOT_REVISION_NUMBER));
+        ref.setPage(new NamePage());
         mMaxNodeKey = -1L;
     }
 

@@ -44,11 +44,11 @@ import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendWriter;
 import org.treetank.page.IConstants;
-import org.treetank.page.IPage;
 import org.treetank.page.IndirectPage;
 import org.treetank.page.NamePage;
 import org.treetank.page.NodePage;
 import org.treetank.page.NodePage.DeletedNode;
+import org.treetank.page.interfaces.IPage;
 import org.treetank.page.PageReference;
 import org.treetank.page.RevisionRootPage;
 import org.treetank.page.UberPage;
@@ -405,11 +405,10 @@ public final class PageWriteTrx implements IPageWriteTrx {
         IndirectPage page = (IndirectPage)pRef.getPage();
         if (page == null) {
             if (pRef.getKey() == IConstants.NULL_ID) {
-                page = new IndirectPage(mDelegate.getUberPage().getRevision());
+                page = new IndirectPage();
             } else {
                 page =
-                    new IndirectPage((IndirectPage)mDelegate.dereferenceIndirectPage(pRef), mNewRoot
-                        .getRevision() + 1);
+                    new IndirectPage((IndirectPage)mDelegate.dereferenceIndirectPage(pRef));
 
             }
             pRef.setPage(page);
@@ -429,7 +428,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
 
             if (page == null) {
                 if (reference.getKey() == IConstants.NULL_ID) {
-                    cont = new NodePageContainer(new NodePage(pPageKey, IConstants.UBP_ROOT_REVISION_NUMBER));
+                    cont = new NodePageContainer(new NodePage(pPageKey));
                 } else {
                     cont = dereferenceNodePageForModification(pPageKey);
                 }

@@ -29,8 +29,8 @@ package org.treetank.io;
 
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.exception.TTIOException;
-import org.treetank.page.IPage;
 import org.treetank.page.PageReference;
+import org.treetank.page.interfaces.IPage;
 
 /**
  * Interface for reading the stored pages in every backend.

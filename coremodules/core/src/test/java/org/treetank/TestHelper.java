@@ -162,8 +162,6 @@ public final class TestHelper {
     /**
      * Getting a node pages filled with nodes.
      * 
-     * @param revision
-     *            of the page
      * @param offset
      *            offset to start within the page
      * @param length
@@ -172,9 +170,8 @@ public final class TestHelper {
      *            key of the nodepage
      * @return a {@link NodePage} filled
      */
-    public static NodePage getNodePage(final long revision, final int offset, final int length,
-        final long nodePageKey) {
-        final NodePage page = new NodePage(nodePageKey, revision);
+    public static NodePage getNodePage(final int offset, final int length, final long nodePageKey) {
+        final NodePage page = new NodePage(nodePageKey);
         for (int i = offset; i < length; i++) {
             page.setNode(i, new DumbNode(random.nextLong(), random.nextLong()));
         }

@@ -28,6 +28,7 @@
 package org.treetank.page;
 
 import org.treetank.api.INodeFactory;
+import org.treetank.page.interfaces.IPage;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
@@ -70,7 +71,7 @@ public final class PageFactory {
         final int kind = input.readInt();
         switch (kind) {
         case IConstants.NODEPAGE:
-            NodePage nodePage = new NodePage(input.readLong(), input.readLong());
+            NodePage nodePage = new NodePage(input.readLong());
             for (int offset = 0; offset < IConstants.NDP_NODE_COUNT; offset++) {
                 int length = input.readInt();
                 if (length != IConstants.NULL_NODE) {
@@ -81,7 +82,7 @@ public final class PageFactory {
             }
             return nodePage;
         case IConstants.NAMEPAGE:
-            NamePage namePage = new NamePage(input.readLong());
+            NamePage namePage = new NamePage();
             final int mapSize = input.readInt();
             for (int i = 0; i < mapSize; i++) {
                 final int key = input.readInt();
@@ -96,7 +97,7 @@ public final class PageFactory {
             uberPage.getReferences()[0].setKey(input.readLong());
             return uberPage;
         case IConstants.INDIRCTPAGE:
-            IndirectPage indirectPage = new IndirectPage(input.readLong());
+            IndirectPage indirectPage = new IndirectPage();
             for (int offset = 0; offset < indirectPage.getReferences().length; offset++) {
                 indirectPage.getReferences()[offset] = new PageReference();
                 indirectPage.getReferences()[offset].setKey(input.readLong());

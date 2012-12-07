@@ -12,6 +12,7 @@ import org.testng.annotations.Test;
 import org.treetank.TestHelper;
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.io.bytepipe.IByteHandler;
+import org.treetank.page.interfaces.IPage;
 
 /**
  * Test class for all classes implementing the {@link IPage} interface.
@@ -22,8 +23,8 @@ import org.treetank.io.bytepipe.IByteHandler;
 public class IPageTest {
 
     /**
-     * Test method for {@link org.treetank.page.IPage} and
-     * {@link org.treetank.page.IPage#getByteRepresentation()}.
+     * Test method for {@link org.treetank.page.interfaces.IPage} and
+     * {@link org.treetank.page.interfaces.IPage#getByteRepresentation()}.
      * 
      * @param clazz
      *            IPage as class
@@ -52,16 +53,16 @@ public class IPageTest {
     @DataProvider(name = "instantiatePages")
     public Object[][] instantiatePages() throws TTByteHandleException {
         // IndirectPage setup
-        IndirectPage indirectPage = new IndirectPage(TestHelper.random.nextLong());
+        IndirectPage indirectPage = new IndirectPage();
         // RevisionRootPage setup
         RevisionRootPage revRootPage = new RevisionRootPage(TestHelper.random.nextLong());
         // NodePage setup
-        NodePage nodePage = new NodePage(TestHelper.random.nextLong(), TestHelper.random.nextLong());
+        NodePage nodePage = new NodePage(TestHelper.random.nextLong());
         for (int i = 0; i < IConstants.NDP_NODE_COUNT - 1; i++) {
             nodePage.setNode(i, TestHelper.generateOne());
         }
         // NamePage setup
-        NamePage namePage = new NamePage(TestHelper.random.nextLong());
+        NamePage namePage = new NamePage();
         namePage.setName(TestHelper.random.nextInt(), new String(TestHelper.generateRandomBytes(256)));
 
         Object[][] returnVal = {

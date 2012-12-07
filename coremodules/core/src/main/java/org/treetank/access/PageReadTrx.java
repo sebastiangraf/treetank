@@ -40,7 +40,6 @@ import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
 import org.treetank.page.IConstants;
-import org.treetank.page.IPage;
 import org.treetank.page.IndirectPage;
 import org.treetank.page.NamePage;
 import org.treetank.page.NodePage;
@@ -48,6 +47,7 @@ import org.treetank.page.NodePage.DeletedNode;
 import org.treetank.page.PageReference;
 import org.treetank.page.RevisionRootPage;
 import org.treetank.page.UberPage;
+import org.treetank.page.interfaces.IReferencePage;
 import org.treetank.revisioning.IRevisioning;
 
 import com.google.common.cache.Cache;
@@ -295,6 +295,7 @@ public class PageReadTrx implements IPageReadTrx {
         for (long i = mRootPage.getRevision(); i >= 0; i--) {
             final PageReference ref =
                 dereferenceLeafOfTree(loadRevRoot(i).getIndirectPageReference(), mNodePageKey);
+            // TODO check this check, ref.getKey!=NULL_ID and next if-check
             if (ref != null && (ref.getPage() != null || ref.getKey() != IConstants.NULL_ID)) {
                 if (ref.getKey() == IConstants.NULL_ID || (!keys.contains(ref.getKey()))) {
                     refs.add(ref);
@@ -374,7 +375,7 @@ public class PageReadTrx implements IPageReadTrx {
         for (int level = 0, height = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level < height; level++) {
             offset = (int)(levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level]);
             levelKey -= offset << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
-            final IPage page = dereferenceIndirectPage(reference);
+            final IReferencePage page = dereferenceIndirectPage(reference);
             if (page == null) {
                 reference = null;
                 break;
