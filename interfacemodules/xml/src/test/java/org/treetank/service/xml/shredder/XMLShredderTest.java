@@ -112,11 +112,6 @@ public class XMLShredderTest {
 
         // Verify.
         final IStorage database2 = TestHelper.getDatabase(PATHS.PATH2.getFile());
-        Properties props =
-            StandardSettings.getStandardProperties(TestHelper.PATHS.PATH2.getFile().getAbsolutePath(),
-                "shredded");
-        mResource = mResourceConfig.create(props);
-        database2.createResource(mResource);
         final ISession session =
             database2.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
         final INodeReadTrx rtx =
@@ -226,7 +221,9 @@ public class XMLShredderTest {
 
         // Setup parsed session.
         final IStorage database2 = TestHelper.getDatabase(PATHS.PATH2.getFile());
-        props = StandardSettings.getStandardProperties(TestHelper.PATHS.PATH2.getFile().getAbsolutePath(), TestHelper.RESOURCENAME);
+        props =
+            StandardSettings.getStandardProperties(TestHelper.PATHS.PATH2.getFile().getAbsolutePath(),
+                TestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
         database2.createResource(mResource);
         final ISession session2 =
@@ -266,7 +263,9 @@ public class XMLShredderTest {
     @Test
     public void testShreddingLargeText() throws Exception {
         final IStorage storage = TestHelper.getDatabase(PATHS.PATH2.getFile());
-        Properties props = StandardSettings.getStandardProperties(TestHelper.PATHS.PATH2.getFile().getAbsolutePath(), "shredded");
+        Properties props =
+            StandardSettings.getStandardProperties(TestHelper.PATHS.PATH2.getFile().getAbsolutePath(),
+                "shredded");
         mResource = mResourceConfig.create(props);
         storage.createResource(mResource);
         final ISession session =
