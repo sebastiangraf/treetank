@@ -66,8 +66,8 @@ public final class BerkeleyWriter implements IBackendWriter {
     /**
      * Simple constructor starting with an {@link Environment} and a {@link Storage}.
      * 
-     * @param pEnv
-     *            {@link Environment} reference for the write
+     * @param pTxn
+     *            {@link Transaction} transaction for the write and read
      * @param pDatabase
      *            {@link Storage} reference where the data should be written to
      * @param pPageBinding
@@ -76,11 +76,11 @@ public final class BerkeleyWriter implements IBackendWriter {
      * @throws TTIOException
      *             if something odd happens
      */
-    public BerkeleyWriter(Environment pEnv, Database pDatabase, TupleBinding<IPage> pPageBinding)
+    public BerkeleyWriter(Database pDatabase, Transaction pTxn, TupleBinding<IPage> pPageBinding)
         throws TTIOException {
         try {
-            mTxn = pEnv.beginTransaction(null, null);
             mDatabase = pDatabase;
+            mTxn = pTxn;
             mNodepagekey = getLastNodePage();
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
