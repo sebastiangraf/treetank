@@ -60,7 +60,6 @@ public class StandardSettings extends AbstractModule {
         install(new FactoryModuleBuilder().implement(IBackend.class, FileStorage.class).build(
             IBackendFactory.class));
         install(new FactoryModuleBuilder().build(IResourceConfigurationFactory.class));
-
         bind(Key.class).toInstance(KEY);
         install(new FactoryModuleBuilder().build(ISessionConfigurationFactory.class));
     }

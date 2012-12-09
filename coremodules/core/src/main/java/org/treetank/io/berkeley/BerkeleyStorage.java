@@ -28,20 +28,22 @@
 package org.treetank.io.berkeley;
 
 import java.io.File;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 
 import org.treetank.access.conf.ContructorProps;
-import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
+import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.io.IOUtils;
-import org.treetank.io.IBackendReader;
 import org.treetank.io.IBackend;
+import org.treetank.io.IBackendReader;
 import org.treetank.io.IBackendWriter;
+import org.treetank.io.IOUtils;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.page.PageFactory;
 import org.treetank.page.interfaces.IPage;
@@ -61,6 +63,7 @@ import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
 import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
+import com.sleepycat.je.Transaction;
 
 /**
  * Factory class to build up {@link IBackendReader} {@link IBackendWriter} instances for the
@@ -95,6 +98,9 @@ public final class BerkeleyStorage implements IBackend {
     /** File for DB. */
     private final File mFile;
 
+    /** Reader and Writer instances for close. */
+    private final Set<Transaction> readers;
+
     /**
      * Private constructor.
      * 
@@ -119,6 +125,7 @@ public final class BerkeleyStorage implements IBackend {
         mPageBinding = new PageBinding();
         mByteHandler = pByteHandler;
         mFac = new PageFactory(pNodeFac);
+        readers = new HashSet<Transaction>();
 
     }
 
@@ -155,7 +162,9 @@ public final class BerkeleyStorage implements IBackend {
     public IBackendReader getReader() throws TTIOException {
         try {
             setUpIfNecessary();
-            return new BerkeleyReader(mDatabase, mEnv.beginTransaction(null, null), mPageBinding);
+            Transaction trx = mEnv.beginTransaction(null, null);
+            readers.add(trx);
+            return new BerkeleyReader(mDatabase, trx, mPageBinding);
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
         }
@@ -167,7 +176,9 @@ public final class BerkeleyStorage implements IBackend {
     @Override
     public IBackendWriter getWriter() throws TTIOException {
         setUpIfNecessary();
-        return new BerkeleyWriter(mEnv, mDatabase, mPageBinding);
+        Transaction trx = mEnv.beginTransaction(null, null);
+        readers.add(trx);
+        return new BerkeleyWriter(mDatabase, trx, mPageBinding);
     }
 
     /**
@@ -177,8 +188,15 @@ public final class BerkeleyStorage implements IBackend {
     public void close() throws TTIOException {
         try {
             setUpIfNecessary();
+            for (Transaction reader : readers) {
+                if (reader.isValid()) {
+                    reader.abort();
+                }
+            }
+            readers.clear();
             mDatabase.close();
             mEnv.close();
+            mEnv = null;
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
         }
@@ -194,15 +212,11 @@ public final class BerkeleyStorage implements IBackend {
         final DatabaseEntry keyEntry = new DatabaseEntry();
         boolean returnVal = false;
         try {
-            final IBackendReader backendReader =
-                new BerkeleyReader(mDatabase, mEnv.beginTransaction(null, null), mPageBinding);
             TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(-1l, keyEntry);
-
             final OperationStatus status = mDatabase.get(null, keyEntry, valueEntry, LockMode.DEFAULT);
             if (status == OperationStatus.SUCCESS) {
                 returnVal = true;
             }
-            backendReader.close();
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
         }
@@ -234,6 +248,8 @@ public final class BerkeleyStorage implements IBackend {
      */
     @Override
     public void truncate() throws TTException {
+        setUpIfNecessary();
+//        mEnv.removeDatabase(null, NAME);
         IOUtils.recursiveDelete(mFile);
     }
 
