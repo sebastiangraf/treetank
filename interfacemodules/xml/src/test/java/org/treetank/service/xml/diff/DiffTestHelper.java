@@ -215,7 +215,7 @@ public final class DiffTestHelper {
         final EDiffOptimized paramOptimized) throws TTException, InterruptedException {
         final Set<IDiffObserver> observers = new HashSet<IDiffObserver>();
         observers.add(paramObserver);
-        DiffFactory.invokeFullDiff(new DiffFactory.Builder(paramHolder.getSession(), 0, 1, 0, paramOptimized,
+        DiffFactory.invokeFullDiff(new DiffFactory.Builder(paramHolder.getSession(), 0, 2, 1, paramOptimized,
             observers));
     }
 

@@ -60,8 +60,8 @@ public class JCloudsStorage implements IBackend {
         mFac = new PageFactory(pNodeFac);
         mByteHandler = (ByteHandlerPipeline)pByteHandler;
         mContext =
-            ContextBuilder.newBuilder(mProperties.getProperty(ContructorProps.JCLOUDSTYPE)).overrides(mProperties)
-                .buildView(BlobStoreContext.class);
+            ContextBuilder.newBuilder(mProperties.getProperty(ContructorProps.JCLOUDSTYPE)).overrides(
+                mProperties).buildView(BlobStoreContext.class);
 
         mBlobStore = mContext.getBlobStore();
 
@@ -77,7 +77,8 @@ public class JCloudsStorage implements IBackend {
         if (!mBlobStore.containerExists(containerName)) {
             mBlobStore.createContainerInLocation(null, containerName);
         }
-        return new JCloudsWriter(mBlobStore, mFac, mByteHandler, mProperties.getProperty(ContructorProps.RESOURCE));
+        return new JCloudsWriter(mBlobStore, mFac, mByteHandler, mProperties
+            .getProperty(ContructorProps.RESOURCE));
     }
 
     /**
@@ -90,7 +91,8 @@ public class JCloudsStorage implements IBackend {
         if (!mBlobStore.containerExists(containerName)) {
             mBlobStore.createContainerInLocation(null, containerName);
         }
-        return new JCloudsReader(mBlobStore, mFac, mByteHandler, mProperties.getProperty(ContructorProps.RESOURCE));
+        return new JCloudsReader(mBlobStore, mFac, mByteHandler, mProperties
+            .getProperty(ContructorProps.RESOURCE));
     }
 
     /**
@@ -99,19 +101,6 @@ public class JCloudsStorage implements IBackend {
     @Override
     public void close() throws TTException {
         mContext.close();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean exists() throws TTException {
-        if (mBlobStore.containerExists(mProperties.getProperty(ContructorProps.RESOURCE))
-            && mBlobStore.blobExists(mProperties.getProperty(ContructorProps.RESOURCE), Long.toString(-2l))) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     /**

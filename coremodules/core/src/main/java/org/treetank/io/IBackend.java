@@ -37,7 +37,8 @@ import com.google.inject.ImplementedBy;
 
 /**
  * Interface to generate access to the underlaying storage. The underlaying
- * storage is flexible as long as {@link IBackendReader} and {@link IBackendWriter} -implementations are provided. Utility
+ * storage is flexible as long as {@link IBackendReader} and {@link IBackendWriter} -implementations are
+ * provided. Utility
  * methods for common interaction with
  * the storage are provided via the <code>EStorage</code>-enum.
  * 
@@ -72,15 +73,6 @@ public interface IBackend {
      *             exception to be throwns
      */
     void close() throws TTException;
-
-    /**
-     * Check if storage exists.
-     * 
-     * @return true if storage holds data, false otherwise
-     * @throws TTIOException
-     *             if storage is not accessible
-     */
-    boolean exists() throws TTException;
 
     /**
      * Getting the ByteHandlers associated with this Storage.

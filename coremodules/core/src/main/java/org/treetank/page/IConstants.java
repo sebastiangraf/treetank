@@ -61,15 +61,6 @@ public interface IConstants {
         4 * 7, 3 * 7, 2 * 7, 1 * 7, 0 * 7
     };
 
-    // --- Uber Page
-    // -------------------------------------------------------------
-
-    /** Revision key of unitialized storage. */
-    public static final long UBP_ROOT_REVISION_COUNT = 1L;
-
-    /** Root revisionKey guaranteed to exist in empty storage. */
-    public static final long UBP_ROOT_REVISION_NUMBER = 0L;
-
     // --- Node Page
     // -------------------------------------------------------------
 

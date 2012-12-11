@@ -60,7 +60,7 @@ public final class UberPage implements IRevisionPage, IReferencePage {
      * Create uber page.
      */
     public UberPage() {
-        this(IConstants.UBP_ROOT_REVISION_NUMBER, IConstants.UBP_ROOT_REVISION_COUNT);
+        this(0, 1);
         mBootstrap = true;
 
         // --- Create revision tree
@@ -78,7 +78,7 @@ public final class UberPage implements IRevisionPage, IReferencePage {
             reference = page.getReferences()[0];
         }
 
-        final RevisionRootPage rrp = new RevisionRootPage(IConstants.UBP_ROOT_REVISION_NUMBER);
+        final RevisionRootPage rrp = new RevisionRootPage(0);
         reference.setPage(rrp);
 
         // --- Create node tree

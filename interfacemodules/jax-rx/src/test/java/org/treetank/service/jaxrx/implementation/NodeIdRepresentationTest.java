@@ -281,7 +281,7 @@ public class NodeIdRepresentationTest {
         final Map<QueryParameter, String> queryParams = new HashMap<QueryParameter, String>();
         queryParams.put(QueryParameter.OUTPUT, LITERALSTRUE);
         queryParams.put(QueryParameter.WRAP, LITERALSTRUE);
-        queryParams.put(QueryParameter.REVISION, "0");
+        queryParams.put(QueryParameter.REVISION, "1");
 
         ByteArrayOutputStream outputStream;
         Document doc;
@@ -358,7 +358,7 @@ public class NodeIdRepresentationTest {
         final Map<QueryParameter, String> queryParams = new HashMap<QueryParameter, String>();
         queryParams.put(QueryParameter.OUTPUT, LITERALSTRUE);
         queryParams.put(QueryParameter.WRAP, LITERALSTRUE);
-        queryParams.put(QueryParameter.REVISION, "0");
+        queryParams.put(QueryParameter.REVISION, "1");
 
         ByteArrayOutputStream outputStream;
         Document doc;
@@ -390,7 +390,7 @@ public class NodeIdRepresentationTest {
         queryParams.clear();
         queryParams.put(QueryParameter.OUTPUT, LITERALSFALSE);
         queryParams.put(QueryParameter.WRAP, LITERALSTRUE);
-        queryParams.put(QueryParameter.REVISION, "0");
+        queryParams.put(QueryParameter.REVISION, "1");
         output = ridWorker.performQueryOnResource(RESOURCENAME, NODEIDGETRESOURCE, QUERY, queryParams);
         outputStream = new ByteArrayOutputStream();
         output.write(outputStream);

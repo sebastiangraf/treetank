@@ -57,12 +57,9 @@ import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
 import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseConfig;
-import com.sleepycat.je.DatabaseEntry;
 import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
-import com.sleepycat.je.LockMode;
-import com.sleepycat.je.OperationStatus;
 import com.sleepycat.je.Transaction;
 
 /**
@@ -202,28 +199,6 @@ public final class BerkeleyStorage implements IBackend {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean exists() throws TTIOException {
-        setUpIfNecessary();
-        final DatabaseEntry valueEntry = new DatabaseEntry();
-        final DatabaseEntry keyEntry = new DatabaseEntry();
-        boolean returnVal = false;
-        try {
-            TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(-1l, keyEntry);
-            final OperationStatus status = mDatabase.get(null, keyEntry, valueEntry, LockMode.DEFAULT);
-            if (status == OperationStatus.SUCCESS) {
-                returnVal = true;
-            }
-        } catch (final DatabaseException exc) {
-            throw new TTIOException(exc);
-        }
-        return returnVal;
-
-    }
-
     private static EnvironmentConfig generateEnvConf() {
         final EnvironmentConfig config = new EnvironmentConfig();
         config.setTransactional(true);
@@ -249,7 +224,7 @@ public final class BerkeleyStorage implements IBackend {
     @Override
     public void truncate() throws TTException {
         setUpIfNecessary();
-//        mEnv.removeDatabase(null, NAME);
+        // mEnv.removeDatabase(null, NAME);
         IOUtils.recursiveDelete(mFile);
     }
 

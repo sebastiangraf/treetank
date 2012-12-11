@@ -77,7 +77,7 @@ public final class Storage implements IStorage {
     }
 
     // //////////////////////////////////////////////////////////
-    // START Creation/Deletion of Storages  /////////////////////
+    // START Creation/Deletion of Storages /////////////////////
     // //////////////////////////////////////////////////////////
     /**
      * Creating a storage. This includes loading the storageconfiguration,
@@ -182,7 +182,7 @@ public final class Storage implements IStorage {
      * {@inheritDoc}
      */
     @Override
-    public synchronized boolean createResource(final ResourceConfiguration pResConf) throws TTIOException {
+    public synchronized boolean createResource(final ResourceConfiguration pResConf) throws TTException {
         boolean returnVal = true;
         // Setting the missing params in the settings, this overrides already
         // set data.
@@ -219,8 +219,13 @@ public final class Storage implements IStorage {
             // substructure
             if (!returnVal) {
                 throw new IllegalStateException(new StringBuilder("Failure, please remove folder ").append(
-                    pResConf.mProperties.getProperty(ContructorProps.STORAGEPATH)).append(" manually!").toString());
+                    pResConf.mProperties.getProperty(ContructorProps.STORAGEPATH)).append(" manually!")
+                    .toString());
             }
+
+            // Boostrapping the Storage, this is quite dirty because of the initialization of the key, i
+            // guess..however...
+            Session.bootstrap(this, pResConf);
             return returnVal;
         }
     }
