@@ -64,7 +64,9 @@ public class XMLSerializerTest {
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        Properties props = StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(), TestHelper.RESOURCENAME);
+        Properties props =
+            StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                TestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
         holder = Holder.generateSession(mResource);
     }
@@ -147,12 +149,12 @@ public class XMLSerializerTest {
         wtx.commit();
         wtx.close();
 
-        XMLSerializer serializerall = new XMLSerializerBuilder(holder.getSession(), out, -1).build();
-        serializerall.call();
-        assertEquals(DocumentCreater.VERSIONEDXML, out.toString());
-        out.reset();
+//        XMLSerializer serializerall = new XMLSerializerBuilder(holder.getSession(), out, -1).build();
+//        serializerall.call();
+//        assertEquals(DocumentCreater.VERSIONEDXML, out.toString());
+//        out.reset();
 
-        serializerall = new XMLSerializerBuilder(holder.getSession(), out, 0, 1, 2).build();
+        XMLSerializer serializerall = new XMLSerializerBuilder(holder.getSession(), out, 0, 1, 2, 3).build();
         serializerall.call();
         assertEquals(DocumentCreater.VERSIONEDXML, out.toString());
     }
@@ -184,7 +186,7 @@ public class XMLSerializerTest {
         assertEquals(result, out.toString());
         out.reset();
 
-        serializerall = new XMLSerializerBuilder(holder.getSession(), out, 0, 1, 2).build();
+        serializerall = new XMLSerializerBuilder(holder.getSession(), out, 0, 1, 2, 3).build();
         serializerall.call();
         assertEquals(DocumentCreater.VERSIONEDXML, out.toString());
 

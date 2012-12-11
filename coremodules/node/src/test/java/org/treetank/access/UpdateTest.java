@@ -128,7 +128,7 @@ public class UpdateTest {
             new NodeReadTrx(holder.getSession().beginPageReadTransaction(
                 holder.getSession().getMostRecentVersion()));
 
-        assertEquals(1L, holder.getPRtx().getActualRevisionRootPage().getRevision());
+        assertEquals(2L, holder.getPRtx().getActualRevisionRootPage().getRevision());
 
         // Insert 100 children.
         for (int i = 1; i <= 10; i++) {
@@ -147,7 +147,7 @@ public class UpdateTest {
             rtx.moveTo(ROOT_NODE);
             rtx.moveTo(((IStructNode)rtx.getNode()).getFirstChildKey());
             assertEquals(Integer.toString(i), rtx.getValueOfCurrentNode());
-            assertEquals(i + 1, holder.getSession().getMostRecentVersion());
+            assertEquals(i + 2, holder.getSession().getMostRecentVersion());
             rtx.close();
         }
 
@@ -157,7 +157,7 @@ public class UpdateTest {
         rtx.moveTo(ROOT_NODE);
         rtx.moveTo(((IStructNode)rtx.getNode()).getFirstChildKey());
         assertEquals("10", rtx.getValueOfCurrentNode());
-        assertEquals(11L, holder.getSession().getMostRecentVersion());
+        assertEquals(12L, holder.getSession().getMostRecentVersion());
         rtx.close();
 
     }

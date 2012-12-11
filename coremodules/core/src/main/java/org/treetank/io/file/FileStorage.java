@@ -31,16 +31,15 @@ import java.io.File;
 import java.util.Properties;
 
 import org.treetank.access.conf.ContructorProps;
-import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTException;
-import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTUsageException;
-import org.treetank.io.IOUtils;
-import org.treetank.io.IBackendReader;
 import org.treetank.io.IBackend;
+import org.treetank.io.IBackendReader;
 import org.treetank.io.IBackendWriter;
+import org.treetank.io.IOUtils;
 import org.treetank.io.bytepipe.ByteHandlerPipeline;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.page.PageFactory;
@@ -94,7 +93,7 @@ public final class FileStorage implements IBackend {
                 StorageConfiguration.Paths.Data.getFile().getName()), pProperties
                 .getProperty(ContructorProps.RESOURCE)), new StringBuilder(ResourceConfiguration.Paths.Data
                 .getFile().getName()).append(File.separator).append(FILENAME).toString());
-        
+
         mFac = new PageFactory(pNodeFac);
         mByteHandler = (ByteHandlerPipeline)pByteHandler;
         mClosed = false;
@@ -122,15 +121,6 @@ public final class FileStorage implements IBackend {
     @Override
     public void close() {
         mClosed = true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean exists() throws TTIOException {
-        final boolean returnVal = mFile.length() > 0;
-        return returnVal;
     }
 
     @Override

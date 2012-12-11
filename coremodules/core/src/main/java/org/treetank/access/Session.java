@@ -31,6 +31,7 @@ import java.io.File;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import org.treetank.access.conf.ContructorProps;
 import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
@@ -77,9 +78,9 @@ public final class Session implements ISession {
     private transient boolean mClosed;
 
     /**
-     * Hidden constructor.
+     * Hidden constructor, only visible for the Storage-Class for instantiation.
      * 
-     * @param pDatabase
+     * @param pStorage
      *            Storage for centralized operations on related sessions.
      * @param pSessionConf
      *            StorageConfiguration for general setting about the storage
@@ -88,26 +89,49 @@ public final class Session implements ISession {
      * @throws TTException
      *             Exception if something weird happens
      */
-    protected Session(final Storage pDatabase, final ResourceConfiguration pResourceConf,
+    protected Session(final Storage pStorage, final ResourceConfiguration pResourceConf,
         final SessionConfiguration pSessionConf) throws TTException {
-        mDatabase = pDatabase;
+        this(pStorage, pResourceConf, pSessionConf, null);
+        final IBackendReader backendReader = pResourceConf.mStorage.getReader();
+        final PageReference firstRef = backendReader.readFirstReference();
+        mLastCommittedUberPage = (UberPage)firstRef.getPage();
+        backendReader.close();
+    }
+
+    /**
+     * 
+     * Private Constructor. For Boostraping and init of other constructor only.
+     * 
+     * @param pStorage
+     *            Storage for centralized operations on related sessions.
+     * @param pSessionConf
+     *            StorageConfiguration for general setting about the storage
+     * @param pResourceConf
+     *            ResourceConfiguration for handling this specific session
+     * @param pPage
+     *            to be set.
+     * @throws TTException
+     */
+    private Session(final Storage pStorage, final ResourceConfiguration pResourceConf,
+        final SessionConfiguration pSessionConf, final UberPage pPage) throws TTException {
+        mDatabase = pStorage;
         mResourceConfig = pResourceConf;
         mSessionConfig = pSessionConf;
         mPageTrxs = new CopyOnWriteArraySet<IPageReadTrx>();
-
         mStorage = pResourceConf.mStorage;
-
-        if (!mStorage.exists()) {
-            // Bootstrap uber page and make sure there already is a root
-            // node.
-            mLastCommittedUberPage = new UberPage();
-        } else {
-            final IBackendReader backendReader = mStorage.getReader();
-            final PageReference firstRef = backendReader.readFirstReference();
-            mLastCommittedUberPage = (UberPage)firstRef.getPage();
-            backendReader.close();
-        }
         mClosed = false;
+        mLastCommittedUberPage = pPage;
+    }
+
+    protected static void bootstrap(final Storage pStorage, final ResourceConfiguration pResourceConf)
+        throws TTException {
+        SessionConfiguration config =
+            new SessionConfiguration(pResourceConf.mProperties.getProperty(ContructorProps.RESOURCE), null);
+        Session session = new Session(pStorage, pResourceConf, config, new UberPage());
+        IPageWriteTrx trx = session.beginPageWriteTransaction();
+        trx.commit();
+        trx.close();
+        session.close();
     }
 
     public IPageReadTrx beginPageReadTransaction(final long pRevKey) throws TTException {
