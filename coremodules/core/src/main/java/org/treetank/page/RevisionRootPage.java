@@ -57,7 +57,7 @@ public final class RevisionRootPage implements IRevisionPage, IReferencePage {
     private final long mRevision;
 
     /** Page references. */
-    private PageReference[] mReferences;
+    private final PageReference[] mReferences;
 
     /**
      * Constructor of RevisionRootPages.
@@ -74,19 +74,6 @@ public final class RevisionRootPage implements IRevisionPage, IReferencePage {
         final PageReference ref = getReferences()[NAME_REFERENCE_OFFSET];
         ref.setPage(new NamePage());
         mMaxNodeKey = pMaxNodeKey;
-    }
-
-    /**
-     * Clone revision root page.
-     * 
-     * @param pCommitedRevPage
-     *            Page to clone.
-     * @param pRevToUse
-     *            Revision number to use.
-     */
-    public RevisionRootPage(final RevisionRootPage pCommitedRevPage, final long pRevToUse) {
-        this(pRevToUse, pCommitedRevPage.mMaxNodeKey);
-        mReferences = pCommitedRevPage.getReferences();
     }
 
     /**

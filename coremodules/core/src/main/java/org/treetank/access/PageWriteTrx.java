@@ -444,16 +444,20 @@ public final class PageWriteTrx implements IPageWriteTrx {
 
     private RevisionRootPage preparePreviousRevisionRootPage(final long pRev, final long pRepresentRev)
         throws TTException {
-
         // Prepare revision root nodePageReference.
+        final RevisionRootPage previousRevRoot = mDelegate.loadRevRoot(pRev);
+
         final RevisionRootPage revisionRootPage =
-            new RevisionRootPage(mDelegate.loadRevRoot(pRev), pRepresentRev + 1);
+            new RevisionRootPage(pRepresentRev + 1, previousRevRoot.getMaxNodeKey());
+        for (int i = 0; i < previousRevRoot.getReferences().length; i++) {
+            revisionRootPage.getReferences()[i] = previousRevRoot.getReferences()[i];
+        }
 
         // Prepare indirect tree to hold reference to prepared revision root
         // nodePageReference.
         final PageReference revisionRootPageReference =
             prepareLeafOfTree(mDelegate.getUberPage().getReferences()[0], mDelegate.getUberPage()
-                .getRevisionNumber()-1);
+                .getRevisionNumber() - 1);
 
         // Link the prepared revision root nodePageReference with the
         // prepared indirect tree.
