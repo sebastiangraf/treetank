@@ -45,8 +45,8 @@ public class IBackendTest {
             assertEquals(new StringBuilder("Check for ").append(backend.getClass()).append(" failed.")
                 .toString(), pageRef1.getKey(), pageRef2.getKey());
             assertEquals(new StringBuilder("Check for ").append(backend.getClass()).append(" failed.")
-                .toString(), ((UberPage)pageRef1.getPage()).getRevisionCount(),
-                ((UberPage)pageRef2.getPage()).getRevisionCount());
+                .toString(), ((UberPage)pageRef1.getPage()).getRevisionNumber(), ((UberPage)pageRef2
+                .getPage()).getRevisionNumber());
             backendWriter.close();
 
             // new instance check
@@ -55,8 +55,8 @@ public class IBackendTest {
             assertEquals(new StringBuilder("Check for ").append(pBackends.getClass()).append(" failed.")
                 .toString(), pageRef1.getKey(), pageRef3.getKey());
             assertEquals(new StringBuilder("Check for ").append(backend.getClass()).append(" failed.")
-                .toString(), ((UberPage)pageRef1.getPage()).getRevisionCount(),
-                ((UberPage)pageRef3.getPage()).getRevisionCount());
+                .toString(), ((UberPage)pageRef1.getPage()).getRevisionNumber(), ((UberPage)pageRef3
+                .getPage()).getRevisionNumber());
             backendReader.close();
             backend.close();
             backend.truncate();

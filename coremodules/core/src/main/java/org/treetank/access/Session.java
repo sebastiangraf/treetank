@@ -116,8 +116,8 @@ public final class Session implements ISession {
         throws TTException {
         final IBackendWriter backendWriter = mStorage.getWriter();
         final IPageWriteTrx trx =
-            new PageWriteTrx(this, new UberPage(mLastCommittedUberPage), backendWriter,
-                mRepresentRevision, mStoreRevision);
+            new PageWriteTrx(this, new UberPage(mLastCommittedUberPage), backendWriter, mRepresentRevision,
+                mStoreRevision);
         mPageTrxs.add(trx);
 
         return trx;
@@ -150,9 +150,9 @@ public final class Session implements ISession {
         if (mClosed) {
             throw new IllegalStateException("Session is already closed.");
         }
-        if (paramRevision > mLastCommittedUberPage.getRevisionCount()) {
+        if (paramRevision > mLastCommittedUberPage.getRevisionNumber() + 1) {
             throw new IllegalArgumentException(new StringBuilder("Revision must not be bigger than").append(
-                Long.toString(mLastCommittedUberPage.getRevisionCount())).toString());
+                Long.toString(mLastCommittedUberPage.getRevisionNumber() + 1)).toString());
         }
     }
 

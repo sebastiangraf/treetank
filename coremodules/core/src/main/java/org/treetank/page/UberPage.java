@@ -78,25 +78,7 @@ public final class UberPage implements IReferencePage {
      * @return Indirect page reference.
      */
     public PageReference getIndirectPageReference() {
-        return getReferences()[0];
-    }
-
-    /**
-     * Get number of revisions.
-     * 
-     * @return Number of revisions.
-     */
-    public long getRevisionCount() {
-        return mRevisionCount;
-    }
-
-    /**
-     * Get key of last committed revision.
-     * 
-     * @return Key of last committed revision.
-     */
-    public long getLastCommittedRevisionNumber() {
-        return mRevisionCount - 2;
+        return mReference;
     }
 
     /**
