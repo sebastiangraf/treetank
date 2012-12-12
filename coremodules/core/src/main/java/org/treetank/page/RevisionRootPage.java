@@ -83,16 +83,16 @@ public final class RevisionRootPage implements IRevisionPage, IReferencePage {
     /**
      * Clone revision root page.
      * 
-     * @param paramCommittedRevisionRootPage
+     * @param pCommitedRevPage
      *            Page to clone.
      * @param pRevToUse
      *            Revision number to use.
      */
-    public RevisionRootPage(final RevisionRootPage paramCommittedRevisionRootPage, final long pRevToUse) {
+    public RevisionRootPage(final RevisionRootPage pCommitedRevPage, final long pRevToUse) {
         this(pRevToUse);
-        mReferences = paramCommittedRevisionRootPage.getReferences();
-        mRevisionSize = paramCommittedRevisionRootPage.mRevisionSize;
-        mMaxNodeKey = paramCommittedRevisionRootPage.mMaxNodeKey;
+        mReferences = pCommitedRevPage.getReferences();
+        mRevisionSize = pCommitedRevPage.mRevisionSize;
+        mMaxNodeKey = pCommitedRevPage.mMaxNodeKey;
     }
 
     /**

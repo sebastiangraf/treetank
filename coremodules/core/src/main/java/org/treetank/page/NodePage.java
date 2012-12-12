@@ -56,8 +56,6 @@ public class NodePage implements IPage {
      * 
      * @param pNodePageKey
      *            Base key assigned to this node page.
-     * @param pRevision
-     *            Revision of the page
      */
     public NodePage(final long pNodePageKey) {
         mNodePageKey = pNodePageKey;
