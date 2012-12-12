@@ -57,7 +57,7 @@ public class StandardSettings extends AbstractModule {
         install(new FactoryModuleBuilder().implement(IRevisioning.class, Differential.class).build(
             IRevisioningFactory.class));
         bind(IByteHandlerPipeline.class).toInstance(new ByteHandlerPipeline(new Zipper()));
-        install(new FactoryModuleBuilder().implement(IBackend.class, JCloudsStorage.class).build(
+        install(new FactoryModuleBuilder().implement(IBackend.class, FileStorage.class).build(
             IBackendFactory.class));
         install(new FactoryModuleBuilder().build(IResourceConfigurationFactory.class));
         bind(Key.class).toInstance(KEY);

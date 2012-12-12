@@ -47,23 +47,14 @@ public final class UberPage implements IRevisionPage, IReferencePage {
     /** Number of revisions. */
     private final long mRevisionCount;
 
-    /** True if this uber page is the uber page of a fresh TreeTank file. */
-    private boolean mBootstrap;
-
     /** Revision of this page. */
     private final long mRevision;
 
     /** Page references. */
     private PageReference mReference;
 
-
     /**
      * Clone uber page.
-     * 
-     * @param paramCommittedUberPage
-     *            Page to clone.
-     * @param pRevToUse
-     *            Revision number to use.
      */
     public UberPage(final long pRevision, final long pRevisionCount) {
         mRevision = pRevision;
@@ -83,13 +74,7 @@ public final class UberPage implements IRevisionPage, IReferencePage {
     public UberPage(final UberPage paramCommittedUberPage, final long pRevToUse) {
         mRevision = pRevToUse;
         mReference = paramCommittedUberPage.getReferences()[0];
-        if (paramCommittedUberPage.isBootstrap()) {
-            mRevisionCount = paramCommittedUberPage.mRevisionCount;
-            mBootstrap = paramCommittedUberPage.mBootstrap;
-        } else {
-            mRevisionCount = paramCommittedUberPage.mRevisionCount + 1;
-            mBootstrap = false;
-        }
+        mRevisionCount = paramCommittedUberPage.mRevisionCount + 1;
     }
 
     /**
@@ -129,20 +114,10 @@ public final class UberPage implements IRevisionPage, IReferencePage {
     }
 
     /**
-     * Flag to indicate whether this uber page is the first ever.
-     * 
-     * @return True if this uber page is the first one of the TreeTank file.
-     */
-    public boolean isBootstrap() {
-        return mBootstrap;
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
     public byte[] getByteRepresentation() {
-        mBootstrap = false;
         final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
         pOutput.writeInt(IConstants.UBERPAGE);
         pOutput.writeLong(mRevision);
@@ -161,8 +136,6 @@ public final class UberPage implements IRevisionPage, IReferencePage {
         StringBuilder builder = new StringBuilder();
         builder.append("UberPage [mRevisionCount=");
         builder.append(mRevisionCount);
-        builder.append(", mBootstrap=");
-        builder.append(mBootstrap);
         builder.append(", mRevision=");
         builder.append(mRevision);
         builder.append(", mReference=");

@@ -407,8 +407,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
             if (pRef.getKey() == IConstants.NULL_ID) {
                 page = new IndirectPage();
             } else {
-                page =
-                    new IndirectPage((IndirectPage)mDelegate.dereferenceIndirectPage(pRef));
+                page = new IndirectPage((IndirectPage)mDelegate.dereferenceIndirectPage(pRef));
 
             }
             pRef.setPage(page);
@@ -446,30 +445,25 @@ public final class PageWriteTrx implements IPageWriteTrx {
     private RevisionRootPage preparePreviousRevisionRootPage(final long pRev, final long pRepresentRev)
         throws TTException {
 
-        if (mDelegate.getUberPage().isBootstrap()) {
-            return mDelegate.loadRevRoot(pRev);
-        } else {
+        // Prepare revision root nodePageReference.
+        final RevisionRootPage revisionRootPage =
+            new RevisionRootPage(mDelegate.loadRevRoot(pRev), pRepresentRev + 1);
 
-            // Prepare revision root nodePageReference.
-            final RevisionRootPage revisionRootPage =
-                new RevisionRootPage(mDelegate.loadRevRoot(pRev), pRepresentRev + 1);
+        // Prepare indirect tree to hold reference to prepared revision root
+        // nodePageReference.
+        final PageReference revisionRootPageReference =
+            prepareLeafOfTree(mDelegate.getUberPage().getIndirectPageReference(), mDelegate.getUberPage()
+                .getRevisionNumber());
 
-            // Prepare indirect tree to hold reference to prepared revision root
-            // nodePageReference.
-            final PageReference revisionRootPageReference =
-                prepareLeafOfTree(mDelegate.getUberPage().getIndirectPageReference(), mDelegate.getUberPage()
-                    .getRevisionNumber());
+        // Link the prepared revision root nodePageReference with the
+        // prepared indirect tree.
+        revisionRootPageReference.setPage(revisionRootPage);
 
-            // Link the prepared revision root nodePageReference with the
-            // prepared indirect tree.
-            revisionRootPageReference.setPage(revisionRootPage);
+        revisionRootPage.getNamePageReference().setPage(
+            (NamePage)mDelegate.getActualRevisionRootPage().getNamePageReference().getPage());
 
-            revisionRootPage.getNamePageReference().setPage(
-                (NamePage)mDelegate.getActualRevisionRootPage().getNamePageReference().getPage());
-
-            // Return prepared revision root nodePageReference.
-            return revisionRootPage;
-        }
+        // Return prepared revision root nodePageReference.
+        return revisionRootPage;
     }
 
     protected PageReference prepareLeafOfTree(final PageReference pStarRef, final long pKey)
