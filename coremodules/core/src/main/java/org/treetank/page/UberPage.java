@@ -56,50 +56,6 @@ public final class UberPage implements IRevisionPage, IReferencePage {
     /** Page references. */
     private PageReference mReference;
 
-    /**
-     * Create uber page.
-     */
-    public UberPage() {
-        this(0, 1);
-        mBootstrap = true;
-
-        // --- Create revision tree
-        // ------------------------------------------------
-
-        // Initialize revision tree to guarantee that there is a revision root
-        // page.
-        IReferencePage page = null;
-        PageReference reference = getReferences()[0];
-
-        // Remaining levels.
-        for (int i = 0, l = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i < l; i++) {
-            page = new IndirectPage();
-            reference.setPage(page);
-            reference = page.getReferences()[0];
-        }
-
-        final RevisionRootPage rrp = new RevisionRootPage(0);
-        reference.setPage(rrp);
-
-        // --- Create node tree
-        // ----------------------------------------------------
-
-        // Initialize revision tree to guarantee that there is a revision root
-        // page.
-        page = null;
-        reference = rrp.getIndirectPageReference();
-
-        // Remaining levels.
-        for (int i = 0, l = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i < l; i++) {
-            page = new IndirectPage();
-            reference.setPage(page);
-            reference = page.getReferences()[0];
-        }
-
-        final NodePage ndp = new NodePage(0);
-        reference.setPage(ndp);
-
-    }
 
     /**
      * Clone uber page.

@@ -35,7 +35,7 @@ public class IBackendTest {
         for (final IBackend backend : pBackends) {
 
             final PageReference pageRef1 = new PageReference();
-            final UberPage page1 = new UberPage();
+            final UberPage page1 = new UberPage(0,1);
             pageRef1.setPage(page1);
 
             // same instance check

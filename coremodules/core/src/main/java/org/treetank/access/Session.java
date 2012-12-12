@@ -31,20 +31,17 @@ import java.io.File;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-import org.treetank.access.conf.ContructorProps;
-import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
+import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.api.IPageReadTrx;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTUsageException;
-import org.treetank.io.IOUtils;
-import org.treetank.io.IBackendReader;
 import org.treetank.io.IBackend;
 import org.treetank.io.IBackendWriter;
-import org.treetank.page.PageReference;
+import org.treetank.io.IOUtils;
 import org.treetank.page.UberPage;
 
 /**
@@ -78,29 +75,8 @@ public final class Session implements ISession {
     private transient boolean mClosed;
 
     /**
+     * 
      * Hidden constructor, only visible for the Storage-Class for instantiation.
-     * 
-     * @param pStorage
-     *            Storage for centralized operations on related sessions.
-     * @param pSessionConf
-     *            StorageConfiguration for general setting about the storage
-     * @param pResourceConf
-     *            ResourceConfiguration for handling this specific session
-     * @throws TTException
-     *             Exception if something weird happens
-     */
-    protected Session(final Storage pStorage, final ResourceConfiguration pResourceConf,
-        final SessionConfiguration pSessionConf) throws TTException {
-        this(pStorage, pResourceConf, pSessionConf, null);
-        final IBackendReader backendReader = pResourceConf.mStorage.getReader();
-        final PageReference firstRef = backendReader.readFirstReference();
-        mLastCommittedUberPage = (UberPage)firstRef.getPage();
-        backendReader.close();
-    }
-
-    /**
-     * 
-     * Private Constructor. For Boostraping and init of other constructor only.
      * 
      * @param pStorage
      *            Storage for centralized operations on related sessions.
@@ -112,7 +88,7 @@ public final class Session implements ISession {
      *            to be set.
      * @throws TTException
      */
-    private Session(final Storage pStorage, final ResourceConfiguration pResourceConf,
+    protected Session(final Storage pStorage, final ResourceConfiguration pResourceConf,
         final SessionConfiguration pSessionConf, final UberPage pPage) throws TTException {
         mDatabase = pStorage;
         mResourceConfig = pResourceConf;
@@ -123,17 +99,6 @@ public final class Session implements ISession {
         mLastCommittedUberPage = pPage;
     }
 
-    protected static void bootstrap(final Storage pStorage, final ResourceConfiguration pResourceConf)
-        throws TTException {
-        SessionConfiguration config =
-            new SessionConfiguration(pResourceConf.mProperties.getProperty(ContructorProps.RESOURCE), null);
-        Session session = new Session(pStorage, pResourceConf, config, new UberPage());
-        IPageWriteTrx trx = session.beginPageWriteTransaction();
-        trx.commit();
-        trx.close();
-        session.close();
-    }
-
     public IPageReadTrx beginPageReadTransaction(final long pRevKey) throws TTException {
         assertAccess(pRevKey);
         final PageReadTrx trx = new PageReadTrx(this, mLastCommittedUberPage, pRevKey, mStorage.getReader());
@@ -142,7 +107,6 @@ public final class Session implements ISession {
     }
 
     public IPageWriteTrx beginPageWriteTransaction() throws TTException {
-
         return beginPageWriteTransaction(mLastCommittedUberPage.getRevisionNumber(), mLastCommittedUberPage
             .getRevisionNumber());
 
@@ -187,9 +151,7 @@ public final class Session implements ISession {
         if (mClosed) {
             throw new IllegalStateException("Session is already closed.");
         }
-        if (paramRevision < 0) {
-            throw new IllegalArgumentException("Revision must be at least 0");
-        } else if (paramRevision > mLastCommittedUberPage.getRevision()) {
+        if (paramRevision > mLastCommittedUberPage.getRevision()) {
             throw new IllegalArgumentException(new StringBuilder("Revision must not be bigger than").append(
                 Long.toString(mLastCommittedUberPage.getRevision())).toString());
         }
