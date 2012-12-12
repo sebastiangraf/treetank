@@ -69,7 +69,7 @@ public final class UberPage implements IReferencePage {
      * @return Revision key.
      */
     public long getRevisionNumber() {
-        return mRevisionCount - 1;
+        return mRevisionCount;
     }
 
     /**

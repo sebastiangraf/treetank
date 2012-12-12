@@ -107,8 +107,8 @@ public final class Session implements ISession {
     }
 
     public IPageWriteTrx beginPageWriteTransaction() throws TTException {
-        return beginPageWriteTransaction(mLastCommittedUberPage.getRevisionNumber(), mLastCommittedUberPage
-            .getRevisionNumber());
+        return beginPageWriteTransaction(mLastCommittedUberPage.getRevisionNumber()-1, mLastCommittedUberPage
+            .getRevisionNumber()-1);
 
     }
 
@@ -116,7 +116,7 @@ public final class Session implements ISession {
         throws TTException {
         final IBackendWriter backendWriter = mStorage.getWriter();
         UberPage newUber =
-            new UberPage(mLastCommittedUberPage.getRevisionNumber() + 2, mLastCommittedUberPage
+            new UberPage(mLastCommittedUberPage.getRevisionNumber() + 1, mLastCommittedUberPage
                 .getReferences()[0]);
         final IPageWriteTrx trx =
             new PageWriteTrx(this, newUber, backendWriter, mRepresentRevision,
@@ -153,9 +153,9 @@ public final class Session implements ISession {
         if (mClosed) {
             throw new IllegalStateException("Session is already closed.");
         }
-        if (paramRevision > mLastCommittedUberPage.getRevisionNumber() + 1) {
+        if (paramRevision > mLastCommittedUberPage.getRevisionNumber()) {
             throw new IllegalArgumentException(new StringBuilder("Revision must not be bigger than").append(
-                Long.toString(mLastCommittedUberPage.getRevisionNumber() + 1)).toString());
+                Long.toString(mLastCommittedUberPage.getRevisionNumber())).toString());
         }
     }
 
@@ -200,7 +200,7 @@ public final class Session implements ISession {
      */
     @Override
     public long getMostRecentVersion() {
-        return mLastCommittedUberPage.getRevisionNumber();
+        return mLastCommittedUberPage.getRevisionNumber()-1;
     }
 
     /**
