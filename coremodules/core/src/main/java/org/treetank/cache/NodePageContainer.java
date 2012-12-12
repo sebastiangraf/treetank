@@ -53,26 +53,16 @@ public final class NodePageContainer {
     private final NodePage mModified;
 
     /**
-     * Constructor with complete page and lazy instantiated modifying page.
-     * 
-     * @param paramComplete
-     *            to be used as a base for this container.
-     */
-    public NodePageContainer(final NodePage paramComplete) {
-        this(paramComplete, new NodePage(paramComplete.getNodePageKey()));
-    }
-
-    /**
      * Constructor with both, complete and modifying page.
      * 
-     * @param paramComplete
+     * @param pComplete
      *            to be used as a base for this container
-     * @param paramModifying
+     * @param pModifying
      *            to be used as a base for this container
      */
-    public NodePageContainer(final NodePage paramComplete, final NodePage paramModifying) {
-        this.mComplete = paramComplete;
-        this.mModified = paramModifying;
+    public NodePageContainer(final NodePage pComplete, final NodePage pModifying) {
+        this.mComplete = pComplete;
+        this.mModified = pModifying;
     }
 
     /**

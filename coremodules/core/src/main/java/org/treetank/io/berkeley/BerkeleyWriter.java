@@ -54,8 +54,8 @@ public final class BerkeleyWriter implements IBackendWriter {
     /** Current {@link Storage} to write to. */
     private final Database mDatabase;
 
-    /** Current {@link Transaction} to write with. */
-    private final Transaction mTxn;
+    // /** Current {@link Transaction} to write with. */
+    // private final Transaction mTxn;
 
     /** Current {@link BerkeleyReader} to read with. */
     private final BerkeleyReader mReader;
@@ -80,23 +80,24 @@ public final class BerkeleyWriter implements IBackendWriter {
         throws TTIOException {
         try {
             mDatabase = pDatabase;
-            mTxn = pTxn;
+            // mTxn = pTxn;
             mNodepagekey = getLastNodePage();
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
         }
 
-        mReader = new BerkeleyReader(mDatabase, mTxn, pPageBinding);
+        // mReader = new BerkeleyReader(mDatabase, mTxn, pPageBinding);
+        mReader = new BerkeleyReader(mDatabase, null, pPageBinding);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void close() throws TTIOException {
+    public synchronized void close() throws TTIOException {
         try {
             setLastNodePage(mNodepagekey);
-            mTxn.commit();
+            // mTxn.commit();
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
         }
@@ -106,7 +107,7 @@ public final class BerkeleyWriter implements IBackendWriter {
      * {@inheritDoc}
      */
     @Override
-    public long write(final PageReference pageReference) throws TTIOException {
+    public synchronized long write(final PageReference pageReference) throws TTIOException {
         final IPage page = pageReference.getPage();
 
         final DatabaseEntry valueEntry = new DatabaseEntry();
@@ -118,7 +119,8 @@ public final class BerkeleyWriter implements IBackendWriter {
         mReader.mPageBinding.objectToEntry(page, valueEntry);
         TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(mNodepagekey, keyEntry);
 
-        final OperationStatus status = mDatabase.put(mTxn, keyEntry, valueEntry);
+        // final OperationStatus status = mDatabase.put(mTxn, keyEntry, valueEntry);
+        final OperationStatus status = mDatabase.put(null, keyEntry, valueEntry);
         if (status != OperationStatus.SUCCESS) {
             throw new TTIOException(new StringBuilder("Write of ").append(pageReference.toString()).append(
                 " failed!").toString());
@@ -144,7 +146,8 @@ public final class BerkeleyWriter implements IBackendWriter {
         TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(-2l, keyEntry);
         TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(paramData, valueEntry);
         try {
-            mDatabase.put(mTxn, keyEntry, valueEntry);
+            // mDatabase.put(mTxn, keyEntry, valueEntry);
+            mDatabase.put(null, keyEntry, valueEntry);
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
         }
@@ -164,7 +167,8 @@ public final class BerkeleyWriter implements IBackendWriter {
         TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(-2l, keyEntry);
 
         try {
-            final OperationStatus status = mDatabase.get(mTxn, keyEntry, valueEntry, LockMode.DEFAULT);
+            // final OperationStatus status = mDatabase.get(mTxn, keyEntry, valueEntry, LockMode.DEFAULT);
+            final OperationStatus status = mDatabase.get(null, keyEntry, valueEntry, LockMode.DEFAULT);
             Long val;
             if (status == OperationStatus.SUCCESS) {
                 val = TupleBinding.getPrimitiveBinding(Long.class).entryToObject(valueEntry);
@@ -182,7 +186,7 @@ public final class BerkeleyWriter implements IBackendWriter {
      * {@inheritDoc}
      */
     @Override
-    public void writeFirstReference(final PageReference paramPageReference) throws TTIOException {
+    public synchronized void writeFirstReference(final PageReference paramPageReference) throws TTIOException {
         write(paramPageReference);
 
         final DatabaseEntry keyEntry = new DatabaseEntry();
@@ -192,7 +196,8 @@ public final class BerkeleyWriter implements IBackendWriter {
         TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(paramPageReference.getKey(), valueEntry);
 
         try {
-            mDatabase.put(mTxn, keyEntry, valueEntry);
+            // mDatabase.put(mTxn, keyEntry, valueEntry);
+            mDatabase.put(null, keyEntry, valueEntry);
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
         }
@@ -203,7 +208,7 @@ public final class BerkeleyWriter implements IBackendWriter {
      * {@inheritDoc}
      */
     @Override
-    public IPage read(final long pKey) throws TTIOException {
+    public synchronized IPage read(final long pKey) throws TTIOException {
         return mReader.read(pKey);
     }
 
@@ -211,7 +216,7 @@ public final class BerkeleyWriter implements IBackendWriter {
      * {@inheritDoc}
      */
     @Override
-    public PageReference readFirstReference() throws TTIOException {
+    public synchronized PageReference readFirstReference() throws TTIOException {
         return mReader.readFirstReference();
     }
 
@@ -223,7 +228,7 @@ public final class BerkeleyWriter implements IBackendWriter {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((mDatabase == null) ? 0 : mDatabase.hashCode());
-        result = prime * result + ((mTxn == null) ? 0 : mTxn.hashCode());
+        // result = prime * result + ((mTxn == null) ? 0 : mTxn.hashCode());
         result = prime * result + ((mReader == null) ? 0 : mReader.hashCode());
         return result;
     }
@@ -247,13 +252,13 @@ public final class BerkeleyWriter implements IBackendWriter {
         } else if (!mDatabase.equals(other.mDatabase)) {
             returnVal = false;
         }
-        if (mTxn == null) {
-            if (other.mTxn != null) {
-                returnVal = false;
-            }
-        } else if (!mTxn.equals(other.mTxn)) {
-            returnVal = false;
-        }
+        // if (mTxn == null) {
+        // if (other.mTxn != null) {
+        // returnVal = false;
+        // }
+        // } else if (!mTxn.equals(other.mTxn)) {
+        // returnVal = false;
+        // }
         if (mReader == null) {
             if (other.mReader != null) {
                 returnVal = false;

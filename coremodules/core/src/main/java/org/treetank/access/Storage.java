@@ -38,12 +38,21 @@ import org.treetank.access.conf.ContructorProps;
 import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
+import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.IStorage;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTUsageException;
+import org.treetank.io.IBackendReader;
 import org.treetank.io.IOUtils;
+import org.treetank.page.IConstants;
+import org.treetank.page.IndirectPage;
+import org.treetank.page.NodePage;
+import org.treetank.page.PageReference;
+import org.treetank.page.RevisionRootPage;
+import org.treetank.page.UberPage;
+import org.treetank.page.interfaces.IReferencePage;
 
 /**
  * This class represents one concrete database for enabling several {@link ISession} objects.
@@ -225,7 +234,7 @@ public final class Storage implements IStorage {
 
             // Boostrapping the Storage, this is quite dirty because of the initialization of the key, i
             // guess..however...
-            Session.bootstrap(this, pResConf);
+            bootstrap(this, pResConf);
             return returnVal;
         }
     }
@@ -307,7 +316,13 @@ public final class Storage implements IStorage {
             ResourceConfiguration config =
                 ResourceConfiguration.deserialize(mStorageConfig.mFile, pSessionConf.getResource());
 
-            returnVal = new Session(this, config, pSessionConf);
+            // reading first reference and instantiate this.
+            final IBackendReader backendReader = config.mStorage.getReader();
+            final PageReference firstRef = backendReader.readFirstReference();
+            UberPage page = (UberPage)firstRef.getPage();
+            backendReader.close();
+
+            returnVal = new Session(this, config, pSessionConf, page);
             mSessions.put(pSessionConf.getResource(), returnVal);
         }
         return returnVal;
@@ -385,4 +400,63 @@ public final class Storage implements IStorage {
     public File getLocation() {
         return mStorageConfig.mFile;
     }
+
+    /**
+     * Boostraping a resource within this storage.
+     * 
+     * @param pStorage
+     *            storage where the new resource should be created in.
+     * @param pResourceConf
+     *            related {@link ResourceConfiguration} for the new resource
+     * @throws TTException
+     */
+    private static void bootstrap(final Storage pStorage, final ResourceConfiguration pResourceConf)
+        throws TTException {
+        SessionConfiguration config =
+            new SessionConfiguration(pResourceConf.mProperties.getProperty(ContructorProps.RESOURCE), null);
+        UberPage uberPage = new UberPage(0, new PageReference());
+
+        // --- Create revision tree
+        // ------------------------------------------------
+
+        // Initialize revision tree to guarantee that there is a revision root
+        // page.
+        IReferencePage page = null;
+        PageReference reference = uberPage.getReferences()[0];
+
+        // Remaining levels.
+        for (int i = 0, l = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i < l; i++) {
+            page = new IndirectPage();
+            reference.setPage(page);
+            reference = page.getReferences()[0];
+        }
+
+        final RevisionRootPage rrp = new RevisionRootPage(0,-1);
+        reference.setPage(rrp);
+
+        // --- Create node tree
+        // ----------------------------------------------------
+
+        // Initialize revision tree to guarantee that there is a revision root
+        // page.
+        page = null;
+        reference = rrp.getIndirectPageReference();
+
+        // Remaining levels.
+        for (int i = 0, l = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i < l; i++) {
+            page = new IndirectPage();
+            reference.setPage(page);
+            reference = page.getReferences()[0];
+        }
+
+        final NodePage ndp = new NodePage(0);
+        reference.setPage(ndp);
+
+        Session session = new Session(pStorage, pResourceConf, config, uberPage);
+        IPageWriteTrx trx = session.beginPageWriteTransaction(0, 0);
+        trx.commit();
+        trx.close();
+        session.close();
+    }
+
 }

@@ -30,7 +30,6 @@ package org.treetank.page;
 import org.treetank.access.PageWriteTrx;
 import org.treetank.exception.TTException;
 import org.treetank.page.interfaces.IReferencePage;
-import org.treetank.page.interfaces.IRevisionPage;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
@@ -42,125 +41,26 @@ import com.google.common.io.ByteStreams;
  * Uber page holds a reference to the static revision root page tree.
  * </p>
  */
-public final class UberPage implements IRevisionPage, IReferencePage {
+public final class UberPage implements IReferencePage {
 
     /** Number of revisions. */
     private final long mRevisionCount;
 
-    /** True if this uber page is the uber page of a fresh TreeTank file. */
-    private boolean mBootstrap;
-
-    /** Revision of this page. */
-    private final long mRevision;
-
     /** Page references. */
-    private PageReference mReference;
+    private final PageReference mReference;
 
     /**
-     * Create uber page.
-     */
-    public UberPage() {
-        this(0, 1);
-        mBootstrap = true;
-
-        // --- Create revision tree
-        // ------------------------------------------------
-
-        // Initialize revision tree to guarantee that there is a revision root
-        // page.
-        IReferencePage page = null;
-        PageReference reference = getReferences()[0];
-
-        // Remaining levels.
-        for (int i = 0, l = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i < l; i++) {
-            page = new IndirectPage();
-            reference.setPage(page);
-            reference = page.getReferences()[0];
-        }
-
-        final RevisionRootPage rrp = new RevisionRootPage(0);
-        reference.setPage(rrp);
-
-        // --- Create node tree
-        // ----------------------------------------------------
-
-        // Initialize revision tree to guarantee that there is a revision root
-        // page.
-        page = null;
-        reference = rrp.getIndirectPageReference();
-
-        // Remaining levels.
-        for (int i = 0, l = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i < l; i++) {
-            page = new IndirectPage();
-            reference.setPage(page);
-            reference = page.getReferences()[0];
-        }
-
-        final NodePage ndp = new NodePage(0);
-        reference.setPage(ndp);
-
-    }
-
-    /**
-     * Clone uber page.
+     * New uber page
      * 
-     * @param paramCommittedUberPage
-     *            Page to clone.
-     * @param pRevToUse
-     *            Revision number to use.
+     * @param pRevisionCount
+     *            count of all revisions in this storage
+     * @param pReference
+     *            Reference for the indirect page
      */
-    public UberPage(final long pRevision, final long pRevisionCount) {
-        mRevision = pRevision;
+    public UberPage(final long pRevisionCount, final PageReference pReference) {
         mRevisionCount = pRevisionCount;
-        mReference = new PageReference();
+        mReference = pReference;
 
-    }
-
-    /**
-     * Clone uber page.
-     * 
-     * @param paramCommittedUberPage
-     *            Page to clone.
-     * @param pRevToUse
-     *            Revision number to use.
-     */
-    public UberPage(final UberPage paramCommittedUberPage, final long pRevToUse) {
-        mRevision = pRevToUse;
-        mReference = paramCommittedUberPage.getReferences()[0];
-        if (paramCommittedUberPage.isBootstrap()) {
-            mRevisionCount = paramCommittedUberPage.mRevisionCount;
-            mBootstrap = paramCommittedUberPage.mBootstrap;
-        } else {
-            mRevisionCount = paramCommittedUberPage.mRevisionCount + 1;
-            mBootstrap = false;
-        }
-    }
-
-    /**
-     * Get indirect page reference.
-     * 
-     * @return Indirect page reference.
-     */
-    public PageReference getIndirectPageReference() {
-        return getReferences()[0];
-    }
-
-    /**
-     * Get number of revisions.
-     * 
-     * @return Number of revisions.
-     */
-    public long getRevisionCount() {
-        return mRevisionCount;
-    }
-
-    /**
-     * Get key of last committed revision.
-     * 
-     * @return Key of last committed revision.
-     */
-    public long getLastCommittedRevisionNumber() {
-        return mRevisionCount - 2;
     }
 
     /**
@@ -169,16 +69,7 @@ public final class UberPage implements IRevisionPage, IReferencePage {
      * @return Revision key.
      */
     public long getRevisionNumber() {
-        return mRevisionCount - 1;
-    }
-
-    /**
-     * Flag to indicate whether this uber page is the first ever.
-     * 
-     * @return True if this uber page is the first one of the TreeTank file.
-     */
-    public boolean isBootstrap() {
-        return mBootstrap;
+        return mRevisionCount;
     }
 
     /**
@@ -186,14 +77,10 @@ public final class UberPage implements IRevisionPage, IReferencePage {
      */
     @Override
     public byte[] getByteRepresentation() {
-        mBootstrap = false;
         final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
         pOutput.writeInt(IConstants.UBERPAGE);
-        pOutput.writeLong(mRevision);
         pOutput.writeLong(mRevisionCount);
-        for (final PageReference reference : getReferences()) {
-            pOutput.writeLong(reference.getKey());
-        }
+        pOutput.writeLong(mReference.getKey());
         return pOutput.toByteArray();
     }
 
@@ -205,21 +92,14 @@ public final class UberPage implements IRevisionPage, IReferencePage {
         StringBuilder builder = new StringBuilder();
         builder.append("UberPage [mRevisionCount=");
         builder.append(mRevisionCount);
-        builder.append(", mBootstrap=");
-        builder.append(mBootstrap);
-        builder.append(", mRevision=");
-        builder.append(mRevision);
         builder.append(", mReference=");
         builder.append(mReference.toString());
-        builder.append("]");
         return builder.toString();
     }
 
     @Override
     public void commit(PageWriteTrx paramState) throws TTException {
-        for (final PageReference reference : getReferences()) {
-            paramState.commit(reference);
-        }
+        paramState.commit(mReference);
     }
 
     @Override
@@ -227,11 +107,6 @@ public final class UberPage implements IRevisionPage, IReferencePage {
         return new PageReference[] {
             mReference
         };
-    }
-
-    @Override
-    public long getRevision() {
-        return mRevision;
     }
 
 }
