@@ -404,11 +404,12 @@ public final class PageWriteTrx implements IPageWriteTrx {
 
         IndirectPage page = (IndirectPage)pRef.getPage();
         if (page == null) {
-            if (pRef.getKey() == IConstants.NULL_ID) {
-                page = new IndirectPage();
-            } else {
-                page = new IndirectPage((IndirectPage)mDelegate.dereferenceIndirectPage(pRef));
-
+            page = new IndirectPage();
+            if (pRef.getKey() != IConstants.NULL_ID) {
+                IndirectPage formerIndirect = mDelegate.dereferenceIndirectPage(pRef);
+                for (int i = 0; i < formerIndirect.getReferences().length; i++) {
+                    page.getReferences()[i] = formerIndirect.getReferences()[i];
+                }
             }
             pRef.setPage(page);
         }
@@ -427,12 +428,12 @@ public final class PageWriteTrx implements IPageWriteTrx {
 
             if (page == null) {
                 if (reference.getKey() == IConstants.NULL_ID) {
-                    cont = new NodePageContainer(new NodePage(pPageKey));
+                    cont = new NodePageContainer(new NodePage(pPageKey), new NodePage(pPageKey));
                 } else {
                     cont = dereferenceNodePageForModification(pPageKey);
                 }
             } else {
-                cont = new NodePageContainer(page);
+                cont = new NodePageContainer(page, new NodePage(page.getNodePageKey()));
             }
 
             reference.setNodePageKey(pPageKey);

@@ -44,7 +44,7 @@ import com.google.common.io.ByteStreams;
 public final class IndirectPage implements IReferencePage {
 
     /** Page references. */
-    private PageReference[] mReferences;
+    private final PageReference[] mReferences;
 
     /**
      * Create indirect page.
@@ -57,18 +57,6 @@ public final class IndirectPage implements IReferencePage {
         for (int i = 0; i < mReferences.length; i++) {
             mReferences[i] = new PageReference();
         }
-    }
-
-    /**
-     * Clone indirect page.
-     * 
-     * @param page
-     *            Page to clone.
-     * @param revisionToUse
-     *            Revision number to use
-     */
-    public IndirectPage(final IndirectPage page) {
-        mReferences = page.getReferences();
     }
 
     @Override
