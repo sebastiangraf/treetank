@@ -39,6 +39,7 @@ import javax.xml.namespace.QName;
 
 import org.treetank.access.PageWriteTrx;
 import org.treetank.access.Storage;
+import org.treetank.access.conf.ContructorProps;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
@@ -47,7 +48,6 @@ import org.treetank.api.INodeReadTrx;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
 import org.treetank.io.IBackend.IBackendFactory;
-import org.treetank.io.IConstants;
 import org.treetank.node.ElementNode;
 import org.treetank.node.TreeNodeFactory;
 import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
@@ -235,10 +235,9 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
         IBackendFactory backend = injector.getInstance(IBackendFactory.class);
         IRevisioningFactory revision = injector.getInstance(IRevisioningFactory.class);
         Properties props = new Properties();
-        props.setProperty(IConstants.DBFILE, storage.getLocation().getAbsolutePath());
-        props.setProperty(IConstants.RESOURCE, "shredded");
-        storage
-            .createResource(new ResourceConfiguration(props, 1, backend, revision, new TreeNodeFactory()));
+        props.setProperty(ContructorProps.STORAGEPATH, storage.getLocation().getAbsolutePath());
+        props.setProperty(ContructorProps.RESOURCE, "shredded");
+        storage.createResource(new ResourceConfiguration(props, backend, revision, new TreeNodeFactory()));
         final ISession session =
             storage.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
 

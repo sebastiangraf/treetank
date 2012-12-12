@@ -370,11 +370,11 @@ public class DatabaseRepresentationTest {
      */
     @Test
     public void getLastRevision() throws TTException {
-        assertEquals(ASSEQUALS, 0, treetank.getLastRevision(RESOURCENAME));
+        assertEquals(ASSEQUALS, 1, treetank.getLastRevision(RESOURCENAME));
         final NodeIdRepresentation rid =
             new NodeIdRepresentation(TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile()));
         rid.deleteResource(RESOURCENAME, 8);
-        assertEquals(ASSEQUALS, 1, treetank.getLastRevision(RESOURCENAME));
+        assertEquals(ASSEQUALS, 2, treetank.getLastRevision(RESOURCENAME));
     }
 
     /**
@@ -394,7 +394,7 @@ public class DatabaseRepresentationTest {
             new NodeIdRepresentation(TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile()));
         rid.deleteResource(RESOURCENAME, 8);
         final OutputStream output = new ByteArrayOutputStream();
-        treetank.getModificHistory(RESOURCENAME, "0-1", false, output, true);
+        treetank.getModificHistory(RESOURCENAME, "1-2", false, output, true);
         final InputStream inpSt = new ByteArrayInputStream(((ByteArrayOutputStream)output).toByteArray());
         final Document doc = xmlDocument(inpSt);
         final NodeList nodes = doc.getElementsByTagName("continent");
@@ -420,8 +420,8 @@ public class DatabaseRepresentationTest {
         rid.deleteResource(RESOURCENAME, 8);
         rid.deleteResource(RESOURCENAME, 11);
         rid.deleteResource(RESOURCENAME, 14);
-        assertEquals(ASSEQUALS, 3, treetank.getLastRevision(RESOURCENAME));
-        treetank.revertToRevision(RESOURCENAME, 0);
+        assertEquals(ASSEQUALS, 4, treetank.getLastRevision(RESOURCENAME));
+        treetank.revertToRevision(RESOURCENAME, 1);
         final StreamingOutput sOutput =
             rid.getResource(RESOURCENAME, 14, new HashMap<QueryParameter, String>());
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -431,7 +431,7 @@ public class DatabaseRepresentationTest {
         final Attr attribute = (Attr)node.getAttributes().getNamedItem(NAME);
         final String africaString = attribute.getTextContent();
         assertNotNull("check if africa (14) exists in the latest version", africaString);
-        assertEquals(ASSEQUALS, 4, treetank.getLastRevision(RESOURCENAME));
+        assertEquals(ASSEQUALS, 5, treetank.getLastRevision(RESOURCENAME));
         output.close();
     }
 

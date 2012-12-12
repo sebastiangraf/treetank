@@ -17,9 +17,9 @@ import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendWriter;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
-import org.treetank.page.IPage;
 import org.treetank.page.PageFactory;
 import org.treetank.page.PageReference;
+import org.treetank.page.interfaces.IPage;
 
 /**
  * @author Sebastian Graf, University of Konstanz

@@ -27,6 +27,7 @@
 
 package org.treetank.service.xml.serialize;
 
+import java.util.Arrays;
 import java.util.Stack;
 import java.util.concurrent.Callable;
 
@@ -100,25 +101,38 @@ abstract class AbsSerializer implements Callable<Void> {
 
         long[] versionsToUse;
 
-        // if there is one negative number in there, serialize all versions
+        // if there are no versions specified, take the last one, of not version==0
         if (mVersions.length == 0) {
-            versionsToUse = new long[] {
-                mSession.getMostRecentVersion()
-            };
-        } else {
-            if (mVersions.length == 1 && mVersions[0] < 0) {
-                versionsToUse = null;
-            } else {
-                versionsToUse = mVersions;
+            if (mSession.getMostRecentVersion() > 0) {
+                versionsToUse = new long[] {
+                    mSession.getMostRecentVersion()
+                };
+            }// revision 0 = bootstrapped page
+            else {
+                versionsToUse = new long[0];
+            }
+        } // if there is any negative number specified, take the entire range of versions, otherwise take the
+          // parameter
+        else {
+            // sort the versions first
+            Arrays.sort(mVersions);
+            if (mVersions[0] < 0) {
+                versionsToUse = new long[(int)mSession.getMostRecentVersion() - 1];
+                
+                for (int i = 0; i < versionsToUse.length; i++) {
+                    versionsToUse[i] = i + 1;
+                }
+
+            }// otherwise take the versions as requested as params
+            else {
+                int index = Arrays.binarySearch(mVersions, 1);
+                versionsToUse = Arrays.copyOfRange(mVersions, index, mVersions.length);
             }
         }
 
-        for (long i = 0; versionsToUse == null ? i < mSession.getMostRecentVersion()
-            : i < versionsToUse.length; i++) {
+        for (int i = 0; i < versionsToUse.length; i++) {
 
-            INodeReadTrx rtx =
-                new NodeReadTrx(mSession.beginPageReadTransaction(versionsToUse == null ? i
-                    : versionsToUse[(int)i]));
+            INodeReadTrx rtx = new NodeReadTrx(mSession.beginPageReadTransaction(versionsToUse[i]));
 
             if (versionsToUse == null || mVersions.length > 1) {
                 emitStartManualElement(i);

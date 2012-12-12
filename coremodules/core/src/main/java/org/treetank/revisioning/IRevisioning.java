@@ -3,6 +3,8 @@
  */
 package org.treetank.revisioning;
 
+import java.util.Properties;
+
 import org.treetank.cache.NodePageContainer;
 import org.treetank.page.NodePage;
 
@@ -60,11 +62,11 @@ public interface IRevisioning {
         /**
          * Generating a storage for a fixed file.
          * 
-         * @param pRevisionsToRestore
-         *            number of revisions to restore.
+         * @param pProperties
+         *            params for revision-approach e.g. numbers of revisions to restore
          * @return an {@link IRevisioning}-instance
          */
-        IRevisioning create(int pRevisionsToRestore);
+        IRevisioning create(Properties pProperties);
     }
 
 }

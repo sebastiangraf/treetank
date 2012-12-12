@@ -32,6 +32,7 @@ import java.util.Map;
 
 import org.treetank.access.PageWriteTrx;
 import org.treetank.exception.TTException;
+import org.treetank.page.interfaces.IPage;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
@@ -48,17 +49,10 @@ public final class NamePage implements IPage {
     /** Map the hash of a name to its name. */
     private final Map<Integer, String> mNameMap;
 
-    /** Revision of this page. */
-    private final long mRevision;
-
     /**
      * Create name page.
-     * 
-     * @param pRevision
-     *            Revision number.
      */
-    public NamePage(final long pRevision) {
-        mRevision = pRevision;
+    public NamePage() {
         mNameMap = new HashMap<Integer, String>();
     }
 
@@ -93,8 +87,6 @@ public final class NamePage implements IPage {
         StringBuilder builder = new StringBuilder();
         builder.append("NamePage [mNameMap=");
         builder.append(mNameMap);
-        builder.append(", mRevision=");
-        builder.append(mRevision);
         builder.append("]");
         return builder.toString();
     }
@@ -112,16 +104,6 @@ public final class NamePage implements IPage {
     public void commit(PageWriteTrx paramState) throws TTException {
     }
 
-    @Override
-    public PageReference[] getReferences() {
-        return null;
-    }
-
-    @Override
-    public long getRevision() {
-        return mRevision;
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -129,8 +111,6 @@ public final class NamePage implements IPage {
     public byte[] getByteRepresentation() {
         final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
         pOutput.writeInt(IConstants.NAMEPAGE);
-        pOutput.writeLong(mRevision);
-
         pOutput.writeInt(mNameMap.size());
 
         for (final int key : mNameMap.keySet()) {

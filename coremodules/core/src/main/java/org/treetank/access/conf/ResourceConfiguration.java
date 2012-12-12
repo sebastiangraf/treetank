@@ -41,7 +41,6 @@ import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackend;
 import org.treetank.io.IBackend.IBackendFactory;
-import org.treetank.io.IConstants;
 import org.treetank.io.bytepipe.ByteHandlerPipeline;
 import org.treetank.io.bytepipe.IByteHandler;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
@@ -155,16 +154,15 @@ public final class ResourceConfiguration {
      * Convenience constructor using the standard settings.
      * 
      * @param pProperties
-     * @param pNumbersOfRevToRestore
      * @param pBackend
      * @param pRevision
      * @param pNodeFac
      */
     @Inject
-    public ResourceConfiguration(@Assisted Properties pProperties, @Assisted int pNumbersOfRevToRestore,
-        IBackendFactory pBackend, IRevisioningFactory pRevision, INodeFactory pNodeFac) {
+    public ResourceConfiguration(@Assisted Properties pProperties, IBackendFactory pBackend,
+        IRevisioningFactory pRevision, INodeFactory pNodeFac) {
 
-        this(pProperties, pBackend.create(pProperties), pRevision.create(pNumbersOfRevToRestore), pNodeFac);
+        this(pProperties, pBackend.create(pProperties), pRevision.create(pProperties), pNodeFac);
     }
 
     /**
@@ -199,55 +197,45 @@ public final class ResourceConfiguration {
          * 
          * @param pProperties
          *            Properties of resource to be set.
-         * @param pNumberOfRevsToRestore
-         *            numbers of revisions to restore an entire revision
          * @return an {@link ResourceConfiguration}-instance
          */
-        ResourceConfiguration create(Properties pProperties, int pNumberOfRevsToRestore);
+        ResourceConfiguration create(Properties pProperties);
     }
 
     private static final String[] JSONNAMES = {
-        "revisioning", "revisioningClass", "numbersOfRevisiontoRestore", "nodeFactoryClass",
-        "byteHandlerClasses", "storage", "storageClass", "storageProperties"
+        "revisioningClass", "nodeFactoryClass", "byteHandlerClasses", "storageClass", "properties"
     };
 
     public static void serialize(final ResourceConfiguration pConfig) throws TTIOException {
         try {
 
             final File file =
-                new File(new File(new File(pConfig.mProperties.getProperty(IConstants.DBFILE),
+                new File(new File(new File(pConfig.mProperties.getProperty(ContructorProps.STORAGEPATH),
                     StorageConfiguration.Paths.Data.getFile().getName()), pConfig.mProperties
-                    .getProperty(IConstants.RESOURCE)), Paths.ConfigBinary.getFile().getName());
+                    .getProperty(ContructorProps.RESOURCE)), Paths.ConfigBinary.getFile().getName());
 
             FileWriter fileWriter = new FileWriter(file);
             JsonWriter jsonWriter = new JsonWriter(fileWriter);
             jsonWriter.beginObject();
             // caring about the versioning
-            jsonWriter.name(JSONNAMES[0]);
-            jsonWriter.beginObject();
-            jsonWriter.name(JSONNAMES[1]).value(pConfig.mRevision.getClass().getName());
-            jsonWriter.name(JSONNAMES[2]).value(pConfig.mRevision.getRevisionsToRestore());
-            jsonWriter.endObject();
+            jsonWriter.name(JSONNAMES[0]).value(pConfig.mRevision.getClass().getName());
             // caring about the NodeFactory
-            jsonWriter.name(JSONNAMES[3]).value(pConfig.mNodeFac.getClass().getName());
+            jsonWriter.name(JSONNAMES[1]).value(pConfig.mNodeFac.getClass().getName());
             // caring about the ByteHandlers
             IByteHandlerPipeline byteHandler = pConfig.mStorage.getByteHandler();
-            jsonWriter.name(JSONNAMES[4]);
+            jsonWriter.name(JSONNAMES[2]);
             jsonWriter.beginArray();
             for (IByteHandler handler : byteHandler) {
                 jsonWriter.value(handler.getClass().getName());
             }
             jsonWriter.endArray();
             // caring about the storage
-            jsonWriter.name(JSONNAMES[5]);
-            jsonWriter.beginObject();
-            jsonWriter.name(JSONNAMES[6]).value(pConfig.mStorage.getClass().getName());
-            jsonWriter.name(JSONNAMES[7]);
+            jsonWriter.name(JSONNAMES[3]).value(pConfig.mStorage.getClass().getName());
+            jsonWriter.name(JSONNAMES[4]);
             jsonWriter.beginObject();
             for (String key : pConfig.mProperties.stringPropertyNames()) {
                 jsonWriter.name(key).value(pConfig.mProperties.getProperty(key));
             }
-            jsonWriter.endObject();
             jsonWriter.endObject();
             jsonWriter.endObject();
             jsonWriter.close();
@@ -278,23 +266,15 @@ public final class ResourceConfiguration {
             JsonReader jsonReader = new JsonReader(fileReader);
             jsonReader.beginObject();
             // caring about the versioning
-            assert jsonReader.nextName().equals(JSONNAMES[0]);
-            jsonReader.beginObject();
-            assert jsonReader.nextName().equals(JSONNAMES[1]);
+            jsonReader.nextName().equals(JSONNAMES[0]);
             Class<?> revClazz = Class.forName(jsonReader.nextString());
-            assert jsonReader.nextName().equals(JSONNAMES[2]);
-            int revisionToRestore = jsonReader.nextInt();
-            Constructor<?> revCons = revClazz.getConstructors()[0];
-            IRevisioning revisioning = (IRevisioning)revCons.newInstance(revisionToRestore);
-            jsonReader.endObject();
             // caring about the NodeFactory
-            assert jsonReader.nextName().equals(JSONNAMES[3]);
+            jsonReader.nextName().equals(JSONNAMES[1]);
             Class<?> nodeFacClazz = Class.forName(jsonReader.nextString());
-            Constructor<?> nodeFacCons = nodeFacClazz.getConstructors()[0];
-            INodeFactory nodeFactory = (INodeFactory)nodeFacCons.newInstance();
+
             // caring about the ByteHandlers
             List<IByteHandler> handlerList = new ArrayList<IByteHandler>();
-            if (jsonReader.nextName().equals(JSONNAMES[4])) {
+            if (jsonReader.nextName().equals(JSONNAMES[2])) {
                 jsonReader.beginArray();
                 while (jsonReader.hasNext()) {
                     Class<?> handlerClazz = Class.forName(jsonReader.nextString());
@@ -306,25 +286,29 @@ public final class ResourceConfiguration {
             ByteHandlerPipeline pipeline =
                 new ByteHandlerPipeline(handlerList.toArray(new IByteHandler[handlerList.size()]));
             // caring about the storage
-            assert jsonReader.nextName().equals(JSONNAMES[5]);
-            jsonReader.beginObject();
-            assert jsonReader.nextName().equals(JSONNAMES[6]);
+            jsonReader.nextName().equals(JSONNAMES[3]);
             Class<?> storageClazz = Class.forName(jsonReader.nextString());
-            assert jsonReader.nextName().equals(JSONNAMES[7]);
+            jsonReader.nextName().equals(JSONNAMES[4]);
             Properties props = new Properties();
             jsonReader.beginObject();
             while (jsonReader.hasNext()) {
                 props.setProperty(jsonReader.nextName(), jsonReader.nextString());
             }
             jsonReader.endObject();
-            Constructor<?> storageCons = storageClazz.getConstructors()[0];
-            IBackend backend = (IBackend)storageCons.newInstance(props, nodeFactory, pipeline);
-            jsonReader.endObject();
             jsonReader.endObject();
             jsonReader.close();
             fileReader.close();
 
-            return new ResourceConfiguration(props, backend, revisioning, nodeFactory);
+            Constructor<?> nodeFacCons = nodeFacClazz.getConstructors()[0];
+            INodeFactory nodeFactory = (INodeFactory)nodeFacCons.newInstance();
+
+            Constructor<?> revCons = revClazz.getConstructors()[0];
+            IRevisioning revObject = (IRevisioning)revCons.newInstance(props);
+
+            Constructor<?> storageCons = storageClazz.getConstructors()[0];
+            IBackend backend = (IBackend)storageCons.newInstance(props, nodeFactory, pipeline);
+
+            return new ResourceConfiguration(props, backend, revObject, nodeFactory);
 
         } catch (IOException | ClassNotFoundException | IllegalArgumentException | InstantiationException
         | IllegalAccessException | InvocationTargetException exc) {

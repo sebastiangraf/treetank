@@ -16,7 +16,6 @@ import org.treetank.ModuleFactory;
 import org.treetank.TestHelper;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.exception.TTException;
-import org.treetank.io.IConstants;
 
 import com.google.inject.Inject;
 
@@ -51,11 +50,11 @@ public class ResourceConfigurationTest {
     public void testDeSerialize() throws Exception {
         Properties props = StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(), TestHelper.RESOURCENAME);
         TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        ResourceConfiguration resConf = mResourceConfig.create(props, 10);
+        ResourceConfiguration resConf = mResourceConfig.create(props);
         TestHelper.createResource(resConf);
         ResourceConfiguration serializedConf =
-            ResourceConfiguration.deserialize(new File(props.getProperty(IConstants.DBFILE)), props
-                .getProperty(IConstants.RESOURCE));
+            ResourceConfiguration.deserialize(new File(props.getProperty(ContructorProps.STORAGEPATH)), props
+                .getProperty(ContructorProps.RESOURCE));
         assertEquals(resConf.toString(), serializedConf.toString());
 
     }

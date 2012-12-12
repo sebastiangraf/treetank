@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import org.treetank.access.conf.ContructorProps;
 import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
@@ -42,7 +43,6 @@ import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTUsageException;
-import org.treetank.io.IConstants;
 import org.treetank.io.IOUtils;
 
 /**
@@ -77,7 +77,7 @@ public final class Storage implements IStorage {
     }
 
     // //////////////////////////////////////////////////////////
-    // START Creation/Deletion of Storages  /////////////////////
+    // START Creation/Deletion of Storages /////////////////////
     // //////////////////////////////////////////////////////////
     /**
      * Creating a storage. This includes loading the storageconfiguration,
@@ -182,14 +182,14 @@ public final class Storage implements IStorage {
      * {@inheritDoc}
      */
     @Override
-    public synchronized boolean createResource(final ResourceConfiguration pResConf) throws TTIOException {
+    public synchronized boolean createResource(final ResourceConfiguration pResConf) throws TTException {
         boolean returnVal = true;
         // Setting the missing params in the settings, this overrides already
         // set data.
         final File path =
-            new File(new File(pResConf.mProperties.getProperty(IConstants.DBFILE),
+            new File(new File(pResConf.mProperties.getProperty(ContructorProps.STORAGEPATH),
                 StorageConfiguration.Paths.Data.getFile().getName()), pResConf.mProperties
-                .getProperty(IConstants.RESOURCE));
+                .getProperty(ContructorProps.RESOURCE));
         // if file is existing, skipping
         if (path.exists()) {
             return false;
@@ -219,8 +219,13 @@ public final class Storage implements IStorage {
             // substructure
             if (!returnVal) {
                 throw new IllegalStateException(new StringBuilder("Failure, please remove folder ").append(
-                    pResConf.mProperties.getProperty(IConstants.DBFILE)).append(" manually!").toString());
+                    pResConf.mProperties.getProperty(ContructorProps.STORAGEPATH)).append(" manually!")
+                    .toString());
             }
+
+            // Boostrapping the Storage, this is quite dirty because of the initialization of the key, i
+            // guess..however...
+            Session.bootstrap(this, pResConf);
             return returnVal;
         }
     }

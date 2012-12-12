@@ -31,6 +31,7 @@ import java.util.Arrays;
 import org.treetank.access.PageWriteTrx;
 import org.treetank.api.INode;
 import org.treetank.exception.TTException;
+import org.treetank.page.interfaces.IPage;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
@@ -50,9 +51,6 @@ public class NodePage implements IPage {
     /** Array of nodes. This can have null nodes that were removed. */
     private final INode[] mNodes;
 
-    /** Revision of this page. */
-    private final long mRevision;
-
     /**
      * Create node page.
      * 
@@ -61,9 +59,8 @@ public class NodePage implements IPage {
      * @param pRevision
      *            Revision of the page
      */
-    public NodePage(final long pNodePageKey, final long pRevision) {
+    public NodePage(final long pNodePageKey) {
         mNodePageKey = pNodePageKey;
-        mRevision = pRevision;
         mNodes = new INode[IConstants.NDP_NODE_COUNT];
     }
 
@@ -109,8 +106,6 @@ public class NodePage implements IPage {
         builder.append(mNodePageKey);
         builder.append(", mNodes=");
         builder.append(Arrays.toString(mNodes));
-        builder.append(", mRevision=");
-        builder.append(mRevision);
         builder.append("]");
         return builder.toString();
     }
@@ -156,16 +151,6 @@ public class NodePage implements IPage {
     public void commit(PageWriteTrx paramState) throws TTException {
     }
 
-    @Override
-    public PageReference[] getReferences() {
-        return null;
-    }
-
-    @Override
-    public long getRevision() {
-        return mRevision;
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -174,7 +159,6 @@ public class NodePage implements IPage {
         final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
         pOutput.writeInt(IConstants.NODEPAGE);
         pOutput.writeLong(mNodePageKey);
-        pOutput.writeLong(mRevision);
 
         for (final INode node : getNodes()) {
             if (node == null) {
@@ -218,7 +202,6 @@ public class NodePage implements IPage {
         public long getNodeKey() {
             return mNodeKey;
         }
-
 
         /**
          * {@inheritDoc}

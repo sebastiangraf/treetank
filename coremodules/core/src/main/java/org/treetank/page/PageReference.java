@@ -27,6 +27,8 @@
 
 package org.treetank.page;
 
+import org.treetank.page.interfaces.IPage;
+
 /**
  * <h1>PageReference</h1>
  * 

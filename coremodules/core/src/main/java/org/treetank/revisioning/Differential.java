@@ -3,6 +3,9 @@
  */
 package org.treetank.revisioning;
 
+import java.util.Properties;
+
+import org.treetank.access.conf.ContructorProps;
 import org.treetank.cache.NodePageContainer;
 import org.treetank.page.NodePage;
 
@@ -30,8 +33,8 @@ public class Differential implements IRevisioning {
      *            to be set.
      */
     @Inject
-    public Differential(@Assisted int pRevToRestore) {
-        mRevToRestore = pRevToRestore;
+    public Differential(@Assisted Properties pProperties) {
+        mRevToRestore = Integer.parseInt(pProperties.getProperty(ContructorProps.NUMBERTORESTORE));
     }
 
     /**
@@ -40,13 +43,13 @@ public class Differential implements IRevisioning {
     @Override
     public NodePage combinePages(NodePage[] pages) {
         final long nodePageKey = pages[0].getNodePageKey();
-        final NodePage returnVal = new NodePage(nodePageKey, pages[0].getRevision());
+        final NodePage returnVal = new NodePage(nodePageKey);
         final NodePage latest = pages[0];
 
         NodePage referencePage = pages[0];
 
         for (int i = 1; i < pages.length; i++) {
-            if (pages[i].getRevision() % mRevToRestore == 0) {
+            if (i % mRevToRestore == 0) {
                 referencePage = pages[i];
                 break;
             }
@@ -69,16 +72,15 @@ public class Differential implements IRevisioning {
     @Override
     public NodePageContainer combinePagesForModification(NodePage[] pages) {
         final long nodePageKey = pages[0].getNodePageKey();
-        final NodePage[] returnVal =
-            {
-                new NodePage(nodePageKey, pages[0].getRevision() + 1),
-                new NodePage(nodePageKey, pages[0].getRevision() + 1)
-            };
+        final NodePage[] returnVal = {
+            new NodePage(nodePageKey), new NodePage(nodePageKey)
+        };
 
         final NodePage latest = pages[0];
         NodePage fullDump = pages[0];
-        for (int i = 1; i < pages.length; i++) {
-            if (pages[i].getRevision() % mRevToRestore == 0) {
+        int i = 1;
+        for (; i < pages.length; i++) {
+            if (i % mRevToRestore == 0) {
                 fullDump = pages[i];
                 break;
             }
@@ -92,7 +94,7 @@ public class Differential implements IRevisioning {
             } else {
                 if (fullDump.getNode(j) != null) {
                     returnVal[0].setNode(j, fullDump.getNode(j));
-                    if ((latest.getRevision() + 1) % mRevToRestore == 0) {
+                    if (i + 1 % mRevToRestore == 0) {
                         returnVal[1].setNode(j, fullDump.getNode(j));
                     }
                 }

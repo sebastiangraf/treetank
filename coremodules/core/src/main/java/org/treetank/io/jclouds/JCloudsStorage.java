@@ -8,9 +8,9 @@ import java.util.Properties;
 import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
+import org.treetank.access.conf.ContructorProps;
 import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTException;
-import org.treetank.io.IConstants;
 import org.treetank.io.IBackendReader;
 import org.treetank.io.IBackend;
 import org.treetank.io.IBackendWriter;
@@ -60,8 +60,8 @@ public class JCloudsStorage implements IBackend {
         mFac = new PageFactory(pNodeFac);
         mByteHandler = (ByteHandlerPipeline)pByteHandler;
         mContext =
-            ContextBuilder.newBuilder(mProperties.getProperty(IConstants.JCLOUDSTYPE)).overrides(mProperties)
-                .buildView(BlobStoreContext.class);
+            ContextBuilder.newBuilder(mProperties.getProperty(ContructorProps.JCLOUDSTYPE)).overrides(
+                mProperties).buildView(BlobStoreContext.class);
 
         mBlobStore = mContext.getBlobStore();
 
@@ -73,11 +73,12 @@ public class JCloudsStorage implements IBackend {
     @Override
     public IBackendWriter getWriter() throws TTException {
         // setup the container name used by the provider (like bucket in S3)
-        String containerName = mProperties.getProperty(IConstants.RESOURCE);
+        String containerName = mProperties.getProperty(ContructorProps.RESOURCE);
         if (!mBlobStore.containerExists(containerName)) {
             mBlobStore.createContainerInLocation(null, containerName);
         }
-        return new JCloudsWriter(mBlobStore, mFac, mByteHandler, mProperties.getProperty(IConstants.RESOURCE));
+        return new JCloudsWriter(mBlobStore, mFac, mByteHandler, mProperties
+            .getProperty(ContructorProps.RESOURCE));
     }
 
     /**
@@ -86,11 +87,12 @@ public class JCloudsStorage implements IBackend {
     @Override
     public IBackendReader getReader() throws TTException {
         // setup the container name used by the provider (like bucket in S3)
-        String containerName = mProperties.getProperty(IConstants.RESOURCE);
+        String containerName = mProperties.getProperty(ContructorProps.RESOURCE);
         if (!mBlobStore.containerExists(containerName)) {
             mBlobStore.createContainerInLocation(null, containerName);
         }
-        return new JCloudsReader(mBlobStore, mFac, mByteHandler, mProperties.getProperty(IConstants.RESOURCE));
+        return new JCloudsReader(mBlobStore, mFac, mByteHandler, mProperties
+            .getProperty(ContructorProps.RESOURCE));
     }
 
     /**
@@ -105,26 +107,13 @@ public class JCloudsStorage implements IBackend {
      * {@inheritDoc}
      */
     @Override
-    public boolean exists() throws TTException {
-        if (mBlobStore.containerExists(mProperties.getProperty(IConstants.RESOURCE))
-            && mBlobStore.blobExists(mProperties.getProperty(IConstants.RESOURCE), Long.toString(-2l))) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public IByteHandlerPipeline getByteHandler() {
         return mByteHandler;
     }
 
     @Override
     public void truncate() throws TTException {
-        mBlobStore.deleteContainer(mProperties.getProperty(IConstants.RESOURCE));
+        mBlobStore.deleteContainer(mProperties.getProperty(ContructorProps.RESOURCE));
     }
 
     /**

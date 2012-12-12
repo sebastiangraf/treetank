@@ -3,6 +3,8 @@
  */
 package org.treetank.revisioning;
 
+import java.util.Properties;
+
 import org.treetank.cache.NodePageContainer;
 import org.treetank.page.NodePage;
 
@@ -25,7 +27,7 @@ public class FullDump implements IRevisioning {
      *            not really set since FullDump revisions are always restorable within one version.
      */
     @Inject
-    public FullDump(@Assisted int pRevToRestore) {
+    public FullDump(@Assisted Properties pProperties) {
     }
 
     /**
@@ -34,7 +36,7 @@ public class FullDump implements IRevisioning {
     @Override
     public NodePage combinePages(NodePage[] pages) {
         final long nodePageKey = pages[0].getNodePageKey();
-        final NodePage returnVal = new NodePage(nodePageKey, pages[0].getRevision());
+        final NodePage returnVal = new NodePage(nodePageKey);
 
         for (int i = 0; i < pages[0].getNodes().length; i++) {
             returnVal.setNode(i, pages[0].getNode(i));
@@ -49,11 +51,9 @@ public class FullDump implements IRevisioning {
     @Override
     public NodePageContainer combinePagesForModification(NodePage[] pages) {
         final long nodePageKey = pages[0].getNodePageKey();
-        final NodePage[] returnVal =
-            {
-                new NodePage(nodePageKey, pages[0].getRevision() + 1),
-                new NodePage(nodePageKey, pages[0].getRevision() + 1)
-            };
+        final NodePage[] returnVal = {
+            new NodePage(nodePageKey), new NodePage(nodePageKey)
+        };
 
         for (int i = 0; i < pages[0].getNodes().length; i++) {
             returnVal[0].setNode(i, pages[0].getNode(i));
@@ -83,7 +83,5 @@ public class FullDump implements IRevisioning {
         builder.append("FullDump []");
         return builder.toString();
     }
-    
- 
 
 }

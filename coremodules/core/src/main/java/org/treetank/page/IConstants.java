@@ -28,7 +28,7 @@
 package org.treetank.page;
 
 /**
- * <h1>IConstants</h1>
+ * <h1>ContructorProps</h1>
  * 
  * <p>
  * Interface to hold all constants of the pagelayer.
@@ -60,15 +60,6 @@ public interface IConstants {
     public static final int[] INP_LEVEL_PAGE_COUNT_EXPONENT = {
         4 * 7, 3 * 7, 2 * 7, 1 * 7, 0 * 7
     };
-
-    // --- Uber Page
-    // -------------------------------------------------------------
-
-    /** Revision key of unitialized storage. */
-    public static final long UBP_ROOT_REVISION_COUNT = 1L;
-
-    /** Root revisionKey guaranteed to exist in empty storage. */
-    public static final long UBP_ROOT_REVISION_NUMBER = 0L;
 
     // --- Node Page
     // -------------------------------------------------------------

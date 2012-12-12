@@ -53,9 +53,11 @@ import javax.xml.stream.events.Namespace;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
+import org.jclouds.Constants;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.Storage;
+import org.treetank.access.conf.ContructorProps;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
@@ -356,10 +358,8 @@ public class XMLShredder implements Callable<Void> {
         Storage.truncateStorage(config);
         Storage.createStorage(config);
         final IStorage db = Storage.openStorage(target);
-        Properties props = new Properties();
-        props.setProperty(org.treetank.io.IConstants.DBFILE, target.getAbsolutePath());
-        props.setProperty(org.treetank.io.IConstants.RESOURCE, "shredded");
-        db.createResource(new ResourceConfiguration(props, 1, storage, revision, new TreeNodeFactory()));
+        Properties props = StandardSettings.getStandardProperties(target.getAbsolutePath(), "shredded");
+        db.createResource(new ResourceConfiguration(props, storage, revision, new TreeNodeFactory()));
         final ISession session = db.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
         final INodeWriteTrx wtx =
             new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);

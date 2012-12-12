@@ -3,6 +3,9 @@
  */
 package org.treetank.revisioning;
 
+import java.util.Properties;
+
+import org.treetank.access.conf.ContructorProps;
 import org.treetank.cache.NodePageContainer;
 import org.treetank.page.NodePage;
 
@@ -26,12 +29,12 @@ public class Incremental implements IRevisioning {
      * 
      * Constructor.
      * 
-     * @param pRevToRestore
+     * @param pProperties
      *            to be set.
      */
     @Inject
-    public Incremental(@Assisted int pRevToRestore) {
-        mRevToRestore = pRevToRestore;
+    public Incremental(@Assisted Properties pProperties) {
+        mRevToRestore = Integer.parseInt(pProperties.getProperty(ContructorProps.NUMBERTORESTORE));
     }
 
     /**
@@ -40,15 +43,15 @@ public class Incremental implements IRevisioning {
     @Override
     public NodePage combinePages(NodePage[] pages) {
         final long nodePageKey = pages[0].getNodePageKey();
-        final NodePage returnVal = new NodePage(nodePageKey, pages[0].getRevision());
-        for (NodePage page : pages) {
-            assert page.getNodePageKey() == nodePageKey;
-            for (int i = 0; i < page.getNodes().length; i++) {
-                if (page.getNode(i) != null && returnVal.getNode(i) == null) {
-                    returnVal.setNode(i, page.getNode(i));
+        final NodePage returnVal = new NodePage(nodePageKey);
+        for (int j = 0; j < pages.length; j++) {
+            assert pages[j].getNodePageKey() == nodePageKey;
+            for (int i = 0; i < pages[j].getNodes().length; i++) {
+                if (pages[j].getNode(i) != null && returnVal.getNode(i) == null) {
+                    returnVal.setNode(i, pages[j].getNode(i));
                 }
             }
-            if (page.getRevision() % mRevToRestore == 0) {
+            if (j % mRevToRestore == 0) {
                 break;
             }
         }
@@ -62,11 +65,9 @@ public class Incremental implements IRevisioning {
     @Override
     public NodePageContainer combinePagesForModification(NodePage[] pages) {
         final long nodePageKey = pages[0].getNodePageKey();
-        final NodePage[] returnVal =
-            {
-                new NodePage(nodePageKey, pages[0].getRevision() + 1),
-                new NodePage(nodePageKey, pages[0].getRevision() + 1)
-            };
+        final NodePage[] returnVal = {
+            new NodePage(nodePageKey), new NodePage(nodePageKey)
+        };
 
         for (int j = 0; j < pages.length; j++) {
             assert pages[j].getNodePageKey() == nodePageKey;
@@ -75,7 +76,8 @@ public class Incremental implements IRevisioning {
                 if (pages[j].getNode(i) != null && returnVal[0].getNode(i) == null) {
                     returnVal[0].setNode(i, pages[j].getNode(i));
 
-                    if (returnVal[0].getRevision() % mRevToRestore == 0) {
+                    //copy of all nodes from the last fulldump to this revision to ensure read-scalability
+                    if (j % mRevToRestore == 0) {
                         returnVal[1].setNode(i, pages[j].getNode(i));
                     }
                 }

@@ -92,7 +92,7 @@ public final class TestNodeWrapperXPath {
     public void setUp() throws TTException, XPathFactoryConfigurationException {
         TestHelper.deleteEverything();
         Properties props = StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(), TestHelper.RESOURCENAME);
-        ResourceConfiguration resource = mResourceConfig.create(props, 10);
+        ResourceConfiguration resource = mResourceConfig.create(props);
         NodeHelper.createTestDocument(resource);
         holder = Holder.generateRtx(resource);
 

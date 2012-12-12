@@ -17,11 +17,12 @@ import org.treetank.access.conf.SessionConfiguration.ISessionConfigurationFactor
 import org.treetank.api.INodeFactory;
 import org.treetank.io.IBackend;
 import org.treetank.io.IBackend.IBackendFactory;
-import org.treetank.io.IConstants;
+import org.treetank.io.berkeley.BerkeleyStorage;
 import org.treetank.io.bytepipe.ByteHandlerPipeline;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.io.bytepipe.Zipper;
 import org.treetank.io.file.FileStorage;
+import org.treetank.io.jclouds.JCloudsStorage;
 import org.treetank.page.DumbNodeFactory;
 import org.treetank.revisioning.Differential;
 import org.treetank.revisioning.IRevisioning;
@@ -59,21 +60,21 @@ public class StandardSettings extends AbstractModule {
         install(new FactoryModuleBuilder().implement(IBackend.class, FileStorage.class).build(
             IBackendFactory.class));
         install(new FactoryModuleBuilder().build(IResourceConfigurationFactory.class));
-
         bind(Key.class).toInstance(KEY);
         install(new FactoryModuleBuilder().build(ISessionConfigurationFactory.class));
     }
 
-    public static Properties getStandardProperties(final String mDatabase, final String resource) {
+    public static Properties getStandardProperties(final String pathToStorage, final String resource) {
         Properties properties = new Properties();
-        properties.setProperty(IConstants.DBFILE, mDatabase);
-        properties.setProperty(IConstants.RESOURCE, resource);
+        properties.setProperty(ContructorProps.STORAGEPATH, pathToStorage);
+        properties.setProperty(ContructorProps.RESOURCE, resource);
         properties.setProperty(FilesystemConstants.PROPERTY_BASEDIR, new File(new File(new File(properties
-            .getProperty(IConstants.DBFILE), StorageConfiguration.Paths.Data.getFile().getName()), properties
-            .getProperty(IConstants.RESOURCE)), ResourceConfiguration.Paths.Data.getFile().getName())
-            .getAbsolutePath());
+            .getProperty(ContructorProps.STORAGEPATH), StorageConfiguration.Paths.Data.getFile().getName()),
+            properties.getProperty(ContructorProps.RESOURCE)), ResourceConfiguration.Paths.Data.getFile()
+            .getName()).getAbsolutePath());
+        properties.setProperty(ContructorProps.NUMBERTORESTORE, Integer.toString(4));
         properties.setProperty(Constants.PROPERTY_CREDENTIAL, "test");
-        properties.setProperty(IConstants.JCLOUDSTYPE, "imagestore");
+        properties.setProperty(ContructorProps.JCLOUDSTYPE, "filesystem");
         // Class name for painter for imagehost
         properties.setProperty(ImageStoreConstants.PROPERTY_BYTEPAINTER,
             "org.jclouds.imagestore.imagegenerator.bytepainter.HexadecimalBytesToImagePainter");

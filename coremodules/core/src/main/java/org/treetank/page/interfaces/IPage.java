@@ -24,18 +24,27 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.treetank.page;
+package org.treetank.page.interfaces;
 
 import org.treetank.access.PageWriteTrx;
 import org.treetank.exception.TTException;
 
+/**
+ * Interface to represent one page.
+ * A page is the atomic unique to be serializible and represents one bucket when stored.
+ * Pointers as well as any nodes may be stored within one page.
+ *   
+ * @author Sebastian Graf, University of Konstanz
+ *
+ */
 public interface IPage {
 
+    /**
+     * Getting the byte representation of the node
+     * @return a byte-array representing the data of the page
+     */
     byte[] getByteRepresentation();
 
-    long getRevision();
-
-    PageReference[] getReferences();
 
     void commit(final PageWriteTrx paramState) throws TTException;
 

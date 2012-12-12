@@ -59,7 +59,7 @@ public final class NodePageContainer {
      *            to be used as a base for this container.
      */
     public NodePageContainer(final NodePage paramComplete) {
-        this(paramComplete, new NodePage(paramComplete.getNodePageKey(), paramComplete.getRevision()));
+        this(paramComplete, new NodePage(paramComplete.getNodePageKey()));
     }
 
     /**

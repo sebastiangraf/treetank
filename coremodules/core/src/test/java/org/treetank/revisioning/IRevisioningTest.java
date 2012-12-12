@@ -6,11 +6,14 @@ package org.treetank.revisioning;
 import static org.testng.AssertJUnit.assertEquals;
 import static org.treetank.TestHelper.getNodePage;
 
+import java.util.Properties;
+
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.treetank.TestHelper;
+import org.treetank.access.conf.ContructorProps;
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.page.NodePage;
 
@@ -59,8 +62,8 @@ public class IRevisioningTest {
         Class<IRevisionChecker> pRevisionCheckerClass, IRevisionChecker[] pRevisionChecker) {
         for (final IRevisioning handler : pRevisioning) {
             final NodePage[] pages = new NodePage[2];
-            pages[0] = getNodePage(1, 0, 128, 0);
-            pages[1] = getNodePage(0, 0, 128, 0);
+            pages[0] = getNodePage(1, 0, 128);
+            pages[1] = getNodePage(0, 0, 128);
 
             final NodePage page = handler.combinePages(pages);
 
@@ -110,10 +113,13 @@ public class IRevisioningTest {
      */
     @DataProvider(name = "instantiateVersioning")
     public Object[][] instantiateVersioning() throws TTByteHandleException {
+        Properties props = new Properties();
+        props.put(ContructorProps.NUMBERTORESTORE, Integer.toString(4));
+
         Object[][] returnVal = {
             {
                 IRevisioning.class, new IRevisioning[] {
-                    new FullDump(1), new Incremental(4), new Differential(4)
+                    new FullDump(props), new Incremental(props), new Differential(props)
                 }, IRevisionChecker.class, new IRevisionChecker[] {
                     // Checker for FullDump
                     new IRevisionChecker() {
@@ -166,10 +172,10 @@ public class IRevisioningTest {
     private static NodePage[] prepareNormal(final int length) {
         final NodePage[] pages = new NodePage[length];
         // filling one entire page with revision 0 and key 0
-        pages[pages.length - 1] = getNodePage(0, 0, 128, 0);
+        pages[pages.length - 1] = getNodePage(0, 0, 128);
         for (int i = 0; i < pages.length - 1; i++) {
             // filling nodepages from end to start with 32 elements each slot
-            pages[i] = getNodePage(pages.length - i - 1, i * 32, (i * 32) + 32, 0);
+            pages[i] = getNodePage(pages.length - i - 1, i * 32, (i * 32) + 32);
         }
         return pages;
     }

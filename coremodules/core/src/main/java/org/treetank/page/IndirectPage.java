@@ -29,6 +29,7 @@ package org.treetank.page;
 
 import org.treetank.access.PageWriteTrx;
 import org.treetank.exception.TTException;
+import org.treetank.page.interfaces.IReferencePage;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
@@ -40,13 +41,10 @@ import com.google.common.io.ByteStreams;
  * Indirect page holds a set of references to build a reference tree.
  * </p>
  */
-public final class IndirectPage implements IPage {
+public final class IndirectPage implements IReferencePage {
 
     /** Page references. */
     private PageReference[] mReferences;
-
-    /** revision of this page. */
-    private final long mRevision;
 
     /**
      * Create indirect page.
@@ -54,8 +52,7 @@ public final class IndirectPage implements IPage {
      * @param paramRevision
      *            Revision Number
      */
-    public IndirectPage(final long paramRevision) {
-        mRevision = paramRevision;
+    public IndirectPage() {
         mReferences = new PageReference[IConstants.INP_REFERENCE_COUNT];
         for (int i = 0; i < mReferences.length; i++) {
             mReferences[i] = new PageReference();
@@ -70,8 +67,7 @@ public final class IndirectPage implements IPage {
      * @param revisionToUse
      *            Revision number to use
      */
-    public IndirectPage(final IndirectPage page, final long revisionToUse) {
-        mRevision = revisionToUse;
+    public IndirectPage(final IndirectPage page) {
         mReferences = page.getReferences();
     }
 
@@ -87,11 +83,6 @@ public final class IndirectPage implements IPage {
         return mReferences;
     }
 
-    @Override
-    public long getRevision() {
-        return mRevision;
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -99,7 +90,6 @@ public final class IndirectPage implements IPage {
     public byte[] getByteRepresentation() {
         final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
         pOutput.writeInt(IConstants.INDIRCTPAGE);
-        pOutput.writeLong(mRevision);
         for (final PageReference reference : getReferences()) {
             pOutput.writeLong(reference.getKey());
         }
@@ -112,9 +102,7 @@ public final class IndirectPage implements IPage {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("IndirectPage [mRevision=");
-        builder.append(mRevision);
-        builder.append("]");
+        builder.append("IndirectPage");
         return builder.toString();
     }
 

@@ -116,7 +116,7 @@ public final class TypedValue {
                 bytes = builder.toString().getBytes("UTF-8");
 
                 // bytes = value.replace("&", "&amp;").replace("<", "&lt;")
-                // .getBytes(IConstants.DEFAULT_ENCODING);
+                // .getBytes(ContructorProps.DEFAULT_ENCODING);
             }
         } catch (final Exception e) {
             throw new RuntimeException("Could not convert String to byte[]: " + e.getLocalizedMessage());
