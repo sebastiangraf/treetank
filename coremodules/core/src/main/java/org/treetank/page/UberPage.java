@@ -47,7 +47,7 @@ public final class UberPage implements IReferencePage {
     private final long mRevisionCount;
 
     /** Page references. */
-    private PageReference mReference;
+    private final PageReference mReference;
 
     /**
      * New uber page
