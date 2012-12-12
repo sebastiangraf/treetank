@@ -64,17 +64,6 @@ public final class UberPage implements IReferencePage {
     }
 
     /**
-     * Clone uber page.
-     * 
-     * @param pCommittedUberPage
-     *            Page to clone.
-     */
-    public UberPage(final UberPage pCommittedUberPage) {
-        mReference = pCommittedUberPage.getReferences()[0];
-        mRevisionCount = pCommittedUberPage.mRevisionCount + 1;
-    }
-
-    /**
      * Get revision key of current in-memory state.
      * 
      * @return Revision key.

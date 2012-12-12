@@ -116,10 +116,10 @@ public final class Session implements ISession {
         throws TTException {
         final IBackendWriter backendWriter = mStorage.getWriter();
         UberPage newUber =
-            new UberPage(mLastCommittedUberPage.getRevisionNumber() + 1, mLastCommittedUberPage
+            new UberPage(mLastCommittedUberPage.getRevisionNumber() + 2, mLastCommittedUberPage
                 .getReferences()[0]);
         final IPageWriteTrx trx =
-            new PageWriteTrx(this, new UberPage(mLastCommittedUberPage), backendWriter, mRepresentRevision,
+            new PageWriteTrx(this, newUber, backendWriter, mRepresentRevision,
                 mStoreRevision);
         mPageTrxs.add(trx);
 
