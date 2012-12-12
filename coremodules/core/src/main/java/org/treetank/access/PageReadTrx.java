@@ -242,7 +242,7 @@ public class PageReadTrx implements IPageReadTrx {
      */
     protected final RevisionRootPage loadRevRoot(final long pRevKey) throws TTException {
 
-        final PageReference ref = dereferenceLeafOfTree(mUberPage.getIndirectPageReference(), pRevKey);
+        final PageReference ref = dereferenceLeafOfTree(mUberPage.getReferences()[0], pRevKey);
         RevisionRootPage page = (RevisionRootPage)ref.getPage();
 
         // If there is no page, get it from the storage and cache it.

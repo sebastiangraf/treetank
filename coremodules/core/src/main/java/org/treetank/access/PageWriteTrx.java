@@ -452,7 +452,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
         // Prepare indirect tree to hold reference to prepared revision root
         // nodePageReference.
         final PageReference revisionRootPageReference =
-            prepareLeafOfTree(mDelegate.getUberPage().getIndirectPageReference(), mDelegate.getUberPage()
+            prepareLeafOfTree(mDelegate.getUberPage().getReferences()[0], mDelegate.getUberPage()
                 .getRevisionNumber());
 
         // Link the prepared revision root nodePageReference with the

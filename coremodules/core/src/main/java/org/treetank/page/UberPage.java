@@ -54,10 +54,12 @@ public final class UberPage implements IReferencePage {
      * 
      * @param pRevisionCount
      *            count of all revisions in this storage
+     * @param pReference
+     *            Reference for the indirect page
      */
-    public UberPage(final long pRevisionCount) {
+    public UberPage(final long pRevisionCount, final PageReference pReference) {
         mRevisionCount = pRevisionCount;
-        mReference = new PageReference();
+        mReference = pReference;
 
     }
 
@@ -70,15 +72,6 @@ public final class UberPage implements IReferencePage {
     public UberPage(final UberPage pCommittedUberPage) {
         mReference = pCommittedUberPage.getReferences()[0];
         mRevisionCount = pCommittedUberPage.mRevisionCount + 1;
-    }
-
-    /**
-     * Get indirect page reference.
-     * 
-     * @return Indirect page reference.
-     */
-    public PageReference getIndirectPageReference() {
-        return mReference;
     }
 
     /**
@@ -117,9 +110,7 @@ public final class UberPage implements IReferencePage {
 
     @Override
     public void commit(PageWriteTrx paramState) throws TTException {
-        for (final PageReference reference : getReferences()) {
-            paramState.commit(reference);
-        }
+        paramState.commit(mReference);
     }
 
     @Override
