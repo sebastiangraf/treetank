@@ -93,7 +93,7 @@ public final class PageFactory {
             }
             return namePage;
         case IConstants.UBERPAGE:
-            UberPage uberPage = new UberPage(input.readLong(), input.readLong());
+            UberPage uberPage = new UberPage(input.readLong());
             uberPage.getReferences()[0].setKey(input.readLong());
             return uberPage;
         case IConstants.INDIRCTPAGE:

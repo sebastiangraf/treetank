@@ -30,7 +30,6 @@ package org.treetank.page;
 import org.treetank.access.PageWriteTrx;
 import org.treetank.exception.TTException;
 import org.treetank.page.interfaces.IReferencePage;
-import org.treetank.page.interfaces.IRevisionPage;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
@@ -42,22 +41,21 @@ import com.google.common.io.ByteStreams;
  * Uber page holds a reference to the static revision root page tree.
  * </p>
  */
-public final class UberPage implements IRevisionPage, IReferencePage {
+public final class UberPage implements IReferencePage {
 
     /** Number of revisions. */
     private final long mRevisionCount;
-
-    /** Revision of this page. */
-    private final long mRevision;
 
     /** Page references. */
     private PageReference mReference;
 
     /**
-     * Clone uber page.
+     * New uber page
+     * 
+     * @param pRevisionCount
+     *            count of all revisions in this storage
      */
-    public UberPage(final long pRevision, final long pRevisionCount) {
-        mRevision = pRevision;
+    public UberPage(final long pRevisionCount) {
         mRevisionCount = pRevisionCount;
         mReference = new PageReference();
 
@@ -66,15 +64,12 @@ public final class UberPage implements IRevisionPage, IReferencePage {
     /**
      * Clone uber page.
      * 
-     * @param paramCommittedUberPage
+     * @param pCommittedUberPage
      *            Page to clone.
-     * @param pRevToUse
-     *            Revision number to use.
      */
-    public UberPage(final UberPage paramCommittedUberPage, final long pRevToUse) {
-        mRevision = pRevToUse;
-        mReference = paramCommittedUberPage.getReferences()[0];
-        mRevisionCount = paramCommittedUberPage.mRevisionCount + 1;
+    public UberPage(final UberPage pCommittedUberPage) {
+        mReference = pCommittedUberPage.getReferences()[0];
+        mRevisionCount = pCommittedUberPage.mRevisionCount + 1;
     }
 
     /**
@@ -120,11 +115,8 @@ public final class UberPage implements IRevisionPage, IReferencePage {
     public byte[] getByteRepresentation() {
         final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
         pOutput.writeInt(IConstants.UBERPAGE);
-        pOutput.writeLong(mRevision);
         pOutput.writeLong(mRevisionCount);
-        for (final PageReference reference : getReferences()) {
-            pOutput.writeLong(reference.getKey());
-        }
+        pOutput.writeLong(mReference.getKey());
         return pOutput.toByteArray();
     }
 
@@ -136,11 +128,8 @@ public final class UberPage implements IRevisionPage, IReferencePage {
         StringBuilder builder = new StringBuilder();
         builder.append("UberPage [mRevisionCount=");
         builder.append(mRevisionCount);
-        builder.append(", mRevision=");
-        builder.append(mRevision);
         builder.append(", mReference=");
         builder.append(mReference.toString());
-        builder.append("]");
         return builder.toString();
     }
 
@@ -156,11 +145,6 @@ public final class UberPage implements IRevisionPage, IReferencePage {
         return new PageReference[] {
             mReference
         };
-    }
-
-    @Override
-    public long getRevision() {
-        return mRevision;
     }
 
 }
