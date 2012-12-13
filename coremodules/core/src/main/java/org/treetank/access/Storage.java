@@ -414,7 +414,7 @@ public final class Storage implements IStorage {
         throws TTException {
         SessionConfiguration config =
             new SessionConfiguration(pResourceConf.mProperties.getProperty(ContructorProps.RESOURCE), null);
-        UberPage uberPage = new UberPage(0, 1, new PageReference());
+        UberPage uberPage = new UberPage(0, 0, 1, new PageReference());
 
         // --- Create revision tree
         // ------------------------------------------------
@@ -431,7 +431,7 @@ public final class Storage implements IStorage {
             reference = page.getReferences()[0];
         }
 
-        final RevisionRootPage rrp = new RevisionRootPage(0, -1);
+        final RevisionRootPage rrp = new RevisionRootPage(uberPage.incrementPageCounter(), 0, -1);
         reference.setPage(rrp);
 
         // --- Create node tree

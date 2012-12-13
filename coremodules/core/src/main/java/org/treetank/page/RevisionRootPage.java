@@ -59,13 +59,20 @@ public final class RevisionRootPage implements IRevisionPage, IReferencePage {
     /** Page references. */
     private final PageReference[] mReferences;
 
+    /** Page Key of this page. */
+    private final long mPageKey;
+
     /**
      * Constructor of RevisionRootPages.
      * 
+     * @param pPageKey
+     *            Key of this page
      * @param pRevision
      *            to be created
+     * @param pMaxNodeKey
+     *            maximal node key given
      */
-    public RevisionRootPage(final long pRevision, final long pMaxNodeKey) {
+    public RevisionRootPage(final long pPageKey, final long pRevision, final long pMaxNodeKey) {
         mRevision = pRevision;
         mReferences = new PageReference[2];
         for (int i = 0; i < mReferences.length; i++) {
@@ -74,6 +81,7 @@ public final class RevisionRootPage implements IRevisionPage, IReferencePage {
         final PageReference ref = getReferences()[NAME_REFERENCE_OFFSET];
         ref.setPage(new NamePage());
         mMaxNodeKey = pMaxNodeKey;
+        mPageKey = pPageKey;
     }
 
     /**
@@ -116,7 +124,9 @@ public final class RevisionRootPage implements IRevisionPage, IReferencePage {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("RevisionRootPage [mMaxNodeKey=");
+        builder.append("RevisionRootPage [mPageKey");
+        builder.append(mPageKey);
+        builder.append(", mMaxNodeKey=");
         builder.append(mMaxNodeKey);
         builder.append(", mRevision=");
         builder.append(mRevision);
@@ -148,6 +158,7 @@ public final class RevisionRootPage implements IRevisionPage, IReferencePage {
     public byte[] getByteRepresentation() {
         final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
         pOutput.writeInt(IConstants.REVISIONROOTPAGE);
+        pOutput.writeLong(mPageKey);
         pOutput.writeLong(mRevision);
         pOutput.writeLong(mMaxNodeKey);
         for (final PageReference reference : getReferences()) {
@@ -161,8 +172,7 @@ public final class RevisionRootPage implements IRevisionPage, IReferencePage {
      */
     @Override
     public long getPageKey() {
-        // TODO Auto-generated method stub
-        return 0;
+        return mPageKey;
     }
 
 }

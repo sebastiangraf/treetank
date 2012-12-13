@@ -49,21 +49,28 @@ public final class UberPage implements IReferencePage {
     /** Page references. */
     private final PageReference mReference;
 
+    /** Key of this UberPage. */
+    private final long mPageKey;
+
     /** Counter for new pages. */
     private long mPageCounter;
 
     /**
      * New uber page
      * 
+     * @param pPageKey
+     *            key of this page
      * @param pRevisionCount
      *            count of all revisions in this storage
      * @param pReference
      *            Reference for the indirect page
      */
-    public UberPage(final long pRevisionCount, final long pPageCounter, final PageReference pReference) {
+    public UberPage(final long pPageKey, final long pRevisionCount, final long pPageCounter,
+        final PageReference pReference) {
         mRevisionCount = pRevisionCount;
         mReference = pReference;
         mPageCounter = pPageCounter;
+        mPageKey = pPageKey;
     }
 
     /**
@@ -82,6 +89,7 @@ public final class UberPage implements IReferencePage {
     public byte[] getByteRepresentation() {
         final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
         pOutput.writeInt(IConstants.UBERPAGE);
+        pOutput.writeLong(mPageKey);
         pOutput.writeLong(mRevisionCount);
         pOutput.writeLong(mPageCounter);
         pOutput.writeLong(mReference.getKey());
@@ -94,7 +102,9 @@ public final class UberPage implements IReferencePage {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("UberPage [mRevisionCount=");
+        builder.append("UberPage [mPageKey=");
+        builder.append(mPageKey);
+        builder.append("mRevisionCount=");
         builder.append(mRevisionCount);
         builder.append(", mReference=");
         builder.append(mReference.toString());
@@ -118,8 +128,7 @@ public final class UberPage implements IReferencePage {
      */
     @Override
     public long getPageKey() {
-        // TODO Auto-generated method stub
-        return 0;
+        return mPageKey;
     }
 
     /**

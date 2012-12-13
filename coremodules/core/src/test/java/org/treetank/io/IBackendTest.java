@@ -36,7 +36,7 @@ public class IBackendTest {
 
             final PageReference pageRef1 = new PageReference();
             final UberPage page1 =
-                new UberPage(TestHelper.random.nextLong(), TestHelper.random.nextLong(), new PageReference());
+                new UberPage(TestHelper.random.nextLong(),TestHelper.random.nextLong(), TestHelper.random.nextLong(), new PageReference());
             pageRef1.setPage(page1);
 
             // same instance check

@@ -449,7 +449,8 @@ public final class PageWriteTrx implements IPageWriteTrx {
         final RevisionRootPage previousRevRoot = mDelegate.loadRevRoot(pRev);
 
         final RevisionRootPage revisionRootPage =
-            new RevisionRootPage(pRepresentRev + 1, previousRevRoot.getMaxNodeKey());
+            new RevisionRootPage(mDelegate.getUberPage().incrementPageCounter(), pRepresentRev + 1,
+                previousRevRoot.getMaxNodeKey());
         for (int i = 0; i < previousRevRoot.getReferences().length; i++) {
             revisionRootPage.getReferences()[i] = previousRevRoot.getReferences()[i];
         }
