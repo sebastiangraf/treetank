@@ -404,7 +404,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
 
         IndirectPage page = (IndirectPage)pRef.getPage();
         if (page == null) {
-            page = new IndirectPage();
+            page = new IndirectPage(mDelegate.getUberPage().incrementPageCounter());
             if (pRef.getKey() != IConstants.NULL_ID) {
                 IndirectPage formerIndirect = mDelegate.dereferenceIndirectPage(pRef);
                 for (int i = 0; i < formerIndirect.getReferences().length; i++) {

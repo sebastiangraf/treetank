@@ -53,7 +53,7 @@ public class IPageTest {
     @DataProvider(name = "instantiatePages")
     public Object[][] instantiatePages() throws TTByteHandleException {
         // IndirectPage setup
-        IndirectPage indirectPage = new IndirectPage();
+        IndirectPage indirectPage = new IndirectPage(TestHelper.random.nextLong());
         // RevisionRootPage setup
         RevisionRootPage revRootPage =
             new RevisionRootPage(TestHelper.random.nextLong(), TestHelper.random.nextLong(),
@@ -64,7 +64,7 @@ public class IPageTest {
             nodePage.setNode(i, TestHelper.generateOne());
         }
         // NamePage setup
-        NamePage namePage = new NamePage();
+        NamePage namePage = new NamePage(TestHelper.random.nextLong());
         namePage.setName(TestHelper.random.nextInt(), new String(TestHelper.generateRandomBytes(256)));
 
         Object[][] returnVal = {

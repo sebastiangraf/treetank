@@ -49,11 +49,18 @@ public final class NamePage implements IPage {
     /** Map the hash of a name to its name. */
     private final Map<Integer, String> mNameMap;
 
+    /** Key of this page. */
+    private final long mPageKey;
+
     /**
      * Create name page.
+     * 
+     * @param pPageKey
+     *            key of this page
      */
-    public NamePage() {
+    public NamePage(final long pPageKey) {
         mNameMap = new HashMap<Integer, String>();
+        mPageKey = pPageKey;
     }
 
     /**
@@ -111,6 +118,7 @@ public final class NamePage implements IPage {
     public byte[] getByteRepresentation() {
         final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
         pOutput.writeInt(IConstants.NAMEPAGE);
+        pOutput.writeLong(mPageKey);
         pOutput.writeInt(mNameMap.size());
 
         for (final int key : mNameMap.keySet()) {
@@ -127,8 +135,7 @@ public final class NamePage implements IPage {
      */
     @Override
     public long getPageKey() {
-        // TODO Auto-generated method stub
-        return 0;
+        return mPageKey;
     }
 
 }

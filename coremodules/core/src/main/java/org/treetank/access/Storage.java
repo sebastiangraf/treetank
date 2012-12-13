@@ -48,6 +48,7 @@ import org.treetank.io.IBackendReader;
 import org.treetank.io.IOUtils;
 import org.treetank.page.IConstants;
 import org.treetank.page.IndirectPage;
+import org.treetank.page.NamePage;
 import org.treetank.page.NodePage;
 import org.treetank.page.PageReference;
 import org.treetank.page.RevisionRootPage;
@@ -426,12 +427,13 @@ public final class Storage implements IStorage {
 
         // Remaining levels.
         for (int i = 0, l = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i < l; i++) {
-            page = new IndirectPage();
+            page = new IndirectPage(uberPage.incrementPageCounter());
             reference.setPage(page);
             reference = page.getReferences()[0];
         }
 
         final RevisionRootPage rrp = new RevisionRootPage(uberPage.incrementPageCounter(), 0, -1);
+        rrp.getNamePageReference().setPage(new NamePage(uberPage.incrementPageCounter()));
         reference.setPage(rrp);
 
         // --- Create node tree
@@ -444,7 +446,7 @@ public final class Storage implements IStorage {
 
         // Remaining levels.
         for (int i = 0, l = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i < l; i++) {
-            page = new IndirectPage();
+            page = new IndirectPage(uberPage.incrementPageCounter());
             reference.setPage(page);
             reference = page.getReferences()[0];
         }

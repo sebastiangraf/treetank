@@ -82,7 +82,7 @@ public final class PageFactory {
             }
             return nodePage;
         case IConstants.NAMEPAGE:
-            NamePage namePage = new NamePage();
+            NamePage namePage = new NamePage(input.readLong());
             final int mapSize = input.readInt();
             for (int i = 0; i < mapSize; i++) {
                 final int key = input.readInt();
@@ -98,7 +98,7 @@ public final class PageFactory {
             uberPage.getReferences()[0].setKey(input.readLong());
             return uberPage;
         case IConstants.INDIRCTPAGE:
-            IndirectPage indirectPage = new IndirectPage();
+            IndirectPage indirectPage = new IndirectPage(input.readLong());
             for (int offset = 0; offset < indirectPage.getReferences().length; offset++) {
                 indirectPage.getReferences()[offset] = new PageReference();
                 indirectPage.getReferences()[offset].setKey(input.readLong());

@@ -78,8 +78,6 @@ public final class RevisionRootPage implements IRevisionPage, IReferencePage {
         for (int i = 0; i < mReferences.length; i++) {
             mReferences[i] = new PageReference();
         }
-        final PageReference ref = getReferences()[NAME_REFERENCE_OFFSET];
-        ref.setPage(new NamePage());
         mMaxNodeKey = pMaxNodeKey;
         mPageKey = pPageKey;
     }
