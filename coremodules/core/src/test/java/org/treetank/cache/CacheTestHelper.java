@@ -53,7 +53,7 @@ public class CacheTestHelper {
                 revs[j] = PAGES[i][j + 1];
             }
             PAGES[i][0] = page;
-            cache.put(i, new NodePageContainer(page, new NodePage(page.getNodePageKey())));
+            cache.put(i, new NodePageContainer(page, new NodePage(page.getPageKey())));
         }
     }
 

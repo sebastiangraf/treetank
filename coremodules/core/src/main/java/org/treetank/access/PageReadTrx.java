@@ -35,7 +35,6 @@ import java.util.Set;
 import org.treetank.api.INode;
 import org.treetank.api.IPageReadTrx;
 import org.treetank.api.ISession;
-import org.treetank.cache.NodePageContainer;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
@@ -78,7 +77,7 @@ public class PageReadTrx implements IPageReadTrx {
     private final RevisionRootPage mRootPage;
 
     /** Internal reference to cache. */
-    private final Cache<Long, NodePageContainer> mCache;
+    private final Cache<Long, NodePage> mCache;
 
     /** Configuration of the session */
     protected final ISession mSession;
@@ -130,10 +129,9 @@ public class PageReadTrx implements IPageReadTrx {
         // Calculate page and node part for given nodeKey.
         final long nodePageKey = nodePageKey(pNodeKey);
         final int nodePageOffset = nodePageOffset(pNodeKey);
+        NodePage page = mCache.getIfPresent(nodePageKey);
 
-        NodePageContainer cont = mCache.getIfPresent(nodePageKey);
-
-        if (cont == null) {
+        if (page == null) {
             final NodePage[] revs = getSnapshotPages(nodePageKey);
             if (revs.length == 0) {
                 return null;
@@ -141,12 +139,10 @@ public class PageReadTrx implements IPageReadTrx {
 
             // Build up the complete page.
             final IRevisioning revision = mSession.getConfig().mRevision;
-            final NodePage completePage = revision.combinePages(revs);
-            cont = new NodePageContainer(completePage, new NodePage(completePage.getNodePageKey()));
-            mCache.put(nodePageKey, cont);
+            page = revision.combinePages(revs);
+            mCache.put(nodePageKey, page);
         }
-        // If nodePage is a weak one, the moveto is not cached
-        final INode returnVal = cont.getComplete().getNode(nodePageOffset);
+        final INode returnVal = page.getNode(nodePageOffset);
         return checkItemIfDeleted(returnVal);
     }
 

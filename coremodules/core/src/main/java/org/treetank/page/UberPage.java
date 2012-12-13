@@ -49,18 +49,32 @@ public final class UberPage implements IReferencePage {
     /** Page references. */
     private final PageReference mReference;
 
+    /** Reference key for first indirect page. */
+    private final long mReferenceKeys[];
+
+    /** Key of this UberPage. */
+    private final long mPageKey;
+
+    /** Counter for new pages. */
+    private long mPageCounter;
+
     /**
      * New uber page
      * 
+     * @param pPageKey
+     *            key of this page
      * @param pRevisionCount
      *            count of all revisions in this storage
      * @param pReference
      *            Reference for the indirect page
      */
-    public UberPage(final long pRevisionCount, final PageReference pReference) {
+    public UberPage(final long pPageKey, final long pRevisionCount, final long pPageCounter,
+        final PageReference pReference) {
         mRevisionCount = pRevisionCount;
         mReference = pReference;
-
+        // TODO This can be a single value only but first, kick out the PageReferences
+        mReferenceKeys = new long[1];
+        mPageKey = pPageKey;
     }
 
     /**
@@ -79,7 +93,10 @@ public final class UberPage implements IReferencePage {
     public byte[] getByteRepresentation() {
         final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
         pOutput.writeInt(IConstants.UBERPAGE);
+        pOutput.writeLong(mPageKey);
         pOutput.writeLong(mRevisionCount);
+        pOutput.writeLong(mPageCounter);
+        pOutput.writeLong(mReferenceKeys[0]);
         pOutput.writeLong(mReference.getKey());
         return pOutput.toByteArray();
     }
@@ -90,7 +107,9 @@ public final class UberPage implements IReferencePage {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("UberPage [mRevisionCount=");
+        builder.append("UberPage [mPageKey=");
+        builder.append(mPageKey);
+        builder.append("mRevisionCount=");
         builder.append(mRevisionCount);
         builder.append(", mReference=");
         builder.append(mReference.toString());
@@ -107,6 +126,42 @@ public final class UberPage implements IReferencePage {
         return new PageReference[] {
             mReference
         };
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long getPageKey() {
+        return mPageKey;
+    }
+
+    /**
+     * Incrementing the counter.
+     * 
+     * @return the incremented counter
+     */
+    public long incrementPageCounter() {
+        return mPageCounter++;
+    }
+
+    /**
+     * Getter for mPageCounter.
+     * 
+     * @return the mPageCounter
+     */
+    public long getPageCounter() {
+        return mPageCounter;
+    }
+
+    @Override
+    public long[] getReferenceKeys() {
+        return mReferenceKeys;
+    }
+
+    @Override
+    public void setReferenceKey(int pIndex, long pKey) {
+        mReferenceKeys[pIndex] = pKey;
     }
 
 }

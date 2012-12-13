@@ -39,7 +39,6 @@ public class IRevisioningTest {
      */
     @AfterMethod
     public void tearDown() throws Exception {
-        TestHelper.closeEverything();
         TestHelper.deleteEverything();
     }
 
