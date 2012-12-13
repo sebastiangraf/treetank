@@ -156,4 +156,13 @@ public final class RevisionRootPage implements IRevisionPage, IReferencePage {
         return pOutput.toByteArray();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long getPageKey() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
 }

@@ -35,7 +35,7 @@ public class FullDump implements IRevisioning {
      */
     @Override
     public NodePage combinePages(NodePage[] pages) {
-        final long nodePageKey = pages[0].getNodePageKey();
+        final long nodePageKey = pages[0].getPageKey();
         final NodePage returnVal = new NodePage(nodePageKey);
 
         for (int i = 0; i < pages[0].getNodes().length; i++) {
@@ -50,7 +50,7 @@ public class FullDump implements IRevisioning {
      */
     @Override
     public NodePageContainer combinePagesForModification(NodePage[] pages) {
-        final long nodePageKey = pages[0].getNodePageKey();
+        final long nodePageKey = pages[0].getPageKey();
         final NodePage[] returnVal = {
             new NodePage(nodePageKey), new NodePage(nodePageKey)
         };

@@ -107,8 +107,8 @@ public final class Session implements ISession {
     }
 
     public IPageWriteTrx beginPageWriteTransaction() throws TTException {
-        return beginPageWriteTransaction(mLastCommittedUberPage.getRevisionNumber()-1, mLastCommittedUberPage
-            .getRevisionNumber()-1);
+        return beginPageWriteTransaction(mLastCommittedUberPage.getRevisionNumber() - 1,
+            mLastCommittedUberPage.getRevisionNumber() - 1);
 
     }
 
@@ -119,8 +119,7 @@ public final class Session implements ISession {
             new UberPage(mLastCommittedUberPage.getRevisionNumber() + 1, mLastCommittedUberPage
                 .getReferences()[0]);
         final IPageWriteTrx trx =
-            new PageWriteTrx(this, newUber, backendWriter, mRepresentRevision,
-                mStoreRevision);
+            new PageWriteTrx(this, newUber, backendWriter, mRepresentRevision, mStoreRevision);
         mPageTrxs.add(trx);
 
         return trx;
@@ -200,7 +199,7 @@ public final class Session implements ISession {
      */
     @Override
     public long getMostRecentVersion() {
-        return mLastCommittedUberPage.getRevisionNumber()-1;
+        return mLastCommittedUberPage.getRevisionNumber() - 1;
     }
 
     /**

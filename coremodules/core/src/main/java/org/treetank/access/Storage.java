@@ -431,7 +431,7 @@ public final class Storage implements IStorage {
             reference = page.getReferences()[0];
         }
 
-        final RevisionRootPage rrp = new RevisionRootPage(0,-1);
+        final RevisionRootPage rrp = new RevisionRootPage(0, -1);
         reference.setPage(rrp);
 
         // --- Create node tree

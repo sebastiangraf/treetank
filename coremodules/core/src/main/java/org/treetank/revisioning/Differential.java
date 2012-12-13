@@ -42,7 +42,7 @@ public class Differential implements IRevisioning {
      */
     @Override
     public NodePage combinePages(NodePage[] pages) {
-        final long nodePageKey = pages[0].getNodePageKey();
+        final long nodePageKey = pages[0].getPageKey();
         final NodePage returnVal = new NodePage(nodePageKey);
         final NodePage latest = pages[0];
 
@@ -54,8 +54,8 @@ public class Differential implements IRevisioning {
                 break;
             }
         }
-        assert latest.getNodePageKey() == nodePageKey;
-        assert referencePage.getNodePageKey() == nodePageKey;
+        assert latest.getPageKey() == nodePageKey;
+        assert referencePage.getPageKey() == nodePageKey;
         for (int i = 0; i < referencePage.getNodes().length; i++) {
             if (latest.getNode(i) != null) {
                 returnVal.setNode(i, latest.getNode(i));
@@ -71,7 +71,7 @@ public class Differential implements IRevisioning {
      */
     @Override
     public NodePageContainer combinePagesForModification(NodePage[] pages) {
-        final long nodePageKey = pages[0].getNodePageKey();
+        final long nodePageKey = pages[0].getPageKey();
         final NodePage[] returnVal = {
             new NodePage(nodePageKey), new NodePage(nodePageKey)
         };

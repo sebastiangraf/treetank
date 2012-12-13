@@ -104,7 +104,7 @@ public final class PageFactory {
             }
             return indirectPage;
         case IConstants.REVISIONROOTPAGE:
-            RevisionRootPage revRootPage = new RevisionRootPage(input.readLong(),input.readLong());
+            RevisionRootPage revRootPage = new RevisionRootPage(input.readLong(), input.readLong());
             for (int offset = 0; offset < revRootPage.getReferences().length; offset++) {
                 revRootPage.getReferences()[offset] = new PageReference();
                 revRootPage.getReferences()[offset].setKey(input.readLong());

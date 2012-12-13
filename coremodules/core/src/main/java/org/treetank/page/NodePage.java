@@ -46,7 +46,7 @@ import com.google.common.io.ByteStreams;
 public class NodePage implements IPage {
 
     /** Key of node page. This is the base key of all contained nodes. */
-    private final long mNodePageKey;
+    private final long mPageKey;
 
     /** Array of nodes. This can have null nodes that were removed. */
     private final INode[] mNodes;
@@ -54,11 +54,11 @@ public class NodePage implements IPage {
     /**
      * Create node page.
      * 
-     * @param pNodePageKey
+     * @param pPageKey
      *            Base key assigned to this node page.
      */
-    public NodePage(final long pNodePageKey) {
-        mNodePageKey = pNodePageKey;
+    public NodePage(final long pPageKey) {
+        mPageKey = pPageKey;
         mNodes = new INode[IConstants.NDP_NODE_COUNT];
     }
 
@@ -67,8 +67,8 @@ public class NodePage implements IPage {
      * 
      * @return Node page key.
      */
-    public final long getNodePageKey() {
-        return mNodePageKey;
+    public final long getPageKey() {
+        return mPageKey;
     }
 
     /**
@@ -100,8 +100,8 @@ public class NodePage implements IPage {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("NodePage [mNodePageKey=");
-        builder.append(mNodePageKey);
+        builder.append("NodePage [mPageKey=");
+        builder.append(mPageKey);
         builder.append(", mNodes=");
         builder.append(Arrays.toString(mNodes));
         builder.append("]");
@@ -119,7 +119,7 @@ public class NodePage implements IPage {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (int)(mNodePageKey ^ (mNodePageKey >>> 32));
+        result = prime * result + (int)(mPageKey ^ (mPageKey >>> 32));
         result = prime * result + Arrays.hashCode(mNodes);
         return result;
     }
@@ -136,7 +136,7 @@ public class NodePage implements IPage {
             return false;
         }
         final NodePage mOther = (NodePage)mObj;
-        if (mNodePageKey != mOther.mNodePageKey) {
+        if (mPageKey != mOther.mPageKey) {
             return false;
         }
         if (!Arrays.equals(mNodes, mOther.mNodes)) {
@@ -156,7 +156,7 @@ public class NodePage implements IPage {
     public byte[] getByteRepresentation() {
         final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
         pOutput.writeInt(IConstants.NODEPAGE);
-        pOutput.writeLong(mNodePageKey);
+        pOutput.writeLong(mPageKey);
 
         for (final INode node : getNodes()) {
             if (node == null) {

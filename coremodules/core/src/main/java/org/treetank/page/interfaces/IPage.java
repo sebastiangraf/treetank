@@ -33,18 +33,26 @@ import org.treetank.exception.TTException;
  * Interface to represent one page.
  * A page is the atomic unique to be serializible and represents one bucket when stored.
  * Pointers as well as any nodes may be stored within one page.
- *   
+ * 
  * @author Sebastian Graf, University of Konstanz
- *
+ * 
  */
 public interface IPage {
 
     /**
      * Getting the byte representation of the node
+     * 
      * @return a byte-array representing the data of the page
      */
     byte[] getByteRepresentation();
 
+    /**
+     * Getting the key of a page for dereferencing over any pointers as well, the access in the log and for
+     * retrieving pages from the persistent storage.
+     * 
+     * @return the key of the page
+     */
+    long getPageKey();
 
     void commit(final PageWriteTrx paramState) throws TTException;
 

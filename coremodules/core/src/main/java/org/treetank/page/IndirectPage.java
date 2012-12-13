@@ -94,4 +94,13 @@ public final class IndirectPage implements IReferencePage {
         return builder.toString();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long getPageKey() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
 }

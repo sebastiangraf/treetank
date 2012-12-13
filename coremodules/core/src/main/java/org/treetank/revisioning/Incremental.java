@@ -42,10 +42,10 @@ public class Incremental implements IRevisioning {
      */
     @Override
     public NodePage combinePages(NodePage[] pages) {
-        final long nodePageKey = pages[0].getNodePageKey();
+        final long nodePageKey = pages[0].getPageKey();
         final NodePage returnVal = new NodePage(nodePageKey);
         for (int j = 0; j < pages.length; j++) {
-            assert pages[j].getNodePageKey() == nodePageKey;
+            assert pages[j].getPageKey() == nodePageKey;
             for (int i = 0; i < pages[j].getNodes().length; i++) {
                 if (pages[j].getNode(i) != null && returnVal.getNode(i) == null) {
                     returnVal.setNode(i, pages[j].getNode(i));
@@ -64,13 +64,13 @@ public class Incremental implements IRevisioning {
      */
     @Override
     public NodePageContainer combinePagesForModification(NodePage[] pages) {
-        final long nodePageKey = pages[0].getNodePageKey();
+        final long nodePageKey = pages[0].getPageKey();
         final NodePage[] returnVal = {
             new NodePage(nodePageKey), new NodePage(nodePageKey)
         };
 
         for (int j = 0; j < pages.length; j++) {
-            assert pages[j].getNodePageKey() == nodePageKey;
+            assert pages[j].getPageKey() == nodePageKey;
             for (int i = 0; i < pages[j].getNodes().length; i++) {
                 // Caching the complete page
                 if (pages[j].getNode(i) != null && returnVal[0].getNode(i) == null) {

@@ -433,7 +433,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
                     cont = dereferenceNodePageForModification(pPageKey);
                 }
             } else {
-                cont = new NodePageContainer(page, new NodePage(page.getNodePageKey()));
+                cont = new NodePageContainer(page, new NodePage(page.getPageKey()));
             }
 
             reference.setNodePageKey(pPageKey);

@@ -122,4 +122,13 @@ public final class NamePage implements IPage {
         return pOutput.toByteArray();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long getPageKey() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
 }

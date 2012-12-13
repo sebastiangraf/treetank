@@ -109,4 +109,13 @@ public final class UberPage implements IReferencePage {
         };
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long getPageKey() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
 }
