@@ -143,8 +143,7 @@ public class PageReadTrx implements IPageReadTrx {
             final IRevisioning revision = mSession.getConfig().mRevision;
             final NodePage completePage = revision.combinePages(revs);
             cont =
-                new NodePageContainer(completePage, new NodePage(completePage.getPageKey(), completePage
-                    .getSeqKey()));
+                new NodePageContainer(completePage, new NodePage(completePage.getPageKey()));
             mCache.put(nodePageKey, cont);
         }
         // If nodePage is a weak one, the moveto is not cached

@@ -42,7 +42,7 @@ public class Differential implements IRevisioning {
      */
     @Override
     public NodePage combinePages(NodePage[] pages) {
-        final NodePage returnVal = new NodePage(pages[0].getPageKey(), pages[0].getSeqKey());
+        final NodePage returnVal = new NodePage(pages[0].getPageKey());
         final NodePage latest = pages[0];
 
         NodePage referencePage = pages[0];
@@ -68,11 +68,9 @@ public class Differential implements IRevisioning {
      */
     @Override
     public NodePageContainer combinePagesForModification(NodePage[] pages) {
-        final NodePage[] returnVal =
-            {
-                new NodePage(pages[0].getPageKey(), pages[0].getSeqKey()),
-                new NodePage(pages[0].getPageKey(), pages[0].getSeqKey())
-            };
+        final NodePage[] returnVal = {
+            new NodePage(pages[0].getPageKey()), new NodePage(pages[0].getPageKey())
+        };
 
         final NodePage latest = pages[0];
         NodePage fullDump = pages[0];

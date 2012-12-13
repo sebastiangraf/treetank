@@ -429,15 +429,13 @@ public final class PageWriteTrx implements IPageWriteTrx {
             if (page == null) {
                 if (reference.getKey() == IConstants.NULL_ID) {
                     long freshPageKey = mDelegate.getUberPage().incrementPageCounter();
-                    cont =
-                        new NodePageContainer(new NodePage(freshPageKey, pSeqKey), new NodePage(
-                            freshPageKey, pSeqKey));
+                    cont = new NodePageContainer(new NodePage(freshPageKey), new NodePage(freshPageKey));
                 } else {
                     cont = dereferenceNodePageForModification(pSeqKey);
                 }
             } else {
                 long freshPageKey = mDelegate.getUberPage().incrementPageCounter();
-                cont = new NodePageContainer(page, new NodePage(freshPageKey, page.getPageKey()));
+                cont = new NodePageContainer(page, new NodePage(freshPageKey));
             }
 
             reference.setNodePageKey(pSeqKey);
