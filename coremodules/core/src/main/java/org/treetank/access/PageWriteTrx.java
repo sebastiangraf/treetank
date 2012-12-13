@@ -416,28 +416,32 @@ public final class PageWriteTrx implements IPageWriteTrx {
         return page;
     }
 
-    protected NodePageContainer prepareNodePage(final long pPageKey) throws TTException {
+    protected NodePageContainer prepareNodePage(final long pSeqKey) throws TTException {
 
         // Last level points to node nodePageReference.
-        NodePageContainer cont = mLog.get(pPageKey);
+        NodePageContainer cont = mLog.get(pSeqKey);
         if (cont == null) {
 
             // Indirect reference.
-            final PageReference reference = prepareLeafOfTree(mNewRoot.getIndirectPageReference(), pPageKey);
+            final PageReference reference = prepareLeafOfTree(mNewRoot.getIndirectPageReference(), pSeqKey);
             NodePage page = (NodePage)reference.getPage();
 
             if (page == null) {
                 if (reference.getKey() == IConstants.NULL_ID) {
-                    cont = new NodePageContainer(new NodePage(pPageKey), new NodePage(pPageKey));
+                    long freshPageKey = mDelegate.getUberPage().incrementPageCounter();
+                    cont =
+                        new NodePageContainer(new NodePage(freshPageKey, pSeqKey), new NodePage(
+                            freshPageKey, pSeqKey));
                 } else {
-                    cont = dereferenceNodePageForModification(pPageKey);
+                    cont = dereferenceNodePageForModification(pSeqKey);
                 }
             } else {
-                cont = new NodePageContainer(page, new NodePage(page.getPageKey()));
+                long freshPageKey = mDelegate.getUberPage().incrementPageCounter();
+                cont = new NodePageContainer(page, new NodePage(freshPageKey, page.getPageKey()));
             }
 
-            reference.setNodePageKey(pPageKey);
-            mLog.put(pPageKey, cont);
+            reference.setNodePageKey(pSeqKey);
+            mLog.put(pSeqKey, cont);
         }
         mNodePageCon = cont;
         return cont;

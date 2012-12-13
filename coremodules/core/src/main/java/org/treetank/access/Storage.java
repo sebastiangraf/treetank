@@ -451,7 +451,7 @@ public final class Storage implements IStorage {
             reference = page.getReferences()[0];
         }
 
-        final NodePage ndp = new NodePage(0);
+        final NodePage ndp = new NodePage(uberPage.incrementPageCounter(), 0);
         reference.setPage(ndp);
 
         Session session = new Session(pStorage, pResourceConf, config, uberPage);

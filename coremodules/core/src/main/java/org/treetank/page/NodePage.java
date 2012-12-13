@@ -48,6 +48,13 @@ public class NodePage implements IPage {
     /** Key of node page. This is the base key of all contained nodes. */
     private final long mPageKey;
 
+    /**
+     * Sequential key of this page. This key computes itself out of the order of all node pages on the last
+     * level. The same page in differeny revisions might have the same key whereas the page key is unique
+     * abroad all revisions and nodepages.
+     */
+    private final long mSeqKey;
+
     /** Array of nodes. This can have null nodes that were removed. */
     private final INode[] mNodes;
 
@@ -57,8 +64,9 @@ public class NodePage implements IPage {
      * @param pPageKey
      *            Base key assigned to this node page.
      */
-    public NodePage(final long pPageKey) {
+    public NodePage(final long pPageKey, final long pSeqKey) {
         mPageKey = pPageKey;
+        mSeqKey = pSeqKey;
         mNodes = new INode[IConstants.NDP_NODE_COUNT];
     }
 
@@ -69,6 +77,15 @@ public class NodePage implements IPage {
      */
     public final long getPageKey() {
         return mPageKey;
+    }
+
+    /**
+     * Get seq key of node page.
+     * 
+     * @return Node page key.
+     */
+    public final long getSeqKey() {
+        return mSeqKey;
     }
 
     /**
@@ -157,7 +174,7 @@ public class NodePage implements IPage {
         final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
         pOutput.writeInt(IConstants.NODEPAGE);
         pOutput.writeLong(mPageKey);
-
+        pOutput.writeLong(mSeqKey);
         for (final INode node : getNodes()) {
             if (node == null) {
                 pOutput.writeInt(IConstants.NULL_NODE);
@@ -208,6 +225,7 @@ public class NodePage implements IPage {
         public byte[] getByteRepresentation() {
             final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
             pOutput.writeInt(IConstants.NULL_NODE);
+            pOutput.writeLong(mNodeKey);
             pOutput.writeLong(mNodeKey);
             return pOutput.toByteArray();
         }
