@@ -404,12 +404,12 @@ public final class PageWriteTrx implements IPageWriteTrx {
 
         IndirectPage page = (IndirectPage)pRef.getPage();
         if (page == null) {
-            if (pRef.getKey() == IConstants.NULL_ID) {
-                page = new IndirectPage();
-            } else {
-                page =
-                    new IndirectPage((IndirectPage)mDelegate.dereferenceIndirectPage(pRef));
-
+            page = new IndirectPage();
+            if (pRef.getKey() != IConstants.NULL_ID) {
+                IndirectPage formerIndirect = mDelegate.dereferenceIndirectPage(pRef);
+                for (int i = 0; i < formerIndirect.getReferences().length; i++) {
+                    page.getReferences()[i] = formerIndirect.getReferences()[i];
+                }
             }
             pRef.setPage(page);
         }
@@ -428,12 +428,12 @@ public final class PageWriteTrx implements IPageWriteTrx {
 
             if (page == null) {
                 if (reference.getKey() == IConstants.NULL_ID) {
-                    cont = new NodePageContainer(new NodePage(pPageKey));
+                    cont = new NodePageContainer(new NodePage(pPageKey), new NodePage(pPageKey));
                 } else {
                     cont = dereferenceNodePageForModification(pPageKey);
                 }
             } else {
-                cont = new NodePageContainer(page);
+                cont = new NodePageContainer(page, new NodePage(page.getNodePageKey()));
             }
 
             reference.setNodePageKey(pPageKey);
@@ -445,31 +445,30 @@ public final class PageWriteTrx implements IPageWriteTrx {
 
     private RevisionRootPage preparePreviousRevisionRootPage(final long pRev, final long pRepresentRev)
         throws TTException {
+        // Prepare revision root nodePageReference.
+        final RevisionRootPage previousRevRoot = mDelegate.loadRevRoot(pRev);
 
-        if (mDelegate.getUberPage().isBootstrap()) {
-            return mDelegate.loadRevRoot(pRev);
-        } else {
-
-            // Prepare revision root nodePageReference.
-            final RevisionRootPage revisionRootPage =
-                new RevisionRootPage(mDelegate.loadRevRoot(pRev), pRepresentRev + 1);
-
-            // Prepare indirect tree to hold reference to prepared revision root
-            // nodePageReference.
-            final PageReference revisionRootPageReference =
-                prepareLeafOfTree(mDelegate.getUberPage().getIndirectPageReference(), mDelegate.getUberPage()
-                    .getRevisionNumber());
-
-            // Link the prepared revision root nodePageReference with the
-            // prepared indirect tree.
-            revisionRootPageReference.setPage(revisionRootPage);
-
-            revisionRootPage.getNamePageReference().setPage(
-                (NamePage)mDelegate.getActualRevisionRootPage().getNamePageReference().getPage());
-
-            // Return prepared revision root nodePageReference.
-            return revisionRootPage;
+        final RevisionRootPage revisionRootPage =
+            new RevisionRootPage(pRepresentRev + 1, previousRevRoot.getMaxNodeKey());
+        for (int i = 0; i < previousRevRoot.getReferences().length; i++) {
+            revisionRootPage.getReferences()[i] = previousRevRoot.getReferences()[i];
         }
+
+        // Prepare indirect tree to hold reference to prepared revision root
+        // nodePageReference.
+        final PageReference revisionRootPageReference =
+            prepareLeafOfTree(mDelegate.getUberPage().getReferences()[0], mDelegate.getUberPage()
+                .getRevisionNumber() - 1);
+
+        // Link the prepared revision root nodePageReference with the
+        // prepared indirect tree.
+        revisionRootPageReference.setPage(revisionRootPage);
+
+        revisionRootPage.getNamePageReference().setPage(
+            (NamePage)mDelegate.getActualRevisionRootPage().getNamePageReference().getPage());
+
+        // Return prepared revision root nodePageReference.
+        return revisionRootPage;
     }
 
     protected PageReference prepareLeafOfTree(final PageReference pStarRef, final long pKey)

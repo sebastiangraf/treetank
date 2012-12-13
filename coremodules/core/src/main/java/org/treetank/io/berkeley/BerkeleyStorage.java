@@ -28,9 +28,7 @@
 package org.treetank.io.berkeley;
 
 import java.io.File;
-import java.util.HashSet;
 import java.util.Properties;
-import java.util.Set;
 
 import org.treetank.access.conf.ContructorProps;
 import org.treetank.access.conf.ResourceConfiguration;
@@ -80,6 +78,9 @@ public final class BerkeleyStorage implements IBackend {
     /** Berkeley Environment for the database. */
     private Environment mEnv = null;
 
+    /** Transaction for DB-Operations. */
+    private Transaction mTxn = null;
+
     /** Storage instance per session. */
     private Database mDatabase = null;
 
@@ -94,9 +95,6 @@ public final class BerkeleyStorage implements IBackend {
 
     /** File for DB. */
     private final File mFile;
-
-    /** Reader and Writer instances for close. */
-    private final Set<Transaction> readers;
 
     /**
      * Private constructor.
@@ -122,7 +120,6 @@ public final class BerkeleyStorage implements IBackend {
         mPageBinding = new PageBinding();
         mByteHandler = pByteHandler;
         mFac = new PageFactory(pNodeFac);
-        readers = new HashSet<Transaction>();
 
     }
 
@@ -133,8 +130,13 @@ public final class BerkeleyStorage implements IBackend {
      * @throws TTIOException
      */
     private synchronized final void setUpIfNecessary() throws TTIOException {
-        final DatabaseConfig conf = generateDBConf();
-        final EnvironmentConfig config = generateEnvConf();
+        final DatabaseConfig conf = new DatabaseConfig();
+        conf.setTransactional(true);
+        conf.setKeyPrefixing(true);
+
+        final EnvironmentConfig config = new EnvironmentConfig();
+        config.setTransactional(true);
+        config.setCacheSize(1024 * 1024);
 
         if (mEnv == null) {
 
@@ -145,7 +147,8 @@ public final class BerkeleyStorage implements IBackend {
 
             try {
                 mEnv = new Environment(mFile, config);
-                mDatabase = mEnv.openDatabase(null, NAME, conf);
+                mTxn = mEnv.beginTransaction(null, null);
+                mDatabase = mEnv.openDatabase(mTxn, NAME, conf);
             } catch (final DatabaseException exc) {
                 throw new TTIOException(exc);
             }
@@ -156,12 +159,12 @@ public final class BerkeleyStorage implements IBackend {
      * {@inheritDoc}
      */
     @Override
-    public IBackendReader getReader() throws TTIOException {
+    public synchronized IBackendReader getReader() throws TTIOException {
         try {
             setUpIfNecessary();
-            Transaction trx = mEnv.beginTransaction(null, null);
-            readers.add(trx);
-            return new BerkeleyReader(mDatabase, trx, mPageBinding);
+            // Transaction trx = mEnv.beginTransaction(null, null);
+            // return new BerkeleyReader(mDatabase, trx, mPageBinding);
+            return new BerkeleyReader(mDatabase, null, mPageBinding);
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
         }
@@ -171,46 +174,28 @@ public final class BerkeleyStorage implements IBackend {
      * {@inheritDoc}
      */
     @Override
-    public IBackendWriter getWriter() throws TTIOException {
+    public synchronized IBackendWriter getWriter() throws TTIOException {
         setUpIfNecessary();
-        Transaction trx = mEnv.beginTransaction(null, null);
-        readers.add(trx);
-        return new BerkeleyWriter(mDatabase, trx, mPageBinding);
+        // Transaction trx = mEnv.beginTransaction(null, null);
+        // return new BerkeleyWriter(mDatabase, trx, mPageBinding);
+        return new BerkeleyWriter(mDatabase, null, mPageBinding);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void close() throws TTIOException {
+    public synchronized void close() throws TTIOException {
         try {
             setUpIfNecessary();
-            for (Transaction reader : readers) {
-                if (reader.isValid()) {
-                    reader.abort();
-                }
-            }
-            readers.clear();
+            mEnv.sync();
+            mTxn.commit();
             mDatabase.close();
             mEnv.close();
             mEnv = null;
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
         }
-    }
-
-    private static EnvironmentConfig generateEnvConf() {
-        final EnvironmentConfig config = new EnvironmentConfig();
-        config.setTransactional(true);
-        config.setCacheSize(1024 * 1024);
-        return config;
-    }
-
-    private static DatabaseConfig generateDBConf() {
-        final DatabaseConfig conf = new DatabaseConfig();
-        conf.setTransactional(true);
-        conf.setKeyPrefixing(true);
-        return conf;
     }
 
     @Override
@@ -222,7 +207,7 @@ public final class BerkeleyStorage implements IBackend {
      * {@inheritDoc}
      */
     @Override
-    public void truncate() throws TTException {
+    public synchronized void truncate() throws TTException {
         setUpIfNecessary();
         // mEnv.removeDatabase(null, NAME);
         IOUtils.recursiveDelete(mFile);

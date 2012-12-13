@@ -142,7 +142,7 @@ public class PageReadTrx implements IPageReadTrx {
             // Build up the complete page.
             final IRevisioning revision = mSession.getConfig().mRevision;
             final NodePage completePage = revision.combinePages(revs);
-            cont = new NodePageContainer(completePage);
+            cont = new NodePageContainer(completePage, new NodePage(completePage.getNodePageKey()));
             mCache.put(nodePageKey, cont);
         }
         // If nodePage is a weak one, the moveto is not cached
@@ -242,7 +242,7 @@ public class PageReadTrx implements IPageReadTrx {
      */
     protected final RevisionRootPage loadRevRoot(final long pRevKey) throws TTException {
 
-        final PageReference ref = dereferenceLeafOfTree(mUberPage.getIndirectPageReference(), pRevKey);
+        final PageReference ref = dereferenceLeafOfTree(mUberPage.getReferences()[0], pRevKey);
         RevisionRootPage page = (RevisionRootPage)ref.getPage();
 
         // If there is no page, get it from the storage and cache it.

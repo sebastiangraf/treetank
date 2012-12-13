@@ -50,9 +50,6 @@ public final class RevisionRootPage implements IRevisionPage, IReferencePage {
     /** Offset of indirect page reference. */
     private static final int INDIRECT_REFERENCE_OFFSET = 1;
 
-    /** Number of nodes of this revision. */
-    private long mRevisionSize;
-
     /** Last allocated node key. */
     private long mMaxNodeKey;
 
@@ -60,7 +57,7 @@ public final class RevisionRootPage implements IRevisionPage, IReferencePage {
     private final long mRevision;
 
     /** Page references. */
-    private PageReference[] mReferences;
+    private final PageReference[] mReferences;
 
     /**
      * Constructor of RevisionRootPages.
@@ -68,31 +65,15 @@ public final class RevisionRootPage implements IRevisionPage, IReferencePage {
      * @param pRevision
      *            to be created
      */
-    public RevisionRootPage(final long pRevision) {
+    public RevisionRootPage(final long pRevision, final long pMaxNodeKey) {
         mRevision = pRevision;
         mReferences = new PageReference[2];
         for (int i = 0; i < mReferences.length; i++) {
             mReferences[i] = new PageReference();
         }
-        mRevisionSize = 0L;
         final PageReference ref = getReferences()[NAME_REFERENCE_OFFSET];
         ref.setPage(new NamePage());
-        mMaxNodeKey = -1L;
-    }
-
-    /**
-     * Clone revision root page.
-     * 
-     * @param paramCommittedRevisionRootPage
-     *            Page to clone.
-     * @param pRevToUse
-     *            Revision number to use.
-     */
-    public RevisionRootPage(final RevisionRootPage paramCommittedRevisionRootPage, final long pRevToUse) {
-        this(pRevToUse);
-        mReferences = paramCommittedRevisionRootPage.getReferences();
-        mRevisionSize = paramCommittedRevisionRootPage.mRevisionSize;
-        mMaxNodeKey = paramCommittedRevisionRootPage.mMaxNodeKey;
+        mMaxNodeKey = pMaxNodeKey;
     }
 
     /**
@@ -114,41 +95,12 @@ public final class RevisionRootPage implements IRevisionPage, IReferencePage {
     }
 
     /**
-     * Get size of revision, i.e., the node count visible in this revision.
-     * 
-     * @return Revision size.
-     */
-    public long getRevisionSize() {
-        return mRevisionSize;
-    }
-
-    /**
-     * Setter for revision size
-     * 
-     * @param pRevSize
-     *            to be set
-     */
-    protected void setRevisionSize(final long pRevSize) {
-        mRevisionSize = pRevSize;
-    }
-
-    /**
      * Get last allocated node key.
      * 
      * @return Last allocated node key.
      */
     public long getMaxNodeKey() {
         return mMaxNodeKey;
-    }
-
-    /**
-     * Setter for max node key.
-     * 
-     * @param pMaxNodeKey
-     *            to be set
-     */
-    protected void setMaxNodeKey(final long pMaxNodeKey) {
-        mMaxNodeKey = pMaxNodeKey;
     }
 
     /**
@@ -164,9 +116,7 @@ public final class RevisionRootPage implements IRevisionPage, IReferencePage {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("RevisionRootPage [mRevisionSize=");
-        builder.append(mRevisionSize);
-        builder.append(", mMaxNodeKey=");
+        builder.append("RevisionRootPage [mMaxNodeKey=");
         builder.append(mMaxNodeKey);
         builder.append(", mRevision=");
         builder.append(mRevision);
@@ -199,13 +149,10 @@ public final class RevisionRootPage implements IRevisionPage, IReferencePage {
         final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
         pOutput.writeInt(IConstants.REVISIONROOTPAGE);
         pOutput.writeLong(mRevision);
+        pOutput.writeLong(mMaxNodeKey);
         for (final PageReference reference : getReferences()) {
             pOutput.writeLong(reference.getKey());
         }
-        pOutput.writeLong(mRevisionSize);
-        pOutput.writeLong(mMaxNodeKey);
-        // mRevisionTimestamp = System.currentTimeMillis();
-        // pOutput.writeLong(mRevisionTimestamp);
         return pOutput.toByteArray();
     }
 

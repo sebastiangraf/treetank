@@ -512,9 +512,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
         mDelegate.assertNotClosed();
 
         long revisionToSet = 0;
-        if (!getPageTransaction().getUberPage().isBootstrap()) {
-            revisionToSet = mDelegate.mPageReadTrx.getActualRevisionRootPage().getRevision() - 1;
-        }
+        revisionToSet = mDelegate.mPageReadTrx.getActualRevisionRootPage().getRevision() - 1;
 
         getPageTransaction().close();
 
