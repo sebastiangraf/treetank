@@ -48,13 +48,6 @@ public class NodePage implements IPage {
     /** Key of node page. This is the base key of all contained nodes. */
     private final long mPageKey;
 
-    // /**
-    // * Sequential key of this page. This key computes itself out of the order of all node pages on the last
-    // * level. The same page in differeny revisions might have the same key whereas the page key is unique
-    // * abroad all revisions and nodepages.
-    // */
-    // private final long mSeqKey;
-
     /** Array of nodes. This can have null nodes that were removed. */
     private final INode[] mNodes;
 
