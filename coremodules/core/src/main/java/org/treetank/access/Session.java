@@ -117,7 +117,7 @@ public final class Session implements ISession {
         final IBackendWriter backendWriter = mStorage.getWriter();
         UberPage newUber =
             new UberPage(mLastCommittedUberPage.getRevisionNumber() + 1, mLastCommittedUberPage
-                .getReferences()[0]);
+                .getPageCounter(), mLastCommittedUberPage.getReferences()[0]);
         final IPageWriteTrx trx =
             new PageWriteTrx(this, newUber, backendWriter, mRepresentRevision, mStoreRevision);
         mPageTrxs.add(trx);

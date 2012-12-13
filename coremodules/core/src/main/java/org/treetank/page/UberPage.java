@@ -49,6 +49,9 @@ public final class UberPage implements IReferencePage {
     /** Page references. */
     private final PageReference mReference;
 
+    /** Counter for new pages. */
+    private long mPageCounter;
+
     /**
      * New uber page
      * 
@@ -57,10 +60,10 @@ public final class UberPage implements IReferencePage {
      * @param pReference
      *            Reference for the indirect page
      */
-    public UberPage(final long pRevisionCount, final PageReference pReference) {
+    public UberPage(final long pRevisionCount, final long pPageCounter, final PageReference pReference) {
         mRevisionCount = pRevisionCount;
         mReference = pReference;
-
+        mPageCounter = pPageCounter;
     }
 
     /**
@@ -80,6 +83,7 @@ public final class UberPage implements IReferencePage {
         final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
         pOutput.writeInt(IConstants.UBERPAGE);
         pOutput.writeLong(mRevisionCount);
+        pOutput.writeLong(mPageCounter);
         pOutput.writeLong(mReference.getKey());
         return pOutput.toByteArray();
     }
@@ -116,6 +120,24 @@ public final class UberPage implements IReferencePage {
     public long getPageKey() {
         // TODO Auto-generated method stub
         return 0;
+    }
+
+    /**
+     * Incrementing the counter.
+     * 
+     * @return the incremented counter
+     */
+    public long incrementPageCounter() {
+        return mPageCounter++;
+    }
+
+    /**
+     * Getter for mPageCounter.
+     * 
+     * @return the mPageCounter
+     */
+    public long getPageCounter() {
+        return mPageCounter;
     }
 
 }
