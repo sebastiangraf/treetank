@@ -49,6 +49,9 @@ public final class UberPage implements IReferencePage {
     /** Page references. */
     private final PageReference mReference;
 
+    /** Reference key for first indirect page. */
+    private final long mReferenceKeys[];
+
     /** Key of this UberPage. */
     private final long mPageKey;
 
@@ -69,7 +72,8 @@ public final class UberPage implements IReferencePage {
         final PageReference pReference) {
         mRevisionCount = pRevisionCount;
         mReference = pReference;
-        mPageCounter = pPageCounter;
+        // TODO This can be a single value only but first, kick out the PageReferences
+        mReferenceKeys = new long[1];
         mPageKey = pPageKey;
     }
 
@@ -92,6 +96,7 @@ public final class UberPage implements IReferencePage {
         pOutput.writeLong(mPageKey);
         pOutput.writeLong(mRevisionCount);
         pOutput.writeLong(mPageCounter);
+        pOutput.writeLong(mReferenceKeys[0]);
         pOutput.writeLong(mReference.getKey());
         return pOutput.toByteArray();
     }
@@ -147,6 +152,16 @@ public final class UberPage implements IReferencePage {
      */
     public long getPageCounter() {
         return mPageCounter;
+    }
+
+    @Override
+    public long[] getReferenceKeys() {
+        return mReferenceKeys;
+    }
+
+    @Override
+    public void setReferenceKey(int pIndex, long pKey) {
+        mReferenceKeys[pIndex] = pKey;
     }
 
 }

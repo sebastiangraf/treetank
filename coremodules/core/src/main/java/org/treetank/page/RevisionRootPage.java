@@ -59,6 +59,9 @@ public final class RevisionRootPage implements IRevisionPage, IReferencePage {
     /** Page references. */
     private final PageReference[] mReferences;
 
+    /** Reference keys. */
+    private final long[] mReferenceKeys;
+
     /** Page Key of this page. */
     private final long mPageKey;
 
@@ -74,6 +77,7 @@ public final class RevisionRootPage implements IRevisionPage, IReferencePage {
      */
     public RevisionRootPage(final long pPageKey, final long pRevision, final long pMaxNodeKey) {
         mRevision = pRevision;
+        mReferenceKeys = new long[2];
         mReferences = new PageReference[2];
         for (int i = 0; i < mReferences.length; i++) {
             mReferences[i] = new PageReference();
@@ -159,6 +163,9 @@ public final class RevisionRootPage implements IRevisionPage, IReferencePage {
         pOutput.writeLong(mPageKey);
         pOutput.writeLong(mRevision);
         pOutput.writeLong(mMaxNodeKey);
+        for(long key : mReferenceKeys) {
+            pOutput.writeLong(key);
+        }
         for (final PageReference reference : getReferences()) {
             pOutput.writeLong(reference.getKey());
         }
@@ -171,6 +178,16 @@ public final class RevisionRootPage implements IRevisionPage, IReferencePage {
     @Override
     public long getPageKey() {
         return mPageKey;
+    }
+
+    @Override
+    public long[] getReferenceKeys() {
+        return mReferenceKeys;
+    }
+
+    @Override
+    public void setReferenceKey(int pIndex, long pKey) {
+        mReferenceKeys[pIndex] = pKey;
     }
 
 }

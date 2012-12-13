@@ -13,4 +13,8 @@ public interface IReferencePage extends IPage {
 
     PageReference[] getReferences();
 
+    long[] getReferenceKeys();
+
+    void setReferenceKey(int pIndex, long pKey);
+
 }

@@ -46,6 +46,9 @@ public final class IndirectPage implements IReferencePage {
     /** Page references. */
     private final PageReference[] mReferences;
 
+    /** Reference keys. */
+    private final long[] mReferenceKeys;
+
     /** Key of this page. */
     private final long mPageKey;
 
@@ -57,6 +60,7 @@ public final class IndirectPage implements IReferencePage {
      */
     public IndirectPage(final long pPageKey) {
         mPageKey = pPageKey;
+        mReferenceKeys = new long[IConstants.INP_REFERENCE_COUNT];
         mReferences = new PageReference[IConstants.INP_REFERENCE_COUNT];
         for (int i = 0; i < mReferences.length; i++) {
             mReferences[i] = new PageReference();
@@ -83,6 +87,10 @@ public final class IndirectPage implements IReferencePage {
         final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
         pOutput.writeInt(IConstants.INDIRCTPAGE);
         pOutput.writeLong(mPageKey);
+        for (long key : mReferenceKeys) {
+            pOutput.writeLong(key);
+        }
+
         for (final PageReference reference : getReferences()) {
             pOutput.writeLong(reference.getKey());
         }
@@ -105,6 +113,16 @@ public final class IndirectPage implements IReferencePage {
     @Override
     public long getPageKey() {
         return mPageKey;
+    }
+
+    @Override
+    public long[] getReferenceKeys() {
+        return mReferenceKeys;
+    }
+
+    @Override
+    public void setReferenceKey(int pIndex, long pKey) {
+        mReferenceKeys[pIndex] = pKey;
     }
 
 }

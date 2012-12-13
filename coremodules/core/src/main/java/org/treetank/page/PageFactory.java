@@ -95,10 +95,14 @@ public final class PageFactory {
         case IConstants.UBERPAGE:
             UberPage uberPage =
                 new UberPage(input.readLong(), input.readLong(), input.readLong(), new PageReference());
+            uberPage.setReferenceKey(0,input.readLong());
             uberPage.getReferences()[0].setKey(input.readLong());
             return uberPage;
         case IConstants.INDIRCTPAGE:
             IndirectPage indirectPage = new IndirectPage(input.readLong());
+            for (int offset = 0; offset < indirectPage.getReferenceKeys().length; offset++) {
+                indirectPage.setReferenceKey(offset, input.readLong());
+            }
             for (int offset = 0; offset < indirectPage.getReferences().length; offset++) {
                 indirectPage.getReferences()[offset] = new PageReference();
                 indirectPage.getReferences()[offset].setKey(input.readLong());
@@ -107,6 +111,10 @@ public final class PageFactory {
         case IConstants.REVISIONROOTPAGE:
             RevisionRootPage revRootPage =
                 new RevisionRootPage(input.readLong(), input.readLong(), input.readLong());
+            for (int offset = 0; offset < revRootPage.getReferences().length; offset++) {
+                revRootPage.setReferenceKey(offset, input.readLong());
+            }
+            
             for (int offset = 0; offset < revRootPage.getReferences().length; offset++) {
                 revRootPage.getReferences()[offset] = new PageReference();
                 revRootPage.getReferences()[offset].setKey(input.readLong());
