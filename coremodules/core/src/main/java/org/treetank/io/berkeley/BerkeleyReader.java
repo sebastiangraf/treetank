@@ -27,10 +27,9 @@
 
 package org.treetank.io.berkeley;
 
+import org.treetank.access.Storage;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
-import org.treetank.page.PageReference;
-import org.treetank.page.UberPage;
 import org.treetank.page.interfaces.IPage;
 
 import com.sleepycat.bind.tuple.TupleBinding;
@@ -39,7 +38,6 @@ import com.sleepycat.je.DatabaseEntry;
 import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
-import com.sleepycat.je.Transaction;
 
 /**
  * This class represents an reading instance of the Treetank-Application
@@ -56,21 +54,15 @@ public final class BerkeleyReader implements IBackendReader {
     /** Link to the {@link Storage}. */
     private final Database mDatabase;
 
-//    /** Link to the {@link Transaction}. */
-//    private final Transaction mTxn;
-
     /**
      * Constructor.
      * 
      * @param pDatabase
      *            {@link Storage} reference to be connected to
-     * @param pTxn
-     *            {@link Transaction} to be used
      * @param pPageBinding
      *            {@link TupleBinding} for de/-serializing pages
      */
-    public BerkeleyReader(Database pDatabase, Transaction pTxn, TupleBinding<IPage> pPageBinding) {
-//        mTxn = pTxn;
+    public BerkeleyReader(Database pDatabase, TupleBinding<IPage> pPageBinding) {
         mDatabase = pDatabase;
         mPageBinding = pPageBinding;
     }
@@ -87,7 +79,6 @@ public final class BerkeleyReader implements IBackendReader {
 
         IPage page = null;
         try {
-//            final OperationStatus status = mDatabase.get(mTxn, keyEntry, valueEntry, LockMode.DEFAULT);
             final OperationStatus status = mDatabase.get(null, keyEntry, valueEntry, LockMode.DEFAULT);
             if (status == OperationStatus.SUCCESS) {
                 page = mPageBinding.entryToObject(valueEntry);
@@ -103,83 +94,7 @@ public final class BerkeleyReader implements IBackendReader {
      * {@inheritDoc}
      */
     @Override
-    public PageReference readFirstReference() throws TTIOException {
-        final DatabaseEntry valueEntry = new DatabaseEntry();
-        final DatabaseEntry keyEntry = new DatabaseEntry();
-        TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(-1l, keyEntry);
-
-        try {
-//            final OperationStatus status = mDatabase.get(mTxn, keyEntry, valueEntry, LockMode.DEFAULT);
-            final OperationStatus status = mDatabase.get(null, keyEntry, valueEntry, LockMode.DEFAULT);
-            PageReference uberPageReference = new PageReference();
-            if (status == OperationStatus.SUCCESS) {
-                uberPageReference.setKey(TupleBinding.getPrimitiveBinding(Long.class).entryToObject(
-                    valueEntry));
-            }
-            final UberPage page = (UberPage)read(uberPageReference.getKey());
-
-            if (uberPageReference != null) {
-                uberPageReference.setPage(page);
-            }
-
-            return uberPageReference;
-        } catch (final DatabaseException e) {
-            throw new TTIOException(e);
-        }
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void close() throws TTIOException {
-        try {
-//            mTxn.abort();
-        } catch (final DatabaseException e) {
-            throw new TTIOException(e);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((mDatabase == null) ? 0 : mDatabase.hashCode());
-//        result = prime * result + ((mTxn == null) ? 0 : mTxn.hashCode());
-        return result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(final Object paramObj) {
-        boolean returnVal = true;
-        if (paramObj == null) {
-            returnVal = false;
-        } else if (getClass() != paramObj.getClass()) {
-            returnVal = false;
-        }
-        final BerkeleyReader other = (BerkeleyReader)paramObj;
-        if (mDatabase == null) {
-            if (other.mDatabase != null) {
-                returnVal = false;
-            }
-        } else if (!mDatabase.equals(other.mDatabase)) {
-            returnVal = false;
-        }
-        // if (mTxn == null) {
-        // if (other.mTxn != null) {
-        // returnVal = false;
-        // }
-        // } else if (!mTxn.equals(other.mTxn)) {
-        // returnVal = false;
-        // }
-        return returnVal;
     }
 
 }

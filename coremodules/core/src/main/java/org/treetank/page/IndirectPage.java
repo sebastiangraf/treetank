@@ -43,9 +43,6 @@ import com.google.common.io.ByteStreams;
  */
 public final class IndirectPage implements IReferencePage {
 
-    /** Page references. */
-    private final PageReference[] mReferences;
-
     /** Reference keys. */
     private final long[] mReferenceKeys;
 
@@ -61,22 +58,13 @@ public final class IndirectPage implements IReferencePage {
     public IndirectPage(final long pPageKey) {
         mPageKey = pPageKey;
         mReferenceKeys = new long[IConstants.INP_REFERENCE_COUNT];
-        mReferences = new PageReference[IConstants.INP_REFERENCE_COUNT];
-        for (int i = 0; i < mReferences.length; i++) {
-            mReferences[i] = new PageReference();
-        }
     }
 
     @Override
     public void commit(PageWriteTrx paramState) throws TTException {
-        for (final PageReference reference : getReferences()) {
+        for (final long reference : getReferenceKeys()) {
             paramState.commit(reference);
         }
-    }
-
-    @Override
-    public PageReference[] getReferences() {
-        return mReferences;
     }
 
     /**
@@ -89,10 +77,6 @@ public final class IndirectPage implements IReferencePage {
         pOutput.writeLong(mPageKey);
         for (long key : mReferenceKeys) {
             pOutput.writeLong(key);
-        }
-
-        for (final PageReference reference : getReferences()) {
-            pOutput.writeLong(reference.getKey());
         }
         return pOutput.toByteArray();
     }

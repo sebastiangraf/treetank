@@ -35,12 +35,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.treetank.access.conf.ContructorProps;
-import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
+import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.api.IPageWriteTrx;
-import org.treetank.api.IStorage;
 import org.treetank.api.ISession;
+import org.treetank.api.IStorage;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTUsageException;
@@ -50,7 +50,6 @@ import org.treetank.page.IConstants;
 import org.treetank.page.IndirectPage;
 import org.treetank.page.NamePage;
 import org.treetank.page.NodePage;
-import org.treetank.page.PageReference;
 import org.treetank.page.RevisionRootPage;
 import org.treetank.page.UberPage;
 import org.treetank.page.interfaces.IReferencePage;
@@ -415,7 +414,7 @@ public final class Storage implements IStorage {
         throws TTException {
         SessionConfiguration config =
             new SessionConfiguration(pResourceConf.mProperties.getProperty(ContructorProps.RESOURCE), null);
-        UberPage uberPage = new UberPage(0, 0, 1, new PageReference());
+        UberPage uberPage = new UberPage(0, 0, 1);
 
         // --- Create revision tree
         // ------------------------------------------------
@@ -423,46 +422,31 @@ public final class Storage implements IStorage {
         // Initialize revision tree to guarantee that there is a revision root
         // page.
         IReferencePage page = uberPage;
-        PageReference reference = uberPage.getReferences()[0];
         long newPageKey;
         // Remaining levels.
         for (int i = 0; i < IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i++) {
             newPageKey = uberPage.incrementPageCounter();
-            page.setReferenceKey(0, newPageKey);
             page = new IndirectPage(newPageKey);
-            reference.setPage(page);
-            reference = page.getReferences()[0];
         }
 
         newPageKey = uberPage.incrementPageCounter();
-        page.setReferenceKey(0, newPageKey);
         page = new RevisionRootPage(newPageKey, 0, -1);
-        reference.setPage(page);
 
         newPageKey = uberPage.incrementPageCounter();
         NamePage namePage = new NamePage(newPageKey);
-        ((RevisionRootPage)page).getNamePageReference().setPage(namePage);
-        page.setReferenceKey(0, newPageKey);
 
         // --- Create node tree
         // ----------------------------------------------------
 
         // Initialize revision tree to guarantee that there is a revision root
         // page.
-        reference = ((RevisionRootPage)page).getIndirectPageReference();
 
-        // Remaining levels.
-        for (int i = 0;i < IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i++) {
+        for (int i = 0; i < IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i++) {
             newPageKey = uberPage.incrementPageCounter();
-            page.setReferenceKey(0, newPageKey);
             page = new IndirectPage(newPageKey);
-            reference.setPage(page);
-            reference = page.getReferences()[0];
         }
         newPageKey = uberPage.incrementPageCounter();
         final NodePage ndp = new NodePage(newPageKey);
-        reference.setPage(ndp);
-        page.setReferenceKey(0, newPageKey);
 
         Session session = new Session(pStorage, pResourceConf, config, uberPage);
         IPageWriteTrx trx = session.beginPageWriteTransaction(0, 0);

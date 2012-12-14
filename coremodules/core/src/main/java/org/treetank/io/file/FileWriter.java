@@ -39,7 +39,6 @@ import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendWriter;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.page.PageFactory;
-import org.treetank.page.PageReference;
 import org.treetank.page.interfaces.IPage;
 
 /**
@@ -84,15 +83,14 @@ public final class FileWriter implements IBackendWriter {
     /**
      * Write page contained in page reference to storage.
      * 
-     * @param pageReference
+     * @param page
      *            Page reference to write.
      * @throws TTIOException
      *             due to errors during writing.
      * @throws TTByteHandleException
      */
-    public long write(final PageReference pageReference) throws TTIOException, TTByteHandleException {
+    public void write(final IPage page) throws TTIOException, TTByteHandleException {
 
-        final IPage page = pageReference.getPage();
         final byte[] rawPage = page.getByteRepresentation();
 
         // Perform crypto operations.
@@ -112,9 +110,6 @@ public final class FileWriter implements IBackendWriter {
             final long offset = fileSize == 0 ? FileReader.FIRST_BEACON : fileSize;
             mFile.seek(offset);
             mFile.write(writtenPage);
-            // Remember page coordinates.
-            pageReference.setKey(offset);
-            return offset;
         } catch (final IOException paramExc) {
             throw new TTIOException(paramExc);
         }
@@ -135,48 +130,10 @@ public final class FileWriter implements IBackendWriter {
     }
 
     /**
-     * Close file handle in case it is not properly closed by the application.
-     * 
-     * @throws Throwable
-     *             if the finalization of the superclass does not work.
-     */
-    @Override
-    protected void finalize() throws Throwable {
-        try {
-            close();
-        } finally {
-            super.finalize();
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     * 
-     * @throws TTByteHandleException
-     */
-    public void writeFirstReference(final PageReference pageReference) throws TTIOException,
-        TTByteHandleException {
-        try {
-            write(pageReference);
-            mFile.seek(0);
-            mFile.writeLong(pageReference.getKey());
-        } catch (final IOException exc) {
-            throw new TTIOException(exc);
-        }
-    }
-
-    /**
      * {@inheritDoc}
      */
     public IPage read(final long pKey) throws TTIOException {
         return mReader.read(pKey);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PageReference readFirstReference() throws TTIOException {
-        return mReader.readFirstReference();
     }
 
 }

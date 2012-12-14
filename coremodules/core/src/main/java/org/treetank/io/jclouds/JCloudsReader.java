@@ -4,7 +4,6 @@
 package org.treetank.io.jclouds;
 
 import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -16,8 +15,6 @@ import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.page.PageFactory;
-import org.treetank.page.PageReference;
-import org.treetank.page.UberPage;
 import org.treetank.page.interfaces.IPage;
 
 import com.google.common.io.ByteStreams;
@@ -46,29 +43,6 @@ public class JCloudsReader implements IBackendReader {
         mByteHandler = pByteHandler;
         mFac = pFac;
         mResourceName = pResourceName;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public PageReference readFirstReference() throws TTIOException, TTByteHandleException {
-        try {
-            final PageReference uberPageReference = new PageReference();
-            Blob blobRetrieved = mBlobStore.getBlob(mResourceName, Long.toString(-1l));
-            InputStream in = blobRetrieved.getPayload().getInput();
-            DataInputStream datain = new DataInputStream(in);
-            long uberpagekey = datain.readLong();
-            uberPageReference.setKey(uberpagekey);
-            final UberPage page = (UberPage)read(uberPageReference.getKey());
-            uberPageReference.setPage(page);
-            datain.close();
-            in.close();
-            return uberPageReference;
-        } catch (final IOException exc) {
-            throw new TTIOException(exc);
-        }
-
     }
 
     /**

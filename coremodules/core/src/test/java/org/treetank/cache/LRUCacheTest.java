@@ -34,7 +34,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.page.NodePage;
+import org.treetank.page.interfaces.IPage;
 
 /**
  * @author Sebastian Graf, University of Konstanz
@@ -54,7 +54,7 @@ public class LRUCacheTest {
     public void test() throws TTIOException {
         for (int i = 1; i < CacheTestHelper.PAGES.length; i++) {
             final NodePageContainer cont = cache.get(i);
-            final NodePage current = cont.getComplete();
+            final IPage current = cont.getComplete();
             assertEquals(CacheTestHelper.PAGES[i][0], current);
         }
 

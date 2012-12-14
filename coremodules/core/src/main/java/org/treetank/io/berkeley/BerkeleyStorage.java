@@ -162,9 +162,7 @@ public final class BerkeleyStorage implements IBackend {
     public synchronized IBackendReader getReader() throws TTIOException {
         try {
             setUpIfNecessary();
-            // Transaction trx = mEnv.beginTransaction(null, null);
-            // return new BerkeleyReader(mDatabase, trx, mPageBinding);
-            return new BerkeleyReader(mDatabase, null, mPageBinding);
+            return new BerkeleyReader(mDatabase, mPageBinding);
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
         }
@@ -176,9 +174,7 @@ public final class BerkeleyStorage implements IBackend {
     @Override
     public synchronized IBackendWriter getWriter() throws TTIOException {
         setUpIfNecessary();
-        // Transaction trx = mEnv.beginTransaction(null, null);
-        // return new BerkeleyWriter(mDatabase, trx, mPageBinding);
-        return new BerkeleyWriter(mDatabase, null, mPageBinding);
+        return new BerkeleyWriter(mDatabase, mPageBinding);
     }
 
     /**

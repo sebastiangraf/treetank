@@ -46,9 +46,6 @@ public final class UberPage implements IReferencePage {
     /** Number of revisions. */
     private final long mRevisionCount;
 
-    /** Page references. */
-    private final PageReference mReference;
-
     /** Reference key for first indirect page. */
     private final long mReferenceKeys[];
 
@@ -68,10 +65,8 @@ public final class UberPage implements IReferencePage {
      * @param pReference
      *            Reference for the indirect page
      */
-    public UberPage(final long pPageKey, final long pRevisionCount, final long pPageCounter,
-        final PageReference pReference) {
+    public UberPage(final long pPageKey, final long pRevisionCount, final long pPageCounter) {
         mRevisionCount = pRevisionCount;
-        mReference = pReference;
         // TODO This can be a single value only but first, kick out the PageReferences
         mReferenceKeys = new long[1];
         mPageKey = pPageKey;
@@ -97,7 +92,6 @@ public final class UberPage implements IReferencePage {
         pOutput.writeLong(mRevisionCount);
         pOutput.writeLong(mPageCounter);
         pOutput.writeLong(mReferenceKeys[0]);
-        pOutput.writeLong(mReference.getKey());
         return pOutput.toByteArray();
     }
 
@@ -111,22 +105,16 @@ public final class UberPage implements IReferencePage {
         builder.append(mPageKey);
         builder.append("mRevisionCount=");
         builder.append(mRevisionCount);
-        builder.append(", mReference=");
-        builder.append(mReference.toString());
+        builder.append(", mReferenceKey=");
+        builder.append(mReferenceKeys[0]);
         return builder.toString();
     }
 
     @Override
     public void commit(PageWriteTrx paramState) throws TTException {
-        paramState.commit(mReference);
+        paramState.commit(mReferenceKeys[0]);
     }
 
-    @Override
-    public PageReference[] getReferences() {
-        return new PageReference[] {
-            mReference
-        };
-    }
 
     /**
      * {@inheritDoc}
