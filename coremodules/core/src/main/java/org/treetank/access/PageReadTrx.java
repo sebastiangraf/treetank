@@ -46,6 +46,7 @@ import org.treetank.page.NodePage.DeletedNode;
 import org.treetank.page.PageReference;
 import org.treetank.page.RevisionRootPage;
 import org.treetank.page.UberPage;
+import org.treetank.page.interfaces.IPage;
 import org.treetank.page.interfaces.IReferencePage;
 import org.treetank.revisioning.IRevisioning;
 
@@ -77,7 +78,7 @@ public class PageReadTrx implements IPageReadTrx {
     private final RevisionRootPage mRootPage;
 
     /** Internal reference to cache. */
-    private final Cache<Long, NodePage> mCache;
+    private final Cache<Long, IPage> mCache;
 
     /** Configuration of the session */
     protected final ISession mSession;
@@ -129,7 +130,7 @@ public class PageReadTrx implements IPageReadTrx {
         // Calculate page and node part for given nodeKey.
         final long nodePageKey = nodePageKey(pNodeKey);
         final int nodePageOffset = nodePageOffset(pNodeKey);
-        NodePage page = mCache.getIfPresent(nodePageKey);
+        NodePage page = (NodePage)mCache.getIfPresent(nodePageKey);
 
         if (page == null) {
             final NodePage[] revs = getSnapshotPages(nodePageKey);
@@ -275,14 +276,14 @@ public class PageReadTrx implements IPageReadTrx {
     /**
      * Dereference node page reference.
      * 
-     * @param mNodePageKey
+     * @param pSeqNodePageKey
      *            Key of node page.
      * @return Dereferenced page.
      * 
      * @throws TTIOException
      *             if something odd happens within the creation process.
      */
-    protected final NodePage[] getSnapshotPages(final long mNodePageKey) throws TTException {
+    protected final NodePage[] getSnapshotPages(final long pSeqNodePageKey) throws TTException {
 
         // ..and get all leaves of nodepages from the revision-trees.
         final List<PageReference> refs = new ArrayList<PageReference>();
@@ -290,7 +291,7 @@ public class PageReadTrx implements IPageReadTrx {
 
         for (long i = mRootPage.getRevision(); i >= 0; i--) {
             final PageReference ref =
-                dereferenceLeafOfTree(loadRevRoot(i).getIndirectPageReference(), mNodePageKey);
+                dereferenceLeafOfTree(loadRevRoot(i).getIndirectPageReference(), pSeqNodePageKey);
             // TODO check this check, ref.getKey!=NULL_ID and next if-check
             if (ref != null && (ref.getPage() != null || ref.getKey() != IConstants.NULL_ID)) {
                 if (ref.getKey() == IConstants.NULL_ID || (!keys.contains(ref.getKey()))) {
@@ -324,27 +325,53 @@ public class PageReadTrx implements IPageReadTrx {
     /**
      * Dereference indirect page reference.
      * 
-     * @param pRef
-     *            Reference to dereference.
+     * @param pKey
+     *            key to dereference.
      * @return Dereferenced page.
      * 
      * @throws TTIOException
      *             if something odd happens within the creation process.
      */
-    protected final IndirectPage dereferenceIndirectPage(final PageReference pRef) throws TTException {
+    protected final IndirectPage dereferenceIndirectPage(final long pKey) throws TTException {
+        IndirectPage page = (IndirectPage)mCache.getIfPresent(pKey);
 
-        IndirectPage page = (IndirectPage)pRef.getPage();
-
-        // If there is no page, get it from the storage and cache it.
+        // if page is not in cache, read it from the storage and cache it
         if (page == null) {
-            if (pRef.getPage() == null && pRef.getKey() == IConstants.NULL_ID) {
-                return null;
-            }
-            page = (IndirectPage)mPageReader.read(pRef.getKey());
-            pRef.setPage(page);
+            page = (IndirectPage)mPageReader.read(pKey);
+        }
+        return page;
+
+    }
+
+    /**
+     * Find reference pointing to leaf page of an indirect tree.
+     * 
+     * @param pStartKey
+     *            Start reference pointing to the indirect tree.
+     * @param pSeqPageKey
+     *            Key to look up in the indirect tree.
+     * @return Reference denoted by key pointing to the leaf page.
+     * 
+     * @throws TTIOException
+     *             if something odd happens within the creation process.
+     */
+    protected final long dereferenceLeafOfTree(final long pStartKey, final long pSeqPageKey)
+        throws TTException {
+
+        // Initial state pointing to the indirect page of level 0.
+        int offset = 0;
+        long levelKey = pSeqPageKey;
+        long pageKey = pStartKey;
+
+        // Iterate through all levels.
+        for (int level = 0; level < IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level++) {
+            offset = (int)(levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level]);
+            levelKey -= offset << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
+            pageKey = dereferenceIndirectPage(pageKey).getReferenceKeys()[offset];
         }
 
-        return page;
+        // Return reference to leaf of indirect tree.
+        return pageKey;
     }
 
     /**
@@ -359,6 +386,7 @@ public class PageReadTrx implements IPageReadTrx {
      * @throws TTIOException
      *             if something odd happens within the creation process.
      */
+    @Deprecated
     protected final PageReference dereferenceLeafOfTree(final PageReference pStartRev, final long pPageKey)
         throws TTException {
 
@@ -368,7 +396,7 @@ public class PageReadTrx implements IPageReadTrx {
         long levelKey = pPageKey;
 
         // Iterate through all levels.
-        for (int level = 0, height = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level < height; level++) {
+        for (int level = 0; level < IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level++) {
             offset = (int)(levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level]);
             levelKey -= offset << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
             final IReferencePage page = dereferenceIndirectPage(reference);
@@ -382,6 +410,33 @@ public class PageReadTrx implements IPageReadTrx {
 
         // Return reference to leaf of indirect tree.
         return reference;
+    }
+
+    /**
+     * Dereference indirect page reference.
+     * 
+     * @param pRef
+     *            Reference to dereference.
+     * @return Dereferenced page.
+     * 
+     * @throws TTIOException
+     *             if something odd happens within the creation process.
+     */
+    @Deprecated
+    protected final IndirectPage dereferenceIndirectPage(final PageReference pRef) throws TTException {
+
+        IndirectPage page = (IndirectPage)pRef.getPage();
+
+        // If there is no page, get it from the storage and cache it.
+        if (page == null) {
+            if (pRef.getPage() == null && pRef.getKey() == IConstants.NULL_ID) {
+                return null;
+            }
+            page = (IndirectPage)mPageReader.read(pRef.getKey());
+            pRef.setPage(page);
+        }
+
+        return page;
     }
 
     /**
