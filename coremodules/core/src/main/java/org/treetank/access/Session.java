@@ -107,19 +107,16 @@ public final class Session implements ISession {
     }
 
     public IPageWriteTrx beginPageWriteTransaction() throws TTException {
-        return beginPageWriteTransaction(mLastCommittedUberPage.getRevisionNumber() - 1,
-            mLastCommittedUberPage.getRevisionNumber() - 1);
+        return beginPageWriteTransaction(mLastCommittedUberPage.getRevisionNumber() - 1);
 
     }
 
-    public IPageWriteTrx beginPageWriteTransaction(final long mRepresentRevision, final long mStoreRevision)
-        throws TTException {
+    public IPageWriteTrx beginPageWriteTransaction(final long mRepresentRevision) throws TTException {
         final IBackendWriter backendWriter = mStorage.getWriter();
         UberPage newUber =
             new UberPage(mLastCommittedUberPage.incrementPageCounter(), mLastCommittedUberPage
                 .getRevisionNumber() + 1, mLastCommittedUberPage.getPageCounter());
-        final IPageWriteTrx trx =
-            new PageWriteTrx(this, newUber, backendWriter, mRepresentRevision, mStoreRevision);
+        final IPageWriteTrx trx = new PageWriteTrx(this, newUber, backendWriter, mRepresentRevision);
         mPageTrxs.add(trx);
 
         return trx;

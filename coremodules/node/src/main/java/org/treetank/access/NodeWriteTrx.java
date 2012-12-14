@@ -471,16 +471,15 @@ public class NodeWriteTrx implements INodeWriteTrx {
      *             if an I/O operation fails
      */
     @Override
-    public void revertTo(final long paramRevision) throws TTException {
-        if (paramRevision < 0) {
+    public void revertTo(final long pRevision) throws TTException {
+        if (pRevision < 0) {
             throw new IllegalArgumentException("paramRevision parameter must be >= 0");
         }
         mDelegate.assertNotClosed();
-        mSession.assertAccess(paramRevision);
-        final long revNumber = mDelegate.mPageReadTrx.getActualRevisionRootPage().getRevision();
+        mSession.assertAccess(pRevision);
         getPageTransaction().close();
         // Reset internal transaction state to new uber page.
-        mDelegate.setPageTransaction(mSession.beginPageWriteTransaction(paramRevision, revNumber - 1));
+        mDelegate.setPageTransaction(mSession.beginPageWriteTransaction(pRevision));
         moveTo(ROOT_NODE);
 
     }
@@ -499,7 +498,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
 
         getPageTransaction().close();
         // Reset internal transaction state to new uber page.
-        mDelegate.setPageTransaction(mSession.beginPageWriteTransaction(revNumber, revNumber));
+        mDelegate.setPageTransaction(mSession.beginPageWriteTransaction(revNumber));
 
     }
 
@@ -517,7 +516,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
         getPageTransaction().close();
 
         // Reset internal transaction state to last committed uber page.
-        mDelegate.setPageTransaction(mSession.beginPageWriteTransaction(revisionToSet, revisionToSet));
+        mDelegate.setPageTransaction(mSession.beginPageWriteTransaction(revisionToSet));
     }
 
     /**

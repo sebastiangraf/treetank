@@ -318,8 +318,7 @@ public final class Storage implements IStorage {
 
             // reading first reference and instantiate this.
             final IBackendReader backendReader = config.mStorage.getReader();
-            final PageReference firstRef = backendReader.readFirstReference();
-            UberPage page = (UberPage)firstRef.getPage();
+            UberPage page = (UberPage)backendReader.read(0);
             backendReader.close();
 
             returnVal = new Session(this, config, pSessionConf, page);
@@ -449,7 +448,7 @@ public final class Storage implements IStorage {
         final NodePage ndp = new NodePage(newPageKey);
 
         Session session = new Session(pStorage, pResourceConf, config, uberPage);
-        IPageWriteTrx trx = session.beginPageWriteTransaction(0, 0);
+        IPageWriteTrx trx = session.beginPageWriteTransaction(0);
         trx.commit();
         trx.close();
         session.close();

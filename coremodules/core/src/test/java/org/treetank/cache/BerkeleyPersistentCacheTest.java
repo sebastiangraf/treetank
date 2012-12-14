@@ -60,15 +60,15 @@ public class BerkeleyPersistentCacheTest {
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
         TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        Properties props = StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(), TestHelper.RESOURCENAME);
-        ResourceConfiguration conf =
-            mResourceConfig.create(props);
+        Properties props =
+            StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                TestHelper.RESOURCENAME);
+        ResourceConfiguration conf = mResourceConfig.create(props);
         TestHelper.createResource(conf);
 
         cache =
             new BerkeleyPersistenceLog(new File(new File(TestHelper.PATHS.PATH1.getFile(),
-                StorageConfiguration.Paths.Data.getFile().getName()), TestHelper.RESOURCENAME), 1,
-                conf.mNodeFac);
+                StorageConfiguration.Paths.Data.getFile().getName()), TestHelper.RESOURCENAME), conf.mNodeFac);
         CacheTestHelper.setUp(cache);
     }
 

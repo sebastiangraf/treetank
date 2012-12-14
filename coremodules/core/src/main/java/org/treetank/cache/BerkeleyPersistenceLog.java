@@ -101,8 +101,7 @@ public final class BerkeleyPersistenceLog implements ICachedLog {
      * @throws TTIOException
      *             Exception if IO is not successful
      */
-    public BerkeleyPersistenceLog(final File pFile, final long pRevision, final INodeFactory pNodeFac)
-        throws TTIOException {
+    public BerkeleyPersistenceLog(final File pFile, final INodeFactory pNodeFac) throws TTIOException {
         mPlace =
             new File(new File(pFile, ResourceConfiguration.Paths.TransactionLog.getFile().getName()), Integer
                 .toString(counter));
