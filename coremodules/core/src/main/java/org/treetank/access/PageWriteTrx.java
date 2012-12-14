@@ -149,8 +149,9 @@ public final class PageWriteTrx implements IPageWriteTrx {
      * 
      * @param pNode
      *            the node to be modified
+     * @throws TTIOException
      */
-    protected void finishNodeModification(final INode pNode) {
+    protected void finishNodeModification(final INode pNode) throws TTIOException {
         final long nodePageKey = nodePageKey(pNode.getNodeKey());
         if (mNodePageCon == null || pNode == null || mLog.get(nodePageKey) == null) {
             throw new IllegalStateException();

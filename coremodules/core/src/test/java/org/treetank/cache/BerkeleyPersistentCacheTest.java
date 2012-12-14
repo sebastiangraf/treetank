@@ -43,6 +43,7 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.exception.TTException;
+import org.treetank.exception.TTIOException;
 import org.treetank.page.NodePage;
 
 import com.google.inject.Inject;
@@ -72,7 +73,7 @@ public class BerkeleyPersistentCacheTest {
     }
 
     @Test
-    public void test() {
+    public void test() throws TTIOException {
         for (int i = 0; i < CacheTestHelper.PAGES.length; i++) {
             final NodePageContainer cont = cache.get(i);
             final NodePage current = cont.getComplete();

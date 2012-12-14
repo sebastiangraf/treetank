@@ -32,6 +32,8 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.treetank.exception.TTIOException;
+
 /**
  * An LRU cache, based on <code>LinkedHashMap</code>. This cache can hold an
  * possible second cache as a second layer for example for storing data in a
@@ -74,7 +76,11 @@ public final class LRUCache implements ICachedLog {
             protected boolean removeEldestEntry(final Map.Entry<Long, NodePageContainer> mEldest) {
                 boolean returnVal = false;
                 if (size() > CACHE_CAPACITY) {
-                    mSecondCache.put(mEldest.getKey(), mEldest.getValue());
+                    try {
+                        mSecondCache.put(mEldest.getKey(), mEldest.getValue());
+                    } catch (final TTIOException exc) {
+                        throw new RuntimeException(exc);
+                    }
                     returnVal = true;
                 }
                 return returnVal;
@@ -84,15 +90,9 @@ public final class LRUCache implements ICachedLog {
     }
 
     /**
-     * Retrieves an entry from the cache.<br>
-     * The retrieved entry becomes the MRU (most recently used) entry.
-     * 
-     * @param mKey
-     *            the key whose associated value is to be returned.
-     * @return the value associated to this key, or null if no value with this
-     *         key exists in the cache.
+     * {@inheritDoc}
      */
-    public NodePageContainer get(final long mKey) {
+    public NodePageContainer get(final long mKey) throws TTIOException {
         NodePageContainer page = map.get(mKey);
         if (page == null) {
             page = mSecondCache.get(mKey);
@@ -101,23 +101,16 @@ public final class LRUCache implements ICachedLog {
     }
 
     /**
-     * 
-     * Adds an entry to this cache. If the cache is full, the LRU (least
-     * recently used) entry is dropped.
-     * 
-     * @param mKey
-     *            the key with which the specified value is to be associated.
-     * @param mValue
-     *            a value to be associated with the specified key.
+     * {@inheritDoc}
      */
     public void put(final long mKey, final NodePageContainer mValue) {
         map.put(mKey, mValue);
     }
 
     /**
-     * Clears the cache.
+     * {@inheritDoc}
      */
-    public void clear() {
+    public void clear() throws TTIOException {
         map.clear();
         mSecondCache.clear();
     }

@@ -40,7 +40,7 @@ import org.treetank.exception.TTIOException;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public final class TransactionLogCache extends AbstractPersistenceCache {
+public final class TransactionLogCache implements ICachedLog {
 
     /**
      * RAM-Based first cache.
@@ -62,9 +62,7 @@ public final class TransactionLogCache extends AbstractPersistenceCache {
      */
     public TransactionLogCache(final File pFile, final long pRevision, final INodeFactory pNodeFac)
         throws TTIOException {
-        super(pFile);
-        final BerkeleyPersistenceCache secondCache =
-            new BerkeleyPersistenceCache(pFile, pRevision, pNodeFac);
+        final BerkeleyPersistenceCache secondCache = new BerkeleyPersistenceCache(pFile, pRevision, pNodeFac);
         mFirstCache = new LRUCache(secondCache);
     }
 
@@ -72,7 +70,7 @@ public final class TransactionLogCache extends AbstractPersistenceCache {
      * {@inheritDoc}
      */
     @Override
-    public void clearPersistent() throws TTIOException {
+    public void clear() throws TTIOException {
         mFirstCache.clear();
     }
 
@@ -80,7 +78,7 @@ public final class TransactionLogCache extends AbstractPersistenceCache {
      * {@inheritDoc}
      */
     @Override
-    public NodePageContainer getPersistent(final long paramKey) throws TTIOException {
+    public NodePageContainer get(final long paramKey) throws TTIOException {
         return mFirstCache.get(paramKey);
     }
 
@@ -88,7 +86,7 @@ public final class TransactionLogCache extends AbstractPersistenceCache {
      * {@inheritDoc}
      */
     @Override
-    public void putPersistent(final long paramKey, final NodePageContainer paramPage) throws TTIOException {
+    public void put(final long paramKey, final NodePageContainer paramPage) throws TTIOException {
         mFirstCache.put(paramKey, paramPage);
     }
 

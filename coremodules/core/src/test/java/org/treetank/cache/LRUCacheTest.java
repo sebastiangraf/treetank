@@ -33,6 +33,7 @@ import static org.testng.AssertJUnit.assertNull;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.treetank.exception.TTException;
+import org.treetank.exception.TTIOException;
 import org.treetank.page.NodePage;
 
 /**
@@ -50,7 +51,7 @@ public class LRUCacheTest {
     }
 
     @Test
-    public void test() {
+    public void test() throws TTIOException {
         for (int i = 1; i < CacheTestHelper.PAGES.length; i++) {
             final NodePageContainer cont = cache.get(i);
             final NodePage current = cont.getComplete();

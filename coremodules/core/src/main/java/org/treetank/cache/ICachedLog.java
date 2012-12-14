@@ -27,6 +27,8 @@
 
 package org.treetank.cache;
 
+import org.treetank.exception.TTIOException;
+
 /**
  * Interface for all upcoming cache implementations. Can be a weak one, a
  * LRU-based one or a persistent. However, clear, put and get must to be
@@ -39,8 +41,11 @@ package org.treetank.cache;
 public interface ICachedLog {
     /**
      * Clearing the cache. That is removing all elements.
+     * 
+     * @throws TTIOException
+     *             if clear fails
      */
-    void clear();
+    void clear() throws TTIOException;
 
     /**
      * Getting a page related to a given nodepagekey.
@@ -48,8 +53,10 @@ public interface ICachedLog {
      * @param mKey
      *            the key for the requested {@link NodePageContainer}
      * @return {@link NodePageContainer} instance related to this key
+     * @throws TTIOException
+     *             if get fails
      */
-    NodePageContainer get(final long mKey);
+    NodePageContainer get(final long mKey) throws TTIOException;
 
     /**
      * Putting an {@link NodePageContainer} into the cache with a corresponding
@@ -59,7 +66,9 @@ public interface ICachedLog {
      *            for putting the page in the cache.
      * @param mPage
      *            should be putted in the cache as well.
+     * @throws TTIOException
+     *             if put fails
      */
-    void put(final long mKey, final NodePageContainer mPage);
+    void put(final long mKey, final NodePageContainer mPage) throws TTIOException;
 
 }
