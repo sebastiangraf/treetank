@@ -37,9 +37,10 @@ import javax.xml.namespace.QName;
 import org.treetank.api.INode;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
-import org.treetank.cache.ICache;
+import org.treetank.cache.BerkeleyPersistenceLog;
+import org.treetank.cache.ICachedLog;
+import org.treetank.cache.LRUCache;
 import org.treetank.cache.NodePageContainer;
-import org.treetank.cache.TransactionLogCache;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendWriter;
@@ -48,10 +49,10 @@ import org.treetank.page.IndirectPage;
 import org.treetank.page.NamePage;
 import org.treetank.page.NodePage;
 import org.treetank.page.NodePage.DeletedNode;
-import org.treetank.page.interfaces.IPage;
 import org.treetank.page.PageReference;
 import org.treetank.page.RevisionRootPage;
 import org.treetank.page.UberPage;
+import org.treetank.page.interfaces.IPage;
 import org.treetank.revisioning.IRevisioning;
 import org.treetank.utils.NamePageHash;
 
@@ -68,7 +69,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
     private final IBackendWriter mPageWriter;
 
     /** Cache to store the changes in this writetransaction. */
-    private final ICache mLog;
+    private final ICachedLog mLog;
 
     /** Last references to the Nodepage, needed for pre/postcondition check. */
     private NodePageContainer mNodePageCon;
@@ -100,9 +101,9 @@ public final class PageWriteTrx implements IPageWriteTrx {
         mDelegate = new PageReadTrx(pSession, pUberPage, pRepresentRev, pWriter);
         mNewRoot = preparePreviousRevisionRootPage(pRepresentRev, pStoreRev);
         mLog =
-            new TransactionLogCache(new File(pSession.getConfig().mProperties
+            new LRUCache(new BerkeleyPersistenceLog(new File(pSession.getConfig().mProperties
                 .getProperty(org.treetank.access.conf.ContructorProps.STORAGEPATH)), pStoreRev, pSession
-                .getConfig().mNodeFac);
+                .getConfig().mNodeFac));
         mPageWriter = pWriter;
 
     }
@@ -149,8 +150,9 @@ public final class PageWriteTrx implements IPageWriteTrx {
      * 
      * @param pNode
      *            the node to be modified
+     * @throws TTIOException
      */
-    protected void finishNodeModification(final INode pNode) {
+    protected void finishNodeModification(final INode pNode) throws TTIOException {
         final long nodePageKey = nodePageKey(pNode.getNodeKey());
         if (mNodePageCon == null || pNode == null || mLog.get(nodePageKey) == null) {
             throw new IllegalStateException();
@@ -404,7 +406,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
 
         IndirectPage page = (IndirectPage)pRef.getPage();
         if (page == null) {
-            page = new IndirectPage();
+            page = new IndirectPage(mDelegate.getUberPage().incrementPageCounter());
             if (pRef.getKey() != IConstants.NULL_ID) {
                 IndirectPage formerIndirect = mDelegate.dereferenceIndirectPage(pRef);
                 for (int i = 0; i < formerIndirect.getReferences().length; i++) {
@@ -416,28 +418,30 @@ public final class PageWriteTrx implements IPageWriteTrx {
         return page;
     }
 
-    protected NodePageContainer prepareNodePage(final long pPageKey) throws TTException {
+    protected NodePageContainer prepareNodePage(final long pSeqKey) throws TTException {
 
         // Last level points to node nodePageReference.
-        NodePageContainer cont = mLog.get(pPageKey);
+        NodePageContainer cont = mLog.get(pSeqKey);
         if (cont == null) {
 
             // Indirect reference.
-            final PageReference reference = prepareLeafOfTree(mNewRoot.getIndirectPageReference(), pPageKey);
+            final PageReference reference = prepareLeafOfTree(mNewRoot.getIndirectPageReference(), pSeqKey);
             NodePage page = (NodePage)reference.getPage();
 
             if (page == null) {
                 if (reference.getKey() == IConstants.NULL_ID) {
-                    cont = new NodePageContainer(new NodePage(pPageKey), new NodePage(pPageKey));
+                    long freshPageKey = mDelegate.getUberPage().incrementPageCounter();
+                    cont = new NodePageContainer(new NodePage(freshPageKey), new NodePage(freshPageKey));
                 } else {
-                    cont = dereferenceNodePageForModification(pPageKey);
+                    cont = dereferenceNodePageForModification(pSeqKey);
                 }
             } else {
-                cont = new NodePageContainer(page, new NodePage(page.getNodePageKey()));
+                long freshPageKey = mDelegate.getUberPage().incrementPageCounter();
+                cont = new NodePageContainer(page, new NodePage(freshPageKey));
             }
 
-            reference.setNodePageKey(pPageKey);
-            mLog.put(pPageKey, cont);
+            reference.setNodePageKey(pSeqKey);
+            mLog.put(pSeqKey, cont);
         }
         mNodePageCon = cont;
         return cont;
@@ -449,7 +453,8 @@ public final class PageWriteTrx implements IPageWriteTrx {
         final RevisionRootPage previousRevRoot = mDelegate.loadRevRoot(pRev);
 
         final RevisionRootPage revisionRootPage =
-            new RevisionRootPage(pRepresentRev + 1, previousRevRoot.getMaxNodeKey());
+            new RevisionRootPage(mDelegate.getUberPage().incrementPageCounter(), pRepresentRev + 1,
+                previousRevRoot.getMaxNodeKey());
         for (int i = 0; i < previousRevRoot.getReferences().length; i++) {
             revisionRootPage.getReferences()[i] = previousRevRoot.getReferences()[i];
         }

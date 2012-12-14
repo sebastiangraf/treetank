@@ -43,6 +43,7 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.exception.TTException;
+import org.treetank.exception.TTIOException;
 import org.treetank.page.NodePage;
 
 import com.google.inject.Inject;
@@ -53,7 +54,7 @@ public class BerkeleyPersistentCacheTest {
     @Inject
     private IResourceConfigurationFactory mResourceConfig;
 
-    private ICache cache;
+    private ICachedLog cache;
 
     @BeforeMethod
     public void setUp() throws TTException {
@@ -65,14 +66,14 @@ public class BerkeleyPersistentCacheTest {
         TestHelper.createResource(conf);
 
         cache =
-            new BerkeleyPersistenceCache(new File(new File(TestHelper.PATHS.PATH1.getFile(),
+            new BerkeleyPersistenceLog(new File(new File(TestHelper.PATHS.PATH1.getFile(),
                 StorageConfiguration.Paths.Data.getFile().getName()), TestHelper.RESOURCENAME), 1,
                 conf.mNodeFac);
         CacheTestHelper.setUp(cache);
     }
 
     @Test
-    public void test() {
+    public void test() throws TTIOException {
         for (int i = 0; i < CacheTestHelper.PAGES.length; i++) {
             final NodePageContainer cont = cache.get(i);
             final NodePage current = cont.getComplete();

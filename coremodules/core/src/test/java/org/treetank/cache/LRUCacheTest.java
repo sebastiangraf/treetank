@@ -33,6 +33,7 @@ import static org.testng.AssertJUnit.assertNull;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.treetank.exception.TTException;
+import org.treetank.exception.TTIOException;
 import org.treetank.page.NodePage;
 
 /**
@@ -41,16 +42,16 @@ import org.treetank.page.NodePage;
  */
 public class LRUCacheTest {
 
-    private ICache cache;
+    private ICachedLog cache;
 
     @BeforeMethod
     public void setUp() throws TTException {
-        cache = new LRUCache();
+        cache = new LRUCache(new NullCache());
         CacheTestHelper.setUp(cache);
     }
 
     @Test
-    public void test() {
+    public void test() throws TTIOException {
         for (int i = 1; i < CacheTestHelper.PAGES.length; i++) {
             final NodePageContainer cont = cache.get(i);
             final NodePage current = cont.getComplete();
@@ -59,6 +60,31 @@ public class LRUCacheTest {
 
         final NodePageContainer page = cache.get(0);
         assertNull(page);
+
+    }
+
+    static class NullCache implements ICachedLog {
+        /**
+         * Constructor.
+         */
+        public NullCache() {
+            super();
+        }
+
+        @Override
+        public void clear() {
+            // Not used over here
+        }
+
+        @Override
+        public NodePageContainer get(final long mKey) {
+            return null;
+        }
+
+        @Override
+        public void put(final long mKey, final NodePageContainer mPage) {
+            // Not used over here
+        }
 
     }
 

@@ -59,21 +59,31 @@ public final class RevisionRootPage implements IRevisionPage, IReferencePage {
     /** Page references. */
     private final PageReference[] mReferences;
 
+    /** Reference keys. */
+    private final long[] mReferenceKeys;
+
+    /** Page Key of this page. */
+    private final long mPageKey;
+
     /**
      * Constructor of RevisionRootPages.
      * 
+     * @param pPageKey
+     *            Key of this page
      * @param pRevision
      *            to be created
+     * @param pMaxNodeKey
+     *            maximal node key given
      */
-    public RevisionRootPage(final long pRevision, final long pMaxNodeKey) {
+    public RevisionRootPage(final long pPageKey, final long pRevision, final long pMaxNodeKey) {
         mRevision = pRevision;
+        mReferenceKeys = new long[2];
         mReferences = new PageReference[2];
         for (int i = 0; i < mReferences.length; i++) {
             mReferences[i] = new PageReference();
         }
-        final PageReference ref = getReferences()[NAME_REFERENCE_OFFSET];
-        ref.setPage(new NamePage());
         mMaxNodeKey = pMaxNodeKey;
+        mPageKey = pPageKey;
     }
 
     /**
@@ -116,7 +126,9 @@ public final class RevisionRootPage implements IRevisionPage, IReferencePage {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("RevisionRootPage [mMaxNodeKey=");
+        builder.append("RevisionRootPage [mPageKey");
+        builder.append(mPageKey);
+        builder.append(", mMaxNodeKey=");
         builder.append(mMaxNodeKey);
         builder.append(", mRevision=");
         builder.append(mRevision);
@@ -148,12 +160,34 @@ public final class RevisionRootPage implements IRevisionPage, IReferencePage {
     public byte[] getByteRepresentation() {
         final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
         pOutput.writeInt(IConstants.REVISIONROOTPAGE);
+        pOutput.writeLong(mPageKey);
         pOutput.writeLong(mRevision);
         pOutput.writeLong(mMaxNodeKey);
+        for(long key : mReferenceKeys) {
+            pOutput.writeLong(key);
+        }
         for (final PageReference reference : getReferences()) {
             pOutput.writeLong(reference.getKey());
         }
         return pOutput.toByteArray();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long getPageKey() {
+        return mPageKey;
+    }
+
+    @Override
+    public long[] getReferenceKeys() {
+        return mReferenceKeys;
+    }
+
+    @Override
+    public void setReferenceKey(int pIndex, long pKey) {
+        mReferenceKeys[pIndex] = pKey;
     }
 
 }
