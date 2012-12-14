@@ -37,9 +37,10 @@ import javax.xml.namespace.QName;
 import org.treetank.api.INode;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
+import org.treetank.cache.BerkeleyPersistenceLog;
 import org.treetank.cache.ICachedLog;
+import org.treetank.cache.LRUCache;
 import org.treetank.cache.NodePageContainer;
-import org.treetank.cache.TransactionLogCache;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendWriter;
@@ -48,10 +49,10 @@ import org.treetank.page.IndirectPage;
 import org.treetank.page.NamePage;
 import org.treetank.page.NodePage;
 import org.treetank.page.NodePage.DeletedNode;
-import org.treetank.page.interfaces.IPage;
 import org.treetank.page.PageReference;
 import org.treetank.page.RevisionRootPage;
 import org.treetank.page.UberPage;
+import org.treetank.page.interfaces.IPage;
 import org.treetank.revisioning.IRevisioning;
 import org.treetank.utils.NamePageHash;
 
@@ -100,9 +101,9 @@ public final class PageWriteTrx implements IPageWriteTrx {
         mDelegate = new PageReadTrx(pSession, pUberPage, pRepresentRev, pWriter);
         mNewRoot = preparePreviousRevisionRootPage(pRepresentRev, pStoreRev);
         mLog =
-            new TransactionLogCache(new File(pSession.getConfig().mProperties
+            new LRUCache(new BerkeleyPersistenceLog(new File(pSession.getConfig().mProperties
                 .getProperty(org.treetank.access.conf.ContructorProps.STORAGEPATH)), pStoreRev, pSession
-                .getConfig().mNodeFac);
+                .getConfig().mNodeFac));
         mPageWriter = pWriter;
 
     }

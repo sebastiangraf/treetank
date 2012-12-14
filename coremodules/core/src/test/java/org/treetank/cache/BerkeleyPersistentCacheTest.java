@@ -66,7 +66,7 @@ public class BerkeleyPersistentCacheTest {
         TestHelper.createResource(conf);
 
         cache =
-            new BerkeleyPersistenceCache(new File(new File(TestHelper.PATHS.PATH1.getFile(),
+            new BerkeleyPersistenceLog(new File(new File(TestHelper.PATHS.PATH1.getFile(),
                 StorageConfiguration.Paths.Data.getFile().getName()), TestHelper.RESOURCENAME), 1,
                 conf.mNodeFac);
         CacheTestHelper.setUp(cache);

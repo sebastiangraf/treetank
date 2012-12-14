@@ -51,7 +51,7 @@ import com.sleepycat.je.OperationStatus;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public final class BerkeleyPersistenceCache implements ICachedLog {
+public final class BerkeleyPersistenceLog implements ICachedLog {
 
     /**
      * Name for the database.
@@ -101,7 +101,7 @@ public final class BerkeleyPersistenceCache implements ICachedLog {
      * @throws TTIOException
      *             Exception if IO is not successful
      */
-    public BerkeleyPersistenceCache(final File pFile, final long pRevision, final INodeFactory pNodeFac)
+    public BerkeleyPersistenceLog(final File pFile, final long pRevision, final INodeFactory pNodeFac)
         throws TTIOException {
         mPlace =
             new File(new File(pFile, ResourceConfiguration.Paths.TransactionLog.getFile().getName()), Integer
