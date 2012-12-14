@@ -36,7 +36,7 @@ package org.treetank.cache;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public interface ICache {
+public interface ICachedLog {
     /**
      * Clearing the cache. That is removing all elements.
      */

@@ -39,7 +39,7 @@ import java.util.Map;
  * 
  * @author Sebastian Graf, University of Konstanz
  */
-public final class LRUCache implements ICache {
+public final class LRUCache implements ICachedLog {
 
     /**
      * Capacity of the cache. Number of stored pages
@@ -54,7 +54,7 @@ public final class LRUCache implements ICache {
     /**
      * The reference to the second cache.
      */
-    private final ICache mSecondCache;
+    private final ICachedLog mSecondCache;
 
     /**
      * Creates a new LRU cache.
@@ -64,7 +64,7 @@ public final class LRUCache implements ICache {
      *            when it gets removed from the first one.
      * 
      */
-    public LRUCache(final ICache paramSecondCache) {
+    public LRUCache(final ICachedLog paramSecondCache) {
         mSecondCache = paramSecondCache;
         map = new LinkedHashMap<Long, NodePageContainer>(CACHE_CAPACITY) {
             // (an anonymous inner class)
@@ -81,13 +81,6 @@ public final class LRUCache implements ICache {
 
             }
         };
-    }
-
-    /**
-     * Constructor with no second cache.
-     */
-    public LRUCache() {
-        this(new NullCache());
     }
 
     /**

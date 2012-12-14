@@ -47,7 +47,7 @@ import com.google.inject.Inject;
 
 @Guice(moduleFactory = ModuleFactory.class)
 public class TransactionLogCacheTest {
-    private ICache cache;
+    private ICachedLog cache;
 
     @Inject
     private IResourceConfigurationFactory mResourceConfig;

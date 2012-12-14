@@ -37,7 +37,7 @@ import javax.xml.namespace.QName;
 import org.treetank.api.INode;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
-import org.treetank.cache.ICache;
+import org.treetank.cache.ICachedLog;
 import org.treetank.cache.NodePageContainer;
 import org.treetank.cache.TransactionLogCache;
 import org.treetank.exception.TTException;
@@ -68,7 +68,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
     private final IBackendWriter mPageWriter;
 
     /** Cache to store the changes in this writetransaction. */
-    private final ICache mLog;
+    private final ICachedLog mLog;
 
     /** Last references to the Nodepage, needed for pre/postcondition check. */
     private NodePageContainer mNodePageCon;

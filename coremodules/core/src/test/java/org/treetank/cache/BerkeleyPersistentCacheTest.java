@@ -53,7 +53,7 @@ public class BerkeleyPersistentCacheTest {
     @Inject
     private IResourceConfigurationFactory mResourceConfig;
 
-    private ICache cache;
+    private ICachedLog cache;
 
     @BeforeMethod
     public void setUp() throws TTException {

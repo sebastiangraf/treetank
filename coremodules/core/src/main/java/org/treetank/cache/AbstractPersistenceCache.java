@@ -39,7 +39,7 @@ import org.treetank.exception.TTIOException;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public abstract class AbstractPersistenceCache implements ICache {
+public abstract class AbstractPersistenceCache implements ICachedLog {
 
     /**
      * Place to store the data.

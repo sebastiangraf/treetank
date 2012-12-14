@@ -41,7 +41,7 @@ public class CacheTestHelper {
 
     protected static NodePage[][] PAGES;
 
-    public static void setUp(final ICache cache) throws TTException {
+    public static void setUp(final ICachedLog cache) throws TTException {
         // Be sure to store more pages as defined in the RAMCache and to be reproduced by the versions
         PAGES = new NodePage[LRUCache.CACHE_CAPACITY + 1][VERSIONSTORESTORE + 1];
         for (int i = 0; i < PAGES.length; i++) {
