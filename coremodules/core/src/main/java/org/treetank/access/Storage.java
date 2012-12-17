@@ -452,7 +452,7 @@ public final class Storage implements IStorage {
         newPageKey = uberPage.incrementPageCounter();
         IndirectPage indirectPage = new IndirectPage(newPageKey);
         page.setReferenceKey(RevisionRootPage.INDIRECT_REFERENCE_OFFSET, newPageKey);
-        key = new LogKey(false, 0, 0);
+        key = new LogKey(false, -1, 0);
         mLog.put(key, new NodePageContainer(page, page));
 
         // --- Create node tree
