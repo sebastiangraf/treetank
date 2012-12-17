@@ -27,6 +27,8 @@
 
 package org.treetank.cache;
 
+import java.util.Map;
+
 import org.treetank.exception.TTIOException;
 
 /**
@@ -70,5 +72,53 @@ public interface ICachedLog {
      *             if put fails
      */
     void put(final LogKey mKey, final NodePageContainer mPage) throws TTIOException;
+
+    /**
+     * Class representing one entry in the transaction-log
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
+    static class TransactionLogEntry implements Map.Entry<LogKey, NodePageContainer> {
+
+        /** Key of the log. */
+        final LogKey mKey;
+
+        /** Container of the log. */
+        final NodePageContainer mContainer;
+
+        /**
+         * Constructor.
+         * 
+         */
+        public TransactionLogEntry(final LogKey pKey, final NodePageContainer pContainer) {
+            mKey = pKey;
+            mContainer = pContainer;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public LogKey getKey() {
+            return mKey;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public NodePageContainer getValue() {
+            return mContainer;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public NodePageContainer setValue(NodePageContainer value) {
+            throw new UnsupportedOperationException();
+        }
+    }
 
 }

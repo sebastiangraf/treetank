@@ -46,12 +46,12 @@ public final class LRUCache implements ICachedLog {
     /**
      * Capacity of the cache. Number of stored pages
      */
-    static final int CACHE_CAPACITY = 10;
+    static final int CACHE_CAPACITY = 1;
 
     /**
      * The collection to hold the maps.
      */
-    private final Map<LogKey, NodePageContainer> map;
+    protected final Map<LogKey, NodePageContainer> map;
 
     /**
      * The reference to the second cache.
@@ -148,5 +148,7 @@ public final class LRUCache implements ICachedLog {
         builder.append(this.mSecondCache.toString());
         return builder.toString();
     }
+
+    
 
 }

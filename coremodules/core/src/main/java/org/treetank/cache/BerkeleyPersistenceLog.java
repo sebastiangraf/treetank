@@ -65,7 +65,7 @@ public final class BerkeleyPersistenceLog implements ICachedLog {
     /**
      * Berkeley database.
      */
-    private final transient Database mDatabase;
+    protected final transient Database mDatabase;
 
     /**
      * Berkeley Environment for the database.
@@ -75,12 +75,12 @@ public final class BerkeleyPersistenceLog implements ICachedLog {
     /**
      * Binding for the key, which is the nodepage.
      */
-    private final transient LogKeyBinding mKeyBinding;
+    protected final transient LogKeyBinding mKeyBinding;
 
     /**
      * Binding for the value which is a page with related Nodes.
      */
-    private final transient NodePageContainerBinding mValueBinding;
+    protected final transient NodePageContainerBinding mValueBinding;
 
     /**
      * Counter to give every instance a different place.
