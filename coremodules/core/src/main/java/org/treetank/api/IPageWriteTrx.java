@@ -42,7 +42,7 @@ public interface IPageWriteTrx extends IPageReadTrx {
     long getMaxNodeKey();
 
     /**
-     * Creating a new node and storing the node in the page-layer. 
+     * Creating a new node and storing the node in the page-layer.
      * 
      * @param pnode
      *            the node to be stored.
@@ -59,6 +59,6 @@ public interface IPageWriteTrx extends IPageReadTrx {
      * @throws if
      *             anything weird happens
      */
-    boolean commit() throws TTException;
+    void commit() throws TTException;
 
 }

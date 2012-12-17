@@ -38,7 +38,6 @@ import org.treetank.access.conf.ContructorProps;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StorageConfiguration;
-import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
 import org.treetank.cache.BerkeleyPersistenceLog;
@@ -476,8 +475,8 @@ public final class Storage implements IStorage {
         mLog.put(key, new NodePageContainer(ndp, ndp));
 
         Session session = new Session(pStorage, pResourceConf, config, uberPage);
-        IPageWriteTrx trx = session.beginPageWriteTransaction(0);
-        trx.commit();
+        PageWriteTrx trx = (PageWriteTrx)session.beginPageWriteTransaction(0);
+        trx.commit(mLog);
         trx.close();
         session.close();
     }
