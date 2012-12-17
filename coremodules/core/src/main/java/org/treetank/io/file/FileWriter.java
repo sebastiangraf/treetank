@@ -145,4 +145,20 @@ public final class FileWriter implements IBackendWriter {
         return mReader.readUber();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void writeUberPage(UberPage page) throws TTException {
+        try {
+            long pageKey = page.getPageKey();
+            write(page);
+            mFile.seek(0);
+            mFile.writeLong(pageKey);
+        } catch (final IOException exc) {
+            throw new TTIOException(exc);
+        }
+
+    }
+
 }

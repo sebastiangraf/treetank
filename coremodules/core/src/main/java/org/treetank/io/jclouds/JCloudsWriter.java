@@ -3,6 +3,10 @@
  */
 package org.treetank.io.jclouds;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobBuilder;
@@ -64,6 +68,28 @@ public class JCloudsWriter implements IBackendWriter {
     @Override
     public UberPage readUber() throws TTException {
         return mReader.readUber();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void writeUberPage(UberPage page) throws TTException {
+        try {
+            long key = page.getPageKey();
+            write(page);
+
+            BlobBuilder blobbuilder = mReader.mBlobStore.blobBuilder(Long.toString(-1L));
+            Blob blob = blobbuilder.build();
+            ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+            DataOutputStream dataOut = new DataOutputStream(byteOut);
+            dataOut.writeLong(key);
+            blob.setPayload(byteOut.toByteArray());
+            mReader.mBlobStore.putBlob(mReader.mResourceName, blob);
+        } catch (final IOException exc) {
+            throw new TTIOException(exc);
+        }
+
     }
 
 }

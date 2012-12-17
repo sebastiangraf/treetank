@@ -125,4 +125,26 @@ public final class BerkeleyWriter implements IBackendWriter {
         return mReader.readUber();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void writeUberPage(UberPage page) throws TTException {
+        long pageKey = page.getPageKey();
+        write(page);
+
+        final DatabaseEntry keyEntry = new DatabaseEntry();
+        TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(-1l, keyEntry);
+
+        final DatabaseEntry valueEntry = new DatabaseEntry();
+        TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(pageKey, valueEntry);
+
+        try {
+            // mDatabase.put(mTxn, keyEntry, valueEntry);
+            mDatabase.put(null, keyEntry, valueEntry);
+        } catch (final DatabaseException exc) {
+            throw new TTIOException(exc);
+        }
+    }
+
 }
