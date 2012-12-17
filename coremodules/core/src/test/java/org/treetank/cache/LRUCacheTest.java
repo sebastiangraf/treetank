@@ -88,6 +88,12 @@ public class LRUCacheTest {
             // Not used over here
         }
 
+        @Override
+        public CacheLogIterator getIterator() {
+            // Not used over here
+            return null;
+        }
+
     }
 
 }

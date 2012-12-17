@@ -31,6 +31,8 @@ import static org.treetank.access.PageReadTrx.nodePageKey;
 import static org.treetank.access.PageReadTrx.nodePageOffset;
 
 import java.io.File;
+import java.util.Iterator;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 
@@ -38,7 +40,6 @@ import org.treetank.api.INode;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.cache.BerkeleyPersistenceLog;
-import org.treetank.cache.ICachedLog;
 import org.treetank.cache.LRUCache;
 import org.treetank.cache.LogKey;
 import org.treetank.cache.NodePageContainer;
@@ -67,7 +68,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
     private final IBackendWriter mPageWriter;
 
     /** Cache to store the changes in this writetransaction. */
-    private final ICachedLog mLog;
+    private final LRUCache mLog;
 
     /** Last reference to the actual revRoot. */
     private final RevisionRootPage mNewRoot;
@@ -270,7 +271,11 @@ public final class PageWriteTrx implements IPageWriteTrx {
 
         final UberPage uberPage = mDelegate.getUberPage();
 
-        // TODO implement this one over the log
+        Iterator<Map.Entry<LogKey, NodePageContainer>> entries = mLog.getIterator();
+        while (entries.hasNext()) {
+            Map.Entry<LogKey, NodePageContainer> next = entries.next();
+            mPageWriter.write(next.getValue().getModified());
+        }
 
         // Remember succesfully committed uber page in session state.
         // TODO This is one of the dirtiest hacks I ever did! Sorry Future-ME!

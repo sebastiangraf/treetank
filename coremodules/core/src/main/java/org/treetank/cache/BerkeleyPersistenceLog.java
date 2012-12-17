@@ -209,4 +209,12 @@ public final class BerkeleyPersistenceLog implements ICachedLog {
         return builder.toString();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public CacheLogIterator getIterator() {
+        return new CacheLogIterator(null, this);
+    }
+
 }

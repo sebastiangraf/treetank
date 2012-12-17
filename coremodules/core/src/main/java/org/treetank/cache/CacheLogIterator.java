@@ -39,7 +39,9 @@ public class CacheLogIterator implements Iterator<Map.Entry<LogKey, NodePageCont
     public CacheLogIterator(final LRUCache pFirstLog, final BerkeleyPersistenceLog pSecondLog) {
         mSecondLog = pSecondLog;
         mEntries = new ArrayList<Map.Entry<LogKey, NodePageContainer>>();
-        pFirstLog.map.entrySet();
+        if (pFirstLog != null) {
+            mEntries.addAll(pFirstLog.map.entrySet());
+        }
         mCursor = mSecondLog.mDatabase.openCursor(null, null);
     }
 

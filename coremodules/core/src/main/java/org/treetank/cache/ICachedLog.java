@@ -73,6 +73,9 @@ public interface ICachedLog {
      */
     void put(final LogKey mKey, final NodePageContainer mPage) throws TTIOException;
 
+    /** Getting iterator from this log. */
+    CacheLogIterator getIterator();
+
     /**
      * Class representing one entry in the transaction-log
      * 

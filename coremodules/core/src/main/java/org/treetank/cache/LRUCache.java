@@ -149,6 +149,13 @@ public final class LRUCache implements ICachedLog {
         return builder.toString();
     }
 
-    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public CacheLogIterator getIterator() {
+        // TODO fix this one, iterator should be handled in a better component-adhering way.
+        return new CacheLogIterator(this, (BerkeleyPersistenceLog)mSecondCache);
+    }
 
 }
