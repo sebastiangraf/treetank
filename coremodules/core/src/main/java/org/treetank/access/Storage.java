@@ -30,6 +30,7 @@ package org.treetank.access;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -48,7 +49,9 @@ import org.treetank.cache.NodePageContainer;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTUsageException;
+import org.treetank.io.IBackend;
 import org.treetank.io.IBackendReader;
+import org.treetank.io.IBackendWriter;
 import org.treetank.io.IOUtils;
 import org.treetank.page.IConstants;
 import org.treetank.page.IndirectPage;
@@ -415,8 +418,6 @@ public final class Storage implements IStorage {
      */
     private static void bootstrap(final Storage pStorage, final ResourceConfiguration pResourceConf)
         throws TTException {
-        SessionConfiguration config =
-            new SessionConfiguration(pResourceConf.mProperties.getProperty(ContructorProps.RESOURCE), null);
         UberPage uberPage = new UberPage(0, 0, 1);
 
         ICachedLog mLog =
@@ -474,11 +475,16 @@ public final class Storage implements IStorage {
         key = new LogKey(false, IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length, 0);
         mLog.put(key, new NodePageContainer(ndp, ndp));
 
-        Session session = new Session(pStorage, pResourceConf, config, uberPage);
-        PageWriteTrx trx = (PageWriteTrx)session.beginPageWriteTransaction(0);
-        trx.commit(mLog);
-        trx.close();
-        session.close();
+        IBackend storage = pResourceConf.mStorage;
+        IBackendWriter writer = storage.getWriter();
+
+        Iterator<Map.Entry<LogKey, NodePageContainer>> entries = mLog.getIterator();
+        while (entries.hasNext()) {
+            Map.Entry<LogKey, NodePageContainer> next = entries.next();
+            writer.write(next.getValue().getModified());
+        }
+        writer.close();
+
     }
 
 }

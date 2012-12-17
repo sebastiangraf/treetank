@@ -40,7 +40,6 @@ import org.treetank.api.INode;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.cache.BerkeleyPersistenceLog;
-import org.treetank.cache.ICachedLog;
 import org.treetank.cache.LRUCache;
 import org.treetank.cache.LogKey;
 import org.treetank.cache.NodePageContainer;
@@ -271,19 +270,16 @@ public final class PageWriteTrx implements IPageWriteTrx {
     public void commit() throws TTException {
 
         final UberPage uberPage = mDelegate.getUberPage();
-        commit(mLog);
-        // Remember succesfully committed uber page in session state.
-        // TODO This is one of the dirtiest hacks I ever did! Sorry Future-ME!
-        ((Session)mDelegate.mSession).setLastCommittedUberPage(uberPage);
 
-    }
-
-    protected void commit(final ICachedLog pLog) throws TTException {
-        Iterator<Map.Entry<LogKey, NodePageContainer>> entries = pLog.getIterator();
+        Iterator<Map.Entry<LogKey, NodePageContainer>> entries = mLog.getIterator();
         while (entries.hasNext()) {
             Map.Entry<LogKey, NodePageContainer> next = entries.next();
             mPageWriter.write(next.getValue().getModified());
         }
+        // Remember succesfully committed uber page in session state.
+        // TODO This is one of the dirtiest hacks I ever did! Sorry Future-ME!
+        ((Session)mDelegate.mSession).setLastCommittedUberPage(uberPage);
+
     }
 
     /**
