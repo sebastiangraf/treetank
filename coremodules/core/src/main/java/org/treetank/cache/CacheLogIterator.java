@@ -51,8 +51,7 @@ public class CacheLogIterator implements Iterator<Map.Entry<LogKey, NodePageCont
     @Override
     public boolean hasNext() {
         boolean returnVal = true;
-
-        if (i <= LRUCache.CACHE_CAPACITY) {
+        if (i < LRUCache.CACHE_CAPACITY) {
             if (mEntries.size() - i <= 0) {
                 returnVal = false;
             }
@@ -71,11 +70,9 @@ public class CacheLogIterator implements Iterator<Map.Entry<LogKey, NodePageCont
             }
 
         }
-        i++;
         if (returnVal == false) {
             mCursor.close();
         }
-
         return returnVal;
     }
 
@@ -84,8 +81,10 @@ public class CacheLogIterator implements Iterator<Map.Entry<LogKey, NodePageCont
      */
     @Override
     public Map.Entry<LogKey, NodePageContainer> next() {
-        if (i <= LRUCache.CACHE_CAPACITY) {
-            return mEntries.get(i);
+        if (i <LRUCache.CACHE_CAPACITY) {
+            Map.Entry<LogKey, NodePageContainer> returnVal = mEntries.get(i);
+            i++;
+            return returnVal;
         } else {
             return new TransactionLogEntry(mSecondLog.mKeyBinding.entryToObject(keyEntry),
                 mSecondLog.mValueBinding.entryToObject(valueEntry));
