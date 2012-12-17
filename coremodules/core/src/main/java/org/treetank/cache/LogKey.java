@@ -10,6 +10,10 @@ package org.treetank.cache;
  * 
  */
 public class LogKey {
+
+    /** Is this key referencing to the root level or to the node level. */
+    private final boolean mRootLevel;
+
     /** Level Key. */
     private final long mLevel;
 
@@ -24,7 +28,8 @@ public class LogKey {
      * @param pSeq
      *            to be set.
      */
-    public LogKey(final long pLevel, final long pSeq) {
+    public LogKey(final boolean pRootLevel, final long pLevel, final long pSeq) {
+        mRootLevel = pRootLevel;
         mLevel = pLevel;
         mSeq = pSeq;
     }
@@ -77,6 +82,15 @@ public class LogKey {
         if (mSeq != other.mSeq)
             return false;
         return true;
+    }
+
+    /**
+     * Getter for mRootLevel.
+     * 
+     * @return the mRootLevel
+     */
+    public boolean isRootLevel() {
+        return mRootLevel;
     }
 
 }
