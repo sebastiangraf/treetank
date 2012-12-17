@@ -33,7 +33,6 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTIOException;
 
-import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseConfig;
 import com.sleepycat.je.DatabaseEntry;
@@ -76,7 +75,7 @@ public final class BerkeleyPersistenceLog implements ICachedLog {
     /**
      * Binding for the key, which is the nodepage.
      */
-    private final transient TupleBinding<Long> mKeyBinding;
+    private final transient LogKeyBinding mKeyBinding;
 
     /**
      * Binding for the value which is a page with related Nodes.
@@ -121,7 +120,7 @@ public final class BerkeleyPersistenceLog implements ICachedLog {
             dbConfig.setExclusiveCreate(true);
             mDatabase = mEnv.openDatabase(null, NAME, dbConfig);
 
-            mKeyBinding = TupleBinding.getPrimitiveBinding(Long.class);
+            mKeyBinding = new LogKeyBinding();
             mValueBinding = new NodePageContainerBinding(pNodeFac);
 
         } catch (final DatabaseException exc) {
@@ -134,7 +133,7 @@ public final class BerkeleyPersistenceLog implements ICachedLog {
      * {@inheritDoc}
      */
     @Override
-    public void put(final long mKey, final NodePageContainer mPage) throws TTIOException {
+    public void put(final LogKey mKey, final NodePageContainer mPage) throws TTIOException {
         final DatabaseEntry valueEntry = new DatabaseEntry();
         final DatabaseEntry keyEntry = new DatabaseEntry();
 
@@ -177,7 +176,7 @@ public final class BerkeleyPersistenceLog implements ICachedLog {
      * {@inheritDoc}
      */
     @Override
-    public NodePageContainer get(final long mKey) throws TTIOException {
+    public NodePageContainer get(final LogKey mKey) throws TTIOException {
         final DatabaseEntry valueEntry = new DatabaseEntry();
         final DatabaseEntry keyEntry = new DatabaseEntry();
         mKeyBinding.objectToEntry(mKey, keyEntry);

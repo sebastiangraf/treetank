@@ -27,8 +27,6 @@
 
 package org.treetank.page;
 
-import org.treetank.access.PageWriteTrx;
-import org.treetank.exception.TTException;
 import org.treetank.page.interfaces.IReferencePage;
 import org.treetank.page.interfaces.IRevisionPage;
 
@@ -109,13 +107,6 @@ public final class RevisionRootPage implements IRevisionPage, IReferencePage {
         builder.append(mRevision);
         builder.append("]");
         return builder.toString();
-    }
-
-    @Override
-    public void commit(PageWriteTrx paramState) throws TTException {
-        for (final long reference : getReferenceKeys()) {
-            paramState.commit(reference);
-        }
     }
 
     @Override

@@ -39,21 +39,24 @@ public class CacheTestHelper {
 
     private final static int VERSIONSTORESTORE = 100;
 
-    protected static NodePage[][] PAGES;
+    protected static NodePage[][][] PAGES;
 
     public static void setUp(final ICachedLog cache) throws TTException {
         // Be sure to store more pages as defined in the RAMCache and to be reproduced by the versions
-        PAGES = new NodePage[LRUCache.CACHE_CAPACITY + 1][VERSIONSTORESTORE + 1];
+        PAGES =
+            new NodePage[LRUCache.CACHE_CAPACITY / 2 + 1][LRUCache.CACHE_CAPACITY / 5 + 1][VERSIONSTORESTORE + 1];
         for (int i = 0; i < PAGES.length; i++) {
-            final NodePage page = new NodePage(i);
-            final NodePage[] revs = new NodePage[VERSIONSTORESTORE + 1];
+            for (int j = 0; j < PAGES[i].length; j++) {
+                final NodePage page = new NodePage(i);
+                final NodePage[] revs = new NodePage[VERSIONSTORESTORE + 1];
 
-            for (int j = 0; j < VERSIONSTORESTORE; j++) {
-                PAGES[i][j + 1] = new NodePage(i);
-                revs[j] = PAGES[i][j + 1];
+                for (int k = 0; k < VERSIONSTORESTORE; k++) {
+                    PAGES[i][j][k + 1] = new NodePage(i);
+                    revs[k] = PAGES[i][j][k + 1];
+                }
+                PAGES[i][j][0] = page;
+                cache.put(new LogKey(i, j), new NodePageContainer(page, new NodePage(page.getPageKey())));
             }
-            PAGES[i][0] = page;
-            cache.put(i, new NodePageContainer(page, new NodePage(page.getPageKey())));
         }
     }
 

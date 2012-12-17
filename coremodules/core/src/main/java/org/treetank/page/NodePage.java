@@ -28,9 +28,7 @@ package org.treetank.page;
 
 import java.util.Arrays;
 
-import org.treetank.access.PageWriteTrx;
 import org.treetank.api.INode;
-import org.treetank.exception.TTException;
 import org.treetank.page.interfaces.IPage;
 
 import com.google.common.io.ByteArrayDataOutput;
@@ -143,10 +141,6 @@ public class NodePage implements IPage {
             return false;
         }
         return true;
-    }
-
-    @Override
-    public void commit(PageWriteTrx paramState) throws TTException {
     }
 
     /**

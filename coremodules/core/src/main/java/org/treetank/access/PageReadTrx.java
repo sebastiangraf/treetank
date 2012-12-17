@@ -45,7 +45,6 @@ import org.treetank.page.NodePage;
 import org.treetank.page.NodePage.DeletedNode;
 import org.treetank.page.RevisionRootPage;
 import org.treetank.page.UberPage;
-import org.treetank.page.interfaces.IPage;
 import org.treetank.revisioning.IRevisioning;
 
 import com.google.common.cache.Cache;
@@ -78,8 +77,11 @@ public class PageReadTrx implements IPageReadTrx {
     /** Cached name page of this revision. */
     private final NamePage mNamePage;
 
-    /** Internal reference to cache. */
-    protected final Cache<Long, IPage> mCache;
+    /**
+     * Internal reference to cache. This cache takes the sequential numbering of the pages instead of the
+     * absolute, storage-relevant numbering.
+     */
+    protected final Cache<Long, NodePage> mNodePageCache;
 
     /** Configuration of the session */
     protected final ISession mSession;
@@ -103,7 +105,7 @@ public class PageReadTrx implements IPageReadTrx {
      */
     protected PageReadTrx(final ISession pSession, final UberPage pUberpage, final long pRevKey,
         final IBackendReader pReader) throws TTException {
-        mCache = CacheBuilder.newBuilder().maximumSize(10000).build();
+        mNodePageCache = CacheBuilder.newBuilder().maximumSize(10000).build();
         mSession = pSession;
         mPageReader = pReader;
         mUberPage = pUberpage;
@@ -134,7 +136,7 @@ public class PageReadTrx implements IPageReadTrx {
         // Calculate page and node part for given nodeKey.
         final long seqNodePageKey = nodePageKey(pNodeKey);
         final int nodePageOffset = nodePageOffset(pNodeKey);
-        NodePage page = (NodePage)mCache.getIfPresent(seqNodePageKey);
+        NodePage page = (NodePage)mNodePageCache.getIfPresent(seqNodePageKey);
 
         if (page == null) {
             final NodePage[] revs = getSnapshotPages(seqNodePageKey);
@@ -145,7 +147,7 @@ public class PageReadTrx implements IPageReadTrx {
             // Build up the complete page.
             final IRevisioning revision = mSession.getConfig().mRevision;
             page = revision.combinePages(revs);
-            mCache.put(seqNodePageKey, page);
+            mNodePageCache.put(seqNodePageKey, page);
         }
         final INode returnVal = page.getNode(nodePageOffset);
         return checkItemIfDeleted(returnVal);
@@ -172,7 +174,7 @@ public class PageReadTrx implements IPageReadTrx {
     public void close() throws TTIOException {
         mSession.deregisterPageTrx(this);
         mPageReader.close();
-        mCache.invalidateAll();
+        mNodePageCache.invalidateAll();
         mClose = true;
     }
 
@@ -201,7 +203,7 @@ public class PageReadTrx implements IPageReadTrx {
         builder.append(", mRootPage=");
         builder.append(mRootPage);
         builder.append(", mCache=");
-        builder.append(mCache);
+        builder.append(mNodePageCache);
         builder.append(", mClose=");
         builder.append(mClose);
         builder.append("]");
@@ -270,7 +272,7 @@ public class PageReadTrx implements IPageReadTrx {
                 dereferenceLeafOfTree(
                     rootPage.getReferenceKeys()[RevisionRootPage.INDIRECT_REFERENCE_OFFSET], pSeqNodePageKey);
             if (nodeKey > 0 && !nodePageKeys.contains(nodeKey)) {
-                NodePage page = (NodePage)mCache.getIfPresent(nodeKey);
+                NodePage page = (NodePage)mNodePageCache.getIfPresent(nodeKey);
                 if (page == null) {
                     page = (NodePage)mPageReader.read(nodeKey);
                     nodePages.add(page);
@@ -285,26 +287,6 @@ public class PageReadTrx implements IPageReadTrx {
         }
 
         return nodePages.toArray(new NodePage[nodePages.size()]);
-
-    }
-
-    /**
-     * Dereference indirect page reference.
-     * 
-     * @param pKey
-     *            key to dereference.
-     * @return Dereferenced page.
-     * 
-     * @throws TTIOException
-     *             if something odd happens within the creation process.
-     */
-    protected final IndirectPage dereferenceIndirectPage(final long pKey) throws TTException {
-        IndirectPage page = (IndirectPage)mCache.getIfPresent(pKey);
-        // if page is not in cache, read it from the storage and cache it
-        if (page == null) {
-            page = (IndirectPage)mPageReader.read(pKey);
-        }
-        return page;
 
     }
 
@@ -332,7 +314,7 @@ public class PageReadTrx implements IPageReadTrx {
         for (int level = 0; level < IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level++) {
             offset = (int)(levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level]);
             levelKey -= offset << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
-            pageKey = dereferenceIndirectPage(pageKey).getReferenceKeys()[offset];
+            pageKey = ((IndirectPage)mPageReader.read(pageKey)).getReferenceKeys()[offset];
         }
 
         // Return reference to leaf of indirect tree.

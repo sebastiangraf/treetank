@@ -27,8 +27,6 @@
 
 package org.treetank.page;
 
-import org.treetank.access.PageWriteTrx;
-import org.treetank.exception.TTException;
 import org.treetank.page.interfaces.IReferencePage;
 
 import com.google.common.io.ByteArrayDataOutput;
@@ -43,9 +41,9 @@ import com.google.common.io.ByteStreams;
  */
 public final class UberPage implements IReferencePage {
 
-    /**Constant to determine the offset of the IndirectPage.*/
+    /** Constant to determine the offset of the IndirectPage. */
     public static final int INDIRECT_REFERENCE_OFFSET = 0;
-    
+
     /** Number of revisions. */
     private final long mRevisionCount;
 
@@ -112,12 +110,6 @@ public final class UberPage implements IReferencePage {
         builder.append(mReferenceKeys[0]);
         return builder.toString();
     }
-
-    @Override
-    public void commit(PageWriteTrx paramState) throws TTException {
-        paramState.commit(mReferenceKeys[0]);
-    }
-
 
     /**
      * {@inheritDoc}

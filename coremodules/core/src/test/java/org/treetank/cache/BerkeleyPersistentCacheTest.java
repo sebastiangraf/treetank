@@ -75,9 +75,11 @@ public class BerkeleyPersistentCacheTest {
     @Test
     public void test() throws TTIOException {
         for (int i = 0; i < CacheTestHelper.PAGES.length; i++) {
-            final NodePageContainer cont = cache.get(i);
-            final IPage current = cont.getComplete();
-            assertEquals(CacheTestHelper.PAGES[i][0], current);
+            for (int j = 0; j < CacheTestHelper.PAGES[i].length; j++) {
+                final NodePageContainer cont = cache.get(new LogKey(i, j));
+                final IPage current = cont.getComplete();
+                assertEquals(CacheTestHelper.PAGES[i][0], current);
+            }
 
         }
         cache.clear();

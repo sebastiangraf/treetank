@@ -53,12 +53,14 @@ public class LRUCacheTest {
     @Test
     public void test() throws TTIOException {
         for (int i = 1; i < CacheTestHelper.PAGES.length; i++) {
-            final NodePageContainer cont = cache.get(i);
-            final IPage current = cont.getComplete();
-            assertEquals(CacheTestHelper.PAGES[i][0], current);
+            for (int j = 1; j < CacheTestHelper.PAGES[i].length; j++) {
+                final NodePageContainer cont = cache.get(new LogKey(i, j));
+                final IPage current = cont.getComplete();
+                assertEquals(CacheTestHelper.PAGES[i][j][0], current);
+            }
         }
 
-        final NodePageContainer page = cache.get(0);
+        final NodePageContainer page = cache.get(new LogKey(0, 0));
         assertNull(page);
 
     }
@@ -77,12 +79,12 @@ public class LRUCacheTest {
         }
 
         @Override
-        public NodePageContainer get(final long mKey) {
+        public NodePageContainer get(final LogKey mKey) {
             return null;
         }
 
         @Override
-        public void put(final long mKey, final NodePageContainer mPage) {
+        public void put(final LogKey mKey, final NodePageContainer mPage) {
             // Not used over here
         }
 

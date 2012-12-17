@@ -27,8 +27,6 @@
 
 package org.treetank.page;
 
-import org.treetank.access.PageWriteTrx;
-import org.treetank.exception.TTException;
 import org.treetank.page.interfaces.IReferencePage;
 
 import com.google.common.io.ByteArrayDataOutput;
@@ -58,13 +56,6 @@ public final class IndirectPage implements IReferencePage {
     public IndirectPage(final long pPageKey) {
         mPageKey = pPageKey;
         mReferenceKeys = new long[IConstants.INP_REFERENCE_COUNT];
-    }
-
-    @Override
-    public void commit(PageWriteTrx paramState) throws TTException {
-        for (final long reference : getReferenceKeys()) {
-            paramState.commit(reference);
-        }
     }
 
     /**

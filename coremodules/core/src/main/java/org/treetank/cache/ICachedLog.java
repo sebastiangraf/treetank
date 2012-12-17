@@ -56,7 +56,7 @@ public interface ICachedLog {
      * @throws TTIOException
      *             if get fails
      */
-    NodePageContainer get(final long mKey) throws TTIOException;
+    NodePageContainer get(final LogKey mKey) throws TTIOException;
 
     /**
      * Putting an {@link NodePageContainer} into the cache with a corresponding
@@ -69,6 +69,6 @@ public interface ICachedLog {
      * @throws TTIOException
      *             if put fails
      */
-    void put(final long mKey, final NodePageContainer mPage) throws TTIOException;
+    void put(final LogKey mKey, final NodePageContainer mPage) throws TTIOException;
 
 }

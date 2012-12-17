@@ -28,8 +28,8 @@
 package org.treetank.cache;
 
 import org.treetank.api.INodeFactory;
-import org.treetank.page.NodePage;
 import org.treetank.page.PageFactory;
+import org.treetank.page.interfaces.IPage;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
@@ -63,8 +63,8 @@ public class NodePageContainerBinding extends TupleBinding<NodePageContainer> {
         data.readFully(completeBytes);
         data.readFully(modifiedBytes);
 
-        final NodePage current = (NodePage)mFac.deserializePage(completeBytes);
-        final NodePage modified = (NodePage)mFac.deserializePage(modifiedBytes);
+        final IPage current = mFac.deserializePage(completeBytes);
+        final IPage modified = mFac.deserializePage(modifiedBytes);
         return new NodePageContainer(current, modified);
     }
 
