@@ -325,7 +325,7 @@ public final class Storage implements IStorage {
 
             // reading first reference and instantiate this.
             final IBackendReader backendReader = config.mStorage.getReader();
-            UberPage page = (UberPage)backendReader.read(0);
+            UberPage page = backendReader.readUber();
             backendReader.close();
 
             returnVal = new Session(this, config, pSessionConf, page);

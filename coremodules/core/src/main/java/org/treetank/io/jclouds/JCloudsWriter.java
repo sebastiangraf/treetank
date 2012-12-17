@@ -12,6 +12,7 @@ import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendWriter;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.page.PageFactory;
+import org.treetank.page.UberPage;
 import org.treetank.page.interfaces.IPage;
 
 /**
@@ -55,6 +56,14 @@ public class JCloudsWriter implements IBackendWriter {
     @Override
     public void close() throws TTIOException {
         mReader.close();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public UberPage readUber() throws TTException {
+        return mReader.readUber();
     }
 
 }

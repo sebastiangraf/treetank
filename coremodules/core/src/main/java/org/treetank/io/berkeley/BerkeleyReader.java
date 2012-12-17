@@ -28,8 +28,10 @@
 package org.treetank.io.berkeley;
 
 import org.treetank.access.Storage;
+import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
+import org.treetank.page.UberPage;
 import org.treetank.page.interfaces.IPage;
 
 import com.sleepycat.bind.tuple.TupleBinding;
@@ -95,6 +97,31 @@ public final class BerkeleyReader implements IBackendReader {
      */
     @Override
     public void close() throws TTIOException {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public UberPage readUber() throws TTException {
+        final DatabaseEntry valueEntry = new DatabaseEntry();
+        final DatabaseEntry keyEntry = new DatabaseEntry();
+        TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(-1l, keyEntry);
+
+        try {
+            // final OperationStatus status = mDatabase.get(mTxn, keyEntry, valueEntry, LockMode.DEFAULT);
+            final OperationStatus status = mDatabase.get(null, keyEntry, valueEntry, LockMode.DEFAULT);
+            long key = 0;
+            if (status == OperationStatus.SUCCESS) {
+                key = TupleBinding.getPrimitiveBinding(Long.class).entryToObject(valueEntry);
+            }
+            final UberPage page = (UberPage)read(key);
+
+            return page;
+        } catch (final DatabaseException e) {
+            throw new TTIOException(e);
+        }
+
     }
 
 }

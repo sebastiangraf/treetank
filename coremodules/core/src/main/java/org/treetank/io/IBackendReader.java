@@ -27,8 +27,9 @@
 
 package org.treetank.io;
 
-import org.treetank.exception.TTByteHandleException;
+import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
+import org.treetank.page.UberPage;
 import org.treetank.page.interfaces.IPage;
 
 /**
@@ -45,10 +46,18 @@ public interface IBackendReader {
      * @param pKey
      *            the reference for the page to be determined
      * @return a {@link IPage} as the base for a page
-     * @throws TTIOException
+     * @throws TTException
      *             if something bad happens during read
      */
-    IPage read(final long pKey) throws TTIOException, TTByteHandleException;
+    IPage read(final long pKey) throws TTException;
+
+    /**
+     * Reading the UberPage
+     * 
+     * @return the most recent UberPage
+     * @throws TTException
+     */
+    UberPage readUber() throws TTException;
 
     /**
      * Closing the storage.

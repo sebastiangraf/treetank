@@ -37,6 +37,7 @@ import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.page.PageFactory;
+import org.treetank.page.UberPage;
 import org.treetank.page.interfaces.IPage;
 
 /**
@@ -119,6 +120,22 @@ public final class FileReader implements IBackendReader {
         } catch (final IOException exc) {
             throw new TTIOException(exc);
 
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public UberPage readUber() throws TTException {
+        try {
+            // Read primary beacon.
+            mFile.seek(0);
+            long key = mFile.readLong();
+            final UberPage page = (UberPage)read(key);
+            return page;
+        } catch (final IOException exc) {
+            throw new TTIOException(exc);
         }
     }
 

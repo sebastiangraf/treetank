@@ -28,8 +28,10 @@
 package org.treetank.io.berkeley;
 
 import org.treetank.access.Storage;
+import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendWriter;
+import org.treetank.page.UberPage;
 import org.treetank.page.interfaces.IPage;
 
 import com.sleepycat.bind.tuple.TupleBinding;
@@ -113,6 +115,14 @@ public final class BerkeleyWriter implements IBackendWriter {
      */
     @Override
     public void close() throws TTIOException {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public UberPage readUber() throws TTException {
+        return mReader.readUber();
     }
 
 }
