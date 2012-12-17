@@ -271,6 +271,8 @@ public final class PageWriteTrx implements IPageWriteTrx {
 
         final UberPage uberPage = mDelegate.getUberPage();
 
+        mPageWriter.writeUberPage(uberPage);
+
         Iterator<Map.Entry<LogKey, NodePageContainer>> entries = mLog.getIterator();
         while (entries.hasNext()) {
             Map.Entry<LogKey, NodePageContainer> next = entries.next();

@@ -418,26 +418,26 @@ public final class Storage implements IStorage {
      */
     private static void bootstrap(final Storage pStorage, final ResourceConfiguration pResourceConf)
         throws TTException {
-        UberPage uberPage = new UberPage(0, 0, 1);
-
         ICachedLog mLog =
             new LRUCache(new BerkeleyPersistenceLog(new File(pResourceConf.mProperties
                 .getProperty(org.treetank.access.conf.ContructorProps.STORAGEPATH)), pResourceConf.mNodeFac));
 
+        UberPage uberPage = new UberPage(0, 0, 1);
+        long newPageKey = uberPage.incrementPageCounter();
+        uberPage.setReferenceKey(UberPage.INDIRECT_REFERENCE_OFFSET, newPageKey);
+
         // --- Create revision tree
         // ------------------------------------------------
-
         // Initialize revision tree to guarantee that there is a revision root
         // page.
-        IReferencePage page = uberPage;
-        long newPageKey = 0;
-        // Remaining levels.
+
+        IReferencePage page;
         for (int i = 0; i < IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i++) {
+            page = new IndirectPage(newPageKey);
             newPageKey = uberPage.incrementPageCounter();
-            page.setReferenceKey(UberPage.INDIRECT_REFERENCE_OFFSET, newPageKey);
+            page.setReferenceKey(0, newPageKey);
             LogKey key = new LogKey(true, i, 0);
             mLog.put(key, new NodePageContainer(page, page));
-            page = new IndirectPage(newPageKey);
         }
 
         page = new RevisionRootPage(newPageKey, 0, -1);
@@ -477,7 +477,9 @@ public final class Storage implements IStorage {
 
         IBackend storage = pResourceConf.mStorage;
         IBackendWriter writer = storage.getWriter();
-
+        
+        writer.writeUberPage(uberPage);
+        
         Iterator<Map.Entry<LogKey, NodePageContainer>> entries = mLog.getIterator();
         while (entries.hasNext()) {
             Map.Entry<LogKey, NodePageContainer> next = entries.next();
