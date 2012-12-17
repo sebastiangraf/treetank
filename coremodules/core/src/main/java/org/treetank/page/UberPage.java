@@ -68,9 +68,9 @@ public final class UberPage implements IReferencePage {
      */
     public UberPage(final long pPageKey, final long pRevisionCount, final long pPageCounter) {
         mRevisionCount = pRevisionCount;
-        // TODO This can be a single value only but first, kick out the PageReferences
         mReferenceKeys = new long[1];
         mPageKey = pPageKey;
+        mPageCounter = pPageCounter;
     }
 
     /**
@@ -104,10 +104,11 @@ public final class UberPage implements IReferencePage {
         StringBuilder builder = new StringBuilder();
         builder.append("UberPage [mPageKey=");
         builder.append(mPageKey);
-        builder.append("mRevisionCount=");
+        builder.append(", mRevisionCount=");
         builder.append(mRevisionCount);
         builder.append(", mReferenceKey=");
         builder.append(mReferenceKeys[0]);
+        builder.append("]" + "");
         return builder.toString();
     }
 

@@ -27,6 +27,8 @@
 
 package org.treetank.page;
 
+import java.util.Arrays;
+
 import org.treetank.page.interfaces.IReferencePage;
 import org.treetank.page.interfaces.IRevisionPage;
 
@@ -93,21 +95,6 @@ public final class RevisionRootPage implements IRevisionPage, IReferencePage {
         mMaxNodeKey += 1;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("RevisionRootPage [mPageKey");
-        builder.append(mPageKey);
-        builder.append(", mMaxNodeKey=");
-        builder.append(mMaxNodeKey);
-        builder.append(", mRevision=");
-        builder.append(mRevision);
-        builder.append("]");
-        return builder.toString();
-    }
 
     @Override
     public long getRevision() {
@@ -146,6 +133,24 @@ public final class RevisionRootPage implements IRevisionPage, IReferencePage {
     @Override
     public void setReferenceKey(int pIndex, long pKey) {
         mReferenceKeys[pIndex] = pKey;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("RevisionRootPage [mPageKey=");
+        builder.append(mPageKey);
+        builder.append(", mRevision=");
+        builder.append(mRevision);
+        builder.append(", mReferenceKeys=");
+        builder.append(Arrays.toString(mReferenceKeys));
+        builder.append(", mMaxNodeKey=");
+        builder.append(mMaxNodeKey);
+        builder.append("]");
+        return builder.toString();
     }
 
 }

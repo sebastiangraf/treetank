@@ -41,6 +41,11 @@ import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
+import org.treetank.cache.BerkeleyPersistenceLog;
+import org.treetank.cache.ICachedLog;
+import org.treetank.cache.LRUCache;
+import org.treetank.cache.LogKey;
+import org.treetank.cache.NodePageContainer;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTUsageException;
@@ -415,24 +420,40 @@ public final class Storage implements IStorage {
             new SessionConfiguration(pResourceConf.mProperties.getProperty(ContructorProps.RESOURCE), null);
         UberPage uberPage = new UberPage(0, 0, 1);
 
+        ICachedLog mLog =
+            new LRUCache(new BerkeleyPersistenceLog(new File(pResourceConf.mProperties
+                .getProperty(org.treetank.access.conf.ContructorProps.STORAGEPATH)), pResourceConf.mNodeFac));
+
         // --- Create revision tree
         // ------------------------------------------------
 
         // Initialize revision tree to guarantee that there is a revision root
         // page.
         IReferencePage page = uberPage;
-        long newPageKey;
+        long newPageKey = 0;
         // Remaining levels.
         for (int i = 0; i < IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i++) {
             newPageKey = uberPage.incrementPageCounter();
+            page.setReferenceKey(UberPage.INDIRECT_REFERENCE_OFFSET, newPageKey);
+            LogKey key = new LogKey(true, i, 0);
+            mLog.put(key, new NodePageContainer(page, page));
             page = new IndirectPage(newPageKey);
         }
 
-        newPageKey = uberPage.incrementPageCounter();
         page = new RevisionRootPage(newPageKey, 0, -1);
 
         newPageKey = uberPage.incrementPageCounter();
+        // establishing fresh NamePage
         NamePage namePage = new NamePage(newPageKey);
+        page.setReferenceKey(RevisionRootPage.NAME_REFERENCE_OFFSET, newPageKey);
+        LogKey key = new LogKey(false, -1, -1);
+        mLog.put(key, new NodePageContainer(namePage, namePage));
+
+        newPageKey = uberPage.incrementPageCounter();
+        IndirectPage indirectPage = new IndirectPage(newPageKey);
+        page.setReferenceKey(RevisionRootPage.INDIRECT_REFERENCE_OFFSET, newPageKey);
+        key = new LogKey(false, 0, 0);
+        mLog.put(key, new NodePageContainer(page, page));
 
         // --- Create node tree
         // ----------------------------------------------------
@@ -440,12 +461,19 @@ public final class Storage implements IStorage {
         // Initialize revision tree to guarantee that there is a revision root
         // page.
 
+        page = indirectPage;
+
         for (int i = 0; i < IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i++) {
             newPageKey = uberPage.incrementPageCounter();
+            page.setReferenceKey(0, newPageKey);
+            key = new LogKey(false, i, 0);
+            mLog.put(key, new NodePageContainer(page, page));
             page = new IndirectPage(newPageKey);
         }
-        newPageKey = uberPage.incrementPageCounter();
+
         final NodePage ndp = new NodePage(newPageKey);
+        key = new LogKey(false, IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length, 0);
+        mLog.put(key, new NodePageContainer(ndp, ndp));
 
         Session session = new Session(pStorage, pResourceConf, config, uberPage);
         IPageWriteTrx trx = session.beginPageWriteTransaction(0);

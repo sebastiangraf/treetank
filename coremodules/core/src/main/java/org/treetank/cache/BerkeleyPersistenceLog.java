@@ -193,4 +193,20 @@ public final class BerkeleyPersistenceLog implements ICachedLog {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("BerkeleyPersistenceLog [mPlace=");
+        builder.append(mPlace);
+        builder.append(", mDatabase=");
+        builder.append(mDatabase);
+        builder.append(", mEnv=");
+        builder.append(mEnv);
+        builder.append("]");
+        return builder.toString();
+    }
+
 }

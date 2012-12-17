@@ -93,4 +93,20 @@ public class LogKey {
         return mRootLevel;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("LogKey [mRootLevel=");
+        builder.append(mRootLevel);
+        builder.append(", mLevel=");
+        builder.append(mLevel);
+        builder.append(", mSeq=");
+        builder.append(mSeq);
+        builder.append("]");
+        return builder.toString();
+    }
+
 }

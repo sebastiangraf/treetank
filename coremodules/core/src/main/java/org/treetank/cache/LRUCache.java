@@ -143,6 +143,7 @@ public final class LRUCache implements ICachedLog {
         builder.append("First Cache: ");
         builder.append(this.map.toString());
         builder.append("\n");
+        builder.append("\n");
         builder.append("Second Cache: ");
         builder.append(this.mSecondCache.toString());
         return builder.toString();
