@@ -98,9 +98,6 @@ public class NodeWriteTrx implements INodeWriteTrx {
     /** Delegate for the read access. */
     private NodeReadTrx mDelegate;
 
-    /** Access to the page transaction. */
-    private IPageWriteTrx mPageWtx;
-
     /**
      * Constructor.
      * 
@@ -120,7 +117,6 @@ public class NodeWriteTrx implements INodeWriteTrx {
         mHashKind = kind;
         mDelegate = new NodeReadTrx(pPageWriteTrx);
         mSession = pSession;
-        mPageWtx = pPageWriteTrx;
     }
 
     /**
@@ -977,7 +973,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      */
     @Override
     public IPageWriteTrx getPageWtx() throws TTException {
-        return mPageWtx;
+        return getPageTransaction();
     }
 
     /**
@@ -992,8 +988,6 @@ public class NodeWriteTrx implements INodeWriteTrx {
         builder.append(mHashKind);
         builder.append(", mDelegate=");
         builder.append(mDelegate);
-        builder.append(", mPageWtx=");
-        builder.append(mPageWtx);
         builder.append("]");
         return builder.toString();
     }

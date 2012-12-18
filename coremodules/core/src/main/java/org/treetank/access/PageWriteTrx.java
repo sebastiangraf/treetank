@@ -292,7 +292,15 @@ public final class PageWriteTrx implements IPageWriteTrx {
 
     public void commit() throws TTException {
 
-        final UberPage uberPage = mDelegate.getUberPage();
+        final UberPage uberPage =
+            new UberPage(mDelegate.getUberPage().getPageKey(), mDelegate.getUberPage().getRevisionNumber(),
+                mDelegate.getUberPage().getPageCounter());
+        
+        
+//        uberPage.setReferenceKey(UberPage.INDIRECT_REFERENCE_OFFSET, mLog.get(pKey))
+        
+        
+        mDelegate.getUberPage();
 
         mPageWriter.writeUberPage(uberPage);
 
