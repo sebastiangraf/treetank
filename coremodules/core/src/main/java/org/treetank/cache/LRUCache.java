@@ -46,7 +46,7 @@ public final class LRUCache implements ICachedLog {
     /**
      * Capacity of the cache. Number of stored pages
      */
-    static final int CACHE_CAPACITY = 1;
+    static final int CACHE_CAPACITY = 100;
 
     /**
      * The collection to hold the maps.
@@ -92,10 +92,10 @@ public final class LRUCache implements ICachedLog {
     /**
      * {@inheritDoc}
      */
-    public NodePageContainer get(final LogKey mKey) throws TTIOException {
-        NodePageContainer page = map.get(mKey);
+    public NodePageContainer get(final LogKey pKey) throws TTIOException {
+        NodePageContainer page = map.get(pKey);
         if (page == null) {
-            page = mSecondCache.get(mKey);
+            page = mSecondCache.get(pKey);
         }
         return page;
     }
@@ -103,8 +103,8 @@ public final class LRUCache implements ICachedLog {
     /**
      * {@inheritDoc}
      */
-    public void put(final LogKey mKey, final NodePageContainer mValue) {
-        map.put(mKey, mValue);
+    public void put(final LogKey pKey, final NodePageContainer pValue) {
+        map.put(pKey, pValue);
     }
 
     /**

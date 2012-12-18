@@ -73,8 +73,8 @@ public final class PageWriteTrx implements IPageWriteTrx {
     /** Last reference to the actual revRoot. */
     private final RevisionRootPage mNewRoot;
 
-    /** Last reference to the last namePage. */
-    private final NamePage mNewName;
+    /** Last reference to the actual namePage. */
+    private final NamePage mNamePage;
 
     /** Delegate for read access. */
     private PageReadTrx mDelegate;
@@ -104,9 +104,33 @@ public final class PageWriteTrx implements IPageWriteTrx {
             new LRUCache(new BerkeleyPersistenceLog(new File(pSession.getConfig().mProperties
                 .getProperty(org.treetank.access.conf.ContructorProps.STORAGEPATH)),
                 pSession.getConfig().mNodeFac));
-        mNewRoot = preparePreviousRevisionRootPage(pRepresentRev);
-        mNewName = new NamePage(mDelegate.getUberPage().incrementPageCounter());
-        mNewRoot.setReferenceKey(RevisionRootPage.NAME_REFERENCE_OFFSET, mNewName.getPageKey());
+
+        // Get previous revision root page..
+        final RevisionRootPage previousRevRoot =
+            (RevisionRootPage)mPageWriter.read(mDelegate.dereferenceLeafOfTree(mDelegate.getUberPage()
+                .getReferenceKeys()[UberPage.INDIRECT_REFERENCE_OFFSET], pRepresentRev));
+        // ...and using this data to initialize a fresh revision root including the pointers.
+        mNewRoot =
+            new RevisionRootPage(mDelegate.getUberPage().incrementPageCounter(), pRepresentRev + 1,
+                previousRevRoot.getMaxNodeKey());
+        mNewRoot.setReferenceKey(RevisionRootPage.INDIRECT_REFERENCE_OFFSET, previousRevRoot
+            .getReferenceKeys()[RevisionRootPage.INDIRECT_REFERENCE_OFFSET]);
+
+        // Prepare indirect tree to hold reference to prepared revision root
+        // nodePageReference.
+        LogKey indirectKey =
+            preparePathToLeaf(true,
+                mDelegate.getUberPage().getReferenceKeys()[UberPage.INDIRECT_REFERENCE_OFFSET], mDelegate
+                    .getUberPage().getRevisionNumber());
+        NodePageContainer indirectContainer = mLog.get(indirectKey);
+        int offset = nodePageOffset(mDelegate.getUberPage().getRevisionNumber());
+        ((IndirectPage)indirectContainer.getModified()).setReferenceKey(offset, mNewRoot.getPageKey());
+        mLog.put(indirectKey, indirectContainer);
+
+        // Setting up a new namepage
+        mNamePage = new NamePage(mDelegate.getUberPage().incrementPageCounter());
+        mNewRoot.setReferenceKey(RevisionRootPage.NAME_REFERENCE_OFFSET, mNamePage.getPageKey());
+
     }
 
     /**
@@ -238,10 +262,10 @@ public final class PageWriteTrx implements IPageWriteTrx {
         String returnVal;
         // if currentNamePage == null -> state was commited and no
         // prepareNodepage was invoked yet
-        if (mNewName.getName(pNameKey) == null) {
+        if (mNamePage.getName(pNameKey) == null) {
             returnVal = mDelegate.getName(pNameKey);
         } else {
-            returnVal = mNewName.getName(pNameKey);
+            returnVal = mNamePage.getName(pNameKey);
         }
         return returnVal;
 
@@ -260,8 +284,8 @@ public final class PageWriteTrx implements IPageWriteTrx {
         final String string = (pName == null ? "" : pName);
         final int nameKey = NamePageHash.generateHashForString(string);
 
-        if (mNewName.getName(nameKey) == null) {
-            mNewName.setName(nameKey, string);
+        if (mNamePage.getName(nameKey) == null) {
+            mNamePage.setName(nameKey, string);
         }
         return nameKey;
     }
@@ -329,38 +353,6 @@ public final class PageWriteTrx implements IPageWriteTrx {
         return container;
     }
 
-    private RevisionRootPage preparePreviousRevisionRootPage(final long pRepresentRev) throws TTException {
-        // Get previous revision root page..
-        final RevisionRootPage previousRevRoot =
-            (RevisionRootPage)mPageWriter.read(mDelegate.dereferenceLeafOfTree(mDelegate.getUberPage()
-                .getReferenceKeys()[UberPage.INDIRECT_REFERENCE_OFFSET], pRepresentRev));
-        // ...and using this data to initialize a fresh revision root including the pointers.
-        final RevisionRootPage revisionRootPage =
-            new RevisionRootPage(mDelegate.getUberPage().incrementPageCounter(), pRepresentRev + 1,
-                previousRevRoot.getMaxNodeKey());
-        revisionRootPage.setReferenceKey(RevisionRootPage.INDIRECT_REFERENCE_OFFSET, previousRevRoot
-            .getReferenceKeys()[RevisionRootPage.INDIRECT_REFERENCE_OFFSET]);
-
-        // Prepare indirect tree to hold reference to prepared revision root
-        // nodePageReference.
-        LogKey indirectKey =
-            preparePathToLeaf(true,
-                mDelegate.getUberPage().getReferenceKeys()[UberPage.INDIRECT_REFERENCE_OFFSET], mDelegate
-                    .getUberPage().getRevisionNumber());
-        NodePageContainer indirectContainer = mLog.get(indirectKey);
-        int offset = nodePageOffset(mDelegate.getUberPage().getRevisionNumber());
-        ((IndirectPage)indirectContainer.getModified())
-            .setReferenceKey(offset, revisionRootPage.getPageKey());
-        mLog.put(indirectKey, indirectContainer);
-
-        LogKey revKey = new LogKey(true, IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length, offset);
-        NodePageContainer revRootContainer = new NodePageContainer(revisionRootPage, revisionRootPage);
-        mLog.put(revKey, revRootContainer);
-
-        // Return prepared revision root nodePageReference.
-        return revisionRootPage;
-    }
-
     /**
      * Getting a NodePageContainer containing the last IndirectPage with the reference to any new/modified
      * page.
@@ -373,7 +365,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
      *            RevisionRootPages) or from a RevisionRootPage (related to new NodePages).
      * @param pSeqPageKey
      *            the key of the page mapped to the layer
-     * @return a LogKey, containing the pointer to the last IndirectPage with the suitable pointer.
+     * @return the key the container representing the last level
      * @throws TTException
      */
     private LogKey
@@ -387,7 +379,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
         LogKey key = null;
 
         // Iterate through all levels.
-        for (int level = 0; level < IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length - 1; level++) {
+        for (int level = 0; level < IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level++) {
             offset = (int)(levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level]);
             levelKey -= offset << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
 

@@ -17,11 +17,9 @@ import org.treetank.access.conf.SessionConfiguration.ISessionConfigurationFactor
 import org.treetank.api.INodeFactory;
 import org.treetank.io.IBackend;
 import org.treetank.io.IBackend.IBackendFactory;
-import org.treetank.io.berkeley.BerkeleyStorage;
 import org.treetank.io.bytepipe.ByteHandlerPipeline;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.io.bytepipe.Zipper;
-import org.treetank.io.file.FileStorage;
 import org.treetank.io.jclouds.JCloudsStorage;
 import org.treetank.page.DumbNodeFactory;
 import org.treetank.revisioning.Differential;

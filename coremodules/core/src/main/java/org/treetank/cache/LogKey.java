@@ -54,37 +54,6 @@ public class LogKey {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (int)(mLevel ^ (mLevel >>> 32));
-        result = prime * result + (int)(mSeq ^ (mSeq >>> 32));
-        return result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        LogKey other = (LogKey)obj;
-        if (mLevel != other.mLevel)
-            return false;
-        if (mSeq != other.mSeq)
-            return false;
-        return true;
-    }
-
-    /**
      * Getter for mRootLevel.
      * 
      * @return the mRootLevel
@@ -107,6 +76,40 @@ public class LogKey {
         builder.append(mSeq);
         builder.append("]");
         return builder.toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (int)(mLevel ^ (mLevel >>> 32));
+        result = prime * result + (mRootLevel ? 1231 : 1237);
+        result = prime * result + (int)(mSeq ^ (mSeq >>> 32));
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        LogKey other = (LogKey)obj;
+        if (mLevel != other.mLevel)
+            return false;
+        if (mRootLevel != other.mRootLevel)
+            return false;
+        if (mSeq != other.mSeq)
+            return false;
+        return true;
     }
 
 }
