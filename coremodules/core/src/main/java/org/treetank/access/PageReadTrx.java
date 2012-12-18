@@ -43,6 +43,7 @@ import org.treetank.page.IndirectPage;
 import org.treetank.page.NamePage;
 import org.treetank.page.NodePage;
 import org.treetank.page.NodePage.DeletedNode;
+import org.treetank.page.interfaces.IReferencePage;
 import org.treetank.page.RevisionRootPage;
 import org.treetank.page.UberPage;
 import org.treetank.revisioning.IRevisioning;
@@ -111,7 +112,7 @@ public class PageReadTrx implements IPageReadTrx {
         mUberPage = pUberpage;
         mRootPage =
             (RevisionRootPage)mPageReader.read(dereferenceLeafOfTree(
-                mUberPage.getReferenceKeys()[UberPage.INDIRECT_REFERENCE_OFFSET], pRevKey));
+                mUberPage.getReferenceKeys()[IReferencePage.GUARANTEED_INDIRECT_OFFSET], pRevKey));
         mNamePage =
             (NamePage)mPageReader.read(mRootPage.getReferenceKeys()[RevisionRootPage.NAME_REFERENCE_OFFSET]);
         mClose = false;
@@ -266,11 +267,11 @@ public class PageReadTrx implements IPageReadTrx {
         for (long i = mRootPage.getRevision(); i >= 0; i--) {
             RevisionRootPage rootPage =
                 (RevisionRootPage)mPageReader.read(dereferenceLeafOfTree(
-                    mUberPage.getReferenceKeys()[UberPage.INDIRECT_REFERENCE_OFFSET], i));
+                    mUberPage.getReferenceKeys()[IReferencePage.GUARANTEED_INDIRECT_OFFSET], i));
             // Searching for the related NodePage within all referenced pages.
             final long nodeKey =
                 dereferenceLeafOfTree(
-                    rootPage.getReferenceKeys()[RevisionRootPage.INDIRECT_REFERENCE_OFFSET], pSeqNodePageKey);
+                    rootPage.getReferenceKeys()[IReferencePage.GUARANTEED_INDIRECT_OFFSET], pSeqNodePageKey);
             if (nodeKey > 0 && !nodePageKeys.contains(nodeKey)) {
                 NodePage page = (NodePage)mNodePageCache.getIfPresent(nodeKey);
                 if (page == null) {

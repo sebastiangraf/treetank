@@ -43,6 +43,7 @@ import org.treetank.io.IBackend;
 import org.treetank.io.IBackendWriter;
 import org.treetank.io.IOUtils;
 import org.treetank.page.UberPage;
+import org.treetank.page.interfaces.IReferencePage;
 
 /**
  * <h1>Session</h1>
@@ -116,8 +117,8 @@ public final class Session implements ISession {
         UberPage newUber =
             new UberPage(mLastCommittedUberPage.incrementPageCounter(), mLastCommittedUberPage
                 .getRevisionNumber() + 1, mLastCommittedUberPage.getPageCounter());
-        newUber.setReferenceKey(UberPage.INDIRECT_REFERENCE_OFFSET,
-            mLastCommittedUberPage.getReferenceKeys()[UberPage.INDIRECT_REFERENCE_OFFSET]);
+        newUber.setReferenceKey(IReferencePage.GUARANTEED_INDIRECT_OFFSET,
+            mLastCommittedUberPage.getReferenceKeys()[IReferencePage.GUARANTEED_INDIRECT_OFFSET]);
         final IPageWriteTrx trx = new PageWriteTrx(this, newUber, backendWriter, mRepresentRevision);
         mPageTrxs.add(trx);
 

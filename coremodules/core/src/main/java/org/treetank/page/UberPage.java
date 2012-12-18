@@ -41,9 +41,6 @@ import com.google.common.io.ByteStreams;
  */
 public final class UberPage implements IReferencePage {
 
-    /** Constant to determine the offset of the IndirectPage. */
-    public static final int INDIRECT_REFERENCE_OFFSET = 0;
-
     /** Number of revisions. */
     private final long mRevisionCount;
 

@@ -53,6 +53,7 @@ import org.treetank.page.NodePage;
 import org.treetank.page.NodePage.DeletedNode;
 import org.treetank.page.RevisionRootPage;
 import org.treetank.page.UberPage;
+import org.treetank.page.interfaces.IReferencePage;
 import org.treetank.utils.NamePageHash;
 
 /**
@@ -114,15 +115,13 @@ public final class PageWriteTrx implements IPageWriteTrx {
         mNewRoot =
             new RevisionRootPage(mDelegate.getUberPage().incrementPageCounter(), pRepresentRev + 1,
                 previousRevRoot.getMaxNodeKey());
-        mNewRoot.setReferenceKey(RevisionRootPage.INDIRECT_REFERENCE_OFFSET, previousRevRoot
-            .getReferenceKeys()[RevisionRootPage.INDIRECT_REFERENCE_OFFSET]);
+        mNewRoot.setReferenceKey(IReferencePage.GUARANTEED_INDIRECT_OFFSET, previousRevRoot
+            .getReferenceKeys()[IReferencePage.GUARANTEED_INDIRECT_OFFSET]);
 
         // Prepare indirect tree to hold reference to prepared revision root
         // nodePageReference.
         LogKey indirectKey =
-            preparePathToLeaf(true,
-                mDelegate.getUberPage().getReferenceKeys()[UberPage.INDIRECT_REFERENCE_OFFSET], mDelegate
-                    .getUberPage().getRevisionNumber());
+            preparePathToLeaf(true, mDelegate.getUberPage(), mDelegate.getUberPage().getRevisionNumber());
         NodePageContainer indirectContainer = mLog.get(indirectKey);
         int offset = nodePageOffset(mDelegate.getUberPage().getRevisionNumber());
         ((IndirectPage)indirectContainer.getModified()).setReferenceKey(offset, mNewRoot.getPageKey());
@@ -294,9 +293,9 @@ public final class PageWriteTrx implements IPageWriteTrx {
     public void commit() throws TTException {
 
         final UberPage uberPage =
-            new UberPage(mDelegate.getUberPage().getPageKey(), mDelegate.getUberPage()
-                .getRevisionNumber() + 1, mDelegate.getUberPage().getPageCounter());
-        uberPage.setReferenceKey(UberPage.INDIRECT_REFERENCE_OFFSET, mNewUberPageKey);
+            new UberPage(mDelegate.getUberPage().getPageKey(),
+                mDelegate.getUberPage().getRevisionNumber() + 1, mDelegate.getUberPage().getPageCounter());
+        uberPage.setReferenceKey(IReferencePage.GUARANTEED_INDIRECT_OFFSET, mNewUberPageKey);
 
         Iterator<Map.Entry<LogKey, NodePageContainer>> entries = mLog.getIterator();
         while (entries.hasNext()) {
@@ -336,9 +335,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
         NodePageContainer container = mLog.get(key);
         // ... and start dereferencing of not.
         if (container == null) {
-            LogKey indirectKey =
-                preparePathToLeaf(false,
-                    mNewRoot.getReferenceKeys()[RevisionRootPage.INDIRECT_REFERENCE_OFFSET], pSeqPageKey);
+            LogKey indirectKey = preparePathToLeaf(false, mNewRoot, pSeqPageKey);
 
             NodePageContainer indirectContainer = mLog.get(indirectKey);
             int offset = nodePageOffset(pSeqPageKey);
@@ -366,23 +363,25 @@ public final class PageWriteTrx implements IPageWriteTrx {
      * @param pIsRootLevel
      *            is this dereferencing walk based on the the search after a RevRoot or a NodePage. Needed
      *            because of the same keys in both subtrees.
-     * @param pStartKey
-     *            start key where to start the tree-walk: either from an UberPage (related to new
+     * @param pPage
+     *            where to start the tree-walk: either from an UberPage (related to new
      *            RevisionRootPages) or from a RevisionRootPage (related to new NodePages).
      * @param pSeqPageKey
      *            the key of the page mapped to the layer
      * @return the key the container representing the last level
      * @throws TTException
      */
-    private LogKey
-        preparePathToLeaf(final boolean pIsRootLevel, final long pStartKey, final long pSeqPageKey)
-            throws TTException {
+    private LogKey preparePathToLeaf(final boolean pIsRootLevel, final IReferencePage pPage,
+        final long pSeqPageKey) throws TTException {
 
         // Initial state pointing to the indirect page of level 0.
-        int offset = 0;
+        int offset = -1;
+        int lastOffset = IReferencePage.GUARANTEED_INDIRECT_OFFSET;
         long levelKey = pSeqPageKey;
-        long pageKey = pStartKey;
+        IReferencePage page = null;
+        IReferencePage lastPage = pPage;
         LogKey key = null;
+        LogKey lastKey = new LogKey(pIsRootLevel, -1, 0);
 
         // Iterate through all levels.
         for (int level = 0; level < IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level++) {
@@ -395,34 +394,32 @@ public final class PageWriteTrx implements IPageWriteTrx {
             NodePageContainer container = mLog.get(key);
             // if not...
             if (container == null) {
-                IndirectPage newPage = new IndirectPage(mDelegate.getUberPage().incrementPageCounter());
-                // ...point to this new indirect reference from either the UberPage or the RevRoot and...
-                if (level == 0) {
-                    if (pIsRootLevel) {
-                        mNewUberPageKey = newPage.getPageKey();
-                    } else {
-                        mNewRoot.setReferenceKey(RevisionRootPage.INDIRECT_REFERENCE_OFFSET, newPage
-                            .getPageKey());
-                    }
-                }
-                // ...check if there is an existing indirect page...
-                if (pageKey != 0) {
-                    // ..read it, copy all references and put it in the transaction log.
-                    IndirectPage oldPage = (IndirectPage)mPageWriter.read(pageKey);
-                    for (int i = 0; i < oldPage.getReferenceKeys().length; i++) {
-                        newPage.setReferenceKey(i, oldPage.getReferenceKeys()[i]);
-                    }
-                    container = new NodePageContainer(oldPage, newPage);
-                }// ...otherwise a fresh page is necessary.
-                else {
-                    container = new NodePageContainer(newPage, newPage);
-                }
-            }
-            mLog.put(key, container);
-            // finally, set the new pagekey for the next level
-            pageKey = ((IndirectPage)container.getModified()).getReferenceKeys()[offset];
-        }
+                // ...generating a new page and let it point to the last offset of the last page and ...
+                final long newKey = mDelegate.getUberPage().incrementPageCounter();
+                page = new IndirectPage(newKey);
 
+                // ...check if there is an existing indirect page...
+                if (lastPage.getReferenceKeys()[lastOffset] != 0) {
+                    // ..read it, copy all references and put it in the transaction log.
+                    IndirectPage oldPage =
+                        (IndirectPage)mPageWriter.read(lastPage.getReferenceKeys()[lastOffset]);
+                    for (int i = 0; i < oldPage.getReferenceKeys().length; i++) {
+                        page.setReferenceKey(i, oldPage.getReferenceKeys()[i]);
+                    }
+                }
+                lastPage.setReferenceKey(lastOffset, newKey);
+                container = new NodePageContainer(lastPage, lastPage);
+                mLog.put(lastKey, container);
+            }
+
+            // finally, set the new pagekey for the next level
+            lastKey = key;
+            lastPage = page;
+            lastOffset = offset;
+            container = new NodePageContainer(page, page);
+            mLog.put(key, container);
+        }
+        
         // Return reference to leaf of indirect tree.
         return key;
     }

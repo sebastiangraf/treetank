@@ -12,6 +12,9 @@ package org.treetank.page.interfaces;
  */
 public interface IReferencePage extends IPage {
 
+    /** Guaranteed Indirect Offset from any ReferencePage. */
+    public static int GUARANTEED_INDIRECT_OFFSET = 0;
+
     /**
      * Getting the keys of the referenced pages.
      * 

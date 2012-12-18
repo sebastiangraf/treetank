@@ -424,7 +424,7 @@ public final class Storage implements IStorage {
 
         UberPage uberPage = new UberPage(1, 0, 2);
         long newPageKey = uberPage.incrementPageCounter();
-        uberPage.setReferenceKey(UberPage.INDIRECT_REFERENCE_OFFSET, newPageKey);
+        uberPage.setReferenceKey(IReferencePage.GUARANTEED_INDIRECT_OFFSET, newPageKey);
 
         // --- Create revision tree
         // ------------------------------------------------
@@ -451,7 +451,7 @@ public final class Storage implements IStorage {
 
         newPageKey = uberPage.incrementPageCounter();
         IndirectPage indirectPage = new IndirectPage(newPageKey);
-        page.setReferenceKey(RevisionRootPage.INDIRECT_REFERENCE_OFFSET, newPageKey);
+        page.setReferenceKey(IReferencePage.GUARANTEED_INDIRECT_OFFSET, newPageKey);
         key = new LogKey(false, -1, 0);
         mLog.put(key, new NodePageContainer(page, page));
 

@@ -45,10 +45,7 @@ import com.google.common.io.ByteStreams;
 public final class RevisionRootPage implements IRevisionPage, IReferencePage {
 
     /** Offset of name page reference. */
-    public static final int NAME_REFERENCE_OFFSET = 0;
-
-    /** Offset of indirect page reference. */
-    public static final int INDIRECT_REFERENCE_OFFSET = 1;
+    public static final int NAME_REFERENCE_OFFSET = 1;
 
     /** Last allocated node key. */
     private long mMaxNodeKey;
@@ -94,7 +91,6 @@ public final class RevisionRootPage implements IRevisionPage, IReferencePage {
     public void incrementMaxNodeKey() {
         mMaxNodeKey += 1;
     }
-
 
     @Override
     public long getRevision() {
