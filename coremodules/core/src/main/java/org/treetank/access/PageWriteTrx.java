@@ -79,6 +79,9 @@ public final class PageWriteTrx implements IPageWriteTrx {
     /** Delegate for read access. */
     private PageReadTrx mDelegate;
 
+    /** key of new first indirect reference from fresh UberPage. */
+    private long mNewUberPageKey;
+
     /**
      * Standard constructor.
      * 
@@ -106,9 +109,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
                 pSession.getConfig().mNodeFac));
 
         // Get previous revision root page..
-        final RevisionRootPage previousRevRoot =
-            (RevisionRootPage)mPageWriter.read(mDelegate.dereferenceLeafOfTree(mDelegate.getUberPage()
-                .getReferenceKeys()[UberPage.INDIRECT_REFERENCE_OFFSET], pRepresentRev));
+        final RevisionRootPage previousRevRoot = mDelegate.getActualRevisionRootPage();
         // ...and using this data to initialize a fresh revision root including the pointers.
         mNewRoot =
             new RevisionRootPage(mDelegate.getUberPage().incrementPageCounter(), pRepresentRev + 1,
@@ -293,22 +294,19 @@ public final class PageWriteTrx implements IPageWriteTrx {
     public void commit() throws TTException {
 
         final UberPage uberPage =
-            new UberPage(mDelegate.getUberPage().getPageKey(), mDelegate.getUberPage().getRevisionNumber(),
-                mDelegate.getUberPage().getPageCounter());
-        
-        
-//        uberPage.setReferenceKey(UberPage.INDIRECT_REFERENCE_OFFSET, mLog.get(pKey))
-        
-        
-        mDelegate.getUberPage();
-
-        mPageWriter.writeUberPage(uberPage);
+            new UberPage(mDelegate.getUberPage().getPageKey(), mDelegate.getUberPage()
+                .getRevisionNumber() + 1, mDelegate.getUberPage().getPageCounter());
+        uberPage.setReferenceKey(UberPage.INDIRECT_REFERENCE_OFFSET, mNewUberPageKey);
 
         Iterator<Map.Entry<LogKey, NodePageContainer>> entries = mLog.getIterator();
         while (entries.hasNext()) {
             Map.Entry<LogKey, NodePageContainer> next = entries.next();
             mPageWriter.write(next.getValue().getModified());
         }
+        mPageWriter.write(mNamePage);
+        mPageWriter.write(mNewRoot);
+        mPageWriter.writeUberPage(uberPage);
+
         // Remember succesfully committed uber page in session state.
         // TODO This is one of the dirtiest hacks I ever did! Sorry Future-ME!
         ((Session)mDelegate.mSession).setLastCommittedUberPage(uberPage);
@@ -398,12 +396,13 @@ public final class PageWriteTrx implements IPageWriteTrx {
             // if not...
             if (container == null) {
                 IndirectPage newPage = new IndirectPage(mDelegate.getUberPage().incrementPageCounter());
-                //...point to this new indirect reference from either the UberPage or the RevRoot and...
-                if(level==0) {
-                    if(pIsRootLevel) {
-                        mDelegate.getUberPage().setReferenceKey(UberPage.INDIRECT_REFERENCE_OFFSET, newPage.getPageKey());
+                // ...point to this new indirect reference from either the UberPage or the RevRoot and...
+                if (level == 0) {
+                    if (pIsRootLevel) {
+                        mNewUberPageKey = newPage.getPageKey();
                     } else {
-                        mNewRoot.setReferenceKey(RevisionRootPage.INDIRECT_REFERENCE_OFFSET, newPage.getPageKey());
+                        mNewRoot.setReferenceKey(RevisionRootPage.INDIRECT_REFERENCE_OFFSET, newPage
+                            .getPageKey());
                     }
                 }
                 // ...check if there is an existing indirect page...

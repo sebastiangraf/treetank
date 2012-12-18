@@ -422,7 +422,7 @@ public final class Storage implements IStorage {
             new LRUCache(new BerkeleyPersistenceLog(new File(pResourceConf.mProperties
                 .getProperty(org.treetank.access.conf.ContructorProps.STORAGEPATH)), pResourceConf.mNodeFac));
 
-        UberPage uberPage = new UberPage(0, 0, 1);
+        UberPage uberPage = new UberPage(1, 0, 2);
         long newPageKey = uberPage.incrementPageCounter();
         uberPage.setReferenceKey(UberPage.INDIRECT_REFERENCE_OFFSET, newPageKey);
 
