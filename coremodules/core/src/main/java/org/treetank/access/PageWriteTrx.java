@@ -398,6 +398,14 @@ public final class PageWriteTrx implements IPageWriteTrx {
             // if not...
             if (container == null) {
                 IndirectPage newPage = new IndirectPage(mDelegate.getUberPage().incrementPageCounter());
+                //...point to this new indirect reference from either the UberPage or the RevRoot and...
+                if(level==0) {
+                    if(pIsRootLevel) {
+                        mDelegate.getUberPage().setReferenceKey(UberPage.INDIRECT_REFERENCE_OFFSET, newPage.getPageKey());
+                    } else {
+                        mNewRoot.setReferenceKey(RevisionRootPage.INDIRECT_REFERENCE_OFFSET, newPage.getPageKey());
+                    }
+                }
                 // ...check if there is an existing indirect page...
                 if (pageKey != 0) {
                     // ..read it, copy all references and put it in the transaction log.
