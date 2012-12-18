@@ -4,7 +4,6 @@
 package org.treetank.api;
 
 import org.treetank.exception.TTException;
-import org.treetank.page.UberPage;
 
 /**
  * Write-Transaction of a page ensuring read- and write access to any pages.
@@ -26,13 +25,6 @@ import org.treetank.page.UberPage;
  * 
  */
 public interface IPageWriteTrx extends IPageReadTrx {
-
-    /**
-     * Getting the actual {@link UberPage}.
-     * 
-     * @return the actual {@link UberPage} for getting additional information.
-     */
-    UberPage getUberPage();
 
     /**
      * Getting most recent node key.

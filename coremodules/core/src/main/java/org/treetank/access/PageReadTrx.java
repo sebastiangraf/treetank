@@ -235,15 +235,6 @@ public class PageReadTrx implements IPageReadTrx {
     }
 
     /**
-     * Get UberPage.
-     * 
-     * @return The uber page.
-     */
-    protected final UberPage getUberPage() {
-        return mUberPage;
-    }
-
-    /**
      * Dereference node page reference.
      * 
      * @param pSeqNodePageKey
@@ -270,8 +261,8 @@ public class PageReadTrx implements IPageReadTrx {
                     mUberPage.getReferenceKeys()[IReferencePage.GUARANTEED_INDIRECT_OFFSET], i));
             // Searching for the related NodePage within all referenced pages.
             final long nodeKey =
-                dereferenceLeafOfTree(
-                    rootPage.getReferenceKeys()[IReferencePage.GUARANTEED_INDIRECT_OFFSET], pSeqNodePageKey);
+                dereferenceLeafOfTree(rootPage.getReferenceKeys()[IReferencePage.GUARANTEED_INDIRECT_OFFSET],
+                    pSeqNodePageKey);
             if (nodeKey > 0 && !nodePageKeys.contains(nodeKey)) {
                 NodePage page = (NodePage)mNodePageCache.getIfPresent(nodeKey);
                 if (page == null) {

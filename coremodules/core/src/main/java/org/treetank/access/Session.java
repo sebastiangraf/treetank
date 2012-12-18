@@ -43,7 +43,6 @@ import org.treetank.io.IBackend;
 import org.treetank.io.IBackendWriter;
 import org.treetank.io.IOUtils;
 import org.treetank.page.UberPage;
-import org.treetank.page.interfaces.IReferencePage;
 
 /**
  * <h1>Session</h1>
@@ -114,12 +113,8 @@ public final class Session implements ISession {
 
     public IPageWriteTrx beginPageWriteTransaction(final long mRepresentRevision) throws TTException {
         final IBackendWriter backendWriter = mStorage.getWriter();
-        UberPage newUber =
-            new UberPage(mLastCommittedUberPage.incrementPageCounter(), mLastCommittedUberPage
-                .getRevisionNumber() + 1, mLastCommittedUberPage.getPageCounter());
-        newUber.setReferenceKey(IReferencePage.GUARANTEED_INDIRECT_OFFSET,
-            mLastCommittedUberPage.getReferenceKeys()[IReferencePage.GUARANTEED_INDIRECT_OFFSET]);
-        final IPageWriteTrx trx = new PageWriteTrx(this, newUber, backendWriter, mRepresentRevision);
+        
+        final IPageWriteTrx trx = new PageWriteTrx(this,mLastCommittedUberPage,backendWriter, mRepresentRevision);
         mPageTrxs.add(trx);
 
         return trx;
