@@ -99,15 +99,14 @@ public final class PageWriteTrx implements IPageWriteTrx {
     protected PageWriteTrx(final ISession pSession, final UberPage pUberPage, final IBackendWriter pWriter,
         final long pRepresentRev) throws TTException {
         mDelegate = new PageReadTrx(pSession, pUberPage, pRepresentRev, pWriter);
-        mNewRoot = preparePreviousRevisionRootPage(pRepresentRev);
-        mNewName = new NamePage(mDelegate.getUberPage().incrementPageCounter());
-        mNewRoot.setReferenceKey(RevisionRootPage.NAME_REFERENCE_OFFSET, mNewName.getPageKey());
+        mPageWriter = pWriter;
         mLog =
             new LRUCache(new BerkeleyPersistenceLog(new File(pSession.getConfig().mProperties
                 .getProperty(org.treetank.access.conf.ContructorProps.STORAGEPATH)),
                 pSession.getConfig().mNodeFac));
-        mPageWriter = pWriter;
-
+        mNewRoot = preparePreviousRevisionRootPage(pRepresentRev);
+        mNewName = new NamePage(mDelegate.getUberPage().incrementPageCounter());
+        mNewRoot.setReferenceKey(RevisionRootPage.NAME_REFERENCE_OFFSET, mNewName.getPageKey());
     }
 
     /**
@@ -339,9 +338,8 @@ public final class PageWriteTrx implements IPageWriteTrx {
         final RevisionRootPage revisionRootPage =
             new RevisionRootPage(mDelegate.getUberPage().incrementPageCounter(), pRepresentRev + 1,
                 previousRevRoot.getMaxNodeKey());
-        for (int i = 0; i < previousRevRoot.getReferenceKeys().length; i++) {
-            revisionRootPage.setReferenceKey(i, previousRevRoot.getReferenceKeys()[i]);
-        }
+        revisionRootPage.setReferenceKey(RevisionRootPage.INDIRECT_REFERENCE_OFFSET, previousRevRoot
+            .getReferenceKeys()[RevisionRootPage.INDIRECT_REFERENCE_OFFSET]);
 
         // Prepare indirect tree to hold reference to prepared revision root
         // nodePageReference.
