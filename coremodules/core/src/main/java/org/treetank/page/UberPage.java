@@ -27,6 +27,8 @@
 
 package org.treetank.page;
 
+import java.util.Arrays;
+
 import org.treetank.page.interfaces.IReferencePage;
 
 import com.google.common.io.ByteArrayDataOutput;
@@ -97,22 +99,6 @@ public final class UberPage implements IReferencePage {
      * {@inheritDoc}
      */
     @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("UberPage [mPageKey=");
-        builder.append(mPageKey);
-        builder.append(", mRevisionCount=");
-        builder.append(mRevisionCount);
-        builder.append(", mReferenceKey=");
-        builder.append(mReferenceKeys[0]);
-        builder.append("]" + "");
-        return builder.toString();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public long getPageKey() {
         return mPageKey;
     }
@@ -143,6 +129,24 @@ public final class UberPage implements IReferencePage {
     @Override
     public void setReferenceKey(int pIndex, long pKey) {
         mReferenceKeys[pIndex] = pKey;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("UberPage [mRevisionCount=");
+        builder.append(mRevisionCount);
+        builder.append(", mReferenceKeys=");
+        builder.append(Arrays.toString(mReferenceKeys));
+        builder.append(", mPageKey=");
+        builder.append(mPageKey);
+        builder.append(", mPageCounter=");
+        builder.append(mPageCounter);
+        builder.append("]");
+        return builder.toString();
     }
 
 }
