@@ -321,7 +321,7 @@ public class PageReadTrx implements IPageReadTrx {
      * @return Node page key.
      */
     protected static final long nodePageKey(final long pNodeKey) {
-        final long nodePageKey = pNodeKey >> IConstants.NDP_NODE_COUNT_EXPONENT;
+        final long nodePageKey = pNodeKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3];
         return nodePageKey;
     }
 
@@ -334,7 +334,7 @@ public class PageReadTrx implements IPageReadTrx {
      */
     protected static final int nodePageOffset(final long pNodeKey) {
         final long nodePageOffset =
-            (pNodeKey - ((pNodeKey >> IConstants.NDP_NODE_COUNT_EXPONENT) << IConstants.NDP_NODE_COUNT_EXPONENT));
+            (pNodeKey - ((pNodeKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3]) << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3]));
         return (int)nodePageOffset;
     }
 

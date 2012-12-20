@@ -388,7 +388,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
 
             // for each level, take a sharp look if the indirectpage was already modified within this
             // transaction
-            key = new LogKey(pIsRootLevel, level, levelKey);
+            key = new LogKey(pIsRootLevel, level, lastOffset * IConstants.CONTENT_COUNT + offset);
             NodePageContainer container = mLog.get(key);
             // if not...
             if (container == null) {
@@ -398,9 +398,10 @@ public final class PageWriteTrx implements IPageWriteTrx {
 
                 // ...check if there is an existing indirect page...
                 if (lastPage.getReferenceKeys()[lastOffset] != 0) {
-                    // ..read it, copy all references and put it in the transaction log.
+                    // ..read it from the persistent storage ...
                     IndirectPage oldPage =
                         (IndirectPage)mPageWriter.read(lastPage.getReferenceKeys()[lastOffset]);
+                    // ...and copy all references and put it in the transaction log.
                     for (int i = 0; i < oldPage.getReferenceKeys().length; i++) {
                         page.setReferenceKey(i, oldPage.getReferenceKeys()[i]);
                     }
@@ -408,14 +409,16 @@ public final class PageWriteTrx implements IPageWriteTrx {
                 lastPage.setReferenceKey(lastOffset, newKey);
                 container = new NodePageContainer(lastPage, lastPage);
                 mLog.put(lastKey, container);
+                container = new NodePageContainer(page, page);
+                mLog.put(key, container);
+            } else {
+                page = (IndirectPage)container.getModified();
             }
 
             // finally, set the new pagekey for the next level
             lastKey = key;
             lastPage = page;
             lastOffset = offset;
-            container = new NodePageContainer(page, page);
-            mLog.put(key, container);
         }
 
         // Return reference to leaf of indirect tree.

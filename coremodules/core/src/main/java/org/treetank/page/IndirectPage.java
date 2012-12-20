@@ -57,7 +57,7 @@ public final class IndirectPage implements IReferencePage {
      */
     public IndirectPage(final long pPageKey) {
         mPageKey = pPageKey;
-        mReferenceKeys = new long[IConstants.INP_REFERENCE_COUNT];
+        mReferenceKeys = new long[IConstants.CONTENT_COUNT];
     }
 
     /**

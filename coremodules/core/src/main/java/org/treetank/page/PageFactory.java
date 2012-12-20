@@ -72,7 +72,7 @@ public final class PageFactory {
         switch (kind) {
         case IConstants.NODEPAGE:
             NodePage nodePage = new NodePage(input.readLong());
-            for (int offset = 0; offset < IConstants.NDP_NODE_COUNT; offset++) {
+            for (int offset = 0; offset < IConstants.CONTENT_COUNT; offset++) {
                 int length = input.readInt();
                 if (length != IConstants.NULL_NODE) {
                     byte[] toread = new byte[length];

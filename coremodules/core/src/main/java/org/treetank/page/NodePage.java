@@ -57,7 +57,7 @@ public class NodePage implements IPage {
      */
     public NodePage(final long pPageKey) {
         mPageKey = pPageKey;
-        mNodes = new INode[IConstants.NDP_NODE_COUNT];
+        mNodes = new INode[IConstants.CONTENT_COUNT];
     }
 
     /**
