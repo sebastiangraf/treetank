@@ -76,6 +76,7 @@ public class JCloudsReader implements IBackendReader {
         try {
             Blob blobRetrieved = mBlobStore.getBlob(mResourceName, Long.toString(pKey));
             InputStream in = blobRetrieved.getPayload().getInput();
+
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             ByteStreams.copy(in, out);
             byte[] decryptedPage = mByteHandler.deserialize(out.toByteArray());
@@ -92,6 +93,24 @@ public class JCloudsReader implements IBackendReader {
      */
     @Override
     public void close() throws TTIOException {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("JCloudsReader [mBlobStore=");
+        builder.append(mBlobStore);
+        builder.append(", mFac=");
+        builder.append(mFac);
+        builder.append(", mByteHandler=");
+        builder.append(mByteHandler);
+        builder.append(", mResourceName=");
+        builder.append(mResourceName);
+        builder.append("]");
+        return builder.toString();
     }
 
 }
