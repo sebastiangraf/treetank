@@ -130,7 +130,7 @@ public final class Session implements ISession {
                 rtx.close();
             }
 
-            // Immediately release all ressources.
+            // Immediately release all resources.
             mLastCommittedUberPage = null;
             mPageTrxs.clear();
 

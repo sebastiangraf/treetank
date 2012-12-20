@@ -346,10 +346,9 @@ public final class PageWriteTrx implements IPageWriteTrx {
                 container = new NodePageContainer(oldPage, newPage);
             } else {
                 container = new NodePageContainer(newPage, newPage);
-                ((IndirectPage)(indirectContainer.getModified())).setReferenceKey(offset, newPage
-                    .getPageKey());
-                mLog.put(indirectKey, indirectContainer);
             }
+            ((IndirectPage)indirectContainer.getModified()).setReferenceKey(offset, newPage.getPageKey());
+            mLog.put(indirectKey, indirectContainer);
             mLog.put(key, container);
         }
         return container;
