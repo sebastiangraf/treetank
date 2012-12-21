@@ -78,15 +78,15 @@ public class NodeReadTrx implements INodeReadTrx {
      * @throws TTIOException
      */
     @Override
-    public final boolean moveTo(final long paramNodeKey) {
+    public final boolean moveTo(final long pNodeKey) {
         assertNotClosed();
-        if (paramNodeKey == NULL_NODE) {
+        if (pNodeKey == NULL_NODE) {
             return false;
         } else {
             // Remember old node and fetch new one.
             final INode oldNode = mCurrentNode;
             try {
-                mCurrentNode = (org.treetank.node.interfaces.INode)mPageReadTrx.getNode(paramNodeKey);
+                mCurrentNode = (org.treetank.node.interfaces.INode)mPageReadTrx.getNode(pNodeKey);
             } catch (final TTException exc) {
                 mCurrentNode = null;
             }
