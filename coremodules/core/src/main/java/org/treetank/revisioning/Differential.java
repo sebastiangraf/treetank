@@ -67,9 +67,9 @@ public class Differential implements IRevisioning {
      * {@inheritDoc}
      */
     @Override
-    public NodePageContainer combinePagesForModification(NodePage[] pages) {
+    public NodePageContainer combinePagesForModification(long pNewPageKey, NodePage[] pages) {
         final NodePage[] returnVal = {
-            new NodePage(pages[0].getPageKey()), new NodePage(pages[0].getPageKey())
+            new NodePage(pages[0].getPageKey()), new NodePage(pNewPageKey)
         };
 
         final NodePage latest = pages[0];

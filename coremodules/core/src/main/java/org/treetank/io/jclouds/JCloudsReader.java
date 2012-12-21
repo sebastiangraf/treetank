@@ -83,7 +83,7 @@ public class JCloudsReader implements IBackendReader {
             out.close();
             in.close();
             return mFac.deserializePage(decryptedPage);
-        } catch (final IOException | TTByteHandleException exc) {
+        } catch (final IOException | TTByteHandleException | NullPointerException exc) {
             throw new TTIOException(exc);
         }
     }

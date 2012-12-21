@@ -48,9 +48,9 @@ public class FullDump implements IRevisioning {
      * {@inheritDoc}
      */
     @Override
-    public NodePageContainer combinePagesForModification(NodePage[] pages) {
+    public NodePageContainer combinePagesForModification(long pNewPageKey, NodePage[] pages) {
         final NodePage[] returnVal = {
-            new NodePage(pages[0].getPageKey()), new NodePage(pages[0].getPageKey())
+            new NodePage(pages[0].getPageKey()), new NodePage(pNewPageKey)
         };
 
         for (int i = 0; i < pages[0].getNodes().length; i++) {

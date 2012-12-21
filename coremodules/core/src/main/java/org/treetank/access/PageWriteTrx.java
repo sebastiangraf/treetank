@@ -343,14 +343,18 @@ public final class PageWriteTrx implements IPageWriteTrx {
             int offset = nodePageOffset(pSeqPageKey);
             long pageKey = ((IndirectPage)indirectContainer.getModified()).getReferenceKeys()[offset];
 
-            NodePage newPage = new NodePage(mNewUber.incrementPageCounter());
+            long newPageKey = mNewUber.incrementPageCounter();
             if (pageKey != 0) {
-                NodePage oldPage = (NodePage)mPageWriter.read(pageKey);
-                container = new NodePageContainer(oldPage, newPage);
+                NodePage[] pages = mDelegate.getSnapshotPages(pSeqPageKey);
+                container =
+                    mDelegate.mSession.getConfig().mRevision.combinePagesForModification(newPageKey, pages);
+                // NodePage oldPage = (NodePage)mPageWriter.read(pageKey);
+                // container = new NodePageContainer(oldPage, newPage);
             } else {
+                NodePage newPage = new NodePage(newPageKey);
                 container = new NodePageContainer(newPage, newPage);
             }
-            ((IndirectPage)indirectContainer.getModified()).setReferenceKey(offset, newPage.getPageKey());
+            ((IndirectPage)indirectContainer.getModified()).setReferenceKey(offset, newPageKey);
             mLog.put(indirectKey, indirectContainer);
             mLog.put(key, container);
         }
