@@ -27,6 +27,8 @@
 
 package org.treetank.access;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.treetank.access.PageReadTrx.nodePageKey;
 import static org.treetank.access.PageReadTrx.nodePageOffset;
 
@@ -127,7 +129,9 @@ public final class PageWriteTrx implements IPageWriteTrx {
 
         // Prepare indirect tree to hold reference to prepared revision root
         // nodePageReference.
-        LogKey indirectKey = preparePathToLeaf(true, mNewUber, mNewUber.getRevisionNumber());
+        long lastIndirectKey =
+            (mNewUber.getRevisionNumber() - ((mNewUber.getRevisionNumber() >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[2]) << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[2]));
+        LogKey indirectKey = preparePathToLeaf(true, mNewUber, lastIndirectKey);
         NodePageContainer indirectContainer = mLog.get(indirectKey);
         int offset = nodePageOffset(mNewUber.getRevisionNumber());
         ((IndirectPage)indirectContainer.getModified()).setReferenceKey(offset, mNewRoot.getPageKey());
@@ -151,20 +155,16 @@ public final class PageWriteTrx implements IPageWriteTrx {
      *             if IO Error
      */
     public INode prepareNodeForModification(final long pNodeKey) throws TTException {
-        if (pNodeKey < 0) {
-            throw new IllegalArgumentException("paramNodeKey must be >= 0!");
-        }
-
+        checkArgument(pNodeKey >= 0);
         final long seqNodePageKey = nodePageKey(pNodeKey);
         final int nodePageOffset = nodePageOffset(pNodeKey);
-        NodePageContainer container = prepareNodePage(seqNodePageKey);
+        final int lastIndirectOffset = (int)pNodeKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[2];
+        NodePageContainer container = prepareNodePage(lastIndirectOffset, seqNodePageKey);
 
         INode node = ((NodePage)container.getModified()).getNode(nodePageOffset);
         if (node == null) {
             final INode oldNode = ((NodePage)container.getComplete()).getNode(nodePageOffset);
-            if (oldNode == null) {
-                throw new TTIOException("Cannot retrieve node from cache");
-            }
+            checkNotNull(oldNode);
             node = oldNode;
             ((NodePage)container.getModified()).setNode(nodePageOffset, node);
         }
@@ -205,7 +205,8 @@ public final class PageWriteTrx implements IPageWriteTrx {
         final long nodeKey = mNewRoot.getMaxNodeKey();
         final long seqPageKey = nodePageKey(nodeKey);
         final int nodePageOffset = nodePageOffset(nodeKey);
-        NodePageContainer container = prepareNodePage(seqPageKey);
+        final int lastIndirectOffset = (int)nodeKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[2];
+        NodePageContainer container = prepareNodePage(lastIndirectOffset, seqPageKey);
         final NodePage page = ((NodePage)container.getModified());
         page.setNode(nodePageOffset, pNode);
         mLog.put(new LogKey(false, IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length, seqPageKey), container);
@@ -223,7 +224,8 @@ public final class PageWriteTrx implements IPageWriteTrx {
     public void removeNode(final INode pNode) throws TTException {
         assert pNode != null;
         final long nodePageKey = nodePageKey(pNode.getNodeKey());
-        NodePageContainer container = prepareNodePage(nodePageKey);
+        final int lastIndirectOffset = (int)nodePageKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[2];
+        NodePageContainer container = prepareNodePage(lastIndirectOffset, nodePageKey);
         final INode delNode = new DeletedNode(pNode.getNodeKey());
         ((NodePage)container.getModified()).setNode(nodePageOffset(pNode.getNodeKey()), delNode);
         ((NodePage)container.getModified()).setNode(nodePageOffset(pNode.getNodeKey()), delNode);
@@ -328,13 +330,14 @@ public final class PageWriteTrx implements IPageWriteTrx {
         return mNewRoot.getMaxNodeKey();
     }
 
-    private NodePageContainer prepareNodePage(final long pSeqPageKey) throws TTException {
+    private NodePageContainer prepareNodePage(final int lastIndirectOffset, final long pSeqPageKey)
+        throws TTException {
         LogKey key = new LogKey(false, IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length, pSeqPageKey);
         // See if on nodePageLevel, there are any pages...
         NodePageContainer container = mLog.get(key);
         // ... and start dereferencing of not.
         if (container == null) {
-            LogKey indirectKey = preparePathToLeaf(false, mNewRoot, pSeqPageKey);
+            LogKey indirectKey = preparePathToLeaf(false, mNewRoot, lastIndirectOffset);
 
             NodePageContainer indirectContainer = mLog.get(indirectKey);
             int offset = nodePageOffset(pSeqPageKey);
