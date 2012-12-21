@@ -28,7 +28,6 @@
 package org.treetank.cache;
 
 import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertNull;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -47,21 +46,19 @@ public class LRUCacheTest {
     @BeforeMethod
     public void setUp() throws TTException {
         cache = new LRUCache(new NullCache());
-        CacheTestHelper.setUp(cache);
+        CacheTestHelper.setUp(false, cache);
     }
 
     @Test
     public void test() throws TTIOException {
         for (int i = 1; i < CacheTestHelper.PAGES.length; i++) {
             for (int j = 1; j < CacheTestHelper.PAGES[i].length; j++) {
-                final NodePageContainer cont = cache.get(new LogKey(true, i, j));
+                LogKey toRetrieve = new LogKey(true, i, j);
+                final NodePageContainer cont = cache.get(toRetrieve);
                 final IPage current = cont.getComplete();
-                assertEquals(CacheTestHelper.PAGES[i][j][0], current);
+                assertEquals(CacheTestHelper.PAGES[i][j], current);
             }
         }
-
-        final NodePageContainer page = cache.get(new LogKey(true, 0, 0));
-        assertNull(page);
 
     }
 

@@ -69,7 +69,7 @@ public class BerkeleyPersistentCacheTest {
         cache =
             new BerkeleyPersistenceLog(new File(new File(TestHelper.PATHS.PATH1.getFile(),
                 StorageConfiguration.Paths.Data.getFile().getName()), TestHelper.RESOURCENAME), conf.mNodeFac);
-        CacheTestHelper.setUp(cache);
+        CacheTestHelper.setUp(true, cache);
     }
 
     @Test
@@ -78,7 +78,7 @@ public class BerkeleyPersistentCacheTest {
             for (int j = 0; j < CacheTestHelper.PAGES[i].length; j++) {
                 final NodePageContainer cont = cache.get(new LogKey(true, i, j));
                 final IPage current = cont.getComplete();
-                assertEquals(CacheTestHelper.PAGES[i][0], current);
+                assertEquals(CacheTestHelper.PAGES[i][j], current);
             }
 
         }
