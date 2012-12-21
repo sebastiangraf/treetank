@@ -113,8 +113,9 @@ public final class Session implements ISession {
 
     public IPageWriteTrx beginPageWriteTransaction(final long mRepresentRevision) throws TTException {
         final IBackendWriter backendWriter = mStorage.getWriter();
-        
-        final IPageWriteTrx trx = new PageWriteTrx(this,mLastCommittedUberPage,backendWriter, mRepresentRevision);
+
+        final IPageWriteTrx trx =
+            new PageWriteTrx(this, mLastCommittedUberPage, backendWriter, mRepresentRevision);
         mPageTrxs.add(trx);
 
         return trx;
@@ -194,7 +195,7 @@ public final class Session implements ISession {
      */
     @Override
     public long getMostRecentVersion() {
-        return mLastCommittedUberPage.getRevisionNumber() - 1;
+        return mLastCommittedUberPage.getRevisionNumber();
     }
 
     /**
