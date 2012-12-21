@@ -1,8 +1,6 @@
 package org.treetank.io;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
 import org.testng.annotations.DataProvider;
@@ -18,7 +16,6 @@ import org.treetank.exception.TTIOException;
 import org.treetank.io.berkeley.BerkeleyStorage;
 import org.treetank.io.bytepipe.ByteHandlerPipeline;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
-import org.treetank.io.file.FileStorage;
 import org.treetank.page.DumbNodeFactory;
 
 import com.google.common.io.Files;
@@ -64,9 +61,9 @@ public class IBackendTest {
     @Test(dataProvider = "instantiateBackend")
     public void testOtherReferences(Class<IBackend> clazz, IBackend[] pBackends) throws TTException {
 
-        for (final IBackend backend : pBackends) {
-
-        }
+        // for (final IBackend backend : pBackends) {
+        //
+        // }
     }
 
     /**
@@ -104,15 +101,15 @@ public class IBackendTest {
         return new BerkeleyStorage(props, pNodeFac, pHandler);
     }
 
-    private static IBackend createFileStorage(INodeFactory pNodeFac, IByteHandlerPipeline pHandler) {
-        File rootFolderToCreate = Files.createTempDir();
-        File fileToCreate =
-            new File(new File(new File(rootFolderToCreate, StorageConfiguration.Paths.Data.getFile()
-                .getName()), TestHelper.RESOURCENAME), ResourceConfiguration.Paths.Data.getFile().getName());
-        fileToCreate.mkdirs();
-        Properties props =
-            StandardSettings.getStandardProperties(rootFolderToCreate.getAbsolutePath(),
-                TestHelper.RESOURCENAME);
-        return new FileStorage(props, pNodeFac, pHandler);
-    }
+    // private static IBackend createFileStorage(INodeFactory pNodeFac, IByteHandlerPipeline pHandler) {
+    // File rootFolderToCreate = Files.createTempDir();
+    // File fileToCreate =
+    // new File(new File(new File(rootFolderToCreate, StorageConfiguration.Paths.Data.getFile()
+    // .getName()), TestHelper.RESOURCENAME), ResourceConfiguration.Paths.Data.getFile().getName());
+    // fileToCreate.mkdirs();
+    // Properties props =
+    // StandardSettings.getStandardProperties(rootFolderToCreate.getAbsolutePath(),
+    // TestHelper.RESOURCENAME);
+    // return new FileStorage(props, pNodeFac, pHandler);
+    // }
 }
