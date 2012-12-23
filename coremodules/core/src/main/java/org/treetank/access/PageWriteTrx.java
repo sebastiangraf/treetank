@@ -405,9 +405,17 @@ public final class PageWriteTrx implements IPageWriteTrx {
 
                 // ...check if there is an existing indirect page...
                 if (parentPage.getReferenceKeys()[lastOffset] != 0) {
-                    // ..read it from the persistent storage ...
-                    IndirectPage oldPage =
-                        (IndirectPage)mPageWriter.read(parentPage.getReferenceKeys()[lastOffset]);
+                    IndirectPage oldPage;
+                    // ...try to retrieve the former page from the log or ....
+                    LogKey formerKey =
+                        new LogKey(pIsRootLevel, level, lastOffset * IConstants.CONTENT_COUNT + offset - 1);
+                    NodePageContainer formerPage = mLog.get(formerKey);
+                    if (formerPage != null) {
+                        oldPage = (IndirectPage)mPageWriter.read(parentPage.getReferenceKeys()[lastOffset]);
+                    } else {
+                        // ..read it from the persistent storage ...
+                        oldPage = (IndirectPage)mPageWriter.read(parentPage.getReferenceKeys()[lastOffset]);
+                    }
                     // ...and copy all references and put it in the transaction log.
                     for (int i = 0; i <= lastOffset; i++) {
                         page.setReferenceKey(i, oldPage.getReferenceKeys()[i]);
