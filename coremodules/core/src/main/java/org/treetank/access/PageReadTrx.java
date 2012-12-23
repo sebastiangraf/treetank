@@ -256,9 +256,10 @@ public class PageReadTrx implements IPageReadTrx {
 
         // Iterate through all versions starting with the most recent one.
         for (long i = mRootPage.getRevision(); i >= 0; i--) {
-            RevisionRootPage rootPage =
-                (RevisionRootPage)mPageReader.read(dereferenceLeafOfTree(
-                    mUberPage.getReferenceKeys()[IReferencePage.GUARANTEED_INDIRECT_OFFSET], i));
+            final long revRootKey =
+                dereferenceLeafOfTree(
+                    mUberPage.getReferenceKeys()[IReferencePage.GUARANTEED_INDIRECT_OFFSET], i);
+            RevisionRootPage rootPage = (RevisionRootPage)mPageReader.read(revRootKey);
             // Searching for the related NodePage within all referenced pages.
             final long nodePageKey =
                 dereferenceLeafOfTree(rootPage.getReferenceKeys()[IReferencePage.GUARANTEED_INDIRECT_OFFSET],
@@ -306,7 +307,8 @@ public class PageReadTrx implements IPageReadTrx {
         for (int level = 0; level < IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level++) {
             offset = (int)(levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level]);
             levelKey -= offset << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
-            pageKey = ((IndirectPage)mPageReader.read(pageKey)).getReferenceKeys()[offset];
+            final IndirectPage page = (IndirectPage)mPageReader.read(pageKey);
+            pageKey = page.getReferenceKeys()[offset];
         }
 
         // Return reference to leaf of indirect tree.
