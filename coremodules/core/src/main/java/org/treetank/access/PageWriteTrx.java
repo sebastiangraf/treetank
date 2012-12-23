@@ -384,9 +384,9 @@ public final class PageWriteTrx implements IPageWriteTrx {
         int lastOffset = IReferencePage.GUARANTEED_INDIRECT_OFFSET;
         long levelKey = pSeqPageKey;
         IReferencePage page = null;
-        IReferencePage lastPage = pPage;
+        IReferencePage parentPage = pPage;
         LogKey key = null;
-        LogKey lastKey = new LogKey(pIsRootLevel, -1, 0);
+        LogKey parentKey = new LogKey(pIsRootLevel, -1, 0);
 
         // Iterate through all levels.
         for (int level = 0; level < IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level++) {
@@ -404,18 +404,18 @@ public final class PageWriteTrx implements IPageWriteTrx {
                 page = new IndirectPage(newKey);
 
                 // ...check if there is an existing indirect page...
-                if (lastPage.getReferenceKeys()[lastOffset] != 0) {
+                if (parentPage.getReferenceKeys()[lastOffset] != 0) {
                     // ..read it from the persistent storage ...
                     IndirectPage oldPage =
-                        (IndirectPage)mPageWriter.read(lastPage.getReferenceKeys()[lastOffset]);
+                        (IndirectPage)mPageWriter.read(parentPage.getReferenceKeys()[lastOffset]);
                     // ...and copy all references and put it in the transaction log.
-                    for (int i = 0; i < oldPage.getReferenceKeys().length; i++) {
+                    for (int i = 0; i <= lastOffset; i++) {
                         page.setReferenceKey(i, oldPage.getReferenceKeys()[i]);
                     }
                 }
-                lastPage.setReferenceKey(lastOffset, newKey);
-                container = new NodePageContainer(lastPage, lastPage);
-                mLog.put(lastKey, container);
+                parentPage.setReferenceKey(lastOffset, newKey);
+                container = new NodePageContainer(parentPage, parentPage);
+                mLog.put(parentKey, container);
                 container = new NodePageContainer(page, page);
                 mLog.put(key, container);
             } else {
@@ -423,8 +423,8 @@ public final class PageWriteTrx implements IPageWriteTrx {
             }
 
             // finally, set the new pagekey for the next level
-            lastKey = key;
-            lastPage = page;
+            parentKey = key;
+            parentPage = page;
             lastOffset = offset;
         }
 
