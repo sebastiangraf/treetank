@@ -216,8 +216,8 @@ public class UpdateTest {
             new NodeReadTrx(holder.getSession().beginPageReadTransaction(
                 holder.getSession().getMostRecentVersion()));
 
-        assertTrue(wtx.moveTo(2L));
-        assertEquals(2L, wtx.getNode().getNodeKey());
+        assertTrue(rtx.moveTo(2L));
+        assertEquals(2L, rtx.getNode().getNodeKey());
         rtx.close();
 
     }
