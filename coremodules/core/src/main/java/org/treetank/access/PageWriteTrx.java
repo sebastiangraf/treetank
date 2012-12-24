@@ -419,8 +419,8 @@ public final class PageWriteTrx implements IPageWriteTrx {
                         for (int i = 0; i <= offset; i++) {
                             page.setReferenceKey(i, oldPage.getReferenceKeys()[i]);
                         }
-                    } else{
-                        System.out.println("blubb");
+                    } else {
+                        parentOffset = offset;
                     }
                 }
                 // Set the reference to the current revision..
