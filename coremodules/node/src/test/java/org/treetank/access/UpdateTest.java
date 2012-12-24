@@ -69,7 +69,9 @@ public class UpdateTest {
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        Properties props = StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(), TestHelper.RESOURCENAME);
+        Properties props =
+            StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                TestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
         NodeHelper.createTestDocument(mResource);
         holder = Holder.generateWtx(mResource);
@@ -203,29 +205,21 @@ public class UpdateTest {
             wtx.insertElementAsRightSibling(new QName(""));
         }
 
-        pageBoundary(wtx);
+        assertTrue(wtx.moveTo(2L));
+        assertEquals(2L, wtx.getNode().getNodeKey());
         wtx.commit();
-        pageBoundary(wtx);
+
+        assertTrue(wtx.moveTo(2L));
+        assertEquals(2L, wtx.getNode().getNodeKey());
         wtx.close();
         final INodeReadTrx rtx =
             new NodeReadTrx(holder.getSession().beginPageReadTransaction(
                 holder.getSession().getMostRecentVersion()));
-        pageBoundary(rtx);
+
+        assertTrue(wtx.moveTo(2L));
+        assertEquals(2L, wtx.getNode().getNodeKey());
         rtx.close();
 
-    }
-
-    /**
-     * Testmethod for {@link UpdateTest#testPageBoundary()} for having different
-     * rtx.
-     * 
-     * @param pRtx
-     *            to test with
-     * @throws TTException
-     */
-    private final static void pageBoundary(final INodeReadTrx pRtx) throws TTException {
-        assertTrue(pRtx.moveTo(2L));
-        assertEquals(2L, pRtx.getNode().getNodeKey());
     }
 
     @Test(expectedExceptions = TTUsageException.class)

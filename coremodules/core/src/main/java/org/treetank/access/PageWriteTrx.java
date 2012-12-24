@@ -381,7 +381,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
 
         // Initial state pointing to the indirect page of level 0.
         int offset = -1;
-        int lastOffset = IReferencePage.GUARANTEED_INDIRECT_OFFSET;
+        int parentOffset = IReferencePage.GUARANTEED_INDIRECT_OFFSET;
         long levelKey = pSeqPageKey;
         IReferencePage page = null;
         IReferencePage parentPage = pPage;
@@ -395,7 +395,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
 
             // for each level, take a sharp look if the indirectpage was already modified within this
             // transaction
-            key = new LogKey(pIsRootLevel, level, lastOffset * IConstants.CONTENT_COUNT + offset);
+            key = new LogKey(pIsRootLevel, level, parentOffset * IConstants.CONTENT_COUNT + offset);
             NodePageContainer container = mLog.get(key);
             // if not...
             if (container == null) {
@@ -404,26 +404,31 @@ public final class PageWriteTrx implements IPageWriteTrx {
                 page = new IndirectPage(newKey);
 
                 // ...check if there is an existing indirect page...
-                if (parentPage.getReferenceKeys()[lastOffset] != 0) {
+                if (parentPage.getReferenceKeys()[parentOffset] != 0) {
                     IndirectPage oldPage;
-                    // ...try to retrieve the former page from the log or ....
-                    LogKey formerKey =
-                        new LogKey(pIsRootLevel, level, lastOffset * IConstants.CONTENT_COUNT + offset - 1);
-                    NodePageContainer formerPage = mLog.get(formerKey);
-                    if (formerPage != null) {
-                        oldPage = (IndirectPage)mPageWriter.read(parentPage.getReferenceKeys()[lastOffset]);
-                    } else {
-                        // ..read it from the persistent storage ...
-                        oldPage = (IndirectPage)mPageWriter.read(parentPage.getReferenceKeys()[lastOffset]);
-                    }
-                    // ...and copy all references and put it in the transaction log.
-                    for (int i = 0; i <= lastOffset; i++) {
-                        page.setReferenceKey(i, oldPage.getReferenceKeys()[i]);
+                    // ...try to retrieve the former page from the log..
+                    LogKey oldKey =
+                        new LogKey(pIsRootLevel, level, parentOffset * IConstants.CONTENT_COUNT + offset - 1);
+                    NodePageContainer oldContainer = mLog.get(oldKey);
+                    // ..since then the page was entirely filled. If not, read the page from a former
+                    // revision..
+                    if (oldContainer == null) {
+                        // ..from the persistent storage ...
+                        oldPage = (IndirectPage)mPageWriter.read(parentPage.getReferenceKeys()[parentOffset]);
+                        // ...and copy all references and put it in the transaction log.
+                        for (int i = 0; i <= offset; i++) {
+                            page.setReferenceKey(i, oldPage.getReferenceKeys()[i]);
+                        }
+                    } else{
+                        System.out.println("blubb");
                     }
                 }
-                parentPage.setReferenceKey(lastOffset, newKey);
+                // Set the reference to the current revision..
+                parentPage.setReferenceKey(parentOffset, newKey);
                 container = new NodePageContainer(parentPage, parentPage);
+                // .. and put the parent-reference to the log as well as the reference of the..
                 mLog.put(parentKey, container);
+                // ...current page.
                 container = new NodePageContainer(page, page);
                 mLog.put(key, container);
             } else {
@@ -433,7 +438,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
             // finally, set the new pagekey for the next level
             parentKey = key;
             parentPage = page;
-            lastOffset = offset;
+            parentOffset = offset;
         }
 
         // Return reference to leaf of indirect tree.
