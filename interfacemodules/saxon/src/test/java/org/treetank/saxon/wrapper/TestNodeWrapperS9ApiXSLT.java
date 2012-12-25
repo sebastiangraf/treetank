@@ -171,8 +171,7 @@ public final class TestNodeWrapperS9ApiXSLT {
      * @throws SaxonApiException
      *             Exception from Saxon in case anything goes wrong.
      */
-    @Test(enabled = false)
-    public void saxonTransform(final File xml, final File stylesheet) throws SaxonApiException {
+    private void saxonTransform(final File xml, final File stylesheet) throws SaxonApiException {
         final Processor proc = new Processor(false);
         final XsltCompiler comp = proc.newXsltCompiler();
         final XsltExecutable exp = comp.compile(new StreamSource(stylesheet));
@@ -195,8 +194,7 @@ public final class TestNodeWrapperS9ApiXSLT {
      * @throws IOException
      *             throws an IOException if any I/O operation fails.
      */
-    @Test(enabled = false)
-    public StringBuilder readFile() throws IOException {
+    private StringBuilder readFile() throws IOException {
         final BufferedReader in =
             new BufferedReader(new FileReader(new File(TestHelper.PATHS.PATH1.getFile(), "books1.html")));
         final StringBuilder sBuilder = new StringBuilder();
