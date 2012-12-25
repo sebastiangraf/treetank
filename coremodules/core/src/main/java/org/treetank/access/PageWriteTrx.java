@@ -348,8 +348,6 @@ public final class PageWriteTrx implements IPageWriteTrx {
                 NodePage[] pages = mDelegate.getSnapshotPages(pSeqPageKey);
                 container =
                     mDelegate.mSession.getConfig().mRevision.combinePagesForModification(newPageKey, pages);
-                // NodePage oldPage = (NodePage)mPageWriter.read(pageKey);
-                // container = new NodePageContainer(oldPage, newPage);
             } else {
                 NodePage newPage = new NodePage(newPageKey);
                 container = new NodePageContainer(newPage, newPage);
@@ -416,7 +414,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
                         // ..from the persistent storage ...
                         oldPage = (IndirectPage)mPageWriter.read(parentPage.getReferenceKeys()[parentOffset]);
                         // ...and copy all references and put it in the transaction log.
-                        for (int i = 0; i <= offset; i++) {
+                        for (int i = 0; i < oldPage.getReferenceKeys().length; i++) {
                             page.setReferenceKey(i, oldPage.getReferenceKeys()[i]);
                         }
                     } else {
