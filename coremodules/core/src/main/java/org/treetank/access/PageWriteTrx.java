@@ -139,6 +139,11 @@ public final class PageWriteTrx implements IPageWriteTrx {
 
         // Setting up a new namepage
         mNewName = new NamePage(mNewUber.incrementPageCounter());
+        Map<Integer, String> oldMap = mDelegate.mNamePage.getNameMap();
+        for (Integer key : oldMap.keySet()) {
+            mNewName.setName(key, oldMap.get(key));
+        }
+
         mNewRoot.setReferenceKey(RevisionRootPage.NAME_REFERENCE_OFFSET, mNewName.getPageKey());
 
     }

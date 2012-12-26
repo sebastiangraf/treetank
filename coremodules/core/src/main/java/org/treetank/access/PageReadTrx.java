@@ -76,13 +76,13 @@ public class PageReadTrx implements IPageReadTrx {
     private final RevisionRootPage mRootPage;
 
     /** Cached name page of this revision. */
-    private final NamePage mNamePage;
+    protected final NamePage mNamePage;
 
     /**
      * Internal reference to cache. This cache takes the sequential numbering of the pages instead of the
      * absolute, storage-relevant numbering.
      */
-    protected final Cache<Long, NodePage> mNodePageCache;
+    private final Cache<Long, NodePage> mNodePageCache;
 
     /** Configuration of the session */
     protected final ISession mSession;
