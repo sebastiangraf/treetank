@@ -134,7 +134,6 @@ public final class OverallTest {
                     final int newKey = ran.nextInt(i + 1) + 1;
                     holder.getNWtx().moveTo(newKey);
                 } while (holder.getNWtx().getNode() == null);
-                // TODO Check if reference check can occur on "=="
                 if (holder.getNWtx().getNode().getKind() != IConstants.ELEMENT) {
                     holder.getNWtx().moveTo(holder.getNWtx().getNode().getParentKey());
                 }

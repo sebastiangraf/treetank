@@ -118,7 +118,7 @@ abstract class AbsSerializer implements Callable<Void> {
             Arrays.sort(mVersions);
             if (mVersions[0] < 0) {
                 versionsToUse = new long[(int)mSession.getMostRecentVersion() - 1];
-                
+
                 for (int i = 0; i < versionsToUse.length; i++) {
                     versionsToUse[i] = i + 1;
                 }
@@ -165,10 +165,8 @@ abstract class AbsSerializer implements Callable<Void> {
                     rtx.moveTo(key);
                     closeElements = false;
                 }
-
                 // Emit node.
                 emitStartElement(rtx);
-
                 // Push end element to stack if we are a start element with
                 // children.
                 if (currentStruc.getKind() == IConstants.ELEMENT && currentStruc.hasFirstChild()) {
