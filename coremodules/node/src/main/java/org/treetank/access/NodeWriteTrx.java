@@ -348,13 +348,19 @@ public class NodeWriteTrx implements INodeWriteTrx {
             throw new TTUsageException("Document root can not be removed.");
         } else if (mDelegate.getCurrentNode() instanceof IStructNode) {
             final IStructNode node = (IStructNode)mDelegate.getCurrentNode();
-            // Remove subtree, excluded since 1. axis is now moved to extra
-            // bundle and 2. attributes and
-            // namespaces are ignored
-            // for (final AbsAxis desc = new DescendantAxis(this, false); desc
-            // .hasNext(); desc.next()) {
-            // getTransactionState().removeNode(getCurrentNode());
-            // }
+            if (node.getKind() == IConstants.ELEMENT) {
+                long currentKey = node.getNodeKey();
+                ElementNode element = (ElementNode)node;
+                for (int i = 0; i < element.getAttributeCount(); i++) {
+                    moveTo(element.getAttributeKey(i));
+                    getPageTransaction().removeNode(mDelegate.getCurrentNode());
+                }
+                for (int i = 0; i < element.getNamespaceCount(); i++) {
+                    moveTo(element.getNamespaceKey(i));
+                    getPageTransaction().removeNode(mDelegate.getCurrentNode());
+                }
+                moveTo(currentKey);
+            }
             moveTo(node.getNodeKey());
             adaptForRemove(node);
             adaptHashesWithRemove();
@@ -378,7 +384,6 @@ public class NodeWriteTrx implements INodeWriteTrx {
             moveTo(mDelegate.getCurrentNode().getParentKey());
         } else if (mDelegate.getCurrentNode().getKind() == IConstants.NAMESPACE) {
             final INode node = mDelegate.getCurrentNode();
-
             final ElementNode parent =
                 (ElementNode)getPageTransaction().prepareNodeForModification(node.getParentKey());
             parent.removeNamespace(node.getNodeKey());

@@ -74,7 +74,9 @@ public final class OverallTest {
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        Properties props = StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(), TestHelper.RESOURCENAME);
+        Properties props =
+            StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                TestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
         holder = Holder.generateWtx(mResource);
     }
