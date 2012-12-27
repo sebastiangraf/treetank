@@ -27,6 +27,9 @@
 
 package org.treetank.access;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -127,12 +130,9 @@ public class PageReadTrx implements IPageReadTrx {
      * @throws TTIOException
      *             if the read to the persistent storage fails
      */
-    public INode getNode(final long pNodeKey) throws TTException {
+    public INode getNode(final long pNodeKey) throws TTIOException {
 
-        // Immediately return node from item list if node key negative.
-        if (pNodeKey < 0) {
-            throw new IllegalArgumentException();
-        }
+        checkArgument(pNodeKey >= 0);
 
         // Calculate page and node part for given nodeKey.
         final long seqNodePageKey = nodePageKey(pNodeKey);
@@ -141,10 +141,6 @@ public class PageReadTrx implements IPageReadTrx {
 
         if (page == null) {
             final NodePage[] revs = getSnapshotPages(seqNodePageKey);
-            if (revs.length == 0) {
-                return null;
-            }
-
             // Build up the complete page.
             final IRevisioning revision = mSession.getConfig().mRevision;
             page = revision.combinePages(revs);
@@ -222,15 +218,15 @@ public class PageReadTrx implements IPageReadTrx {
     /**
      * Method to check if an {@link INode} is a deleted one.
      * 
-     * @param mToCheck
+     * @param pToCheck
      *            of the IItem
      * @return the item if it is valid, null otherwise
      */
-    protected final INode checkItemIfDeleted(final INode mToCheck) {
-        if (mToCheck instanceof DeletedNode) {
+    protected final INode checkItemIfDeleted(final INode pToCheck) {
+        if (pToCheck == null || pToCheck instanceof DeletedNode) {
             return null;
         } else {
-            return mToCheck;
+            return pToCheck;
         }
     }
 
@@ -244,7 +240,7 @@ public class PageReadTrx implements IPageReadTrx {
      * @throws TTIOException
      *             if something odd happens within the creation process.
      */
-    protected final NodePage[] getSnapshotPages(final long pSeqNodePageKey) throws TTException {
+    protected final NodePage[] getSnapshotPages(final long pSeqNodePageKey) throws TTIOException {
 
         // Return Value, since the revision iterates a flexible number of version, this has to be a list
         // first.
@@ -296,7 +292,7 @@ public class PageReadTrx implements IPageReadTrx {
      *             if something odd happens within the creation process.
      */
     protected final long dereferenceLeafOfTree(final long pStartKey, final long pSeqPageKey)
-        throws TTException {
+        throws TTIOException {
 
         // Initial state pointing to the indirect page of level 0.
         int offset = 0;
@@ -307,6 +303,7 @@ public class PageReadTrx implements IPageReadTrx {
         for (int level = 0; level < IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level++) {
             offset = (int)(levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level]);
             levelKey -= offset << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
+            checkState(pageKey > 0);
             final IndirectPage page = (IndirectPage)mPageReader.read(pageKey);
             pageKey = page.getReferenceKeys()[offset];
         }

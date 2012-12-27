@@ -30,6 +30,7 @@ package org.treetank.api;
 import javax.xml.namespace.QName;
 
 import org.treetank.exception.TTException;
+import org.treetank.exception.TTIOException;
 
 /**
 
@@ -45,8 +46,10 @@ public interface INodeReadTrx {
      * @param pKey
      *            Key of node to select.
      * @return True if the node with the given node key is selected.
+     * @throws TTIOException
+     *             if retrieval fails (including non-existing of node)
      */
-    boolean moveTo(final long pKey);
+    boolean moveTo(final long pKey) throws TTIOException;
 
     /**
      * Move cursor to attribute by its index.
@@ -54,8 +57,10 @@ public interface INodeReadTrx {
      * @param pIndex
      *            Index of attribute to move to.
      * @return True if the attribute node is selected.
+     * @throws TTIOException
+     *             if retrieval fails (including non-existing of node)
      */
-    boolean moveToAttribute(final int pIndex);
+    boolean moveToAttribute(final int pIndex) throws TTIOException;
 
     /**
      * Move cursor to namespace declaration by its index.
@@ -63,8 +68,10 @@ public interface INodeReadTrx {
      * @param pIndex
      *            Index of attribute to move to.
      * @return True if the namespace node is selected.
+     * @throws TTIOException
+     *             if retrieval fails (including non-existing of node)
      */
-    boolean moveToNamespace(final int pIndex);
+    boolean moveToNamespace(final int pIndex) throws TTIOException;
 
     // --- Node Getters
     // ----------------------------------------------------------

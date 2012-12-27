@@ -29,6 +29,7 @@ package org.treetank.service.xml.diff;
 
 import org.treetank.api.INodeReadTrx;
 import org.treetank.exception.TTException;
+import org.treetank.exception.TTIOException;
 import org.treetank.node.ElementNode;
 import org.treetank.node.IConstants;
 import org.treetank.service.xml.diff.DiffFactory.Builder;
@@ -54,9 +55,10 @@ final class FullDiff extends AbsDiff {
         super(paramBuilder);
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc} 
+     * @throws TTIOException */
     @Override
-    boolean checkNodes(final INodeReadTrx paramFirstRtx, final INodeReadTrx paramSecondRtx) {
+    boolean checkNodes(final INodeReadTrx paramFirstRtx, final INodeReadTrx paramSecondRtx) throws TTIOException {
         assert paramFirstRtx != null;
         assert paramSecondRtx != null;
 

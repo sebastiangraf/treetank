@@ -49,7 +49,7 @@ public interface IBackendReader {
      * @throws TTException
      *             if something bad happens during read
      */
-    IPage read(final long pKey) throws TTException;
+    IPage read(final long pKey) throws TTIOException;
 
     /**
      * Reading the UberPage
@@ -57,7 +57,7 @@ public interface IBackendReader {
      * @return the most recent UberPage
      * @throws TTException
      */
-    UberPage readUber() throws TTException;
+    UberPage readUber() throws TTIOException;
 
     /**
      * Closing the storage.

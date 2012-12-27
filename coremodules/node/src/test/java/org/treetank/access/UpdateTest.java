@@ -46,12 +46,11 @@ import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.ResourceConfiguration;
-import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
+import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.exception.TTException;
-import org.treetank.exception.TTUsageException;
 import org.treetank.node.interfaces.IStructNode;
 
 import com.google.inject.Inject;
@@ -222,7 +221,7 @@ public class UpdateTest {
 
     }
 
-    @Test(expectedExceptions = TTUsageException.class)
+    @Test(expectedExceptions = IllegalStateException.class)
     public void testRemoveDocument() throws TTException {
         final INodeWriteTrx wtx = holder.getNWtx();
         DocumentCreater.create(wtx);

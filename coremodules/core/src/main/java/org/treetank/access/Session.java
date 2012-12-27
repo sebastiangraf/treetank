@@ -27,6 +27,8 @@
 
 package org.treetank.access;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import java.io.File;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -38,7 +40,6 @@ import org.treetank.api.IPageReadTrx;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
-import org.treetank.exception.TTUsageException;
 import org.treetank.io.IBackend;
 import org.treetank.io.IBackendWriter;
 import org.treetank.io.IOUtils;
@@ -144,23 +145,17 @@ public final class Session implements ISession {
     /**
      * {@inheritDoc}
      */
-    public void assertAccess(final long paramRevision) {
-        if (mClosed) {
-            throw new IllegalStateException("Session is already closed.");
-        }
-        if (paramRevision > mLastCommittedUberPage.getRevisionNumber()) {
-            throw new IllegalArgumentException(new StringBuilder("Revision must not be bigger than").append(
-                Long.toString(mLastCommittedUberPage.getRevisionNumber())).toString());
-        }
+    public void assertAccess(final long pRevision) {
+        checkState(!mClosed, "Session is already closed.");
+        checkState(pRevision <= mLastCommittedUberPage.getRevisionNumber(),
+            "Revision must not be bigger than %s", mLastCommittedUberPage.getRevisionNumber());
     }
 
     /**
      * {@inheritDoc}
      */
     public void truncate() throws TTException {
-        if (!mClosed) {
-            throw new TTUsageException("Session must be closed before truncated.");
-        }
+        checkState(mClosed, "Session must be closed before truncated.");
         mStorage.truncate();
         IOUtils.recursiveDelete(new File(new File(mDatabase.getLocation(), StorageConfiguration.Paths.Data
             .getFile().getName()), mSessionConfig.getResource()));

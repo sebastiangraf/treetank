@@ -35,6 +35,7 @@ import org.treetank.access.NodeReadTrx;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
+import org.treetank.exception.TTIOException;
 import org.treetank.node.ElementNode;
 import org.treetank.node.TextNode;
 import org.treetank.node.interfaces.INode;
@@ -70,8 +71,9 @@ public final class LabelFMESVisitor {
         mLeafLabels = new HashMap<Integer, List<INode>>();
     }
 
-    /** {@inheritDoc} */
-    public void visit(final ElementNode paramNode) {
+    /** {@inheritDoc} 
+     * @throws TTIOException */
+    public void visit(final ElementNode paramNode) throws TTIOException {
         final long nodeKey = paramNode.getNodeKey();
         mRtx.moveTo(nodeKey);
         for (int i = 0; i < paramNode.getAttributeCount(); i++) {
@@ -93,8 +95,9 @@ public final class LabelFMESVisitor {
         }
     }
 
-    /** {@inheritDoc} */
-    public void visit(final TextNode paramNode) {
+    /** {@inheritDoc} 
+     * @throws TTIOException */
+    public void visit(final TextNode paramNode) throws TTIOException {
         mRtx.moveTo(paramNode.getNodeKey());
         addLeafLabel();
     }

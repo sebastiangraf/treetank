@@ -27,6 +27,8 @@
 
 package org.treetank.access;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -48,7 +50,6 @@ import org.treetank.cache.LogKey;
 import org.treetank.cache.NodePageContainer;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.exception.TTUsageException;
 import org.treetank.io.IBackend;
 import org.treetank.io.IBackendReader;
 import org.treetank.io.IBackendWriter;
@@ -233,11 +234,8 @@ public final class Storage implements IStorage {
             ResourceConfiguration.serialize(pResConf);
             // if something was not correct, delete the partly created
             // substructure
-            if (!returnVal) {
-                throw new IllegalStateException(new StringBuilder("Failure, please remove folder ").append(
-                    pResConf.mProperties.getProperty(ContructorProps.STORAGEPATH)).append(" manually!")
-                    .toString());
-            }
+            checkState(returnVal, "Failure, please remove folder %s manually!", pResConf.mProperties
+                .getProperty(ContructorProps.STORAGEPATH));
 
             // Boostrapping the Storage, this is quite dirty because of the initialization of the key, i
             // guess..however...
@@ -282,10 +280,8 @@ public final class Storage implements IStorage {
      *             if something odd happens
      */
     public static synchronized IStorage openStorage(final File pFile) throws TTException {
-        if (!existsStorage(pFile)) {
-            throw new TTUsageException("DB could not be opened (since it was not created?) at location",
-                pFile.toString());
-        }
+        checkState(existsStorage(pFile), "DB could not be opened (since it was not created?) at location %s",
+            pFile);
         StorageConfiguration config = StorageConfiguration.deserialize(pFile);
         final Storage storage = new Storage(config);
         final IStorage returnVal = STORAGEMAP.putIfAbsent(pFile, storage);
@@ -315,11 +311,8 @@ public final class Storage implements IStorage {
                 pSessionConf.getResource());
         Session returnVal = mSessions.get(resourceFile);
         if (returnVal == null) {
-            if (!resourceFile.exists()) {
-                throw new TTUsageException(
-                    "Resource could not be opened (since it was not created?) at location", resourceFile
-                        .toString());
-            }
+            checkState(resourceFile.exists(),
+                "Resource could not be opened (since it was not created?) at location %s", resourceFile);
             ResourceConfiguration config =
                 ResourceConfiguration.deserialize(mStorageConfig.mFile, pSessionConf.getResource());
 
@@ -477,9 +470,9 @@ public final class Storage implements IStorage {
 
         IBackend storage = pResourceConf.mStorage;
         IBackendWriter writer = storage.getWriter();
-        
+
         writer.writeUberPage(uberPage);
-        
+
         Iterator<Map.Entry<LogKey, NodePageContainer>> entries = mLog.getIterator();
         while (entries.hasNext()) {
             Map.Entry<LogKey, NodePageContainer> next = entries.next();

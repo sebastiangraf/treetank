@@ -240,7 +240,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
     /**
      * {@inheritDoc}
      */
-    public INode getNode(final long pNodeKey) throws TTException {
+    public INode getNode(final long pNodeKey) throws TTIOException {
 
         // Calculate page and node part for given nodeKey.
         final long nodePageKey = nodePageKey(pNodeKey);

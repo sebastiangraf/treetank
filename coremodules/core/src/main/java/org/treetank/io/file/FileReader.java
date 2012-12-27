@@ -127,7 +127,7 @@ public final class FileReader implements IBackendReader {
      * {@inheritDoc}
      */
     @Override
-    public UberPage readUber() throws TTException {
+    public UberPage readUber() throws TTIOException {
         try {
             // Read primary beacon.
             mFile.seek(0);

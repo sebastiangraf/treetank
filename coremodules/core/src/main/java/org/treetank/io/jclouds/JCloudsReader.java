@@ -51,7 +51,7 @@ public class JCloudsReader implements IBackendReader {
      * {@inheritDoc}
      */
     @Override
-    public UberPage readUber() throws TTException {
+    public UberPage readUber() throws TTIOException {
         try {
             Blob blobRetrieved = mBlobStore.getBlob(mResourceName, Long.toString(-1l));
             InputStream in = blobRetrieved.getPayload().getInput();

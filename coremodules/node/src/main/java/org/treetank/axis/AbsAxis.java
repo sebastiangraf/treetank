@@ -27,12 +27,16 @@
 
 package org.treetank.axis;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.treetank.api.INodeReadTrx;
 import org.treetank.exception.TTException;
+import org.treetank.exception.TTIOException;
 import org.treetank.node.AtomicValue;
 import org.treetank.node.interfaces.INode;
 
@@ -82,9 +86,7 @@ public abstract class AbsAxis implements Iterator<Long>, Iterable<Long> {
      *            transaction to operate with
      */
     public AbsAxis(final INodeReadTrx paramRtx) {
-        if (paramRtx == null) {
-            throw new IllegalArgumentException("Transaction may not be null!");
-        }
+        checkNotNull(paramRtx);
         mRTX = paramRtx;
         mIncludeSelf = false;
         reset(paramRtx.getNode().getNodeKey());
@@ -99,9 +101,7 @@ public abstract class AbsAxis implements Iterator<Long>, Iterable<Long> {
      *            determines if self is included
      */
     public AbsAxis(final INodeReadTrx paramRtx, final boolean paramIncludeSelf) {
-        if (paramRtx == null) {
-            throw new IllegalArgumentException("Transaction may not be null!");
-        }
+        checkNotNull(paramRtx);
         mRTX = paramRtx;
         mIncludeSelf = paramIncludeSelf;
         reset(paramRtx.getNode().getNodeKey());
@@ -120,10 +120,7 @@ public abstract class AbsAxis implements Iterator<Long>, Iterable<Long> {
      */
     @Override
     public final Long next() {
-        if (!mNext) {
-            throw new IllegalStateException("IAxis.next() must be called exactely once after hasNext()"
-                + " evaluated to true.");
-        }
+        checkState(mNext, "IAxis.next() must be called exactely once after hasNext()" + " evaluated to true.");
         mKey = mRTX.getNode().getNodeKey();
         mNext = false;
         return mKey;
@@ -158,11 +155,15 @@ public abstract class AbsAxis implements Iterator<Long>, Iterable<Long> {
      * @return True if the node with the given node key is selected.
      */
     public boolean moveTo(final long pKey) {
-        if (pKey < 0 || mRTX.moveTo(pKey)) {
-            lastPointer.put(mRTX, pKey);
-            return true;
-        } else {
-            return false;
+        try {
+            if (pKey < 0 || mRTX.moveTo(pKey)) {
+                lastPointer.put(mRTX, pKey);
+                return true;
+            } else {
+                return false;
+            }
+        } catch (TTIOException exc) {
+            throw new RuntimeException(exc);
         }
     }
 

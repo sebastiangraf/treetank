@@ -27,6 +27,9 @@
 
 package org.treetank.service.xml.shredder;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 import static org.treetank.node.IConstants.NULL_NODE;
 
 import java.io.ByteArrayInputStream;
@@ -65,7 +68,6 @@ import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.exception.TTUsageException;
 import org.treetank.io.IBackend.IBackendFactory;
 import org.treetank.node.DocumentRootNode;
 import org.treetank.node.ElementNode;
@@ -152,9 +154,10 @@ public class XMLShredder implements Callable<Void> {
      */
     public XMLShredder(final INodeWriteTrx paramWtx, final XMLEventReader paramReader,
         final EShredderInsert paramAddAsFirstChild, final EShredderCommit paramCommit) throws TTException {
-        if (paramWtx == null || paramReader == null || paramAddAsFirstChild == null || paramCommit == null) {
-            throw new IllegalArgumentException("None of the constructor parameters may be null!");
-        }
+        checkNotNull(paramWtx);
+        checkNotNull(paramReader);
+        checkNotNull(paramAddAsFirstChild);
+        checkNotNull(paramCommit);
         mWtx = paramWtx;
         mReader = paramReader;
         mFirstChildAppend = paramAddAsFirstChild;
@@ -264,9 +267,8 @@ public class XMLShredder implements Callable<Void> {
         final QName name = paramEvent.getName();
 
         if (mFirstChildAppend == EShredderInsert.ADDASRIGHTSIBLING) {
-            if (mWtx.getNode().getKind() == IConstants.ROOT) {
-                throw new TTUsageException("Subtree can not be inserted as sibling of Root");
-            }
+            checkState(mWtx.getNode().getKind() != IConstants.ROOT,
+                "Subtree can not be inserted as sibling of Root");
             key = mWtx.insertElementAsRightSibling(name);
             mFirstChildAppend = EShredderInsert.ADDASFIRSTCHILD;
         } else {
@@ -340,9 +342,7 @@ public class XMLShredder implements Callable<Void> {
      *             if any exception occurs
      */
     public static void main(final String... paramArgs) throws Exception {
-        if (paramArgs.length != 2) {
-            throw new IllegalArgumentException("Usage: XMLShredder input.xml output.tnk");
-        }
+        checkArgument(paramArgs.length != 2, "Usage: XMLShredder input.xml output.tnk");
 
         System.out.print("Shredding '" + paramArgs[0] + "' to '" + paramArgs[1] + "' ... ");
         final long time = System.currentTimeMillis();
@@ -430,9 +430,7 @@ public class XMLShredder implements Callable<Void> {
      */
     public static synchronized XMLEventReader createListReader(final List<XMLEvent> paramEvents)
         throws IOException, XMLStreamException {
-        if (paramEvents == null) {
-            throw new IllegalArgumentException("paramEvents may not be null!");
-        }
+        checkNotNull(paramEvents);
         return new ListEventReader(paramEvents);
     }
 

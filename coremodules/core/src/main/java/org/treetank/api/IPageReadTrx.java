@@ -37,7 +37,7 @@ public interface IPageReadTrx {
      * @throws TTException
      *             if anything weird happens
      */
-    INode getNode(final long pKey) throws TTException;
+    INode getNode(final long pKey) throws TTIOException;
 
     /**
      * Getting the most related {@link RevisionRootPage} for additional content.

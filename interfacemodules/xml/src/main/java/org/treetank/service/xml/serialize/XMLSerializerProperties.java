@@ -27,6 +27,8 @@
 
 package org.treetank.service.xml.serialize;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -101,8 +103,6 @@ public final class XMLSerializerProperties {
                 final Object[] arr = (Object[])obj;
                 mProps.put(arr[0].toString(), arr[1]);
             }
-        } catch (final IllegalArgumentException exc) {
-            exc.printStackTrace();
         } catch (IllegalAccessException exc) {
             exc.printStackTrace();
         }
@@ -134,9 +134,7 @@ public final class XMLSerializerProperties {
      */
     public ConcurrentMap<String, Object> readProps(final String paramFilePath) {
         mFilePath = paramFilePath;
-        if (!new File(mFilePath).exists()) {
-            throw new IllegalStateException("Properties file doesn't exist!");
-        }
+        checkState(new File(mFilePath).exists(), "Properties file doesn't exist!");
 
         try {
             // Read and parse file.

@@ -26,6 +26,8 @@
  */
 package org.treetank;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import org.treetank.TestHelper.PATHS;
 import org.treetank.access.NodeReadTrx;
 import org.treetank.access.NodeWriteTrx;
@@ -105,12 +107,8 @@ public class Holder {
     }
 
     public IPageWriteTrx getPWtx() {
-        if (mPRtx instanceof IPageWriteTrx) {
-            return (IPageWriteTrx)mPRtx;
-        } else {
-            throw new IllegalStateException();
-        }
-
+        checkState(mPRtx instanceof IPageWriteTrx);
+        return (IPageWriteTrx)mPRtx;
     }
 
     public INodeReadTrx getNRtx() {
@@ -118,12 +116,8 @@ public class Holder {
     }
 
     public INodeWriteTrx getNWtx() {
-        if (mNRtx instanceof INodeWriteTrx) {
-            return (INodeWriteTrx)mNRtx;
-        } else {
-            throw new IllegalStateException();
-        }
-
+        checkState(mNRtx instanceof INodeWriteTrx);
+        return (INodeWriteTrx)mNRtx;
     }
 
 }

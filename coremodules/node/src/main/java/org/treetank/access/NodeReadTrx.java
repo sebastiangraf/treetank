@@ -27,6 +27,7 @@
 
 package org.treetank.access;
 
+import static com.google.common.base.Preconditions.checkState;
 import static org.treetank.node.IConstants.NULL_NODE;
 import static org.treetank.node.IConstants.ROOT_NODE;
 
@@ -78,18 +79,14 @@ public class NodeReadTrx implements INodeReadTrx {
      * @throws TTIOException
      */
     @Override
-    public final boolean moveTo(final long pNodeKey) {
+    public final boolean moveTo(final long pNodeKey) throws TTIOException {
         assertNotClosed();
         if (pNodeKey == NULL_NODE) {
             return false;
         } else {
             // Remember old node and fetch new one.
             final INode oldNode = mCurrentNode;
-            try {
-                mCurrentNode = (org.treetank.node.interfaces.INode)mPageReadTrx.getNode(pNodeKey);
-            } catch (final TTException exc) {
-                mCurrentNode = null;
-            }
+            mCurrentNode = (org.treetank.node.interfaces.INode)mPageReadTrx.getNode(pNodeKey);
 
             if (mCurrentNode == null) {
                 mCurrentNode = oldNode;
@@ -104,7 +101,7 @@ public class NodeReadTrx implements INodeReadTrx {
      * {@inheritDoc}
      */
     @Override
-    public final boolean moveToAttribute(final int mIndex) {
+    public final boolean moveToAttribute(final int mIndex) throws TTIOException {
         assertNotClosed();
         if (mCurrentNode.getKind() == IConstants.ELEMENT) {
             return moveTo(((ElementNode)mCurrentNode).getAttributeKey(mIndex));
@@ -117,7 +114,7 @@ public class NodeReadTrx implements INodeReadTrx {
      * {@inheritDoc}
      */
     @Override
-    public final boolean moveToNamespace(final int mIndex) {
+    public final boolean moveToNamespace(final int mIndex) throws TTIOException {
         assertNotClosed();
         if (mCurrentNode.getKind() == IConstants.ELEMENT) {
             return moveTo(((ElementNode)mCurrentNode).getNamespaceKey(mIndex));
@@ -213,19 +210,17 @@ public class NodeReadTrx implements INodeReadTrx {
      * Make sure that the session is not yet closed when calling this method.
      */
     protected final void assertNotClosed() {
-        if (mPageReadTrx.isClosed()) {
-            throw new IllegalStateException("Transaction is already closed.");
-        }
+        checkState(!mPageReadTrx.isClosed(), "Transaction is already closed.");
     }
 
     /**
      * Replace the state of the transaction.
      * 
-     * @param paramTransactionState
-     *            State of transaction.
+     * @param pPageTrx
+     *            Page Read Trx
      */
-    protected final void setPageTransaction(final IPageReadTrx paramTransactionState) {
-        mPageReadTrx = paramTransactionState;
+    protected final void setPageTransaction(final IPageReadTrx pPageTrx) {
+        mPageReadTrx = pPageTrx;
     }
 
     /**

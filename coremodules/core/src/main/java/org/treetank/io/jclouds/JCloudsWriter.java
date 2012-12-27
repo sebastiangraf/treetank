@@ -37,7 +37,7 @@ public class JCloudsWriter implements IBackendWriter {
      * {@inheritDoc}
      */
     @Override
-    public IPage read(long pKey) throws TTIOException, TTByteHandleException {
+    public IPage read(long pKey) throws TTIOException {
         return mReader.read(pKey);
     }
 
@@ -66,7 +66,7 @@ public class JCloudsWriter implements IBackendWriter {
      * {@inheritDoc}
      */
     @Override
-    public UberPage readUber() throws TTException {
+    public UberPage readUber() throws TTIOException {
         return mReader.readUber();
     }
 

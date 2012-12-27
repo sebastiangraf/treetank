@@ -121,7 +121,7 @@ public final class BerkeleyWriter implements IBackendWriter {
      * {@inheritDoc}
      */
     @Override
-    public UberPage readUber() throws TTException {
+    public UberPage readUber() throws TTIOException {
         return mReader.readUber();
     }
 

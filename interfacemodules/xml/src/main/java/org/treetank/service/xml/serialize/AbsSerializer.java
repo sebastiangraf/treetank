@@ -37,6 +37,7 @@ import org.treetank.api.ISession;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.DescendantAxis;
 import org.treetank.exception.TTException;
+import org.treetank.exception.TTIOException;
 import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.IStructNode;
 
@@ -205,7 +206,7 @@ abstract class AbsSerializer implements Callable<Void> {
      * @param paramRTX
      *            Treetank reading transaction {@link IReadTransaction}.
      */
-    protected abstract void emitStartElement(final INodeReadTrx paramRTX);
+    protected abstract void emitStartElement(final INodeReadTrx paramRTX) throws TTIOException;
 
     /**
      * Emit end tag.
