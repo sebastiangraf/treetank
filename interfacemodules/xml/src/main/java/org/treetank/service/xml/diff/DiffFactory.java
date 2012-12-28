@@ -207,11 +207,11 @@ public final class DiffFactory {
      *            {@link Builder} reference
      */
     private static void checkParams(final Builder paramBuilder) {
-        checkState(paramBuilder.mSession == null || paramBuilder.mKey < -1L || paramBuilder.mNewRev < 0
-            || paramBuilder.mOldRev < 0 || paramBuilder.mObservers == null || paramBuilder.mKind == null,
+        checkState(paramBuilder.mSession != null && paramBuilder.mKey >= 0 && paramBuilder.mNewRev >= 0
+            && paramBuilder.mOldRev >= 0 && paramBuilder.mObservers != null && paramBuilder.mKind != null,
             "No valid arguments specified!");
         checkState(
-            paramBuilder.mNewRev == paramBuilder.mOldRev || paramBuilder.mNewRev < paramBuilder.mOldRev,
+            paramBuilder.mNewRev != paramBuilder.mOldRev && paramBuilder.mNewRev >= paramBuilder.mOldRev,
             "Revision numbers must not be the same and the new revision must have a greater number than the old revision!");
     }
 }
