@@ -342,7 +342,7 @@ public class XMLShredder implements Callable<Void> {
      *             if any exception occurs
      */
     public static void main(final String... paramArgs) throws Exception {
-        checkArgument(paramArgs.length != 2, "Usage: XMLShredder input.xml output.tnk");
+        checkArgument(paramArgs.length == 2, "Usage: XMLShredder input.xml output.tnk");
 
         System.out.print("Shredding '" + paramArgs[0] + "' to '" + paramArgs[1] + "' ... ");
         final long time = System.currentTimeMillis();
