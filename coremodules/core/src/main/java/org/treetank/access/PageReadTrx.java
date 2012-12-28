@@ -263,8 +263,8 @@ public class PageReadTrx implements IPageReadTrx {
                 NodePage page = (NodePage)mNodePageCache.getIfPresent(nodePageKey);
                 if (page == null) {
                     page = (NodePage)mPageReader.read(nodePageKey);
-                    nodePages.add(page);
                 }
+                nodePages.add(page);
                 nodePageKeys.add(nodePageKey);
                 if (nodePages.size() == mSession.getConfig().mRevision.getRevisionsToRestore()) {
                     break;
