@@ -103,8 +103,11 @@ public final class LRUCache implements ICachedLog {
     /**
      * {@inheritDoc}
      */
-    public void put(final LogKey pKey, final NodePageContainer pValue) {
+    public void put(final LogKey pKey, final NodePageContainer pValue) throws TTIOException {
         map.put(pKey, pValue);
+        if (mSecondCache.get(pKey) != null) {
+            mSecondCache.put(pKey, pValue);
+        }
     }
 
     /**
@@ -113,15 +116,6 @@ public final class LRUCache implements ICachedLog {
     public void clear() throws TTIOException {
         map.clear();
         mSecondCache.clear();
-    }
-
-    /**
-     * Returns the number of used entries in the cache.
-     * 
-     * @return the number of entries currently in the cache.
-     */
-    public int usedEntries() {
-        return map.size();
     }
 
     /**

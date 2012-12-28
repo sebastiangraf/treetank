@@ -28,7 +28,6 @@
 package org.treetank.access;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,9 +45,9 @@ import org.treetank.page.IndirectPage;
 import org.treetank.page.NamePage;
 import org.treetank.page.NodePage;
 import org.treetank.page.NodePage.DeletedNode;
-import org.treetank.page.interfaces.IReferencePage;
 import org.treetank.page.RevisionRootPage;
 import org.treetank.page.UberPage;
+import org.treetank.page.interfaces.IReferencePage;
 import org.treetank.revisioning.IRevisioning;
 
 import com.google.common.cache.Cache;
@@ -298,13 +297,15 @@ public class PageReadTrx implements IPageReadTrx {
         int offset = 0;
         long levelKey = pSeqPageKey;
         long pageKey = pStartKey;
-
+        IndirectPage page = null;
         // Iterate through all levels.
         for (int level = 0; level < IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level++) {
             offset = (int)(levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level]);
             levelKey -= offset << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
-            checkState(pageKey > 0);
-            final IndirectPage page = (IndirectPage)mPageReader.read(pageKey);
+            if (pageKey == 0) {
+                return -1;
+            }
+            page = (IndirectPage)mPageReader.read(pageKey);
             pageKey = page.getReferenceKeys()[offset];
         }
 

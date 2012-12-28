@@ -42,25 +42,29 @@ public class Differential implements IRevisioning {
      */
     @Override
     public NodePage combinePages(NodePage[] pages) {
-        final NodePage returnVal = new NodePage(pages[0].getPageKey());
-        final NodePage latest = pages[0];
+        try {
+            final NodePage returnVal = new NodePage(pages[0].getPageKey());
+            final NodePage latest = pages[0];
 
-        NodePage referencePage = pages[0];
+            NodePage referencePage = pages[0];
 
-        for (int i = 1; i < pages.length; i++) {
-            if (i % mRevToRestore == 0) {
-                referencePage = pages[i];
-                break;
+            for (int i = 1; i < pages.length; i++) {
+                if (i % mRevToRestore == 0) {
+                    referencePage = pages[i];
+                    break;
+                }
             }
-        }
-        for (int i = 0; i < referencePage.getNodes().length; i++) {
-            if (latest.getNode(i) != null) {
-                returnVal.setNode(i, latest.getNode(i));
-            } else {
-                returnVal.setNode(i, referencePage.getNode(i));
+            for (int i = 0; i < referencePage.getNodes().length; i++) {
+                if (latest.getNode(i) != null) {
+                    returnVal.setNode(i, latest.getNode(i));
+                } else {
+                    returnVal.setNode(i, referencePage.getNode(i));
+                }
             }
+            return returnVal;
+        } catch (ArrayIndexOutOfBoundsException exc) {
+            throw exc;
         }
-        return returnVal;
     }
 
     /**
