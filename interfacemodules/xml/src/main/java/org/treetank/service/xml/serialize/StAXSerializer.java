@@ -52,6 +52,7 @@ import org.treetank.axis.DescendantAxis;
 import org.treetank.axis.FilterAxis;
 import org.treetank.axis.filter.TextFilter;
 import org.treetank.exception.TTException;
+import org.treetank.exception.TTIOException;
 import org.treetank.node.ElementNode;
 import org.treetank.node.interfaces.IStructNode;
 
@@ -159,8 +160,9 @@ public final class StAXSerializer implements XMLEventReader {
      * 
      * @param paramRTX
      *            Treetank reading transaction {@link IReadTransaction}.
+     * @throws TTIOException
      */
-    private void emitEndTag() {
+    private void emitEndTag() throws TTIOException {
         final long nodeKey = mRtx.getNode().getNodeKey();
         mEvent = mFac.createEndElement(mRtx.getQNameOfCurrentNode(), new NamespaceIterator(mRtx));
         mRtx.moveTo(nodeKey);
@@ -171,8 +173,9 @@ public final class StAXSerializer implements XMLEventReader {
      * 
      * @param paramRTX
      *            Treetank reading transaction {@link IReadTransaction}.
+     * @throws TTIOException
      */
-    private void emitNode() {
+    private void emitNode() throws TTIOException {
         switch (mRtx.getNode().getKind()) {
         case ROOT:
             mEvent = mFac.createStartDocument();
@@ -237,13 +240,17 @@ public final class StAXSerializer implements XMLEventReader {
             strBuilder.append(mRtx.getValueOfCurrentNode());
         }
 
-        mRtx.moveTo(nodeKey);
+        try {
+            mRtx.moveTo(nodeKey);
+        } catch (TTIOException exc) {
+            throw new XMLStreamException(exc);
+        }
         return strBuilder.toString();
     }
 
     /** {@inheritDoc} */
     @Override
-    public Object getProperty(final String mName) throws IllegalArgumentException {
+    public Object getProperty(final String mName) {
         throw new UnsupportedOperationException("Not supported by Treetank!");
     }
 
@@ -281,8 +288,8 @@ public final class StAXSerializer implements XMLEventReader {
                 }
             }
             emit();
-        } catch (final IOException exc) {
-            exc.printStackTrace();
+        } catch (final TTIOException exc) {
+            throw new XMLStreamException(exc);
         }
 
         return mEvent;
@@ -316,11 +323,11 @@ public final class StAXSerializer implements XMLEventReader {
                     emitEndTag();
                 }
             }
-        } catch (final IOException exc) {
-            exc.printStackTrace();
-        }
 
-        mRtx.moveTo(currNodeKey);
+            mRtx.moveTo(currNodeKey);
+        } catch (final TTIOException exc) {
+            throw new XMLStreamException(exc);
+        }
         return mEvent;
     }
 
@@ -354,7 +361,7 @@ public final class StAXSerializer implements XMLEventReader {
      * @throws IOException
      *             In case of any I/O error.
      */
-    private void processNode(final int paramNodeKind) throws IOException {
+    private void processNode(final int paramNodeKind) throws TTIOException {
         switch (paramNodeKind) {
         case ELEMENT:
             emitEndTag();
@@ -373,7 +380,7 @@ public final class StAXSerializer implements XMLEventReader {
      * @throws IOException
      *             In case of any I/O error.
      */
-    private void emit() throws IOException {
+    private void emit() throws TTIOException {
         // Emit pending end elements.
         if (mCloseElements) {
             if (!mStack.empty() && mStack.peek() != ((IStructNode)mRtx.getNode()).getLeftSiblingKey()) {
@@ -407,8 +414,7 @@ public final class StAXSerializer implements XMLEventReader {
                 && !((IStructNode)mRtx.getNode()).hasRightSibling()) {
                 mGoUp = true;
                 moveToNextNode();
-            } else if (mRtx.getNode().getKind() == ELEMENT
-                && !((ElementNode)mRtx.getNode()).hasFirstChild()) {
+            } else if (mRtx.getNode().getKind() == ELEMENT && !((ElementNode)mRtx.getNode()).hasFirstChild()) {
                 // Case: Empty elements with right siblings.
                 mGoBack = true;
                 moveToNextNode();
@@ -481,13 +487,17 @@ public final class StAXSerializer implements XMLEventReader {
 
         @Override
         public Attribute next() {
-            mRTX.moveTo(mNodeKey);
-            mRTX.moveToAttribute(mIndex++);
-            assert mRTX.getNode().getKind() == ATTRIBUTE;
-            final QName qName = mRTX.getQNameOfCurrentNode();
-            final String value = mRTX.getValueOfCurrentNode();
-            mRTX.moveTo(mNodeKey);
-            return mFac.createAttribute(qName, value);
+            try {
+                mRTX.moveTo(mNodeKey);
+                mRTX.moveToAttribute(mIndex++);
+                assert mRTX.getNode().getKind() == ATTRIBUTE;
+                final QName qName = mRTX.getQNameOfCurrentNode();
+                final String value = mRTX.getValueOfCurrentNode();
+                mRTX.moveTo(mNodeKey);
+                return mFac.createAttribute(qName, value);
+            } catch (TTIOException exc) {
+                throw new RuntimeException(exc);
+            }
         }
 
         @Override
@@ -553,12 +563,16 @@ public final class StAXSerializer implements XMLEventReader {
 
         @Override
         public Namespace next() {
-            mRTX.moveTo(mNodeKey);
-            mRTX.moveToNamespace(mIndex++);
-            assert mRTX.getNode().getKind() == NAMESPACE;
-            final QName qName = mRTX.getQNameOfCurrentNode();
-            mRTX.moveTo(mNodeKey);
-            return mFac.createNamespace(qName.getLocalPart(), qName.getNamespaceURI());
+            try {
+                mRTX.moveTo(mNodeKey);
+                mRTX.moveToNamespace(mIndex++);
+                assert mRTX.getNode().getKind() == NAMESPACE;
+                final QName qName = mRTX.getQNameOfCurrentNode();
+                mRTX.moveTo(mNodeKey);
+                return mFac.createNamespace(qName.getLocalPart(), qName.getNamespaceURI());
+            } catch (TTIOException exc) {
+                throw new RuntimeException(exc);
+            }
         }
 
         @Override

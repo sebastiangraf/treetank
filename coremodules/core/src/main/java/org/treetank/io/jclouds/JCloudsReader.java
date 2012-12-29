@@ -16,7 +16,6 @@ import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.page.PageFactory;
-import org.treetank.page.PageReference;
 import org.treetank.page.UberPage;
 import org.treetank.page.interfaces.IPage;
 
@@ -52,23 +51,19 @@ public class JCloudsReader implements IBackendReader {
      * {@inheritDoc}
      */
     @Override
-    public PageReference readFirstReference() throws TTIOException, TTByteHandleException {
+    public UberPage readUber() throws TTIOException {
         try {
-            final PageReference uberPageReference = new PageReference();
             Blob blobRetrieved = mBlobStore.getBlob(mResourceName, Long.toString(-1l));
             InputStream in = blobRetrieved.getPayload().getInput();
             DataInputStream datain = new DataInputStream(in);
             long uberpagekey = datain.readLong();
-            uberPageReference.setKey(uberpagekey);
-            final UberPage page = (UberPage)read(uberPageReference.getKey());
-            uberPageReference.setPage(page);
+            final UberPage page = (UberPage)read(uberpagekey);
             datain.close();
             in.close();
-            return uberPageReference;
+            return page;
         } catch (final IOException exc) {
             throw new TTIOException(exc);
         }
-
     }
 
     /**
@@ -81,13 +76,14 @@ public class JCloudsReader implements IBackendReader {
         try {
             Blob blobRetrieved = mBlobStore.getBlob(mResourceName, Long.toString(pKey));
             InputStream in = blobRetrieved.getPayload().getInput();
+
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             ByteStreams.copy(in, out);
             byte[] decryptedPage = mByteHandler.deserialize(out.toByteArray());
             out.close();
             in.close();
             return mFac.deserializePage(decryptedPage);
-        } catch (final IOException | TTByteHandleException exc) {
+        } catch (final IOException | TTByteHandleException | NullPointerException exc) {
             throw new TTIOException(exc);
         }
     }
@@ -97,6 +93,24 @@ public class JCloudsReader implements IBackendReader {
      */
     @Override
     public void close() throws TTIOException {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("JCloudsReader [mBlobStore=");
+        builder.append(mBlobStore);
+        builder.append(", mFac=");
+        builder.append(mFac);
+        builder.append(", mByteHandler=");
+        builder.append(mByteHandler);
+        builder.append(", mResourceName=");
+        builder.append(mResourceName);
+        builder.append("]");
+        return builder.toString();
     }
 
 }

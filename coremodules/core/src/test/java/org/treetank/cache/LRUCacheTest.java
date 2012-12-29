@@ -28,13 +28,12 @@
 package org.treetank.cache;
 
 import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertNull;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.page.NodePage;
+import org.treetank.page.interfaces.IPage;
 
 /**
  * @author Sebastian Graf, University of Konstanz
@@ -47,19 +46,19 @@ public class LRUCacheTest {
     @BeforeMethod
     public void setUp() throws TTException {
         cache = new LRUCache(new NullCache());
-        CacheTestHelper.setUp(cache);
+        CacheTestHelper.setUp(false, cache);
     }
 
     @Test
     public void test() throws TTIOException {
         for (int i = 1; i < CacheTestHelper.PAGES.length; i++) {
-            final NodePageContainer cont = cache.get(i);
-            final NodePage current = cont.getComplete();
-            assertEquals(CacheTestHelper.PAGES[i][0], current);
+            for (int j = 1; j < CacheTestHelper.PAGES[i].length; j++) {
+                LogKey toRetrieve = new LogKey(true, i, j);
+                final NodePageContainer cont = cache.get(toRetrieve);
+                final IPage current = cont.getComplete();
+                assertEquals(CacheTestHelper.PAGES[i][j], current);
+            }
         }
-
-        final NodePageContainer page = cache.get(0);
-        assertNull(page);
 
     }
 
@@ -77,13 +76,19 @@ public class LRUCacheTest {
         }
 
         @Override
-        public NodePageContainer get(final long mKey) {
+        public NodePageContainer get(final LogKey mKey) {
             return null;
         }
 
         @Override
-        public void put(final long mKey, final NodePageContainer mPage) {
+        public void put(final LogKey mKey, final NodePageContainer mPage) {
             // Not used over here
+        }
+
+        @Override
+        public CacheLogIterator getIterator() {
+            // Not used over here
+            return null;
         }
 
     }

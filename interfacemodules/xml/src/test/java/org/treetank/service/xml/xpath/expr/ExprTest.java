@@ -15,13 +15,14 @@ import org.treetank.NodeHelper;
 import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
 import org.treetank.access.conf.ResourceConfiguration;
-import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
+import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.AxisTest;
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.exception.TTException;
+import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTXPathException;
 import org.treetank.node.AtomicValue;
 import org.treetank.node.Type;
@@ -53,13 +54,12 @@ public class ExprTest {
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
         Properties props =
-        StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
-            TestHelper.RESOURCENAME);
+            StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                TestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
         NodeHelper.createTestDocument(mResource);
         holder = Holder.generateRtx(mResource);
     }
-
 
     @AfterClass
     public void tearDown() throws TTException {
@@ -125,7 +125,7 @@ public class ExprTest {
                     new IExprChecker() {
 
                         @Override
-                        public void checkExpr(INodeReadTrx pRtx) throws TTXPathException {
+                        public void checkExpr(INodeReadTrx pRtx) throws TTXPathException, TTIOException {
 
                             pRtx.moveTo(1L);
 
@@ -173,7 +173,7 @@ public class ExprTest {
                     new IExprChecker() {
 
                         @Override
-                        public void checkExpr(INodeReadTrx pRtx) throws TTXPathException {
+                        public void checkExpr(INodeReadTrx pRtx) throws TTXPathException, TTIOException {
 
                             final AbsAxis axis1 = new XPathAxis(pRtx, "1 castable as xs:decimal");
                             assertEquals(true, axis1.hasNext());
@@ -192,14 +192,6 @@ public class ExprTest {
                                     + "xs:NOTATION or xs:anyAtomicType.");
                             }
 
-                            // Token is not implemented yet.
-                            // final IAxis axis3 = new XPathAxis(holder.getRtx(),
-                            // "\"hello\" castable as xs:token");
-                            // assertEquals(true, axis3.hasNext());
-                            // assertEquals(Type.BOOLEAN, holder.getRtx().getValueTypeAsType());
-                            // assertEquals(true, holder.getRtx().getValueAsBoolean());
-                            // assertEquals(false, axis3.hasNext());
-
                             final AbsAxis axis4 = new XPathAxis(pRtx, "\"hello\" castable as xs:string");
                             assertEquals(true, axis4.hasNext());
                             assertEquals(NamePageHash.generateHashForString("xs:boolean"), axis4.getNode()
@@ -208,20 +200,12 @@ public class ExprTest {
                                 .getRawValue())));
                             assertEquals(false, axis4.hasNext());
 
-                            // final IAxis axis5 = new XPathAxis(holder.getRtx(),
-                            // "\"hello\" castable as xs:decimal");
-                            // assertEquals(true, axis5.hasNext());
-                            // assertEquals(holder.getRtx().keyForName("xs:boolean"),
-                            // holder.getRtx().getTypeKey());
-                            // assertEquals(true, Boolean.parseBoolean(holder.getRtx().getValue()));
-                            // assertEquals(false, axis5.hasNext());
-
                         }
                     },// Comp Expr Test
                     new IExprChecker() {
 
                         @Override
-                        public void checkExpr(INodeReadTrx pRtx) throws TTXPathException {
+                        public void checkExpr(INodeReadTrx pRtx) throws TTXPathException, TTIOException {
                             final AbsAxis axis1 = new XPathAxis(pRtx, "1.0 = 1.0");
                             assertEquals(true, axis1.hasNext());
                             assertEquals(true, Boolean.parseBoolean(new String(((IValNode)axis1.getNode())
@@ -245,7 +229,7 @@ public class ExprTest {
                     new IExprChecker() {
 
                         @Override
-                        public void checkExpr(INodeReadTrx pRtx) throws TTXPathException {
+                        public void checkExpr(INodeReadTrx pRtx) throws TTXPathException, TTIOException {
                             final AbsAxis axis1 =
                                 new XPathAxis(pRtx, "every $child in child::node()" + "satisfies $child/@i");
                             assertEquals(true, axis1.hasNext());
@@ -283,7 +267,7 @@ public class ExprTest {
                     new IExprChecker() {
 
                         @Override
-                        public void checkExpr(INodeReadTrx pRtx) throws TTXPathException {
+                        public void checkExpr(INodeReadTrx pRtx) throws TTXPathException, TTIOException {
                             pRtx.moveTo(1L);
 
                             AxisTest.testIAxisConventions(new XPathAxis(pRtx, "child::node() except b"),
@@ -315,7 +299,7 @@ public class ExprTest {
                     new IExprChecker() {
 
                         @Override
-                        public void checkExpr(INodeReadTrx pRtx) throws TTXPathException {
+                        public void checkExpr(INodeReadTrx pRtx) throws TTXPathException, TTIOException {
                             pRtx.moveTo(1L);
 
                             AxisTest.testIAxisConventions(new XPathAxis(pRtx,
@@ -371,7 +355,7 @@ public class ExprTest {
                     new IExprChecker() {
 
                         @Override
-                        public void checkExpr(INodeReadTrx pRtx) throws TTXPathException {
+                        public void checkExpr(INodeReadTrx pRtx) throws TTXPathException, TTIOException {
                             pRtx.moveTo(1L);
 
                             final AbsAxis axis1 = new XPathAxis(pRtx, "fn:count(text())");
@@ -415,7 +399,7 @@ public class ExprTest {
                     new IExprChecker() {
 
                         @Override
-                        public void checkExpr(INodeReadTrx pRtx) throws TTXPathException {
+                        public void checkExpr(INodeReadTrx pRtx) throws TTXPathException, TTIOException {
                             pRtx.moveTo(1L);
 
                             AxisTest.testIAxisConventions(new XPathAxis(pRtx,
@@ -438,7 +422,7 @@ public class ExprTest {
                     new IExprChecker() {
 
                         @Override
-                        public void checkExpr(INodeReadTrx pRtx) throws TTXPathException {
+                        public void checkExpr(INodeReadTrx pRtx) throws TTXPathException, TTIOException {
                             final AbsAxis axis1 = new XPathAxis(pRtx, "1 instance of xs:integer");
                             assertEquals(true, axis1.hasNext());
                             assertEquals(NamePageHash.generateHashForString("xs:boolean"), axis1.getNode()
@@ -484,7 +468,7 @@ public class ExprTest {
                     new IExprChecker() {
 
                         @Override
-                        public void checkExpr(INodeReadTrx pRtx) throws TTXPathException {
+                        public void checkExpr(INodeReadTrx pRtx) throws TTXPathException, TTIOException {
 
                             pRtx.moveTo(1L);
 
@@ -594,7 +578,7 @@ public class ExprTest {
                     new IExprChecker() {
 
                         @Override
-                        public void checkExpr(INodeReadTrx pRtx) throws TTXPathException {
+                        public void checkExpr(INodeReadTrx pRtx) throws TTXPathException, TTIOException {
                             pRtx.moveTo(1L);
 
                             final AbsAxis axis1 = new XPathAxis(pRtx, "text() or node()");
@@ -642,7 +626,7 @@ public class ExprTest {
                     new IExprChecker() {
 
                         @Override
-                        public void checkExpr(INodeReadTrx pRtx) throws TTXPathException {
+                        public void checkExpr(INodeReadTrx pRtx) throws TTXPathException, TTIOException {
 
                             final AbsAxis axis1 =
                                 new XPathAxis(pRtx, "some $child in child::node() satisfies $child/@i");
@@ -671,7 +655,7 @@ public class ExprTest {
                     new IExprChecker() {
 
                         @Override
-                        public void checkExpr(INodeReadTrx pRtx) throws TTXPathException {
+                        public void checkExpr(INodeReadTrx pRtx) throws TTXPathException, TTIOException {
 
                             pRtx.moveTo(1L);
 
@@ -755,7 +739,7 @@ public class ExprTest {
      * 
      */
     interface IExprChecker {
-        void checkExpr(INodeReadTrx pRtx) throws TTException;
+        void checkExpr(INodeReadTrx pRtx) throws TTXPathException, TTIOException;
 
     }
 

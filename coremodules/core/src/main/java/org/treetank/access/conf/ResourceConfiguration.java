@@ -310,7 +310,7 @@ public final class ResourceConfiguration {
 
             return new ResourceConfiguration(props, backend, revObject, nodeFactory);
 
-        } catch (IOException | ClassNotFoundException | IllegalArgumentException | InstantiationException
+        } catch (IOException | ClassNotFoundException  | InstantiationException
         | IllegalAccessException | InvocationTargetException exc) {
             throw new TTIOException(exc);
         }

@@ -46,12 +46,12 @@ public final class LRUCache implements ICachedLog {
     /**
      * Capacity of the cache. Number of stored pages
      */
-    static final int CACHE_CAPACITY = 10;
+    static final int CACHE_CAPACITY = 100;
 
     /**
      * The collection to hold the maps.
      */
-    private final Map<Long, NodePageContainer> map;
+    protected final Map<LogKey, NodePageContainer> map;
 
     /**
      * The reference to the second cache.
@@ -68,12 +68,12 @@ public final class LRUCache implements ICachedLog {
      */
     public LRUCache(final ICachedLog paramSecondCache) {
         mSecondCache = paramSecondCache;
-        map = new LinkedHashMap<Long, NodePageContainer>(CACHE_CAPACITY) {
+        map = new LinkedHashMap<LogKey, NodePageContainer>(CACHE_CAPACITY) {
             // (an anonymous inner class)
             private static final long serialVersionUID = 1;
 
             @Override
-            protected boolean removeEldestEntry(final Map.Entry<Long, NodePageContainer> mEldest) {
+            protected boolean removeEldestEntry(final Map.Entry<LogKey, NodePageContainer> mEldest) {
                 boolean returnVal = false;
                 if (size() > CACHE_CAPACITY) {
                     try {
@@ -92,10 +92,10 @@ public final class LRUCache implements ICachedLog {
     /**
      * {@inheritDoc}
      */
-    public NodePageContainer get(final long mKey) throws TTIOException {
-        NodePageContainer page = map.get(mKey);
+    public NodePageContainer get(final LogKey pKey) throws TTIOException {
+        NodePageContainer page = map.get(pKey);
         if (page == null) {
-            page = mSecondCache.get(mKey);
+            page = mSecondCache.get(pKey);
         }
         return page;
     }
@@ -103,8 +103,11 @@ public final class LRUCache implements ICachedLog {
     /**
      * {@inheritDoc}
      */
-    public void put(final long mKey, final NodePageContainer mValue) {
-        map.put(mKey, mValue);
+    public void put(final LogKey pKey, final NodePageContainer pValue) throws TTIOException {
+        map.put(pKey, pValue);
+        if (mSecondCache.get(pKey) != null) {
+            mSecondCache.put(pKey, pValue);
+        }
     }
 
     /**
@@ -116,22 +119,13 @@ public final class LRUCache implements ICachedLog {
     }
 
     /**
-     * Returns the number of used entries in the cache.
-     * 
-     * @return the number of entries currently in the cache.
-     */
-    public int usedEntries() {
-        return map.size();
-    }
-
-    /**
      * Returns a <code>Collection</code> that contains a copy of all cache
      * entries.
      * 
      * @return a <code>Collection</code> with a copy of the cache content.
      */
-    public Collection<Map.Entry<Long, NodePageContainer>> getAll() {
-        return new ArrayList<Map.Entry<Long, NodePageContainer>>(map.entrySet());
+    public Collection<Map.Entry<LogKey, NodePageContainer>> getAll() {
+        return new ArrayList<Map.Entry<LogKey, NodePageContainer>>(map.entrySet());
     }
 
     /**
@@ -143,9 +137,19 @@ public final class LRUCache implements ICachedLog {
         builder.append("First Cache: ");
         builder.append(this.map.toString());
         builder.append("\n");
+        builder.append("\n");
         builder.append("Second Cache: ");
         builder.append(this.mSecondCache.toString());
         return builder.toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public CacheLogIterator getIterator() {
+        // TODO fix this one, iterator should be handled in a better component-adhering way.
+        return new CacheLogIterator(this, (BerkeleyPersistenceLog)mSecondCache);
     }
 
 }

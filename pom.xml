@@ -80,8 +80,7 @@
 		<module>interfacemodules/saxon</module>
 		<module>interfacemodules/jax-rx</module>
 		<module>interfacemodules/xml</module>
-		<!-- Test run fails, so this module is excluded for now. -->
-		<!-- module>interfacemodules/iscsi</module  -->
+		<module>interfacemodules/iscsi</module>
 	</modules>
 
 	<repositories>

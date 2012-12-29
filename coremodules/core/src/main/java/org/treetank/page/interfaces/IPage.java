@@ -26,8 +26,6 @@
  */
 package org.treetank.page.interfaces;
 
-import org.treetank.access.PageWriteTrx;
-import org.treetank.exception.TTException;
 
 /**
  * Interface to represent one page.
@@ -53,7 +51,5 @@ public interface IPage {
      * @return the key of the page
      */
     long getPageKey();
-
-    void commit(final PageWriteTrx paramState) throws TTException;
 
 }

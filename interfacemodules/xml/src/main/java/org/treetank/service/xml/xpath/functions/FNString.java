@@ -135,7 +135,6 @@ public class FNString extends AbsFunction {
                     value.append(new String(((IValNode)getNode()).getRawValue()));
 
                 }
-
             } else {
                 throw new IllegalStateException();
             }

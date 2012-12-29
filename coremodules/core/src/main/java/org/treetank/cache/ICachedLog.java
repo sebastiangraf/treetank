@@ -27,6 +27,8 @@
 
 package org.treetank.cache;
 
+import java.util.Map;
+
 import org.treetank.exception.TTIOException;
 
 /**
@@ -56,7 +58,7 @@ public interface ICachedLog {
      * @throws TTIOException
      *             if get fails
      */
-    NodePageContainer get(final long mKey) throws TTIOException;
+    NodePageContainer get(final LogKey mKey) throws TTIOException;
 
     /**
      * Putting an {@link NodePageContainer} into the cache with a corresponding
@@ -69,6 +71,57 @@ public interface ICachedLog {
      * @throws TTIOException
      *             if put fails
      */
-    void put(final long mKey, final NodePageContainer mPage) throws TTIOException;
+    void put(final LogKey mKey, final NodePageContainer mPage) throws TTIOException;
+
+    /** Getting iterator from this log. */
+    CacheLogIterator getIterator();
+
+    /**
+     * Class representing one entry in the transaction-log
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
+    static class TransactionLogEntry implements Map.Entry<LogKey, NodePageContainer> {
+
+        /** Key of the log. */
+        final LogKey mKey;
+
+        /** Container of the log. */
+        final NodePageContainer mContainer;
+
+        /**
+         * Constructor.
+         * 
+         */
+        public TransactionLogEntry(final LogKey pKey, final NodePageContainer pContainer) {
+            mKey = pKey;
+            mContainer = pContainer;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public LogKey getKey() {
+            return mKey;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public NodePageContainer getValue() {
+            return mContainer;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public NodePageContainer setValue(NodePageContainer value) {
+            throw new UnsupportedOperationException();
+        }
+    }
 
 }

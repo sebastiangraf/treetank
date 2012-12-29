@@ -33,7 +33,6 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTIOException;
 
-import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseConfig;
 import com.sleepycat.je.DatabaseEntry;
@@ -66,7 +65,7 @@ public final class BerkeleyPersistenceLog implements ICachedLog {
     /**
      * Berkeley database.
      */
-    private final transient Database mDatabase;
+    protected final transient Database mDatabase;
 
     /**
      * Berkeley Environment for the database.
@@ -76,12 +75,12 @@ public final class BerkeleyPersistenceLog implements ICachedLog {
     /**
      * Binding for the key, which is the nodepage.
      */
-    private final transient TupleBinding<Long> mKeyBinding;
+    protected final transient LogKeyBinding mKeyBinding;
 
     /**
      * Binding for the value which is a page with related Nodes.
      */
-    private final transient NodePageContainerBinding mValueBinding;
+    protected final transient NodePageContainerBinding mValueBinding;
 
     /**
      * Counter to give every instance a different place.
@@ -101,8 +100,7 @@ public final class BerkeleyPersistenceLog implements ICachedLog {
      * @throws TTIOException
      *             Exception if IO is not successful
      */
-    public BerkeleyPersistenceLog(final File pFile, final long pRevision, final INodeFactory pNodeFac)
-        throws TTIOException {
+    public BerkeleyPersistenceLog(final File pFile, final INodeFactory pNodeFac) throws TTIOException {
         mPlace =
             new File(new File(pFile, ResourceConfiguration.Paths.TransactionLog.getFile().getName()), Integer
                 .toString(counter));
@@ -122,7 +120,7 @@ public final class BerkeleyPersistenceLog implements ICachedLog {
             dbConfig.setExclusiveCreate(true);
             mDatabase = mEnv.openDatabase(null, NAME, dbConfig);
 
-            mKeyBinding = TupleBinding.getPrimitiveBinding(Long.class);
+            mKeyBinding = new LogKeyBinding();
             mValueBinding = new NodePageContainerBinding(pNodeFac);
 
         } catch (final DatabaseException exc) {
@@ -135,7 +133,7 @@ public final class BerkeleyPersistenceLog implements ICachedLog {
      * {@inheritDoc}
      */
     @Override
-    public void put(final long mKey, final NodePageContainer mPage) throws TTIOException {
+    public void put(final LogKey mKey, final NodePageContainer mPage) throws TTIOException {
         final DatabaseEntry valueEntry = new DatabaseEntry();
         final DatabaseEntry keyEntry = new DatabaseEntry();
 
@@ -178,7 +176,7 @@ public final class BerkeleyPersistenceLog implements ICachedLog {
      * {@inheritDoc}
      */
     @Override
-    public NodePageContainer get(final long mKey) throws TTIOException {
+    public NodePageContainer get(final LogKey mKey) throws TTIOException {
         final DatabaseEntry valueEntry = new DatabaseEntry();
         final DatabaseEntry keyEntry = new DatabaseEntry();
         mKeyBinding.objectToEntry(mKey, keyEntry);
@@ -193,6 +191,30 @@ public final class BerkeleyPersistenceLog implements ICachedLog {
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("BerkeleyPersistenceLog [mPlace=");
+        builder.append(mPlace);
+        builder.append(", mDatabase=");
+        builder.append(mDatabase);
+        builder.append(", mEnv=");
+        builder.append(mEnv);
+        builder.append("]");
+        return builder.toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public CacheLogIterator getIterator() {
+        return new CacheLogIterator(null, this);
     }
 
 }

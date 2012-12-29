@@ -62,7 +62,9 @@ public class ReadTransactionTest {
     @BeforeMethod
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        Properties props = StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(), TestHelper.RESOURCENAME);
+        Properties props =
+            StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                TestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
         NodeHelper.createTestDocument(mResource);
         holder = Holder.generateWtx(mResource);
@@ -99,9 +101,6 @@ public class ReadTransactionTest {
 
         assertEquals(((IStructNode)holder.getNRtx().getNode()).hasFirstChild(), holder.getNRtx().moveTo(
             ((IStructNode)holder.getNRtx().getNode()).getFirstChildKey()));
-        assertEquals(1L, holder.getNRtx().getNode().getNodeKey());
-
-        assertEquals(false, holder.getNRtx().moveTo(Integer.MAX_VALUE));
         assertEquals(1L, holder.getNRtx().getNode().getNodeKey());
 
         assertEquals(((IStructNode)holder.getNRtx().getNode()).hasRightSibling(), holder.getNRtx().moveTo(

@@ -4,10 +4,8 @@
 package org.treetank.io.jclouds;
 
 import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
@@ -18,7 +16,7 @@ import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendWriter;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.page.PageFactory;
-import org.treetank.page.PageReference;
+import org.treetank.page.UberPage;
 import org.treetank.page.interfaces.IPage;
 
 /**
@@ -30,28 +28,16 @@ public class JCloudsWriter implements IBackendWriter {
     /** Delegate for reader. */
     private final JCloudsReader mReader;
 
-    /** Key of nodepage. */
-    private long mNodepagekey;
-
     public JCloudsWriter(BlobStore pBlobStore, PageFactory pFac, IByteHandlerPipeline pByteHandler,
         String pResourceName) throws TTException {
         mReader = new JCloudsReader(pBlobStore, pFac, pByteHandler, pResourceName);
-        mNodepagekey = getLastNodePage();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public PageReference readFirstReference() throws TTIOException, TTByteHandleException {
-        return mReader.readFirstReference();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IPage read(long pKey) throws TTIOException, TTByteHandleException {
+    public IPage read(long pKey) throws TTIOException {
         return mReader.read(pKey);
     }
 
@@ -59,38 +45,13 @@ public class JCloudsWriter implements IBackendWriter {
      * {@inheritDoc}
      */
     @Override
-    public long write(PageReference pageReference) throws TTIOException, TTByteHandleException {
-        // TODO make this better
-        mNodepagekey++;
-        final IPage page = pageReference.getPage();
-        final byte[] rawPage = page.getByteRepresentation();
+    public void write(IPage pPage) throws TTIOException, TTByteHandleException {
+        final byte[] rawPage = pPage.getByteRepresentation();
         final byte[] decryptedPage = mReader.mByteHandler.serialize(rawPage);
-        BlobBuilder blobbuilder = mReader.mBlobStore.blobBuilder(Long.toString(mNodepagekey));
+        BlobBuilder blobbuilder = mReader.mBlobStore.blobBuilder(Long.toString(pPage.getPageKey()));
         Blob blob = blobbuilder.build();
         blob.setPayload(decryptedPage);
         mReader.mBlobStore.putBlob(mReader.mResourceName, blob);
-        pageReference.setKey(mNodepagekey);
-        return mNodepagekey;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void writeFirstReference(PageReference pageReference) throws TTIOException, TTByteHandleException {
-        write(pageReference);
-        try {
-            BlobBuilder blobbuilder = mReader.mBlobStore.blobBuilder(Long.toString(-1L));
-            Blob blob = blobbuilder.build();
-            ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
-            DataOutputStream dataOut = new DataOutputStream(byteOut);
-            dataOut.writeLong(pageReference.getKey());
-            blob.setPayload(byteOut.toByteArray());
-            mReader.mBlobStore.putBlob(mReader.mResourceName, blob);
-        } catch (final IOException exc) {
-            throw new TTIOException(exc);
-        }
-
     }
 
     /**
@@ -98,55 +59,49 @@ public class JCloudsWriter implements IBackendWriter {
      */
     @Override
     public void close() throws TTIOException {
-        setLastNodePage(mNodepagekey);
         mReader.close();
     }
 
     /**
-     * Getting the last nodePage from the persistent storage.
-     * 
-     * @throws TTIOException
-     *             If can't get last Node page
-     * @return the last nodepage-key
+     * {@inheritDoc}
      */
-    private long getLastNodePage() throws TTIOException {
-        try {
-            if (mReader.mBlobStore.blobExists(mReader.mResourceName, Long.toString(-2l))) {
-                Blob blobRetrieved = mReader.mBlobStore.getBlob(mReader.mResourceName, Long.toString(-2l));
-                InputStream in = blobRetrieved.getPayload().getInput();
-                DataInputStream datain = new DataInputStream(in);
-                long key = datain.readLong();
-                datain.close();
-                in.close();
-                return key;
-            } else {
-                return 0;
-            }
-        } catch (final IOException exc) {
-            throw new TTIOException(exc);
-        }
+    @Override
+    public UberPage readUber() throws TTIOException {
+        return mReader.readUber();
     }
 
     /**
-     * Setting the last nodePage to the persistent storage.
-     * 
-     * @param paramData
-     *            key to be stored
-     * @throws TTIOException
-     *             If can't set last Node page
+     * {@inheritDoc}
      */
-    private void setLastNodePage(final Long paramData) throws TTIOException {
+    @Override
+    public void writeUberPage(UberPage page) throws TTException {
         try {
-            BlobBuilder blobbuilder = mReader.mBlobStore.blobBuilder(Long.toString(-2L));
+            long key = page.getPageKey();
+            write(page);
+
+            BlobBuilder blobbuilder = mReader.mBlobStore.blobBuilder(Long.toString(-1L));
             Blob blob = blobbuilder.build();
             ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
             DataOutputStream dataOut = new DataOutputStream(byteOut);
-            dataOut.writeLong(paramData);
+            dataOut.writeLong(key);
             blob.setPayload(byteOut.toByteArray());
             mReader.mBlobStore.putBlob(mReader.mResourceName, blob);
         } catch (final IOException exc) {
             throw new TTIOException(exc);
         }
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("JCloudsWriter [mReader=");
+        builder.append(mReader);
+        builder.append("]");
+        return builder.toString();
     }
 
 }

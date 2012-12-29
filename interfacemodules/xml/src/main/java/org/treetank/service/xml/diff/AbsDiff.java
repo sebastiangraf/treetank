@@ -38,6 +38,7 @@ import org.treetank.access.NodeReadTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.exception.TTException;
+import org.treetank.exception.TTIOException;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.service.xml.diff.DiffFactory.Builder;
 import org.treetank.service.xml.diff.DiffFactory.EDiff;
@@ -189,16 +190,17 @@ abstract class AbsDiff extends AbsDiffObservable {
      * @param paramRevision
      *            the {@link ERevision} constant
      * @return true, if cursor moved, false otherwise
+     * @throws TTIOException
      */
-    boolean moveCursor(final INodeReadTrx paramRtx, final ERevision paramRevision) {
+    boolean moveCursor(final INodeReadTrx paramRtx, final ERevision paramRevision) throws TTIOException {
         assert paramRtx != null;
 
         boolean moved = false;
 
         final IStructNode node = ((IStructNode)paramRtx.getNode());
         if (node.hasFirstChild()) {
-            if (node.getKind() != ROOT && mDiffKind == EDiffOptimized.HASHED
-                && mHashKind != HashKind.None && (mDiff == EDiff.SAMEHASH || mDiff == EDiff.DELETED)) {
+            if (node.getKind() != ROOT && mDiffKind == EDiffOptimized.HASHED && mHashKind != HashKind.None
+                && (mDiff == EDiff.SAMEHASH || mDiff == EDiff.DELETED)) {
                 moved = paramRtx.moveTo(((IStructNode)paramRtx.getNode()).getRightSiblingKey());
 
                 if (!moved) {
@@ -238,8 +240,10 @@ abstract class AbsDiff extends AbsDiffObservable {
      * @param paramRevision
      *            the {@link ERevision} constant
      * @return true, if cursor moved, false otherwise
+     * @throws TTIOException
      */
-    private boolean moveToFollowingNode(final INodeReadTrx paramRtx, final ERevision paramRevision) {
+    private boolean moveToFollowingNode(final INodeReadTrx paramRtx, final ERevision paramRevision)
+        throws TTIOException {
         boolean moved = false;
         while (!((IStructNode)paramRtx.getNode()).hasRightSibling()
             && ((IStructNode)paramRtx.getNode()).hasParent() && paramRtx.getNode().getNodeKey() != mRootKey) {
@@ -277,9 +281,10 @@ abstract class AbsDiff extends AbsDiffObservable {
      * @param paramFireDiff
      *            determines if a diff should be fired
      * @return kind of difference
+     * @throws TTIOException
      */
     EDiff diff(final INodeReadTrx paramNewRtx, final INodeReadTrx paramOldRtx, final DepthCounter paramDepth,
-        final EFireDiff paramFireDiff) {
+        final EFireDiff paramFireDiff) throws TTIOException {
         assert paramNewRtx != null;
         assert paramOldRtx != null;
         assert paramDepth != null;
@@ -319,9 +324,10 @@ abstract class AbsDiff extends AbsDiffObservable {
      * @param paramFireDiff
      *            determines if a diff should be fired
      * @return kind of difference
+     * @throws TTIOException
      */
     EDiff optimizedDiff(final INodeReadTrx paramNewRtx, final INodeReadTrx paramOldRtx,
-        final DepthCounter paramDepth, final EFireDiff paramFireDiff) {
+        final DepthCounter paramDepth, final EFireDiff paramFireDiff) throws TTIOException {
         assert paramNewRtx != null;
         assert paramOldRtx != null;
         assert paramDepth != null;
@@ -370,9 +376,10 @@ abstract class AbsDiff extends AbsDiffObservable {
      *            {@link DepthCounter} container for current depths of both
      *            transaction cursors
      * @return kind of diff
+     * @throws TTIOException
      */
     private EDiff diffAlgorithm(final INodeReadTrx paramNewRtx, final INodeReadTrx paramOldRtx,
-        final DepthCounter paramDepth) {
+        final DepthCounter paramDepth) throws TTIOException {
         EDiff diff = null;
 
         // Check if node has been deleted.
@@ -443,7 +450,8 @@ abstract class AbsDiff extends AbsDiffObservable {
      *            {@link IReadTransaction} on old revision
      * @return true if nodes are "equal", otherwise false
      */
-    abstract boolean checkNodes(final INodeReadTrx paramNewRtx, final INodeReadTrx paramOldRtx);
+    abstract boolean checkNodes(final INodeReadTrx paramNewRtx, final INodeReadTrx paramOldRtx)
+        throws TTIOException;
 
     /**
      * Check for an update of a node.
@@ -453,8 +461,9 @@ abstract class AbsDiff extends AbsDiffObservable {
      * @param paramOldRtx
      *            second {@link IReadTransaction} instance
      * @return kind of diff
+     * @throws TTIOException
      */
-    boolean checkUpdate(final INodeReadTrx paramNewRtx, final INodeReadTrx paramOldRtx) {
+    boolean checkUpdate(final INodeReadTrx paramNewRtx, final INodeReadTrx paramOldRtx) throws TTIOException {
         assert paramNewRtx != null;
         assert paramOldRtx != null;
         boolean updated = false;

@@ -59,6 +59,7 @@ import org.treetank.axis.filter.TypeFilter;
 import org.treetank.axis.filter.WildcardFilter;
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.exception.TTException;
+import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTXPathException;
 import org.treetank.service.xml.xpath.XPathAxis;
 
@@ -84,8 +85,8 @@ public class FilterTest {
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
         Properties props =
-        StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
-            TestHelper.RESOURCENAME);
+            StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                TestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
         NodeHelper.createTestDocument(mResource);
         holder = Holder.generateRtx(mResource);
@@ -103,7 +104,7 @@ public class FilterTest {
 
         for (int i = 0; i < pFilterChecker.length; i++) {
             pFilterChecker[i].checkFilter(holder.getNRtx());
-            
+
         }
 
     }
@@ -118,7 +119,7 @@ public class FilterTest {
                     new IFilterChecker() {
 
                         @Override
-                        public void checkFilter(INodeReadTrx pRtx) {
+                        public void checkFilter(INodeReadTrx pRtx) throws TTXPathException, TTIOException {
                             pRtx.moveTo(1L);
                             AxisTest.testIAxisConventions(new DocumentNodeAxis(pRtx), new long[] {
                                 ROOT_NODE
@@ -151,7 +152,7 @@ public class FilterTest {
                     new IFilterChecker() {
 
                         @Override
-                        public void checkFilter(INodeReadTrx pRtx) throws TTXPathException {
+                        public void checkFilter(INodeReadTrx pRtx) throws TTXPathException, TTIOException {
                             pRtx.moveTo(1L);
 
                             AxisTest.testIAxisConventions(
@@ -179,7 +180,7 @@ public class FilterTest {
                     new IFilterChecker() {
 
                         @Override
-                        public void checkFilter(INodeReadTrx pRtx) {
+                        public void checkFilter(INodeReadTrx pRtx) throws TTXPathException, TTIOException {
 
                             pRtx.moveTo(9L);
                             org.treetank.axis.FilterTest.testFilterConventions(new ItemFilter(pRtx), true);
@@ -196,7 +197,7 @@ public class FilterTest {
                     new IFilterChecker() {
 
                         @Override
-                        public void checkFilter(INodeReadTrx pRtx) {
+                        public void checkFilter(INodeReadTrx pRtx) throws TTXPathException, TTIOException {
 
                             pRtx.moveTo(9L);
                             org.treetank.axis.FilterTest.testFilterConventions(new NestedFilter(pRtx,
@@ -222,7 +223,7 @@ public class FilterTest {
                     new IFilterChecker() {
 
                         @Override
-                        public void checkFilter(INodeReadTrx pRtx) throws TTXPathException {
+                        public void checkFilter(INodeReadTrx pRtx) throws TTXPathException, TTIOException {
                             // Find descendants starting from nodeKey 0L (root).
                             pRtx.moveTo(ROOT_NODE);
 
@@ -303,7 +304,7 @@ public class FilterTest {
                     new IFilterChecker() {
 
                         @Override
-                        public void checkFilter(INodeReadTrx pRtx) throws TTXPathException {
+                        public void checkFilter(INodeReadTrx pRtx) throws TTIOException, TTXPathException {
 
                             final AbsAxis axis = new XPathAxis(pRtx, "a");
 
@@ -331,7 +332,7 @@ public class FilterTest {
                     new IFilterChecker() {
 
                         @Override
-                        public void checkFilter(INodeReadTrx pRtx) {
+                        public void checkFilter(INodeReadTrx pRtx) throws TTIOException {
                             pRtx.moveTo(9L);
                             org.treetank.axis.FilterTest.testFilterConventions(new WildcardFilter(pRtx, "b",
                                 true), true);
@@ -378,7 +379,7 @@ public class FilterTest {
      * 
      */
     interface IFilterChecker {
-        void checkFilter(INodeReadTrx pRtx) throws TTXPathException;
+        void checkFilter(INodeReadTrx pRtx) throws TTXPathException, TTIOException;
 
     }
 

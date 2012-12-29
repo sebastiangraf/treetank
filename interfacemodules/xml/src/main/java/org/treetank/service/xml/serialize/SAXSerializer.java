@@ -47,6 +47,7 @@ import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
+import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackend.IBackendFactory;
 import org.treetank.node.ElementNode;
 import org.treetank.node.TreeNodeFactory;
@@ -98,9 +99,10 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
         mContHandler = paramHandler;
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc} 
+     * @throws TTIOException */
     @Override
-    protected void emitStartElement(final INodeReadTrx rtx) {
+    protected void emitStartElement(final INodeReadTrx rtx) throws TTIOException {
         switch (rtx.getNode().getKind()) {
         case ROOT:
             break;
@@ -155,8 +157,9 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
      * 
      * @param paramRtx
      *            Read Transaction
+     * @throws TTIOException 
      */
-    private void generateElement(final INodeReadTrx paramRtx) {
+    private void generateElement(final INodeReadTrx paramRtx) throws TTIOException {
         final AttributesImpl atts = new AttributesImpl();
         final long key = paramRtx.getNode().getNodeKey();
 

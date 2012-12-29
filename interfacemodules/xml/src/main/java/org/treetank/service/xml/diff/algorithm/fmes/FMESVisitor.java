@@ -32,6 +32,7 @@ import org.treetank.access.NodeReadTrx;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
+import org.treetank.exception.TTIOException;
 import org.treetank.node.ElementNode;
 import org.treetank.node.TextNode;
 import org.treetank.node.interfaces.INode;
@@ -76,8 +77,9 @@ public final class FMESVisitor {
         mDescendants = paramDescendants;
     }
 
-    /** {@inheritDoc} */
-    public void visit(final ElementNode paramNode) {
+    /** {@inheritDoc} 
+     * @throws TTIOException */
+    public void visit(final ElementNode paramNode) throws TTIOException {
         final long nodeKey = paramNode.getNodeKey();
         mRtx.moveTo(nodeKey);
         for (int i = 0; i < paramNode.getAttributeCount(); i++) {
@@ -104,8 +106,9 @@ public final class FMESVisitor {
 
     /**
      * Count descendants of node (including self).
+     * @throws TTIOException 
      */
-    private void countDescendants() {
+    private void countDescendants() throws TTIOException {
         long descendants = 1;
         final long nodeKey = mRtx.getNode().getNodeKey();
         if (((IStructNode)mRtx.getNode()).hasFirstChild()) {
@@ -119,8 +122,9 @@ public final class FMESVisitor {
         mDescendants.put(mRtx.getNode(), descendants);
     }
 
-    /** {@inheritDoc} */
-    public void visit(final TextNode paramNode) {
+    /** {@inheritDoc} 
+     * @throws TTIOException */
+    public void visit(final TextNode paramNode) throws TTIOException {
         final long nodeKey = paramNode.getNodeKey();
         mRtx.moveTo(nodeKey);
         mInOrder.put(mRtx.getNode(), false);

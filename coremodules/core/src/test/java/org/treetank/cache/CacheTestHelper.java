@@ -26,6 +26,7 @@
  */
 package org.treetank.cache;
 
+import org.treetank.TestHelper;
 import org.treetank.exception.TTException;
 import org.treetank.page.NodePage;
 
@@ -37,24 +38,23 @@ import org.treetank.page.NodePage;
  */
 public class CacheTestHelper {
 
-    private final static int VERSIONSTORESTORE = 100;
+    // private final static int VERSIONSTORESTORE = 100;
 
     protected static NodePage[][] PAGES;
 
-    public static void setUp(final ICachedLog cache) throws TTException {
-        // Be sure to store more pages as defined in the RAMCache and to be reproduced by the versions
-        PAGES = new NodePage[LRUCache.CACHE_CAPACITY + 1][VERSIONSTORESTORE + 1];
+    public static void setUp(boolean overflow, final ICachedLog cache) throws TTException {
+        if (overflow) {
+            PAGES = new NodePage[LRUCache.CACHE_CAPACITY / 5][LRUCache.CACHE_CAPACITY / 5];
+        } else {
+            PAGES = new NodePage[LRUCache.CACHE_CAPACITY / 10][LRUCache.CACHE_CAPACITY / 10];
+        }
         for (int i = 0; i < PAGES.length; i++) {
-            final NodePage page = new NodePage(i);
-            final NodePage[] revs = new NodePage[VERSIONSTORESTORE + 1];
+            for (int j = 0; j < PAGES[i].length; j++) {
 
-            for (int j = 0; j < VERSIONSTORESTORE; j++) {
-                PAGES[i][j + 1] = new NodePage(i);
-                revs[j] = PAGES[i][j + 1];
+                LogKey toStore = new LogKey(true, i, j);
+                PAGES[i][j] = TestHelper.getNodePage(0, 0, TestHelper.random.nextLong());
+                cache.put(toStore, new NodePageContainer(PAGES[i][j], PAGES[i][j]));
             }
-            PAGES[i][0] = page;
-            cache.put(i, new NodePageContainer(page, new NodePage(page.getPageKey())));
         }
     }
-
 }

@@ -26,6 +26,8 @@
  */
 package org.treetank;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import org.treetank.TestHelper.PATHS;
 import org.treetank.access.NodeReadTrx;
 import org.treetank.access.NodeWriteTrx;
@@ -33,12 +35,12 @@ import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
-import org.treetank.api.IStorage;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.IPageReadTrx;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
+import org.treetank.api.IStorage;
 import org.treetank.exception.TTException;
 
 /**
@@ -81,6 +83,7 @@ public class Holder {
         final Holder holder = generateSession(pConf);
         final IPageReadTrx pRtx =
             holder.mSession.beginPageReadTransaction(holder.mSession.getMostRecentVersion());
+        holder.mPRtx = pRtx;
         holder.mNRtx = new NodeReadTrx(pRtx);
         return holder;
     }
@@ -105,12 +108,8 @@ public class Holder {
     }
 
     public IPageWriteTrx getPWtx() {
-        if (mPRtx instanceof IPageWriteTrx) {
-            return (IPageWriteTrx)mPRtx;
-        } else {
-            throw new IllegalStateException();
-        }
-
+        checkState(mPRtx instanceof IPageWriteTrx);
+        return (IPageWriteTrx)mPRtx;
     }
 
     public INodeReadTrx getNRtx() {
@@ -118,12 +117,8 @@ public class Holder {
     }
 
     public INodeWriteTrx getNWtx() {
-        if (mNRtx instanceof INodeWriteTrx) {
-            return (INodeWriteTrx)mNRtx;
-        } else {
-            throw new IllegalStateException();
-        }
-
+        checkState(mNRtx instanceof INodeWriteTrx);
+        return (INodeWriteTrx)mNRtx;
     }
 
 }

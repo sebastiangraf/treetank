@@ -27,9 +27,10 @@
 
 package org.treetank.io;
 
-import org.treetank.exception.TTByteHandleException;
+import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.page.PageReference;
+import org.treetank.page.UberPage;
+import org.treetank.page.interfaces.IPage;
 
 /**
  * Interface to provide the abstract layer related to write access of the
@@ -43,22 +44,20 @@ public interface IBackendWriter extends IBackendReader {
     /**
      * Writing a page related to the reference.
      * 
-     * @param pageReference
-     *            that points to a page
-     * @throws TTIOException
+     * @param page
+     *            page to be written
+     * @throws TTException
      *             execption to be thrown if something bad happens
      */
-    long write(final PageReference pageReference) throws TTIOException, TTByteHandleException;
+    void write(final IPage page) throws TTException;
 
     /**
-     * Write Beacon for the first reference.
+     * Writing the Uberpage including the pointer to the page.
      * 
-     * @param pageReference
-     *            that points to the beacon
-     * @throws TTIOException
-     *             exception if something bad happens
+     * @param page
+     *            the UberPage to be written.
      */
-    void writeFirstReference(final PageReference pageReference) throws TTIOException, TTByteHandleException;
+    void writeUberPage(final UberPage page) throws TTException;
 
     /**
      * Closing the write access.

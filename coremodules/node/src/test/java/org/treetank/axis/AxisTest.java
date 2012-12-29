@@ -54,6 +54,7 @@ import org.treetank.axis.filter.TextFilter;
 import org.treetank.axis.filter.ValueFilter;
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.exception.TTException;
+import org.treetank.exception.TTIOException;
 
 import com.google.inject.Inject;
 
@@ -76,7 +77,9 @@ public class AxisTest {
     @BeforeClass
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        Properties props = StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(), TestHelper.RESOURCENAME);
+        Properties props =
+            StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                TestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
         NodeHelper.createTestDocument(mResource);
         holder = Holder.generateRtx(mResource);
@@ -106,7 +109,7 @@ public class AxisTest {
                     // Child Axis Test
                     new IAxisChecker() {
                         @Override
-                        public void checkAxis(INodeReadTrx ppRtx) {
+                        public void checkAxis(INodeReadTrx ppRtx) throws TTIOException {
 
                             ppRtx.moveTo(1L);
                             AxisTest.testIAxisConventions(new ChildAxis(ppRtx), new long[] {
@@ -125,7 +128,7 @@ public class AxisTest {
                     new IAxisChecker() {
 
                         @Override
-                        public void checkAxis(INodeReadTrx ppRtx) {
+                        public void checkAxis(INodeReadTrx ppRtx) throws TTIOException {
                             ppRtx.moveTo(ROOT_NODE);
 
                             AxisTest.testIAxisConventions(new DescendantAxis(ppRtx), new long[] {
@@ -150,7 +153,7 @@ public class AxisTest {
                     new IAxisChecker() {
 
                         @Override
-                        public void checkAxis(INodeReadTrx ppRtx) {
+                        public void checkAxis(INodeReadTrx ppRtx) throws TTIOException {
                             ppRtx.moveTo(ROOT_NODE);
                             AxisTest.testIAxisConventions(new DescendantAxis(ppRtx, true), new long[] {
                                 ROOT_NODE, 1L, 4L, 5L, 6L, 7L, 8L, 9L, 11L, 12L, 13L
@@ -176,7 +179,7 @@ public class AxisTest {
                     new IAxisChecker() {
 
                         @Override
-                        public void checkAxis(INodeReadTrx ppRtx) {
+                        public void checkAxis(INodeReadTrx ppRtx) throws TTIOException {
 
                             ppRtx.moveTo(11L);
                             AxisTest.testIAxisConventions(new FollowingAxis(ppRtx), new long[] {
@@ -206,7 +209,7 @@ public class AxisTest {
                     new IAxisChecker() {
 
                         @Override
-                        public void checkAxis(INodeReadTrx ppRtx) {
+                        public void checkAxis(INodeReadTrx ppRtx) throws TTIOException {
                             ppRtx.moveTo(9L);
                             AxisTest.testIAxisConventions(new FollowingSiblingAxis(ppRtx), new long[] {
                                 13L
@@ -234,7 +237,7 @@ public class AxisTest {
                     new IAxisChecker() {
 
                         @Override
-                        public void checkAxis(INodeReadTrx pRtx) {
+                        public void checkAxis(INodeReadTrx pRtx) throws TTIOException {
                             pRtx.moveTo(11L);
                             AxisTest.testIAxisConventions(new LevelOrderAxis(pRtx), new long[] {
                                 12L
@@ -273,7 +276,7 @@ public class AxisTest {
                     new IAxisChecker() {
 
                         @Override
-                        public void checkAxis(INodeReadTrx pRtx) {
+                        public void checkAxis(INodeReadTrx pRtx) throws TTIOException {
                             // Find descendants starting from nodeKey 0L (root).
                             pRtx.moveTo(ROOT_NODE);
 
@@ -300,7 +303,7 @@ public class AxisTest {
                     new IAxisChecker() {
 
                         @Override
-                        public void checkAxis(INodeReadTrx pRtx) {
+                        public void checkAxis(INodeReadTrx pRtx) throws TTIOException {
 
                             // Find descendants starting from nodeKey 0L (root).
                             pRtx.moveTo(ROOT_NODE);
@@ -328,7 +331,7 @@ public class AxisTest {
                     new IAxisChecker() {
 
                         @Override
-                        public void checkAxis(INodeReadTrx pRtx) {
+                        public void checkAxis(INodeReadTrx pRtx) throws TTIOException {
 
                             // Find desceFndants starting from nodeKey 0L (root).
                             pRtx.moveTo(ROOT_NODE);
@@ -354,7 +357,7 @@ public class AxisTest {
                     new IAxisChecker() {
 
                         @Override
-                        public void checkAxis(INodeReadTrx pRtx) {
+                        public void checkAxis(INodeReadTrx pRtx) throws TTIOException {
                             pRtx.moveTo(12L);
                             AxisTest.testIAxisConventions(new AncestorAxis(pRtx), new long[] {
                                 9L, 1L
@@ -378,7 +381,7 @@ public class AxisTest {
                     new IAxisChecker() {
 
                         @Override
-                        public void checkAxis(INodeReadTrx pRtx) {
+                        public void checkAxis(INodeReadTrx pRtx) throws TTIOException {
                             pRtx.moveTo(11L);
                             AxisTest.testIAxisConventions(new AncestorAxis(pRtx, true), new long[] {
                                 11L, 9L, 1L
@@ -403,7 +406,7 @@ public class AxisTest {
                     new IAxisChecker() {
 
                         @Override
-                        public void checkAxis(INodeReadTrx pRtx) {
+                        public void checkAxis(INodeReadTrx pRtx) throws TTIOException {
                             pRtx.moveTo(ROOT_NODE);
                             AxisTest.testIAxisConventions(new AttributeAxis(pRtx), new long[] {});
 
@@ -427,7 +430,7 @@ public class AxisTest {
                     new IAxisChecker() {
 
                         @Override
-                        public void checkAxis(INodeReadTrx pRtx) {
+                        public void checkAxis(INodeReadTrx pRtx) throws TTIOException {
 
                             pRtx.moveTo(5L);
                             AxisTest.testIAxisConventions(new ParentAxis(pRtx), new long[] {
@@ -448,7 +451,7 @@ public class AxisTest {
                     new IAxisChecker() {
 
                         @Override
-                        public void checkAxis(INodeReadTrx pRtx) {
+                        public void checkAxis(INodeReadTrx pRtx) throws TTIOException {
                             pRtx.moveTo(ROOT_NODE);
                             AxisTest.testIAxisConventions(new PostOrderAxis(pRtx), new long[] {
                                 4L, 6L, 7L, 5L, 8L, 11L, 12L, 9L, 13L, 1L, 0L
@@ -459,7 +462,7 @@ public class AxisTest {
                     new IAxisChecker() {
 
                         @Override
-                        public void checkAxis(INodeReadTrx pRtx) {
+                        public void checkAxis(INodeReadTrx pRtx) throws TTIOException {
 
                             pRtx.moveTo(12L);
                             AxisTest.testIAxisConventions(new PrecedingAxis(pRtx), new long[] {
@@ -488,7 +491,7 @@ public class AxisTest {
                     new IAxisChecker() {
 
                         @Override
-                        public void checkAxis(INodeReadTrx pRtx) {
+                        public void checkAxis(INodeReadTrx pRtx) throws TTIOException {
 
                             pRtx.moveTo(12L);
                             AxisTest.testIAxisConventions(new PrecedingSiblingAxis(pRtx), new long[] {
@@ -517,7 +520,7 @@ public class AxisTest {
                     new IAxisChecker() {
 
                         @Override
-                        public void checkAxis(INodeReadTrx pRtx) {
+                        public void checkAxis(INodeReadTrx pRtx) throws TTIOException {
                             pRtx.moveTo(4L);
                             AxisTest.testIAxisConventions(new SelfAxis(pRtx), new long[] {
                                 4L
@@ -533,7 +536,7 @@ public class AxisTest {
                     new IAxisChecker() {
 
                         @Override
-                        public void checkAxis(INodeReadTrx pRtx) {
+                        public void checkAxis(INodeReadTrx pRtx) throws TTIOException {
                             pRtx.moveTo(ROOT_NODE);
                             AxisTest.testIAxisConventions(new FilterAxis(new DescendantAxis(pRtx), pRtx,
                                 new NameFilter(pRtx, "b")), new long[] {
@@ -545,7 +548,7 @@ public class AxisTest {
                     new IAxisChecker() {
 
                         @Override
-                        public void checkAxis(INodeReadTrx pRtx) {
+                        public void checkAxis(INodeReadTrx pRtx) throws TTIOException {
                             pRtx.moveTo(ROOT_NODE);
                             AxisTest.testIAxisConventions(new FilterAxis(new DescendantAxis(pRtx), pRtx,
                                 new ValueFilter(pRtx, "foo")), new long[] {
@@ -557,7 +560,7 @@ public class AxisTest {
                     new IAxisChecker() {
 
                         @Override
-                        public void checkAxis(INodeReadTrx pRtx) {
+                        public void checkAxis(INodeReadTrx pRtx) throws TTIOException {
                             pRtx.moveTo(1L);
                             AxisTest.testIAxisConventions(new FilterAxis(new AttributeAxis(pRtx), pRtx,
                                 new NameFilter(pRtx, "i"), new ValueFilter(pRtx, "j")), new long[] {
@@ -622,7 +625,7 @@ public class AxisTest {
      * 
      */
     interface IAxisChecker {
-        void checkAxis(INodeReadTrx pRtx);
+        void checkAxis(INodeReadTrx pRtx) throws TTIOException;
 
     }
 

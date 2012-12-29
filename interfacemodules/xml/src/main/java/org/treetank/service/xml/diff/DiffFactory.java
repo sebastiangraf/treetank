@@ -27,6 +27,8 @@
 
 package org.treetank.service.xml.diff;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import java.util.Set;
 
 import org.treetank.api.ISession;
@@ -205,14 +207,11 @@ public final class DiffFactory {
      *            {@link Builder} reference
      */
     private static void checkParams(final Builder paramBuilder) {
-        if (paramBuilder.mSession == null || paramBuilder.mKey < -1L || paramBuilder.mNewRev < 0
-            || paramBuilder.mOldRev < 0 || paramBuilder.mObservers == null || paramBuilder.mKind == null) {
-            throw new IllegalArgumentException("No valid arguments specified!");
-        }
-        if (paramBuilder.mNewRev == paramBuilder.mOldRev || paramBuilder.mNewRev < paramBuilder.mOldRev) {
-            throw new IllegalArgumentException(
-                "Revision numbers must not be the same and the new revision must have a greater number than the old revision!");
-        }
+        checkState(paramBuilder.mSession != null && paramBuilder.mKey >= 0 && paramBuilder.mNewRev >= 0
+            && paramBuilder.mOldRev >= 0 && paramBuilder.mObservers != null && paramBuilder.mKind != null,
+            "No valid arguments specified!");
+        checkState(
+            paramBuilder.mNewRev != paramBuilder.mOldRev && paramBuilder.mNewRev >= paramBuilder.mOldRev,
+            "Revision numbers must not be the same and the new revision must have a greater number than the old revision!");
     }
-
 }

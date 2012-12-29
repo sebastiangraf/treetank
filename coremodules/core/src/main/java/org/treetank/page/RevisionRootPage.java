@@ -27,8 +27,8 @@
 
 package org.treetank.page;
 
-import org.treetank.access.PageWriteTrx;
-import org.treetank.exception.TTException;
+import java.util.Arrays;
+
 import org.treetank.page.interfaces.IReferencePage;
 import org.treetank.page.interfaces.IRevisionPage;
 
@@ -45,19 +45,13 @@ import com.google.common.io.ByteStreams;
 public final class RevisionRootPage implements IRevisionPage, IReferencePage {
 
     /** Offset of name page reference. */
-    private static final int NAME_REFERENCE_OFFSET = 0;
-
-    /** Offset of indirect page reference. */
-    private static final int INDIRECT_REFERENCE_OFFSET = 1;
+    public static final int NAME_REFERENCE_OFFSET = 1;
 
     /** Last allocated node key. */
     private long mMaxNodeKey;
 
     /** Revision of this page. */
     private final long mRevision;
-
-    /** Page references. */
-    private final PageReference[] mReferences;
 
     /** Reference keys. */
     private final long[] mReferenceKeys;
@@ -78,30 +72,8 @@ public final class RevisionRootPage implements IRevisionPage, IReferencePage {
     public RevisionRootPage(final long pPageKey, final long pRevision, final long pMaxNodeKey) {
         mRevision = pRevision;
         mReferenceKeys = new long[2];
-        mReferences = new PageReference[2];
-        for (int i = 0; i < mReferences.length; i++) {
-            mReferences[i] = new PageReference();
-        }
         mMaxNodeKey = pMaxNodeKey;
         mPageKey = pPageKey;
-    }
-
-    /**
-     * Get name page reference.
-     * 
-     * @return Name page reference.
-     */
-    public PageReference getNamePageReference() {
-        return getReferences()[NAME_REFERENCE_OFFSET];
-    }
-
-    /**
-     * Get indirect page reference.
-     * 
-     * @return Indirect page reference.
-     */
-    public PageReference getIndirectPageReference() {
-        return getReferences()[INDIRECT_REFERENCE_OFFSET];
     }
 
     /**
@@ -120,34 +92,6 @@ public final class RevisionRootPage implements IRevisionPage, IReferencePage {
         mMaxNodeKey += 1;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("RevisionRootPage [mPageKey");
-        builder.append(mPageKey);
-        builder.append(", mMaxNodeKey=");
-        builder.append(mMaxNodeKey);
-        builder.append(", mRevision=");
-        builder.append(mRevision);
-        builder.append("]");
-        return builder.toString();
-    }
-
-    @Override
-    public void commit(PageWriteTrx paramState) throws TTException {
-        for (final PageReference reference : getReferences()) {
-            paramState.commit(reference);
-        }
-    }
-
-    @Override
-    public PageReference[] getReferences() {
-        return mReferences;
-    }
-
     @Override
     public long getRevision() {
         return mRevision;
@@ -163,11 +107,8 @@ public final class RevisionRootPage implements IRevisionPage, IReferencePage {
         pOutput.writeLong(mPageKey);
         pOutput.writeLong(mRevision);
         pOutput.writeLong(mMaxNodeKey);
-        for(long key : mReferenceKeys) {
+        for (long key : mReferenceKeys) {
             pOutput.writeLong(key);
-        }
-        for (final PageReference reference : getReferences()) {
-            pOutput.writeLong(reference.getKey());
         }
         return pOutput.toByteArray();
     }
@@ -188,6 +129,24 @@ public final class RevisionRootPage implements IRevisionPage, IReferencePage {
     @Override
     public void setReferenceKey(int pIndex, long pKey) {
         mReferenceKeys[pIndex] = pKey;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("RevisionRootPage [mPageKey=");
+        builder.append(mPageKey);
+        builder.append(", mRevision=");
+        builder.append(mRevision);
+        builder.append(", mReferenceKeys=");
+        builder.append(Arrays.toString(mReferenceKeys));
+        builder.append(", mMaxNodeKey=");
+        builder.append(mMaxNodeKey);
+        builder.append("]");
+        return builder.toString();
     }
 
 }

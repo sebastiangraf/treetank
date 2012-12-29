@@ -32,6 +32,7 @@ import java.util.Map;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.DescendantAxis;
+import org.treetank.exception.TTIOException;
 import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IStructNode;
 
@@ -100,8 +101,9 @@ public final class Matching {
      *            source node
      * @param paramNodeY
      *            partner of paramNodeX
+     * @throws TTIOException 
      */
-    public void add(final INode paramNodeX, final INode paramNodeY) {
+    public void add(final INode paramNodeX, final INode paramNodeY) throws TTIOException {
         mMapping.put(paramNodeX, paramNodeY);
         mReverseMapping.put(paramNodeY, paramNodeX);
         updateSubtreeMap(paramNodeX, mRtxNew);
@@ -115,8 +117,9 @@ public final class Matching {
      *            node in subtree
      * @param paramRtx
      *            {@link IReadTransaction} reference
+     * @throws TTIOException 
      */
-    private void updateSubtreeMap(final INode paramNode, final INodeReadTrx paramRtx) {
+    private void updateSubtreeMap(final INode paramNode, final INodeReadTrx paramRtx) throws TTIOException {
         assert paramNode != null;
         assert paramRtx != null;
 
@@ -152,8 +155,9 @@ public final class Matching {
      * @param paramNodeY
      *            second subtree root node
      * @return number of children which have been matched
+     * @throws TTIOException 
      */
-    public long containedChildren(final INode paramNodeX, final INode paramNodeY) {
+    public long containedChildren(final INode paramNodeX, final INode paramNodeY) throws TTIOException {
         assert paramNodeX != null;
         assert paramNodeY != null;
         long retVal = 0;

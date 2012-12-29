@@ -169,7 +169,7 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
 
         getPageTransaction().close();
         // Reset internal transaction state to new uber page.
-        mDelegate.setPageTransaction(mSession.beginPageWriteTransaction(revNumber, revNumber));
+        mDelegate.setPageTransaction(mSession.beginPageWriteTransaction(revNumber));
 
     }
 
@@ -187,7 +187,7 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
         getPageTransaction().close();
 
         // Reset internal transaction state to last committed uber page.
-        mDelegate.setPageTransaction(mSession.beginPageWriteTransaction(revisionToSet, revisionToSet));
+        mDelegate.setPageTransaction(mSession.beginPageWriteTransaction(revisionToSet));
 
     }
 

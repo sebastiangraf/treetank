@@ -57,6 +57,7 @@ import org.treetank.axis.filter.TextFilter;
 import org.treetank.axis.filter.ValueFilter;
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.exception.TTException;
+import org.treetank.exception.TTIOException;
 
 import com.google.inject.Inject;
 
@@ -79,7 +80,9 @@ public class FilterTest {
     @BeforeClass
     public void setUp() throws TTException {
         TestHelper.deleteEverything();
-        Properties props = StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(), TestHelper.RESOURCENAME);
+        Properties props =
+            StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                TestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
         NodeHelper.createTestDocument(mResource);
         holder = Holder.generateRtx(mResource);
@@ -111,7 +114,7 @@ public class FilterTest {
                     new IFilterChecker() {
 
                         @Override
-                        public void checkFilter(INodeReadTrx pRtx) {
+                        public void checkFilter(INodeReadTrx pRtx) throws TTIOException {
                             pRtx.moveTo(9L);
                             testFilterConventions(new AttributeFilter(pRtx), false);
 
@@ -131,7 +134,7 @@ public class FilterTest {
                     new IFilterChecker() {
 
                         @Override
-                        public void checkFilter(INodeReadTrx pRtx) {
+                        public void checkFilter(INodeReadTrx pRtx) throws TTIOException {
 
                             pRtx.moveTo(9L);
                             testFilterConventions(new CommentFilter(pRtx), false);
@@ -152,7 +155,7 @@ public class FilterTest {
                     new IFilterChecker() {
 
                         @Override
-                        public void checkFilter(INodeReadTrx pRtx) {
+                        public void checkFilter(INodeReadTrx pRtx) throws TTIOException {
 
                             pRtx.moveTo(0L);
                             testFilterConventions(new DocumentRootNodeFilter(pRtx), true);
@@ -192,7 +195,7 @@ public class FilterTest {
                     new IFilterChecker() {
 
                         @Override
-                        public void checkFilter(INodeReadTrx pRtx) {
+                        public void checkFilter(INodeReadTrx pRtx) throws TTIOException {
 
                             pRtx.moveTo(0L);
                             testFilterConventions(new ElementFilter(pRtx), false);
@@ -228,7 +231,7 @@ public class FilterTest {
                     new IFilterChecker() {
 
                         @Override
-                        public void checkFilter(INodeReadTrx pRtx) {
+                        public void checkFilter(INodeReadTrx pRtx) throws TTIOException {
                             pRtx.moveTo(9L);
                             testFilterConventions(new NameFilter(pRtx, "b"), true);
 
@@ -243,7 +246,7 @@ public class FilterTest {
                     new IFilterChecker() {
 
                         @Override
-                        public void checkFilter(INodeReadTrx pRtx) {
+                        public void checkFilter(INodeReadTrx pRtx) throws TTIOException {
                             pRtx.moveTo(9L);
                             testFilterConventions(new NodeFilter(pRtx), true);
 
@@ -259,7 +262,7 @@ public class FilterTest {
                     new IFilterChecker() {
 
                         @Override
-                        public void checkFilter(INodeReadTrx pRtx) {
+                        public void checkFilter(INodeReadTrx pRtx) throws TTIOException {
                             pRtx.moveTo(8L);
                             testFilterConventions(new PIFilter(pRtx), false);
 
@@ -279,7 +282,7 @@ public class FilterTest {
                     new IFilterChecker() {
 
                         @Override
-                        public void checkFilter(INodeReadTrx pRtx) {
+                        public void checkFilter(INodeReadTrx pRtx) throws TTIOException {
                             pRtx.moveTo(8L);
                             testFilterConventions(new TextFilter(pRtx), true);
 
@@ -298,7 +301,7 @@ public class FilterTest {
                     new IFilterChecker() {
 
                         @Override
-                        public void checkFilter(INodeReadTrx pRtx) {
+                        public void checkFilter(INodeReadTrx pRtx) throws TTIOException {
                             pRtx.moveTo(4L);
                             testFilterConventions(new ValueFilter(pRtx, "oops1"), true);
                             testFilterConventions(new ValueFilter(pRtx, "foo"), false);
@@ -339,7 +342,7 @@ public class FilterTest {
      * 
      */
     interface IFilterChecker {
-        void checkFilter(INodeReadTrx pRtx);
+        void checkFilter(INodeReadTrx pRtx) throws TTIOException;
 
     }
 

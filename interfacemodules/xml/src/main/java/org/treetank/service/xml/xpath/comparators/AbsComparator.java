@@ -234,7 +234,7 @@ public abstract class AbsComparator extends AbsAxis {
             || "<=".equals(paramVal) || ">".equals(paramVal) || ">=".equals(paramVal)) {
             return new GeneralComp(paramRtx, paramOperandOne, paramOperandTwo, paramKind);
         } else if ("is".equals(paramVal) || "<<".equals(paramVal) || ">>".equals(paramVal)) {
-            new NodeComp(paramRtx, paramOperandOne, paramOperandTwo, paramKind);
+            return new NodeComp(paramRtx, paramOperandOne, paramOperandTwo, paramKind);
         }
         throw new IllegalStateException(paramVal + " is not a valid comparison.");
     }
