@@ -3,18 +3,33 @@
  */
 package org.treetank.page.interfaces;
 
-import org.treetank.page.PageReference;
-
 /**
+ * Interface denoting all pages holding references to other pages.
+ * The references are represented by the keys of the serialized storage.
+ * 
  * @author Sebastian Graf, University of Konstanz
  * 
  */
 public interface IReferencePage extends IPage {
 
-    PageReference[] getReferences();
+    /** Guaranteed Indirect Offset from any ReferencePage. */
+    public static int GUARANTEED_INDIRECT_OFFSET = 0;
 
+    /**
+     * Getting the keys of the referenced pages.
+     * 
+     * @return the keys for the referenced pages.
+     */
     long[] getReferenceKeys();
 
+    /**
+     * Setting one key of a page to be referenced from this page.
+     * 
+     * @param pIndex
+     *            offset of the key to be referenced
+     * @param pKey
+     *            the key of the page to be referenced
+     */
     void setReferenceKey(int pIndex, long pKey);
 
 }

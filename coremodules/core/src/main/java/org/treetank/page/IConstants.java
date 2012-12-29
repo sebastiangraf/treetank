@@ -50,24 +50,12 @@ public interface IConstants {
     /** ID for not existing nodes. */
     public final static int NULL_NODE = -22;
 
-    // --- Indirect Page
-    // ----------------------------------------------------------
-
     /** Count of indirect references in indirect page. */
-    public static final int INP_REFERENCE_COUNT = 128;
+    public static final int CONTENT_COUNT = 128;
 
     /** Exponent of pages per level (root level = 0, leaf level = 5). */
     public static final int[] INP_LEVEL_PAGE_COUNT_EXPONENT = {
         4 * 7, 3 * 7, 2 * 7, 1 * 7, 0 * 7
     };
-
-    // --- Node Page
-    // -------------------------------------------------------------
-
-    /** Maximum node count per node page. */
-    public static final int NDP_NODE_COUNT = 128;
-
-    /** 2^NDP_NODE_COUNT_EXPONENT = NDP_NODE_COUNT. */
-    public static final int NDP_NODE_COUNT_EXPONENT = 7;
 
 }

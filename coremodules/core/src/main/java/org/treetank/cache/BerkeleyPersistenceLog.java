@@ -29,10 +29,10 @@ package org.treetank.cache;
 
 import java.io.File;
 
+import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTIOException;
 
-import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseConfig;
 import com.sleepycat.je.DatabaseEntry;
@@ -50,7 +50,7 @@ import com.sleepycat.je.OperationStatus;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
+public final class BerkeleyPersistenceLog implements ICachedLog {
 
     /**
      * Name for the database.
@@ -58,9 +58,14 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
     private static final String NAME = "berkeleyCache";
 
     /**
+     * Place to store the data.
+     */
+    private final File mPlace;
+
+    /**
      * Berkeley database.
      */
-    private final transient Database mDatabase;
+    protected final transient Database mDatabase;
 
     /**
      * Berkeley Environment for the database.
@@ -70,12 +75,17 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
     /**
      * Binding for the key, which is the nodepage.
      */
-    private final transient TupleBinding<Long> mKeyBinding;
+    protected final transient LogKeyBinding mKeyBinding;
 
     /**
      * Binding for the value which is a page with related Nodes.
      */
-    private final transient NodePageContainerBinding mValueBinding;
+    protected final transient NodePageContainerBinding mValueBinding;
+
+    /**
+     * Counter to give every instance a different place.
+     */
+    private static int counter = 0;
 
     /**
      * Constructor. Building up the berkeley db and setting necessary settings.
@@ -90,16 +100,19 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
      * @throws TTIOException
      *             Exception if IO is not successful
      */
-    public BerkeleyPersistenceCache(final File pFile, final long pRevision,
-        final INodeFactory pNodeFac) throws TTIOException {
-        super(pFile);
+    public BerkeleyPersistenceLog(final File pFile, final INodeFactory pNodeFac) throws TTIOException {
+        mPlace =
+            new File(new File(pFile, ResourceConfiguration.Paths.TransactionLog.getFile().getName()), Integer
+                .toString(counter));
+        mPlace.mkdirs();
+        counter++;
         try {
             /* Create a new, transactional database environment */
             final EnvironmentConfig config = new EnvironmentConfig();
             config.setAllowCreate(true);
             config.setLocking(false);
             config.setCacheSize(1024 * 1024);
-            mEnv = new Environment(place, config);
+            mEnv = new Environment(mPlace, config);
 
             /* Make a database within that environment */
             final DatabaseConfig dbConfig = new DatabaseConfig();
@@ -107,7 +120,7 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
             dbConfig.setExclusiveCreate(true);
             mDatabase = mEnv.openDatabase(null, NAME, dbConfig);
 
-            mKeyBinding = TupleBinding.getPrimitiveBinding(Long.class);
+            mKeyBinding = new LogKeyBinding();
             mValueBinding = new NodePageContainerBinding(pNodeFac);
 
         } catch (final DatabaseException exc) {
@@ -120,7 +133,7 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
      * {@inheritDoc}
      */
     @Override
-    public void putPersistent(final long mKey, final NodePageContainer mPage) throws TTIOException {
+    public void put(final LogKey mKey, final NodePageContainer mPage) throws TTIOException {
         final DatabaseEntry valueEntry = new DatabaseEntry();
         final DatabaseEntry keyEntry = new DatabaseEntry();
 
@@ -139,11 +152,20 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
      * {@inheritDoc}
      */
     @Override
-    public void clearPersistent() throws TTIOException {
+    public void clear() throws TTIOException {
         try {
+
             mDatabase.close();
             mEnv.removeDatabase(null, NAME);
             mEnv.close();
+            for (final File file : mPlace.listFiles()) {
+                if (!file.delete()) {
+                    throw new TTIOException("Couldn't delete!");
+                }
+            }
+            if (!mPlace.delete()) {
+                throw new TTIOException("Couldn't delete!");
+            }
 
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
@@ -154,7 +176,7 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
      * {@inheritDoc}
      */
     @Override
-    public NodePageContainer getPersistent(final long mKey) throws TTIOException {
+    public NodePageContainer get(final LogKey mKey) throws TTIOException {
         final DatabaseEntry valueEntry = new DatabaseEntry();
         final DatabaseEntry keyEntry = new DatabaseEntry();
         mKeyBinding.objectToEntry(mKey, keyEntry);
@@ -169,6 +191,30 @@ public final class BerkeleyPersistenceCache extends AbstractPersistenceCache {
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("BerkeleyPersistenceLog [mPlace=");
+        builder.append(mPlace);
+        builder.append(", mDatabase=");
+        builder.append(mDatabase);
+        builder.append(", mEnv=");
+        builder.append(mEnv);
+        builder.append("]");
+        return builder.toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public CacheLogIterator getIterator() {
+        return new CacheLogIterator(null, this);
     }
 
 }

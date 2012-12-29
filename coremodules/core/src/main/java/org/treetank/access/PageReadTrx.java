@@ -27,10 +27,12 @@
 
 package org.treetank.access;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.treetank.api.INode;
 import org.treetank.api.IPageReadTrx;
@@ -43,7 +45,6 @@ import org.treetank.page.IndirectPage;
 import org.treetank.page.NamePage;
 import org.treetank.page.NodePage;
 import org.treetank.page.NodePage.DeletedNode;
-import org.treetank.page.PageReference;
 import org.treetank.page.RevisionRootPage;
 import org.treetank.page.UberPage;
 import org.treetank.page.interfaces.IReferencePage;
@@ -73,11 +74,17 @@ public class PageReadTrx implements IPageReadTrx {
     /** Uber page this transaction is bound to. */
     private final UberPage mUberPage;
 
-    /** Cached name page of this revision. */
+    /** Cached root page of this revision. */
     private final RevisionRootPage mRootPage;
 
-    /** Internal reference to cache. */
-    private final Cache<Long, NodePage> mCache;
+    /** Cached name page of this revision. */
+    protected final NamePage mNamePage;
+
+    /**
+     * Internal reference to cache. This cache takes the sequential numbering of the pages instead of the
+     * absolute, storage-relevant numbering.
+     */
+    private final Cache<Long, NodePage> mNodePageCache;
 
     /** Configuration of the session */
     protected final ISession mSession;
@@ -101,12 +108,15 @@ public class PageReadTrx implements IPageReadTrx {
      */
     protected PageReadTrx(final ISession pSession, final UberPage pUberpage, final long pRevKey,
         final IBackendReader pReader) throws TTException {
-        mCache = CacheBuilder.newBuilder().maximumSize(10000).build();
+        mNodePageCache = CacheBuilder.newBuilder().maximumSize(10000).build();
         mSession = pSession;
         mPageReader = pReader;
         mUberPage = pUberpage;
-        mRootPage = loadRevRoot(pRevKey);
-        initializeNamePage();
+        mRootPage =
+            (RevisionRootPage)mPageReader.read(dereferenceLeafOfTree(
+                mUberPage.getReferenceKeys()[IReferencePage.GUARANTEED_INDIRECT_OFFSET], pRevKey));
+        mNamePage =
+            (NamePage)mPageReader.read(mRootPage.getReferenceKeys()[RevisionRootPage.NAME_REFERENCE_OFFSET]);
         mClose = false;
     }
 
@@ -119,28 +129,21 @@ public class PageReadTrx implements IPageReadTrx {
      * @throws TTIOException
      *             if the read to the persistent storage fails
      */
-    public INode getNode(final long pNodeKey) throws TTException {
+    public INode getNode(final long pNodeKey) throws TTIOException {
 
-        // Immediately return node from item list if node key negative.
-        if (pNodeKey < 0) {
-            throw new IllegalArgumentException();
-        }
+        checkArgument(pNodeKey >= 0);
 
         // Calculate page and node part for given nodeKey.
-        final long nodePageKey = nodePageKey(pNodeKey);
+        final long seqNodePageKey = nodePageKey(pNodeKey);
         final int nodePageOffset = nodePageOffset(pNodeKey);
-        NodePage page = mCache.getIfPresent(nodePageKey);
+        NodePage page = mNodePageCache.getIfPresent(seqNodePageKey);
 
         if (page == null) {
-            final NodePage[] revs = getSnapshotPages(nodePageKey);
-            if (revs.length == 0) {
-                return null;
-            }
-
+            final NodePage[] revs = getSnapshotPages(seqNodePageKey);
             // Build up the complete page.
             final IRevisioning revision = mSession.getConfig().mRevision;
             page = revision.combinePages(revs);
-            mCache.put(nodePageKey, page);
+            mNodePageCache.put(seqNodePageKey, page);
         }
         final INode returnVal = page.getNode(nodePageOffset);
         return checkItemIfDeleted(returnVal);
@@ -154,7 +157,7 @@ public class PageReadTrx implements IPageReadTrx {
      * @return the name
      */
     public String getName(final int pNameKey) {
-        return ((NamePage)mRootPage.getNamePageReference().getPage()).getName(pNameKey);
+        return mNamePage.getName(pNameKey);
 
     }
 
@@ -167,7 +170,7 @@ public class PageReadTrx implements IPageReadTrx {
     public void close() throws TTIOException {
         mSession.deregisterPageTrx(this);
         mPageReader.close();
-        mCache.invalidateAll();
+        mNodePageCache.invalidateAll();
         mClose = true;
     }
 
@@ -195,8 +198,8 @@ public class PageReadTrx implements IPageReadTrx {
         builder.append(mUberPage);
         builder.append(", mRootPage=");
         builder.append(mRootPage);
-        builder.append(", mCache=");
-        builder.append(mCache);
+        // builder.append(", mCache=");
+        // builder.append(mNodePageCache);
         builder.append(", mClose=");
         builder.append(mClose);
         builder.append("]");
@@ -214,174 +217,97 @@ public class PageReadTrx implements IPageReadTrx {
     /**
      * Method to check if an {@link INode} is a deleted one.
      * 
-     * @param mToCheck
+     * @param pToCheck
      *            of the IItem
      * @return the item if it is valid, null otherwise
      */
-    protected final INode checkItemIfDeleted(final INode mToCheck) {
-        if (mToCheck instanceof DeletedNode) {
+    protected final INode checkItemIfDeleted(final INode pToCheck) {
+        if (pToCheck == null || pToCheck instanceof DeletedNode) {
             return null;
         } else {
-            return mToCheck;
+            return pToCheck;
         }
-    }
-
-    /**
-     * Get revision root page belonging to revision key.
-     * 
-     * @param pRevKey
-     *            Key of revision to find revision root page for.
-     * @return Revision root page of this revision key.
-     * 
-     * @throws TTIOException
-     *             if something odd happens within the creation process.
-     */
-    protected final RevisionRootPage loadRevRoot(final long pRevKey) throws TTException {
-
-        final PageReference ref = dereferenceLeafOfTree(mUberPage.getReferences()[0], pRevKey);
-        RevisionRootPage page = (RevisionRootPage)ref.getPage();
-
-        // If there is no page, get it from the storage and cache it.
-        if (page == null) {
-            page = (RevisionRootPage)mPageReader.read(ref.getKey());
-        }
-
-        // Get revision root page which is the leaf of the indirect tree.
-        return page;
-    }
-
-    /**
-     * Initialize NamePage.
-     * 
-     * @throws TTIOException
-     *             if something odd happens during initialization
-     */
-    protected final void initializeNamePage() throws TTException {
-        final PageReference ref = mRootPage.getNamePageReference();
-        if (ref.getPage() == null) {
-            ref.setPage((NamePage)mPageReader.read(ref.getKey()));
-        }
-    }
-
-    /**
-     * Get UberPage.
-     * 
-     * @return The uber page.
-     */
-    protected final UberPage getUberPage() {
-        return mUberPage;
     }
 
     /**
      * Dereference node page reference.
      * 
-     * @param mNodePageKey
+     * @param pSeqNodePageKey
      *            Key of node page.
      * @return Dereferenced page.
      * 
      * @throws TTIOException
      *             if something odd happens within the creation process.
      */
-    protected final NodePage[] getSnapshotPages(final long mNodePageKey) throws TTException {
+    protected final NodePage[] getSnapshotPages(final long pSeqNodePageKey) throws TTIOException {
 
-        // ..and get all leaves of nodepages from the revision-trees.
-        final List<PageReference> refs = new ArrayList<PageReference>();
-        final Set<Long> keys = new HashSet<Long>();
+        // Return Value, since the revision iterates a flexible number of version, this has to be a list
+        // first.
+        final List<NodePage> nodePages = new ArrayList<NodePage>();
 
+        // Since same versions might be referenced starting different versions (if not touched), we have to
+        // check against the keys as well.
+        final Set<Long> nodePageKeys = new TreeSet<Long>();
+
+        // Iterate through all versions starting with the most recent one.
         for (long i = mRootPage.getRevision(); i >= 0; i--) {
-            final PageReference ref =
-                dereferenceLeafOfTree(loadRevRoot(i).getIndirectPageReference(), mNodePageKey);
-            // TODO check this check, ref.getKey!=NULL_ID and next if-check
-            if (ref != null && (ref.getPage() != null || ref.getKey() != IConstants.NULL_ID)) {
-                if (ref.getKey() == IConstants.NULL_ID || (!keys.contains(ref.getKey()))) {
-                    refs.add(ref);
-                    if (ref.getKey() != IConstants.NULL_ID) {
-                        keys.add(ref.getKey());
-                    }
-                }
-                if (refs.size() == mSession.getConfig().mRevision.getRevisionsToRestore()) {
+            final long revRootKey =
+                dereferenceLeafOfTree(
+                    mUberPage.getReferenceKeys()[IReferencePage.GUARANTEED_INDIRECT_OFFSET], i);
+            RevisionRootPage rootPage = (RevisionRootPage)mPageReader.read(revRootKey);
+            // Searching for the related NodePage within all referenced pages.
+            final long nodePageKey =
+                dereferenceLeafOfTree(rootPage.getReferenceKeys()[IReferencePage.GUARANTEED_INDIRECT_OFFSET],
+                    pSeqNodePageKey);
+            if (nodePageKey > 0 && !nodePageKeys.contains(nodePageKey)) {
+                NodePage page = (NodePage)mPageReader.read(nodePageKey);
+                nodePages.add(page);
+                nodePageKeys.add(nodePageKey);
+                if (nodePages.size() == mSession.getConfig().mRevision.getRevisionsToRestore()) {
                     break;
                 }
-
             } else {
                 break;
             }
         }
 
-        // Afterwards read the nodepages if they are not dereferences...
-        final NodePage[] pages = new NodePage[refs.size()];
-        for (int i = 0; i < pages.length; i++) {
-            final PageReference ref = refs.get(i);
-            pages[i] = (NodePage)ref.getPage();
-            if (pages[i] == null) {
-                pages[i] = (NodePage)mPageReader.read(ref.getKey());
-            }
-        }
-        return pages;
+        return nodePages.toArray(new NodePage[nodePages.size()]);
 
-    }
-
-    /**
-     * Dereference indirect page reference.
-     * 
-     * @param pRef
-     *            Reference to dereference.
-     * @return Dereferenced page.
-     * 
-     * @throws TTIOException
-     *             if something odd happens within the creation process.
-     */
-    protected final IndirectPage dereferenceIndirectPage(final PageReference pRef) throws TTException {
-
-        IndirectPage page = (IndirectPage)pRef.getPage();
-
-        // If there is no page, get it from the storage and cache it.
-        if (page == null) {
-            if (pRef.getPage() == null && pRef.getKey() == IConstants.NULL_ID) {
-                return null;
-            }
-            page = (IndirectPage)mPageReader.read(pRef.getKey());
-            pRef.setPage(page);
-        }
-
-        return page;
     }
 
     /**
      * Find reference pointing to leaf page of an indirect tree.
      * 
-     * @param pStartRev
+     * @param pStartKey
      *            Start reference pointing to the indirect tree.
-     * @param pPageKey
+     * @param pSeqPageKey
      *            Key to look up in the indirect tree.
      * @return Reference denoted by key pointing to the leaf page.
      * 
      * @throws TTIOException
      *             if something odd happens within the creation process.
      */
-    protected final PageReference dereferenceLeafOfTree(final PageReference pStartRev, final long pPageKey)
-        throws TTException {
+    protected final long dereferenceLeafOfTree(final long pStartKey, final long pSeqPageKey)
+        throws TTIOException {
 
         // Initial state pointing to the indirect page of level 0.
-        PageReference reference = pStartRev;
         int offset = 0;
-        long levelKey = pPageKey;
-
+        long levelKey = pSeqPageKey;
+        long pageKey = pStartKey;
+        IndirectPage page = null;
         // Iterate through all levels.
-        for (int level = 0, height = IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level < height; level++) {
+        for (int level = 0; level < IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level++) {
             offset = (int)(levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level]);
             levelKey -= offset << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
-            final IReferencePage page = dereferenceIndirectPage(reference);
-            if (page == null) {
-                reference = null;
-                break;
-            } else {
-                reference = page.getReferences()[offset];
+            if (pageKey == 0) {
+                return -1;
             }
+            page = (IndirectPage)mPageReader.read(pageKey);
+            pageKey = page.getReferenceKeys()[offset];
         }
 
         // Return reference to leaf of indirect tree.
-        return reference;
+        return pageKey;
     }
 
     /**
@@ -392,7 +318,7 @@ public class PageReadTrx implements IPageReadTrx {
      * @return Node page key.
      */
     protected static final long nodePageKey(final long pNodeKey) {
-        final long nodePageKey = pNodeKey >> IConstants.NDP_NODE_COUNT_EXPONENT;
+        final long nodePageKey = pNodeKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3];
         return nodePageKey;
     }
 
@@ -405,7 +331,7 @@ public class PageReadTrx implements IPageReadTrx {
      */
     protected static final int nodePageOffset(final long pNodeKey) {
         final long nodePageOffset =
-            (pNodeKey - ((pNodeKey >> IConstants.NDP_NODE_COUNT_EXPONENT) << IConstants.NDP_NODE_COUNT_EXPONENT));
+            (pNodeKey - ((pNodeKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3]) << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3]));
         return (int)nodePageOffset;
     }
 

@@ -33,14 +33,14 @@ public interface IRevisioning {
      * Method to reconstruct a complete NodePage for reading as well as a
      * NodePage for serializing with the Nodes to write already on there.
      * 
+     * @param pNewPageKey
+     *            page key of the new page
      * @param pages
      *            the base of the complete Nodepage
-     * @param mileStoneRevision
-     *            the revision needed to build up the complete milestone.
      * @return a NodePageContainer holding a complete NodePage for reading a one
      *         for writing
      */
-    NodePageContainer combinePagesForModification(final NodePage[] pages);
+    NodePageContainer combinePagesForModification(final long pNewPageKey, final NodePage[] pages);
 
     /**
      * Getting the numbers of necessary revisions to restore.

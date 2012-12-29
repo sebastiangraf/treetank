@@ -37,7 +37,6 @@ import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.page.PageFactory;
-import org.treetank.page.PageReference;
 import org.treetank.page.UberPage;
 import org.treetank.page.interfaces.IPage;
 
@@ -80,13 +79,10 @@ public final class FileReader implements IBackendReader {
      *             if anything bad happens
      */
     public FileReader(File pFile, PageFactory pFac, IByteHandlerPipeline pByteHandler) throws TTException {
-
         try {
-
             mFile = new RandomAccessFile(pFile, "r");
             mByteHandler = pByteHandler;
             mFac = pFac;
-
         } catch (final IOException exc) {
             throw new TTIOException(exc);
         }
@@ -104,33 +100,16 @@ public final class FileReader implements IBackendReader {
     public IPage read(final long pKey) throws TTIOException {
 
         try {
-
             // Read page from file.
             mFile.seek(pKey);
             final int dataLength = mFile.readInt();
             final byte[] rawPage = new byte[dataLength];
             mFile.read(rawPage);
-
             // Perform crypto operations.
             byte[] decryptedPage = mByteHandler.deserialize(rawPage);
-
             // Return reader required to instantiate and deserialize page.
             return mFac.deserializePage(decryptedPage);
         } catch (final IOException | TTByteHandleException exc) {
-            throw new TTIOException(exc);
-        }
-    }
-
-    public PageReference readFirstReference() throws TTIOException {
-        final PageReference uberPageReference = new PageReference();
-        try {
-            // Read primary beacon.
-            mFile.seek(0);
-            uberPageReference.setKey(mFile.readLong());
-            final UberPage page = (UberPage)read(uberPageReference.getKey());
-            uberPageReference.setPage(page);
-            return uberPageReference;
-        } catch (final IOException exc) {
             throw new TTIOException(exc);
         }
     }
@@ -141,6 +120,22 @@ public final class FileReader implements IBackendReader {
         } catch (final IOException exc) {
             throw new TTIOException(exc);
 
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public UberPage readUber() throws TTIOException {
+        try {
+            // Read primary beacon.
+            mFile.seek(0);
+            long key = mFile.readLong();
+            final UberPage page = (UberPage)read(key);
+            return page;
+        } catch (final IOException exc) {
+            throw new TTIOException(exc);
         }
     }
 

@@ -54,6 +54,7 @@ import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
+import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackend.IBackendFactory;
 import org.treetank.node.ElementNode;
 import org.treetank.node.TreeNodeFactory;
@@ -227,9 +228,10 @@ public final class XMLSerializer extends AbsSerializer {
 
     /**
      * Emit node (start element or characters).
+     * @throws TTIOException 
      */
     @Override
-    protected void emitStartElement(final INodeReadTrx paramRTX) {
+    protected void emitStartElement(final INodeReadTrx paramRTX) throws TTIOException {
         try {
             switch (paramRTX.getNode().getKind()) {
             case ROOT:

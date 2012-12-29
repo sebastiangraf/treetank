@@ -30,8 +30,6 @@ package org.treetank.page;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.treetank.access.PageWriteTrx;
-import org.treetank.exception.TTException;
 import org.treetank.page.interfaces.IPage;
 
 import com.google.common.io.ByteArrayDataOutput;
@@ -87,28 +85,12 @@ public final class NamePage implements IPage {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("NamePage [mNameMap=");
-        builder.append(mNameMap);
-        builder.append("]");
-        return builder.toString();
-    }
-
-    /**
      * Get name map.
      * 
      * @return name map
      */
     public Map<Integer, String> getNameMap() {
         return mNameMap;
-    }
-
-    @Override
-    public void commit(PageWriteTrx paramState) throws TTException {
     }
 
     /**
@@ -136,6 +118,20 @@ public final class NamePage implements IPage {
     @Override
     public long getPageKey() {
         return mPageKey;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("NamePage [mPageKey=");
+        builder.append(mPageKey);
+        builder.append(", mNameMap=");
+        builder.append(mNameMap);
+        builder.append("]");
+        return builder.toString();
     }
 
 }

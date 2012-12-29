@@ -37,6 +37,7 @@ import org.treetank.api.ISession;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.DescendantAxis;
 import org.treetank.exception.TTException;
+import org.treetank.exception.TTIOException;
 import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.IStructNode;
 
@@ -118,7 +119,7 @@ abstract class AbsSerializer implements Callable<Void> {
             Arrays.sort(mVersions);
             if (mVersions[0] < 0) {
                 versionsToUse = new long[(int)mSession.getMostRecentVersion() - 1];
-                
+
                 for (int i = 0; i < versionsToUse.length; i++) {
                     versionsToUse[i] = i + 1;
                 }
@@ -165,10 +166,8 @@ abstract class AbsSerializer implements Callable<Void> {
                     rtx.moveTo(key);
                     closeElements = false;
                 }
-
                 // Emit node.
                 emitStartElement(rtx);
-
                 // Push end element to stack if we are a start element with
                 // children.
                 if (currentStruc.getKind() == IConstants.ELEMENT && currentStruc.hasFirstChild()) {
@@ -207,7 +206,7 @@ abstract class AbsSerializer implements Callable<Void> {
      * @param paramRTX
      *            Treetank reading transaction {@link IReadTransaction}.
      */
-    protected abstract void emitStartElement(final INodeReadTrx paramRTX);
+    protected abstract void emitStartElement(final INodeReadTrx paramRTX) throws TTIOException;
 
     /**
      * Emit end tag.

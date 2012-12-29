@@ -27,6 +27,8 @@
 
 package org.treetank.io.file;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import java.io.File;
 import java.util.Properties;
 
@@ -35,7 +37,6 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTException;
-import org.treetank.exception.TTUsageException;
 import org.treetank.io.IBackend;
 import org.treetank.io.IBackendReader;
 import org.treetank.io.IBackendWriter;
@@ -149,9 +150,7 @@ public final class FileStorage implements IBackend {
      */
     @Override
     public void truncate() throws TTException {
-        if (!mClosed) {
-            throw new TTUsageException("Storage opened, close first");
-        }
+        checkState(!mClosed, "Storage opened, close first");
         IOUtils.recursiveDelete(mFile);
     }
 

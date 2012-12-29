@@ -27,6 +27,9 @@
 
 package org.treetank.access;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 import static org.treetank.node.IConstants.NULL_NODE;
 import static org.treetank.node.IConstants.ROOT_NODE;
 
@@ -39,7 +42,6 @@ import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.exception.TTUsageException;
 import org.treetank.node.AttributeNode;
 import org.treetank.node.DocumentRootNode;
 import org.treetank.node.ElementNode;
@@ -98,9 +100,6 @@ public class NodeWriteTrx implements INodeWriteTrx {
     /** Delegate for the read access. */
     private NodeReadTrx mDelegate;
 
-    /** Access to the page transaction. */
-    private IPageWriteTrx mPageWtx;
-
     /**
      * Constructor.
      * 
@@ -120,200 +119,179 @@ public class NodeWriteTrx implements INodeWriteTrx {
         mHashKind = kind;
         mDelegate = new NodeReadTrx(pPageWriteTrx);
         mSession = pSession;
-        mPageWtx = pPageWriteTrx;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public long insertElementAsFirstChild(final QName mQName) throws TTException, NullPointerException {
-        if (mQName == null) {
-            throw new NullPointerException("mQName may not be null!");
-        }
-        if (mDelegate.getCurrentNode() instanceof ElementNode
-            || mDelegate.getCurrentNode() instanceof DocumentRootNode) {
+    public long insertElementAsFirstChild(final QName pQName) throws TTException, NullPointerException {
+        checkNotNull(pQName);
+        checkState(mDelegate.getCurrentNode() instanceof ElementNode
+            || mDelegate.getCurrentNode() instanceof DocumentRootNode,
+            "Insert is not allowed if current node is not an ElementNode, but was %s", mDelegate
+                .getCurrentNode());
+        checkAccessAndCommit();
 
-            checkAccessAndCommit();
+        final long parentKey = mDelegate.getCurrentNode().getNodeKey();
+        final long leftSibKey = NULL_NODE;
+        final long rightSibKey = ((IStructNode)mDelegate.getCurrentNode()).getFirstChildKey();
+        final ElementNode node = createElementNode(parentKey, leftSibKey, rightSibKey, 0, pQName);
 
-            final long parentKey = mDelegate.getCurrentNode().getNodeKey();
-            final long leftSibKey = NULL_NODE;
-            final long rightSibKey = ((IStructNode)mDelegate.getCurrentNode()).getFirstChildKey();
-            final ElementNode node = createElementNode(parentKey, leftSibKey, rightSibKey, 0, mQName);
+        mDelegate.setCurrentNode(node);
+        adaptForInsert(node, true);
+        adaptHashesWithAdd();
 
-            mDelegate.setCurrentNode(node);
-            adaptForInsert(node, true);
-            adaptHashesWithAdd();
-
-            return node.getNodeKey();
-        } else {
-            throw new TTUsageException("Insert is not allowed if current node is not an ElementNode!");
-        }
+        return node.getNodeKey();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public long insertElementAsRightSibling(final QName paramQName) throws TTException {
-        if (paramQName == null) {
-            throw new NullPointerException("paramQName may not be null!");
-        }
-        if (mDelegate.getCurrentNode() instanceof IStructNode) {
+    public long insertElementAsRightSibling(final QName pQName) throws TTException {
+        checkNotNull(pQName);
+        checkState(
+            mDelegate.getCurrentNode() instanceof IStructNode,
+            "Insert is not allowed if current node is not an StructuralNode (either Text or Element), but was %s",
+            mDelegate.getCurrentNode());
 
-            checkAccessAndCommit();
+        checkAccessAndCommit();
 
-            final long parentKey = mDelegate.getCurrentNode().getParentKey();
-            final long leftSibKey = mDelegate.getCurrentNode().getNodeKey();
-            final long rightSibKey = ((IStructNode)mDelegate.getCurrentNode()).getRightSiblingKey();
-            final ElementNode node = createElementNode(parentKey, leftSibKey, rightSibKey, 0, paramQName);
+        final long parentKey = mDelegate.getCurrentNode().getParentKey();
+        final long leftSibKey = mDelegate.getCurrentNode().getNodeKey();
+        final long rightSibKey = ((IStructNode)mDelegate.getCurrentNode()).getRightSiblingKey();
+        final ElementNode node = createElementNode(parentKey, leftSibKey, rightSibKey, 0, pQName);
 
-            mDelegate.setCurrentNode(node);
-            adaptForInsert(node, false);
-            adaptHashesWithAdd();
+        mDelegate.setCurrentNode(node);
+        adaptForInsert(node, false);
+        adaptHashesWithAdd();
 
-            return node.getNodeKey();
-        } else {
-            throw new TTUsageException(
-                "Insert is not allowed if current node is not an StructuralNode (either Text or Element)!");
-        }
+        return node.getNodeKey();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public long insertTextAsFirstChild(final String paramValueAsString) throws TTException {
-        if (paramValueAsString == null) {
-            throw new NullPointerException("paramValueAsString may not be null!");
-        }
-        if (mDelegate.getCurrentNode() instanceof ElementNode
-            || mDelegate.getCurrentNode() instanceof DocumentRootNode) {
+    public long insertTextAsFirstChild(final String pValue) throws TTException {
+        checkNotNull(pValue);
+        checkState(mDelegate.getCurrentNode() instanceof ElementNode
+            || mDelegate.getCurrentNode() instanceof DocumentRootNode,
+            "Insert is not allowed if current node is not an ElementNode, but was %s", mDelegate
+                .getCurrentNode());
+        checkAccessAndCommit();
 
-            checkAccessAndCommit();
+        final byte[] value = TypedValue.getBytes(pValue);
+        final long parentKey = mDelegate.getCurrentNode().getNodeKey();
+        final long leftSibKey = NULL_NODE;
+        final long rightSibKey = ((IStructNode)mDelegate.getCurrentNode()).getFirstChildKey();
+        final TextNode node = createTextNode(parentKey, leftSibKey, rightSibKey, value);
 
-            final byte[] value = TypedValue.getBytes(paramValueAsString);
-            final long parentKey = mDelegate.getCurrentNode().getNodeKey();
-            final long leftSibKey = NULL_NODE;
-            final long rightSibKey = ((IStructNode)mDelegate.getCurrentNode()).getFirstChildKey();
-            final TextNode node = createTextNode(parentKey, leftSibKey, rightSibKey, value);
+        mDelegate.setCurrentNode(node);
+        adaptForInsert(node, true);
+        adaptHashesWithAdd();
 
-            mDelegate.setCurrentNode(node);
-            adaptForInsert(node, true);
-            adaptHashesWithAdd();
-
-            return node.getNodeKey();
-        } else {
-            throw new TTUsageException("Insert is not allowed if current node is not an ElementNode!");
-        }
+        return node.getNodeKey();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public long insertTextAsRightSibling(final String paramValueAsString) throws TTException {
-        if (paramValueAsString == null) {
-            throw new NullPointerException("paramValueAsString may not be null!");
-        }
+    public long insertTextAsRightSibling(final String pValue) throws TTException {
+        checkNotNull(pValue);
+        checkState(mDelegate.getCurrentNode() instanceof ElementNode,
+            "Insert is not allowed if current node is not an ElementNode, but was %s", mDelegate
+                .getCurrentNode());
+        checkAccessAndCommit();
 
-        if (mDelegate.getCurrentNode().getKind() == IConstants.ELEMENT) {
-            checkAccessAndCommit();
+        final byte[] value = TypedValue.getBytes(pValue);
+        final long parentKey = mDelegate.getCurrentNode().getParentKey();
+        final long leftSibKey = mDelegate.getCurrentNode().getNodeKey();
+        final long rightSibKey = ((IStructNode)mDelegate.getCurrentNode()).getRightSiblingKey();
+        final TextNode node = createTextNode(parentKey, leftSibKey, rightSibKey, value);
 
-            final byte[] value = TypedValue.getBytes(paramValueAsString);
-            final long parentKey = mDelegate.getCurrentNode().getParentKey();
-            final long leftSibKey = mDelegate.getCurrentNode().getNodeKey();
-            final long rightSibKey = ((IStructNode)mDelegate.getCurrentNode()).getRightSiblingKey();
-            final TextNode node = createTextNode(parentKey, leftSibKey, rightSibKey, value);
+        mDelegate.setCurrentNode(node);
+        adaptForInsert(node, false);
+        adaptHashesWithAdd();
 
-            mDelegate.setCurrentNode(node);
-            adaptForInsert(node, false);
-            adaptHashesWithAdd();
+        return node.getNodeKey();
 
-            return node.getNodeKey();
-
-        } else {
-            throw new TTUsageException("Insert is not allowed if current node is not an element node!");
-        }
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public long insertAttribute(final QName paramQName, final String paramValueAsString) throws TTException {
-        if (mDelegate.getCurrentNode() instanceof ElementNode) {
+    public long insertAttribute(final QName pQName, final String pValue) throws TTException {
+        checkState(mDelegate.getCurrentNode() instanceof ElementNode,
+            "Insert is not allowed if current node is not an ElementNode, but was %s", mDelegate
+                .getCurrentNode());
 
-            checkAccessAndCommit();
+        checkAccessAndCommit();
 
-            final byte[] value = TypedValue.getBytes(paramValueAsString);
-            final long elementKey = mDelegate.getCurrentNode().getNodeKey();
+        final byte[] value = TypedValue.getBytes(pValue);
+        final long elementKey = mDelegate.getCurrentNode().getNodeKey();
 
-            final int nameKey = getPageTransaction().createNameKey(PageWriteTrx.buildName(paramQName));
-            final int namespaceKey = getPageTransaction().createNameKey(paramQName.getNamespaceURI());
-            final NodeDelegate nodeDel =
-                new NodeDelegate(getPageTransaction().getMaxNodeKey() + 1, elementKey, 0);
-            final NameNodeDelegate nameDel = new NameNodeDelegate(nodeDel, nameKey, namespaceKey);
-            final ValNodeDelegate valDel = new ValNodeDelegate(nodeDel, value);
+        final int nameKey = getPageTransaction().createNameKey(PageWriteTrx.buildName(pQName));
+        final int namespaceKey = getPageTransaction().createNameKey(pQName.getNamespaceURI());
+        final NodeDelegate nodeDel =
+            new NodeDelegate(getPageTransaction().getMaxNodeKey() + 1, elementKey, 0);
+        final NameNodeDelegate nameDel = new NameNodeDelegate(nodeDel, nameKey, namespaceKey);
+        final ValNodeDelegate valDel = new ValNodeDelegate(nodeDel, value);
 
-            final AttributeNode node =
-                getPageTransaction().createNode(new AttributeNode(nodeDel, nameDel, valDel));
+        final AttributeNode node =
+            getPageTransaction().createNode(new AttributeNode(nodeDel, nameDel, valDel));
 
-            final INode parentNode =
-                (org.treetank.node.interfaces.INode)getPageTransaction().prepareNodeForModification(
-                    node.getParentKey());
-            ((ElementNode)parentNode).insertAttribute(node.getNodeKey());
-            getPageTransaction().finishNodeModification(parentNode);
+        final INode parentNode =
+            (org.treetank.node.interfaces.INode)getPageTransaction().prepareNodeForModification(
+                node.getParentKey());
+        ((ElementNode)parentNode).insertAttribute(node.getNodeKey());
+        getPageTransaction().finishNodeModification(parentNode);
 
-            mDelegate.setCurrentNode(node);
-            adaptForInsert(node, false);
+        mDelegate.setCurrentNode(node);
+        adaptForInsert(node, false);
 
-            adaptHashesWithAdd();
-            return node.getNodeKey();
+        adaptHashesWithAdd();
+        return node.getNodeKey();
 
-        } else {
-            throw new TTUsageException("Insert is not allowed if current node is not an ElementNode!");
-        }
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public long insertNamespace(final QName paramQName) throws TTException {
-        if (paramQName == null) {
-            throw new NullPointerException("QName may not be null!");
-        }
-        if (mDelegate.getCurrentNode() instanceof ElementNode) {
+    public long insertNamespace(final QName pQName) throws TTException {
+        checkNotNull(pQName);
+        checkState(mDelegate.getCurrentNode() instanceof ElementNode,
+            "Insert is not allowed if current node is not an ElementNode, but was %s", mDelegate
+                .getCurrentNode());
+        checkAccessAndCommit();
 
-            checkAccessAndCommit();
+        final int uriKey = getPageTransaction().createNameKey(pQName.getNamespaceURI());
+        // final String name =
+        // paramQName.getPrefix().isEmpty() ? "xmlns" : "xmlns:" +
+        // paramQName.getPrefix();
+        final int prefixKey = getPageTransaction().createNameKey(pQName.getPrefix());
+        final long elementKey = mDelegate.getCurrentNode().getNodeKey();
 
-            final int uriKey = getPageTransaction().createNameKey(paramQName.getNamespaceURI());
-            // final String name =
-            // paramQName.getPrefix().isEmpty() ? "xmlns" : "xmlns:" +
-            // paramQName.getPrefix();
-            final int prefixKey = getPageTransaction().createNameKey(paramQName.getPrefix());
-            final long elementKey = mDelegate.getCurrentNode().getNodeKey();
+        final NodeDelegate nodeDel =
+            new NodeDelegate(getPageTransaction().getMaxNodeKey() + 1, elementKey, 0);
+        final NameNodeDelegate nameDel = new NameNodeDelegate(nodeDel, prefixKey, uriKey);
 
-            final NodeDelegate nodeDel =
-                new NodeDelegate(getPageTransaction().getMaxNodeKey() + 1, elementKey, 0);
-            final NameNodeDelegate nameDel = new NameNodeDelegate(nodeDel, prefixKey, uriKey);
+        final NamespaceNode node = getPageTransaction().createNode(new NamespaceNode(nodeDel, nameDel));
 
-            final NamespaceNode node = getPageTransaction().createNode(new NamespaceNode(nodeDel, nameDel));
+        final INode parentNode =
+            (org.treetank.node.interfaces.INode)getPageTransaction().prepareNodeForModification(
+                node.getParentKey());
+        ((ElementNode)parentNode).insertNamespace(node.getNodeKey());
+        getPageTransaction().finishNodeModification(parentNode);
 
-            final INode parentNode =
-                (org.treetank.node.interfaces.INode)getPageTransaction().prepareNodeForModification(
-                    node.getParentKey());
-            ((ElementNode)parentNode).insertNamespace(node.getNodeKey());
-            getPageTransaction().finishNodeModification(parentNode);
-
-            mDelegate.setCurrentNode(node);
-            adaptForInsert(node, false);
-            adaptHashesWithAdd();
-            return node.getNodeKey();
-        } else {
-            throw new TTUsageException("Insert is not allowed if current node is not an ElementNode!");
-        }
+        mDelegate.setCurrentNode(node);
+        adaptForInsert(node, false);
+        adaptHashesWithAdd();
+        return node.getNodeKey();
     }
 
     private ElementNode createElementNode(final long parentKey, final long mLeftSibKey,
@@ -348,17 +326,23 @@ public class NodeWriteTrx implements INodeWriteTrx {
     @Override
     public void remove() throws TTException {
         checkAccessAndCommit();
-        if (mDelegate.getCurrentNode().getKind() == IConstants.ROOT) {
-            throw new TTUsageException("Document root can not be removed.");
-        } else if (mDelegate.getCurrentNode() instanceof IStructNode) {
+        checkState(mDelegate.getCurrentNode().getKind() != IConstants.ROOT,
+            "Document root can not be removed.");
+        if (mDelegate.getCurrentNode() instanceof IStructNode) {
             final IStructNode node = (IStructNode)mDelegate.getCurrentNode();
-            // Remove subtree, excluded since 1. axis is now moved to extra
-            // bundle and 2. attributes and
-            // namespaces are ignored
-            // for (final AbsAxis desc = new DescendantAxis(this, false); desc
-            // .hasNext(); desc.next()) {
-            // getTransactionState().removeNode(getCurrentNode());
-            // }
+            if (node.getKind() == IConstants.ELEMENT) {
+                long currentKey = node.getNodeKey();
+                ElementNode element = (ElementNode)node;
+                for (int i = 0; i < element.getAttributeCount(); i++) {
+                    moveTo(element.getAttributeKey(i));
+                    getPageTransaction().removeNode(mDelegate.getCurrentNode());
+                }
+                for (int i = 0; i < element.getNamespaceCount(); i++) {
+                    moveTo(element.getNamespaceKey(i));
+                    getPageTransaction().removeNode(mDelegate.getCurrentNode());
+                }
+                moveTo(currentKey);
+            }
             moveTo(node.getNodeKey());
             adaptForRemove(node);
             adaptHashesWithRemove();
@@ -382,7 +366,6 @@ public class NodeWriteTrx implements INodeWriteTrx {
             moveTo(mDelegate.getCurrentNode().getParentKey());
         } else if (mDelegate.getCurrentNode().getKind() == IConstants.NAMESPACE) {
             final INode node = mDelegate.getCurrentNode();
-
             final ElementNode parent =
                 (ElementNode)getPageTransaction().prepareNodeForModification(node.getParentKey());
             parent.removeNamespace(node.getNodeKey());
@@ -397,22 +380,20 @@ public class NodeWriteTrx implements INodeWriteTrx {
      */
     @Override
     public void setQName(final QName paramName) throws TTException {
-        if (mDelegate.getCurrentNode() instanceof INameNode) {
-            mDelegate.assertNotClosed();
-            final long oldHash = mDelegate.getCurrentNode().hashCode();
+        checkState(mDelegate.getCurrentNode() instanceof INameNode,
+            "setQName is not allowed if current node is not an INameNode implementation, but was %s",
+            mDelegate.getCurrentNode());
+        mDelegate.assertNotClosed();
+        final long oldHash = mDelegate.getCurrentNode().hashCode();
 
-            final INameNode node =
-                (INameNode)getPageTransaction().prepareNodeForModification(
-                    mDelegate.getCurrentNode().getNodeKey());
-            node.setNameKey(getPageTransaction().createNameKey(PageWriteTrx.buildName(paramName)));
-            getPageTransaction().finishNodeModification(node);
+        final INameNode node =
+            (INameNode)getPageTransaction().prepareNodeForModification(
+                mDelegate.getCurrentNode().getNodeKey());
+        node.setNameKey(getPageTransaction().createNameKey(PageWriteTrx.buildName(paramName)));
+        getPageTransaction().finishNodeModification(node);
 
-            mDelegate.setCurrentNode((INode)node);
-            adaptHashedWithUpdate(oldHash);
-        } else {
-            throw new TTUsageException(
-                "setQName is not allowed if current node is not an INameNode implementation!");
-        }
+        mDelegate.setCurrentNode((INode)node);
+        adaptHashedWithUpdate(oldHash);
     }
 
     /**
@@ -420,46 +401,41 @@ public class NodeWriteTrx implements INodeWriteTrx {
      */
     @Override
     public void setURI(final String paramUri) throws TTException {
-        if (mDelegate.getCurrentNode() instanceof INameNode) {
-            mDelegate.assertNotClosed();
-            final long oldHash = mDelegate.getCurrentNode().hashCode();
+        checkState(mDelegate.getCurrentNode() instanceof INameNode,
+            "setURI is not allowed if current node is not an INameNode implementation, but was %s", mDelegate
+                .getCurrentNode());
+        mDelegate.assertNotClosed();
+        final long oldHash = mDelegate.getCurrentNode().hashCode();
 
-            final INameNode node =
-                (INameNode)getPageTransaction().prepareNodeForModification(
-                    mDelegate.getCurrentNode().getNodeKey());
-            node.setURIKey(getPageTransaction().createNameKey(paramUri));
-            getPageTransaction().finishNodeModification(node);
+        final INameNode node =
+            (INameNode)getPageTransaction().prepareNodeForModification(
+                mDelegate.getCurrentNode().getNodeKey());
+        node.setURIKey(getPageTransaction().createNameKey(paramUri));
+        getPageTransaction().finishNodeModification(node);
 
-            mDelegate.setCurrentNode((INode)node);
-            adaptHashedWithUpdate(oldHash);
-        } else {
-            throw new TTUsageException(
-                "setURI is not allowed if current node is not an INameNode implementation!");
-        }
-
+        mDelegate.setCurrentNode((INode)node);
+        adaptHashedWithUpdate(oldHash);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void setValue(final String paramValue) throws TTException {
-        if (mDelegate.getCurrentNode() instanceof IValNode) {
-            mDelegate.assertNotClosed();
-            final long oldHash = mDelegate.getCurrentNode().hashCode();
+    public void setValue(final String pValue) throws TTException {
+        checkState(mDelegate.getCurrentNode() instanceof IValNode,
+            "setValue is not allowed if current node is not an IValNode implementation, but was %s",
+            mDelegate.getCurrentNode());
+        mDelegate.assertNotClosed();
+        final long oldHash = mDelegate.getCurrentNode().hashCode();
 
-            final IValNode node =
-                (IValNode)getPageTransaction().prepareNodeForModification(
-                    mDelegate.getCurrentNode().getNodeKey());
-            node.setValue(TypedValue.getBytes(paramValue));
-            getPageTransaction().finishNodeModification(node);
+        final IValNode node =
+            (IValNode)getPageTransaction()
+                .prepareNodeForModification(mDelegate.getCurrentNode().getNodeKey());
+        node.setValue(TypedValue.getBytes(pValue));
+        getPageTransaction().finishNodeModification(node);
 
-            mDelegate.setCurrentNode((INode)node);
-            adaptHashedWithUpdate(oldHash);
-        } else {
-            throw new TTUsageException(
-                "SetValue is not allowed if current node is not an IValNode implementation!");
-        }
+        mDelegate.setCurrentNode((INode)node);
+        adaptHashedWithUpdate(oldHash);
     }
 
     /**
@@ -471,16 +447,13 @@ public class NodeWriteTrx implements INodeWriteTrx {
      *             if an I/O operation fails
      */
     @Override
-    public void revertTo(final long paramRevision) throws TTException {
-        if (paramRevision < 0) {
-            throw new IllegalArgumentException("paramRevision parameter must be >= 0");
-        }
+    public void revertTo(final long pRevision) throws TTException {
+        checkArgument(pRevision >= 0, "Parameter must be >= 0, but was %s", pRevision);
         mDelegate.assertNotClosed();
-        mSession.assertAccess(paramRevision);
-        final long revNumber = mDelegate.mPageReadTrx.getActualRevisionRootPage().getRevision();
+        mSession.assertAccess(pRevision);
         getPageTransaction().close();
         // Reset internal transaction state to new uber page.
-        mDelegate.setPageTransaction(mSession.beginPageWriteTransaction(paramRevision, revNumber - 1));
+        mDelegate.setPageTransaction(mSession.beginPageWriteTransaction(pRevision));
         moveTo(ROOT_NODE);
 
     }
@@ -490,16 +463,13 @@ public class NodeWriteTrx implements INodeWriteTrx {
      */
     @Override
     public void commit() throws TTException {
-
         mDelegate.assertNotClosed();
-
         // Commit uber page.
         getPageTransaction().commit();
         final long revNumber = mDelegate.mPageReadTrx.getActualRevisionRootPage().getRevision();
-
         getPageTransaction().close();
         // Reset internal transaction state to new uber page.
-        mDelegate.setPageTransaction(mSession.beginPageWriteTransaction(revNumber, revNumber));
+        mDelegate.setPageTransaction(mSession.beginPageWriteTransaction(revNumber));
 
     }
 
@@ -517,7 +487,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
         getPageTransaction().close();
 
         // Reset internal transaction state to last committed uber page.
-        mDelegate.setPageTransaction(mSession.beginPageWriteTransaction(revisionToSet, revisionToSet));
+        mDelegate.setPageTransaction(mSession.beginPageWriteTransaction(revisionToSet));
     }
 
     /**
@@ -905,7 +875,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      * {@inheritDoc}
      */
     @Override
-    public boolean moveTo(long pKey) {
+    public boolean moveTo(long pKey) throws TTIOException {
         return mDelegate.moveTo(pKey);
     }
 
@@ -913,7 +883,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      * {@inheritDoc}
      */
     @Override
-    public boolean moveToAttribute(int pIndex) {
+    public boolean moveToAttribute(int pIndex) throws TTIOException {
         return mDelegate.moveToAttribute(pIndex);
     }
 
@@ -921,7 +891,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      * {@inheritDoc}
      */
     @Override
-    public boolean moveToNamespace(int pIndex) {
+    public boolean moveToNamespace(int pIndex) throws TTIOException {
         return mDelegate.moveToNamespace(pIndex);
     }
 
@@ -978,7 +948,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      */
     @Override
     public IPageWriteTrx getPageWtx() throws TTException {
-        return mPageWtx;
+        return getPageTransaction();
     }
 
     /**
@@ -993,8 +963,6 @@ public class NodeWriteTrx implements INodeWriteTrx {
         builder.append(mHashKind);
         builder.append(", mDelegate=");
         builder.append(mDelegate);
-        builder.append(", mPageWtx=");
-        builder.append(mPageWtx);
         builder.append("]");
         return builder.toString();
     }

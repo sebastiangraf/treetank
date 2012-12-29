@@ -30,7 +30,6 @@ package org.treetank.service.xml.xpath;
 import java.io.File;
 import java.util.Properties;
 
-import org.perfidix.annotation.BenchClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
@@ -39,8 +38,8 @@ import org.treetank.Holder;
 import org.treetank.NodeModuleFactory;
 import org.treetank.TestHelper;
 import org.treetank.access.conf.ResourceConfiguration;
-import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
+import org.treetank.access.conf.StandardSettings;
 import org.treetank.exception.TTException;
 import org.treetank.service.xml.shredder.EShredderInsert;
 import org.treetank.service.xml.shredder.XMLShredder;
@@ -53,7 +52,6 @@ import com.google.inject.Inject;
  * @author Tina Scherer
  */
 @Guice(moduleFactory = NodeModuleFactory.class)
-@BenchClass(runs = 1)
 public class XMarkTest {
 
     // XMark 1 GB

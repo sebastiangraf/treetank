@@ -4,7 +4,6 @@
 package org.treetank.api;
 
 import org.treetank.exception.TTException;
-import org.treetank.page.UberPage;
 
 /**
  * Write-Transaction of a page ensuring read- and write access to any pages.
@@ -28,13 +27,6 @@ import org.treetank.page.UberPage;
 public interface IPageWriteTrx extends IPageReadTrx {
 
     /**
-     * Getting the actual {@link UberPage}.
-     * 
-     * @return the actual {@link UberPage} for getting additional information.
-     */
-    UberPage getUberPage();
-
-    /**
      * Getting most recent node key.
      * 
      * @return the most recent node key.
@@ -42,7 +34,7 @@ public interface IPageWriteTrx extends IPageReadTrx {
     long getMaxNodeKey();
 
     /**
-     * Creating a new node and storing the node in the page-layer. 
+     * Creating a new node and storing the node in the page-layer.
      * 
      * @param pnode
      *            the node to be stored.
@@ -59,6 +51,6 @@ public interface IPageWriteTrx extends IPageReadTrx {
      * @throws if
      *             anything weird happens
      */
-    boolean commit() throws TTException;
+    void commit() throws TTException;
 
 }

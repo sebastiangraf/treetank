@@ -27,7 +27,10 @@
 
 package org.treetank.axis.filter;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import org.treetank.api.INodeReadTrx;
+import org.treetank.exception.TTIOException;
 import org.treetank.node.ElementNode;
 import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.INameNode;
@@ -75,6 +78,11 @@ public class WildcardFilter extends AbsFilter {
      */
     @Override
     public final boolean filter() {
+        // supporting attributes here is difficult, because treetank
+        // does not provide a way to acces the name and namespace of
+        // the current attribute (attribute index is not known here)
+        checkState(mRtx.getNode().getKind() != IConstants.ATTRIBUTE,
+            "Wildcards are not supported in attribute names yet.");
         if (mRtx.getNode().getKind() == IConstants.ELEMENT) {
 
             if (mIsName) { // local name is given
@@ -85,25 +93,23 @@ public class WildcardFilter extends AbsFilter {
 
                 return localnameKey == mKnownPartKey;
             } else { // namespace prefix is given
-                final int nsCount = ((ElementNode)mRtx.getNode()).getNamespaceCount();
-                for (int i = 0; i < nsCount; i++) {
-                    mRtx.moveTo(((ElementNode)mRtx.getNode()).getNamespaceKey(i));
-                    final int prefixKey = mKnownPartKey;
-                    if (((INameNode)mRtx.getNode()).getNameKey() == prefixKey) {
+                try {
+                    final int nsCount = ((ElementNode)mRtx.getNode()).getNamespaceCount();
+                    for (int i = 0; i < nsCount; i++) {
+                        mRtx.moveTo(((ElementNode)mRtx.getNode()).getNamespaceKey(i));
+                        final int prefixKey = mKnownPartKey;
+                        if (((INameNode)mRtx.getNode()).getNameKey() == prefixKey) {
+                            mRtx.moveTo(mRtx.getNode().getParentKey());
+                            return true;
+                        }
                         mRtx.moveTo(mRtx.getNode().getParentKey());
-                        return true;
                     }
-                    mRtx.moveTo(mRtx.getNode().getParentKey());
+                } catch (TTIOException exc) {
+                    throw new RuntimeException(exc);
                 }
             }
 
-        } else if (mRtx.getNode().getKind() == IConstants.ATTRIBUTE) {
-            // supporting attributes here is difficult, because treetank
-            // does not provide a way to acces the name and namespace of
-            // the current attribute (attribute index is not known here)
-            throw new IllegalStateException("Wildcards are not supported in attribute names yet.");
         }
-
         return false;
 
     }

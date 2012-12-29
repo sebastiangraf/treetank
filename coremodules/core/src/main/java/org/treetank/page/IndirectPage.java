@@ -27,8 +27,8 @@
 
 package org.treetank.page;
 
-import org.treetank.access.PageWriteTrx;
-import org.treetank.exception.TTException;
+import java.util.Arrays;
+
 import org.treetank.page.interfaces.IReferencePage;
 
 import com.google.common.io.ByteArrayDataOutput;
@@ -42,9 +42,6 @@ import com.google.common.io.ByteStreams;
  * </p>
  */
 public final class IndirectPage implements IReferencePage {
-
-    /** Page references. */
-    private final PageReference[] mReferences;
 
     /** Reference keys. */
     private final long[] mReferenceKeys;
@@ -60,23 +57,7 @@ public final class IndirectPage implements IReferencePage {
      */
     public IndirectPage(final long pPageKey) {
         mPageKey = pPageKey;
-        mReferenceKeys = new long[IConstants.INP_REFERENCE_COUNT];
-        mReferences = new PageReference[IConstants.INP_REFERENCE_COUNT];
-        for (int i = 0; i < mReferences.length; i++) {
-            mReferences[i] = new PageReference();
-        }
-    }
-
-    @Override
-    public void commit(PageWriteTrx paramState) throws TTException {
-        for (final PageReference reference : getReferences()) {
-            paramState.commit(reference);
-        }
-    }
-
-    @Override
-    public PageReference[] getReferences() {
-        return mReferences;
+        mReferenceKeys = new long[IConstants.CONTENT_COUNT];
     }
 
     /**
@@ -90,21 +71,7 @@ public final class IndirectPage implements IReferencePage {
         for (long key : mReferenceKeys) {
             pOutput.writeLong(key);
         }
-
-        for (final PageReference reference : getReferences()) {
-            pOutput.writeLong(reference.getKey());
-        }
         return pOutput.toByteArray();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("IndirectPage");
-        return builder.toString();
     }
 
     /**
@@ -123,6 +90,20 @@ public final class IndirectPage implements IReferencePage {
     @Override
     public void setReferenceKey(int pIndex, long pKey) {
         mReferenceKeys[pIndex] = pKey;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("IndirectPage [mPageKey=");
+        builder.append(mPageKey);
+        builder.append(", mReferenceKeys=");
+        builder.append(Arrays.toString(mReferenceKeys));
+        builder.append("]");
+        return builder.toString();
     }
 
 }

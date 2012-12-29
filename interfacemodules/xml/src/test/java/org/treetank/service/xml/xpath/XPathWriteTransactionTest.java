@@ -54,6 +54,7 @@ import org.treetank.api.IStorage;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
+import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTXPathException;
 import org.treetank.service.xml.shredder.XMLShredder;
 
@@ -92,9 +93,9 @@ public final class XPathWriteTransactionTest {
         props.put(ContructorProps.STORAGEPATH, TestHelper.PATHS.PATH1.getFile().getAbsolutePath());
         props.put(ContructorProps.RESOURCE, "shredded");
         props.setProperty(FilesystemConstants.PROPERTY_BASEDIR, new File(new File(new File(props
-            .getProperty(ContructorProps.STORAGEPATH), StorageConfiguration.Paths.Data.getFile().getName()), props
-            .getProperty(ContructorProps.RESOURCE)), ResourceConfiguration.Paths.Data.getFile().getName())
-            .getAbsolutePath());
+            .getProperty(ContructorProps.STORAGEPATH), StorageConfiguration.Paths.Data.getFile().getName()),
+            props.getProperty(ContructorProps.RESOURCE)), ResourceConfiguration.Paths.Data.getFile()
+            .getName()).getAbsolutePath());
         props.setProperty(Constants.PROPERTY_CREDENTIAL, "test");
         props.setProperty(ContructorProps.JCLOUDSTYPE, "filesystem");
         props.setProperty(ContructorProps.NUMBERTORESTORE, Integer.toString(4));
@@ -104,7 +105,7 @@ public final class XPathWriteTransactionTest {
     }
 
     @Test
-    public void test() throws TTXPathException {
+    public void test() throws TTIOException, TTXPathException {
         wtx.moveTo(ROOT_NODE);
         // final XPathAxis xpa =
         // new XPathAxis(wtx, "//revision[./parent::page/title/text() = '"

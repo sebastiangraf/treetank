@@ -28,12 +28,12 @@
 package org.treetank.cache;
 
 import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertNull;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.treetank.exception.TTException;
-import org.treetank.page.NodePage;
+import org.treetank.exception.TTIOException;
+import org.treetank.page.interfaces.IPage;
 
 /**
  * @author Sebastian Graf, University of Konstanz
@@ -41,24 +41,55 @@ import org.treetank.page.NodePage;
  */
 public class LRUCacheTest {
 
-    private ICache cache;
+    private ICachedLog cache;
 
     @BeforeMethod
     public void setUp() throws TTException {
-        cache = new LRUCache();
-        CacheTestHelper.setUp(cache);
+        cache = new LRUCache(new NullCache());
+        CacheTestHelper.setUp(false, cache);
     }
 
     @Test
-    public void test() {
+    public void test() throws TTIOException {
         for (int i = 1; i < CacheTestHelper.PAGES.length; i++) {
-            final NodePageContainer cont = cache.get(i);
-            final NodePage current = cont.getComplete();
-            assertEquals(CacheTestHelper.PAGES[i][0], current);
+            for (int j = 1; j < CacheTestHelper.PAGES[i].length; j++) {
+                LogKey toRetrieve = new LogKey(true, i, j);
+                final NodePageContainer cont = cache.get(toRetrieve);
+                final IPage current = cont.getComplete();
+                assertEquals(CacheTestHelper.PAGES[i][j], current);
+            }
         }
 
-        final NodePageContainer page = cache.get(0);
-        assertNull(page);
+    }
+
+    static class NullCache implements ICachedLog {
+        /**
+         * Constructor.
+         */
+        public NullCache() {
+            super();
+        }
+
+        @Override
+        public void clear() {
+            // Not used over here
+        }
+
+        @Override
+        public NodePageContainer get(final LogKey mKey) {
+            return null;
+        }
+
+        @Override
+        public void put(final LogKey mKey, final NodePageContainer mPage) {
+            // Not used over here
+        }
+
+        @Override
+        public CacheLogIterator getIterator() {
+            // Not used over here
+            return null;
+        }
 
     }
 

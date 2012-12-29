@@ -32,6 +32,8 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.treetank.exception.TTIOException;
+
 /**
  * An LRU cache, based on <code>LinkedHashMap</code>. This cache can hold an
  * possible second cache as a second layer for example for storing data in a
@@ -39,22 +41,22 @@ import java.util.Map;
  * 
  * @author Sebastian Graf, University of Konstanz
  */
-public final class LRUCache implements ICache {
+public final class LRUCache implements ICachedLog {
 
     /**
      * Capacity of the cache. Number of stored pages
      */
-    static final int CACHE_CAPACITY = 10;
+    static final int CACHE_CAPACITY = 100;
 
     /**
      * The collection to hold the maps.
      */
-    private final Map<Long, NodePageContainer> map;
+    protected final Map<LogKey, NodePageContainer> map;
 
     /**
      * The reference to the second cache.
      */
-    private final ICache mSecondCache;
+    private final ICachedLog mSecondCache;
 
     /**
      * Creates a new LRU cache.
@@ -64,17 +66,21 @@ public final class LRUCache implements ICache {
      *            when it gets removed from the first one.
      * 
      */
-    public LRUCache(final ICache paramSecondCache) {
+    public LRUCache(final ICachedLog paramSecondCache) {
         mSecondCache = paramSecondCache;
-        map = new LinkedHashMap<Long, NodePageContainer>(CACHE_CAPACITY) {
+        map = new LinkedHashMap<LogKey, NodePageContainer>(CACHE_CAPACITY) {
             // (an anonymous inner class)
             private static final long serialVersionUID = 1;
 
             @Override
-            protected boolean removeEldestEntry(final Map.Entry<Long, NodePageContainer> mEldest) {
+            protected boolean removeEldestEntry(final Map.Entry<LogKey, NodePageContainer> mEldest) {
                 boolean returnVal = false;
                 if (size() > CACHE_CAPACITY) {
-                    mSecondCache.put(mEldest.getKey(), mEldest.getValue());
+                    try {
+                        mSecondCache.put(mEldest.getKey(), mEldest.getValue());
+                    } catch (final TTIOException exc) {
+                        throw new RuntimeException(exc);
+                    }
                     returnVal = true;
                 }
                 return returnVal;
@@ -84,58 +90,32 @@ public final class LRUCache implements ICache {
     }
 
     /**
-     * Constructor with no second cache.
+     * {@inheritDoc}
      */
-    public LRUCache() {
-        this(new NullCache());
-    }
-
-    /**
-     * Retrieves an entry from the cache.<br>
-     * The retrieved entry becomes the MRU (most recently used) entry.
-     * 
-     * @param mKey
-     *            the key whose associated value is to be returned.
-     * @return the value associated to this key, or null if no value with this
-     *         key exists in the cache.
-     */
-    public NodePageContainer get(final long mKey) {
-        NodePageContainer page = map.get(mKey);
+    public NodePageContainer get(final LogKey pKey) throws TTIOException {
+        NodePageContainer page = map.get(pKey);
         if (page == null) {
-            page = mSecondCache.get(mKey);
+            page = mSecondCache.get(pKey);
         }
         return page;
     }
 
     /**
-     * 
-     * Adds an entry to this cache. If the cache is full, the LRU (least
-     * recently used) entry is dropped.
-     * 
-     * @param mKey
-     *            the key with which the specified value is to be associated.
-     * @param mValue
-     *            a value to be associated with the specified key.
+     * {@inheritDoc}
      */
-    public void put(final long mKey, final NodePageContainer mValue) {
-        map.put(mKey, mValue);
+    public void put(final LogKey pKey, final NodePageContainer pValue) throws TTIOException {
+        map.put(pKey, pValue);
+        if (mSecondCache.get(pKey) != null) {
+            mSecondCache.put(pKey, pValue);
+        }
     }
 
     /**
-     * Clears the cache.
+     * {@inheritDoc}
      */
-    public void clear() {
+    public void clear() throws TTIOException {
         map.clear();
         mSecondCache.clear();
-    }
-
-    /**
-     * Returns the number of used entries in the cache.
-     * 
-     * @return the number of entries currently in the cache.
-     */
-    public int usedEntries() {
-        return map.size();
     }
 
     /**
@@ -144,8 +124,8 @@ public final class LRUCache implements ICache {
      * 
      * @return a <code>Collection</code> with a copy of the cache content.
      */
-    public Collection<Map.Entry<Long, NodePageContainer>> getAll() {
-        return new ArrayList<Map.Entry<Long, NodePageContainer>>(map.entrySet());
+    public Collection<Map.Entry<LogKey, NodePageContainer>> getAll() {
+        return new ArrayList<Map.Entry<LogKey, NodePageContainer>>(map.entrySet());
     }
 
     /**
@@ -157,9 +137,19 @@ public final class LRUCache implements ICache {
         builder.append("First Cache: ");
         builder.append(this.map.toString());
         builder.append("\n");
+        builder.append("\n");
         builder.append("Second Cache: ");
         builder.append(this.mSecondCache.toString());
         return builder.toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public CacheLogIterator getIterator() {
+        // TODO fix this one, iterator should be handled in a better component-adhering way.
+        return new CacheLogIterator(this, (BerkeleyPersistenceLog)mSecondCache);
     }
 
 }

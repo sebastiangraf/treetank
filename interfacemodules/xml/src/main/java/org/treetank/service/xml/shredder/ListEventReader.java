@@ -104,7 +104,7 @@ public final class ListEventReader implements XMLEventReader {
     }
 
     @Override
-    public Object getProperty(final String paramName) throws IllegalArgumentException {
+    public Object getProperty(final String paramName) {
         // Do nothing.
         return null;
     }

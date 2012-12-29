@@ -31,12 +31,14 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.exception.TTException;
 
 /**
- * Each <code>IStorage</code> contains multiple resources. To each resource, one {@link ISession} can be bound.  
+ * Each <code>IStorage</code> contains multiple resources. To each resource, one {@link ISession} can be
+ * bound.
  * 
- * Transactions can then be started from this instance. There can only be one {@link IPageWriteTrx} at the time.
+ * Transactions can then be started from this instance. There can only be one {@link IPageWriteTrx} at the
+ * time.
  * However, multiple {@link IPageReadTrx} can coexist concurrently:
  * 
- *  * <code>
+ * * <code>
  *      //Ensure, storage and resources are created
  *      final IStorage storage = Storage.openStorage(FILE);
  *      final ISession session =
@@ -95,8 +97,7 @@ public interface ISession {
      * @return a {@link IPageReadTrx} instance
      * @throws TTException
      */
-    IPageWriteTrx beginPageWriteTransaction(final long pRevToRepresent, final long pRevToStore)
-        throws TTException;
+    IPageWriteTrx beginPageWriteTransaction(final long pRevToRepresent) throws TTException;
 
     /**
      * Begin exclusive read transaction on the page layer

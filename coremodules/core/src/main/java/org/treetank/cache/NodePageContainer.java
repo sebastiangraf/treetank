@@ -28,6 +28,7 @@
 package org.treetank.cache;
 
 import org.treetank.page.NodePage;
+import org.treetank.page.interfaces.IPage;
 
 /**
  * <h1>NodePageContainer</h1> This class acts as a container for revisioned {@link NodePage}s. Each
@@ -48,9 +49,9 @@ import org.treetank.page.NodePage;
  */
 public final class NodePageContainer {
 
-    private final NodePage mComplete;
+    private final IPage mComplete;
 
-    private final NodePage mModified;
+    private final IPage mModified;
 
     /**
      * Constructor with both, complete and modifying page.
@@ -60,7 +61,7 @@ public final class NodePageContainer {
      * @param pModifying
      *            to be used as a base for this container
      */
-    public NodePageContainer(final NodePage pComplete, final NodePage pModifying) {
+    public NodePageContainer(final IPage pComplete, final IPage pModifying) {
         this.mComplete = pComplete;
         this.mModified = pModifying;
     }
@@ -70,7 +71,7 @@ public final class NodePageContainer {
      * 
      * @return the complete page
      */
-    public NodePage getComplete() {
+    public IPage getComplete() {
         return mComplete;
     }
 
@@ -79,7 +80,7 @@ public final class NodePageContainer {
      * 
      * @return the modified page
      */
-    public NodePage getModified() {
+    public IPage getModified() {
         return mModified;
     }
 
@@ -131,9 +132,7 @@ public final class NodePageContainer {
      */
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder("Pagekey: ");
-        builder.append(mComplete.getPageKey());
-        builder.append("\nComplete page: ");
+        final StringBuilder builder = new StringBuilder("Complete page: ");
         builder.append(mComplete.toString());
         builder.append("\nModified page: ");
         builder.append(mModified.toString());

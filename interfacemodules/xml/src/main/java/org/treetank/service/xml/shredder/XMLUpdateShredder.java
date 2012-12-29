@@ -27,6 +27,8 @@
 
 package org.treetank.service.xml.shredder;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 import static org.treetank.node.IConstants.ROOT_NODE;
 
 import java.io.File;
@@ -60,7 +62,6 @@ import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.exception.TTUsageException;
 import org.treetank.io.IBackend.IBackendFactory;
 import org.treetank.node.ElementNode;
 import org.treetank.node.IConstants;
@@ -247,9 +248,8 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Voi
         final EShredderInsert paramAddAsFirstChild, final Object paramData, final EShredderCommit paramCommit)
         throws TTException {
         super(paramWtx, paramReader, paramAddAsFirstChild);
-        if (paramData == null || paramCommit == null) {
-            throw new IllegalArgumentException("None of the constructor parameters may be null!");
-        }
+        checkNotNull(paramData);
+        checkNotNull(paramCommit);
         mCommit = paramCommit;
 
         if (paramData instanceof File) {
@@ -339,10 +339,8 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Voi
                             assert event.getEventType() == XMLStreamConstants.START_ELEMENT;
                             // mElemsParsed++;
                         }
-                        if (event.getEventType() != XMLStreamConstants.START_ELEMENT) {
-                            throw new IllegalStateException(
-                                "StAX parser has to be on START_DOCUMENT or START_ELEMENT event!");
-                        }
+                        checkState(event.getEventType() == XMLStreamConstants.START_ELEMENT,
+                            "StAX parser has to be on START_DOCUMENT or START_ELEMENT event!");
 
                         // Get root element of subtree or whole XML document
                         // to shredder.
@@ -585,8 +583,9 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Voi
      *             checkDescendants(...)).
      * @throws XMLStreamException
      *             In case any StAX parser problem occurs.
+     * @throws TTIOException 
      */
-    private void algorithm(final XMLEvent paramEvent) throws IOException, XMLStreamException {
+    private void algorithm(final XMLEvent paramEvent) throws IOException, XMLStreamException, TTIOException {
         assert paramEvent != null;
         do {
             /*
@@ -1168,153 +1167,15 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Voi
         }
     }
 
-    // /**
-    // * Check if descendants match. Beware of the fact that you have to move the
-    // * write transaction to the node it was before this method has been invoked.
-    // *
-    // * @param paramElem
-    // * the start element where the StAX parser currently is
-    // * @return true if they match, otherwise false
-    // * @throws XMLStreamException
-    // * if streamining exception in the source document
-    // * @throws IOException
-    // * if any I/O exception while opening the target file
-    // */
-    // private boolean checkDescendants(final StartElement paramElem) throws XMLStreamException, IOException {
-    // assert paramElem != null;
-    // boolean found = false;
-    // boolean lastToCheck = false;
-    // if (mMoved == EMoved.FIRSTNODE) {
-    // // Initialize level.
-    // mDescendantLevel = 0;
-    // /*
-    // * Setup new StAX parser and move it to the node, where the current
-    // * StAX parser is.
-    // */
-    // if (mFile != null) {
-    // mParser = createFileReader(mFile);
-    // } else if (mEvents != null) {
-    // mParser = createListReader(mEvents);
-    // } else {
-    // throw new IllegalStateException("Your XMLEventReader implementation is not supported!");
-    // }
-    //
-    // long elemsParsed = 0;
-    // XMLEvent event = null;
-    // while (mParser.hasNext() && elemsParsed != mElemsParsed) {
-    // event = mParser.nextEvent();
-    // if (event.isCharacters() && event.asCharacters().isWhiteSpace()) {
-    // continue;
-    // }
-    // elemsParsed++;
-    // }
-    //
-    // assert event != null && event.isStartElement()
-    // && event.asStartElement().getName().equals(paramElem.getName());
-    //
-    // if (event.isStartElement()) {
-    // found = checkElement(event.asStartElement());
-    // } else if (event.isCharacters()) {
-    // found = checkText(event.asCharacters());
-    // }
-    // }
-    //
-    // assert mParser != null;
-    //
-    // // Move write transaction to next node.
-    // boolean moved = false;
-    // final IStructNode node = (IStructNode)mWtx.getNode();
-    //
-    // if (mMoved == EMoved.TOPARENT) {
-    // mMoved = EMoved.NOTTOPARENT;
-    // moved = true;
-    // } else {
-    // if (node.hasFirstChild()) {
-    // moved = mWtx.moveToFirstChild();
-    // mDescendantLevel++;
-    // } else if (node.hasRightSibling()) {
-    // moved = mWtx.moveToRightSibling();
-    // } else {
-    // moved = true;
-    // }
-    // }
-    //
-    // // Check if nodes are equal.
-    // if (moved) {
-    // mMoved = EMoved.NOTTOPARENT;
-    // if (mParser.hasNext()) {
-    // skipWhitespaces(mParser);
-    // final XMLEvent event = mParser.nextEvent();
-    //
-    // switch (event.getEventType()) {
-    // case XMLStreamConstants.START_ELEMENT:
-    // found = checkElement(event.asStartElement());
-    // break;
-    // case XMLStreamConstants.CHARACTERS:
-    // found = checkText(event.asCharacters());
-    // break;
-    // case XMLStreamConstants.END_ELEMENT:
-    // mMoved = EMoved.TOPARENT;
-    // if (mWtx.getNode().getKind() == ENode.ELEMENT_KIND) {
-    // // Move cursor to parent.
-    // if (mWtx.getNode().getNodeKey() == mLastDescCheckNodeKey) {
-    // /*
-    // * An end tag must have been parsed immediately
-    // * before and it must have been an empty element at
-    // * the end of a subtree, thus move this time to
-    // * parent node.
-    // */
-    // assert mWtx.getNode().hasParent()
-    // && mWtx.getNode().getKind() == ENode.ELEMENT_KIND;
-    // found = mWtx.moveToParent();
-    // mDescendantLevel--;
-    // } else {
-    // if (mWtx.getStructuralNode().hasFirstChild()) {
-    // found = mWtx.moveToParent();
-    // mDescendantLevel--;
-    // } else {
-    // found = true;
-    // mLastDescCheckNodeKey = mWtx.getNode().getNodeKey();
-    // }
-    // }
-    // } else if (node.getKind() == ENode.TEXT_KIND) {
-    // found = mWtx.moveToParent();
-    // mDescendantLevel--;
-    // }
-    //
-    // if (mWtx.getNode().getKind() == ENode.ELEMENT_KIND
-    // && mWtx.getQNameOfCurrentNode().equals(paramElem.getName()) && mDescendantLevel == 0) {
-    // found = true;
-    // lastToCheck = true;
-    // }
-    //
-    // if (mWtx.getStructuralNode().hasRightSibling()) {
-    // found = mWtx.moveToRightSibling();
-    // }
-    //
-    // break;
-    // default:
-    // // Do nothing.
-    // }
-    //
-    // if (found && !lastToCheck) {
-    // checkDescendants(paramElem);
-    // }
-    // }
-    // }
-    //
-    // mParser.close();
-    // return found;
-    // }
-
     /**
      * Check if current element matches the element in the shreddered file.
      * 
      * @param mEvent
      *            StartElement event, from the XML file to shredder.
      * @return true if they are equal, false otherwise.
+     * @throws TTIOException 
      */
-    private boolean checkElement(final StartElement mEvent) {
+    private boolean checkElement(final StartElement mEvent) throws TTIOException {
         assert mEvent != null;
         boolean retVal = false;
 

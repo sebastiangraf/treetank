@@ -27,6 +27,10 @@
 
 package org.treetank.cache;
 
+import java.util.Map;
+
+import org.treetank.exception.TTIOException;
+
 /**
  * Interface for all upcoming cache implementations. Can be a weak one, a
  * LRU-based one or a persistent. However, clear, put and get must to be
@@ -36,11 +40,14 @@ package org.treetank.cache;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public interface ICache {
+public interface ICachedLog {
     /**
      * Clearing the cache. That is removing all elements.
+     * 
+     * @throws TTIOException
+     *             if clear fails
      */
-    void clear();
+    void clear() throws TTIOException;
 
     /**
      * Getting a page related to a given nodepagekey.
@@ -48,8 +55,10 @@ public interface ICache {
      * @param mKey
      *            the key for the requested {@link NodePageContainer}
      * @return {@link NodePageContainer} instance related to this key
+     * @throws TTIOException
+     *             if get fails
      */
-    NodePageContainer get(final long mKey);
+    NodePageContainer get(final LogKey mKey) throws TTIOException;
 
     /**
      * Putting an {@link NodePageContainer} into the cache with a corresponding
@@ -59,7 +68,60 @@ public interface ICache {
      *            for putting the page in the cache.
      * @param mPage
      *            should be putted in the cache as well.
+     * @throws TTIOException
+     *             if put fails
      */
-    void put(final long mKey, final NodePageContainer mPage);
+    void put(final LogKey mKey, final NodePageContainer mPage) throws TTIOException;
+
+    /** Getting iterator from this log. */
+    CacheLogIterator getIterator();
+
+    /**
+     * Class representing one entry in the transaction-log
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
+    static class TransactionLogEntry implements Map.Entry<LogKey, NodePageContainer> {
+
+        /** Key of the log. */
+        final LogKey mKey;
+
+        /** Container of the log. */
+        final NodePageContainer mContainer;
+
+        /**
+         * Constructor.
+         * 
+         */
+        public TransactionLogEntry(final LogKey pKey, final NodePageContainer pContainer) {
+            mKey = pKey;
+            mContainer = pContainer;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public LogKey getKey() {
+            return mKey;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public NodePageContainer getValue() {
+            return mContainer;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public NodePageContainer setValue(NodePageContainer value) {
+            throw new UnsupportedOperationException();
+        }
+    }
 
 }

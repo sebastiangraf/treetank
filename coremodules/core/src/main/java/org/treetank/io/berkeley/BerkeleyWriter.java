@@ -27,9 +27,11 @@
 
 package org.treetank.io.berkeley;
 
+import org.treetank.access.Storage;
+import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendWriter;
-import org.treetank.page.PageReference;
+import org.treetank.page.UberPage;
 import org.treetank.page.interfaces.IPage;
 
 import com.sleepycat.bind.tuple.TupleBinding;
@@ -37,7 +39,6 @@ import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseEntry;
 import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.Environment;
-import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
 import com.sleepycat.je.Transaction;
 
@@ -54,14 +55,8 @@ public final class BerkeleyWriter implements IBackendWriter {
     /** Current {@link Storage} to write to. */
     private final Database mDatabase;
 
-    // /** Current {@link Transaction} to write with. */
-    // private final Transaction mTxn;
-
     /** Current {@link BerkeleyReader} to read with. */
     private final BerkeleyReader mReader;
-
-    /** Key of nodepage. */
-    private long mNodepagekey;
 
     /**
      * Simple constructor starting with an {@link Environment} and a {@link Storage}.
@@ -76,130 +71,33 @@ public final class BerkeleyWriter implements IBackendWriter {
      * @throws TTIOException
      *             if something odd happens
      */
-    public BerkeleyWriter(Database pDatabase, Transaction pTxn, TupleBinding<IPage> pPageBinding)
-        throws TTIOException {
+    public BerkeleyWriter(Database pDatabase, TupleBinding<IPage> pPageBinding) throws TTIOException {
         try {
             mDatabase = pDatabase;
-            // mTxn = pTxn;
-            mNodepagekey = getLastNodePage();
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
         }
 
-        // mReader = new BerkeleyReader(mDatabase, mTxn, pPageBinding);
-        mReader = new BerkeleyReader(mDatabase, null, pPageBinding);
+        mReader = new BerkeleyReader(mDatabase, pPageBinding);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public synchronized void close() throws TTIOException {
-        try {
-            setLastNodePage(mNodepagekey);
-            // mTxn.commit();
-        } catch (final DatabaseException exc) {
-            throw new TTIOException(exc);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public synchronized long write(final PageReference pageReference) throws TTIOException {
-        final IPage page = pageReference.getPage();
+    public synchronized void write(final IPage page) throws TTIOException {
 
         final DatabaseEntry valueEntry = new DatabaseEntry();
         final DatabaseEntry keyEntry = new DatabaseEntry();
 
-        // TODO make this better
-        mNodepagekey++;
-
         mReader.mPageBinding.objectToEntry(page, valueEntry);
-        TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(mNodepagekey, keyEntry);
+        TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(page.getPageKey(), keyEntry);
 
         // final OperationStatus status = mDatabase.put(mTxn, keyEntry, valueEntry);
         final OperationStatus status = mDatabase.put(null, keyEntry, valueEntry);
         if (status != OperationStatus.SUCCESS) {
-            throw new TTIOException(new StringBuilder("Write of ").append(pageReference.toString()).append(
-                " failed!").toString());
-        }
-
-        pageReference.setKey(mNodepagekey);
-        return mNodepagekey;
-
-    }
-
-    /**
-     * Setting the last nodePage to the persistent storage.
-     * 
-     * @param paramData
-     *            key to be stored
-     * @throws TTIOException
-     *             If can't set last Node page
-     */
-    private void setLastNodePage(final Long paramData) throws TTIOException {
-        final DatabaseEntry keyEntry = new DatabaseEntry();
-        final DatabaseEntry valueEntry = new DatabaseEntry();
-
-        TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(-2l, keyEntry);
-        TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(paramData, valueEntry);
-        try {
-            // mDatabase.put(mTxn, keyEntry, valueEntry);
-            mDatabase.put(null, keyEntry, valueEntry);
-        } catch (final DatabaseException exc) {
-            throw new TTIOException(exc);
-        }
-    }
-
-    /**
-     * Getting the last nodePage from the persistent storage.
-     * 
-     * @throws TTIOException
-     *             If can't get last Node page
-     * @return the last nodepage-key
-     */
-    private long getLastNodePage() throws TTIOException {
-        final DatabaseEntry keyEntry = new DatabaseEntry();
-        final DatabaseEntry valueEntry = new DatabaseEntry();
-
-        TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(-2l, keyEntry);
-
-        try {
-            // final OperationStatus status = mDatabase.get(mTxn, keyEntry, valueEntry, LockMode.DEFAULT);
-            final OperationStatus status = mDatabase.get(null, keyEntry, valueEntry, LockMode.DEFAULT);
-            Long val;
-            if (status == OperationStatus.SUCCESS) {
-                val = TupleBinding.getPrimitiveBinding(Long.class).entryToObject(valueEntry);
-            } else {
-                val = 0L;
-            }
-            return val;
-        } catch (final DatabaseException exc) {
-            throw new TTIOException(exc);
-        }
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public synchronized void writeFirstReference(final PageReference paramPageReference) throws TTIOException {
-        write(paramPageReference);
-
-        final DatabaseEntry keyEntry = new DatabaseEntry();
-        TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(-1l, keyEntry);
-
-        final DatabaseEntry valueEntry = new DatabaseEntry();
-        TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(paramPageReference.getKey(), valueEntry);
-
-        try {
-            // mDatabase.put(mTxn, keyEntry, valueEntry);
-            mDatabase.put(null, keyEntry, valueEntry);
-        } catch (final DatabaseException exc) {
-            throw new TTIOException(exc);
+            throw new TTIOException(new StringBuilder("Write of ").append(page.toString()).append(" failed!")
+                .toString());
         }
 
     }
@@ -216,57 +114,37 @@ public final class BerkeleyWriter implements IBackendWriter {
      * {@inheritDoc}
      */
     @Override
-    public synchronized PageReference readFirstReference() throws TTIOException {
-        return mReader.readFirstReference();
+    public void close() throws TTIOException {
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((mDatabase == null) ? 0 : mDatabase.hashCode());
-        // result = prime * result + ((mTxn == null) ? 0 : mTxn.hashCode());
-        result = prime * result + ((mReader == null) ? 0 : mReader.hashCode());
-        return result;
+    public UberPage readUber() throws TTIOException {
+        return mReader.readUber();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean equals(final Object mObj) {
-        boolean returnVal = true;
-        if (mObj == null) {
-            returnVal = false;
-        } else if (getClass() != mObj.getClass()) {
-            returnVal = false;
+    public void writeUberPage(UberPage page) throws TTException {
+        long pageKey = page.getPageKey();
+        write(page);
+
+        final DatabaseEntry keyEntry = new DatabaseEntry();
+        TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(-1l, keyEntry);
+
+        final DatabaseEntry valueEntry = new DatabaseEntry();
+        TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(pageKey, valueEntry);
+
+        try {
+            // mDatabase.put(mTxn, keyEntry, valueEntry);
+            mDatabase.put(null, keyEntry, valueEntry);
+        } catch (final DatabaseException exc) {
+            throw new TTIOException(exc);
         }
-        final BerkeleyWriter other = (BerkeleyWriter)mObj;
-        if (mDatabase == null) {
-            if (other.mDatabase != null) {
-                returnVal = false;
-            }
-        } else if (!mDatabase.equals(other.mDatabase)) {
-            returnVal = false;
-        }
-        // if (mTxn == null) {
-        // if (other.mTxn != null) {
-        // returnVal = false;
-        // }
-        // } else if (!mTxn.equals(other.mTxn)) {
-        // returnVal = false;
-        // }
-        if (mReader == null) {
-            if (other.mReader != null) {
-                returnVal = false;
-            }
-        } else if (!mReader.equals(other.mReader)) {
-            returnVal = false;
-        }
-        return returnVal;
     }
 
 }

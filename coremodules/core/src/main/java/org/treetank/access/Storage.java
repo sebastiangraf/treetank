@@ -27,30 +27,37 @@
 
 package org.treetank.access;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.treetank.access.conf.ContructorProps;
-import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
-import org.treetank.api.IPageWriteTrx;
-import org.treetank.api.IStorage;
+import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.api.ISession;
+import org.treetank.api.IStorage;
+import org.treetank.cache.BerkeleyPersistenceLog;
+import org.treetank.cache.ICachedLog;
+import org.treetank.cache.LRUCache;
+import org.treetank.cache.LogKey;
+import org.treetank.cache.NodePageContainer;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.exception.TTUsageException;
+import org.treetank.io.IBackend;
 import org.treetank.io.IBackendReader;
+import org.treetank.io.IBackendWriter;
 import org.treetank.io.IOUtils;
 import org.treetank.page.IConstants;
 import org.treetank.page.IndirectPage;
 import org.treetank.page.NamePage;
 import org.treetank.page.NodePage;
-import org.treetank.page.PageReference;
 import org.treetank.page.RevisionRootPage;
 import org.treetank.page.UberPage;
 import org.treetank.page.interfaces.IReferencePage;
@@ -227,11 +234,8 @@ public final class Storage implements IStorage {
             ResourceConfiguration.serialize(pResConf);
             // if something was not correct, delete the partly created
             // substructure
-            if (!returnVal) {
-                throw new IllegalStateException(new StringBuilder("Failure, please remove folder ").append(
-                    pResConf.mProperties.getProperty(ContructorProps.STORAGEPATH)).append(" manually!")
-                    .toString());
-            }
+            checkState(returnVal, "Failure, please remove folder %s manually!", pResConf.mProperties
+                .getProperty(ContructorProps.STORAGEPATH));
 
             // Boostrapping the Storage, this is quite dirty because of the initialization of the key, i
             // guess..however...
@@ -276,10 +280,8 @@ public final class Storage implements IStorage {
      *             if something odd happens
      */
     public static synchronized IStorage openStorage(final File pFile) throws TTException {
-        if (!existsStorage(pFile)) {
-            throw new TTUsageException("DB could not be opened (since it was not created?) at location",
-                pFile.toString());
-        }
+        checkState(existsStorage(pFile), "DB could not be opened (since it was not created?) at location %s",
+            pFile);
         StorageConfiguration config = StorageConfiguration.deserialize(pFile);
         final Storage storage = new Storage(config);
         final IStorage returnVal = STORAGEMAP.putIfAbsent(pFile, storage);
@@ -309,18 +311,14 @@ public final class Storage implements IStorage {
                 pSessionConf.getResource());
         Session returnVal = mSessions.get(resourceFile);
         if (returnVal == null) {
-            if (!resourceFile.exists()) {
-                throw new TTUsageException(
-                    "Resource could not be opened (since it was not created?) at location", resourceFile
-                        .toString());
-            }
+            checkState(resourceFile.exists(),
+                "Resource could not be opened (since it was not created?) at location %s", resourceFile);
             ResourceConfiguration config =
                 ResourceConfiguration.deserialize(mStorageConfig.mFile, pSessionConf.getResource());
 
             // reading first reference and instantiate this.
             final IBackendReader backendReader = config.mStorage.getReader();
-            final PageReference firstRef = backendReader.readFirstReference();
-            UberPage page = (UberPage)firstRef.getPage();
+            UberPage page = backendReader.readUber();
             backendReader.close();
 
             returnVal = new Session(this, config, pSessionConf, page);
@@ -413,62 +411,75 @@ public final class Storage implements IStorage {
      */
     private static void bootstrap(final Storage pStorage, final ResourceConfiguration pResourceConf)
         throws TTException {
-        SessionConfiguration config =
-            new SessionConfiguration(pResourceConf.mProperties.getProperty(ContructorProps.RESOURCE), null);
-        UberPage uberPage = new UberPage(0, 0, 1, new PageReference());
+        ICachedLog mLog =
+            new LRUCache(new BerkeleyPersistenceLog(new File(pResourceConf.mProperties
+                .getProperty(org.treetank.access.conf.ContructorProps.STORAGEPATH)), pResourceConf.mNodeFac));
+
+        UberPage uberPage = new UberPage(1, 0, 2);
+        long newPageKey = uberPage.incrementPageCounter();
+        uberPage.setReferenceKey(IReferencePage.GUARANTEED_INDIRECT_OFFSET, newPageKey);
 
         // --- Create revision tree
         // ------------------------------------------------
-
         // Initialize revision tree to guarantee that there is a revision root
         // page.
-        IReferencePage page = uberPage;
-        PageReference reference = uberPage.getReferences()[0];
-        long newPageKey;
-        // Remaining levels.
+
+        IReferencePage page;
         for (int i = 0; i < IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i++) {
+            page = new IndirectPage(newPageKey);
             newPageKey = uberPage.incrementPageCounter();
             page.setReferenceKey(0, newPageKey);
-            page = new IndirectPage(newPageKey);
-            reference.setPage(page);
-            reference = page.getReferences()[0];
+            LogKey key = new LogKey(true, i, 0);
+            mLog.put(key, new NodePageContainer(page, page));
         }
 
-        newPageKey = uberPage.incrementPageCounter();
-        page.setReferenceKey(0, newPageKey);
         page = new RevisionRootPage(newPageKey, 0, -1);
-        reference.setPage(page);
 
         newPageKey = uberPage.incrementPageCounter();
+        // establishing fresh NamePage
         NamePage namePage = new NamePage(newPageKey);
-        ((RevisionRootPage)page).getNamePageReference().setPage(namePage);
-        page.setReferenceKey(0, newPageKey);
+        page.setReferenceKey(RevisionRootPage.NAME_REFERENCE_OFFSET, newPageKey);
+        LogKey key = new LogKey(false, -1, -1);
+        mLog.put(key, new NodePageContainer(namePage, namePage));
+
+        newPageKey = uberPage.incrementPageCounter();
+        IndirectPage indirectPage = new IndirectPage(newPageKey);
+        page.setReferenceKey(IReferencePage.GUARANTEED_INDIRECT_OFFSET, newPageKey);
+        key = new LogKey(false, -1, 0);
+        mLog.put(key, new NodePageContainer(page, page));
 
         // --- Create node tree
         // ----------------------------------------------------
 
         // Initialize revision tree to guarantee that there is a revision root
         // page.
-        reference = ((RevisionRootPage)page).getIndirectPageReference();
 
-        // Remaining levels.
-        for (int i = 0;i < IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i++) {
+        page = indirectPage;
+
+        for (int i = 0; i < IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i++) {
             newPageKey = uberPage.incrementPageCounter();
             page.setReferenceKey(0, newPageKey);
+            key = new LogKey(false, i, 0);
+            mLog.put(key, new NodePageContainer(page, page));
             page = new IndirectPage(newPageKey);
-            reference.setPage(page);
-            reference = page.getReferences()[0];
         }
-        newPageKey = uberPage.incrementPageCounter();
-        final NodePage ndp = new NodePage(newPageKey);
-        reference.setPage(ndp);
-        page.setReferenceKey(0, newPageKey);
 
-        Session session = new Session(pStorage, pResourceConf, config, uberPage);
-        IPageWriteTrx trx = session.beginPageWriteTransaction(0, 0);
-        trx.commit();
-        trx.close();
-        session.close();
+        final NodePage ndp = new NodePage(newPageKey);
+        key = new LogKey(false, IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length, 0);
+        mLog.put(key, new NodePageContainer(ndp, ndp));
+
+        IBackend storage = pResourceConf.mStorage;
+        IBackendWriter writer = storage.getWriter();
+
+        writer.writeUberPage(uberPage);
+
+        Iterator<Map.Entry<LogKey, NodePageContainer>> entries = mLog.getIterator();
+        while (entries.hasNext()) {
+            Map.Entry<LogKey, NodePageContainer> next = entries.next();
+            writer.write(next.getValue().getModified());
+        }
+        writer.close();
+
     }
 
 }
