@@ -83,6 +83,7 @@ public class Holder {
         final Holder holder = generateSession(pConf);
         final IPageReadTrx pRtx =
             holder.mSession.beginPageReadTransaction(holder.mSession.getMostRecentVersion());
+        holder.mPRtx = pRtx;
         holder.mNRtx = new NodeReadTrx(pRtx);
         return holder;
     }

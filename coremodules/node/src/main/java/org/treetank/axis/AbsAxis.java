@@ -86,10 +86,7 @@ public abstract class AbsAxis implements Iterator<Long>, Iterable<Long> {
      *            transaction to operate with
      */
     public AbsAxis(final INodeReadTrx paramRtx) {
-        checkNotNull(paramRtx);
-        mRTX = paramRtx;
-        mIncludeSelf = false;
-        reset(paramRtx.getNode().getNodeKey());
+        this(paramRtx, false);
     }
 
     /**
