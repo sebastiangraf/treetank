@@ -86,6 +86,11 @@ public class PageReadTrx implements IPageReadTrx {
      */
     private final Cache<Long, NodePage> mNodePageCache;
 
+    /**
+     * Internal reference to cache. This cache takes the versions as key.
+     */
+    private final Cache<Long, RevisionRootPage> mRevisionRootCache;
+
     /** Configuration of the session */
     protected final ISession mSession;
 
@@ -109,6 +114,7 @@ public class PageReadTrx implements IPageReadTrx {
     protected PageReadTrx(final ISession pSession, final UberPage pUberpage, final long pRevKey,
         final IBackendReader pReader) throws TTException {
         mNodePageCache = CacheBuilder.newBuilder().maximumSize(10000).build();
+        mRevisionRootCache = CacheBuilder.newBuilder().maximumSize(10).build();
         mSession = pSession;
         mPageReader = pReader;
         mUberPage = pUberpage;
@@ -171,6 +177,7 @@ public class PageReadTrx implements IPageReadTrx {
         mSession.deregisterPageTrx(this);
         mPageReader.close();
         mNodePageCache.invalidateAll();
+        mRevisionRootCache.invalidateAll();
         mClose = true;
     }
 
@@ -251,10 +258,17 @@ public class PageReadTrx implements IPageReadTrx {
 
         // Iterate through all versions starting with the most recent one.
         for (long i = mRootPage.getRevision(); i >= 0; i--) {
-            final long revRootKey =
-                dereferenceLeafOfTree(
-                    mUberPage.getReferenceKeys()[IReferencePage.GUARANTEED_INDIRECT_OFFSET], i);
-            RevisionRootPage rootPage = (RevisionRootPage)mPageReader.read(revRootKey);
+            // check if rootpage was cached, if so retrieve it and use it, otherwise, dereference it the hard
+            // way.
+            RevisionRootPage rootPage = mRevisionRootCache.getIfPresent(i);
+            if (rootPage == null) {
+                final long revRootKey =
+                    dereferenceLeafOfTree(
+                        mUberPage.getReferenceKeys()[IReferencePage.GUARANTEED_INDIRECT_OFFSET], i);
+                rootPage = (RevisionRootPage)mPageReader.read(revRootKey);
+                mRevisionRootCache.put(i, rootPage);
+            }
+
             // Searching for the related NodePage within all referenced pages.
             final long nodePageKey =
                 dereferenceLeafOfTree(rootPage.getReferenceKeys()[IReferencePage.GUARANTEED_INDIRECT_OFFSET],
