@@ -40,8 +40,8 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.NodeModuleFactory;
-import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
+import org.treetank.CoreTestHelper;
+import org.treetank.CoreTestHelper.PATHS;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
@@ -83,14 +83,14 @@ public final class XPathWriteTransactionTest {
 
     @BeforeMethod
     public void setUp() throws Exception {
-        TestHelper.deleteEverything();
+        CoreTestHelper.deleteEverything();
         // Build simple test tree.
-        XMLShredder.main(XML, TestHelper.PATHS.PATH1.getFile().getAbsolutePath());
+        XMLShredder.main(XML, CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath());
 
         // Verify.
-        storage = TestHelper.getDatabase(PATHS.PATH1.getFile());
+        storage = CoreTestHelper.getDatabase(PATHS.PATH1.getFile());
         Properties props = new Properties();
-        props.put(ContructorProps.STORAGEPATH, TestHelper.PATHS.PATH1.getFile().getAbsolutePath());
+        props.put(ContructorProps.STORAGEPATH, CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath());
         props.put(ContructorProps.RESOURCE, "shredded");
         props.setProperty(FilesystemConstants.PROPERTY_BASEDIR, new File(new File(new File(props
             .getProperty(ContructorProps.STORAGEPATH), StorageConfiguration.Paths.Data.getFile().getName()),
@@ -123,7 +123,7 @@ public final class XPathWriteTransactionTest {
         // wtx.abort();
         wtx.close();
         session.close();
-        TestHelper.closeEverything();
+        CoreTestHelper.closeEverything();
     }
 
 }

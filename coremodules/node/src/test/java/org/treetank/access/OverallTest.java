@@ -42,9 +42,9 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.Holder;
-import org.treetank.NodeHelper;
+import org.treetank.NodeTestHelper;
 import org.treetank.NodeModuleFactory;
-import org.treetank.TestHelper;
+import org.treetank.CoreTestHelper;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
@@ -73,17 +73,17 @@ public final class OverallTest {
 
     @BeforeMethod
     public void setUp() throws TTException {
-        TestHelper.deleteEverything();
+        CoreTestHelper.deleteEverything();
         Properties props =
-            StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
-                TestHelper.RESOURCENAME);
+            StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
         holder = Holder.generateWtx(mResource);
     }
 
     @Test
     public void testJustEverything() throws TTException {
-        NodeHelper.createDocumentRootNode(holder.getNWtx());
+        NodeTestHelper.createDocumentRootNode(holder.getNWtx());
         holder.getNWtx().insertElementAsFirstChild(new QName(getString()));
         for (int i = 0; i < ELEMENTS; i++) {
             if (ran.nextBoolean()) {
@@ -150,7 +150,7 @@ public final class OverallTest {
     @AfterMethod
     public void tearDown() throws TTException {
         holder.close();
-        TestHelper.deleteEverything();
+        CoreTestHelper.deleteEverything();
     }
 
     private static String getString() {

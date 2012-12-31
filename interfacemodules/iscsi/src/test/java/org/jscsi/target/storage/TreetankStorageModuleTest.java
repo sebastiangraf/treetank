@@ -38,7 +38,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.ByteNodeModuleFactory;
-import org.treetank.TestHelper;
+import org.treetank.CoreTestHelper;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.StandardSettings;
@@ -66,15 +66,15 @@ public class TreetankStorageModuleTest {
   @BeforeClass
   public void setUp() throws TTException {
 
-    TestHelper.deleteEverything();
+    CoreTestHelper.deleteEverything();
     Properties props = StandardSettings.getStandardProperties(
-        TestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
-        TestHelper.RESOURCENAME);
+        CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+        CoreTestHelper.RESOURCENAME);
     mResource = mResourceConfig.create(props);
-    TestHelper.createResource(mResource);
+    CoreTestHelper.createResource(mResource);
 
-    file = TestHelper.PATHS.PATH1.getFile();
-    configuration = TestHelper.PATHS.PATH1.getConfig();
+    file = CoreTestHelper.PATHS.PATH1.getFile();
+    configuration = CoreTestHelper.PATHS.PATH1.getConfig();
 
     storageModule = new TreetankStorageModule(512, 512, configuration, file);
   }

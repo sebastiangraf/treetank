@@ -34,7 +34,7 @@ import static org.treetank.node.IConstants.ROOT_NODE;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
-import org.treetank.TestHelper;
+import org.treetank.CoreTestHelper;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTException;
@@ -44,12 +44,12 @@ public class XPathStringChecker {
 
     @BeforeMethod
     public void setUp() throws TTException {
-        TestHelper.deleteEverything();
+        CoreTestHelper.deleteEverything();
     }
 
     @AfterMethod
     public void tearDown() throws TTException {
-        TestHelper.closeEverything();
+        CoreTestHelper.closeEverything();
     }
 
     public static void testIAxisConventions(final INodeReadTrx rtx, final AbsAxis axis,

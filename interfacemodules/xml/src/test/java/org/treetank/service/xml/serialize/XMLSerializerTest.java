@@ -36,17 +36,17 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
-import org.treetank.Holder;
+import org.treetank.CoreTestHelper;
 import org.treetank.NodeModuleFactory;
-import org.treetank.TestHelper;
+import org.treetank.NodeTestHelper;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.ResourceConfiguration;
-import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
+import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.exception.TTException;
-import org.treetank.service.xml.DocumentCreater;
+import org.treetank.service.xml.XMLTestHelper;
 import org.treetank.service.xml.serialize.XMLSerializer.XMLSerializerBuilder;
 
 import com.google.inject.Inject;
@@ -54,7 +54,7 @@ import com.google.inject.Inject;
 @Guice(moduleFactory = NodeModuleFactory.class)
 public class XMLSerializerTest {
 
-    private Holder holder;
+    private CoreTestHelper.Holder holder;
 
     @Inject
     private IResourceConfigurationFactory mResourceConfig;
@@ -63,17 +63,17 @@ public class XMLSerializerTest {
 
     @BeforeMethod
     public void setUp() throws TTException {
-        TestHelper.deleteEverything();
+        CoreTestHelper.deleteEverything();
         Properties props =
-            StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
-                TestHelper.RESOURCENAME);
+            StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
-        holder = Holder.generateSession(mResource);
+        holder = CoreTestHelper.Holder.generateSession(mResource);
     }
 
     @AfterMethod
     public void tearDown() throws TTException {
-        TestHelper.deleteEverything();
+        CoreTestHelper.deleteEverything();
     }
 
     @Test
@@ -81,7 +81,7 @@ public class XMLSerializerTest {
         final INodeWriteTrx wtx =
             new NodeWriteTrx(holder.getSession(), holder.getSession().beginPageWriteTransaction(),
                 HashKind.Rolling);
-        org.treetank.DocumentCreater.create(wtx);
+        NodeTestHelper.DocumentCreater.create(wtx);
         wtx.commit();
         wtx.close();
 
@@ -102,7 +102,7 @@ public class XMLSerializerTest {
         final INodeWriteTrx wtx =
             new NodeWriteTrx(holder.getSession(), holder.getSession().beginPageWriteTransaction(),
                 HashKind.Rolling);
-        org.treetank.DocumentCreater.create(wtx);
+        NodeTestHelper.DocumentCreater.create(wtx);
         wtx.commit();
         wtx.close();
 
@@ -114,7 +114,7 @@ public class XMLSerializerTest {
         builder.setDeclaration(true);
         final XMLSerializer serializer = builder.build();
         serializer.call();
-        assertEquals(DocumentCreater.REST, out.toString());
+        assertEquals(XMLTestHelper.REST, out.toString());
 
     }
 
@@ -123,7 +123,7 @@ public class XMLSerializerTest {
         final INodeWriteTrx wtx =
             new NodeWriteTrx(holder.getSession(), holder.getSession().beginPageWriteTransaction(),
                 HashKind.Rolling);
-        org.treetank.DocumentCreater.create(wtx);
+        NodeTestHelper.DocumentCreater.create(wtx);
         wtx.commit();
         wtx.close();
 
@@ -134,7 +134,7 @@ public class XMLSerializerTest {
         builder.setDeclaration(true);
         final XMLSerializer serializer = builder.build();
         serializer.call();
-        assertEquals(DocumentCreater.ID, out.toString());
+        assertEquals(XMLTestHelper.ID, out.toString());
     }
 
     @Test
@@ -145,18 +145,18 @@ public class XMLSerializerTest {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         // generate serialize all from this session
-        DocumentCreater.createVersioned(wtx);
+        XMLTestHelper.DocumentCreater.createVersioned(wtx);
         wtx.commit();
         wtx.close();
 
-//        XMLSerializer serializerall = new XMLSerializerBuilder(holder.getSession(), out, -1).build();
-//        serializerall.call();
-//        assertEquals(DocumentCreater.VERSIONEDXML, out.toString());
-//        out.reset();
+        // XMLSerializer serializerall = new XMLSerializerBuilder(holder.getSession(), out, -1).build();
+        // serializerall.call();
+        // assertEquals(DocumentCreater.VERSIONEDXML, out.toString());
+        // out.reset();
 
         XMLSerializer serializerall = new XMLSerializerBuilder(holder.getSession(), out, 0, 1, 2, 3).build();
         serializerall.call();
-        assertEquals(DocumentCreater.VERSIONEDXML, out.toString());
+        assertEquals(XMLTestHelper.VERSIONEDXML, out.toString());
     }
 
     /**
@@ -173,7 +173,7 @@ public class XMLSerializerTest {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         // generate serialize all from this session
-        DocumentCreater.createVersioned(wtx);
+        XMLTestHelper.DocumentCreater.createVersioned(wtx);
         wtx.commit();
         wtx.close();
 
@@ -188,7 +188,7 @@ public class XMLSerializerTest {
 
         serializerall = new XMLSerializerBuilder(holder.getSession(), out, 0, 1, 2, 3).build();
         serializerall.call();
-        assertEquals(DocumentCreater.VERSIONEDXML, out.toString());
+        assertEquals(XMLTestHelper.VERSIONEDXML, out.toString());
 
     }
 }

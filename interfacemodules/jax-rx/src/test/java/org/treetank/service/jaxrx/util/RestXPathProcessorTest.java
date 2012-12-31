@@ -46,7 +46,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.NodeModuleFactory;
-import org.treetank.TestHelper;
+import org.treetank.CoreTestHelper;
 import org.treetank.exception.TTException;
 import org.treetank.io.IBackend.IBackendFactory;
 import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
@@ -102,10 +102,10 @@ public class RestXPathProcessorTest {
 
     @BeforeMethod
     public void setUpGlobal() throws TTException {
-        TestHelper.deleteEverything();
-        rxProcessor = new RestXPathProcessor(TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile()));
+        CoreTestHelper.deleteEverything();
+        rxProcessor = new RestXPathProcessor(CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile()));
         final InputStream xmlInput = RestXPathProcessorTest.class.getResourceAsStream("/books.xml");
-        new DatabaseRepresentation(TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile()), mStorageFac,
+        new DatabaseRepresentation(CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile()), mStorageFac,
             mRevisioningFac).shred(xmlInput, RESOURCENAME);
     }
 
@@ -117,7 +117,7 @@ public class RestXPathProcessorTest {
     @Test
     public final void testRestXPathProcessor() throws TTException {
         final RestXPathProcessor reference =
-            new RestXPathProcessor(TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile()));
+            new RestXPathProcessor(CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile()));
         assertNotNull("checks if the reference is not null and constructor works", reference);
     }
 

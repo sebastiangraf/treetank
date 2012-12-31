@@ -50,7 +50,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.NodeModuleFactory;
-import org.treetank.TestHelper;
+import org.treetank.CoreTestHelper;
 import org.treetank.exception.TTException;
 import org.treetank.io.IBackend.IBackendFactory;
 import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
@@ -105,13 +105,13 @@ public class RESTResponseHelperTest {
 
     @BeforeMethod
     public void before() throws TTException {
-        TestHelper.deleteEverything();
-        TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        CoreTestHelper.deleteEverything();
+        CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile());
     }
 
     @AfterMethod
     public void after() throws TTException {
-        TestHelper.deleteEverything();
+        CoreTestHelper.deleteEverything();
     }
 
     /**
@@ -136,7 +136,7 @@ public class RESTResponseHelperTest {
         availResources.add(SHAKE);
 
         final DatabaseRepresentation treetank =
-            new DatabaseRepresentation(TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile()), mStorageFac,
+            new DatabaseRepresentation(CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile()), mStorageFac,
                 mRevisioningFac);
         InputStream input = NodeIdRepresentationTest.class.getClass().getResourceAsStream(RESPATH);
         treetank.shred(input, FACT);
@@ -155,7 +155,7 @@ public class RESTResponseHelperTest {
         input.close();
 
         final StreamingOutput result =
-            RESTResponseHelper.buildResponseOfDomLR(TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile()),
+            RESTResponseHelper.buildResponseOfDomLR(CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile()),
                 mStorageFac, mRevisioningFac);
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         result.write(outputStream);

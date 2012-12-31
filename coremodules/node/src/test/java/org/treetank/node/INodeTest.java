@@ -8,7 +8,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-import org.treetank.TestHelper;
+import org.treetank.CoreTestHelper;
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.node.delegates.NameNodeDelegate;
 import org.treetank.node.delegates.NodeDelegate;
@@ -31,7 +31,7 @@ public class INodeTest {
      */
     @BeforeMethod
     public void setUp() throws Exception {
-        TestHelper.deleteEverything();
+        CoreTestHelper.deleteEverything();
 
     }
 
@@ -40,8 +40,8 @@ public class INodeTest {
      */
     @AfterMethod
     public void tearDown() throws Exception {
-        TestHelper.closeEverything();
-        TestHelper.deleteEverything();
+        CoreTestHelper.closeEverything();
+        CoreTestHelper.deleteEverything();
     }
 
     /**

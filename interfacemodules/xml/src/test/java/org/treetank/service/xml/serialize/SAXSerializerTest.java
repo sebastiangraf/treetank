@@ -36,14 +36,13 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
-import org.treetank.DocumentCreater;
+import org.treetank.CoreTestHelper;
 import org.treetank.Holder;
-import org.treetank.NodeHelper;
 import org.treetank.NodeModuleFactory;
-import org.treetank.TestHelper;
+import org.treetank.NodeTestHelper;
 import org.treetank.access.conf.ResourceConfiguration;
-import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
+import org.treetank.access.conf.StandardSettings;
 import org.treetank.exception.TTException;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
@@ -70,16 +69,16 @@ public class SAXSerializerTest {
 
     @BeforeMethod
     public void setUp() throws TTException {
-        TestHelper.deleteEverything();
-        Properties props = StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(), TestHelper.RESOURCENAME);
+        CoreTestHelper.deleteEverything();
+        Properties props = StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(), CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
-        NodeHelper.createTestDocument(mResource);
+        NodeTestHelper.createTestDocument(mResource);
         holder = Holder.generateWtx(mResource);
     }
 
     @AfterMethod
     public void tearDown() throws TTException {
-        TestHelper.deleteEverything();
+        CoreTestHelper.deleteEverything();
     }
 
     @Test
@@ -127,6 +126,6 @@ public class SAXSerializerTest {
 
         final SAXSerializer serializer = new SAXSerializer(holder.getSession(), contHandler);
         serializer.call();
-        assertEquals(DocumentCreater.XML, strBuilder.toString());
+        assertEquals(NodeTestHelper.XML, strBuilder.toString());
     }
 }

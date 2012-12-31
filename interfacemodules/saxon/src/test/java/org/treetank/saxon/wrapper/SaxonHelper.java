@@ -34,7 +34,7 @@ import java.util.Properties;
 
 import javax.xml.stream.XMLEventReader;
 
-import org.treetank.TestHelper;
+import org.treetank.CoreTestHelper;
 import org.treetank.access.Storage;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
@@ -66,15 +66,15 @@ public final class SaxonHelper {
         File.separator).append("my-books.xml").toString());
 
     public static void createBookDB(IResourceConfigurationFactory resFac) throws Exception {
-        TestHelper.deleteEverything();
+        CoreTestHelper.deleteEverything();
 
-        final StorageConfiguration dbConfig = new StorageConfiguration(TestHelper.PATHS.PATH1.getFile());
+        final StorageConfiguration dbConfig = new StorageConfiguration(CoreTestHelper.PATHS.PATH1.getFile());
         Storage.createStorage(dbConfig);
-        final IStorage storage = Storage.openStorage(TestHelper.PATHS.PATH1.getFile());
-        Properties props = StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(), TestHelper.RESOURCENAME);
+        final IStorage storage = Storage.openStorage(CoreTestHelper.PATHS.PATH1.getFile());
+        Properties props = StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(), CoreTestHelper.RESOURCENAME);
         storage.createResource(resFac.create(props));
         final ISession session =
-            storage.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, StandardSettings.KEY));
+            storage.getSession(new SessionConfiguration(CoreTestHelper.RESOURCENAME, StandardSettings.KEY));
         final INodeWriteTrx wtx =
             new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
         createDocumentRootNode(wtx);

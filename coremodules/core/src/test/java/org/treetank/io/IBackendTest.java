@@ -5,7 +5,7 @@ import java.util.Properties;
 
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-import org.treetank.TestHelper;
+import org.treetank.CoreTestHelper;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.StorageConfiguration;
@@ -93,11 +93,11 @@ public class IBackendTest {
         File rootFolderToCreate = Files.createTempDir();
         File fileToCreate =
             new File(new File(new File(rootFolderToCreate, StorageConfiguration.Paths.Data.getFile()
-                .getName()), TestHelper.RESOURCENAME), ResourceConfiguration.Paths.Data.getFile().getName());
+                .getName()), CoreTestHelper.RESOURCENAME), ResourceConfiguration.Paths.Data.getFile().getName());
         fileToCreate.mkdirs();
         Properties props =
             StandardSettings.getStandardProperties(rootFolderToCreate.getAbsolutePath(),
-                TestHelper.RESOURCENAME);
+                CoreTestHelper.RESOURCENAME);
         return new BerkeleyStorage(props, pNodeFac, pHandler);
     }
 

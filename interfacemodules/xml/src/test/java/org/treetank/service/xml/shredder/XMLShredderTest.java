@@ -43,11 +43,11 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
+import org.treetank.CoreTestHelper;
+import org.treetank.CoreTestHelper.PATHS;
 import org.treetank.Holder;
-import org.treetank.NodeHelper;
 import org.treetank.NodeModuleFactory;
-import org.treetank.TestHelper;
-import org.treetank.TestHelper.PATHS;
+import org.treetank.NodeTestHelper;
 import org.treetank.access.NodeReadTrx;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
@@ -55,16 +55,16 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
-import org.treetank.api.IStorage;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
+import org.treetank.api.IStorage;
 import org.treetank.axis.DescendantAxis;
 import org.treetank.exception.TTException;
 import org.treetank.node.ElementNode;
 import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.IStructNode;
-import org.treetank.service.xml.DocumentCreater;
+import org.treetank.service.xml.XMLTestHelper;
 
 import com.google.inject.Inject;
 
@@ -89,17 +89,17 @@ public class XMLShredderTest {
 
     @BeforeMethod
     public void setUp() throws TTException {
-        TestHelper.deleteEverything();
+        CoreTestHelper.deleteEverything();
         Properties props =
-            StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
-                TestHelper.RESOURCENAME);
+            StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
         holder = Holder.generateWtx(mResource);
     }
 
     @AfterMethod
     public void tearDown() throws TTException {
-        TestHelper.deleteEverything();
+        CoreTestHelper.deleteEverything();
     }
 
     @Test
@@ -108,10 +108,10 @@ public class XMLShredderTest {
         // Setup parsed session.
         XMLShredder.main(XML, PATHS.PATH2.getFile().getAbsolutePath());
         final INodeWriteTrx expectedTrx = holder.getNWtx();
-        NodeHelper.createDocumentRootNode(expectedTrx);
+        NodeTestHelper.createDocumentRootNode(expectedTrx);
 
         // Verify.
-        final IStorage database2 = TestHelper.getDatabase(PATHS.PATH2.getFile());
+        final IStorage database2 = CoreTestHelper.getDatabase(PATHS.PATH2.getFile());
         final ISession session =
             database2.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
         final INodeReadTrx rtx =
@@ -162,9 +162,9 @@ public class XMLShredderTest {
         shredder2.call();
 
         // Setup expected session.
-        final IStorage database2 = TestHelper.getDatabase(PATHS.PATH2.getFile());
+        final IStorage database2 = CoreTestHelper.getDatabase(PATHS.PATH2.getFile());
         Properties props =
-            StandardSettings.getStandardProperties(TestHelper.PATHS.PATH2.getFile().getAbsolutePath(),
+            StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH2.getFile().getAbsolutePath(),
                 "shredded");
         mResource = mResourceConfig.create(props);
         database2.createResource(mResource);
@@ -173,7 +173,7 @@ public class XMLShredderTest {
 
         final INodeWriteTrx expectedTrx =
             new NodeWriteTrx(expectedSession, expectedSession.beginPageWriteTransaction(), HashKind.Rolling);
-        org.treetank.DocumentCreater.create(expectedTrx);
+        NodeTestHelper.DocumentCreater.create(expectedTrx);
         expectedTrx.commit();
         expectedTrx.moveTo(ROOT_NODE);
 
@@ -206,28 +206,28 @@ public class XMLShredderTest {
     @Test
     public void testAttributesNSPrefix() throws Exception {
         // Setup expected session.
-        final IStorage storage = TestHelper.getDatabase(PATHS.PATH1.getFile());
+        final IStorage storage = CoreTestHelper.getDatabase(PATHS.PATH1.getFile());
         Properties props =
-            StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
-                TestHelper.RESOURCENAME);
+            StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
         storage.createResource(mResource);
         final ISession expectedSession2 =
-            storage.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, StandardSettings.KEY));
+            storage.getSession(new SessionConfiguration(CoreTestHelper.RESOURCENAME, StandardSettings.KEY));
         final INodeWriteTrx expectedTrx2 =
             new NodeWriteTrx(expectedSession2, expectedSession2.beginPageWriteTransaction(), HashKind.Rolling);
-        DocumentCreater.createWithoutNamespace(expectedTrx2);
+        XMLTestHelper.DocumentCreater.createWithoutNamespace(expectedTrx2);
         expectedTrx2.commit();
 
         // Setup parsed session.
-        final IStorage database2 = TestHelper.getDatabase(PATHS.PATH2.getFile());
+        final IStorage database2 = CoreTestHelper.getDatabase(PATHS.PATH2.getFile());
         props =
-            StandardSettings.getStandardProperties(TestHelper.PATHS.PATH2.getFile().getAbsolutePath(),
-                TestHelper.RESOURCENAME);
+            StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH2.getFile().getAbsolutePath(),
+                CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
         database2.createResource(mResource);
         final ISession session2 =
-            database2.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, StandardSettings.KEY));
+            database2.getSession(new SessionConfiguration(CoreTestHelper.RESOURCENAME, StandardSettings.KEY));
         final INodeWriteTrx wtx =
             new NodeWriteTrx(session2, session2.beginPageWriteTransaction(), HashKind.Rolling);
         final XMLShredder shredder =
@@ -262,9 +262,9 @@ public class XMLShredderTest {
 
     @Test
     public void testShreddingLargeText() throws Exception {
-        final IStorage storage = TestHelper.getDatabase(PATHS.PATH2.getFile());
+        final IStorage storage = CoreTestHelper.getDatabase(PATHS.PATH2.getFile());
         Properties props =
-            StandardSettings.getStandardProperties(TestHelper.PATHS.PATH2.getFile().getAbsolutePath(),
+            StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH2.getFile().getAbsolutePath(),
                 "shredded");
         mResource = mResourceConfig.create(props);
         storage.createResource(mResource);

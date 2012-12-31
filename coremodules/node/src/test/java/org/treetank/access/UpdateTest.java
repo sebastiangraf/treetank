@@ -39,11 +39,10 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
-import org.treetank.DocumentCreater;
+import org.treetank.CoreTestHelper;
 import org.treetank.Holder;
-import org.treetank.NodeHelper;
 import org.treetank.NodeModuleFactory;
-import org.treetank.TestHelper;
+import org.treetank.NodeTestHelper;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
@@ -67,18 +66,18 @@ public class UpdateTest {
 
     @BeforeMethod
     public void setUp() throws TTException {
-        TestHelper.deleteEverything();
+        CoreTestHelper.deleteEverything();
         Properties props =
-            StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
-                TestHelper.RESOURCENAME);
+            StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
-        NodeHelper.createTestDocument(mResource);
+        NodeTestHelper.createTestDocument(mResource);
         holder = Holder.generateWtx(mResource);
     }
 
     @AfterMethod
     public void tearDown() throws TTException {
-        TestHelper.deleteEverything();
+        CoreTestHelper.deleteEverything();
     }
 
     @Test
@@ -121,7 +120,7 @@ public class UpdateTest {
     public void testInsertChild() throws TTException {
 
         INodeWriteTrx wtx = holder.getNWtx();
-        NodeHelper.createDocumentRootNode(wtx);
+        NodeTestHelper.createDocumentRootNode(wtx);
         wtx.commit();
         wtx.close();
 
@@ -172,7 +171,7 @@ public class UpdateTest {
         wtx =
             new NodeWriteTrx(holder.getSession(), holder.getSession().beginPageWriteTransaction(),
                 HashKind.Rolling);
-        NodeHelper.createDocumentRootNode(wtx);
+        NodeTestHelper.createDocumentRootNode(wtx);
         wtx.moveTo(ROOT_NODE);
         assertEquals(15L, wtx.insertElementAsFirstChild(new QName("")));
         assertEquals(16L, wtx.insertElementAsFirstChild(new QName("")));
@@ -195,7 +194,7 @@ public class UpdateTest {
     @Test
     public void testPageBoundary() throws TTException {
         INodeWriteTrx wtx = holder.getNWtx();
-        NodeHelper.createDocumentRootNode(wtx);
+        NodeTestHelper.createDocumentRootNode(wtx);
 
         // Document root.
         wtx.insertElementAsFirstChild(new QName(""));
@@ -224,7 +223,7 @@ public class UpdateTest {
     @Test(expectedExceptions = IllegalStateException.class)
     public void testRemoveDocument() throws TTException {
         final INodeWriteTrx wtx = holder.getNWtx();
-        DocumentCreater.create(wtx);
+        NodeTestHelper.DocumentCreater.create(wtx);
         wtx.moveTo(ROOT_NODE);
         try {
             wtx.remove();

@@ -32,12 +32,17 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Random;
 
-import org.treetank.access.Storage;
 import org.treetank.access.Session;
-import org.treetank.access.conf.StorageConfiguration;
+import org.treetank.access.Storage;
 import org.treetank.access.conf.ResourceConfiguration;
-import org.treetank.api.IStorage;
+import org.treetank.access.conf.SessionConfiguration;
+import org.treetank.access.conf.StandardSettings;
+import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.api.INode;
+import org.treetank.api.IPageReadTrx;
+import org.treetank.api.IPageWriteTrx;
+import org.treetank.api.ISession;
+import org.treetank.api.IStorage;
 import org.treetank.exception.TTException;
 import org.treetank.page.DumbNodeFactory.DumbNode;
 import org.treetank.page.NodePage;
@@ -54,7 +59,7 @@ import com.google.common.io.Files;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public final class TestHelper {
+public final class CoreTestHelper {
 
     public static final String RESOURCENAME = "tmp";
 
@@ -117,7 +122,7 @@ public final class TestHelper {
     }
 
     public static final boolean createResource(final ResourceConfiguration resConf) throws TTException {
-        final IStorage storage = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        final IStorage storage = CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile());
         return storage.createResource(resConf);
     }
 
@@ -184,7 +189,65 @@ public final class TestHelper {
      * @return one {@link DumbNode} with random values.
      */
     public static final INode generateOne() {
-        return new DumbNode(TestHelper.random.nextLong(), TestHelper.random.nextLong());
+        return new DumbNode(CoreTestHelper.random.nextLong(), CoreTestHelper.random.nextLong());
+    }
+
+    public static class Holder {
+
+        IStorage mStorage;
+
+        ISession mSession;
+
+        IPageReadTrx mPageRTrx;
+        IPageWriteTrx mPageWTrx;
+
+        public static Holder generateStorage(ResourceConfiguration pConf) throws TTException {
+            Holder holder = new Holder();
+            holder.mStorage = CoreTestHelper.getDatabase(PATHS.PATH1.getFile());
+            holder.mStorage.createResource(pConf);
+            return holder;
+        }
+
+        public static Holder generateSession(ResourceConfiguration pConf) throws TTException {
+            Holder holder = generateStorage(pConf);
+            holder.mSession =
+                holder.mStorage.getSession(new SessionConfiguration(CoreTestHelper.RESOURCENAME,
+                    StandardSettings.KEY));
+            return holder;
+        }
+
+        public static Holder generateWtx(ResourceConfiguration pConf) throws TTException {
+            final Holder holder = generateSession(pConf);
+            holder.mPageWTrx = holder.mSession.beginPageWriteTransaction();
+            holder.mPageRTrx = holder.mPageWTrx;
+            return holder;
+        }
+
+        public static Holder generateRtx(ResourceConfiguration pConf) throws TTException {
+            final Holder holder = generateSession(pConf);
+            holder.mPageRTrx =
+                holder.mSession.beginPageReadTransaction(holder.mSession.getMostRecentVersion());
+            return holder;
+        }
+
+        public IStorage getStorage() {
+            return mStorage;
+        }
+
+        public ISession getSession() {
+            return mSession;
+        }
+
+        public void close() throws TTException {
+            if (mPageRTrx != null && !mPageRTrx.isClosed()) {
+                mPageRTrx.close();
+            }
+            if (mPageWTrx != null && !mPageWTrx.isClosed()) {
+                mPageWTrx.close();
+            }
+            mSession.close();
+            mStorage.close();
+        }
     }
 
 }

@@ -31,7 +31,7 @@ import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertNotNull;
 import static org.testng.AssertJUnit.assertNull;
 import static org.testng.AssertJUnit.assertTrue;
-import static org.treetank.TestHelper.RESOURCENAME;
+import static org.treetank.CoreTestHelper.RESOURCENAME;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -53,7 +53,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.NodeModuleFactory;
-import org.treetank.TestHelper;
+import org.treetank.CoreTestHelper;
 import org.treetank.exception.TTException;
 import org.treetank.io.IBackend.IBackendFactory;
 import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
@@ -129,11 +129,11 @@ public class DatabaseRepresentationTest {
      */
     @BeforeMethod
     public void setUp() throws TTException {
-        TestHelper.deleteEverything();
-        TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        CoreTestHelper.deleteEverything();
+        CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile());
         final InputStream input = DatabaseRepresentationTest.class.getResourceAsStream(XMLFILE);
         treetank =
-            new DatabaseRepresentation(TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile()), mStorageFac,
+            new DatabaseRepresentation(CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile()), mStorageFac,
                 mRevisioningFac);
         treetank.shred(input, RESOURCENAME);
     }
@@ -145,7 +145,7 @@ public class DatabaseRepresentationTest {
      */
     @AfterMethod
     public void tearDown() throws TTException {
-        TestHelper.deleteEverything();
+        CoreTestHelper.deleteEverything();
     }
 
     /**
@@ -372,7 +372,7 @@ public class DatabaseRepresentationTest {
     public void getLastRevision() throws TTException {
         assertEquals(ASSEQUALS, 1, treetank.getLastRevision(RESOURCENAME));
         final NodeIdRepresentation rid =
-            new NodeIdRepresentation(TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile()));
+            new NodeIdRepresentation(CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile()));
         rid.deleteResource(RESOURCENAME, 8);
         assertEquals(ASSEQUALS, 2, treetank.getLastRevision(RESOURCENAME));
     }
@@ -391,7 +391,7 @@ public class DatabaseRepresentationTest {
     public void getModificHistory() throws WebApplicationException, TTException, SAXException, IOException,
         ParserConfigurationException {
         final NodeIdRepresentation rid =
-            new NodeIdRepresentation(TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile()));
+            new NodeIdRepresentation(CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile()));
         rid.deleteResource(RESOURCENAME, 8);
         final OutputStream output = new ByteArrayOutputStream();
         treetank.getModificHistory(RESOURCENAME, "1-2", false, output, true);
@@ -416,7 +416,7 @@ public class DatabaseRepresentationTest {
     public void revertToRevision() throws TTException, WebApplicationException, IOException,
         ParserConfigurationException, SAXException, InterruptedException {
         final NodeIdRepresentation rid =
-            new NodeIdRepresentation(TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile()));
+            new NodeIdRepresentation(CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile()));
         rid.deleteResource(RESOURCENAME, 8);
         rid.deleteResource(RESOURCENAME, 11);
         rid.deleteResource(RESOURCENAME, 14);

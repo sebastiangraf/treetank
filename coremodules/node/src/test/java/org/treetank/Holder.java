@@ -28,63 +28,41 @@ package org.treetank;
 
 import static com.google.common.base.Preconditions.checkState;
 
-import org.treetank.TestHelper.PATHS;
+import org.treetank.CoreTestHelper.PATHS;
 import org.treetank.access.NodeReadTrx;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.ResourceConfiguration;
-import org.treetank.access.conf.SessionConfiguration;
-import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.IPageReadTrx;
-import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
-import org.treetank.api.IStorage;
 import org.treetank.exception.TTException;
 
 /**
  * Generating a standard resource within the {@link PATHS#PATH1} path. It also
- * generates a standard resource defined within {@link TestHelper#RESOURCENAME}.
+ * generates a standard resource defined within {@link CoreTestHelper#RESOURCENAME}.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
  */
 public class Holder {
 
-    private IStorage mDatabase;
-
-    private ISession mSession;
-
-    private IPageReadTrx mPRtx;
+    private CoreTestHelper.Holder mHolder;
 
     private INodeReadTrx mNRtx;
 
-    public static Holder generateSession(ResourceConfiguration pConf) throws TTException {
-        final IStorage storage = TestHelper.getDatabase(PATHS.PATH1.getFile());
-        storage.createResource(pConf);
-        final ISession session =
-            storage.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, StandardSettings.KEY));
-        final Holder holder = new Holder();
-        holder.mDatabase = storage;
-        holder.mSession = session;
-        return holder;
-    }
-
     public static Holder generateWtx(ResourceConfiguration pConf) throws TTException {
-        final Holder holder = generateSession(pConf);
-        final IPageWriteTrx pRtx = holder.mSession.beginPageWriteTransaction();
-        holder.mPRtx = pRtx;
-        holder.mNRtx = new NodeWriteTrx(holder.mSession, pRtx, HashKind.Rolling);
+        Holder holder = new Holder();
+        holder.mHolder = CoreTestHelper.Holder.generateWtx(pConf);
+        holder.mNRtx = new NodeWriteTrx(holder.mHolder.mSession, holder.mHolder.mPageWTrx, HashKind.Rolling);
         return holder;
     }
 
     public static Holder generateRtx(ResourceConfiguration pConf) throws TTException {
-        final Holder holder = generateSession(pConf);
-        final IPageReadTrx pRtx =
-            holder.mSession.beginPageReadTransaction(holder.mSession.getMostRecentVersion());
-        holder.mPRtx = pRtx;
-        holder.mNRtx = new NodeReadTrx(pRtx);
+        Holder holder = new Holder();
+        holder.mHolder = CoreTestHelper.Holder.generateRtx(pConf);
+        holder.mNRtx = new NodeReadTrx(holder.mHolder.mPageRTrx);
         return holder;
     }
 
@@ -92,24 +70,15 @@ public class Holder {
         if (mNRtx != null && !mNRtx.isClosed()) {
             mNRtx.close();
         }
-        mSession.close();
-    }
-
-    public IStorage getDatabase() {
-        return mDatabase;
+        mHolder.close();
     }
 
     public ISession getSession() {
-        return mSession;
+        return mHolder.mSession;
     }
 
     public IPageReadTrx getPRtx() {
-        return mPRtx;
-    }
-
-    public IPageWriteTrx getPWtx() {
-        checkState(mPRtx instanceof IPageWriteTrx);
-        return (IPageWriteTrx)mPRtx;
+        return mHolder.mPageRTrx;
     }
 
     public INodeReadTrx getNRtx() {
@@ -120,5 +89,4 @@ public class Holder {
         checkState(mNRtx instanceof INodeWriteTrx);
         return (INodeWriteTrx)mNRtx;
     }
-
 }

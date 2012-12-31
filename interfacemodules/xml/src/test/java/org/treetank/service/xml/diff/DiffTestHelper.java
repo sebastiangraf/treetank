@@ -43,7 +43,7 @@ import org.mockito.InOrder;
 import org.treetank.Holder;
 import org.treetank.exception.TTException;
 import org.treetank.node.interfaces.IStructNode;
-import org.treetank.service.xml.DocumentCreater;
+import org.treetank.service.xml.XMLTestHelper;
 import org.treetank.service.xml.diff.DiffFactory.EDiff;
 import org.treetank.service.xml.diff.DiffFactory.EDiffOptimized;
 import org.treetank.service.xml.shredder.EShredderCommit;
@@ -57,7 +57,7 @@ public final class DiffTestHelper {
     protected static final long TIMEOUT_S = 5;
 
     static void setUpFirst(final Holder paramHolder) throws TTException {
-        DocumentCreater.createVersioned(paramHolder.getNWtx());
+        XMLTestHelper.DocumentCreater.createVersioned(paramHolder.getNWtx());
     }
 
     static void setUpSecond(final Holder paramHolder) throws TTException, IOException, XMLStreamException {
