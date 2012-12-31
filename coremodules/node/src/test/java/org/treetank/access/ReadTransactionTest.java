@@ -37,7 +37,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.Holder;
-import org.treetank.NodeHelper;
+import org.treetank.NodeTestHelper;
 import org.treetank.NodeModuleFactory;
 import org.treetank.CoreTestHelper;
 import org.treetank.access.conf.ResourceConfiguration;
@@ -66,7 +66,7 @@ public class ReadTransactionTest {
             StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
                 CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
-        NodeHelper.createTestDocument(mResource);
+        NodeTestHelper.createTestDocument(mResource);
         holder = Holder.generateWtx(mResource);
     }
 

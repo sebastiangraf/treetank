@@ -43,11 +43,11 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
-import org.treetank.Holder;
-import org.treetank.NodeHelper;
-import org.treetank.NodeModuleFactory;
 import org.treetank.CoreTestHelper;
 import org.treetank.CoreTestHelper.PATHS;
+import org.treetank.Holder;
+import org.treetank.NodeModuleFactory;
+import org.treetank.NodeTestHelper;
 import org.treetank.access.NodeReadTrx;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
@@ -55,16 +55,16 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
-import org.treetank.api.IStorage;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
+import org.treetank.api.IStorage;
 import org.treetank.axis.DescendantAxis;
 import org.treetank.exception.TTException;
 import org.treetank.node.ElementNode;
 import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.IStructNode;
-import org.treetank.service.xml.DocumentCreater;
+import org.treetank.service.xml.XMLTestHelper;
 
 import com.google.inject.Inject;
 
@@ -108,7 +108,7 @@ public class XMLShredderTest {
         // Setup parsed session.
         XMLShredder.main(XML, PATHS.PATH2.getFile().getAbsolutePath());
         final INodeWriteTrx expectedTrx = holder.getNWtx();
-        NodeHelper.createDocumentRootNode(expectedTrx);
+        NodeTestHelper.createDocumentRootNode(expectedTrx);
 
         // Verify.
         final IStorage database2 = CoreTestHelper.getDatabase(PATHS.PATH2.getFile());
@@ -173,7 +173,7 @@ public class XMLShredderTest {
 
         final INodeWriteTrx expectedTrx =
             new NodeWriteTrx(expectedSession, expectedSession.beginPageWriteTransaction(), HashKind.Rolling);
-        org.treetank.DocumentCreater.create(expectedTrx);
+        NodeTestHelper.DocumentCreater.create(expectedTrx);
         expectedTrx.commit();
         expectedTrx.moveTo(ROOT_NODE);
 
@@ -216,7 +216,7 @@ public class XMLShredderTest {
             storage.getSession(new SessionConfiguration(CoreTestHelper.RESOURCENAME, StandardSettings.KEY));
         final INodeWriteTrx expectedTrx2 =
             new NodeWriteTrx(expectedSession2, expectedSession2.beginPageWriteTransaction(), HashKind.Rolling);
-        DocumentCreater.createWithoutNamespace(expectedTrx2);
+        XMLTestHelper.DocumentCreater.createWithoutNamespace(expectedTrx2);
         expectedTrx2.commit();
 
         // Setup parsed session.

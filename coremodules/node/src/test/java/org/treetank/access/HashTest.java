@@ -39,7 +39,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
-import org.treetank.NodeHelper;
+import org.treetank.NodeTestHelper;
 import org.treetank.NodeModuleFactory;
 import org.treetank.CoreTestHelper;
 import org.treetank.access.NodeWriteTrx.HashKind;
@@ -255,7 +255,7 @@ public class HashTest {
             storage.getSession(new SessionConfiguration(CoreTestHelper.RESOURCENAME, StandardSettings.KEY));
         final IPageWriteTrx pTrx = session.beginPageWriteTransaction();
         final INodeWriteTrx wTrx = new NodeWriteTrx(session, pTrx, kind);
-        NodeHelper.createDocumentRootNode(wTrx);
+        NodeTestHelper.createDocumentRootNode(wTrx);
         return wTrx;
     }
 }
