@@ -13,7 +13,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.ModuleFactory;
-import org.treetank.TestHelper;
+import org.treetank.CoreTestHelper;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.exception.TTException;
 
@@ -33,12 +33,12 @@ public class ResourceConfigurationTest {
 
     @BeforeMethod
     public void setUp() throws TTException {
-        TestHelper.deleteEverything();
+        CoreTestHelper.deleteEverything();
     }
 
     @AfterMethod
     public void tearDown() throws TTException {
-        TestHelper.deleteEverything();
+        CoreTestHelper.deleteEverything();
     }
 
     /**
@@ -48,10 +48,10 @@ public class ResourceConfigurationTest {
      */
     @Test
     public void testDeSerialize() throws Exception {
-        Properties props = StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(), TestHelper.RESOURCENAME);
-        TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        Properties props = StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(), CoreTestHelper.RESOURCENAME);
+        CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile());
         ResourceConfiguration resConf = mResourceConfig.create(props);
-        TestHelper.createResource(resConf);
+        CoreTestHelper.createResource(resConf);
         ResourceConfiguration serializedConf =
             ResourceConfiguration.deserialize(new File(props.getProperty(ContructorProps.STORAGEPATH)), props
                 .getProperty(ContructorProps.RESOURCE));

@@ -9,7 +9,7 @@ import static org.testng.AssertJUnit.assertTrue;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import org.treetank.TestHelper;
+import org.treetank.CoreTestHelper;
 import org.treetank.access.Storage;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
@@ -24,12 +24,12 @@ public class StorageConfigurationTest {
 
     @BeforeMethod
     public void setUp() throws TTException {
-        TestHelper.deleteEverything();
+        CoreTestHelper.deleteEverything();
     }
 
     @AfterMethod
     public void tearDown() throws TTException {
-        TestHelper.deleteEverything();
+        CoreTestHelper.deleteEverything();
     }
 
     /**
@@ -41,10 +41,10 @@ public class StorageConfigurationTest {
      */
     @Test
     public void testDeSerialize() throws TTIOException {
-        StorageConfiguration conf = new StorageConfiguration(TestHelper.PATHS.PATH1.getFile());
+        StorageConfiguration conf = new StorageConfiguration(CoreTestHelper.PATHS.PATH1.getFile());
         assertTrue(Storage.createStorage(conf));
         StorageConfiguration serializedConf =
-            StorageConfiguration.deserialize(TestHelper.PATHS.PATH1.getFile());
+            StorageConfiguration.deserialize(CoreTestHelper.PATHS.PATH1.getFile());
         assertEquals(conf.toString(), serializedConf.toString());
 
     }

@@ -38,7 +38,7 @@ import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.NodeHelper;
 import org.treetank.NodeModuleFactory;
-import org.treetank.TestHelper;
+import org.treetank.CoreTestHelper;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
@@ -59,8 +59,8 @@ public class AttributeAndNamespaceTest {
 
     @BeforeMethod
     public void setUp() throws TTException {
-        TestHelper.deleteEverything();
-        Properties props = StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(), TestHelper.RESOURCENAME);
+        CoreTestHelper.deleteEverything();
+        Properties props = StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(), CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
         NodeHelper.createTestDocument(mResource);
         holder = Holder.generateRtx(mResource);
@@ -69,7 +69,7 @@ public class AttributeAndNamespaceTest {
     @AfterMethod
     public void tearDown() throws TTException {
         holder.close();
-        TestHelper.deleteEverything();
+        CoreTestHelper.deleteEverything();
     }
 
     @Test

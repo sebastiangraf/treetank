@@ -9,7 +9,7 @@ import java.util.Arrays;
 
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-import org.treetank.TestHelper;
+import org.treetank.CoreTestHelper;
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.io.bytepipe.IByteHandler;
 import org.treetank.page.interfaces.IPage;
@@ -53,19 +53,19 @@ public class IPageTest {
     @DataProvider(name = "instantiatePages")
     public Object[][] instantiatePages() throws TTByteHandleException {
         // IndirectPage setup
-        IndirectPage indirectPage = new IndirectPage(TestHelper.random.nextLong());
+        IndirectPage indirectPage = new IndirectPage(CoreTestHelper.random.nextLong());
         // RevisionRootPage setup
         RevisionRootPage revRootPage =
-            new RevisionRootPage(TestHelper.random.nextLong(), TestHelper.random.nextLong(),
-                TestHelper.random.nextLong());
+            new RevisionRootPage(CoreTestHelper.random.nextLong(), CoreTestHelper.random.nextLong(),
+                CoreTestHelper.random.nextLong());
         // NodePage setup
-        NodePage nodePage = new NodePage(TestHelper.random.nextLong());
+        NodePage nodePage = new NodePage(CoreTestHelper.random.nextLong());
         for (int i = 0; i < IConstants.CONTENT_COUNT - 1; i++) {
-            nodePage.setNode(i, TestHelper.generateOne());
+            nodePage.setNode(i, CoreTestHelper.generateOne());
         }
         // NamePage setup
-        NamePage namePage = new NamePage(TestHelper.random.nextLong());
-        namePage.setName(TestHelper.random.nextInt(), new String(TestHelper.generateRandomBytes(256)));
+        NamePage namePage = new NamePage(CoreTestHelper.random.nextLong());
+        namePage.setName(CoreTestHelper.random.nextInt(), new String(CoreTestHelper.generateRandomBytes(256)));
 
         Object[][] returnVal = {
             {

@@ -58,7 +58,7 @@ import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.NodeHelper;
 import org.treetank.NodeModuleFactory;
-import org.treetank.TestHelper;
+import org.treetank.CoreTestHelper;
 import org.treetank.access.Storage;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
@@ -99,10 +99,10 @@ public class TestNodeWrapper {
 
     @BeforeMethod
     public void beforeMethod() throws TTException {
-        TestHelper.deleteEverything();
+        CoreTestHelper.deleteEverything();
         Properties props =
-            StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
-                TestHelper.RESOURCENAME);
+            StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
         NodeHelper.createTestDocument(mResource);
         holder = Holder.generateRtx(mResource);
@@ -115,7 +115,7 @@ public class TestNodeWrapper {
 
     @AfterMethod
     public void afterMethod() throws TTException {
-        TestHelper.deleteEverything();
+        CoreTestHelper.deleteEverything();
     }
 
     @Test
@@ -171,14 +171,14 @@ public class TestNodeWrapper {
             new File("src" + File.separator + "test" + File.separator + "resources" + File.separator + "data"
                 + File.separator + "testBaseURI.xml");
 
-        final StorageConfiguration db2 = new StorageConfiguration(TestHelper.PATHS.PATH2.getFile());
+        final StorageConfiguration db2 = new StorageConfiguration(CoreTestHelper.PATHS.PATH2.getFile());
 
         Storage.createStorage(db2);
-        final IStorage storage = Storage.openStorage(TestHelper.PATHS.PATH2.getFile());
+        final IStorage storage = Storage.openStorage(CoreTestHelper.PATHS.PATH2.getFile());
         Properties props = new Properties();
-        props.setProperty(org.treetank.access.conf.ContructorProps.STORAGEPATH, TestHelper.PATHS.PATH2.getFile()
+        props.setProperty(org.treetank.access.conf.ContructorProps.STORAGEPATH, CoreTestHelper.PATHS.PATH2.getFile()
             .getAbsolutePath());
-        props.setProperty(org.treetank.access.conf.ContructorProps.RESOURCE, TestHelper.RESOURCENAME);
+        props.setProperty(org.treetank.access.conf.ContructorProps.RESOURCE, CoreTestHelper.RESOURCENAME);
         props.setProperty(FilesystemConstants.PROPERTY_BASEDIR, new File(new File(new File(props
             .getProperty(ContructorProps.STORAGEPATH), StorageConfiguration.Paths.Data.getFile().getName()), props
             .getProperty(ContructorProps.RESOURCE)), ResourceConfiguration.Paths.Data.getFile().getName())
@@ -188,7 +188,7 @@ public class TestNodeWrapper {
         props.setProperty(ContructorProps.NUMBERTORESTORE, Integer.toString(5));
         storage.createResource(mResourceConfig.create(props));
         final ISession session =
-            storage.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, StandardSettings.KEY));
+            storage.getSession(new SessionConfiguration(CoreTestHelper.RESOURCENAME, StandardSettings.KEY));
         final INodeWriteTrx wtx =
             new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
         SaxonHelper.createDocumentRootNode(wtx);

@@ -41,7 +41,7 @@ import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.NodeModuleFactory;
-import org.treetank.TestHelper;
+import org.treetank.CoreTestHelper;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
@@ -66,9 +66,9 @@ public final class TestNodeWrapperS9ApiXQuery {
 
     @BeforeMethod
     public void beforeMethod() throws Exception {
-        TestHelper.deleteEverything();
+        CoreTestHelper.deleteEverything();
         SaxonHelper.createBookDB(mResourceConfig);
-        Properties props = StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(), TestHelper.RESOURCENAME);
+        Properties props = StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(), CoreTestHelper.RESOURCENAME);
         ResourceConfiguration mResource =
             mResourceConfig.create(props);
         holder = Holder.generateSession(mResource);
@@ -77,7 +77,7 @@ public final class TestNodeWrapperS9ApiXQuery {
 
     @AfterMethod
     public void afterMethod() throws TTException {
-        TestHelper.deleteEverything();
+        CoreTestHelper.deleteEverything();
     }
 
     @Test

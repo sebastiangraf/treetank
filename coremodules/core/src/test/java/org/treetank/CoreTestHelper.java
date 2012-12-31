@@ -54,7 +54,7 @@ import com.google.common.io.Files;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public final class TestHelper {
+public final class CoreTestHelper {
 
     public static final String RESOURCENAME = "tmp";
 
@@ -117,7 +117,7 @@ public final class TestHelper {
     }
 
     public static final boolean createResource(final ResourceConfiguration resConf) throws TTException {
-        final IStorage storage = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        final IStorage storage = CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile());
         return storage.createResource(resConf);
     }
 
@@ -184,7 +184,7 @@ public final class TestHelper {
      * @return one {@link DumbNode} with random values.
      */
     public static final INode generateOne() {
-        return new DumbNode(TestHelper.random.nextLong(), TestHelper.random.nextLong());
+        return new DumbNode(CoreTestHelper.random.nextLong(), CoreTestHelper.random.nextLong());
     }
 
 }

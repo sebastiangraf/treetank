@@ -55,7 +55,7 @@ import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.NodeHelper;
 import org.treetank.NodeModuleFactory;
-import org.treetank.TestHelper;
+import org.treetank.CoreTestHelper;
 import org.treetank.access.NodeReadTrx;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.StandardSettings;
@@ -90,8 +90,8 @@ public final class TestNodeWrapperXPath {
 
     @BeforeMethod
     public void setUp() throws TTException, XPathFactoryConfigurationException {
-        TestHelper.deleteEverything();
-        Properties props = StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(), TestHelper.RESOURCENAME);
+        CoreTestHelper.deleteEverything();
+        Properties props = StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(), CoreTestHelper.RESOURCENAME);
         ResourceConfiguration resource = mResourceConfig.create(props);
         NodeHelper.createTestDocument(resource);
         holder = Holder.generateRtx(resource);
@@ -107,8 +107,8 @@ public final class TestNodeWrapperXPath {
 
     @AfterMethod
     public void tearDown() throws Exception {
-        TestHelper.closeEverything();
-        TestHelper.deleteEverything();
+        CoreTestHelper.closeEverything();
+        CoreTestHelper.deleteEverything();
 
     }
 

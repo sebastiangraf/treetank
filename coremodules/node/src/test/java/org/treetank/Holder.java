@@ -28,7 +28,7 @@ package org.treetank;
 
 import static com.google.common.base.Preconditions.checkState;
 
-import org.treetank.TestHelper.PATHS;
+import org.treetank.CoreTestHelper.PATHS;
 import org.treetank.access.NodeReadTrx;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
@@ -45,7 +45,7 @@ import org.treetank.exception.TTException;
 
 /**
  * Generating a standard resource within the {@link PATHS#PATH1} path. It also
- * generates a standard resource defined within {@link TestHelper#RESOURCENAME}.
+ * generates a standard resource defined within {@link CoreTestHelper#RESOURCENAME}.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
@@ -61,10 +61,10 @@ public class Holder {
     private INodeReadTrx mNRtx;
 
     public static Holder generateSession(ResourceConfiguration pConf) throws TTException {
-        final IStorage storage = TestHelper.getDatabase(PATHS.PATH1.getFile());
+        final IStorage storage = CoreTestHelper.getDatabase(PATHS.PATH1.getFile());
         storage.createResource(pConf);
         final ISession session =
-            storage.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, StandardSettings.KEY));
+            storage.getSession(new SessionConfiguration(CoreTestHelper.RESOURCENAME, StandardSettings.KEY));
         final Holder holder = new Holder();
         holder.mDatabase = storage;
         holder.mSession = session;

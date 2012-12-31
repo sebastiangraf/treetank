@@ -43,7 +43,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.NodeModuleFactory;
-import org.treetank.TestHelper;
+import org.treetank.CoreTestHelper;
 import org.treetank.access.NodeReadTrx;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
@@ -86,7 +86,7 @@ public class WorkerHelperTest {
     /**
      * The test file that has to be saved on the server.
      */
-    private final static File DBFILE = new File(TestHelper.PATHS.PATH1.getFile(), RESOURCENAME);
+    private final static File DBFILE = new File(CoreTestHelper.PATHS.PATH1.getFile(), RESOURCENAME);
 
     @Inject
     public IBackendFactory mStorageFac;
@@ -101,11 +101,11 @@ public class WorkerHelperTest {
      */
     @BeforeMethod
     public void setUp() throws FileNotFoundException, TTException {
-        TestHelper.deleteEverything();
-        TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        CoreTestHelper.deleteEverything();
+        CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile());
         workerHelper = WorkerHelper.getInstance();
         treetank =
-            new DatabaseRepresentation(TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile()), mStorageFac,
+            new DatabaseRepresentation(CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile()), mStorageFac,
                 mRevisioningFac);
         InputStream inputfile = WorkerHelperTest.class.getClass().getResourceAsStream("/factbook.xml");
         treetank.shred(inputfile, RESOURCENAME);
@@ -113,7 +113,7 @@ public class WorkerHelperTest {
 
     @AfterMethod
     public void after() throws TTException {
-        TestHelper.deleteEverything();
+        CoreTestHelper.deleteEverything();
     }
 
     /**

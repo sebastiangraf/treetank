@@ -45,7 +45,7 @@ import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.Holder;
 import org.treetank.NodeModuleFactory;
-import org.treetank.TestHelper;
+import org.treetank.CoreTestHelper;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.ResourceConfiguration;
@@ -77,10 +77,10 @@ public final class XMLUpdateShredderTest {
 
     @BeforeMethod
     public void setUp() throws TTException {
-        TestHelper.deleteEverything();
+        CoreTestHelper.deleteEverything();
         Properties props =
-            StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
-                TestHelper.RESOURCENAME);
+            StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
         holder = Holder.generateWtx(mResource);
         XMLUnit.setIgnoreComments(true);
@@ -89,7 +89,7 @@ public final class XMLUpdateShredderTest {
 
     @AfterMethod
     public void tearDown() throws TTException {
-        TestHelper.deleteEverything();
+        CoreTestHelper.deleteEverything();
     }
 
     @Test

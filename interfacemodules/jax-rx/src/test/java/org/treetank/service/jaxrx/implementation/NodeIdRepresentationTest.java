@@ -52,7 +52,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.NodeModuleFactory;
-import org.treetank.TestHelper;
+import org.treetank.CoreTestHelper;
 import org.treetank.exception.TTException;
 import org.treetank.io.IBackend.IBackendFactory;
 import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
@@ -149,11 +149,11 @@ public class NodeIdRepresentationTest {
      */
     @BeforeMethod
     public void setUp() throws Exception {
-        TestHelper.deleteEverything();
-        TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-        ridWorker = new NodeIdRepresentation(TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile()));
+        CoreTestHelper.deleteEverything();
+        CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile());
+        ridWorker = new NodeIdRepresentation(CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile()));
         treetank =
-            new DatabaseRepresentation(TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile()), mStorageFac,
+            new DatabaseRepresentation(CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile()), mStorageFac,
                 mRevisioningFac);
         final InputStream input =
             NodeIdRepresentationTest.class.getClass().getResourceAsStream("/factbook.xml");
@@ -167,7 +167,7 @@ public class NodeIdRepresentationTest {
      */
     @AfterMethod
     public void tearDown() throws Exception {
-        TestHelper.deleteEverything();
+        CoreTestHelper.deleteEverything();
     }
 
     /**

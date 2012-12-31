@@ -31,7 +31,7 @@ import static org.testng.AssertJUnit.assertTrue;
 import static org.treetank.node.IConstants.NULL_NODE;
 import static org.treetank.node.IConstants.ROOT_NODE;
 
-import org.treetank.TestHelper.PATHS;
+import org.treetank.CoreTestHelper.PATHS;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.Session;
@@ -66,10 +66,10 @@ public final class NodeHelper {
      * @throws TTException
      */
     public static void createTestDocument(ResourceConfiguration mResourceConfig) throws TTException {
-        final IStorage storage = TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        final IStorage storage = CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile());
         assertTrue(storage.createResource(mResourceConfig));
         final ISession session =
-            storage.getSession(new SessionConfiguration(TestHelper.RESOURCENAME, StandardSettings.KEY));
+            storage.getSession(new SessionConfiguration(CoreTestHelper.RESOURCENAME, StandardSettings.KEY));
         final IPageWriteTrx pWtx = session.beginPageWriteTransaction();
         final INodeWriteTrx nWtx = new NodeWriteTrx(session, pWtx, HashKind.Rolling);
         DocumentCreater.create(nWtx);

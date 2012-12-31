@@ -36,7 +36,7 @@ import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.ByteNodeModuleFactory;
 import org.treetank.Holder;
-import org.treetank.TestHelper;
+import org.treetank.CoreTestHelper;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.StandardSettings;
@@ -62,8 +62,8 @@ public final class TransactionTest {
 
     @BeforeMethod
     public void setUp() throws TTException {
-        TestHelper.deleteEverything();
-        Properties props = StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(), TestHelper.RESOURCENAME);
+        CoreTestHelper.deleteEverything();
+        Properties props = StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(), CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
         holder = Holder.generateWtx(mResource);
     }
@@ -127,7 +127,7 @@ public final class TransactionTest {
     @AfterMethod
     public void tearDown() throws TTException {
         holder.close();
-        TestHelper.deleteEverything();
+        CoreTestHelper.deleteEverything();
     }
 
 }

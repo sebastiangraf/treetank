@@ -13,7 +13,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-import org.treetank.TestHelper;
+import org.treetank.CoreTestHelper;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.exception.TTByteHandleException;
 
@@ -33,7 +33,7 @@ public class IByteHandlerTest {
     public void testSerializeAndDeserialize(Class<IByteHandler> clazz, IByteHandler[] pHandlers)
         throws TTByteHandleException {
         for (final IByteHandler handler : pHandlers) {
-            final byte[] bytes = TestHelper.generateRandomBytes(10000);
+            final byte[] bytes = CoreTestHelper.generateRandomBytes(10000);
             byte[] serialized = handler.serialize(bytes);
             assertFalse(new StringBuilder("Check for ").append(handler.getClass()).append(" failed.")
                 .toString(), Arrays.equals(bytes, serialized));

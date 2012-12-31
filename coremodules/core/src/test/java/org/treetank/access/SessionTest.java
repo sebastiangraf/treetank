@@ -3,10 +3,19 @@
  */
 package org.treetank.access;
 
+import java.util.Properties;
+
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
-import org.treetank.TestHelper;
+import org.treetank.ModuleFactory;
+import org.treetank.CoreTestHelper;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.StandardSettings;
+import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
+
+import com.google.inject.Inject;
 
 /**
  * Testcase for Session.
@@ -14,11 +23,21 @@ import org.treetank.TestHelper;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
+@Guice(moduleFactory = ModuleFactory.class)
 public class SessionTest {
 
+    @Inject
+    private IResourceConfigurationFactory mResourceConfig;
+    
+    private ResourceConfiguration mResource;
+    
     @BeforeMethod
     public void setUp() throws Exception {
-        TestHelper.deleteEverything();
+        CoreTestHelper.deleteEverything();
+        Properties props =
+            StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                CoreTestHelper.RESOURCENAME);
+        mResource = mResourceConfig.create(props);
     }
     
     /**
@@ -26,8 +45,7 @@ public class SessionTest {
      */
     @AfterMethod
     public void tearDown() throws Exception {
-        TestHelper.closeEverything();
-        TestHelper.deleteEverything();
+        CoreTestHelper.deleteEverything();
     }
     
     /**

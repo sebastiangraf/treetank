@@ -37,7 +37,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.ModuleFactory;
-import org.treetank.TestHelper;
+import org.treetank.CoreTestHelper;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.StandardSettings;
@@ -58,17 +58,17 @@ public class BerkeleyPersistentCacheTest {
 
     @BeforeMethod
     public void setUp() throws TTException {
-        TestHelper.deleteEverything();
-        TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+        CoreTestHelper.deleteEverything();
+        CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile());
         Properties props =
-            StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
-                TestHelper.RESOURCENAME);
+            StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                CoreTestHelper.RESOURCENAME);
         ResourceConfiguration conf = mResourceConfig.create(props);
-        TestHelper.createResource(conf);
+        CoreTestHelper.createResource(conf);
 
         cache =
-            new BerkeleyPersistenceLog(new File(new File(TestHelper.PATHS.PATH1.getFile(),
-                StorageConfiguration.Paths.Data.getFile().getName()), TestHelper.RESOURCENAME), conf.mNodeFac);
+            new BerkeleyPersistenceLog(new File(new File(CoreTestHelper.PATHS.PATH1.getFile(),
+                StorageConfiguration.Paths.Data.getFile().getName()), CoreTestHelper.RESOURCENAME), conf.mNodeFac);
         CacheTestHelper.setUp(true, cache);
     }
 
@@ -87,6 +87,6 @@ public class BerkeleyPersistentCacheTest {
 
     @AfterMethod
     public void tearDown() throws TTException {
-        TestHelper.closeEverything();
+        CoreTestHelper.closeEverything();
     }
 }
