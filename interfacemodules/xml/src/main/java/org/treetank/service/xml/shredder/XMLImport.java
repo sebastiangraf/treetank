@@ -101,24 +101,24 @@ public final class XMLImport {
     //
     // @SuppressWarnings("unchecked")
     // @Override
-    // public void check(final Object mDatabase, final Object mObj) {
+    // public void check(final Object mStorage, final Object mObj) {
     // try {
     // // Setup executor service.
     // final ExecutorService execService =
     // Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     //
-    // if (mDatabase instanceof File) {
+    // if (mStorage instanceof File) {
     // // Single file.
-    // mXml = (File)mDatabase;
+    // mXml = (File)mStorage;
     // if (mObj instanceof RevNode) {
     // mNodes.add((RevNode)mObj);
     // } else if (mObj instanceof List<?>) {
     // mNodes = (List<RevNode>)mObj;
     // }
     // execService.submit(this);
-    // } else if (mDatabase instanceof List<?>) {
+    // } else if (mStorage instanceof List<?>) {
     // // List of files.
-    // final List<?> files = (List<?>)mDatabase;
+    // final List<?> files = (List<?>)mStorage;
     // if (mObj instanceof RevNode) {
     // mNodes.add((RevNode)mObj);
     // for (final File xmlFile : files.toArray(new File[files.size()])) {

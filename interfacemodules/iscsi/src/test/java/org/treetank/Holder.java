@@ -30,15 +30,10 @@ import org.treetank.CoreTestHelper.PATHS;
 import org.treetank.access.IscsiReadTrx;
 import org.treetank.access.IscsiWriteTrx;
 import org.treetank.access.conf.ResourceConfiguration;
-import org.treetank.access.conf.SessionConfiguration;
-import org.treetank.access.conf.StandardSettings;
-import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.api.IIscsiReadTrx;
 import org.treetank.api.IIscsiWriteTrx;
 import org.treetank.api.IPageReadTrx;
 import org.treetank.api.IPageWriteTrx;
-import org.treetank.api.ISession;
-import org.treetank.api.IStorage;
 import org.treetank.exception.TTException;
 
 /**
@@ -50,37 +45,25 @@ import org.treetank.exception.TTException;
  */
 public class Holder {
 
-    private IStorage mDatabase;
+    private CoreTestHelper.Holder mHolder;
 
-    private ISession mSession;
-
-    private IPageReadTrx mPRtx;
+    private IPageWriteTrx mPWtx;
 
     private IIscsiReadTrx mIRtx;
 
-    public static Holder generateSession(ResourceConfiguration pConf) throws TTException {
-        final IStorage storage = CoreTestHelper.getDatabase(PATHS.PATH1.getFile());
-        storage.createResource(pConf);
-        final ISession session =
-            storage.getSession(new SessionConfiguration(CoreTestHelper.RESOURCENAME, StandardSettings.KEY));
-        final Holder holder = new Holder();
-        holder.mDatabase = storage;
-        holder.mSession = session;
-        return holder;
-    }
-
     public static Holder generateWtx(ResourceConfiguration pConf) throws TTException {
-        final Holder holder = generateSession(pConf);
-        final IPageWriteTrx pRtx = holder.mSession.beginPageWriteTransaction();
-        holder.mPRtx = pRtx;
-        holder.mIRtx = new IscsiWriteTrx(pRtx, holder.mSession);
+        final Holder holder = new Holder();
+        holder.mHolder = CoreTestHelper.Holder.generateSession(pConf);
+        holder.mPWtx = holder.mHolder.mSession.beginPageWriteTransaction();
+        holder.mIRtx = new IscsiWriteTrx(holder.mPWtx, holder.mHolder.mSession);
         return holder;
     }
 
     public static Holder generateRtx(ResourceConfiguration pConf) throws TTException {
-        final Holder holder = generateSession(pConf);
+        final Holder holder = new Holder();
+        holder.mHolder = CoreTestHelper.Holder.generateSession(pConf);
         final IPageReadTrx pRtx =
-            holder.mSession.beginPageReadTransaction(holder.mSession.getMostRecentVersion());
+            holder.mHolder.mSession.beginPageReadTransaction(holder.mHolder.mSession.getMostRecentVersion());
         holder.mIRtx = new IscsiReadTrx(pRtx);
         return holder;
     }
@@ -89,28 +72,11 @@ public class Holder {
         if (mIRtx != null && !mIRtx.isClosed()) {
             mIRtx.close();
         }
-        mSession.close();
-    }
-
-    public IStorage getDatabase() {
-        return mDatabase;
-    }
-
-    public ISession getSession() {
-        return mSession;
-    }
-
-    public IPageReadTrx getPRtx() {
-        return mPRtx;
+        mHolder.close();
     }
 
     public IPageWriteTrx getPWtx() {
-        if (mPRtx instanceof IPageWriteTrx) {
-            return (IPageWriteTrx)mPRtx;
-        } else {
-            throw new IllegalStateException();
-        }
-
+        return mPWtx;
     }
 
     public IIscsiReadTrx getIRtx() {

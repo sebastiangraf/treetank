@@ -32,12 +32,15 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Random;
 
-import org.treetank.access.Storage;
 import org.treetank.access.Session;
-import org.treetank.access.conf.StorageConfiguration;
+import org.treetank.access.Storage;
 import org.treetank.access.conf.ResourceConfiguration;
-import org.treetank.api.IStorage;
+import org.treetank.access.conf.SessionConfiguration;
+import org.treetank.access.conf.StandardSettings;
+import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.api.INode;
+import org.treetank.api.ISession;
+import org.treetank.api.IStorage;
 import org.treetank.exception.TTException;
 import org.treetank.page.DumbNodeFactory.DumbNode;
 import org.treetank.page.NodePage;
@@ -185,6 +188,38 @@ public final class CoreTestHelper {
      */
     public static final INode generateOne() {
         return new DumbNode(CoreTestHelper.random.nextLong(), CoreTestHelper.random.nextLong());
+    }
+
+    static class Holder {
+
+        IStorage mStorage;
+
+        ISession mSession;
+
+        public static Holder generateSession(ResourceConfiguration pConf) throws TTException {
+            final IStorage storage = CoreTestHelper.getDatabase(PATHS.PATH1.getFile());
+            storage.createResource(pConf);
+            final ISession session =
+                storage
+                    .getSession(new SessionConfiguration(CoreTestHelper.RESOURCENAME, StandardSettings.KEY));
+            final Holder holder = new Holder();
+            holder.mStorage = storage;
+            holder.mSession = session;
+            return holder;
+        }
+
+        public IStorage getStorage() {
+            return mStorage;
+        }
+
+        public ISession getSession() {
+            return mSession;
+        }
+
+        public void close() throws TTException {
+            mSession.close();
+            mStorage.close();
+        }
     }
 
 }
