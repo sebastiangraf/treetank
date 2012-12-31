@@ -37,7 +37,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.CoreTestHelper;
-import org.treetank.Holder;
 import org.treetank.NodeModuleFactory;
 import org.treetank.NodeTestHelper;
 import org.treetank.access.NodeWriteTrx;
@@ -55,7 +54,7 @@ import com.google.inject.Inject;
 @Guice(moduleFactory = NodeModuleFactory.class)
 public class XMLSerializerTest {
 
-    private Holder holder;
+    private CoreTestHelper.Holder holder;
 
     @Inject
     private IResourceConfigurationFactory mResourceConfig;
@@ -69,7 +68,7 @@ public class XMLSerializerTest {
             StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
                 CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
-        holder = Holder.generateSession(mResource);
+        holder = CoreTestHelper.Holder.generateSession(mResource);
     }
 
     @AfterMethod

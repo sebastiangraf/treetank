@@ -27,12 +27,10 @@
 package org.treetank;
 
 import org.treetank.CoreTestHelper.PATHS;
-import org.treetank.access.IscsiReadTrx;
 import org.treetank.access.IscsiWriteTrx;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.api.IIscsiReadTrx;
 import org.treetank.api.IIscsiWriteTrx;
-import org.treetank.api.IPageReadTrx;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.exception.TTException;
 
@@ -47,24 +45,12 @@ public class Holder {
 
     private CoreTestHelper.Holder mHolder;
 
-    private IPageWriteTrx mPWtx;
-
     private IIscsiReadTrx mIRtx;
 
     public static Holder generateWtx(ResourceConfiguration pConf) throws TTException {
         final Holder holder = new Holder();
-        holder.mHolder = CoreTestHelper.Holder.generateSession(pConf);
-        holder.mPWtx = holder.mHolder.mSession.beginPageWriteTransaction();
-        holder.mIRtx = new IscsiWriteTrx(holder.mPWtx, holder.mHolder.mSession);
-        return holder;
-    }
-
-    public static Holder generateRtx(ResourceConfiguration pConf) throws TTException {
-        final Holder holder = new Holder();
-        holder.mHolder = CoreTestHelper.Holder.generateSession(pConf);
-        final IPageReadTrx pRtx =
-            holder.mHolder.mSession.beginPageReadTransaction(holder.mHolder.mSession.getMostRecentVersion());
-        holder.mIRtx = new IscsiReadTrx(pRtx);
+        holder.mHolder = CoreTestHelper.Holder.generateWtx(pConf);
+        holder.mIRtx = new IscsiWriteTrx(holder.mHolder.mPageWTrx, holder.mHolder.mSession);
         return holder;
     }
 
@@ -76,7 +62,7 @@ public class Holder {
     }
 
     public IPageWriteTrx getPWtx() {
-        return mPWtx;
+        return mHolder.mPageWTrx;
     }
 
     public IIscsiReadTrx getIRtx() {

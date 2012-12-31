@@ -35,12 +35,11 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
-import org.treetank.Holder;
-import org.treetank.NodeModuleFactory;
 import org.treetank.CoreTestHelper;
+import org.treetank.NodeModuleFactory;
 import org.treetank.access.conf.ResourceConfiguration;
-import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
+import org.treetank.access.conf.StandardSettings;
 import org.treetank.exception.TTException;
 import org.treetank.saxon.evaluator.XQueryEvaluatorSAXHandler;
 import org.xml.sax.Attributes;
@@ -64,7 +63,7 @@ import com.google.inject.Inject;
 @Guice(moduleFactory = NodeModuleFactory.class)
 public class TestNodeWrapperS9ApiXQuerySAXHandler {
 
-    private Holder holder;
+    private CoreTestHelper.Holder holder;
 
     @Inject
     private IResourceConfigurationFactory mResourceConfig;
@@ -73,9 +72,11 @@ public class TestNodeWrapperS9ApiXQuerySAXHandler {
     public void beforeMethod() throws Exception {
         CoreTestHelper.deleteEverything();
         SaxonHelper.createBookDB(mResourceConfig);
-        Properties props = StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(), CoreTestHelper.RESOURCENAME);
+        Properties props =
+            StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                CoreTestHelper.RESOURCENAME);
         ResourceConfiguration mResource = mResourceConfig.create(props);
-        holder = Holder.generateSession(mResource);
+        holder = CoreTestHelper.Holder.generateSession(mResource);
     }
 
     @AfterMethod

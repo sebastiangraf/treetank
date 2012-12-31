@@ -39,6 +39,8 @@ import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.api.INode;
+import org.treetank.api.IPageReadTrx;
+import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
 import org.treetank.exception.TTException;
@@ -190,21 +192,41 @@ public final class CoreTestHelper {
         return new DumbNode(CoreTestHelper.random.nextLong(), CoreTestHelper.random.nextLong());
     }
 
-    static class Holder {
+    public static class Holder {
 
         IStorage mStorage;
 
         ISession mSession;
 
+        IPageReadTrx mPageRTrx;
+        IPageWriteTrx mPageWTrx;
+
+        public static Holder generateStorage(ResourceConfiguration pConf) throws TTException {
+            Holder holder = new Holder();
+            holder.mStorage = CoreTestHelper.getDatabase(PATHS.PATH1.getFile());
+            holder.mStorage.createResource(pConf);
+            return holder;
+        }
+
         public static Holder generateSession(ResourceConfiguration pConf) throws TTException {
-            final IStorage storage = CoreTestHelper.getDatabase(PATHS.PATH1.getFile());
-            storage.createResource(pConf);
-            final ISession session =
-                storage
-                    .getSession(new SessionConfiguration(CoreTestHelper.RESOURCENAME, StandardSettings.KEY));
-            final Holder holder = new Holder();
-            holder.mStorage = storage;
-            holder.mSession = session;
+            Holder holder = generateStorage(pConf);
+            holder.mSession =
+                holder.mStorage.getSession(new SessionConfiguration(CoreTestHelper.RESOURCENAME,
+                    StandardSettings.KEY));
+            return holder;
+        }
+
+        public static Holder generateWtx(ResourceConfiguration pConf) throws TTException {
+            final Holder holder = generateSession(pConf);
+            holder.mPageWTrx = holder.mSession.beginPageWriteTransaction();
+            holder.mPageRTrx = holder.mPageWTrx;
+            return holder;
+        }
+
+        public static Holder generateRtx(ResourceConfiguration pConf) throws TTException {
+            final Holder holder = generateSession(pConf);
+            holder.mPageRTrx =
+                holder.mSession.beginPageReadTransaction(holder.mSession.getMostRecentVersion());
             return holder;
         }
 
@@ -217,6 +239,12 @@ public final class CoreTestHelper {
         }
 
         public void close() throws TTException {
+            if (mPageRTrx != null && !mPageRTrx.isClosed()) {
+                mPageRTrx.close();
+            }
+            if (mPageWTrx != null && !mPageWTrx.isClosed()) {
+                mPageWTrx.close();
+            }
             mSession.close();
             mStorage.close();
         }

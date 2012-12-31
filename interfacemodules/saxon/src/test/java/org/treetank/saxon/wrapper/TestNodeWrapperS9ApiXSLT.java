@@ -54,20 +54,19 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
-import org.treetank.Holder;
-import org.treetank.NodeModuleFactory;
 import org.treetank.CoreTestHelper;
-import org.treetank.access.Storage;
+import org.treetank.NodeModuleFactory;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
-import org.treetank.access.conf.StorageConfiguration;
+import org.treetank.access.Storage;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
-import org.treetank.api.IStorage;
+import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
+import org.treetank.api.IStorage;
 import org.treetank.exception.TTException;
 import org.treetank.saxon.evaluator.XSLTEvaluator;
 import org.treetank.service.xml.shredder.EShredderInsert;
@@ -92,7 +91,7 @@ public final class TestNodeWrapperS9ApiXSLT {
     private static final File BOOKS = new File("src" + File.separator + "test" + File.separator + "resources"
         + File.separator + "data" + File.separator + "books.xml");
 
-    private Holder holder;
+    private CoreTestHelper.Holder holder;
 
     @Inject
     private IResourceConfigurationFactory mResourceConfig;
@@ -103,11 +102,14 @@ public final class TestNodeWrapperS9ApiXSLT {
         final StorageConfiguration dbConfig = new StorageConfiguration(CoreTestHelper.PATHS.PATH1.getFile());
         Storage.createStorage(dbConfig);
         final IStorage databaseBooks = Storage.openStorage(CoreTestHelper.PATHS.PATH1.getFile());
-        Properties props = StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(), CoreTestHelper.RESOURCENAME);
+        Properties props =
+            StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                CoreTestHelper.RESOURCENAME);
         ResourceConfiguration resConfig = mResourceConfig.create(props);
         databaseBooks.createResource(resConfig);
         final ISession session =
-            databaseBooks.getSession(new SessionConfiguration(CoreTestHelper.RESOURCENAME, StandardSettings.KEY));
+            databaseBooks.getSession(new SessionConfiguration(CoreTestHelper.RESOURCENAME,
+                StandardSettings.KEY));
         final INodeWriteTrx wtx =
             new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
         SaxonHelper.createDocumentRootNode(wtx);
@@ -117,7 +119,7 @@ public final class TestNodeWrapperS9ApiXSLT {
         wtx.close();
         session.close();
         databaseBooks.close();
-        holder = Holder.generateSession(resConfig);
+        holder = CoreTestHelper.Holder.generateSession(resConfig);
 
         saxonTransform(BOOKS, STYLESHEET);
 
