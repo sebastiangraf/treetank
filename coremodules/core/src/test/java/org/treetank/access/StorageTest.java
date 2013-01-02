@@ -83,6 +83,7 @@ public class StorageTest {
         assertNotNull(mStorage);
         IStorage storage = Storage.openStorage(CoreTestHelper.PATHS.PATH1.getFile());
         assertTrue(storage == mStorage);
+        mStorage.close();
     }
 
     @Test
