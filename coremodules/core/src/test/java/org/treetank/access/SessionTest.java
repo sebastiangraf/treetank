@@ -64,11 +64,7 @@ public class SessionTest {
      */
     @Test
     public void testSession() throws TTException {
-        SessionConfiguration sessionConfig = new SessionConfiguration(CoreTestHelper.RESOURCENAME, null);
-        ISession session = mHolder.getStorage().getSession(sessionConfig);
-        assertEquals(0, session.getMostRecentVersion());
-        ISession sameSession = mHolder.getStorage().getSession(sessionConfig);
-        assertTrue(session == sameSession);
+
     }
 
     /**
