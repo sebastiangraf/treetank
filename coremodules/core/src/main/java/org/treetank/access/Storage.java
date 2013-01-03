@@ -309,7 +309,7 @@ public final class Storage implements IStorage {
         final File resourceFile =
             new File(new File(mStorageConfig.mFile, StorageConfiguration.Paths.Data.getFile().getName()),
                 pSessionConf.getResource());
-        Session returnVal = mSessions.get(resourceFile.getAbsolutePath());
+        Session returnVal = mSessions.get(pSessionConf.getResource());
         if (returnVal == null) {
             checkState(resourceFile.exists(),
                 "Resource could not be opened (since it was not created?) at location %s", resourceFile);
@@ -322,7 +322,7 @@ public final class Storage implements IStorage {
             backendReader.close();
 
             returnVal = new Session(this, config, pSessionConf, page);
-            mSessions.put(resourceFile.getAbsolutePath(), returnVal);
+            mSessions.put(pSessionConf.getResource(), returnVal);
         }
         return returnVal;
     }
