@@ -77,7 +77,7 @@ public class SessionTest {
         try {
             mSession.beginPageReadTransaction(1);
             fail();
-        } catch (IllegalStateException exc) {
+        } catch (IllegalArgumentException exc) {
             // must be thrown
         }
     }
@@ -96,7 +96,7 @@ public class SessionTest {
         try {
             mSession.beginPageWriteTransaction(1);
             fail();
-        } catch (IllegalStateException exc) {
+        } catch (IllegalArgumentException exc) {
             // must be thrown
         }
 
@@ -142,8 +142,8 @@ public class SessionTest {
 
     @Test
     public void testGetConfig() {
-        assertEquals(mResource.mProperties.getProperty(ContructorProps.RESOURCE), mSession.getConfig().mProperties.getProperty(ContructorProps.RESOURCE));
+        assertEquals(mResource.mProperties.getProperty(ContructorProps.RESOURCE),
+            mSession.getConfig().mProperties.getProperty(ContructorProps.RESOURCE));
     }
-
 
 }

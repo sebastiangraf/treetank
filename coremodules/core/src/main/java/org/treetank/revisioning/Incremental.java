@@ -3,6 +3,8 @@
  */
 package org.treetank.revisioning;
 
+import static com.google.common.base.Objects.toStringHelper;
+
 import java.util.Properties;
 
 import org.treetank.access.conf.ContructorProps;
@@ -96,31 +98,8 @@ public class Incremental implements IRevisioning {
      * {@inheritDoc}
      */
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + mRevToRestore;
-        return result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(Object obj) {
-        return obj.hashCode() == this.hashCode();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Incremental [mRevToRestore=");
-        builder.append(mRevToRestore);
-        builder.append("]");
-        return builder.toString();
+        return toStringHelper(this).add("mRevToRestore", mRevToRestore).toString();
     }
 
 }
