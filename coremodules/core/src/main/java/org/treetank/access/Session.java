@@ -27,6 +27,8 @@
 
 package org.treetank.access;
 
+import static com.google.common.base.Objects.toStringHelper;
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.io.File;
@@ -66,11 +68,11 @@ public final class Session implements ISession {
     /** Strong reference to uber page before the begin of a write transaction. */
     private UberPage mLastCommittedUberPage;
 
-    /** Remember the write seperatly because of the concurrent writes. */
+    /** Remember the write separately because of the concurrent writes. */
     private final Set<IPageReadTrx> mPageTrxs;
 
     /** abstract factory for all interaction to the storage. */
-    private final IBackend mStorage;
+    private final IBackend mBackend;
 
     /** Determines if session was closed. */
     private transient boolean mClosed;
@@ -95,14 +97,14 @@ public final class Session implements ISession {
         mResourceConfig = pResourceConf;
         mSessionConfig = pSessionConf;
         mPageTrxs = new CopyOnWriteArraySet<IPageReadTrx>();
-        mStorage = pResourceConf.mStorage;
+        mBackend = pResourceConf.mBackend;
         mClosed = false;
         mLastCommittedUberPage = pPage;
     }
 
     public IPageReadTrx beginPageReadTransaction(final long pRevKey) throws TTException {
         assertAccess(pRevKey);
-        final PageReadTrx trx = new PageReadTrx(this, mLastCommittedUberPage, pRevKey, mStorage.getReader());
+        final PageReadTrx trx = new PageReadTrx(this, mLastCommittedUberPage, pRevKey, mBackend.getReader());
         mPageTrxs.add(trx);
         return trx;
     }
@@ -113,8 +115,8 @@ public final class Session implements ISession {
     }
 
     public IPageWriteTrx beginPageWriteTransaction(final long mRepresentRevision) throws TTException {
-        final IBackendWriter backendWriter = mStorage.getWriter();
-
+        assertAccess(mRepresentRevision);
+        final IBackendWriter backendWriter = mBackend.getWriter();
         final IPageWriteTrx trx =
             new PageWriteTrx(this, mLastCommittedUberPage, backendWriter, mRepresentRevision);
         mPageTrxs.add(trx);
@@ -125,60 +127,50 @@ public final class Session implements ISession {
     /**
      * {@inheritDoc}
      */
-    public synchronized void close() throws TTException {
+    public synchronized boolean close() throws TTException {
         if (!mClosed) {
             // Forcibly close all open transactions.
             for (final IPageReadTrx rtx : mPageTrxs) {
-                rtx.close();
+                if (!rtx.close()) {
+                    return false;
+                }
             }
 
             // Immediately release all resources.
             mLastCommittedUberPage = null;
             mPageTrxs.clear();
-
-            mStorage.close();
-            mDatabase.removeSession(mSessionConfig.getResource());
+            mBackend.close();
+            mDatabase.mSessions.remove(mSessionConfig.getResource());
             mClosed = true;
+            return true;
+        } else {
+            return false;
         }
     }
 
     /**
      * {@inheritDoc}
      */
-    public void assertAccess(final long pRevision) {
-        checkState(!mClosed, "Session is already closed.");
-        checkState(pRevision <= mLastCommittedUberPage.getRevisionNumber(),
-            "Revision must not be bigger than %s", mLastCommittedUberPage.getRevisionNumber());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void truncate() throws TTException {
+    public boolean truncate() throws TTException {
         checkState(mClosed, "Session must be closed before truncated.");
-        mStorage.truncate();
-        IOUtils.recursiveDelete(new File(new File(mDatabase.getLocation(), StorageConfiguration.Paths.Data
-            .getFile().getName()), mSessionConfig.getResource()));
+        if (mBackend.truncate()) {
+            return IOUtils.recursiveDelete(new File(new File(mDatabase.getLocation(),
+                StorageConfiguration.Paths.Data.getFile().getName()), mSessionConfig.getResource()));
+        } else {
+            return false;
+        }
     }
 
     /**
-     * {@inheritDoc}
+     * Asserting access on this session with the denoted revision number
+     * 
+     * @param pRevision
+     *            the revision to be validated
      */
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Session [mResourceConfig=");
-        builder.append(mResourceConfig);
-        builder.append(", mSessionConfig=");
-        builder.append(mSessionConfig);
-        builder.append(", mLastCommittedUberPage=");
-        builder.append(mLastCommittedUberPage);
-        builder.append(", mPageTrxs=");
-        builder.append(mPageTrxs);
-        builder.append(", mFac=");
-        builder.append(mStorage);
-        builder.append("]");
-        return builder.toString();
+    private void assertAccess(final long pRevision) {
+        checkState(!mClosed, "Session is already closed.");
+        checkArgument(pRevision <= mLastCommittedUberPage.getRevisionNumber(),
+            "Revision must not be bigger than %s", mLastCommittedUberPage.getRevisionNumber());
     }
 
     protected void setLastCommittedUberPage(final UberPage paramPage) {
@@ -205,7 +197,16 @@ public final class Session implements ISession {
      * {@inheritDoc}
      */
     @Override
-    public void deregisterPageTrx(IPageReadTrx pTrx) {
-        mPageTrxs.remove(pTrx);
+    public boolean deregisterPageTrx(IPageReadTrx pTrx) {
+        return mPageTrxs.remove(pTrx);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return toStringHelper(this).add("mResourceConfig", mResourceConfig).add("mSessionConfig", mSessionConfig).add("mLastCommittedUberPage",
+            mLastCommittedUberPage).add("mLastCommittedUberPage", mPageTrxs).add("mBackend", mBackend).toString();
     }
 }

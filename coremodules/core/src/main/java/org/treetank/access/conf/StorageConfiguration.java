@@ -27,11 +27,14 @@
 
 package org.treetank.access.conf;
 
+import static com.google.common.base.Objects.toStringHelper;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Objects;
 
 import org.treetank.exception.TTIOException;
 
@@ -138,11 +141,7 @@ public final class StorageConfiguration {
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("StorageConfiguration [mFile=");
-        builder.append(mFile);
-        builder.append("]");
-        return builder.toString();
+        return toStringHelper(this).add("mFile", mFile).toString();
     }
 
     /**
@@ -158,10 +157,7 @@ public final class StorageConfiguration {
      */
     @Override
     public int hashCode() {
-        final int prime = 72277;
-        int result = 13;
-        result = prime * result + mFile.hashCode();
-        return result;
+        return Objects.hash(mFile);
     }
 
     /**

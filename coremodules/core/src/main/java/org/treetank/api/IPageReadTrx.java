@@ -60,10 +60,11 @@ public interface IPageReadTrx {
     /**
      * Close the transaction.
      * 
+     * @return true if successful, false otherwise
      * @throws TTIOException
      *             if anything weird happens
      */
-    void close() throws TTIOException;
+    boolean close() throws TTIOException;
 
     /**
      * Check if transaction is closed.

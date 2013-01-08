@@ -178,7 +178,7 @@ public final class CoreTestHelper {
     public static NodePage getNodePage(final int offset, final int length, final long nodePageKey) {
         final NodePage page = new NodePage(nodePageKey);
         for (int i = offset; i < length; i++) {
-            page.setNode(i, new DumbNode(random.nextLong(), random.nextLong()));
+            page.setNode(i, generateOne());
         }
         return page;
     }

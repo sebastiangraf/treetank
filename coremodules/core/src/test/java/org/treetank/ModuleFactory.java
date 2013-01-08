@@ -15,7 +15,6 @@ import org.treetank.io.bytepipe.ByteHandlerPipeline;
 import org.treetank.io.bytepipe.Encryptor;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.io.bytepipe.Zipper;
-import org.treetank.io.file.FileStorage;
 import org.treetank.io.jclouds.JCloudsStorage;
 import org.treetank.page.DumbNodeFactory;
 import org.treetank.revisioning.Differential;
@@ -128,48 +127,7 @@ public class ModuleFactory implements IModuleFactory {
                 }
             };
             break;
-        case "FileZipper":
-            returnVal = new AbstractModule() {
 
-                @Override
-                protected void configure() {
-                    install(new FactoryModuleBuilder().implement(IRevisioning.class, Differential.class)
-                        .build(IRevisioningFactory.class));
-
-                    bind(INodeFactory.class).to(DumbNodeFactory.class);
-                    bind(IByteHandlerPipeline.class).toInstance(new ByteHandlerPipeline(new Zipper()));
-
-                    install(new FactoryModuleBuilder().implement(IBackend.class, FileStorage.class).build(
-                        IBackendFactory.class));
-
-                    install(new FactoryModuleBuilder().build(IResourceConfigurationFactory.class));
-
-                    bind(Key.class).toInstance(StandardSettings.KEY);
-                    install(new FactoryModuleBuilder().build(ISessionConfigurationFactory.class));
-                }
-            };
-            break;
-        case "FileEnryptor":
-            returnVal = new AbstractModule() {
-
-                @Override
-                protected void configure() {
-                    install(new FactoryModuleBuilder().implement(IRevisioning.class, Differential.class)
-                        .build(IRevisioningFactory.class));
-
-                    bind(INodeFactory.class).to(DumbNodeFactory.class);
-                    bind(IByteHandlerPipeline.class).toInstance(new ByteHandlerPipeline(new Encryptor()));
-
-                    install(new FactoryModuleBuilder().implement(IBackend.class, FileStorage.class).build(
-                        IBackendFactory.class));
-
-                    install(new FactoryModuleBuilder().build(IResourceConfigurationFactory.class));
-
-                    bind(Key.class).toInstance(StandardSettings.KEY);
-                    install(new FactoryModuleBuilder().build(ISessionConfigurationFactory.class));
-                }
-            };
-            break;
         default:
             returnVal = new StandardSettings();
             break;
