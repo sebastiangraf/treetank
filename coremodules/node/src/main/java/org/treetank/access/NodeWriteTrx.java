@@ -450,7 +450,6 @@ public class NodeWriteTrx implements INodeWriteTrx {
     public void revertTo(final long pRevision) throws TTException {
         checkArgument(pRevision >= 0, "Parameter must be >= 0, but was %s", pRevision);
         mDelegate.assertNotClosed();
-        mSession.assertAccess(pRevision);
         getPageTransaction().close();
         // Reset internal transaction state to new uber page.
         mDelegate.setPageTransaction(mSession.beginPageWriteTransaction(pRevision));

@@ -32,6 +32,7 @@ import static com.google.common.base.Preconditions.checkState;
 import java.io.File;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
@@ -66,8 +67,11 @@ public final class Session implements ISession {
     /** Strong reference to uber page before the begin of a write transaction. */
     private UberPage mLastCommittedUberPage;
 
-    /** Remember the write seperatly because of the concurrent writes. */
+    /** Remember the write separately because of the concurrent writes. */
     private final Set<IPageReadTrx> mPageTrxs;
+
+    /** Remember write references only once. */
+    private final AtomicReference<IPageWriteTrx> mPageWtx;
 
     /** abstract factory for all interaction to the storage. */
     private final IBackend mStorage;
@@ -95,6 +99,7 @@ public final class Session implements ISession {
         mResourceConfig = pResourceConf;
         mSessionConfig = pSessionConf;
         mPageTrxs = new CopyOnWriteArraySet<IPageReadTrx>();
+        mPageWtx = new AtomicReference<IPageWriteTrx>();
         mStorage = pResourceConf.mStorage;
         mClosed = false;
         mLastCommittedUberPage = pPage;
@@ -113,8 +118,8 @@ public final class Session implements ISession {
     }
 
     public IPageWriteTrx beginPageWriteTransaction(final long mRepresentRevision) throws TTException {
+        assertAccess(mRepresentRevision);
         final IBackendWriter backendWriter = mStorage.getWriter();
-
         final IPageWriteTrx trx =
             new PageWriteTrx(this, mLastCommittedUberPage, backendWriter, mRepresentRevision);
         mPageTrxs.add(trx);
@@ -148,15 +153,6 @@ public final class Session implements ISession {
     /**
      * {@inheritDoc}
      */
-    public void assertAccess(final long pRevision) {
-        checkState(!mClosed, "Session is already closed.");
-        checkState(pRevision <= mLastCommittedUberPage.getRevisionNumber(),
-            "Revision must not be bigger than %s", mLastCommittedUberPage.getRevisionNumber());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public boolean truncate() throws TTException {
         checkState(mClosed, "Session must be closed before truncated.");
         mStorage.truncate();
@@ -183,6 +179,18 @@ public final class Session implements ISession {
         builder.append(mStorage);
         builder.append("]");
         return builder.toString();
+    }
+
+    /**
+     * Asserting access on this session with the denoted revision number
+     * 
+     * @param pRevision
+     *            the revision to be validated
+     */
+    private void assertAccess(final long pRevision) {
+        checkState(!mClosed, "Session is already closed.");
+        checkState(pRevision <= mLastCommittedUberPage.getRevisionNumber(),
+            "Revision must not be bigger than %s", mLastCommittedUberPage.getRevisionNumber());
     }
 
     protected void setLastCommittedUberPage(final UberPage paramPage) {

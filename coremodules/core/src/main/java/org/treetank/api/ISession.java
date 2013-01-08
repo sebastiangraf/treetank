@@ -59,14 +59,6 @@ public interface ISession {
     void deregisterPageTrx(final IPageReadTrx pTrx);
 
     /**
-     * Checks for valid revision.
-     * 
-     * @param pRevision
-     *            revision parameter to check
-     */
-    void assertAccess(final long pRevision);
-
-    /**
      * Getting the resource configuration
      * 
      * @return the config of the resource
