@@ -27,6 +27,7 @@
 
 package org.treetank.access;
 
+import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.io.File;
@@ -74,7 +75,7 @@ public final class Storage implements IStorage {
     private static final ConcurrentMap<File, Storage> STORAGEMAP = new ConcurrentHashMap<File, Storage>();
 
     /** Central repository of all running sessions. */
-    private final Map<String, Session> mSessions;
+    protected final Map<String, Session> mSessions;
 
     /** StorageConfiguration with fixed settings. */
     private final StorageConfiguration mStorageConfig;
@@ -249,16 +250,21 @@ public final class Storage implements IStorage {
      * 
      */
     @Override
-    public synchronized void truncateResource(final SessionConfiguration pResConf) throws TTException {
-        final File resourceFile =
-            new File(new File(mStorageConfig.mFile, StorageConfiguration.Paths.Data.getFile().getName()),
-                pResConf.getResource());
+    public synchronized boolean truncateResource(final SessionConfiguration pSesConf) throws TTException {
         // check that database must be closed beforehand
-        if (!mSessions.containsKey(resourceFile) && existsResource(pResConf.getResource())) {
-            ISession session = getSession(pResConf);
-            session.close();
-            session.truncate();
+        checkState(!mSessions.containsKey(pSesConf.getResource()),
+            "Please close all session before truncating!");
+        if (existsResource(pSesConf.getResource())) {
+            ISession session = getSession(pSesConf);
+            if (session.close() && session.truncate()) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
         }
+
     }
 
     // //////////////////////////////////////////////////////////
@@ -317,7 +323,7 @@ public final class Storage implements IStorage {
                 ResourceConfiguration.deserialize(mStorageConfig.mFile, pSessionConf.getResource());
 
             // reading first reference and instantiate this.
-            final IBackendReader backendReader = config.mStorage.getReader();
+            final IBackendReader backendReader = config.mBackend.getReader();
             UberPage page = backendReader.readUber();
             backendReader.close();
 
@@ -331,42 +337,18 @@ public final class Storage implements IStorage {
      * {@inheritDoc}
      */
     @Override
-    public synchronized void close() throws TTException {
+    public synchronized boolean close() throws TTException {
         for (final ISession session : mSessions.values()) {
             session.close();
         }
-        STORAGEMAP.remove(mStorageConfig.mFile);
+        return STORAGEMAP.remove(mStorageConfig.mFile) != null;
     }
 
     // //////////////////////////////////////////////////////////
     // End DB-Operations//////////////////////////////////
     // /////////////////////////////////////////////////////////
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Storage [mSessions=");
-        builder.append(mSessions);
-        builder.append(", mStorageConfig=");
-        builder.append(mStorageConfig);
-        builder.append("]");
-        return builder.toString();
-    }
 
-    /**
-     * Closing a resource. This callback is necessary due to centralized
-     * handling of all sessions within a database.
-     * 
-     * @param pResourceName
-     *            to be closed
-     * @return true if close successful, false otherwise
-     */
-    protected boolean removeSession(final String pResourceName) {
-        return mSessions.remove(pResourceName) != null ? true : false;
-    }
 
     /**
      * {@inheritDoc}
@@ -468,7 +450,7 @@ public final class Storage implements IStorage {
         key = new LogKey(false, IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length, 0);
         mLog.put(key, new NodePageContainer(ndp, ndp));
 
-        IBackend storage = pResourceConf.mStorage;
+        IBackend storage = pResourceConf.mBackend;
         IBackendWriter writer = storage.getWriter();
 
         writer.writeUberPage(uberPage);
@@ -480,6 +462,14 @@ public final class Storage implements IStorage {
         }
         writer.close();
 
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return toStringHelper(this).add("mSessions", mSessions).add("mStorageConfig", mStorageConfig).toString();
     }
 
 }

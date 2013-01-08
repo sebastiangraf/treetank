@@ -34,6 +34,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 
 import org.treetank.access.Session;
@@ -47,6 +48,7 @@ import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.revisioning.IRevisioning;
 import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
 
+import static com.google.common.base.Objects.toStringHelper;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import com.google.inject.Inject;
@@ -137,7 +139,7 @@ public final class ResourceConfiguration {
 
     // MEMBERS FOR FIXED FIELDS
     /** Type of Storage (File, Berkeley). */
-    public final IBackend mStorage;
+    public final IBackend mBackend;
 
     /** Kind of revisioning (Incremental, Differential). */
     public final IRevisioning mRevision;
@@ -176,7 +178,7 @@ public final class ResourceConfiguration {
     private ResourceConfiguration(Properties pProperties, IBackend pStorage, IRevisioning pRevisioning,
         INodeFactory pNodeFac) {
         mProperties = pProperties;
-        mStorage = pStorage;
+        mBackend = pStorage;
         mRevision = pRevisioning;
         mNodeFac = pNodeFac;
     }
@@ -222,7 +224,7 @@ public final class ResourceConfiguration {
             // caring about the NodeFactory
             jsonWriter.name(JSONNAMES[1]).value(pConfig.mNodeFac.getClass().getName());
             // caring about the ByteHandlers
-            IByteHandlerPipeline byteHandler = pConfig.mStorage.getByteHandler();
+            IByteHandlerPipeline byteHandler = pConfig.mBackend.getByteHandler();
             jsonWriter.name(JSONNAMES[2]);
             jsonWriter.beginArray();
             for (IByteHandler handler : byteHandler) {
@@ -230,7 +232,7 @@ public final class ResourceConfiguration {
             }
             jsonWriter.endArray();
             // caring about the storage
-            jsonWriter.name(JSONNAMES[3]).value(pConfig.mStorage.getClass().getName());
+            jsonWriter.name(JSONNAMES[3]).value(pConfig.mBackend.getClass().getName());
             jsonWriter.name(JSONNAMES[4]);
             jsonWriter.beginObject();
             for (String key : pConfig.mProperties.stringPropertyNames()) {
@@ -310,8 +312,8 @@ public final class ResourceConfiguration {
 
             return new ResourceConfiguration(props, backend, revObject, nodeFactory);
 
-        } catch (IOException | ClassNotFoundException  | InstantiationException
-        | IllegalAccessException | InvocationTargetException exc) {
+        } catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException
+        | InvocationTargetException exc) {
             throw new TTIOException(exc);
         }
     }
@@ -321,13 +323,7 @@ public final class ResourceConfiguration {
      */
     @Override
     public int hashCode() {
-        final int prime = 90599;
-        int result = 13;
-        result = prime * result + mStorage.hashCode();
-        result = prime * result + mRevision.hashCode();
-        result = prime * result + mProperties.hashCode();
-        result = prime * result + mNodeFac.hashCode();
-        return result;
+        return Objects.hash(mBackend, mRevision, mProperties, mNodeFac);
     }
 
     /**
@@ -343,16 +339,7 @@ public final class ResourceConfiguration {
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("ResourceConfiguration [mStorage=");
-        builder.append(mStorage);
-        builder.append(", mRevision=");
-        builder.append(mRevision);
-        builder.append(", mProperties=");
-        builder.append(mProperties);
-        builder.append(", mNodeFac=");
-        builder.append(mNodeFac);
-        builder.append("]");
-        return builder.toString();
+        return toStringHelper(this).add("mBackend", mBackend).add("mRevision", mRevision).add("mProperties",
+            mProperties).add("mNodeFac", mNodeFac).toString();
     }
 }

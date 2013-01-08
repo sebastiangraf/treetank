@@ -112,8 +112,13 @@ public class JCloudsStorage implements IBackend {
     }
 
     @Override
-    public void truncate() throws TTException {
-        mBlobStore.deleteContainer(mProperties.getProperty(ContructorProps.RESOURCE));
+    public boolean truncate() throws TTException {
+        boolean returnVal = false;
+        if (mBlobStore.containerExists(mProperties.getProperty(ContructorProps.RESOURCE))) {
+            mBlobStore.deleteContainer(mProperties.getProperty(ContructorProps.RESOURCE));
+            returnVal = true;
+        }
+        return returnVal;
     }
 
     /**

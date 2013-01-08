@@ -99,7 +99,7 @@ public final class XSLTEvaluator implements Callable<OutputStream> {
      * Constructor.
      * 
      * @param paramSession
-     *            Treetank mStorage.
+     *            Treetank mBackend.
      * @param paramStyle
      *            Path to stylesheet.
      * @param paramOut

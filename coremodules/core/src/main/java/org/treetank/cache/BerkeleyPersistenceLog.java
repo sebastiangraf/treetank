@@ -201,7 +201,7 @@ public final class BerkeleyPersistenceLog implements ICachedLog {
         StringBuilder builder = new StringBuilder();
         builder.append("BerkeleyPersistenceLog [mPlace=");
         builder.append(mPlace);
-        builder.append(", mStorage=");
+        builder.append(", mBackend=");
         builder.append(mDatabase);
         builder.append(", mEnv=");
         builder.append(mEnv);

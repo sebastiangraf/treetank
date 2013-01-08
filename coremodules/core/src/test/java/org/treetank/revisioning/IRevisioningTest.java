@@ -60,9 +60,12 @@ public class IRevisioningTest {
     public void testCompletePages(Class<IRevisioning> pRevisioningClass, IRevisioning[] pRevisioning,
         Class<IRevisionChecker> pRevisionCheckerClass, IRevisionChecker[] pRevisionChecker) {
         for (final IRevisioning handler : pRevisioning) {
-            final NodePage[] pages = new NodePage[2];
-            pages[0] = getNodePage(1, 0, 128);
-            pages[1] = getNodePage(0, 0, 128);
+            final NodePage[] pages = new NodePage[5];
+            pages[0] = getNodePage(0, 128, 0);
+            pages[1] = getNodePage(0, 128, 0);
+            pages[2] = getNodePage(0, 128, 0);
+            pages[3] = getNodePage(0, 128, 0);
+            pages[4] = getNodePage(0, 128, 0);
 
             final NodePage page = handler.combinePages(pages);
 
@@ -96,11 +99,18 @@ public class IRevisioningTest {
 
         for (int i = 0; i < pRevisioning.length; i++) {
             // initialize pages with suitable offsets related to the last version...
-            NodePage[] pages = prepareNormal(4);
+            final NodePage[] pages = new NodePage[5];
+            // filling one entire page with revision 0 and key 0
+            pages[pages.length - 1] = getNodePage(0, 128, 0);
+            for (int j = 0; j < pages.length - 1; j++) {
+                // filling nodepages from end to start with 32 elements each slot
+                pages[j] = getNodePage(j * 32, (j * 32) + 32, pages.length - j - 1);
+            }
+
             // ..and recombine them...
             final NodePage page = pRevisioning[i].combinePages(pages);
             // ...and check them suitable to the versioning approach
-            pRevisionChecker[i].checkRevisions(page, pages);
+//            pRevisionChecker[i].checkRevisions(page, pages);
         }
     }
 
@@ -166,17 +176,6 @@ public class IRevisioningTest {
             }
         };
         return returnVal;
-    }
-
-    private static NodePage[] prepareNormal(final int length) {
-        final NodePage[] pages = new NodePage[length];
-        // filling one entire page with revision 0 and key 0
-        pages[pages.length - 1] = getNodePage(0, 0, 128);
-        for (int i = 0; i < pages.length - 1; i++) {
-            // filling nodepages from end to start with 32 elements each slot
-            pages[i] = getNodePage(pages.length - i - 1, i * 32, (i * 32) + 32);
-        }
-        return pages;
     }
 
     /**

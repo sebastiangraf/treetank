@@ -3,6 +3,8 @@
  */
 package org.treetank.revisioning;
 
+import static com.google.common.base.Objects.toStringHelper;
+
 import java.util.Properties;
 
 import org.treetank.cache.NodePageContainer;
@@ -77,9 +79,7 @@ public class FullDump implements IRevisioning {
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("FullDump []");
-        return builder.toString();
+        return toStringHelper(this).toString();
     }
 
 }

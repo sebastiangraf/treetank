@@ -100,7 +100,7 @@ public interface IStorage {
      * @throws TTException
      *             if anything weird happens
      */
-    void truncateResource(final SessionConfiguration pResConf) throws TTException;
+    boolean truncateResource(final SessionConfiguration pResConf) throws TTException;
 
     /**
      * Is the resource within this database existing?
@@ -128,9 +128,10 @@ public interface IStorage {
     /**
      * Closing the database for further access.
      * 
+     * @return true if successful, false otherwise
      * @throws TTException
      *             if anything happens within treetank.
      */
-    void close() throws TTException;
+    boolean close() throws TTException;
 
 }

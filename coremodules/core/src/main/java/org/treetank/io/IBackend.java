@@ -31,21 +31,17 @@ import java.util.Properties;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
-import org.treetank.io.file.FileStorage;
-
-import com.google.inject.ImplementedBy;
 
 /**
  * Interface to generate access to the underlaying storage. The underlaying
  * storage is flexible as long as {@link IBackendReader} and {@link IBackendWriter} -implementations are
  * provided. Utility
  * methods for common interaction with
- * the storage are provided via the <code>EStorage</code>-enum.
+ * the storage are provided via the <code>IOUtils</code>-class.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-@ImplementedBy(FileStorage.class)
 public interface IBackend {
 
     /**
@@ -84,10 +80,11 @@ public interface IBackend {
     /**
      * Truncating a storage.
      * 
+     * @return true if successful, false otherwise
      * @throws TTException
      *             if anything weird happens
      */
-    void truncate() throws TTException;
+    boolean truncate() throws TTException;
 
     /**
      * 

@@ -203,10 +203,10 @@ public final class BerkeleyStorage implements IBackend {
      * {@inheritDoc}
      */
     @Override
-    public synchronized void truncate() throws TTException {
+    public synchronized boolean truncate() throws TTException {
         setUpIfNecessary();
         // mEnv.removeDatabase(null, NAME);
-        IOUtils.recursiveDelete(mFile);
+        return IOUtils.recursiveDelete(mFile);
     }
 
     /**
