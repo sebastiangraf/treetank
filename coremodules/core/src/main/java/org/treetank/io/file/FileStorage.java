@@ -149,9 +149,9 @@ public final class FileStorage implements IBackend {
      * {@inheritDoc}
      */
     @Override
-    public void truncate() throws TTException {
+    public boolean truncate() throws TTException {
         checkState(!mClosed, "Storage opened, close first");
-        IOUtils.recursiveDelete(mFile);
+        return IOUtils.recursiveDelete(mFile);
     }
 
 }

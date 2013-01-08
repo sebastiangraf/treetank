@@ -116,18 +116,20 @@ public interface ISession {
      * This is an idempotent operation and does nothing if the session is
      * already closed.
      * 
+     * @return true if successful, false otherwise
      * @throws TTException
      *             If can't close session.
      */
-    void close() throws TTException;
+    boolean close() throws TTException;
 
     /**
      * Truncating the resource where this {@link ISession} is bound to. Note that the session must be closed
      * first.
      * 
+     * @return true if successful, false otherwise
      * @throws TTException
      *             if anything weird happens.
      */
-    void truncate() throws TTException;
+    boolean truncate() throws TTException;
 
 }

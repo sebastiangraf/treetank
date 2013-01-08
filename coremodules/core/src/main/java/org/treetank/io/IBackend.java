@@ -84,10 +84,11 @@ public interface IBackend {
     /**
      * Truncating a storage.
      * 
+     * @return true if successful, false otherwise
      * @throws TTException
      *             if anything weird happens
      */
-    void truncate() throws TTException;
+    boolean truncate() throws TTException;
 
     /**
      * 

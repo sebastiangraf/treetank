@@ -74,7 +74,7 @@ public final class Storage implements IStorage {
     private static final ConcurrentMap<File, Storage> STORAGEMAP = new ConcurrentHashMap<File, Storage>();
 
     /** Central repository of all running sessions. */
-    private final Map<String, Session> mSessions;
+    protected final Map<String, Session> mSessions;
 
     /** StorageConfiguration with fixed settings. */
     private final StorageConfiguration mStorageConfig;
@@ -249,16 +249,21 @@ public final class Storage implements IStorage {
      * 
      */
     @Override
-    public synchronized void truncateResource(final SessionConfiguration pResConf) throws TTException {
-        final File resourceFile =
-            new File(new File(mStorageConfig.mFile, StorageConfiguration.Paths.Data.getFile().getName()),
-                pResConf.getResource());
+    public synchronized boolean truncateResource(final SessionConfiguration pSesConf) throws TTException {
         // check that database must be closed beforehand
-        if (!mSessions.containsKey(resourceFile) && existsResource(pResConf.getResource())) {
-            ISession session = getSession(pResConf);
-            session.close();
-            session.truncate();
+        checkState(!mSessions.containsKey(pSesConf.getResource()),
+            "Please close all session before truncating!");
+        if (existsResource(pSesConf.getResource())) {
+            ISession session = getSession(pSesConf);
+            if (session.close() && session.truncate()) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
         }
+
     }
 
     // //////////////////////////////////////////////////////////
@@ -331,11 +336,11 @@ public final class Storage implements IStorage {
      * {@inheritDoc}
      */
     @Override
-    public synchronized void close() throws TTException {
+    public synchronized boolean close() throws TTException {
         for (final ISession session : mSessions.values()) {
             session.close();
         }
-        STORAGEMAP.remove(mStorageConfig.mFile);
+        return STORAGEMAP.remove(mStorageConfig.mFile) != null;
     }
 
     // //////////////////////////////////////////////////////////
@@ -354,18 +359,6 @@ public final class Storage implements IStorage {
         builder.append(mStorageConfig);
         builder.append("]");
         return builder.toString();
-    }
-
-    /**
-     * Closing a resource. This callback is necessary due to centralized
-     * handling of all sessions within a database.
-     * 
-     * @param pResourceName
-     *            to be closed
-     * @return true if close successful, false otherwise
-     */
-    protected boolean removeSession(final String pResourceName) {
-        return mSessions.remove(pResourceName) != null ? true : false;
     }
 
     /**
