@@ -93,7 +93,7 @@ public final class BerkeleyWriter implements IBackendWriter {
         mReader.mPageBinding.objectToEntry(page, valueEntry);
         TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(page.getPageKey(), keyEntry);
 
-        // final OperationStatus status = mStorage.put(mTxn, keyEntry, valueEntry);
+        // final OperationStatus status = mBackend.put(mTxn, keyEntry, valueEntry);
         final OperationStatus status = mDatabase.put(null, keyEntry, valueEntry);
         if (status != OperationStatus.SUCCESS) {
             throw new TTIOException(new StringBuilder("Write of ").append(page.toString()).append(" failed!")
@@ -140,7 +140,7 @@ public final class BerkeleyWriter implements IBackendWriter {
         TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(pageKey, valueEntry);
 
         try {
-            // mStorage.put(mTxn, keyEntry, valueEntry);
+            // mBackend.put(mTxn, keyEntry, valueEntry);
             mDatabase.put(null, keyEntry, valueEntry);
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);

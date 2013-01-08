@@ -108,7 +108,7 @@ public final class BerkeleyReader implements IBackendReader {
         TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(-1l, keyEntry);
 
         try {
-            // final OperationStatus status = mStorage.get(mTxn, keyEntry, valueEntry, LockMode.DEFAULT);
+            // final OperationStatus status = mBackend.get(mTxn, keyEntry, valueEntry, LockMode.DEFAULT);
             final OperationStatus status = mDatabase.get(null, keyEntry, valueEntry, LockMode.DEFAULT);
             long key = 0;
             if (status == OperationStatus.SUCCESS) {

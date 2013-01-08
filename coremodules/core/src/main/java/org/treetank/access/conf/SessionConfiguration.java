@@ -28,6 +28,7 @@
 package org.treetank.access.conf;
 
 import java.security.Key;
+import java.util.Objects;
 
 import org.treetank.access.Storage;
 import org.treetank.access.Session;
@@ -35,6 +36,7 @@ import org.treetank.access.Session;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.assistedinject.Assisted;
+import static com.google.common.base.Objects.toStringHelper;
 
 /**
  * <h1>SessionConfiguration</h1>
@@ -42,8 +44,7 @@ import com.google.inject.assistedinject.Assisted;
  * <p>
  * Holds the {@link Session}-wide settings that can not change within the runtime of a {@link Session}. This
  * included stuff like commit-threshold and number of usable write/read transactions. Each
- * {@link SessionConfiguration} is only bound through the location to a {@link Storage} and related
- * resources.
+ * {@link SessionConfiguration} is only bound through the location to a {@link Storage} and related resources.
  * </p>
  */
 @Singleton
@@ -87,11 +88,7 @@ public final class SessionConfiguration {
      */
     @Override
     public int hashCode() {
-        final int prime = 90599;
-        int result = 13;
-        result = prime * result + mResource.hashCode();
-        result = prime * result + mKey.hashCode();
-        return result;
+        return Objects.hash(mResource, mKey);
     }
 
     /**
@@ -107,13 +104,7 @@ public final class SessionConfiguration {
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("SessionConfiguration [mResource=");
-        builder.append(mResource);
-        builder.append(", mKey=");
-        builder.append(mKey);
-        builder.append("]");
-        return builder.toString();
+        return toStringHelper(this).add("mResource", mResource).add("mKey", mKey).toString();
     }
 
     /**

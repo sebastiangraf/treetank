@@ -27,6 +27,7 @@
 
 package org.treetank.access;
 
+import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.treetank.access.PageReadTrx.nodePageKey;
@@ -324,11 +325,17 @@ public final class PageWriteTrx implements IPageWriteTrx {
      * @throws TTIOException
      *             if something weird happened in the storage
      */
-    public void close() throws TTIOException {
-        mDelegate.mSession.deregisterPageTrx(this);
-        mDelegate.close();
-        mLog.clear();
-        // mPageWriter.close();
+    public boolean close() throws TTIOException {
+        if (!mDelegate.isClosed()) {
+            mDelegate.close();
+            mLog.clear();
+            mDelegate.mSession.deregisterPageTrx(this);
+            // mPageWriter.close();
+            return true;
+        } else {
+            return false;
+        }
+
     }
 
     public long getMaxNodeKey() {
@@ -491,17 +498,8 @@ public final class PageWriteTrx implements IPageWriteTrx {
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("PageWriteTrx [mPageWriter=");
-        builder.append(mPageWriter);
-        builder.append(", mLog=");
-        builder.append(mLog);
-        builder.append(", mNewRoot=");
-        builder.append(mNewRoot);
-        builder.append(", mDelegate=");
-        builder.append(mDelegate);
-        builder.append("]");
-        return builder.toString();
+        return toStringHelper(this).add("mPageWriter", mPageWriter).add("mLog", mLog).add("mRootPage",
+            mNewRoot).add("mDelegate", mDelegate).toString();
     }
 
 }

@@ -27,6 +27,7 @@
 
 package org.treetank.access;
 
+import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.ArrayList;
@@ -173,12 +174,18 @@ public class PageReadTrx implements IPageReadTrx {
      * @throws TTIOException
      *             if the closing to the persistent storage fails.
      */
-    public void close() throws TTIOException {
-        mSession.deregisterPageTrx(this);
-        mPageReader.close();
-        mNodePageCache.invalidateAll();
-        mRevisionRootCache.invalidateAll();
-        mClose = true;
+    public boolean close() throws TTIOException {
+        if (!mClose) {
+            mSession.deregisterPageTrx(this);
+            mPageReader.close();
+            mNodePageCache.invalidateAll();
+            mRevisionRootCache.invalidateAll();
+            mClose = true;
+            return true;
+        } else {
+            return false;
+        }
+
     }
 
     /**
@@ -191,26 +198,6 @@ public class PageReadTrx implements IPageReadTrx {
      */
     public RevisionRootPage getActualRevisionRootPage() throws TTIOException {
         return mRootPage;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("PageReadTrx [mPageReader=");
-        builder.append(mPageReader);
-        builder.append(", mUberPage=");
-        builder.append(mUberPage);
-        builder.append(", mRootPage=");
-        builder.append(mRootPage);
-        // builder.append(", mCache=");
-        // builder.append(mNodePageCache);
-        builder.append(", mClose=");
-        builder.append(mClose);
-        builder.append("]");
-        return builder.toString();
     }
 
     /**
@@ -349,4 +336,12 @@ public class PageReadTrx implements IPageReadTrx {
         return (int)nodePageOffset;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return toStringHelper(this).add("mPageReader", mPageReader).add("mPageReader", mUberPage).add(
+            "mRootPage", mRootPage).add("mClose", mClose).toString();
+    }
 }

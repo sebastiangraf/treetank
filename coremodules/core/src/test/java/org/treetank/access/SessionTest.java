@@ -42,13 +42,15 @@ public class SessionTest {
 
     private ISession mSession;
 
+    private ResourceConfiguration mResource;
+
     @BeforeMethod
     public void setUp() throws Exception {
         CoreTestHelper.deleteEverything();
         Properties props =
             StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
                 CoreTestHelper.RESOURCENAME);
-        ResourceConfiguration mResource = mResourceConfig.create(props);
+        mResource = mResourceConfig.create(props);
         mSession = CoreTestHelper.Holder.generateSession(mResource).getSession();
     }
 
@@ -72,7 +74,6 @@ public class SessionTest {
         assertNotSame(pRtx1, pRtx2);
         // beginning transaction with invalid revision number
         try {
-            // try to truncate the resource
             mSession.beginPageReadTransaction(1);
             fail();
         } catch (IllegalStateException exc) {
@@ -82,50 +83,66 @@ public class SessionTest {
 
     @Test
     public void testBeginPageWriteTransaction() throws TTException {
-        // generate first valid read transaction
+        // generate first valid write transaction
         final IPageWriteTrx pWtx1 = mSession.beginPageWriteTransaction();
         assertNotNull(pWtx1);
+        // generate second valid write transaction
+        final IPageWriteTrx pWtx2 = mSession.beginPageWriteTransaction(0);
+        assertNotNull(pWtx2);
+        // asserting they are different
+        assertNotSame(pWtx1, pWtx2);
+        // beginning transaction with invalid revision number
+        try {
+            mSession.beginPageWriteTransaction(1);
+            fail();
+        } catch (IllegalStateException exc) {
+            // must be thrown
+        }
 
     }
 
     @Test
-    public void testBeginPageWriteTransactionLongLong() {
-        // fail("Not yet implemented");
+    public void testClose() throws TTException {
+        // generate inlaying write transaction
+        final IPageWriteTrx pWtx1 = mSession.beginPageWriteTransaction();
+        // close the session
+        assertTrue(mSession.close());
+        assertFalse(mSession.close());
+        assertTrue(pWtx1.isClosed());
+        // beginning transaction with valid revision number on closed session
+        try {
+            // try to truncate the resource
+            mSession.beginPageWriteTransaction(0);
+            fail();
+        } catch (IllegalStateException exc) {
+            // must be thrown
+        }
     }
 
     @Test
-    public void testClose() {
-        // fail("Not yet implemented");
-    }
-
-    @Test
-    public void testAssertAccess() {
-        // fail("Not yet implemented");
-    }
-
-    @Test
-    public void testTruncate() {
-        // fail("Not yet implemented");
-    }
-
-    @Test
-    public void testSetLastCommittedUberPage() {
-        // fail("Not yet implemented");
+    public void testTruncate() throws TTException {
+        // truncate open session
+        try {
+            // try to truncate the resource
+            mSession.truncate();
+            fail();
+        } catch (IllegalStateException exc) {
+            // must be thrown
+        }
+        assertTrue(mSession.close());
+        assertTrue(mSession.truncate());
+        assertFalse(mSession.truncate());
     }
 
     @Test
     public void testGetMostRecentVersion() {
-        // fail("Not yet implemented");
+        assertEquals(0, mSession.getMostRecentVersion());
     }
 
     @Test
     public void testGetConfig() {
-        // fail("Not yet implemented");
+        assertEquals(mResource.mProperties.getProperty(ContructorProps.RESOURCE), mSession.getConfig().mProperties.getProperty(ContructorProps.RESOURCE));
     }
 
-    @Test
-    public void testDeregisterPageTrx() {
-        // fail("Not yet implemented");
-    }
 
 }

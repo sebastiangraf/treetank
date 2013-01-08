@@ -55,8 +55,9 @@ public interface ISession {
      * 
      * @param pTrx
      *            to be deregistered.
+     * @return true if successful, false otherwise
      */
-    void deregisterPageTrx(final IPageReadTrx pTrx);
+    boolean deregisterPageTrx(final IPageReadTrx pTrx);
 
     /**
      * Getting the resource configuration
