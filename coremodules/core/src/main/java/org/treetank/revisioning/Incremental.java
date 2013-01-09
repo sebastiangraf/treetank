@@ -51,7 +51,7 @@ public class Incremental implements IRevisioning {
                     returnVal.setNode(i, pages[j].getNode(i));
                 }
             }
-            if (j % mRevToRestore == 0) {
+            if (j > 0 && j % mRevToRestore == 0) {
                 break;
             }
         }

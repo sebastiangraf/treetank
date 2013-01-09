@@ -6,7 +6,6 @@ package org.treetank.page;
 import org.treetank.api.INode;
 import org.treetank.api.INodeFactory;
 
-import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;

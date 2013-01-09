@@ -16,6 +16,7 @@ import org.treetank.CoreTestHelper;
 import org.treetank.access.conf.ContructorProps;
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.page.NodePage;
+import org.treetank.page.RevisionRootPage;
 
 /**
  * Test for {@link IRevisioning}-interface.
@@ -24,6 +25,12 @@ import org.treetank.page.NodePage;
  * 
  */
 public class IRevisioningTest {
+
+    // Parameter to fix the number needed to restore one entire status
+    private final static int REVTORESTORE = 4;
+    // overhead to be skipped since the entire revision should already be complete after
+    // REVTORESTORE-revisions
+    private final static int OVERHEAD = 1;
 
     /**
      * @throws java.lang.Exception
@@ -60,12 +67,10 @@ public class IRevisioningTest {
     public void testCompletePages(Class<IRevisioning> pRevisioningClass, IRevisioning[] pRevisioning,
         Class<IRevisionChecker> pRevisionCheckerClass, IRevisionChecker[] pRevisionChecker) {
         for (final IRevisioning handler : pRevisioning) {
-            final NodePage[] pages = new NodePage[5];
-            pages[0] = getNodePage(0, 128, 0);
-            pages[1] = getNodePage(0, 128, 0);
-            pages[2] = getNodePage(0, 128, 0);
-            pages[3] = getNodePage(0, 128, 0);
-            pages[4] = getNodePage(0, 128, 0);
+            final NodePage[] pages = new NodePage[REVTORESTORE + OVERHEAD];
+            for (int i = 0; i < pages.length; i++) {
+                pages[i] = getNodePage(0, 128, i);
+            }
 
             final NodePage page = handler.combinePages(pages);
 
@@ -98,19 +103,27 @@ public class IRevisioningTest {
         assertEquals(pRevisioning.length, pRevisionChecker.length);
 
         for (int i = 0; i < pRevisioning.length; i++) {
-            // initialize pages with suitable offsets related to the last version...
-            final NodePage[] pages = new NodePage[5];
-            // filling one entire page with revision 0 and key 0
-            pages[pages.length - 1] = getNodePage(0, 128, 0);
-            for (int j = 0; j < pages.length - 1; j++) {
+            // initialize all framents first...
+            final NodePage[] pages = new NodePage[REVTORESTORE + OVERHEAD];
+            // fill all pages up to number of restores first...
+            for (int j = 0; j < REVTORESTORE - 1; j++) {
                 // filling nodepages from end to start with 32 elements each slot
                 pages[j] = getNodePage(j * 32, (j * 32) + 32, pages.length - j - 1);
+            }
+            // ...set the full-dump on the parameter of number of restores..
+            pages[REVTORESTORE - 1] = getNodePage(0, 128, REVTORESTORE - 1);
+            // ...then generate the overhead...
+            int k = 0;
+            for (int j = REVTORESTORE; j < REVTORESTORE + OVERHEAD; j++) {
+                // filling nodepages from end to start with 32 elements each slot
+                pages[j] = getNodePage(k * 32, (k * 32) + 32, k);
+                k++;
             }
 
             // ..and recombine them...
             final NodePage page = pRevisioning[i].combinePages(pages);
             // ...and check them suitable to the versioning approach
-//            pRevisionChecker[i].checkRevisions(page, pages);
+            pRevisionChecker[i].checkRevisions(page, pages);
         }
     }
 
@@ -123,7 +136,7 @@ public class IRevisioningTest {
     @DataProvider(name = "instantiateVersioning")
     public Object[][] instantiateVersioning() throws TTByteHandleException {
         Properties props = new Properties();
-        props.put(ContructorProps.NUMBERTORESTORE, Integer.toString(4));
+        props.put(ContructorProps.NUMBERTORESTORE, Integer.toString(REVTORESTORE));
 
         Object[][] returnVal = {
             {
@@ -147,7 +160,7 @@ public class IRevisioningTest {
                         @Override
                         public void checkRevisions(NodePage pComplete, NodePage[] pFragments) {
                             // Incrementally iterate through all pages to reconstruct the complete page.
-                            for (int i = 0; i < pFragments.length; i++) {
+                            for (int i = 0; i < REVTORESTORE; i++) {
                                 for (int j = i * 32; j < (i * 32) + 32; j++) {
                                     assertEquals("Check for Incremental failed.", pFragments[i].getNode(j),
                                         pComplete.getNode(j));
