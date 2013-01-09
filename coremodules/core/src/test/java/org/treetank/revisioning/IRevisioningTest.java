@@ -14,9 +14,9 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.treetank.CoreTestHelper;
 import org.treetank.access.conf.ContructorProps;
+import org.treetank.cache.NodePageContainer;
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.page.NodePage;
-import org.treetank.page.RevisionRootPage;
 
 /**
  * Test for {@link IRevisioning}-interface.
@@ -64,26 +64,40 @@ public class IRevisioningTest {
      *            the different revisioning-check approaches
      */
     @Test(dataProvider = "instantiateVersioning")
-    public void testCompletePages(Class<IRevisioning> pRevisioningClass, IRevisioning[] pRevisioning,
+    public void testCombinePages(Class<IRevisioning> pRevisioningClass, IRevisioning[] pRevisioning,
         Class<IRevisionChecker> pRevisionCheckerClass, IRevisionChecker[] pRevisionChecker) {
-        for (final IRevisioning handler : pRevisioning) {
+
+        // be sure you have enough checkers for the revisioning to check
+        assertEquals(pRevisioning.length, pRevisionChecker.length);
+
+        for (int i = 0; i < pRevisioning.length; i++) {
+            // initialize all framents first...
             final NodePage[] pages = new NodePage[REVTORESTORE + OVERHEAD];
-            for (int i = 0; i < pages.length; i++) {
-                pages[i] = getNodePage(0, 128, i);
+            // fill all pages up to number of restores first...
+            for (int j = 0; j < REVTORESTORE - 1; j++) {
+                // filling nodepages from end to start with 32 elements each slot
+                pages[j] = getNodePage(j * 32, (j * 32) + 32, pages.length - j - 1);
+            }
+            // ...set the full-dump on the parameter of number of restores..
+            pages[REVTORESTORE - 1] = getNodePage(0, 128, REVTORESTORE - 1);
+            // ...then generate the overhead...
+            int k = 0;
+            for (int j = REVTORESTORE; j < REVTORESTORE + OVERHEAD; j++) {
+                // filling nodepages from end to start with 32 elements each slot
+                pages[j] = getNodePage(k * 32, (k * 32) + 32, k);
+                k++;
             }
 
-            final NodePage page = handler.combinePages(pages);
-
-            for (int j = 0; j < page.getNodes().length; j++) {
-                assertEquals(new StringBuilder("Check for ").append(handler.getClass()).append(" failed.")
-                    .toString(), pages[0].getNode(j), page.getNode(j));
-            }
+            // ..and recombine them...
+            final NodePageContainer page = pRevisioning[i].combinePagesForModification(0, pages);
+            // ...and check them suitable to the versioning approach
+            pRevisionChecker[i].checkCompletePagesForModification(page, pages);
         }
     }
 
     /**
      * Test method for
-     * {@link org.treetank.revisioning.IRevisioning#combinePages(org.treetank.page.NodePage[])}.
+     * {@link org.treetank.revisioning.IRevisioning#combinePagesForModification(long, NodePage[])}.
      * This test just takes two versions and checks if the version-counter is interpreted correctly.
      * 
      * @param pRevisioningClass
@@ -96,8 +110,9 @@ public class IRevisioningTest {
      *            the different revisioning-check approaches
      */
     @Test(dataProvider = "instantiateVersioning")
-    public void testFragmentedPages(Class<IRevisioning> pRevisioningClass, IRevisioning[] pRevisioning,
-        Class<IRevisionChecker> pRevisionCheckerClass, IRevisionChecker[] pRevisionChecker) {
+    public void testCombinePagesForModification(Class<IRevisioning> pRevisioningClass,
+        IRevisioning[] pRevisioning, Class<IRevisionChecker> pRevisionCheckerClass,
+        IRevisionChecker[] pRevisionChecker) {
 
         // be sure you have enough checkers for the revisioning to check
         assertEquals(pRevisioning.length, pRevisionChecker.length);
@@ -123,8 +138,35 @@ public class IRevisioningTest {
             // ..and recombine them...
             final NodePage page = pRevisioning[i].combinePages(pages);
             // ...and check them suitable to the versioning approach
-            pRevisionChecker[i].checkRevisions(page, pages);
+            pRevisionChecker[i].checkCompletePages(page, pages);
         }
+    }
+
+    /**
+     * Test method for
+     * {@link org.treetank.revisioning.IRevisioning#combinePages(org.treetank.page.NodePage[])}.
+     * This test just takes two versions and checks if the version-counter is interpreted correctly.
+     * 
+     * @param pRevisioningClass
+     *            class for the revisioning approaches
+     * @param pRevisioning
+     *            the different revisioning approaches
+     * @param pRevisionCheckerClass
+     *            class for the revisioning-check approaches
+     * @param pRevisionChecker
+     *            the different revisioning-check approaches
+     */
+    @Test(dataProvider = "instantiateVersioning")
+    public void testRevToRestore(Class<IRevisioning> pRevisioningClass, IRevisioning[] pRevisioning,
+        Class<IRevisionChecker> pRevisionCheckerClass, IRevisionChecker[] pRevisionChecker) {
+        for (final IRevisioning handler : pRevisioning) {
+            if (handler instanceof FullDump) {
+                assertEquals(1, handler.getRevisionsToRestore());
+            } else {
+                assertEquals(REVTORESTORE, handler.getRevisionsToRestore());
+            }
+        }
+
     }
 
     /**
@@ -146,7 +188,7 @@ public class IRevisioningTest {
                     // Checker for FullDump
                     new IRevisionChecker() {
                         @Override
-                        public void checkRevisions(NodePage pComplete, NodePage[] pFragments) {
+                        public void checkCompletePages(NodePage pComplete, NodePage[] pFragments) {
                             // Check only the last version since the complete dump consists out of the last
                             // version within the FullDump
                             for (int i = 0; i < pComplete.getNodes().length; i++) {
@@ -154,11 +196,27 @@ public class IRevisioningTest {
                                     pComplete.getNode(i));
                             }
                         }
+
+                        @Override
+                        public void checkCompletePagesForModification(NodePageContainer pComplete,
+                            NodePage[] pFragments) {
+                            // Check only the last version since the complete dump consists out of the last
+                            // version within the FullDump
+                            NodePage complete = (NodePage)pComplete.getComplete();
+                            NodePage modified = (NodePage)pComplete.getModified();
+                            for (int i = 0; i < complete.getNodes().length; i++) {
+                                assertEquals("Check for FullDump failed.", pFragments[0].getNode(i), complete
+                                    .getNode(i));
+                                assertEquals("Check for FullDump failed.", pFragments[0].getNode(i), modified
+                                    .getNode(i));
+                            }
+
+                        }
                     },
                     // Checker for Incremental
                     new IRevisionChecker() {
                         @Override
-                        public void checkRevisions(NodePage pComplete, NodePage[] pFragments) {
+                        public void checkCompletePages(NodePage pComplete, NodePage[] pFragments) {
                             // Incrementally iterate through all pages to reconstruct the complete page.
                             for (int i = 0; i < REVTORESTORE; i++) {
                                 for (int j = i * 32; j < (i * 32) + 32; j++) {
@@ -167,10 +225,17 @@ public class IRevisioningTest {
                                 }
                             }
                         }
+
+                        @Override
+                        public void checkCompletePagesForModification(NodePageContainer pComplete,
+                            NodePage[] pFragments) {
+                            // TODO Auto-generated method stub
+
+                        }
                     }// Checker for Differential
                     , new IRevisionChecker() {
                         @Override
-                        public void checkRevisions(NodePage pComplete, NodePage[] pFragments) {
+                        public void checkCompletePages(NodePage pComplete, NodePage[] pFragments) {
                             // Take the last version first, to get the data out there...
                             for (int j = 0; j < 32; j++) {
                                 assertEquals("Check for Incremental failed.", pFragments[0].getNode(j),
@@ -183,6 +248,13 @@ public class IRevisioningTest {
                                     .toString(), pFragments[pFragments.length - 1].getNode(j), pComplete
                                     .getNode(j));
                             }
+                        }
+
+                        @Override
+                        public void checkCompletePagesForModification(NodePageContainer pComplete,
+                            NodePage[] pFragments) {
+                            // TODO Auto-generated method stub
+
                         }
                     }
                 }
@@ -198,7 +270,9 @@ public class IRevisioningTest {
      * 
      */
     interface IRevisionChecker {
-        void checkRevisions(NodePage pComplete, NodePage[] pFragments);
+        void checkCompletePages(NodePage pComplete, NodePage[] pFragments);
+
+        void checkCompletePagesForModification(NodePageContainer pComplete, NodePage[] pFragments);
 
     }
 
