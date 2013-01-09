@@ -51,7 +51,7 @@ public class Incremental implements IRevisioning {
                     returnVal.setNode(i, pages[j].getNode(i));
                 }
             }
-            if (j % mRevToRestore == 0) {
+            if ((j + 1) % mRevToRestore == 0) {
                 break;
             }
         }
@@ -75,7 +75,7 @@ public class Incremental implements IRevisioning {
                     returnVal[0].setNode(i, pages[j].getNode(i));
 
                     // copy of all nodes from the last fulldump to this revision to ensure read-scalability
-                    if (j % mRevToRestore == 0) {
+                    if ((j + 1) % mRevToRestore == 0) {
                         returnVal[1].setNode(i, pages[j].getNode(i));
                     }
                 }
