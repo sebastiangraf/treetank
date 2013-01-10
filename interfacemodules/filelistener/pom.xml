@@ -157,10 +157,10 @@
 			</properties>
 		</profile>
 		<profile>
-			<id>macosx32</id>
+			<id>mac32</id>
 			<activation>
 				<os>
-					<name>macosx</name>
+					<name>mac os x</name>
 				</os>
 			</activation>
 			<properties>
@@ -170,11 +170,10 @@
 			</properties>
 		</profile>
 		<profile>
-			<id>macosx64</id>
+			<id>mac64</id>
 			<activation>
 				<os>
-					<name>macosx</name>
-					<arch>x86_x64</arch>
+					<name>mac os x</name>
 				</os>
 			</activation>
 			<properties>
