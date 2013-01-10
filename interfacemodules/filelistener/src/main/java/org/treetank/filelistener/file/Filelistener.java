@@ -21,6 +21,8 @@ public class Filelistener {
 
 	private final WatchService watcher;
 	private final Map<WatchKey, Path> keyPaths = new ConcurrentHashMap();
+	
+	private static Map<String, String> filelistenerToPaths;
 
 	/**
 	 * This thread is used, so the program does not get blocked by the
@@ -86,6 +88,14 @@ public class Filelistener {
 
 	private void process(Path dir, Path file, WatchEvent.Kind evtType) {
 		callback.processFileSystemChanges(dir, file, evtType);
+	}
+	
+	public static boolean addFilelistener(){
+		if(filelistenerToPaths == null){
+			
+		}
+		
+		return false;
 	}
 
 }

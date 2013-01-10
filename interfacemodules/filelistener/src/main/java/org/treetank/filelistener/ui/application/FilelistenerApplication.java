@@ -18,7 +18,7 @@ import org.eclipse.swt.events.SelectionEvent;
 public class FilelistenerApplication {
 
 	protected Shell shell;
-	private Composite composite;
+	private MainComposite composite;
 	private Menu menu;
 	private Menu menu_1;
 	private MenuItem mntmFile;
@@ -129,8 +129,10 @@ public class FilelistenerApplication {
 		
 	}
 	
-	protected static void do_mntmListenToA_widgetSelected(final SelectionEvent e) {
+	protected void do_mntmListenToA_widgetSelected(final SelectionEvent e) {
 		ListenToFolderDialog dialog = new ListenToFolderDialog(new Shell(), SWT.DIALOG_TRIM);
 		dialog.open();
+		
+		composite.configurationListChanged();
 	}
 }

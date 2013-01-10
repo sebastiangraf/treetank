@@ -63,4 +63,8 @@ public class MainComposite extends Composite {
 		list.setBounds(10, 33, 200, height - lblFoldersYouAre.computeSize(200, SWT.DEFAULT).y - 100);
 		composite.setBounds(225, 10, width - 235, height - 20);
 	}
+	
+	public void configurationListChanged(){
+		
+	}
 }
