@@ -3,9 +3,9 @@
  */
 package org.treetank.revisioning;
 
-import java.util.Properties;
-
 import org.treetank.cache.NodePageContainer;
+import org.treetank.exception.TTIOException;
+import org.treetank.io.IBackendReader;
 import org.treetank.page.NodePage;
 
 /**
@@ -35,38 +35,18 @@ public interface IRevisioning {
      * 
      * @param pNewPageKey
      *            page key of the new page
-     * @param pages
+     * @param pPages
      *            the base of the complete Nodepage
+     * @param pFullDump
+     *            boolean if entire page should be written. Must be triggered from extern seind it is based on
+     *            the revisionToRestore-Param
      * @return a NodePageContainer holding a complete NodePage for reading a one
      *         for writing
      */
-    NodePageContainer combinePagesForModification(final long pNewPageKey, final NodePage[] pages);
+    NodePageContainer combinePagesForModification(final long pNewPageKey, final NodePage[] pPages,
+        final boolean pFullDump);
 
-    /**
-     * Getting the numbers of necessary revisions to restore.
-     * 
-     * @return the number of revisions to restore.
-     */
-    int getRevisionsToRestore();
-
-    /**
-     * 
-     * Factory for generating an {@link IRevisioning}-instance. Needed mainly
-     * because of Guice-Assisted utilization.
-     * 
-     * @author Sebastian Graf, University of Konstanz
-     * 
-     */
-    public static interface IRevisioningFactory {
-
-        /**
-         * Generating a storage for a fixed file.
-         * 
-         * @param pProperties
-         *            params for revision-approach e.g. numbers of revisions to restore
-         * @return an {@link IRevisioning}-instance
-         */
-        IRevisioning create(Properties pProperties);
-    }
+    long[] getRevRootKeys(final int pRevToRestore, final long pLongStartKey, final long pSeqKey,
+        final IBackendReader pReader) throws TTIOException;
 
 }

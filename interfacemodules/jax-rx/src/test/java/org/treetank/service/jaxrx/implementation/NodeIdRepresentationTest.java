@@ -51,11 +51,11 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
-import org.treetank.NodeModuleFactory;
 import org.treetank.CoreTestHelper;
+import org.treetank.NodeModuleFactory;
 import org.treetank.exception.TTException;
 import org.treetank.io.IBackend.IBackendFactory;
-import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
+import org.treetank.revisioning.IRevisioning;
 import org.treetank.service.jaxrx.enums.EIdAccessType;
 import org.treetank.service.jaxrx.util.DOMHelper;
 import org.w3c.dom.Attr;
@@ -140,7 +140,7 @@ public class NodeIdRepresentationTest {
     public IBackendFactory mStorageFac;
 
     @Inject
-    public IRevisioningFactory mRevisioningFac;
+    public IRevisioning mRevisioning;
 
     /**
      * The set up method.
@@ -151,10 +151,11 @@ public class NodeIdRepresentationTest {
     public void setUp() throws Exception {
         CoreTestHelper.deleteEverything();
         CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile());
-        ridWorker = new NodeIdRepresentation(CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile()));
+        ridWorker =
+            new NodeIdRepresentation(CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile()));
         treetank =
-            new DatabaseRepresentation(CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile()), mStorageFac,
-                mRevisioningFac);
+            new DatabaseRepresentation(CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile()),
+                mStorageFac, mRevisioning);
         final InputStream input =
             NodeIdRepresentationTest.class.getClass().getResourceAsStream("/factbook.xml");
         treetank.shred(input, RESOURCENAME);

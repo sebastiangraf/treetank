@@ -49,11 +49,11 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
-import org.treetank.NodeModuleFactory;
 import org.treetank.CoreTestHelper;
+import org.treetank.NodeModuleFactory;
 import org.treetank.exception.TTException;
 import org.treetank.io.IBackend.IBackendFactory;
-import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
+import org.treetank.revisioning.IRevisioning;
 import org.treetank.service.jaxrx.implementation.DatabaseRepresentation;
 import org.treetank.service.jaxrx.implementation.NodeIdRepresentationTest;
 import org.w3c.dom.Document;
@@ -101,7 +101,7 @@ public class RESTResponseHelperTest {
     public IBackendFactory mStorageFac;
 
     @Inject
-    public IRevisioningFactory mRevisioningFac;
+    public IRevisioning mRevisioning;
 
     @BeforeMethod
     public void before() throws TTException {
@@ -116,7 +116,8 @@ public class RESTResponseHelperTest {
 
     /**
      * Test method for
-     * {@link org.treetank.service.jaxrx.util.RESTResponseHelper#buildResponseOfDomLR(org.treetank.api.IStorage, IBackendFactory, IRevisioningFactory)}.
+     * {@link org.treetank.service.jaxrx.util.RESTResponseHelper#buildResponseOfDomLR(org.treetank.api.IStorage, IBackendFactory, IRevisioningFactory)}
+     * .
      * 
      * @throws IOException
      * @throws WebApplicationException
@@ -136,8 +137,8 @@ public class RESTResponseHelperTest {
         availResources.add(SHAKE);
 
         final DatabaseRepresentation treetank =
-            new DatabaseRepresentation(CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile()), mStorageFac,
-                mRevisioningFac);
+            new DatabaseRepresentation(CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile()),
+                mStorageFac, mRevisioning);
         InputStream input = NodeIdRepresentationTest.class.getClass().getResourceAsStream(RESPATH);
         treetank.shred(input, FACT);
         input.close();
@@ -155,8 +156,8 @@ public class RESTResponseHelperTest {
         input.close();
 
         final StreamingOutput result =
-            RESTResponseHelper.buildResponseOfDomLR(CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile()),
-                mStorageFac, mRevisioningFac);
+            RESTResponseHelper.buildResponseOfDomLR(CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1
+                .getFile()), mStorageFac, mRevisioning);
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         result.write(outputStream);
         final Document doc = DOMHelper.buildDocument(outputStream);

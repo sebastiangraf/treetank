@@ -68,7 +68,7 @@ import org.treetank.node.IConstants;
 import org.treetank.node.TreeNodeFactory;
 import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.IStructNode;
-import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
+import org.treetank.revisioning.IRevisioning;
 import org.treetank.service.xml.StandardXMLSettings;
 import org.treetank.utils.TypedValue;
 
@@ -1265,7 +1265,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Voi
 
         Injector injector = Guice.createInjector(new StandardXMLSettings());
         IBackendFactory storage = injector.getInstance(IBackendFactory.class);
-        IRevisioningFactory revision = injector.getInstance(IRevisioningFactory.class);
+        IRevisioning revision = injector.getInstance(IRevisioning.class);
 
         try {
             final StorageConfiguration config = new StorageConfiguration(target);

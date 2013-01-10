@@ -43,7 +43,7 @@ import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.api.IStorage;
 import org.treetank.exception.TTException;
 import org.treetank.io.IBackend.IBackendFactory;
-import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
+import org.treetank.revisioning.IRevisioning;
 import org.treetank.service.jaxrx.enums.EIdAccessType;
 import org.treetank.service.jaxrx.util.WorkerHelper;
 
@@ -73,7 +73,7 @@ public final class TreeTankMediator implements JaxRx {
     private IBackendFactory mStorageFac;
 
     @Inject
-    private IRevisioningFactory mRevisionFac;
+    private IRevisioning mRevision;
 
     /**
      * 
@@ -88,7 +88,7 @@ public final class TreeTankMediator implements JaxRx {
             Storage.createStorage(new StorageConfiguration(pStoragePath));
         }
         IStorage db = Storage.openStorage(pStoragePath);
-        database = new DatabaseRepresentation(db, mStorageFac, mRevisionFac);
+        database = new DatabaseRepresentation(db, mStorageFac, mRevision);
         nodeIdResource = new NodeIdRepresentation(db);
     }
 

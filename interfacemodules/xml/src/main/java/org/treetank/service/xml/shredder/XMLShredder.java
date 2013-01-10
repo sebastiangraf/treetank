@@ -75,7 +75,7 @@ import org.treetank.node.IConstants;
 import org.treetank.node.TreeNodeFactory;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
-import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
+import org.treetank.revisioning.IRevisioning;
 import org.treetank.service.xml.StandardXMLSettings;
 import org.treetank.utils.TypedValue;
 
@@ -349,7 +349,7 @@ public class XMLShredder implements Callable<Void> {
 
         Injector injector = Guice.createInjector(new StandardXMLSettings());
         IBackendFactory storage = injector.getInstance(IBackendFactory.class);
-        IRevisioningFactory revision = injector.getInstance(IRevisioningFactory.class);
+        IRevisioning revision = injector.getInstance(IRevisioning.class);
 
         final File target = new File(paramArgs[1]);
         final StorageConfiguration config = new StorageConfiguration(target);

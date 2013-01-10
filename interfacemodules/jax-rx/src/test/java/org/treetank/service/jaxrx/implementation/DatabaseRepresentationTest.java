@@ -52,11 +52,11 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
-import org.treetank.NodeModuleFactory;
 import org.treetank.CoreTestHelper;
+import org.treetank.NodeModuleFactory;
 import org.treetank.exception.TTException;
 import org.treetank.io.IBackend.IBackendFactory;
-import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
+import org.treetank.revisioning.IRevisioning;
 import org.treetank.service.jaxrx.util.DOMHelper;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -120,7 +120,7 @@ public class DatabaseRepresentationTest {
     public IBackendFactory mStorageFac;
 
     @Inject
-    public IRevisioningFactory mRevisioningFac;
+    public IRevisioning mRevisioning;
 
     /**
      * This a simple setUp.
@@ -133,8 +133,8 @@ public class DatabaseRepresentationTest {
         CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile());
         final InputStream input = DatabaseRepresentationTest.class.getResourceAsStream(XMLFILE);
         treetank =
-            new DatabaseRepresentation(CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile()), mStorageFac,
-                mRevisioningFac);
+            new DatabaseRepresentation(CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile()),
+                mStorageFac, mRevisioning);
         treetank.shred(input, RESOURCENAME);
     }
 
