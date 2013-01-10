@@ -49,14 +49,7 @@ public class Filelistener {
      */
     private volatile Thread processingThread;
 
-    /**
-     * This callback is used for upper layers to be able to react on changes in
-     * the filesystem without having to implement such methods as below.
-     */
-    private final IWatchCallback callback;
-
-    public Filelistener(IWatchCallback callback) throws IOException {
-        this.callback = callback;
+    public Filelistener() throws IOException {
         this.watcher = FileSystems.getDefault().newWatchService();
     }
 
@@ -105,12 +98,13 @@ public class Filelistener {
     }
 
     private void process(Path dir, Path file, WatchEvent.Kind evtType) {
-        callback.processFileSystemChanges(dir, file, evtType);
+        
     }
 
     public static Map<String, String> getFilelisteners() throws FileNotFoundException, IOException,
         ClassNotFoundException {
-        filelistenerToPaths = new HashMap<>();
+        
+        filelistenerToPaths = new HashMap<String, String>();
 
         File listenerFilePaths = new File(StorageManager.ROOT_PATH + File.separator + "mapping.data");
 
@@ -134,7 +128,7 @@ public class Filelistener {
 
     public static boolean addFilelistener(String storageName, String listenerPath)
         throws FileNotFoundException, IOException, ClassNotFoundException {
-        filelistenerToPaths = new HashMap<>();
+        filelistenerToPaths = new HashMap<String, String>();
 
         File listenerFilePaths = new File(StorageManager.ROOT_PATH + File.separator + "mapping.data");
 
