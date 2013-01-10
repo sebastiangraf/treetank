@@ -26,7 +26,7 @@ import org.treetank.filelistener.api.file.IWatchCallback;
 public class Filelistener {
 
     private final WatchService watcher;
-    private final Map<WatchKey, Path> keyPaths = new ConcurrentHashMap();
+    private final Map<WatchKey, Path> keyPaths = new ConcurrentHashMap<WatchKey, Path>();
 
     private static Map<String, String> filelistenerToPaths;
 

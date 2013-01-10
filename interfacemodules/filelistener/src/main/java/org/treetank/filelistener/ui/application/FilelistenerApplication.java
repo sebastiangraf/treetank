@@ -37,14 +37,9 @@ public class FilelistenerApplication {
      * 
      * @param args
      */
-    public static void main(String[] args) {
-        try {
-            FilelistenerApplication window = new FilelistenerApplication();
-            window.open();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+    public static void main(String[] args) throws Exception {
+        FilelistenerApplication window = new FilelistenerApplication();
+        window.open();
     }
 
     /**

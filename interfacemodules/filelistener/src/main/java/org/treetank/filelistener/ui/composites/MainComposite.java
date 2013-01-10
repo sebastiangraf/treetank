@@ -27,7 +27,7 @@ public class MainComposite extends Composite {
         setLocation(0, 0);
         setSize(parent.getSize().x, parent.getSize().y);
 
-        filelistenerList = new HashMap();
+        filelistenerList = new HashMap<String, Filelistener>();
 
         lblFoldersYouAre = new Label(this, SWT.NONE);
         lblFoldersYouAre.setLocation(10, 10);
