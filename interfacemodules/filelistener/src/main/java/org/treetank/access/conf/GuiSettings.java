@@ -20,7 +20,6 @@ import org.treetank.io.jclouds.JCloudsStorage;
 import org.treetank.page.DumbNodeFactory;
 import org.treetank.revisioning.Differential;
 import org.treetank.revisioning.IRevisioning;
-import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
@@ -44,17 +43,13 @@ public class GuiSettings extends AbstractModule {
 	@Override
 	protected void configure() {
 		bind(INodeFactory.class).to(DumbNodeFactory.class);
-		install(new FactoryModuleBuilder().implement(IRevisioning.class,
-				Differential.class).build(IRevisioningFactory.class));
-		bind(IByteHandlerPipeline.class).toInstance(
-				new ByteHandlerPipeline(new Zipper()));
-		install(new FactoryModuleBuilder().implement(IBackend.class,
-				backend).build(IBackendFactory.class));
-		install(new FactoryModuleBuilder()
-				.build(IResourceConfigurationFactory.class));
-		bind(Key.class).toInstance(KEY);
-		install(new FactoryModuleBuilder()
-				.build(ISessionConfigurationFactory.class));
+        bind(IRevisioning.class).to(Differential.class);
+        bind(IByteHandlerPipeline.class).toInstance(new ByteHandlerPipeline(new Zipper()));
+        install(new FactoryModuleBuilder().implement(IBackend.class, backend).build(
+            IBackendFactory.class));
+        install(new FactoryModuleBuilder().build(IResourceConfigurationFactory.class));
+        bind(Key.class).toInstance(KEY);
+        install(new FactoryModuleBuilder().build(ISessionConfigurationFactory.class));
 	}
 
 	public static Properties getStandardProperties(final String pathToStorage,
