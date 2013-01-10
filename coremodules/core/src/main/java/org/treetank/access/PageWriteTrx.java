@@ -39,6 +39,7 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import org.treetank.access.conf.ContructorProps;
 import org.treetank.api.INode;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
@@ -358,8 +359,17 @@ public final class PageWriteTrx implements IPageWriteTrx {
             long newPageKey = mNewUber.incrementPageCounter();
             if (pageKey != 0) {
                 NodePage[] pages = mDelegate.getSnapshotPages(pSeqPageKey);
-                container =
-                    mDelegate.mSession.getConfig().mRevision.combinePagesForModification(newPageKey, pages);
+                if (mNewRoot.getRevision()
+                    % Integer.parseInt(mDelegate.mSession.getConfig().mProperties
+                        .getProperty(ContructorProps.NUMBERTORESTORE)) == 0) {
+                    container =
+                        mDelegate.mSession.getConfig().mRevision.combinePagesForModification(newPageKey,
+                            pages, true);
+                } else {
+                    container =
+                        mDelegate.mSession.getConfig().mRevision.combinePagesForModification(newPageKey,
+                            pages, false);
+                }
             } else {
                 NodePage newPage = new NodePage(newPageKey);
                 container = new NodePageContainer(newPage, newPage);

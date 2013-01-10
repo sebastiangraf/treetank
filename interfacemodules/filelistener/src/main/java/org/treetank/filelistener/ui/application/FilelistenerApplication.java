@@ -1,5 +1,6 @@
 package org.treetank.filelistener.ui.application;
 
+import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
@@ -8,8 +9,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.SWT;
 import org.treetank.filelistener.ui.composites.MainComposite;
+import org.treetank.filelistener.ui.dialogs.ListenToFolderDialog;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 
 public class FilelistenerApplication {
 
@@ -92,6 +96,12 @@ public class FilelistenerApplication {
 		mntmFile.setMenu(menu_2);
 		
 		mntmListenToA = new MenuItem(menu_2, SWT.NONE);
+		mntmListenToA.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				do_mntmListenToA_widgetSelected(e);
+			}
+		});
 		mntmListenToA.setText("Listen to a folder");
 		
 		mntmExit = new MenuItem(menu_2, SWT.NONE);
@@ -117,5 +127,10 @@ public class FilelistenerApplication {
 		
 		shell.setMenuBar(menu_1);
 		
+	}
+	
+	protected static void do_mntmListenToA_widgetSelected(final SelectionEvent e) {
+		ListenToFolderDialog dialog = new ListenToFolderDialog(new Shell(), SWT.DIALOG_TRIM);
+		dialog.open();
 	}
 }

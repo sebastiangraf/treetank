@@ -19,7 +19,6 @@ import org.treetank.io.jclouds.JCloudsStorage;
 import org.treetank.node.TreeNodeFactory;
 import org.treetank.revisioning.Differential;
 import org.treetank.revisioning.IRevisioning;
-import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
@@ -47,9 +46,7 @@ public class NodeModuleFactory implements IModuleFactory {
 
                 @Override
                 protected void configure() {
-                    install(new FactoryModuleBuilder().implement(IRevisioning.class, Differential.class)
-                        .build(IRevisioningFactory.class));
-
+                    bind(IRevisioning.class).to(Differential.class);
                     bind(INodeFactory.class).to(TreeNodeFactory.class);
                     bind(IByteHandlerPipeline.class).toInstance(new ByteHandlerPipeline(new Zipper()));
 
@@ -69,9 +66,7 @@ public class NodeModuleFactory implements IModuleFactory {
 
                 @Override
                 protected void configure() {
-                    install(new FactoryModuleBuilder().implement(IRevisioning.class, Differential.class)
-                        .build(IRevisioningFactory.class));
-
+                    bind(IRevisioning.class).to(Differential.class);
                     bind(INodeFactory.class).to(TreeNodeFactory.class);
                     bind(IByteHandlerPipeline.class).toInstance(new ByteHandlerPipeline(new Encryptor()));
 

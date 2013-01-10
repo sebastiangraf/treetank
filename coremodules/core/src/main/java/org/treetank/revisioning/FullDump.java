@@ -5,13 +5,12 @@ package org.treetank.revisioning;
 
 import static com.google.common.base.Objects.toStringHelper;
 
-import java.util.Properties;
-
+import org.treetank.access.PageReadTrx;
 import org.treetank.cache.NodePageContainer;
+import org.treetank.exception.TTIOException;
+import org.treetank.io.IBackendReader;
 import org.treetank.page.NodePage;
-
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
+import static com.google.common.base.Preconditions.checkArgument;
 
 /**
  * FullDump versioning of {@link NodePage}s.
@@ -22,27 +21,15 @@ import com.google.inject.assistedinject.Assisted;
 public class FullDump implements IRevisioning {
 
     /**
-     * 
-     * Constructor.
-     * 
-     * @param pRevToRestore
-     *            not really set since FullDump revisions are always restorable within one version.
-     */
-    @Inject
-    public FullDump(@Assisted Properties pProperties) {
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
     public NodePage combinePages(NodePage[] pages) {
+        checkArgument(pages.length == 1, "parameter should just consists of one single page");
         final NodePage returnVal = new NodePage(pages[0].getPageKey());
-
         for (int i = 0; i < pages[0].getNodes().length; i++) {
             returnVal.setNode(i, pages[0].getNode(i));
         }
-
         return returnVal;
     }
 
@@ -50,16 +37,17 @@ public class FullDump implements IRevisioning {
      * {@inheritDoc}
      */
     @Override
-    public NodePageContainer combinePagesForModification(long pNewPageKey, NodePage[] pages) {
+    public NodePageContainer
+        combinePagesForModification(long pNewPageKey, NodePage[] pages, boolean fullDump) {
+        checkArgument(pages.length == 1, "parameter should just consists of one single page");
+        checkArgument(fullDump, "Because of the nature, fulldump should occur always");
         final NodePage[] returnVal = {
             new NodePage(pages[0].getPageKey()), new NodePage(pNewPageKey)
         };
 
         for (int i = 0; i < pages[0].getNodes().length; i++) {
             returnVal[0].setNode(i, pages[0].getNode(i));
-            if (pages[0].getNode(i) != null) {
-                returnVal[1].setNode(i, pages[0].getNode(i));
-            }
+            returnVal[1].setNode(i, pages[0].getNode(i));
         }
 
         final NodePageContainer cont = new NodePageContainer(returnVal[0], returnVal[1]);
@@ -70,16 +58,21 @@ public class FullDump implements IRevisioning {
      * {@inheritDoc}
      */
     @Override
-    public int getRevisionsToRestore() {
-        return 1;
+    public String toString() {
+        return toStringHelper(this).toString();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String toString() {
-        return toStringHelper(this).toString();
+    public long[]
+        getRevRootKeys(int pRevToRestore, long pLongStartKey, long pSeqKey, IBackendReader pReader)
+            throws TTIOException {
+        final long currentRevKey = PageReadTrx.dereferenceLeafOfTree(pReader, pLongStartKey, pSeqKey);
+        return new long[] {
+            currentRevKey
+        };
     }
 
 }

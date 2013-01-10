@@ -47,7 +47,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.treetank.api.IStorage;
 import org.treetank.exception.TTException;
 import org.treetank.io.IBackend.IBackendFactory;
-import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
+import org.treetank.revisioning.IRevisioning;
 import org.treetank.service.jaxrx.implementation.DatabaseRepresentation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -110,7 +110,7 @@ public final class RESTResponseHelper {
      * @throws WebApplicationException
      */
     private static List<Element> createCollectionElementDBs(final IStorage pDatabase,
-        final Document document, final IBackendFactory pStorageFac, final IRevisioningFactory pRevisionFac)
+        final Document document, final IBackendFactory pStorageFac, final IRevisioning pRevision)
         throws WebApplicationException, TTException {
         final List<Element> collectionsEls = new ArrayList<Element>();
         for (final String res : pDatabase.listResources()) {
@@ -120,7 +120,7 @@ public final class RESTResponseHelper {
 
             // get last revision from given db name
             final DatabaseRepresentation dbWorker =
-                new DatabaseRepresentation(pDatabase, pStorageFac, pRevisionFac);
+                new DatabaseRepresentation(pDatabase, pStorageFac, pRevision);
             final String lastRevision = Long.toString(dbWorker.getLastRevision(res.toString()));
 
             elRes.setAttribute("lastRevision", lastRevision);
@@ -140,7 +140,7 @@ public final class RESTResponseHelper {
      * @return The streaming output for the HTTP response body.
      */
     public static StreamingOutput buildResponseOfDomLR(final IStorage pDatabase,
-        final IBackendFactory pStorageFac, final IRevisioningFactory pRevisionFac) {
+        final IBackendFactory pStorageFac, final IRevisioning pRevision) {
 
         final StreamingOutput sOutput = new StreamingOutput() {
 
@@ -155,7 +155,7 @@ public final class RESTResponseHelper {
                     try {
                         collections =
                             RESTResponseHelper.createCollectionElementDBs(pDatabase, document, pStorageFac,
-                                pRevisionFac);
+                                pRevision);
                     } catch (final TTException exce) {
                         throw new WebApplicationException(exce);
                     }

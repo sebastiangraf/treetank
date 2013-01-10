@@ -5,14 +5,11 @@ package org.treetank.revisioning;
 
 import static com.google.common.base.Objects.toStringHelper;
 
-import java.util.Properties;
-
-import org.treetank.access.conf.ContructorProps;
+import org.treetank.access.PageReadTrx;
 import org.treetank.cache.NodePageContainer;
+import org.treetank.exception.TTIOException;
+import org.treetank.io.IBackendReader;
 import org.treetank.page.NodePage;
-
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
 
 /**
  * Incremental versioning of {@link NodePage}s.
@@ -23,39 +20,27 @@ import com.google.inject.assistedinject.Assisted;
 public class Incremental implements IRevisioning {
 
     /**
-     * Parameter to determine the gap between two full-dumps
-     */
-    private final int mRevToRestore;
-
-    /**
-     * 
-     * Constructor.
-     * 
-     * @param pProperties
-     *            to be set.
-     */
-    @Inject
-    public Incremental(@Assisted Properties pProperties) {
-        mRevToRestore = Integer.parseInt(pProperties.getProperty(ContructorProps.NUMBERTORESTORE));
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
-    public NodePage combinePages(NodePage[] pages) {
+    public NodePage combinePages(final NodePage[] pages) {
+        // create entire page..
         final NodePage returnVal = new NodePage(pages[0].getPageKey());
-        for (int j = 0; j < pages.length; j++) {
-            for (int i = 0; i < pages[j].getNodes().length; i++) {
-                if (pages[j].getNode(i) != null && returnVal.getNode(i) == null) {
+        // ...iterate through the nodes and check if it is stored..
+        for (int i = 0; i < pages[0].getNodes().length; i++) {
+            boolean pageSkip = false;
+            // ... form the newest version to the oldest one..
+            for (int j = 0; !pageSkip && j < pages.length; j++) {
+                // if the node is not set yet but existing in the current version..
+                if (pages[j].getNode(i) != null) {
+                    // ...break out the loop the next time and..
+                    pageSkip = true;
+                    // ...set it
                     returnVal.setNode(i, pages[j].getNode(i));
                 }
-            }
-            if ((j + 1) % mRevToRestore == 0) {
-                break;
+
             }
         }
-
         return returnVal;
     }
 
@@ -63,35 +48,32 @@ public class Incremental implements IRevisioning {
      * {@inheritDoc}
      */
     @Override
-    public NodePageContainer combinePagesForModification(long pNewPageKey, NodePage[] pages) {
+    public NodePageContainer
+        combinePagesForModification(long pNewPageKey, NodePage[] pages, boolean pFullDump) {
+        // create pages for container..
         final NodePage[] returnVal = {
             new NodePage(pages[0].getPageKey()), new NodePage(pNewPageKey)
         };
-
-        for (int j = 0; j < pages.length; j++) {
-            for (int i = 0; i < pages[j].getNodes().length; i++) {
-                // Caching the complete page
-                if (pages[j].getNode(i) != null && returnVal[0].getNode(i) == null) {
+        // ...iterate through the nodes and check if it is stored..
+        for (int i = 0; i < pages[0].getNodes().length; i++) {
+            boolean pageSkip = false;
+            // ... form the newest version to the oldest one..
+            for (int j = 0; !pageSkip && j < pages.length; j++) {
+                // if the node is not set yet but existing in the current version..
+                if (pages[j].getNode(i) != null) {
+                    // ...break out the loop the next time and..
+                    pageSkip = true;
+                    // ...set it to the read-cache and..
                     returnVal[0].setNode(i, pages[j].getNode(i));
-
-                    // copy of all nodes from the last fulldump to this revision to ensure read-scalability
-                    if ((j + 1) % mRevToRestore == 0) {
+                    // ...if a fulldump becomes necessary, set it to the write cache as well.
+                    if (pFullDump) {
                         returnVal[1].setNode(i, pages[j].getNode(i));
                     }
                 }
             }
         }
-
-        final NodePageContainer cont = new NodePageContainer(returnVal[0], returnVal[1]);
-        return cont;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getRevisionsToRestore() {
-        return mRevToRestore;
+        // return the container
+        return new NodePageContainer(returnVal[0], returnVal[1]);
     }
 
     /**
@@ -99,7 +81,32 @@ public class Incremental implements IRevisioning {
      */
     @Override
     public String toString() {
-        return toStringHelper(this).add("mRevToRestore", mRevToRestore).toString();
+        return toStringHelper(this).toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long[]
+        getRevRootKeys(int pRevToRestore, long pLongStartKey, long pSeqKey, IBackendReader pReader)
+            throws TTIOException {
+        final long currentRevKey = PageReadTrx.dereferenceLeafOfTree(pReader, pLongStartKey, pSeqKey);
+        // Revision to retrieve is a full-dump
+        if (pSeqKey % pRevToRestore == 0) {
+            return new long[] {
+                currentRevKey
+            };
+        } else {
+            final long lastFullDumpRev = (long)Math.floor(pSeqKey / pRevToRestore) * pRevToRestore;
+            long[] returnVal = new long[(int)(pSeqKey - lastFullDumpRev + 1)];
+            returnVal[0] = currentRevKey;
+            int i = 1;
+            for (long rev = pSeqKey - 1; rev >= lastFullDumpRev; rev--) {
+                returnVal[i] = PageReadTrx.dereferenceLeafOfTree(pReader, pLongStartKey, rev);
+            }
+            return returnVal;
+        }
     }
 
 }

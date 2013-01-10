@@ -63,7 +63,7 @@ import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTException;
 import org.treetank.io.IBackend.IBackendFactory;
 import org.treetank.node.TreeNodeFactory;
-import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
+import org.treetank.revisioning.IRevisioning;
 import org.treetank.service.jaxrx.util.RESTResponseHelper;
 import org.treetank.service.jaxrx.util.RESTXMLShredder;
 import org.treetank.service.jaxrx.util.RestXPathProcessor;
@@ -111,13 +111,13 @@ public class DatabaseRepresentation {
 
     private final IBackendFactory mStorageFac;
 
-    private final IRevisioningFactory mRevisionFac;
+    private final IRevisioning mRevision;
 
     public DatabaseRepresentation(final IStorage pDatabase, final IBackendFactory pStorageFac,
-        final IRevisioningFactory pRevisionFac) throws TTException {
+        final IRevisioning pRevision) throws TTException {
         mDatabase = pDatabase;
         mStorageFac = pStorageFac;
-        mRevisionFac = pRevisionFac;
+        mRevision = pRevision;
 
     }
 
@@ -239,7 +239,7 @@ public class DatabaseRepresentation {
      *             The exception occurred.
      */
     public StreamingOutput getResourcesNames() throws JaxRxException {
-        return RESTResponseHelper.buildResponseOfDomLR(mDatabase, mStorageFac, mRevisionFac);
+        return RESTResponseHelper.buildResponseOfDomLR(mDatabase, mStorageFac, mRevision);
     }
 
     /**
@@ -302,7 +302,7 @@ public class DatabaseRepresentation {
             Properties properties =
                 StandardSettings.getStandardProperties(mDatabase.getLocation().getAbsolutePath(), resource);
 
-            mDatabase.createResource(new ResourceConfiguration(properties, mStorageFac, mRevisionFac,
+            mDatabase.createResource(new ResourceConfiguration(properties, mStorageFac, mRevision,
                 NODEFACTORY));
 
             session = mDatabase.getSession(new SessionConfiguration(resource, StandardSettings.KEY));

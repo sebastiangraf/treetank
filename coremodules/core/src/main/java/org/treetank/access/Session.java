@@ -42,7 +42,6 @@ import org.treetank.api.IPageReadTrx;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
-import org.treetank.io.IBackend;
 import org.treetank.io.IBackendWriter;
 import org.treetank.io.IOUtils;
 import org.treetank.page.UberPage;
@@ -71,9 +70,6 @@ public final class Session implements ISession {
     /** Remember the write separately because of the concurrent writes. */
     private final Set<IPageReadTrx> mPageTrxs;
 
-    /** abstract factory for all interaction to the storage. */
-    private final IBackend mBackend;
-
     /** Determines if session was closed. */
     private transient boolean mClosed;
 
@@ -97,14 +93,13 @@ public final class Session implements ISession {
         mResourceConfig = pResourceConf;
         mSessionConfig = pSessionConf;
         mPageTrxs = new CopyOnWriteArraySet<IPageReadTrx>();
-        mBackend = pResourceConf.mBackend;
         mClosed = false;
         mLastCommittedUberPage = pPage;
     }
 
     public IPageReadTrx beginPageReadTransaction(final long pRevKey) throws TTException {
         assertAccess(pRevKey);
-        final PageReadTrx trx = new PageReadTrx(this, mLastCommittedUberPage, pRevKey, mBackend.getReader());
+        final PageReadTrx trx = new PageReadTrx(this, mLastCommittedUberPage, pRevKey, mResourceConfig.mBackend.getReader());
         mPageTrxs.add(trx);
         return trx;
     }
@@ -116,7 +111,7 @@ public final class Session implements ISession {
 
     public IPageWriteTrx beginPageWriteTransaction(final long mRepresentRevision) throws TTException {
         assertAccess(mRepresentRevision);
-        final IBackendWriter backendWriter = mBackend.getWriter();
+        final IBackendWriter backendWriter = mResourceConfig.mBackend.getWriter();
         final IPageWriteTrx trx =
             new PageWriteTrx(this, mLastCommittedUberPage, backendWriter, mRepresentRevision);
         mPageTrxs.add(trx);
@@ -139,7 +134,7 @@ public final class Session implements ISession {
             // Immediately release all resources.
             mLastCommittedUberPage = null;
             mPageTrxs.clear();
-            mBackend.close();
+            mResourceConfig.mBackend.close();
             mDatabase.mSessions.remove(mSessionConfig.getResource());
             mClosed = true;
             return true;
@@ -153,7 +148,7 @@ public final class Session implements ISession {
      */
     public boolean truncate() throws TTException {
         checkState(mClosed, "Session must be closed before truncated.");
-        if (mBackend.truncate()) {
+        if (mResourceConfig.mBackend.truncate()) {
             return IOUtils.recursiveDelete(new File(new File(mDatabase.getLocation(),
                 StorageConfiguration.Paths.Data.getFile().getName()), mSessionConfig.getResource()));
         } else {
@@ -200,13 +195,14 @@ public final class Session implements ISession {
     public boolean deregisterPageTrx(IPageReadTrx pTrx) {
         return mPageTrxs.remove(pTrx);
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public String toString() {
-        return toStringHelper(this).add("mResourceConfig", mResourceConfig).add("mSessionConfig", mSessionConfig).add("mLastCommittedUberPage",
-            mLastCommittedUberPage).add("mLastCommittedUberPage", mPageTrxs).add("mBackend", mBackend).toString();
+        return toStringHelper(this).add("mResourceConfig", mResourceConfig).add("mSessionConfig",
+            mSessionConfig).add("mLastCommittedUberPage", mLastCommittedUberPage).add(
+            "mLastCommittedUberPage", mPageTrxs).toString();
     }
 }

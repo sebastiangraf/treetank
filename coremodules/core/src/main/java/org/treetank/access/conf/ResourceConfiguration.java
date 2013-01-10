@@ -26,6 +26,8 @@
  */
 package org.treetank.access.conf;
 
+import static com.google.common.base.Objects.toStringHelper;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -46,9 +48,7 @@ import org.treetank.io.bytepipe.ByteHandlerPipeline;
 import org.treetank.io.bytepipe.IByteHandler;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.revisioning.IRevisioning;
-import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
 
-import static com.google.common.base.Objects.toStringHelper;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import com.google.inject.Inject;
@@ -162,9 +162,9 @@ public final class ResourceConfiguration {
      */
     @Inject
     public ResourceConfiguration(@Assisted Properties pProperties, IBackendFactory pBackend,
-        IRevisioningFactory pRevision, INodeFactory pNodeFac) {
+        IRevisioning pRevision, INodeFactory pNodeFac) {
 
-        this(pProperties, pBackend.create(pProperties), pRevision.create(pProperties), pNodeFac);
+        this(pProperties, pBackend.create(pProperties), pRevision, pNodeFac);
     }
 
     /**
@@ -305,7 +305,7 @@ public final class ResourceConfiguration {
             INodeFactory nodeFactory = (INodeFactory)nodeFacCons.newInstance();
 
             Constructor<?> revCons = revClazz.getConstructors()[0];
-            IRevisioning revObject = (IRevisioning)revCons.newInstance(props);
+            IRevisioning revObject = (IRevisioning)revCons.newInstance();
 
             Constructor<?> storageCons = storageClazz.getConstructors()[0];
             IBackend backend = (IBackend)storageCons.newInstance(props, nodeFactory, pipeline);
