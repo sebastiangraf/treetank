@@ -1,6 +1,9 @@
 package org.treetank.filelistener.ui.composites;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -38,6 +41,14 @@ public class MainComposite extends Composite {
         list = new List(this, SWT.BORDER);
         list.setBounds(10, 33, 200, this.getClientArea().height
             - lblFoldersYouAre.computeSize(200, SWT.DEFAULT).y - 100);
+        
+        try {
+            for(Entry<String, String> e : Filelistener.getFilelisteners().entrySet()){
+                list.add(e.getValue() + " : " + e.getKey());
+            }
+        } catch (ClassNotFoundException | IOException e) {
+            e.printStackTrace();
+        }
 
         composite = new Composite(this, SWT.BORDER);
         composite.setBounds(225, 10, this.getClientArea().width - 235, this.getClientArea().height - 50);
@@ -66,6 +77,14 @@ public class MainComposite extends Composite {
     }
 
     public void configurationListChanged() {
-
+        list.removeAll();
+        
+        try {
+            for(Entry<String, String> e : Filelistener.getFilelisteners().entrySet()){
+                list.add(e.getValue() + " : " + e.getKey());
+            }
+        } catch (ClassNotFoundException | IOException e) {
+            e.printStackTrace();
+        }
     }
 }

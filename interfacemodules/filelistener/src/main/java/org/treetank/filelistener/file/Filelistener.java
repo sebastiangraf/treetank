@@ -10,18 +10,31 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.treetank.filelistener.api.file.IWatchCallback;
+
+import com.google.common.io.ByteArrayDataInput;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteProcessor;
+import com.google.common.io.ByteStreams;
+import com.google.common.io.Files;
+import com.google.common.io.InputSupplier;
+import com.google.common.io.OutputSupplier;
 
 public class Filelistener {
 
@@ -77,7 +90,7 @@ public class Filelistener {
         while (true) {
             WatchKey key = watcher.take();
             Path dir = keyPaths.get(key);
-            for (WatchEvent evt : key.pollEvents()) {
+            for (WatchEvent<?> evt : key.pollEvents()) {
                 WatchEvent.Kind eventType = evt.kind();
                 if (eventType == OVERFLOW)
                     continue;
@@ -95,38 +108,64 @@ public class Filelistener {
         callback.processFileSystemChanges(dir, file, evtType);
     }
 
+    public static Map<String, String> getFilelisteners() throws FileNotFoundException, IOException,
+        ClassNotFoundException {
+        filelistenerToPaths = new HashMap<>();
+
+        File listenerFilePaths = new File(StorageManager.ROOT_PATH + File.separator + "mapping.data");
+
+        if (!listenerFilePaths.exists()) {
+            java.nio.file.Files.createFile(listenerFilePaths.toPath());
+        } else {
+            byte[] bytes = java.nio.file.Files.readAllBytes(listenerFilePaths.toPath());
+
+            ByteArrayDataInput input = ByteStreams.newDataInput(bytes);
+
+            String key;
+            while ((key = input.readLine()) != null) {
+                String val = input.readLine();
+
+                filelistenerToPaths.put(key, val);
+            }
+        }
+
+        return filelistenerToPaths;
+    }
+
     public static boolean addFilelistener(String storageName, String listenerPath)
         throws FileNotFoundException, IOException, ClassNotFoundException {
-        if (filelistenerToPaths == null) {
-            filelistenerToPaths = new HashMap<>();
+        filelistenerToPaths = new HashMap<>();
 
-            File listenerFilePaths = new File(StorageManager.ROOT_PATH + File.separator + "mapping.data");
+        File listenerFilePaths = new File(StorageManager.ROOT_PATH + File.separator + "mapping.data");
 
-            if (!listenerFilePaths.exists()) {
-                listenerFilePaths.mkdirs();
-                listenerFilePaths.createNewFile();
+        if (!listenerFilePaths.exists()) {
+            java.nio.file.Files.createFile(listenerFilePaths.toPath());
 
-                filelistenerToPaths.put(storageName, listenerPath);
+            filelistenerToPaths.put(storageName, listenerPath);
+        } else {
+            byte[] bytes = java.nio.file.Files.readAllBytes(listenerFilePaths.toPath());
 
-                ObjectOutputStream objout = new ObjectOutputStream(new FileOutputStream(listenerFilePaths));
-                objout.writeObject(filelistenerToPaths);
-                objout.flush();
-                objout.close();
-            } else {
-                ObjectInputStream obj = new ObjectInputStream(new FileInputStream(listenerFilePaths));
-                Object o = obj.readObject();
-                obj.close();
+            ByteArrayDataInput input = ByteStreams.newDataInput(bytes);
 
-                filelistenerToPaths = (HashMap<String, String>)o;
+            String key;
+            while ((key = input.readLine()) != null) {
+                String val = input.readLine();
 
-                filelistenerToPaths.put(storageName, listenerPath);
-                ObjectOutputStream objout = new ObjectOutputStream(new FileOutputStream(listenerFilePaths));
-                objout.writeObject(filelistenerToPaths);
-                objout.flush();
-                objout.close();
+                filelistenerToPaths.put(key, val);
             }
 
+            filelistenerToPaths.put(storageName, listenerPath);
         }
+
+        ByteArrayDataOutput output = ByteStreams.newDataOutput();
+        for (Entry<String, String> e : filelistenerToPaths.entrySet()) {
+            output.write((e.getKey() + "\n").getBytes());
+            output.write((e.getValue() + "\n").getBytes());
+        }
+
+        java.nio.file.Files.write(listenerFilePaths.toPath(), output.toByteArray(),
+            StandardOpenOption.TRUNCATE_EXISTING);
+        
         return true;
     }
 
