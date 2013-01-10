@@ -21,16 +21,16 @@ public class Filelistener {
 
 	private final WatchService watcher;
 	private final Map<WatchKey, Path> keyPaths = new ConcurrentHashMap();
-	
+
 	/**
-	 * This thread is used, so the program does not get blocked by the watchservice.
+	 * This thread is used, so the program does not get blocked by the
+	 * watchservice.
 	 */
 	private volatile Thread processingThread;
-	
+
 	/**
-	 * This callback is used for upper layers to be able to react on
-	 * changes in the filesystem without having to implement such methods
-	 * as below.
+	 * This callback is used for upper layers to be able to react on changes in
+	 * the filesystem without having to implement such methods as below.
 	 */
 	private final IWatchCallback callback;
 
@@ -51,8 +51,8 @@ public class Filelistener {
 			public void run() {
 				try {
 					processFileNotifications();
-				} catch (InterruptedException ex){
-					
+				} catch (InterruptedException ex) {
+
 				}
 			}
 		};
