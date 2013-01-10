@@ -15,7 +15,7 @@ import org.treetank.filelistener.exceptions.StorageAlreadyExistsException;
 import org.treetank.filelistener.exceptions.StorageNotExistingException;
 import org.treetank.io.IBackend.IBackendFactory;
 import org.treetank.io.jclouds.JCloudsStorage;
-import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
+import org.treetank.revisioning.IRevisioning;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -82,10 +82,8 @@ public class StorageManager {
 			}
 			
 			Injector injector = Guice.createInjector(new GuiSettings(clazz));
-			IBackendFactory backend = injector
-					.getInstance(IBackendFactory.class);
-			IRevisioningFactory revision = injector
-					.getInstance(IRevisioningFactory.class);
+			IBackendFactory backend = injector.getInstance(IBackendFactory.class);
+	        IRevisioning revision = injector.getInstance(IRevisioning.class);
 
 			// Creating and opening the storage.
 			// Making it ready for usage.
