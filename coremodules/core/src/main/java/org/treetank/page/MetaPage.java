@@ -40,11 +40,8 @@ import com.google.common.io.ByteStreams;
  * <h1>MetaPage</h1>
  * 
  * <p>
- * This page stored variable key -> value mappings.
+ * This page stored variable key -> value mappings, whereas elements must implement the {@link IMetaEntry}s.
  * </p>
- * 
- * @param <K>
- * @param <V>
  */
 public final class MetaPage implements IPage {
 
