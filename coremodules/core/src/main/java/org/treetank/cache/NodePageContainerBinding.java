@@ -27,6 +27,7 @@
 
 package org.treetank.cache;
 
+import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;
 import org.treetank.page.PageFactory;
 import org.treetank.page.interfaces.IPage;
@@ -47,9 +48,11 @@ public class NodePageContainerBinding extends TupleBinding<NodePageContainer> {
      * 
      * @param pNodeFac
      *            for the deserialization of nodes
+     * @param pMetaFac
+     *            for the deserialization of meta-entries
      */
-    public NodePageContainerBinding(final INodeFactory pNodeFac) {
-        mFac = new PageFactory(pNodeFac);
+    public NodePageContainerBinding(final INodeFactory pNodeFac, final IMetaEntryFactory pMetaFac) {
+        mFac = new PageFactory(pNodeFac, pMetaFac);
     }
 
     @Override

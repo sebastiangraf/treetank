@@ -4,7 +4,9 @@
 package org.treetank.access;
 
 import org.treetank.access.conf.StandardSettings;
+import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;
+import org.treetank.node.NodeMetaPageFactory;
 import org.treetank.node.TreeNodeFactory;
 
 /**
@@ -18,6 +20,7 @@ public class StandardNodeSettings extends StandardSettings {
     @Override
     protected void configure() {
         bind(INodeFactory.class).to(TreeNodeFactory.class);
+        bind(IMetaEntryFactory.class).to(NodeMetaPageFactory.class);
         configureNormal();
     }
 }

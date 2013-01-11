@@ -40,6 +40,7 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import org.treetank.access.conf.ContructorProps;
+import org.treetank.api.IMetaEntry;
 import org.treetank.api.INode;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
@@ -52,13 +53,12 @@ import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendWriter;
 import org.treetank.page.IConstants;
 import org.treetank.page.IndirectPage;
-import org.treetank.page.NamePage;
+import org.treetank.page.MetaPage;
 import org.treetank.page.NodePage;
 import org.treetank.page.NodePage.DeletedNode;
 import org.treetank.page.RevisionRootPage;
 import org.treetank.page.UberPage;
 import org.treetank.page.interfaces.IReferencePage;
-import org.treetank.utils.NamePageHash;
 
 /**
  * <h1>PageWriteTrx</h1>
@@ -82,7 +82,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
     private final RevisionRootPage mNewRoot;
 
     /** Last reference to the actual namePage. */
-    private final NamePage mNewName;
+    private final MetaPage mNewName;
 
     /** Delegate for read access. */
     private PageReadTrx mDelegate;
@@ -104,8 +104,8 @@ public final class PageWriteTrx implements IPageWriteTrx {
      * @throws TTIOException
      *             if IO Error
      */
-    protected PageWriteTrx(final ISession pSession, final UberPage pUberPage, final IBackendWriter pWriter,
-        final long pRepresentRev) throws TTException {
+    protected <K, V extends IMetaEntry> PageWriteTrx(final ISession pSession, final UberPage pUberPage,
+        final IBackendWriter pWriter, final long pRepresentRev) throws TTException {
 
         mNewUber =
             new UberPage(pUberPage.incrementPageCounter(), pUberPage.getRevisionNumber() + 1, pUberPage
@@ -118,7 +118,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
         mLog =
             new LRUCache(new BerkeleyPersistenceLog(new File(pSession.getConfig().mProperties
                 .getProperty(org.treetank.access.conf.ContructorProps.STORAGEPATH)),
-                pSession.getConfig().mNodeFac));
+                pSession.getConfig().mNodeFac, pSession.getConfig().mMetaFac));
 
         // Get previous revision root page..
         final RevisionRootPage previousRevRoot = mDelegate.getActualRevisionRootPage();
@@ -140,10 +140,11 @@ public final class PageWriteTrx implements IPageWriteTrx {
         mLog.put(indirectKey, indirectContainer);
 
         // Setting up a new namepage
-        mNewName = new NamePage(mNewUber.incrementPageCounter());
-        Map<Integer, String> oldMap = mDelegate.mNamePage.getNameMap();
-        for (Integer key : oldMap.keySet()) {
-            mNewName.setName(key, oldMap.get(key));
+        Map<IMetaEntry, IMetaEntry> oldMap = mDelegate.mMetaPage.getMetaMap();
+        mNewName = new MetaPage(mNewUber.incrementPageCounter());
+
+        for (IMetaEntry key : oldMap.keySet()) {
+            mNewName.setEntry(key, oldMap.get(key));
         }
 
         mNewRoot.setReferenceKey(RevisionRootPage.NAME_REFERENCE_OFFSET, mNewName.getPageKey());
@@ -267,26 +268,6 @@ public final class PageWriteTrx implements IPageWriteTrx {
     }
 
     /**
-     * Getting the name corresponding to the given key.
-     * 
-     * @param pNameKey
-     *            for the term searched
-     * @return the name
-     */
-    public String getName(final int pNameKey) {
-        String returnVal;
-        // if currentNamePage == null -> state was commited and no
-        // prepareNodepage was invoked yet
-        if (mNewName.getName(pNameKey) == null) {
-            returnVal = mDelegate.getName(pNameKey);
-        } else {
-            returnVal = mNewName.getName(pNameKey);
-        }
-        return returnVal;
-
-    }
-
-    /**
      * Creating a namekey for a given name.
      * 
      * @param pName
@@ -295,14 +276,8 @@ public final class PageWriteTrx implements IPageWriteTrx {
      * @throws TTIOException
      *             if something odd happens while storing the new key
      */
-    public int createNameKey(final String pName) throws TTIOException {
-        final String string = (pName == null ? "" : pName);
-        final int nameKey = NamePageHash.generateHashForString(string);
-
-        if (mNewName.getName(nameKey) == null) {
-            mNewName.setName(nameKey, string);
-        }
-        return nameKey;
+    public void createEntry(final IMetaEntry key, IMetaEntry value) throws TTIOException {
+        mNewName.setEntry(key, value);
     }
 
     public void commit() throws TTException {
@@ -510,6 +485,14 @@ public final class PageWriteTrx implements IPageWriteTrx {
     public String toString() {
         return toStringHelper(this).add("mPageWriter", mPageWriter).add("mLog", mLog).add("mRootPage",
             mNewRoot).add("mDelegate", mDelegate).toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public MetaPage getMetaPage() {
+        return mNewName;
     }
 
 }

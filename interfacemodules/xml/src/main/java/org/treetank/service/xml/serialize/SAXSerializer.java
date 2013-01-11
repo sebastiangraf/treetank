@@ -50,6 +50,7 @@ import org.treetank.api.IStorage;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackend.IBackendFactory;
 import org.treetank.node.ElementNode;
+import org.treetank.node.NodeMetaPageFactory;
 import org.treetank.node.TreeNodeFactory;
 import org.treetank.revisioning.IRevisioning;
 import org.treetank.service.xml.StandardXMLSettings;
@@ -99,8 +100,11 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
         mContHandler = paramHandler;
     }
 
-    /** {@inheritDoc} 
-     * @throws TTIOException */
+    /**
+     * {@inheritDoc}
+     * 
+     * @throws TTIOException
+     */
     @Override
     protected void emitStartElement(final INodeReadTrx rtx) throws TTIOException {
         switch (rtx.getNode().getKind()) {
@@ -157,7 +161,7 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
      * 
      * @param paramRtx
      *            Read Transaction
-     * @throws TTIOException 
+     * @throws TTIOException
      */
     private void generateElement(final INodeReadTrx paramRtx) throws TTIOException {
         final AttributesImpl atts = new AttributesImpl();
@@ -240,7 +244,7 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
         Properties props = new Properties();
         props.setProperty(ContructorProps.STORAGEPATH, storage.getLocation().getAbsolutePath());
         props.setProperty(ContructorProps.RESOURCE, "shredded");
-        storage.createResource(new ResourceConfiguration(props, backend, revision, new TreeNodeFactory()));
+        storage.createResource(new ResourceConfiguration(props, backend, revision, new TreeNodeFactory(), new NodeMetaPageFactory()));
         final ISession session =
             storage.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
 

@@ -53,6 +53,7 @@ import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
+import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.INodeWriteTrx;
@@ -62,6 +63,7 @@ import org.treetank.api.IStorage;
 import org.treetank.axis.AbsAxis;
 import org.treetank.exception.TTException;
 import org.treetank.io.IBackend.IBackendFactory;
+import org.treetank.node.NodeMetaPageFactory;
 import org.treetank.node.TreeNodeFactory;
 import org.treetank.revisioning.IRevisioning;
 import org.treetank.service.jaxrx.util.RESTResponseHelper;
@@ -105,9 +107,10 @@ public class DatabaseRepresentation {
     private final static transient String YESSTRING = "yes";
 
     /**
-     * Factory to build pages.
+     * Factory to build pages and meta structures
      */
     private final static INodeFactory NODEFACTORY = new TreeNodeFactory();
+    private final static IMetaEntryFactory METAFAC = new NodeMetaPageFactory();
 
     private final IBackendFactory mStorageFac;
 
@@ -118,7 +121,6 @@ public class DatabaseRepresentation {
         mDatabase = pDatabase;
         mStorageFac = pStorageFac;
         mRevision = pRevision;
-
     }
 
     /**
@@ -303,7 +305,7 @@ public class DatabaseRepresentation {
                 StandardSettings.getStandardProperties(mDatabase.getLocation().getAbsolutePath(), resource);
 
             mDatabase.createResource(new ResourceConfiguration(properties, mStorageFac, mRevision,
-                NODEFACTORY));
+                NODEFACTORY, METAFAC));
 
             session = mDatabase.getSession(new SessionConfiguration(resource, StandardSettings.KEY));
             pWtx = session.beginPageWriteTransaction();

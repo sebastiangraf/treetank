@@ -27,6 +27,8 @@
 
 package org.treetank.page;
 
+import org.treetank.api.IMetaEntry;
+import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;
 import org.treetank.page.interfaces.IPage;
 
@@ -46,17 +48,21 @@ import com.google.inject.Singleton;
 public final class PageFactory {
 
     /** Node Factory to be initialized. */
-    private INodeFactory mNodeFac;
+    private final INodeFactory mNodeFac;
+
+    /** MetaEntry Factory to be initialized. */
+    private final IMetaEntryFactory mEntryFac;
 
     /**
      * Constructor.
      * 
-     * @param pFac
+     * @param pNodeFac
      *            to be set
      */
     @Inject
-    public PageFactory(final INodeFactory pFac) {
-        mNodeFac = pFac;
+    public PageFactory(final INodeFactory pNodeFac, final IMetaEntryFactory pMetaFac) {
+        mNodeFac = pNodeFac;
+        mEntryFac = pMetaFac;
     }
 
     /**
@@ -81,17 +87,25 @@ public final class PageFactory {
                 }
             }
             return nodePage;
-        case IConstants.NAMEPAGE:
-            NamePage namePage = new NamePage(input.readLong());
+        case IConstants.METAPAGE:
+            MetaPage metaPage = new MetaPage(input.readLong());
             final int mapSize = input.readInt();
+            int size = -1;
+            byte[] bytes;
+            IMetaEntry key;
+            IMetaEntry value;
             for (int i = 0; i < mapSize; i++) {
-                final int key = input.readInt();
-                final int valSize = input.readInt();
-                final byte[] bytes = new byte[valSize];
+                size = input.readInt();
+                bytes = new byte[size];
                 input.readFully(bytes);
-                namePage.setName(key, new String(bytes));
+                key = mEntryFac.deserializeEntry(bytes);
+                size = input.readInt();
+                bytes = new byte[size];
+                input.readFully(bytes);
+                value = mEntryFac.deserializeEntry(bytes);
+                metaPage.setEntry(key, value);
             }
-            return namePage;
+            return metaPage;
         case IConstants.UBERPAGE:
             UberPage uberPage = new UberPage(input.readLong(), input.readLong(), input.readLong());
             uberPage.setReferenceKey(0, input.readLong());

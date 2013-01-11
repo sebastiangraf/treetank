@@ -1,8 +1,5 @@
 package org.treetank.filelistener.ui.dialogs;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
@@ -14,7 +11,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.treetank.filelistener.file.Filelistener;
 
 public class ListenToFolderDialog extends Dialog {
 
@@ -153,7 +149,7 @@ public class ListenToFolderDialog extends Dialog {
         dialog.open();
 
         savePath.setText(dialog.getFilterPath());
-        this.listenFolder = savePath.getText();
+        this.storageName = savePath.getText();
     }
 
     protected void do_btnUseAnExisting_widgetSelected(final SelectionEvent e) {
@@ -182,13 +178,7 @@ public class ListenToFolderDialog extends Dialog {
     }
 
     private void btnSubmit() {
-        try {
-            Filelistener.addFilelistener(this.storageName, this.listenFolder);
-            
-            this.getParent().close();
-        } catch (ClassNotFoundException | IOException e) {
-            e.printStackTrace();
-        }
+        this.getParent().close();
     }
 
     private void btnCancel() {

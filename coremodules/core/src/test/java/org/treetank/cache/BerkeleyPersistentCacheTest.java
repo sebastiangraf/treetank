@@ -68,7 +68,8 @@ public class BerkeleyPersistentCacheTest {
 
         cache =
             new BerkeleyPersistenceLog(new File(new File(CoreTestHelper.PATHS.PATH1.getFile(),
-                StorageConfiguration.Paths.Data.getFile().getName()), CoreTestHelper.RESOURCENAME), conf.mNodeFac);
+                StorageConfiguration.Paths.Data.getFile().getName()), CoreTestHelper.RESOURCENAME),
+                conf.mNodeFac, conf.mMetaFac);
         CacheTestHelper.setUp(true, cache);
     }
 

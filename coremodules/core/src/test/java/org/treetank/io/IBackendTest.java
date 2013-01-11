@@ -9,6 +9,7 @@ import org.treetank.CoreTestHelper;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.StorageConfiguration;
+import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.exception.TTException;
@@ -16,6 +17,7 @@ import org.treetank.exception.TTIOException;
 import org.treetank.io.berkeley.BerkeleyStorage;
 import org.treetank.io.bytepipe.ByteHandlerPipeline;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
+import org.treetank.page.DumbMetaEntryFactory;
 import org.treetank.page.DumbNodeFactory;
 
 import com.google.common.io.Files;
@@ -76,29 +78,31 @@ public class IBackendTest {
     public Object[][] instantiateBackend() throws TTIOException {
 
         INodeFactory nodeFac = new DumbNodeFactory();
+        IMetaEntryFactory metaFac = new DumbMetaEntryFactory();
         IByteHandlerPipeline handler = new ByteHandlerPipeline();
 
         Object[][] returnVal = {
             {
                 IBackend.class, new IBackend[] {
-                     createBerkeleyStorage(nodeFac, handler)
+                    createBerkeleyStorage(nodeFac, handler, metaFac)
                 }
             }
         };
         return returnVal;
     }
 
-    private static IBackend createBerkeleyStorage(INodeFactory pNodeFac, IByteHandlerPipeline pHandler)
-        throws TTIOException {
+    private static IBackend createBerkeleyStorage(INodeFactory pNodeFac, IByteHandlerPipeline pHandler,
+        IMetaEntryFactory pMetaFac) throws TTIOException {
         File rootFolderToCreate = Files.createTempDir();
         File fileToCreate =
             new File(new File(new File(rootFolderToCreate, StorageConfiguration.Paths.Data.getFile()
-                .getName()), CoreTestHelper.RESOURCENAME), ResourceConfiguration.Paths.Data.getFile().getName());
+                .getName()), CoreTestHelper.RESOURCENAME), ResourceConfiguration.Paths.Data.getFile()
+                .getName());
         fileToCreate.mkdirs();
         Properties props =
             StandardSettings.getStandardProperties(rootFolderToCreate.getAbsolutePath(),
                 CoreTestHelper.RESOURCENAME);
-        return new BerkeleyStorage(props, pNodeFac, pHandler);
+        return new BerkeleyStorage(props, pNodeFac, pMetaFac, pHandler);
     }
 
     // private static IBackend createFileStorage(INodeFactory pNodeFac, IByteHandlerPipeline pHandler) {

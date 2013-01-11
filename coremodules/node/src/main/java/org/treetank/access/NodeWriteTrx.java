@@ -47,6 +47,7 @@ import org.treetank.node.DocumentRootNode;
 import org.treetank.node.ElementNode;
 import org.treetank.node.IConstants;
 import org.treetank.node.NamespaceNode;
+import org.treetank.node.NodeMetaPageFactory;
 import org.treetank.node.TextNode;
 import org.treetank.node.delegates.NameNodeDelegate;
 import org.treetank.node.delegates.NodeDelegate;
@@ -56,6 +57,7 @@ import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.node.interfaces.IValNode;
+import org.treetank.utils.NamePageHash;
 import org.treetank.utils.TypedValue;
 
 /**
@@ -234,21 +236,18 @@ public class NodeWriteTrx implements INodeWriteTrx {
         final byte[] value = TypedValue.getBytes(pValue);
         final long elementKey = mDelegate.getCurrentNode().getNodeKey();
 
-        final int nameKey = getPageTransaction().createNameKey(PageWriteTrx.buildName(pQName));
-        final int namespaceKey = getPageTransaction().createNameKey(pQName.getNamespaceURI());
-        final NodeDelegate nodeDel =
-            new NodeDelegate(getPageTransaction().getMaxNodeKey() + 1, elementKey, 0);
+        final int nameKey = insertName(PageWriteTrx.buildName(pQName));
+        final int namespaceKey = insertName(pQName.getNamespaceURI());
+        final NodeDelegate nodeDel = new NodeDelegate(getPtx().getMaxNodeKey() + 1, elementKey, 0);
         final NameNodeDelegate nameDel = new NameNodeDelegate(nodeDel, nameKey, namespaceKey);
         final ValNodeDelegate valDel = new ValNodeDelegate(nodeDel, value);
 
-        final AttributeNode node =
-            getPageTransaction().createNode(new AttributeNode(nodeDel, nameDel, valDel));
+        final AttributeNode node = getPtx().createNode(new AttributeNode(nodeDel, nameDel, valDel));
 
         final INode parentNode =
-            (org.treetank.node.interfaces.INode)getPageTransaction().prepareNodeForModification(
-                node.getParentKey());
+            (org.treetank.node.interfaces.INode)getPtx().prepareNodeForModification(node.getParentKey());
         ((ElementNode)parentNode).insertAttribute(node.getNodeKey());
-        getPageTransaction().finishNodeModification(parentNode);
+        getPtx().finishNodeModification(parentNode);
 
         mDelegate.setCurrentNode(node);
         adaptForInsert(node, false);
@@ -269,24 +268,19 @@ public class NodeWriteTrx implements INodeWriteTrx {
                 .getCurrentNode());
         checkAccessAndCommit();
 
-        final int uriKey = getPageTransaction().createNameKey(pQName.getNamespaceURI());
-        // final String name =
-        // paramQName.getPrefix().isEmpty() ? "xmlns" : "xmlns:" +
-        // paramQName.getPrefix();
-        final int prefixKey = getPageTransaction().createNameKey(pQName.getPrefix());
+        final int uriKey = insertName(pQName.getNamespaceURI());
+        final int prefixKey = insertName(pQName.getPrefix());
         final long elementKey = mDelegate.getCurrentNode().getNodeKey();
 
-        final NodeDelegate nodeDel =
-            new NodeDelegate(getPageTransaction().getMaxNodeKey() + 1, elementKey, 0);
+        final NodeDelegate nodeDel = new NodeDelegate(getPtx().getMaxNodeKey() + 1, elementKey, 0);
         final NameNodeDelegate nameDel = new NameNodeDelegate(nodeDel, prefixKey, uriKey);
 
-        final NamespaceNode node = getPageTransaction().createNode(new NamespaceNode(nodeDel, nameDel));
+        final NamespaceNode node = getPtx().createNode(new NamespaceNode(nodeDel, nameDel));
 
         final INode parentNode =
-            (org.treetank.node.interfaces.INode)getPageTransaction().prepareNodeForModification(
-                node.getParentKey());
+            (org.treetank.node.interfaces.INode)getPtx().prepareNodeForModification(node.getParentKey());
         ((ElementNode)parentNode).insertNamespace(node.getNodeKey());
-        getPageTransaction().finishNodeModification(parentNode);
+        getPtx().finishNodeModification(parentNode);
 
         mDelegate.setCurrentNode(node);
         adaptForInsert(node, false);
@@ -297,27 +291,26 @@ public class NodeWriteTrx implements INodeWriteTrx {
     private ElementNode createElementNode(final long parentKey, final long mLeftSibKey,
         final long rightSibKey, final long hash, final QName mName) throws TTException {
 
-        final int nameKey = getPageTransaction().createNameKey(PageWriteTrx.buildName(mName));
-        final int namespaceKey = getPageTransaction().createNameKey(mName.getNamespaceURI());
+        final int nameKey = insertName(PageWriteTrx.buildName(mName));
+        final int namespaceKey = insertName(mName.getNamespaceURI());
 
-        final NodeDelegate nodeDel = new NodeDelegate(getPageTransaction().getMaxNodeKey() + 1, parentKey, 0);
+        final NodeDelegate nodeDel = new NodeDelegate(getPtx().getMaxNodeKey() + 1, parentKey, 0);
         final StructNodeDelegate structDel =
             new StructNodeDelegate(nodeDel, NULL_NODE, rightSibKey, mLeftSibKey, 0);
         final NameNodeDelegate nameDel = new NameNodeDelegate(nodeDel, nameKey, namespaceKey);
 
-        return getPageTransaction().createNode(
+        return getPtx().createNode(
             new ElementNode(nodeDel, structDel, nameDel, new ArrayList<Long>(), new ArrayList<Long>()));
     }
 
     private TextNode createTextNode(final long mParentKey, final long mLeftSibKey, final long rightSibKey,
         final byte[] mValue) throws TTException {
-        final NodeDelegate nodeDel =
-            new NodeDelegate(getPageTransaction().getMaxNodeKey() + 1, mParentKey, 0);
+        final NodeDelegate nodeDel = new NodeDelegate(getPtx().getMaxNodeKey() + 1, mParentKey, 0);
         final ValNodeDelegate valDel = new ValNodeDelegate(nodeDel, mValue);
         final StructNodeDelegate structDel =
             new StructNodeDelegate(nodeDel, NULL_NODE, rightSibKey, mLeftSibKey, 0);
 
-        return getPageTransaction().createNode(new TextNode(nodeDel, structDel, valDel));
+        return getPtx().createNode(new TextNode(nodeDel, structDel, valDel));
     }
 
     /**
@@ -335,11 +328,11 @@ public class NodeWriteTrx implements INodeWriteTrx {
                 ElementNode element = (ElementNode)node;
                 for (int i = 0; i < element.getAttributeCount(); i++) {
                     moveTo(element.getAttributeKey(i));
-                    getPageTransaction().removeNode(mDelegate.getCurrentNode());
+                    getPtx().removeNode(mDelegate.getCurrentNode());
                 }
                 for (int i = 0; i < element.getNamespaceCount(); i++) {
                     moveTo(element.getNamespaceKey(i));
-                    getPageTransaction().removeNode(mDelegate.getCurrentNode());
+                    getPtx().removeNode(mDelegate.getCurrentNode());
                 }
                 moveTo(currentKey);
             }
@@ -358,18 +351,16 @@ public class NodeWriteTrx implements INodeWriteTrx {
         } else if (mDelegate.getCurrentNode().getKind() == IConstants.ATTRIBUTE) {
             final INode node = mDelegate.getCurrentNode();
 
-            final ElementNode parent =
-                (ElementNode)getPageTransaction().prepareNodeForModification(node.getParentKey());
+            final ElementNode parent = (ElementNode)getPtx().prepareNodeForModification(node.getParentKey());
             parent.removeAttribute(node.getNodeKey());
-            getPageTransaction().finishNodeModification(parent);
+            getPtx().finishNodeModification(parent);
             adaptHashesWithRemove();
             moveTo(mDelegate.getCurrentNode().getParentKey());
         } else if (mDelegate.getCurrentNode().getKind() == IConstants.NAMESPACE) {
             final INode node = mDelegate.getCurrentNode();
-            final ElementNode parent =
-                (ElementNode)getPageTransaction().prepareNodeForModification(node.getParentKey());
+            final ElementNode parent = (ElementNode)getPtx().prepareNodeForModification(node.getParentKey());
             parent.removeNamespace(node.getNodeKey());
-            getPageTransaction().finishNodeModification(parent);
+            getPtx().finishNodeModification(parent);
             adaptHashesWithRemove();
             moveTo(mDelegate.getCurrentNode().getParentKey());
         }
@@ -387,10 +378,9 @@ public class NodeWriteTrx implements INodeWriteTrx {
         final long oldHash = mDelegate.getCurrentNode().hashCode();
 
         final INameNode node =
-            (INameNode)getPageTransaction().prepareNodeForModification(
-                mDelegate.getCurrentNode().getNodeKey());
-        node.setNameKey(getPageTransaction().createNameKey(PageWriteTrx.buildName(paramName)));
-        getPageTransaction().finishNodeModification(node);
+            (INameNode)getPtx().prepareNodeForModification(mDelegate.getCurrentNode().getNodeKey());
+        node.setNameKey(insertName(PageWriteTrx.buildName(paramName)));
+        getPtx().finishNodeModification(node);
 
         mDelegate.setCurrentNode((INode)node);
         adaptHashedWithUpdate(oldHash);
@@ -408,10 +398,9 @@ public class NodeWriteTrx implements INodeWriteTrx {
         final long oldHash = mDelegate.getCurrentNode().hashCode();
 
         final INameNode node =
-            (INameNode)getPageTransaction().prepareNodeForModification(
-                mDelegate.getCurrentNode().getNodeKey());
-        node.setURIKey(getPageTransaction().createNameKey(paramUri));
-        getPageTransaction().finishNodeModification(node);
+            (INameNode)getPtx().prepareNodeForModification(mDelegate.getCurrentNode().getNodeKey());
+        node.setURIKey(insertName(paramUri));
+        getPtx().finishNodeModification(node);
 
         mDelegate.setCurrentNode((INode)node);
         adaptHashedWithUpdate(oldHash);
@@ -429,10 +418,9 @@ public class NodeWriteTrx implements INodeWriteTrx {
         final long oldHash = mDelegate.getCurrentNode().hashCode();
 
         final IValNode node =
-            (IValNode)getPageTransaction()
-                .prepareNodeForModification(mDelegate.getCurrentNode().getNodeKey());
+            (IValNode)getPtx().prepareNodeForModification(mDelegate.getCurrentNode().getNodeKey());
         node.setValue(TypedValue.getBytes(pValue));
-        getPageTransaction().finishNodeModification(node);
+        getPtx().finishNodeModification(node);
 
         mDelegate.setCurrentNode((INode)node);
         adaptHashedWithUpdate(oldHash);
@@ -450,7 +438,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
     public void revertTo(final long pRevision) throws TTException {
         checkArgument(pRevision >= 0, "Parameter must be >= 0, but was %s", pRevision);
         mDelegate.assertNotClosed();
-        getPageTransaction().close();
+        getPtx().close();
         // Reset internal transaction state to new uber page.
         mDelegate.setPageTransaction(mSession.beginPageWriteTransaction(pRevision));
         moveTo(ROOT_NODE);
@@ -464,9 +452,9 @@ public class NodeWriteTrx implements INodeWriteTrx {
     public void commit() throws TTException {
         mDelegate.assertNotClosed();
         // Commit uber page.
-        getPageTransaction().commit();
+        getPtx().commit();
         final long revNumber = mDelegate.mPageReadTrx.getActualRevisionRootPage().getRevision();
-        getPageTransaction().close();
+        getPtx().close();
         // Reset internal transaction state to new uber page.
         mDelegate.setPageTransaction(mSession.beginPageWriteTransaction(revNumber));
 
@@ -483,7 +471,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
         long revisionToSet = 0;
         revisionToSet = mDelegate.mPageReadTrx.getActualRevisionRootPage().getRevision() - 1;
 
-        getPageTransaction().close();
+        getPtx().close();
 
         // Reset internal transaction state to last committed uber page.
         mDelegate.setPageTransaction(mSession.beginPageWriteTransaction(revisionToSet));
@@ -509,6 +497,22 @@ public class NodeWriteTrx implements INodeWriteTrx {
         mDelegate.assertNotClosed();
     }
 
+    /**
+     * Setting a new name in the metapage.
+     * 
+     * @param pName
+     *            to be set
+     * @throws TTException
+     */
+    private int insertName(final String pName) throws TTException {
+        final String string = (pName == null ? "" : pName);
+        final int nameKey = NamePageHash.generateHashForString(string);
+        NodeMetaPageFactory.MetaKey key = new NodeMetaPageFactory.MetaKey(nameKey);
+        NodeMetaPageFactory.MetaValue value = new NodeMetaPageFactory.MetaValue(string);
+        getPageWtx().getMetaPage().setEntry(key, value);
+        return nameKey;
+    }
+
     // ////////////////////////////////////////////////////////////
     // insert operation
     // //////////////////////////////////////////////////////////
@@ -529,26 +533,24 @@ public class NodeWriteTrx implements INodeWriteTrx {
         if (paramNewNode instanceof IStructNode) {
             final IStructNode strucNode = (IStructNode)paramNewNode;
             final IStructNode parent =
-                (IStructNode)getPageTransaction().prepareNodeForModification(paramNewNode.getParentKey());
+                (IStructNode)getPtx().prepareNodeForModification(paramNewNode.getParentKey());
             parent.incrementChildCount();
             if (addAsFirstChild) {
                 parent.setFirstChildKey(paramNewNode.getNodeKey());
             }
-            getPageTransaction().finishNodeModification(parent);
+            getPtx().finishNodeModification(parent);
 
             if (strucNode.hasRightSibling()) {
                 final IStructNode rightSiblingNode =
-                    (IStructNode)getPageTransaction().prepareNodeForModification(
-                        strucNode.getRightSiblingKey());
+                    (IStructNode)getPtx().prepareNodeForModification(strucNode.getRightSiblingKey());
                 rightSiblingNode.setLeftSiblingKey(paramNewNode.getNodeKey());
-                getPageTransaction().finishNodeModification(rightSiblingNode);
+                getPtx().finishNodeModification(rightSiblingNode);
             }
             if (strucNode.hasLeftSibling()) {
                 final IStructNode leftSiblingNode =
-                    (IStructNode)getPageTransaction().prepareNodeForModification(
-                        strucNode.getLeftSiblingKey());
+                    (IStructNode)getPtx().prepareNodeForModification(strucNode.getLeftSiblingKey());
                 leftSiblingNode.setRightSiblingKey(paramNewNode.getNodeKey());
-                getPageTransaction().finishNodeModification(leftSiblingNode);
+                getPtx().finishNodeModification(leftSiblingNode);
             }
         }
 
@@ -576,46 +578,44 @@ public class NodeWriteTrx implements INodeWriteTrx {
         // Adapt left sibling node if there is one.
         if (paramOldNode.hasLeftSibling()) {
             final IStructNode leftSibling =
-                (IStructNode)getPageTransaction()
-                    .prepareNodeForModification(paramOldNode.getLeftSiblingKey());
+                (IStructNode)getPtx().prepareNodeForModification(paramOldNode.getLeftSiblingKey());
             leftSibling.setRightSiblingKey(paramOldNode.getRightSiblingKey());
-            getPageTransaction().finishNodeModification(leftSibling);
+            getPtx().finishNodeModification(leftSibling);
         }
 
         // Adapt right sibling node if there is one.
         if (paramOldNode.hasRightSibling()) {
             final IStructNode rightSibling =
-                (IStructNode)getPageTransaction().prepareNodeForModification(
-                    paramOldNode.getRightSiblingKey());
+                (IStructNode)getPtx().prepareNodeForModification(paramOldNode.getRightSiblingKey());
             rightSibling.setLeftSiblingKey(paramOldNode.getLeftSiblingKey());
-            getPageTransaction().finishNodeModification(rightSibling);
+            getPtx().finishNodeModification(rightSibling);
         }
 
         // Adapt parent, if node has now left sibling it is a first child.
         final IStructNode parent =
-            (IStructNode)getPageTransaction().prepareNodeForModification(paramOldNode.getParentKey());
+            (IStructNode)getPtx().prepareNodeForModification(paramOldNode.getParentKey());
         if (!paramOldNode.hasLeftSibling()) {
             parent.setFirstChildKey(paramOldNode.getRightSiblingKey());
         }
         parent.decrementChildCount();
-        getPageTransaction().finishNodeModification(parent);
+        getPtx().finishNodeModification(parent);
 
         if (paramOldNode.getKind() == IConstants.ELEMENT) {
             // removing attributes
             for (int i = 0; i < ((ElementNode)paramOldNode).getAttributeCount(); i++) {
                 moveTo(((ElementNode)paramOldNode).getAttributeKey(i));
-                getPageTransaction().removeNode(mDelegate.getCurrentNode());
+                getPtx().removeNode(mDelegate.getCurrentNode());
             }
             // removing namespaces
             moveTo(paramOldNode.getNodeKey());
             for (int i = 0; i < ((ElementNode)paramOldNode).getNamespaceCount(); i++) {
                 moveTo(((ElementNode)paramOldNode).getNamespaceKey(i));
-                getPageTransaction().removeNode(mDelegate.getCurrentNode());
+                getPtx().removeNode(mDelegate.getCurrentNode());
             }
         }
 
         // Remove old node.
-        getPageTransaction().removeNode(paramOldNode);
+        getPtx().removeNode(paramOldNode);
     }
 
     // ////////////////////////////////////////////////////////////
@@ -627,7 +627,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      * 
      * @return The state of this transaction.
      */
-    private PageWriteTrx getPageTransaction() {
+    private PageWriteTrx getPtx() {
         return (PageWriteTrx)mDelegate.mPageReadTrx;
     }
 
@@ -713,9 +713,9 @@ public class NodeWriteTrx implements INodeWriteTrx {
         long hashCodeForParent = 0;
         // adapting the parent if the current node is no structural one.
         if (!(mDelegate.getCurrentNode() instanceof IStructNode)) {
-            getPageTransaction().prepareNodeForModification(mDelegate.getCurrentNode().getNodeKey());
+            getPtx().prepareNodeForModification(mDelegate.getCurrentNode().getNodeKey());
             mDelegate.getCurrentNode().setHash(mDelegate.getCurrentNode().hashCode());
-            getPageTransaction().finishNodeModification(mDelegate.getCurrentNode());
+            getPtx().finishNodeModification(mDelegate.getCurrentNode());
             moveTo(mDelegate.getCurrentNode().getParentKey());
         }
         // Cursor to root
@@ -723,8 +723,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
         do {
             synchronized (mDelegate.getCurrentNode()) {
                 cursorToRoot =
-                    (IStructNode)getPageTransaction().prepareNodeForModification(
-                        mDelegate.getCurrentNode().getNodeKey());
+                    (IStructNode)getPtx().prepareNodeForModification(mDelegate.getCurrentNode().getNodeKey());
                 hashCodeForParent = mDelegate.getCurrentNode().hashCode() + hashCodeForParent * PRIME;
                 // Caring about attributes and namespaces if node is an element.
                 if (cursorToRoot.getKind() == IConstants.ELEMENT) {
@@ -751,7 +750,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
 
                 // setting hash and resetting hash
                 cursorToRoot.setHash(hashCodeForParent);
-                getPageTransaction().finishNodeModification(cursorToRoot);
+                getPtx().finishNodeModification(cursorToRoot);
                 hashCodeForParent = 0;
             }
         } while (moveTo(cursorToRoot.getParentKey()));
@@ -776,7 +775,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
         // go the path to the root
         do {
             synchronized (mDelegate.getCurrentNode()) {
-                getPageTransaction().prepareNodeForModification(mDelegate.getCurrentNode().getNodeKey());
+                getPtx().prepareNodeForModification(mDelegate.getCurrentNode().getNodeKey());
                 if (mDelegate.getCurrentNode().getNodeKey() == newNode.getNodeKey()) {
                     resultNew = mDelegate.getCurrentNode().getHash() - paramOldHash;
                     resultNew = resultNew + newNodeHash;
@@ -785,7 +784,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
                     resultNew = resultNew + newNodeHash * PRIME;
                 }
                 mDelegate.getCurrentNode().setHash(resultNew);
-                getPageTransaction().finishNodeModification(mDelegate.getCurrentNode());
+                getPtx().finishNodeModification(mDelegate.getCurrentNode());
             }
         } while (moveTo(mDelegate.getCurrentNode().getParentKey()));
 
@@ -807,7 +806,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
         // go the path to the root
         do {
             synchronized (mDelegate.getCurrentNode()) {
-                getPageTransaction().prepareNodeForModification(mDelegate.getCurrentNode().getNodeKey());
+                getPtx().prepareNodeForModification(mDelegate.getCurrentNode().getNodeKey());
                 if (mDelegate.getCurrentNode().getNodeKey() == startNode.getNodeKey()) {
                     // the begin node is always null
                     newHash = 0;
@@ -823,7 +822,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
                 }
                 mDelegate.getCurrentNode().setHash(newHash);
                 hashToAdd = newHash;
-                getPageTransaction().finishNodeModification(mDelegate.getCurrentNode());
+                getPtx().finishNodeModification(mDelegate.getCurrentNode());
             }
         } while (moveTo(mDelegate.getCurrentNode().getParentKey()));
 
@@ -846,7 +845,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
         // go the path to the root
         do {
             synchronized (mDelegate.getCurrentNode()) {
-                getPageTransaction().prepareNodeForModification(mDelegate.getCurrentNode().getNodeKey());
+                getPtx().prepareNodeForModification(mDelegate.getCurrentNode().getNodeKey());
                 if (mDelegate.getCurrentNode().getNodeKey() == startNode.getNodeKey()) {
                     // at the beginning, take the hashcode of the node only
                     newHash = hashToAdd;
@@ -864,7 +863,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
                     possibleOldHash = mDelegate.getCurrentNode().getHash();
                 }
                 mDelegate.getCurrentNode().setHash(newHash);
-                getPageTransaction().finishNodeModification(mDelegate.getCurrentNode());
+                getPtx().finishNodeModification(mDelegate.getCurrentNode());
             }
         } while (moveTo(mDelegate.getCurrentNode().getParentKey()));
         mDelegate.setCurrentNode(startNode);
@@ -947,7 +946,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      */
     @Override
     public IPageWriteTrx getPageWtx() throws TTException {
-        return getPageTransaction();
+        return getPtx();
     }
 
     /**

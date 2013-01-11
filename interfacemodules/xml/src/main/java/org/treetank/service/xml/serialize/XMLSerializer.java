@@ -57,6 +57,7 @@ import org.treetank.api.IStorage;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackend.IBackendFactory;
 import org.treetank.node.ElementNode;
+import org.treetank.node.NodeMetaPageFactory;
 import org.treetank.node.TreeNodeFactory;
 import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.IStructNode;
@@ -461,7 +462,7 @@ public final class XMLSerializer extends AbsSerializer {
         Properties props = new Properties();
         props.setProperty(ContructorProps.STORAGEPATH, target.getAbsolutePath());
         props.setProperty(ContructorProps.RESOURCE, "shredded");
-        db.createResource(new ResourceConfiguration(props, storage, revision, new TreeNodeFactory()));
+        db.createResource(new ResourceConfiguration(props, storage, revision, new TreeNodeFactory(),new NodeMetaPageFactory()));
         final ISession session = db.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
 
         final XMLSerializer serializer = new XMLSerializerBuilder(session, outputStream).build();

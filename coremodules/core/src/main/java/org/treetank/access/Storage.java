@@ -57,7 +57,7 @@ import org.treetank.io.IBackendWriter;
 import org.treetank.io.IOUtils;
 import org.treetank.page.IConstants;
 import org.treetank.page.IndirectPage;
-import org.treetank.page.NamePage;
+import org.treetank.page.MetaPage;
 import org.treetank.page.NodePage;
 import org.treetank.page.RevisionRootPage;
 import org.treetank.page.UberPage;
@@ -348,8 +348,6 @@ public final class Storage implements IStorage {
     // End DB-Operations//////////////////////////////////
     // /////////////////////////////////////////////////////////
 
-
-
     /**
      * {@inheritDoc}
      */
@@ -395,7 +393,8 @@ public final class Storage implements IStorage {
         throws TTException {
         ICachedLog mLog =
             new LRUCache(new BerkeleyPersistenceLog(new File(pResourceConf.mProperties
-                .getProperty(org.treetank.access.conf.ContructorProps.STORAGEPATH)), pResourceConf.mNodeFac));
+                .getProperty(org.treetank.access.conf.ContructorProps.STORAGEPATH)), pResourceConf.mNodeFac,
+                pResourceConf.mMetaFac));
 
         UberPage uberPage = new UberPage(1, 0, 2);
         long newPageKey = uberPage.incrementPageCounter();
@@ -419,7 +418,7 @@ public final class Storage implements IStorage {
 
         newPageKey = uberPage.incrementPageCounter();
         // establishing fresh NamePage
-        NamePage namePage = new NamePage(newPageKey);
+        MetaPage namePage = new MetaPage(newPageKey);
         page.setReferenceKey(RevisionRootPage.NAME_REFERENCE_OFFSET, newPageKey);
         LogKey key = new LogKey(false, -1, -1);
         mLog.put(key, new NodePageContainer(namePage, namePage));
@@ -463,13 +462,14 @@ public final class Storage implements IStorage {
         writer.close();
 
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public String toString() {
-        return toStringHelper(this).add("mSessions", mSessions).add("mStorageConfig", mStorageConfig).toString();
+        return toStringHelper(this).add("mSessions", mSessions).add("mStorageConfig", mStorageConfig)
+            .toString();
     }
 
 }

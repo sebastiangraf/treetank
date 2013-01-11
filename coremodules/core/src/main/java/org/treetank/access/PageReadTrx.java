@@ -44,7 +44,7 @@ import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
 import org.treetank.page.IConstants;
 import org.treetank.page.IndirectPage;
-import org.treetank.page.NamePage;
+import org.treetank.page.MetaPage;
 import org.treetank.page.NodePage;
 import org.treetank.page.NodePage.DeletedNode;
 import org.treetank.page.RevisionRootPage;
@@ -80,7 +80,7 @@ public class PageReadTrx implements IPageReadTrx {
     private final RevisionRootPage mRootPage;
 
     /** Cached name page of this revision. */
-    protected final NamePage mNamePage;
+    protected final MetaPage mMetaPage;
 
     /**
      * Internal reference to cache. This cache takes the sequential numbering of the pages instead of the
@@ -123,8 +123,8 @@ public class PageReadTrx implements IPageReadTrx {
         mRootPage =
             (RevisionRootPage)mPageReader.read(dereferenceLeafOfTree(mPageReader, mUberPage
                 .getReferenceKeys()[IReferencePage.GUARANTEED_INDIRECT_OFFSET], pRevKey));
-        mNamePage =
-            (NamePage)mPageReader.read(mRootPage.getReferenceKeys()[RevisionRootPage.NAME_REFERENCE_OFFSET]);
+        mMetaPage =
+            (MetaPage)mPageReader.read(mRootPage.getReferenceKeys()[RevisionRootPage.NAME_REFERENCE_OFFSET]);
         mClose = false;
     }
 
@@ -155,18 +155,6 @@ public class PageReadTrx implements IPageReadTrx {
         }
         final INode returnVal = page.getNode(nodePageOffset);
         return checkItemIfDeleted(returnVal);
-    }
-
-    /**
-     * Getting the name corresponding to the given key.
-     * 
-     * @param pNameKey
-     *            for the term searched
-     * @return the name
-     */
-    public String getName(final int pNameKey) {
-        return mNamePage.getName(pNameKey);
-
     }
 
     /**
@@ -340,4 +328,10 @@ public class PageReadTrx implements IPageReadTrx {
         return toStringHelper(this).add("mPageReader", mPageReader).add("mPageReader", mUberPage).add(
             "mRootPage", mRootPage).add("mClose", mClose).toString();
     }
+
+    @Override
+    public MetaPage getMetaPage() {
+        return mMetaPage;
+    }
+
 }

@@ -12,6 +12,8 @@ import org.testng.annotations.Test;
 import org.treetank.CoreTestHelper;
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.io.bytepipe.IByteHandler;
+import org.treetank.page.DumbMetaEntryFactory.MetaKey;
+import org.treetank.page.DumbMetaEntryFactory.MetaValue;
 import org.treetank.page.interfaces.IPage;
 
 /**
@@ -33,7 +35,7 @@ public class IPageTest {
      */
     @Test(dataProvider = "instantiatePages")
     public void testByteRepresentation(Class<IPage> clazz, IPage[] pHandlers) {
-        final PageFactory fac = new PageFactory(new DumbNodeFactory());
+        final PageFactory fac = new PageFactory(new DumbNodeFactory(), new DumbMetaEntryFactory());
 
         for (final IPage handler : pHandlers) {
             final byte[] pageBytes = handler.getByteRepresentation();
@@ -63,14 +65,15 @@ public class IPageTest {
         for (int i = 0; i < IConstants.CONTENT_COUNT - 1; i++) {
             nodePage.setNode(i, CoreTestHelper.generateOne());
         }
-        // NamePage setup
-        NamePage namePage = new NamePage(CoreTestHelper.random.nextLong());
-        namePage.setName(CoreTestHelper.random.nextInt(), new String(CoreTestHelper.generateRandomBytes(256)));
+        // MetaPage setup
+        MetaPage metaPage = new MetaPage(CoreTestHelper.random.nextLong());
+        metaPage.setEntry(new MetaKey(CoreTestHelper.random.nextLong()), new MetaValue(CoreTestHelper.random
+            .nextLong()));
 
         Object[][] returnVal = {
             {
                 IPage.class, new IPage[] {
-                    indirectPage, revRootPage, nodePage, namePage
+                    indirectPage, revRootPage, nodePage, metaPage
                 }
             }
         };

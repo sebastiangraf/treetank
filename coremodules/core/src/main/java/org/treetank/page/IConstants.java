@@ -39,7 +39,7 @@ public interface IConstants {
     // --- Page Kinds
     // ----------------------------------------------------------
     public final static int NODEPAGE = 1;
-    public final static int NAMEPAGE = 2;
+    public final static int METAPAGE = 2;
     public final static int UBERPAGE = 3;
     public final static int INDIRCTPAGE = 4;
     public final static int REVISIONROOTPAGE = 5;
