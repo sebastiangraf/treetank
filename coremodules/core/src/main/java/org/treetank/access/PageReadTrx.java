@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.treetank.access.conf.ContructorProps;
 import org.treetank.api.INode;
 import org.treetank.api.IPageReadTrx;
 import org.treetank.api.ISession;
@@ -120,8 +121,8 @@ public class PageReadTrx implements IPageReadTrx {
         mPageReader = pReader;
         mUberPage = pUberpage;
         mRootPage =
-            (RevisionRootPage)mPageReader.read(dereferenceLeafOfTree(
-                mUberPage.getReferenceKeys()[IReferencePage.GUARANTEED_INDIRECT_OFFSET], pRevKey));
+            (RevisionRootPage)mPageReader.read(dereferenceLeafOfTree(mPageReader, mUberPage
+                .getReferenceKeys()[IReferencePage.GUARANTEED_INDIRECT_OFFSET], pRevKey));
         mNamePage =
             (NamePage)mPageReader.read(mRootPage.getReferenceKeys()[RevisionRootPage.NAME_REFERENCE_OFFSET]);
         mClose = false;
@@ -243,30 +244,25 @@ public class PageReadTrx implements IPageReadTrx {
         // check against the keys as well.
         final Set<Long> nodePageKeys = new TreeSet<Long>();
 
-        // Iterate through all versions starting with the most recent one.
-        for (long i = mRootPage.getRevision(); i >= 0; i--) {
-            // check if rootpage was cached, if so retrieve it and use it, otherwise, dereference it the hard
-            // way.
-            RevisionRootPage rootPage = mRevisionRootCache.getIfPresent(i);
-            if (rootPage == null) {
-                final long revRootKey =
-                    dereferenceLeafOfTree(
-                        mUberPage.getReferenceKeys()[IReferencePage.GUARANTEED_INDIRECT_OFFSET], i);
-                rootPage = (RevisionRootPage)mPageReader.read(revRootKey);
-                mRevisionRootCache.put(i, rootPage);
-            }
+        // Getting the keys for the revRoots
+        long[] revKeys =
+            mSession.getConfig().mRevision.getRevRootKeys(Integer.parseInt(mSession.getConfig().mProperties
+                .getProperty(ContructorProps.NUMBERTORESTORE)),
+                mUberPage.getReferenceKeys()[IReferencePage.GUARANTEED_INDIRECT_OFFSET], mRootPage
+                    .getRevision(), mPageReader);
+
+        for (long i : revKeys) {
+            RevisionRootPage rootPage = (RevisionRootPage)mPageReader.read(i);
+            mRevisionRootCache.put(i, rootPage);
 
             // Searching for the related NodePage within all referenced pages.
             final long nodePageKey =
-                dereferenceLeafOfTree(rootPage.getReferenceKeys()[IReferencePage.GUARANTEED_INDIRECT_OFFSET],
-                    pSeqNodePageKey);
+                dereferenceLeafOfTree(mPageReader,
+                    rootPage.getReferenceKeys()[IReferencePage.GUARANTEED_INDIRECT_OFFSET], pSeqNodePageKey);
             if (nodePageKey > 0 && !nodePageKeys.contains(nodePageKey)) {
                 NodePage page = (NodePage)mPageReader.read(nodePageKey);
                 nodePages.add(page);
                 nodePageKeys.add(nodePageKey);
-                if (nodePages.size() == mSession.getConfig().mRevision.getRevisionsToRestore()) {
-                    break;
-                }
             } else {
                 break;
             }
@@ -288,8 +284,8 @@ public class PageReadTrx implements IPageReadTrx {
      * @throws TTIOException
      *             if something odd happens within the creation process.
      */
-    protected final long dereferenceLeafOfTree(final long pStartKey, final long pSeqPageKey)
-        throws TTIOException {
+    public static final long dereferenceLeafOfTree(final IBackendReader pReader, final long pStartKey,
+        final long pSeqPageKey) throws TTIOException {
 
         // Initial state pointing to the indirect page of level 0.
         int offset = 0;
@@ -303,7 +299,7 @@ public class PageReadTrx implements IPageReadTrx {
             if (pageKey == 0) {
                 return -1;
             }
-            page = (IndirectPage)mPageReader.read(pageKey);
+            page = (IndirectPage)pReader.read(pageKey);
             pageKey = page.getReferenceKeys()[offset];
         }
 

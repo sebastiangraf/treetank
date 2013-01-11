@@ -23,7 +23,6 @@ import org.treetank.io.jclouds.JCloudsStorage;
 import org.treetank.page.DumbNodeFactory;
 import org.treetank.revisioning.Differential;
 import org.treetank.revisioning.IRevisioning;
-import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
@@ -51,8 +50,7 @@ public class StandardSettings extends AbstractModule {
     }
 
     public void configureNormal() {
-        install(new FactoryModuleBuilder().implement(IRevisioning.class, Differential.class).build(
-            IRevisioningFactory.class));
+        bind(IRevisioning.class).to(Differential.class);
         bind(IByteHandlerPipeline.class).toInstance(new ByteHandlerPipeline(new Zipper()));
         install(new FactoryModuleBuilder().implement(IBackend.class, JCloudsStorage.class).build(
             IBackendFactory.class));

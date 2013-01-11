@@ -45,11 +45,11 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
-import org.treetank.NodeModuleFactory;
 import org.treetank.CoreTestHelper;
+import org.treetank.NodeModuleFactory;
 import org.treetank.exception.TTException;
 import org.treetank.io.IBackend.IBackendFactory;
-import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
+import org.treetank.revisioning.IRevisioning;
 import org.treetank.service.jaxrx.implementation.DatabaseRepresentation;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -98,19 +98,22 @@ public class RestXPathProcessorTest {
     public IBackendFactory mStorageFac;
 
     @Inject
-    public IRevisioningFactory mRevisioningFac;
+    public IRevisioning mRevisioning;
 
     @BeforeMethod
     public void setUpGlobal() throws TTException {
         CoreTestHelper.deleteEverything();
-        rxProcessor = new RestXPathProcessor(CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile()));
+        rxProcessor =
+            new RestXPathProcessor(CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile()));
         final InputStream xmlInput = RestXPathProcessorTest.class.getResourceAsStream("/books.xml");
-        new DatabaseRepresentation(CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile()), mStorageFac,
-            mRevisioningFac).shred(xmlInput, RESOURCENAME);
+        new DatabaseRepresentation(CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile()),
+            mStorageFac, mRevisioning).shred(xmlInput, RESOURCENAME);
     }
 
     /**
-     * Test method for {@link org.treetank.service.jaxrx.util.RestXPathProcessor#RestXPathProcessor(org.treetank.api.IStorage)} .
+     * Test method for
+     * {@link org.treetank.service.jaxrx.util.RestXPathProcessor#RestXPathProcessor(org.treetank.api.IStorage)}
+     * .
      * 
      * @throws TTException
      */

@@ -60,7 +60,7 @@ import org.treetank.node.ElementNode;
 import org.treetank.node.TreeNodeFactory;
 import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.IStructNode;
-import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
+import org.treetank.revisioning.IRevisioning;
 import org.treetank.service.xml.StandardXMLSettings;
 
 import com.google.inject.Guice;
@@ -228,7 +228,8 @@ public final class XMLSerializer extends AbsSerializer {
 
     /**
      * Emit node (start element or characters).
-     * @throws TTIOException 
+     * 
+     * @throws TTIOException
      */
     @Override
     protected void emitStartElement(final INodeReadTrx paramRTX) throws TTIOException {
@@ -448,7 +449,7 @@ public final class XMLSerializer extends AbsSerializer {
 
         Injector injector = Guice.createInjector(new StandardXMLSettings());
         IBackendFactory storage = injector.getInstance(IBackendFactory.class);
-        IRevisioningFactory revision = injector.getInstance(IRevisioningFactory.class);
+        IRevisioning revision = injector.getInstance(IRevisioning.class);
 
         final File target = new File(args[1]);
         target.delete();

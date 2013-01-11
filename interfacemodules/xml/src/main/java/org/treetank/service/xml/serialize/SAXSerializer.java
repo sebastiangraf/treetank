@@ -51,7 +51,7 @@ import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackend.IBackendFactory;
 import org.treetank.node.ElementNode;
 import org.treetank.node.TreeNodeFactory;
-import org.treetank.revisioning.IRevisioning.IRevisioningFactory;
+import org.treetank.revisioning.IRevisioning;
 import org.treetank.service.xml.StandardXMLSettings;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.DTDHandler;
@@ -236,7 +236,7 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
 
         Injector injector = Guice.createInjector(new StandardXMLSettings());
         IBackendFactory backend = injector.getInstance(IBackendFactory.class);
-        IRevisioningFactory revision = injector.getInstance(IRevisioningFactory.class);
+        IRevisioning revision = injector.getInstance(IRevisioning.class);
         Properties props = new Properties();
         props.setProperty(ContructorProps.STORAGEPATH, storage.getLocation().getAbsolutePath());
         props.setProperty(ContructorProps.RESOURCE, "shredded");

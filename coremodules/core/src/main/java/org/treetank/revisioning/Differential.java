@@ -4,15 +4,13 @@
 package org.treetank.revisioning;
 
 import static com.google.common.base.Objects.toStringHelper;
+import static com.google.common.base.Preconditions.checkArgument;
 
-import java.util.Properties;
-
-import org.treetank.access.conf.ContructorProps;
+import org.treetank.access.PageReadTrx;
 import org.treetank.cache.NodePageContainer;
+import org.treetank.exception.TTIOException;
+import org.treetank.io.IBackendReader;
 import org.treetank.page.NodePage;
-
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
 
 /**
  * Differential versioning of {@link NodePage}s.
@@ -23,43 +21,23 @@ import com.google.inject.assistedinject.Assisted;
 public class Differential implements IRevisioning {
 
     /**
-     * Parameter to determine the gap between two full-dumps
-     */
-    private final int mRevToRestore;
-
-    /**
-     * 
-     * Constructor.
-     * 
-     * @param pRevToRestore
-     *            to be set.
-     */
-    @Inject
-    public Differential(@Assisted Properties pProperties) {
-        mRevToRestore = Integer.parseInt(pProperties.getProperty(ContructorProps.NUMBERTORESTORE));
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
-    public NodePage combinePages(NodePage[] pages) {
+    public NodePage combinePages(final NodePage[] pages) {
+        // check to have only the newer version and the related fulldump to read on
+        checkArgument(pages.length <= 2,
+            "parameter should just consists of one or two single pages, depending if last page was fulldumped or not");
+        // create entire page..
         final NodePage returnVal = new NodePage(pages[0].getPageKey());
-        final NodePage latest = pages[0];
-
-        NodePage referencePage = pages[0];
-
-        for (int i = 1; i < pages.length; i++) {
-            if (i % mRevToRestore == 0) {
-                referencePage = pages[i];
-                break;
-            }
-        }
-        for (int i = 0; i < referencePage.getNodes().length; i++) {
-            if (latest.getNode(i) != null) {
-                returnVal.setNode(i, latest.getNode(i));
-            } else {
-                returnVal.setNode(i, referencePage.getNode(i));
+        // ...and for all nodes...
+        for (int i = 0; i < pages[0].getNodes().length; i++) {
+            // ..check if node exists in newer version, and if not...
+            if (pages[0].getNodes()[i] != null) {
+                returnVal.setNode(i, pages[0].getNode(i));
+            }// ...set the version from the last fulldump
+            else if (pages.length > 1) {
+                returnVal.setNode(i, pages[1].getNode(i));
             }
         }
         return returnVal;
@@ -69,46 +47,34 @@ public class Differential implements IRevisioning {
      * {@inheritDoc}
      */
     @Override
-    public NodePageContainer combinePagesForModification(long pNewPageKey, NodePage[] pages) {
+    public NodePageContainer
+        combinePagesForModification(long pNewPageKey, NodePage[] pages, boolean pFullDump) {
+        // check to have only the newer version and the related fulldump to read on
+        checkArgument(pages.length <= 2,
+            "parameter should just consists of one or two single pages, depending if last page was fulldumped or not");
+        // create pages for container..
         final NodePage[] returnVal = {
             new NodePage(pages[0].getPageKey()), new NodePage(pNewPageKey)
         };
 
-        final NodePage latest = pages[0];
-        NodePage fullDump = pages[0];
-        int i = 1;
-        for (; i < pages.length; i++) {
-            if (i % mRevToRestore == 0) {
-                fullDump = pages[i];
-                break;
-            }
-        }
-
-        // iterate through all nodes
+        // ...iterate through the nodes and check if it is stored..
         for (int j = 0; j < returnVal[0].getNodes().length; j++) {
-            if (latest.getNode(j) != null) {
-                returnVal[0].setNode(j, latest.getNode(j));
-                returnVal[1].setNode(j, latest.getNode(j));
-            } else {
-                if (fullDump.getNode(j) != null) {
-                    returnVal[0].setNode(j, fullDump.getNode(j));
-                    if (i + 1 % mRevToRestore == 0) {
-                        returnVal[1].setNode(j, fullDump.getNode(j));
-                    }
+            // ...check if the node was written within the last version, if so...
+            if (pages[0].getNode(j) != null) {
+                // ...set it in the read and write-version to be rewritten again...
+                returnVal[0].setNode(j, pages[0].getNode(j));
+                returnVal[1].setNode(j, pages[0].getNode(j));
+            }else if (pages.length > 1) {
+                // otherwise, just store then node from the fulldump to complete read-page except...
+                returnVal[0].setNode(j, pages[1].getNode(j));
+                // ..a fulldump becomes necessary.
+                if (pFullDump) {
+                    returnVal[1].setNode(j, pages[1].getNode(j));
                 }
             }
         }
-
-        final NodePageContainer cont = new NodePageContainer(returnVal[0], returnVal[1]);
-        return cont;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getRevisionsToRestore() {
-        return mRevToRestore;
+        // return the container
+        return new NodePageContainer(returnVal[0], returnVal[1]);
     }
 
     /**
@@ -116,7 +82,29 @@ public class Differential implements IRevisioning {
      */
     @Override
     public String toString() {
-        return toStringHelper(this).add("mRevToRestore", mRevToRestore).toString();
+        return toStringHelper(this).toString();
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     */
+    @Override
+    public long[] getRevRootKeys(int pRevToRestore, long pLongStartKey, long pSeqKey, IBackendReader pReader)
+        throws TTIOException {
+
+        final long currentRevKey = PageReadTrx.dereferenceLeafOfTree(pReader, pLongStartKey, pSeqKey);
+        // Revision to retrieve is a full-dump
+        if (pSeqKey % pRevToRestore == 0) {
+            return new long[] {
+                currentRevKey
+            };
+        } else {
+            final long lastFullDumpRev = (long)Math.floor(pSeqKey / pRevToRestore) * pRevToRestore;
+            long lastFullDumpKey = PageReadTrx.dereferenceLeafOfTree(pReader, pLongStartKey, lastFullDumpRev);
+            return new long[] {
+                currentRevKey, lastFullDumpKey
+            };
+        }
+    }
 }
