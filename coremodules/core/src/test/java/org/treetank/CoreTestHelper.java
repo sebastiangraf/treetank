@@ -27,6 +27,10 @@
 
 package org.treetank;
 
+import static org.mockito.Mockito.when;
+
+import static org.mockito.Mockito.mock;
+
 import java.io.File;
 import java.util.Hashtable;
 import java.util.Map;
@@ -44,6 +48,8 @@ import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
 import org.treetank.exception.TTException;
+import org.treetank.exception.TTIOException;
+import org.treetank.io.IBackendReader;
 import org.treetank.page.DumbNodeFactory.DumbNode;
 import org.treetank.page.NodePage;
 
@@ -248,6 +254,32 @@ public final class CoreTestHelper {
             mSession.close();
             mStorage.close();
         }
+    }
+    
+
+    /**
+     * Getting a fake structure for testing consiting of different arranged pages
+     * 
+     * @return
+     * @throws TTIOException 
+     */
+    IBackendReader getFakedStructure() throws TTIOException {
+        //mocking the reader
+        IBackendReader reader = mock(IBackendReader.class);
+        //page counter for the entire infrastructure
+//        long pKey = 0;
+//        //
+//        for (int i = 0; i < 5; i++) {
+//            
+//            
+//            for (int j = 0; j < loadPerLevel[i]; j++) {
+//                when(reader.read(pKey)).thenReturn(null);
+//                pKey++;
+//            }
+//
+//        }
+
+        return reader;
     }
 
 }

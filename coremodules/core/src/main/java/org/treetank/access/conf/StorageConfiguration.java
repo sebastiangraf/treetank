@@ -30,7 +30,6 @@ package org.treetank.access.conf;
 import static com.google.common.base.Objects.toStringHelper;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -177,8 +176,6 @@ public final class StorageConfiguration {
             jsonWriter.endObject();
             jsonWriter.close();
             fileWriter.close();
-        } catch (FileNotFoundException fileExec) {
-            throw new TTIOException(fileExec);
         } catch (IOException ioexc) {
             throw new TTIOException(ioexc);
         }
@@ -203,8 +200,6 @@ public final class StorageConfiguration {
             jsonReader.close();
             fileReader.close();
             return new StorageConfiguration(file);
-        } catch (FileNotFoundException fileExec) {
-            throw new TTIOException(fileExec);
         } catch (IOException ioexc) {
             throw new TTIOException(ioexc);
         }

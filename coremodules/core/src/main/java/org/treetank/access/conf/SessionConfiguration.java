@@ -27,16 +27,16 @@
 
 package org.treetank.access.conf;
 
-import java.security.Key;
-import java.util.Objects;
+import static com.google.common.base.Objects.toStringHelper;
 
-import org.treetank.access.Storage;
+import java.security.Key;
+
 import org.treetank.access.Session;
+import org.treetank.access.Storage;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.assistedinject.Assisted;
-import static com.google.common.base.Objects.toStringHelper;
 
 /**
  * <h1>SessionConfiguration</h1>
@@ -81,22 +81,6 @@ public final class SessionConfiguration {
      */
     public static SessionConfiguration getInstance() {
         return SINGLETON;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        return Objects.hash(mResource, mKey);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final boolean equals(final Object mObj) {
-        return this.hashCode() == mObj.hashCode();
     }
 
     /**

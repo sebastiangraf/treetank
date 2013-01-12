@@ -89,9 +89,9 @@ public class PageReadTrxTest {
      */
     @Test
     public void testDereferenceLeafOfTree() {
-        IBackendReader reader = mock(IBackendReader.class);
         
-
+        
+        
     }
 
     /**
