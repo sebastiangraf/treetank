@@ -255,31 +255,5 @@ public final class CoreTestHelper {
             mStorage.close();
         }
     }
-    
-
-    /**
-     * Getting a fake structure for testing consiting of different arranged pages
-     * 
-     * @return
-     * @throws TTIOException 
-     */
-    IBackendReader getFakedStructure() throws TTIOException {
-        //mocking the reader
-        IBackendReader reader = mock(IBackendReader.class);
-        //page counter for the entire infrastructure
-//        long pKey = 0;
-//        //
-//        for (int i = 0; i < 5; i++) {
-//            
-//            
-//            for (int j = 0; j < loadPerLevel[i]; j++) {
-//                when(reader.read(pKey)).thenReturn(null);
-//                pKey++;
-//            }
-//
-//        }
-
-        return reader;
-    }
 
 }

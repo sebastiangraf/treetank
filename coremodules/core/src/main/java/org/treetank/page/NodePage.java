@@ -26,6 +26,8 @@
  */
 package org.treetank.page;
 
+import static com.google.common.base.Objects.toStringHelper;
+
 import java.util.Arrays;
 
 import org.treetank.api.INode;
@@ -97,13 +99,7 @@ public class NodePage implements IPage {
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("NodePage [mPageKey=");
-        builder.append(mPageKey);
-        builder.append(", mNodes=");
-        builder.append(Arrays.toString(mNodes));
-        builder.append("]");
-        return builder.toString();
+        return toStringHelper(this).add("mPageKey", mPageKey).add("mNodes", mNodes).toString();
     }
 
     /**

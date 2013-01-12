@@ -27,6 +27,8 @@
 
 package org.treetank.page;
 
+import static com.google.common.base.Objects.toStringHelper;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -120,6 +122,14 @@ public final class MetaPage implements IPage {
     @Override
     public long getPageKey() {
         return mPageKey;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return toStringHelper(this).add("mPageKey", mPageKey).add("mMetaMap", mMetaMap).toString();
     }
 
 }

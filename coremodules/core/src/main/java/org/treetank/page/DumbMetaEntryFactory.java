@@ -1,5 +1,7 @@
 package org.treetank.page;
 
+import static com.google.common.base.Objects.toStringHelper;
+
 import java.util.Objects;
 
 import org.treetank.api.IMetaEntry;
@@ -58,6 +60,14 @@ public class DumbMetaEntryFactory implements IMetaEntryFactory {
         public final boolean equals(final Object pObj) {
             return this.hashCode() == pObj.hashCode();
         }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String toString() {
+            return toStringHelper(this).add("mData", mData).toString();
+        }
     }
 
     public static class MetaValue implements IMetaEntry {
@@ -90,6 +100,14 @@ public class DumbMetaEntryFactory implements IMetaEntryFactory {
         @Override
         public final boolean equals(final Object pObj) {
             return this.hashCode() == pObj.hashCode();
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String toString() {
+            return toStringHelper(this).add("mData", mData).toString();
         }
 
     }

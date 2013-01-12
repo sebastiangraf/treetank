@@ -276,19 +276,19 @@ public class PageReadTrx implements IPageReadTrx {
         final long pSeqPageKey) throws TTIOException {
 
         // Initial state pointing to the indirect page of level 0.
-        int offset = 0;
+        long offset = 0;
         long levelKey = pSeqPageKey;
         long pageKey = pStartKey;
         IndirectPage page = null;
         // Iterate through all levels.
         for (int level = 0; level < IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level++) {
-            offset = (int)(levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level]);
+            offset = levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
             levelKey -= offset << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
             if (pageKey == 0) {
                 return -1;
             }
             page = (IndirectPage)pReader.read(pageKey);
-            pageKey = page.getReferenceKeys()[offset];
+            pageKey = page.getReferenceKeys()[(int)offset];
         }
 
         // Return reference to leaf of indirect tree.
