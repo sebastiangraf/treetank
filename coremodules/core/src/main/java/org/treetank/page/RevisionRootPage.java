@@ -29,6 +29,9 @@ package org.treetank.page;
 
 import static com.google.common.base.Objects.toStringHelper;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 import org.treetank.page.interfaces.IReferencePage;
 import org.treetank.page.interfaces.IRevisionPage;
 
@@ -138,6 +141,22 @@ public final class RevisionRootPage implements IRevisionPage, IReferencePage {
     public String toString() {
         return toStringHelper(this).add("mPageKey", mPageKey).add("mRevision", mRevision).add(
             "mReferenceKeys", mReferenceKeys).add("mMaxNodeKey", mMaxNodeKey).toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(mPageKey, mRevision, Arrays.hashCode(mReferenceKeys), mMaxNodeKey);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        return this.hashCode() == obj.hashCode();
     }
 
 }

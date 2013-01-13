@@ -235,8 +235,9 @@ public final class PageWriteTrx implements IPageWriteTrx {
         final int lastIndirectOffset = (int)nodePageKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[2];
         NodePageContainer container = prepareNodePage(lastIndirectOffset, nodePageKey);
         final INode delNode = new DeletedNode(pNode.getNodeKey());
+        ((NodePage)container.getComplete()).setNode(nodePageOffset(pNode.getNodeKey()), delNode);
         ((NodePage)container.getModified()).setNode(nodePageOffset(pNode.getNodeKey()), delNode);
-        ((NodePage)container.getModified()).setNode(nodePageOffset(pNode.getNodeKey()), delNode);
+        
         mLog.put(new LogKey(false, IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length, nodePageKey), container);
     }
 

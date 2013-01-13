@@ -20,20 +20,23 @@ public class RAMStorage implements IBackend {
 
     private final IByteHandlerPipeline mHandler;
 
+    private final RAMAccess access;
+
     @Inject
     public RAMStorage(IByteHandlerPipeline pByteHandler) {
         mStorage = new ConcurrentHashMap<Long, IPage>();
         mHandler = pByteHandler;
+        access = new RAMAccess();
     }
 
     @Override
     public IBackendWriter getWriter() throws TTException {
-        return new RAMAccess();
+        return access;
     }
 
     @Override
     public IBackendReader getReader() throws TTException {
-        return new RAMAccess();
+        return access;
     }
 
     @Override
@@ -55,12 +58,12 @@ public class RAMStorage implements IBackend {
 
         @Override
         public IPage read(long pKey) throws TTIOException {
-            return mStorage.get(pKey);
+            return mStorage.get(new Long(pKey));
         }
 
         @Override
         public UberPage readUber() throws TTIOException {
-            return (UberPage)mStorage.get(-1);
+            return (UberPage)mStorage.get(new Long(-1));
         }
 
         @Override

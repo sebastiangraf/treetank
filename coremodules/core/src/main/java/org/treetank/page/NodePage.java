@@ -29,6 +29,7 @@ package org.treetank.page;
 import static com.google.common.base.Objects.toStringHelper;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 import org.treetank.api.INode;
 import org.treetank.page.interfaces.IPage;
@@ -95,48 +96,10 @@ public class NodePage implements IPage {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return toStringHelper(this).add("mPageKey", mPageKey).add("mNodes", mNodes).toString();
-    }
-
-    /**
      * @return the mNodes
      */
     public final INode[] getNodes() {
         return mNodes;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (int)(mPageKey ^ (mPageKey >>> 32));
-        result = prime * result + Arrays.hashCode(mNodes);
-        return result;
-    }
-
-    @Override
-    public boolean equals(final Object mObj) {
-        if (this == mObj) {
-            return true;
-        }
-        if (mObj == null) {
-            return false;
-        }
-        if (getClass() != mObj.getClass()) {
-            return false;
-        }
-        final NodePage mOther = (NodePage)mObj;
-        if (mPageKey != mOther.mPageKey) {
-            return false;
-        }
-        if (!Arrays.equals(mNodes, mOther.mNodes)) {
-            return false;
-        }
-        return true;
     }
 
     /**
@@ -157,6 +120,30 @@ public class NodePage implements IPage {
             }
         }
         return pOutput.toByteArray();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return toStringHelper(this).add("mPageKey", mPageKey).add("mNodes", mNodes).toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(mPageKey, Arrays.hashCode(mNodes));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        return this.hashCode() == obj.hashCode();
     }
 
     public static class DeletedNode implements INode {
@@ -197,7 +184,6 @@ public class NodePage implements IPage {
         public byte[] getByteRepresentation() {
             final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
             pOutput.writeInt(IConstants.NULL_NODE);
-            pOutput.writeLong(mNodeKey);
             pOutput.writeLong(mNodeKey);
             return pOutput.toByteArray();
         }

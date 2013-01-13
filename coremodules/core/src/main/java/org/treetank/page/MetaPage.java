@@ -31,6 +31,7 @@ import static com.google.common.base.Objects.toStringHelper;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.treetank.api.IMetaEntry;
 import org.treetank.page.interfaces.IPage;
@@ -130,6 +131,22 @@ public final class MetaPage implements IPage {
     @Override
     public String toString() {
         return toStringHelper(this).add("mPageKey", mPageKey).add("mMetaMap", mMetaMap).toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(mPageKey, mMetaMap);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        return this.hashCode() == obj.hashCode();
     }
 
 }

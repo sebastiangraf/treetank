@@ -29,6 +29,9 @@ package org.treetank.page;
 
 import static com.google.common.base.Objects.toStringHelper;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 import org.treetank.page.interfaces.IReferencePage;
 
 import com.google.common.io.ByteArrayDataOutput;
@@ -121,11 +124,17 @@ public final class UberPage implements IReferencePage {
         return mPageCounter;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long[] getReferenceKeys() {
         return mReferenceKeys;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setReferenceKey(int pIndex, long pKey) {
         mReferenceKeys[pIndex] = pKey;
@@ -138,6 +147,22 @@ public final class UberPage implements IReferencePage {
     public String toString() {
         return toStringHelper(this).add("mPageKey", mPageKey).add("mPageCounter", mPageCounter).add(
             "mReferenceKeys", mReferenceKeys).toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(mPageKey, mPageCounter, Arrays.hashCode(mReferenceKeys));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        return this.hashCode() == obj.hashCode();
     }
 
 }

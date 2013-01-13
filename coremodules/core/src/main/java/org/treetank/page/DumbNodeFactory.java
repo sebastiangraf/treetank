@@ -3,6 +3,8 @@
  */
 package org.treetank.page;
 
+import java.util.Objects;
+
 import org.treetank.api.INode;
 import org.treetank.api.INodeFactory;
 
@@ -85,6 +87,22 @@ public class DumbNodeFactory implements INodeFactory {
         @Override
         public long getHash() {
             return mHash;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int hashCode() {
+            return Objects.hash(mNodeKey, mHash);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean equals(Object obj) {
+            return this.hashCode() == obj.hashCode();
         }
 
     }

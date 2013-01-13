@@ -329,6 +329,9 @@ public class PageReadTrx implements IPageReadTrx {
             "mRootPage", mRootPage).add("mClose", mClose).toString();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public MetaPage getMetaPage() {
         return mMetaPage;
