@@ -51,7 +51,7 @@ public interface IRevisioning {
      * 
      * @param pRevToRestore
      *            number of revisions necessary to restore one version
-     * @param pLongStartKey
+     * @param pStartKey
      *            starting key for getting the rest of the pages
      * @param pSeqKey
      *            the sequential key namely the version
@@ -60,7 +60,7 @@ public interface IRevisioning {
      * @return an array with the keys to the revision root pages from the newest to the oldest
      * @throws TTIOException
      */
-    long[] getRevRootKeys(final int pRevToRestore, final long pLongStartKey, final long pSeqKey,
+    long[] getRevRootKeys(final int pRevToRestore, final long pStartKey, final long pSeqKey,
         final IBackendReader pReader) throws TTIOException;
 
 }
