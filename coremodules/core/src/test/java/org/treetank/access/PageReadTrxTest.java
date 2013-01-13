@@ -3,16 +3,14 @@
  */
 package org.treetank.access;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.testng.AssertJUnit.assertEquals;
+import static org.treetank.CoreTestHelper.getFakedStructure;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
-import org.treetank.page.IndirectPage;
 
 /**
  * 
@@ -92,74 +90,73 @@ public class PageReadTrxTest {
      */
     @Test
     public void testDereferenceLeafOfTree() throws TTIOException {
-        // checking 0 offset
-        int[] offsets = new int[5];
-        
+        int[][] offsets = new int[5][1];
+
         IBackendReader reader = getFakedStructure(offsets);
         long key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 0);
         assertEquals(6, key);
 
-        offsets[4] = 127;
+        offsets[4][0] = 127;
         reader = getFakedStructure(offsets);
         key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 127);
         assertEquals(6, key);
 
-        offsets[3] = 1;
-        offsets[4] = 0;
+        offsets[3][0] = 1;
+        offsets[4][0] = 0;
         reader = getFakedStructure(offsets);
         key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 128);
         assertEquals(6, key);
 
-        offsets[3] = 127;
-        offsets[4] = 127;
+        offsets[3][0] = 127;
+        offsets[4][0] = 127;
         reader = getFakedStructure(offsets);
         key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 16383);
         assertEquals(6, key);
 
-        offsets[2] = 1;
-        offsets[3] = 0;
-        offsets[4] = 0;
+        offsets[2][0] = 1;
+        offsets[3][0] = 0;
+        offsets[4][0] = 0;
         reader = getFakedStructure(offsets);
         key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 16384);
         assertEquals(6, key);
 
-        offsets[2] = 127;
-        offsets[3] = 127;
-        offsets[4] = 127;
+        offsets[2][0] = 127;
+        offsets[3][0] = 127;
+        offsets[4][0] = 127;
         reader = getFakedStructure(offsets);
         key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 2097151);
         assertEquals(6, key);
 
-        offsets[1] = 1;
-        offsets[2] = 0;
-        offsets[3] = 0;
-        offsets[4] = 0;
+        offsets[1][0] = 1;
+        offsets[2][0] = 0;
+        offsets[3][0] = 0;
+        offsets[4][0] = 0;
         reader = getFakedStructure(offsets);
         key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 2097152);
         assertEquals(6, key);
 
-        offsets[1] = 127;
-        offsets[2] = 127;
-        offsets[3] = 127;
-        offsets[4] = 127;
+        offsets[1][0] = 127;
+        offsets[2][0] = 127;
+        offsets[3][0] = 127;
+        offsets[4][0] = 127;
         reader = getFakedStructure(offsets);
         key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 268435455);
         assertEquals(6, key);
-        
-        offsets[0] = 1;
-        offsets[1] = 0;
-        offsets[2] = 0;
-        offsets[3] = 0;
-        offsets[4] = 0;
+
+        offsets[0][0] = 1;
+        offsets[1][0] = 0;
+        offsets[2][0] = 0;
+        offsets[3][0] = 0;
+        offsets[4][0] = 0;
         reader = getFakedStructure(offsets);
         key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 268435456);
         assertEquals(6, key);
-        
-        offsets[0] = 127;
-        offsets[1] = 127;
-        offsets[2] = 127;
-        offsets[3] = 127;
-        offsets[4] = 127;
+
+        offsets[0][0] = 127;
+        offsets[1][0] = 127;
+        offsets[2][0] = 127;
+        offsets[3][0] = 127;
+        offsets[4][0] = 127;
         reader = getFakedStructure(offsets);
         key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 34359738367l);
         assertEquals(6, key);
@@ -188,36 +185,6 @@ public class PageReadTrxTest {
     @Test
     public void testGetMetaPage() {
         // fail("Not yet implemented");
-    }
-
-    /**
-     * Getting a fake structure for testing consiting of different arranged pages.
-     * This structure starts with the key 1 and incrementally sets a new pagekey for the defined offsets in
-     * the indirectpages to simulate different versions and node-offsets.
-     * The key retrieved thereby has always the value 6 (1 (starting) + 5 (number of indirect layers)
-     * 
-     * @param offsets
-     *            an array with offsets internally of the tree.
-     * @return a {@link IBackendReader}-mock
-     * @throws TTIOException
-     */
-    private static IBackendReader getFakedStructure(int[] offsets) throws TTIOException {
-        assertEquals(5, offsets.length);
-        // mocking the reader
-        IBackendReader reader = mock(IBackendReader.class);
-        // variable storing the related keys to the pages created in the mock
-        long pKey = 1;
-        // iterating through the tree and..
-        for (int i = 0; i < offsets.length; i++) {
-            // ...creating a new page with incrementing the page key
-            final IndirectPage page = new IndirectPage(pKey);
-            // setting the related key to the defined offset and...
-            page.setReferenceKey(offsets[i], ++pKey);
-            // ...tell the mock to react when the key is demanded.
-            when(reader.read(pKey - 1)).thenReturn(page);
-        }
-        // returning the mock
-        return reader;
     }
 
 }

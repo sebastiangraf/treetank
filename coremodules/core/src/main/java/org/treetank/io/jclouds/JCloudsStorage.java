@@ -12,8 +12,8 @@ import org.treetank.access.conf.ContructorProps;
 import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTException;
-import org.treetank.io.IBackendReader;
 import org.treetank.io.IBackend;
+import org.treetank.io.IBackendReader;
 import org.treetank.io.IBackendWriter;
 import org.treetank.io.bytepipe.ByteHandlerPipeline;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
@@ -122,22 +122,6 @@ public class JCloudsStorage implements IBackend {
             returnVal = true;
         }
         return returnVal;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("JCloudsStorage [mFac=");
-        builder.append(mFac);
-        builder.append(", mByteHandler=");
-        builder.append(mByteHandler);
-        builder.append(", mProperties=");
-        builder.append(mProperties);
-        builder.append("]");
-        return builder.toString();
     }
 
 }

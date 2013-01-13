@@ -3,8 +3,9 @@
  */
 package org.treetank.io.bytepipe;
 
+import static com.google.common.base.Objects.toStringHelper;
+
 import java.security.GeneralSecurityException;
-import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.Cipher;
@@ -29,9 +30,7 @@ public class Encryptor implements IByteHandler {
     static {
         try {
             CIPHER = Cipher.getInstance(ALGORITHM);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        } catch (NoSuchPaddingException e) {
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
             throw new RuntimeException(e);
         }
     }
@@ -70,8 +69,6 @@ public class Encryptor implements IByteHandler {
             }
             return toDecrypt;
 
-        } catch (final InvalidKeyException exc) {
-            throw new TTByteHandleException(exc);
         } catch (final GeneralSecurityException exc) {
             throw new TTByteHandleException(exc);
         }
@@ -83,9 +80,7 @@ public class Encryptor implements IByteHandler {
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Encryptor []");
-        return builder.toString();
+        return toStringHelper(this).toString();
     }
 
 }

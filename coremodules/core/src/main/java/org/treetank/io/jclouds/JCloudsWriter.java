@@ -92,16 +92,4 @@ public class JCloudsWriter implements IBackendWriter {
 
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("JCloudsWriter [mReader=");
-        builder.append(mReader);
-        builder.append("]");
-        return builder.toString();
-    }
-
 }

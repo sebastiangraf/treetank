@@ -27,9 +27,9 @@
 
 package org.treetank;
 
-import static org.mockito.Mockito.when;
-
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.testng.AssertJUnit.assertEquals;
 
 import java.io.File;
 import java.util.Hashtable;
@@ -51,6 +51,7 @@ import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
 import org.treetank.page.DumbNodeFactory.DumbNode;
+import org.treetank.page.IndirectPage;
 import org.treetank.page.NodePage;
 
 import com.google.common.io.Files;
@@ -196,6 +197,39 @@ public final class CoreTestHelper {
      */
     public static final INode generateOne() {
         return new DumbNode(CoreTestHelper.random.nextLong(), CoreTestHelper.random.nextLong());
+    }
+
+    /**
+     * Getting a fake structure for testing consiting of different arranged pages.
+     * This structure starts with the key 1 and incrementally sets a new pagekey for the defined offsets in
+     * the indirectpages to simulate different versions and node-offsets.
+     * The key retrieved thereby has always the value 6 (1 (starting) + 5 (number of indirect layers)
+     * 
+     * @param offsets
+     *            an array with offsets internally of the tree.
+     * @return a {@link IBackendReader}-mock
+     * @throws TTIOException
+     */
+    public static IBackendReader getFakedStructure(int[][] offsets) throws TTIOException {
+        assertEquals(5, offsets.length);
+        // mocking the reader
+        IBackendReader reader = mock(IBackendReader.class);
+        // variable storing the related keys to the pages created in the mock
+        long pKey = 1;
+        // iterating through the tree and..
+        for (int i = 0; i < offsets.length; i++) {
+            //...get for all offsets determining each level keys for the offsets to set...
+            for (int j = 0; j < offsets[i].length; j++) {
+                // ...and create a new page with incrementing the page key
+                final IndirectPage page = new IndirectPage(pKey);
+                // setting the related key to the defined offset and...
+                page.setReferenceKey(offsets[i][j], ++pKey);
+                // ...tell the mock to react when the key is demanded.
+                when(reader.read(pKey - 1)).thenReturn(page);
+            }
+        }
+        // returning the mock
+        return reader;
     }
 
     public static class Holder {

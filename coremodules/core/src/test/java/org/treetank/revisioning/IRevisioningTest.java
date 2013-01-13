@@ -3,6 +3,8 @@
  */
 package org.treetank.revisioning;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.testng.AssertJUnit.assertTrue;
 import static org.testng.AssertJUnit.assertEquals;
 import static org.treetank.CoreTestHelper.getNodePage;
@@ -14,8 +16,15 @@ import org.testng.annotations.Test;
 import org.treetank.CoreTestHelper;
 import org.treetank.cache.NodePageContainer;
 import org.treetank.exception.TTByteHandleException;
+import org.treetank.exception.TTIOException;
+import org.treetank.io.IBackendReader;
 import org.treetank.page.IConstants;
+import org.treetank.page.IndirectPage;
 import org.treetank.page.NodePage;
+import org.treetank.page.UberPage;
+import org.treetank.page.interfaces.IPage;
+
+import static org.treetank.CoreTestHelper.getFakedStructure;
 
 /**
  * Test for {@link IRevisioning}-interface.
@@ -137,6 +146,54 @@ public class IRevisioningTest {
             // ...and check them suitable to the versioning approach
             pRevisionChecker[i].checkCompletePages(page, pages);
         }
+    }
+
+    /**
+     * Test method for
+     * {@link org.treetank.revisioning.IRevisioning#getRevRootKeys(int, long, long, IBackendReader)}.
+     * 
+     * @param pRevisioningClass
+     *            class for the revisioning approaches
+     * @param pRevisioning
+     *            the different revisioning approaches
+     * @param pBackendReaderGeneratorClass
+     *            class for the backend generator
+     * @param pBackendReaderGenerator
+     *            the different backend generators
+     * 
+     */
+    @Test(dataProvider = "intatiateRevRootPages")
+    public void testRevRootRetrieval(Class<IRevisioning> pRevisioningClass, IRevisioning[] pRevisioning,
+        Class<IBackendReaderGenerator> pBackendReaderGeneratorClass,
+        IBackendReaderGenerator[] pBackendReaderGenerator) {
+
+    }
+
+    /**
+     * Providing different implementations of the {@link IRevisioning} as Dataprovider to the test class.
+     * 
+     * @return different classes of the {@link IRevisioning} and <code>IRevisionChecker</code>
+     * @throws TTByteHandleException
+     */
+    @DataProvider(name = "intatiateRevRootPages")
+    public Object[][] intatiateRevRootPages() throws TTByteHandleException {
+        Object[][] returnVal = {
+            {
+                IRevisioning.class, new IRevisioning[] {
+                    new FullDump(), new Incremental(), new Differential(), new SlidingSnapshot()
+                }, IBackendReaderGenerator.class, new IBackendReaderGenerator[] {
+                    // test for fulldump
+                    new IBackendReaderGenerator() {
+                        @Override
+                        public IBackendReader generateBackendReader() throws TTIOException {
+                            int[][] offsets = new int[5][1];
+                            return getFakedStructure(offsets);
+                        }
+                    }
+                }
+            }
+        };
+        return returnVal;
     }
 
     /**
@@ -392,13 +449,23 @@ public class IRevisioningTest {
     }
 
     /**
-     * Note Page Generator for new NodePages.
+     * Node Page Generator for new NodePages.
      * 
      * @author Sebastian Graf, University of Konstanz
      * 
      */
     interface INodePageGenerator {
         NodePage[] generateNodePages();
+    }
+
+    /**
+     * Backend Reader generator for checking the loading of RevRootPages.
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
+    interface IBackendReaderGenerator {
+        IBackendReader generateBackendReader() throws TTIOException;
     }
 
 }

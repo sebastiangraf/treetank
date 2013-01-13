@@ -3,6 +3,8 @@
  */
 package org.treetank.io.bytepipe;
 
+import static com.google.common.base.Objects.toStringHelper;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -73,31 +75,8 @@ public final class ByteHandlerPipeline implements IByteHandlerPipeline {
      * {@inheritDoc}
      */
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((mParts == null) ? 0 : mParts.hashCode());
-        return result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(Object obj) {
-        return obj.hashCode() == this.hashCode();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("ByteHandlerPipeline [mParts=");
-        builder.append(mParts);
-        builder.append("]");
-        return builder.toString();
+        return toStringHelper(this).add("mParts", mParts).toString();
     }
 
 }
