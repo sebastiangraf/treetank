@@ -56,31 +56,31 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
-		
+
 		<repository>
 			<id>swt-repo</id>
 			<url>https://swt-repo.googlecode.com/svn/repo/</url>
 		</repository>
 	</repositories>
 	<dependencies>
-        <dependency>
-            <groupId>treetank</groupId>
-            <artifactId>core</artifactId>
-            <version>6.0.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>treetank</groupId>
-            <artifactId>core</artifactId>
-            <version>6.0.0-SNAPSHOT</version>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>treetank</groupId>
-            <artifactId>commons</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
+		<dependency>
+			<groupId>treetank</groupId>
+			<artifactId>core</artifactId>
+			<version>6.0.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>treetank</groupId>
+			<artifactId>core</artifactId>
+			<version>6.0.0-SNAPSHOT</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>treetank</groupId>
+			<artifactId>commons</artifactId>
+			<version>1.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
 			<groupId>org.swinglabs</groupId>
 			<artifactId>swingx</artifactId>
 			<version>1.6.1</version>
@@ -99,37 +99,38 @@
 			<version>${swt.version}</version>
 		</dependency>
 	</dependencies>
-	
+
 	<build>
 		<plugins>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.4</version>
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>frames.ApplicationStarter</mainClass>
+							<mainClass>org.treetank.filelistener.ui.application.FilelistenerApplication</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
 				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id> <!-- this is used for inheritance merges -->
+						<phase>package</phase> <!-- bind to the packaging phase -->
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<includes>
-					<include>*.xsl</include>
-				</includes>
-				<targetPath>src/main/resources</targetPath>
-			</resource>
-		</resources>
 	</build>
 
 	<profiles>
 		<profile>
-			<id>linux</id>
+			<id>linux32</id>
 			<activation>
 				<os>
 					<name>linux</name>
@@ -142,23 +143,64 @@
 			</properties>
 		</profile>
 		<profile>
-			<id>mac</id>
+			<id>linux64</id>
 			<activation>
 				<os>
-					<name>macosx</name>
+					<name>linux</name>
+					<arch>x86_x64</arch>
 				</os>
 			</activation>
 			<properties>
 				<swt.groupId>org.eclipse.swt</swt.groupId>
-				<swt.artifactId>org.eclipse.swt.carbon.macosx</swt.artifactId>
-				<swt.version>3.7.2</swt.version>
+				<swt.artifactId>org.eclipse.swt.gtk.linux.x86_64</swt.artifactId>
+				<swt.version>4.2.1</swt.version>
 			</properties>
 		</profile>
 		<profile>
-			<id>windows</id>
+			<id>mac32</id>
+			<activation>
+				<os>
+					<name>mac os x</name>
+				</os>
+			</activation>
+			<properties>
+				<swt.groupId>org.eclipse.swt</swt.groupId>
+				<swt.artifactId>org.eclipse.swt.cocoa.macosx</swt.artifactId>
+				<swt.version>4.2.1</swt.version>
+			</properties>
+		</profile>
+		<profile>
+			<id>mac64</id>
+			<activation>
+				<os>
+					<name>mac os x</name>
+				</os>
+			</activation>
+			<properties>
+				<swt.groupId>org.eclipse.swt</swt.groupId>
+				<swt.artifactId>org.eclipse.swt.cocoa.macosx.x86_64</swt.artifactId>
+				<swt.version>4.2.1</swt.version>
+			</properties>
+		</profile>
+		<profile>
+			<id>windows32</id>
 			<activation>
 				<os>
 					<family>windows</family>
+				</os>
+			</activation>
+			<properties>
+				<swt.groupId>org.eclipse.swt</swt.groupId>
+				<swt.artifactId>org.eclipse.swt.win32.win32.x86</swt.artifactId>
+				<swt.version>4.2.1</swt.version>
+			</properties>
+		</profile>
+		<profile>
+			<id>windows64</id>
+			<activation>
+				<os>
+					<family>windows</family>
+					<arch>x86_x64</arch>
 				</os>
 			</activation>
 			<properties>

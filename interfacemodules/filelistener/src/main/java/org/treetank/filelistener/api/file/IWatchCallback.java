@@ -5,6 +5,6 @@ import java.nio.file.WatchEvent;
 
 public interface IWatchCallback {
 
-	public void processFileSystemChanges(Path dir, Path file, WatchEvent.Kind evtType);
-	
+    public void processFileSystemChanges(Path dir, Path file, WatchEvent.Kind evtType);
+
 }

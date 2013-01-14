@@ -1,5 +1,5 @@
 package org.treetank.filelistener.exceptions;
 
-public class WrongFilenodeDataLengthException extends Exception{
-	
+public class WrongFilenodeDataLengthException extends Exception {
+
 }

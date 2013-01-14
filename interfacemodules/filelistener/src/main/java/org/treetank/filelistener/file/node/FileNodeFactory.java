@@ -10,32 +10,32 @@ import com.google.common.io.ByteStreams;
 /**
  * 
  * @author Andreas Rain
- *
+ * 
  */
-public class FileNodeFactory implements INodeFactory{
-	  /**
-	   * {@inheritDoc}
-	   */
-	  @Override
-	  public INode deserializeNode(byte[] pData) {
-	    ByteArrayDataInput input = ByteStreams.newDataInput(pData);
-	    long nodeKey = input.readLong();
-	    long nextNodeKey = input.readLong();
-	    boolean header = input.readBoolean();
-	    boolean eof = input.readBoolean();
-	    byte[] data = new byte[FileNode.FILENODESIZE];
-	    input.readFully(data);
-	    
-	    FileNode node = null;
-		try {
-			node = new FileNode(nodeKey, data);
-		    node.setNextNodeKey(nextNodeKey);
-		    node.setHeader(header);
-		    node.setEof(eof);
-		} catch (WrongFilenodeDataLengthException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	    return node;
-	  }
+public class FileNodeFactory implements INodeFactory {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public INode deserializeNode(byte[] pData) {
+        ByteArrayDataInput input = ByteStreams.newDataInput(pData);
+        long nodeKey = input.readLong();
+        long nextNodeKey = input.readLong();
+        boolean header = input.readBoolean();
+        boolean eof = input.readBoolean();
+        byte[] data = new byte[FileNode.FILENODESIZE];
+        input.readFully(data);
+
+        FileNode node = null;
+        try {
+            node = new FileNode(nodeKey, data);
+            node.setNextNodeKey(nextNodeKey);
+            node.setHeader(header);
+            node.setEof(eof);
+        } catch (WrongFilenodeDataLengthException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return node;
+    }
 }

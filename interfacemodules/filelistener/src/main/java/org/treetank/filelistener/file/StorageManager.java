@@ -22,118 +22,110 @@ import com.google.inject.Injector;
 
 public class StorageManager {
 
-	/**
-	 * Indizes provided by this class to determine which backend has been
-	 * chosen.
-	 */
-	public static final int BACKEND_INDEX_JCLOUDS = 0;
+    /**
+     * Indizes provided by this class to determine which backend has been
+     * chosen.
+     */
+    public static final int BACKEND_INDEX_JCLOUDS = 0;
 
-	/**
-	 * The rootpath of where the filelistener saves application dependent data.
-	 */
-	public static final String ROOT_PATH = new StringBuilder()
-			.append(System.getProperty("user.home")).append(File.separator)
-			.append("TreetankFilelistenerService").append(File.separator)
-			.toString();
+    /**
+     * The rootpath of where the filelistener saves application dependent data.
+     */
+    public static final String ROOT_PATH = new StringBuilder().append(System.getProperty("user.home"))
+        .append(File.separator).append("TreetankFilelistenerService").append(File.separator).toString();
 
-	/**
-	 * The path where the storage configurations are to find.
-	 */
-	public static final String STORAGE_CONFIGURATION_PATH = new StringBuilder()
-			.append(ROOT_PATH).append("storageconfigurations")
-			.append(File.separator).toString();
+    /**
+     * The path where the storage configurations are to find.
+     */
+    public static final String STORAGE_CONFIGURATION_PATH = new StringBuilder().append(ROOT_PATH).append(
+        "storageconfigurations").append(File.separator).toString();
 
-	/**
-	 * Create a new storage with the given name and backend.
-	 * 
-	 * @param name
-	 * @param backend
-	 * @return
-	 * @throws StorageAlreadyExistsException
-	 * @throws TTException 
-	 */
-	public static boolean createStorage(String name, int backendIndex)
-			throws StorageAlreadyExistsException, TTException {
-		File file = new File(ROOT_PATH);
+    /**
+     * Create a new storage with the given name and backend.
+     * 
+     * @param name
+     * @param backend
+     * @return
+     * @throws StorageAlreadyExistsException
+     * @throws TTException
+     */
+    public static boolean createStorage(String name, int backendIndex) throws StorageAlreadyExistsException,
+        TTException {
+        File file = new File(ROOT_PATH);
 
-		if (!file.exists()) {
-			file.mkdirs();
+        if (!file.exists()) {
+            file.mkdirs();
 
-			new File(STORAGE_CONFIGURATION_PATH).mkdir();
-		}
+            new File(STORAGE_CONFIGURATION_PATH).mkdir();
+        }
 
-		File storageFile = new File(STORAGE_CONFIGURATION_PATH + File.separator
-				+ name);
+        File storageFile = new File(STORAGE_CONFIGURATION_PATH + File.separator + name);
 
-		if (storageFile.exists()) {
-			throw new StorageAlreadyExistsException();
-		} else {
-			StorageConfiguration configuration = new StorageConfiguration(
-					storageFile);
+        if (storageFile.exists()) {
+            throw new StorageAlreadyExistsException();
+        } else {
+            StorageConfiguration configuration = new StorageConfiguration(storageFile);
 
-			Class clazz = null;
+            Class clazz = null;
 
-			switch (backendIndex) {
-			case BACKEND_INDEX_JCLOUDS:
-				clazz = JCloudsStorage.class;
-				break;
-			default:
-				break;
-			}
-			
-			Injector injector = Guice.createInjector(new GuiSettings(clazz));
-			IBackendFactory backend = injector.getInstance(IBackendFactory.class);
-	        IRevisioning revision = injector.getInstance(IRevisioning.class);
+            switch (backendIndex) {
+            case BACKEND_INDEX_JCLOUDS:
+                clazz = JCloudsStorage.class;
+                break;
+            default:
+                break;
+            }
 
-			// Creating and opening the storage.
-			// Making it ready for usage.
-			Storage.truncateStorage(configuration);
-			Storage.createStorage(configuration);
-		}
+            Injector injector = Guice.createInjector(new GuiSettings(clazz));
+            IBackendFactory backend = injector.getInstance(IBackendFactory.class);
+            IRevisioning revision = injector.getInstance(IRevisioning.class);
 
-		return true;
-	}
+            // Creating and opening the storage.
+            // Making it ready for usage.
+            Storage.truncateStorage(configuration);
+            Storage.createStorage(configuration);
+        }
 
-	public static List<String> getStorages() {
-		File storageConfigurations = new File(STORAGE_CONFIGURATION_PATH);
-		File[] children = storageConfigurations.listFiles();
-		
-		List<String> storages = new ArrayList<String>();
-		
-		for (int i = 0; i < children.length; i++) {
-			if(children[i].isDirectory()) storages.add(children[i].getName());
-		}
-		
-		return storages;
-	}
-	
-	public static ISession getSession(String storageName) throws StorageNotExistingException, TTException{
-		File storageFile = new File(STORAGE_CONFIGURATION_PATH + File.separator
-				+ storageName);
-		
-		ISession session = null;
-		
-		if(!storageFile.exists()){
-			throw new StorageNotExistingException();
-		}
-		else{
-			StorageConfiguration configuration = new StorageConfiguration(
-					storageFile);
+        return true;
+    }
 
-			Class clazz = null;
+    public static List<String> getStorages() {
+        File storageConfigurations = new File(STORAGE_CONFIGURATION_PATH);
+        File[] children = storageConfigurations.listFiles();
 
-			// Creating and opening the storage.
-			// Making it ready for usage.
-			Storage.truncateStorage(configuration);
-			Storage.createStorage(configuration);
+        List<String> storages = new ArrayList<String>();
 
-			IStorage storage = Storage.openStorage(storageFile);
+        for (int i = 0; i < children.length; i++) {
+            if (children[i].isDirectory())
+                storages.add(children[i].getName());
+        }
 
-		    session = storage
-		        .getSession(new SessionConfiguration(storageName, null));
-		}
-		
-		return session;
-	}
+        return storages;
+    }
+
+    public static ISession getSession(String storageName) throws StorageNotExistingException, TTException {
+        File storageFile = new File(STORAGE_CONFIGURATION_PATH + File.separator + storageName);
+
+        ISession session = null;
+
+        if (!storageFile.exists()) {
+            throw new StorageNotExistingException();
+        } else {
+            StorageConfiguration configuration = new StorageConfiguration(storageFile);
+
+            Class clazz = null;
+
+            // Creating and opening the storage.
+            // Making it ready for usage.
+            Storage.truncateStorage(configuration);
+            Storage.createStorage(configuration);
+
+            IStorage storage = Storage.openStorage(storageFile);
+
+            session = storage.getSession(new SessionConfiguration(storageName, null));
+        }
+
+        return session;
+    }
 
 }

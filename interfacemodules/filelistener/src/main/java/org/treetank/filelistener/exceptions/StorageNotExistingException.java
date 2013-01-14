@@ -1,5 +1,5 @@
 package org.treetank.filelistener.exceptions;
 
-public class StorageNotExistingException extends Exception{
+public class StorageNotExistingException extends Exception {
 
 }

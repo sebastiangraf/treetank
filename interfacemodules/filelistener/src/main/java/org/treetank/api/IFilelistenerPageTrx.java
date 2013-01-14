@@ -8,35 +8,35 @@ import org.treetank.exception.TTIOException;
  * 
  */
 public interface IFilelistenerPageTrx {
-	
-	/**
-	 * The returned array consists of all the header filenode keys
-	 * currently in the database.
-	 * 
-	 * @return
-	 */
-	public long[] getFileKeys();
-	
-	/**
-	 * This method allows you to get a full file
-	 * using the node key of the header
-	 * 
-	 * @param pKey
-	 * @return true if successful, false otherwise
-	 */
-	public boolean getFullFile(long pKey);
 
-	/**
-	 * Close this transaction
-	 * 
-	 * @throws TTIOException
-	 */
-	public void close() throws TTIOException;
+    /**
+     * The returned array consists of all the header filenode keys currently in
+     * the database.
+     * 
+     * @return
+     */
+    public long[] getFileKeys();
 
-	/**
-	 * Check whether or not this transaction has been closed
-	 * 
-	 * @return true if closed, false otherwise
-	 */
-	public boolean isClosed();
+    /**
+     * This method allows you to get a full file using the node key of the
+     * header
+     * 
+     * @param pKey
+     * @return true if successful, false otherwise
+     */
+    public boolean getFullFile(long pKey);
+
+    /**
+     * Close this transaction
+     * 
+     * @throws TTIOException
+     */
+    public void close() throws TTIOException;
+
+    /**
+     * Check whether or not this transaction has been closed
+     * 
+     * @return true if closed, false otherwise
+     */
+    public boolean isClosed();
 }

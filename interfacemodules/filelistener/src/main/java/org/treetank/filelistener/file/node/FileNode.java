@@ -18,146 +18,145 @@ import com.google.common.io.ByteStreams;
  */
 public class FileNode implements INode {
 
-	/**
-	 * The nodes key value, which is equal with it's position in the list.
-	 */
-	private long nodeKey = 0;
+    /**
+     * The nodes key value, which is equal with it's position in the list.
+     */
+    private long nodeKey = 0;
 
-	/**
-	 * The following nodes key
-	 */
-	private long nextNodeKey = 0;
+    /**
+     * The following nodes key
+     */
+    private long nextNodeKey = 0;
 
-	/**
-	 * The size of the filenode
-	 */
-	public static final int FILENODESIZE = 0x512;
-	
-	/**
-	 * NodeKey for EOF filenodes
-	 */
-	
-	public static final long EOF_KEY = -1;
+    /**
+     * The size of the filenode
+     */
+    public static final int FILENODESIZE = 0x512;
 
-	/**
-	 * The content of this node in form of a byte array.
-	 */
-	private byte[] val;
+    /**
+     * NodeKey for EOF filenodes
+     */
 
-	/**
-	 * Determines whether or not this filenode is the first in the sequence.
-	 */
-	private boolean header;
+    public static final long EOF_KEY = -1;
 
-	/**
-	 * Determines whether or not this filenode is the last in the sequence.
-	 */
-	private boolean eof;
+    /**
+     * The content of this node in form of a byte array.
+     */
+    private byte[] val;
 
-	/**
-	 * Standard constructor with a size of 512 bytes for each node.
-	 */
-	public FileNode(long nodeKey) {
-		this.nodeKey = nodeKey;
-		val = new byte[FILENODESIZE];
-	}
+    /**
+     * Determines whether or not this filenode is the first in the sequence.
+     */
+    private boolean header;
 
-	/**
-	 * Creates a Filenode with given bytes
-	 * 
-	 * @param content
-	 *            , as byte array
-	 * @throws WrongFilenodeDataLengthException
-	 */
-	public FileNode(long nodeKey, byte[] content)
-			throws WrongFilenodeDataLengthException {
-		this.nodeKey = nodeKey;
+    /**
+     * Determines whether or not this filenode is the last in the sequence.
+     */
+    private boolean eof;
 
-		if (content.length != 512) {
-			throw new WrongFilenodeDataLengthException();
-		}
+    /**
+     * Standard constructor with a size of 512 bytes for each node.
+     */
+    public FileNode(long nodeKey) {
+        this.nodeKey = nodeKey;
+        val = new byte[FILENODESIZE];
+    }
 
-		val = content;
-	}
+    /**
+     * Creates a Filenode with given bytes
+     * 
+     * @param content
+     *            , as byte array
+     * @throws WrongFilenodeDataLengthException
+     */
+    public FileNode(long nodeKey, byte[] content) throws WrongFilenodeDataLengthException {
+        this.nodeKey = nodeKey;
 
-	@Override
-	public byte[] getByteRepresentation() {
-		ByteArrayDataOutput output = ByteStreams.newDataOutput();
-		output.writeLong(nodeKey);
-		output.writeLong(nextNodeKey);
-		output.writeBoolean(header);
-		output.writeBoolean(eof);
-		output.write(val);
+        if (content.length != 512) {
+            throw new WrongFilenodeDataLengthException();
+        }
 
-		return output.toByteArray();
-	}
+        val = content;
+    }
 
-	@Override
-	public long getNodeKey() {
-		return this.nodeKey;
-	}
+    @Override
+    public byte[] getByteRepresentation() {
+        ByteArrayDataOutput output = ByteStreams.newDataOutput();
+        output.writeLong(nodeKey);
+        output.writeLong(nextNodeKey);
+        output.writeBoolean(header);
+        output.writeBoolean(eof);
+        output.write(val);
 
-	@Override
-	public void setHash(long pHash) {
-	}
+        return output.toByteArray();
+    }
 
-	@Override
-	public long getHash() {
-		return this.nodeKey * nextNodeKey * 31;
-	}
+    @Override
+    public long getNodeKey() {
+        return this.nodeKey;
+    }
 
-	/**
-	 * Check whether or not this filenode is the first in the sequence.
-	 * 
-	 * @return
-	 */
-	public boolean isHeader() {
-		return header;
-	}
+    @Override
+    public void setHash(long pHash) {
+    }
 
-	public void setHeader(boolean header) {
-		this.header = header;
-	}
+    @Override
+    public long getHash() {
+        return this.nodeKey * nextNodeKey * 31;
+    }
 
-	/**
-	 * Check whether or not this filenode is the last in the sequence.
-	 * 
-	 * @return
-	 */
-	public boolean isEof() {
-		return eof;
-	}
+    /**
+     * Check whether or not this filenode is the first in the sequence.
+     * 
+     * @return
+     */
+    public boolean isHeader() {
+        return header;
+    }
 
-	public void setEof(boolean eof) {
-		this.eof = eof;
-	}
+    public void setHeader(boolean header) {
+        this.header = header;
+    }
 
-	/**
-	 * Set the link to the next node. Use the nodekey of that node.
-	 * 
-	 * @param nextNodeKey
-	 *            as a long
-	 */
-	public void setNextNodeKey(long nextNodeKey) {
-		this.nextNodeKey = nextNodeKey;
-	}
+    /**
+     * Check whether or not this filenode is the last in the sequence.
+     * 
+     * @return
+     */
+    public boolean isEof() {
+        return eof;
+    }
 
-	/**
-	 * The node key of the next node
-	 * 
-	 * @return returns the key as long
-	 */
-	public long getNextNodeKey() {
-		return nextNodeKey;
-	}
+    public void setEof(boolean eof) {
+        this.eof = eof;
+    }
 
-	/**
-	 * Determine if a node follows after this one.
-	 * 
-	 * @return returns true if a node follows
-	 */
-	public boolean hasNext() {
-		return !this.isEof();
-	}
+    /**
+     * Set the link to the next node. Use the nodekey of that node.
+     * 
+     * @param nextNodeKey
+     *            as a long
+     */
+    public void setNextNodeKey(long nextNodeKey) {
+        this.nextNodeKey = nextNodeKey;
+    }
+
+    /**
+     * The node key of the next node
+     * 
+     * @return returns the key as long
+     */
+    public long getNextNodeKey() {
+        return nextNodeKey;
+    }
+
+    /**
+     * Determine if a node follows after this one.
+     * 
+     * @return returns true if a node follows
+     */
+    public boolean hasNext() {
+        return !this.isEof();
+    }
 
 }
