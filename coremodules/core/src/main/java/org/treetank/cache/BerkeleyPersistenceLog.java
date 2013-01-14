@@ -66,12 +66,12 @@ public final class BerkeleyPersistenceLog implements ICachedLog {
     /**
      * Berkeley database.
      */
-    protected final transient Database mDatabase;
+    protected transient Database mDatabase;
 
     /**
      * Berkeley Environment for the database.
      */
-    private final transient Environment mEnv;
+    private transient Environment mEnv;
 
     /**
      * Binding for the key, which is the nodepage.
@@ -117,20 +117,21 @@ public final class BerkeleyPersistenceLog implements ICachedLog {
             config.setLocking(false);
             config.setCacheSize(1024 * 1024);
             mEnv = new Environment(mPlace, config);
-
-            /* Make a database within that environment */
-            final DatabaseConfig dbConfig = new DatabaseConfig();
-            dbConfig.setAllowCreate(true);
-            dbConfig.setExclusiveCreate(true);
-            mDatabase = mEnv.openDatabase(null, NAME, dbConfig);
-
+            setUp();
             mKeyBinding = new LogKeyBinding();
             mValueBinding = new NodePageContainerBinding(pNodeFac, pMetaFac);
-
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
 
         }
+    }
+
+    private void setUp() {
+        /* Make a database within that environment */
+        final DatabaseConfig dbConfig = new DatabaseConfig();
+        dbConfig.setAllowCreate(true);
+        dbConfig.setExclusiveCreate(true);
+        mDatabase = mEnv.openDatabase(null, NAME, dbConfig);
     }
 
     /**
@@ -158,19 +159,9 @@ public final class BerkeleyPersistenceLog implements ICachedLog {
     @Override
     public void clear() throws TTIOException {
         try {
-
             mDatabase.close();
             mEnv.removeDatabase(null, NAME);
-            mEnv.close();
-            for (final File file : mPlace.listFiles()) {
-                if (!file.delete()) {
-                    throw new TTIOException("Couldn't delete!");
-                }
-            }
-            if (!mPlace.delete()) {
-                throw new TTIOException("Couldn't delete!");
-            }
-
+            setUp();
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
         }

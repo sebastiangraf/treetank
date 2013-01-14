@@ -83,9 +83,9 @@ public class SlidingSnapshot implements IRevisioning {
     public long[]
         getRevRootKeys(int pRevToRestore, long pLongStartKey, long pSeqKey, IBackendReader pReader)
             throws TTIOException {
-        long[] returnVal = new long[(int)(pRevToRestore)];
+        long[] returnVal = new long[pRevToRestore];
         long revCounter = pSeqKey;
-        for (int i = 0; i <= returnVal.length; i++) {
+        for (int i = 0; i < returnVal.length; i++) {
             returnVal[i] = PageReadTrx.dereferenceLeafOfTree(pReader, pLongStartKey, revCounter);
             revCounter--;
         }

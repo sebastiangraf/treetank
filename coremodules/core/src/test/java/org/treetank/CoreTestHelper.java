@@ -32,7 +32,6 @@ import static org.mockito.Mockito.when;
 import static org.testng.AssertJUnit.assertEquals;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Random;
@@ -219,15 +218,46 @@ public final class CoreTestHelper {
         long pKey = 1;
         // iterating through the tree..
         for (int i = 0; i < offsets.length; i++) {
-            // ...and create a new page with incrementing the page key
+            // ...and create a new page.
             final IndirectPage page = new IndirectPage(pKey);
-            // setting the related key to the defined offset and...
-            page.setReferenceKey(offsets[i], ++pKey);
+            long oldKey = pKey;
+            // set the offsets until the defined parameter...
+            for (int j = 0; j <= offsets[i]; j++) {
+                // ...by setting the related key to the defined offset and...
+                page.setReferenceKey(j, ++pKey);
+            }
             // ...tell the mock to react when the key is demanded.
-            when(reader.read(pKey - 1)).thenReturn(page);
+            when(reader.read(oldKey)).thenReturn(page);
         }
         // returning the mock
         return reader;
+    }
+
+    /**
+     * Utility method to create nodes per revision.
+     * 
+     * @param nodesPerRevision
+     *            to create
+     * @param pWtx
+     *            to store to.
+     * @throws TTException
+     */
+    public static DumbNode[][] createRevisions(final int[] nodesPerRevision, final IPageWriteTrx pWtx)
+        throws TTException {
+        final DumbNode[][] returnVal = new DumbNode[nodesPerRevision.length][];
+        long nodeCounter = 0;
+        for (int i = 0; i < nodesPerRevision.length; i++) {
+            returnVal[i] = new DumbNode[nodesPerRevision[i]];
+            // inserting nodes on this transaction
+            for (int j = 0; j < returnVal[i].length; j++) {
+                returnVal[i][j] =
+                    pWtx.createNode(new DumbNode(nodeCounter, CoreTestHelper.random.nextLong()));
+                nodeCounter++;
+            }
+            // comitting data
+            pWtx.commit();
+        }
+        return returnVal;
     }
 
     public static class Holder {
