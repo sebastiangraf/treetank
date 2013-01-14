@@ -233,6 +233,33 @@ public final class CoreTestHelper {
         return reader;
     }
 
+    /**
+     * Utility method to create nodes per revision.
+     * 
+     * @param nodesPerRevision
+     *            to create
+     * @param pWtx
+     *            to store to.
+     * @throws TTException
+     */
+    public static DumbNode[][] createRevisions(final int[] nodesPerRevision, final IPageWriteTrx pWtx)
+        throws TTException {
+        final DumbNode[][] returnVal = new DumbNode[nodesPerRevision.length][];
+        long nodeCounter = 0;
+        for (int i = 0; i < nodesPerRevision.length; i++) {
+            returnVal[i] = new DumbNode[nodesPerRevision[i]];
+            // inserting nodes on this transaction
+            for (int j = 0; j < returnVal[i].length; j++) {
+                returnVal[i][j] =
+                    pWtx.createNode(new DumbNode(nodeCounter, CoreTestHelper.random.nextLong()));
+                nodeCounter++;
+            }
+            // comitting data
+            pWtx.commit();
+        }
+        return returnVal;
+    }
+
     public static class Holder {
 
         IStorage mStorage;
