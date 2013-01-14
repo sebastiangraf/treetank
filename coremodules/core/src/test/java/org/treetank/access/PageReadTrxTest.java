@@ -89,80 +89,138 @@ public class PageReadTrxTest {
      * .
      */
     @Test
-    public void testDereferenceLeafOfTree() throws TTIOException {
-        int[] offsets = new int[5];
+    public void testDereferenceLeafOfTreeOld() throws TTIOException {
+        int[][] offsets = new int[5][1];
 
         IBackendReader reader = getFakedStructure(offsets);
         long key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 0);
         assertEquals(6, key);
 
-        offsets[4] = 127;
+        offsets[4][0] = 127;
         reader = getFakedStructure(offsets);
         key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 127);
         assertEquals(6, key);
 
-        offsets[3] = 1;
-        offsets[4] = 0;
+        offsets[3][0] = 1;
+        offsets[4][0] = 0;
         reader = getFakedStructure(offsets);
         key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 128);
         assertEquals(6, key);
 
-        offsets[3] = 127;
-        offsets[4] = 127;
+        offsets[3][0] = 127;
+        offsets[4][0] = 127;
         reader = getFakedStructure(offsets);
         key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 16383);
         assertEquals(6, key);
 
-        offsets[2] = 1;
-        offsets[3] = 0;
-        offsets[4] = 0;
+        offsets[2][0] = 1;
+        offsets[3][0] = 0;
+        offsets[4][0] = 0;
         reader = getFakedStructure(offsets);
         key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 16384);
         assertEquals(6, key);
 
-        offsets[2] = 127;
-        offsets[3] = 127;
-        offsets[4] = 127;
+        offsets[2][0] = 127;
+        offsets[3][0] = 127;
+        offsets[4][0] = 127;
         reader = getFakedStructure(offsets);
         key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 2097151);
         assertEquals(6, key);
 
-        offsets[1] = 1;
-        offsets[2] = 0;
-        offsets[3] = 0;
-        offsets[4] = 0;
+        offsets[1][0] = 1;
+        offsets[2][0] = 0;
+        offsets[3][0] = 0;
+        offsets[4][0] = 0;
         reader = getFakedStructure(offsets);
         key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 2097152);
         assertEquals(6, key);
 
-        offsets[1] = 127;
-        offsets[2] = 127;
-        offsets[3] = 127;
-        offsets[4] = 127;
+        offsets[1][0] = 127;
+        offsets[2][0] = 127;
+        offsets[3][0] = 127;
+        offsets[4][0] = 127;
         reader = getFakedStructure(offsets);
         key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 268435455);
         assertEquals(6, key);
 
-        offsets[0] = 1;
-        offsets[1] = 0;
-        offsets[2] = 0;
-        offsets[3] = 0;
-        offsets[4] = 0;
+        offsets[0][0] = 1;
+        offsets[1][0] = 0;
+        offsets[2][0] = 0;
+        offsets[3][0] = 0;
+        offsets[4][0] = 0;
         reader = getFakedStructure(offsets);
         key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 268435456);
         assertEquals(6, key);
 
-        offsets[0] = 127;
-        offsets[1] = 127;
-        offsets[2] = 127;
-        offsets[3] = 127;
-        offsets[4] = 127;
+        offsets[0][0] = 127;
+        offsets[1][0] = 127;
+        offsets[2][0] = 127;
+        offsets[3][0] = 127;
+        offsets[4][0] = 127;
         reader = getFakedStructure(offsets);
         key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 34359738367l);
         assertEquals(6, key);
 
     }
 
+    /**
+     * Test method for
+     * {@link org.treetank.access.PageReadTrx#dereferenceLeafOfTree(org.treetank.io.IBackendReader, long, long)}
+     * .
+     */
+    @Test(enabled=false)
+    public void testDereferenceLeafOfTree() throws TTIOException {
+        int[][] offsets = new int[5][1];
+
+        offsets[0][0] = 0;
+        offsets[0][1] = 1;
+        offsets[0][2] = 127;
+        offsets[1][0] = 0;
+        offsets[1][1] = 1;
+        offsets[1][2] = 127;
+        offsets[2][0] = 0;
+        offsets[2][1] = 1;
+        offsets[2][2] = 127;
+        offsets[3][0] = 0;
+        offsets[3][1] = 1;
+        offsets[3][2] = 127;
+        offsets[4][0] = 0;
+        offsets[4][1] = 1;
+        offsets[4][2] = 127;
+        
+        IBackendReader reader = getFakedStructure(offsets);
+        long key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 0);
+        assertEquals(6, key);
+
+        key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 127);
+        assertEquals(6, key);
+
+        key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 128);
+        assertEquals(6, key);
+
+        key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 16383);
+        assertEquals(6, key);
+
+        key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 16384);
+        assertEquals(6, key);
+
+        key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 2097151);
+        assertEquals(6, key);
+
+        key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 2097152);
+        assertEquals(6, key);
+
+        key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 268435455);
+        assertEquals(6, key);
+
+        key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 268435456);
+        assertEquals(6, key);
+
+        key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 34359738367l);
+        assertEquals(6, key);
+
+    }
+    
     /**
      * Test method for {@link org.treetank.access.PageReadTrx#nodePageKey(long)}.
      */

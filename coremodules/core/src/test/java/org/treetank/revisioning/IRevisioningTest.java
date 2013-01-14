@@ -186,13 +186,14 @@ public class IRevisioningTest {
         Object[][] returnVal = {
             {
                 IRevisioning.class, new IRevisioning[] {
-                    new FullDump()//, new Incremental(), new Differential(), new SlidingSnapshot()
+                    new FullDump()
+                // , new Incremental(), new Differential(), new SlidingSnapshot()
                 }, IBackendReaderGenerator.class, new IBackendReaderGenerator[] {
                     // test for fulldump
                     new IBackendReaderGenerator() {
                         @Override
                         public IBackendReader generateBackendReader() throws TTIOException {
-                            int[] offsets = new int[5];
+                            int[][] offsets = new int[5][1];
                             return getFakedStructure(offsets);
                         }
                     }
