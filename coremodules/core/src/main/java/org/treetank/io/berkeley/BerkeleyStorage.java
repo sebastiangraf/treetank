@@ -34,6 +34,7 @@ import org.treetank.access.conf.ContructorProps;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StorageConfiguration;
+import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.exception.TTException;
@@ -103,6 +104,8 @@ public final class BerkeleyStorage implements IBackend {
      *            not only the file associated with the database
      * @param pNodeFac
      *            factory for the nodes
+     * @param pMetaFac
+     *            factory for meta page
      * @param pByteHandler
      *            handling any bytes
      * @throws TTIOException
@@ -110,7 +113,7 @@ public final class BerkeleyStorage implements IBackend {
      */
     @Inject
     public BerkeleyStorage(@Assisted Properties pProperties, INodeFactory pNodeFac,
-        IByteHandlerPipeline pByteHandler) throws TTIOException {
+        IMetaEntryFactory pMetaFac, IByteHandlerPipeline pByteHandler) throws TTIOException {
 
         mFile =
             new File(new File(new File(pProperties.getProperty(ContructorProps.STORAGEPATH),
@@ -119,7 +122,7 @@ public final class BerkeleyStorage implements IBackend {
 
         mPageBinding = new PageBinding();
         mByteHandler = pByteHandler;
-        mFac = new PageFactory(pNodeFac);
+        mFac = new PageFactory(pNodeFac, pMetaFac);
 
     }
 

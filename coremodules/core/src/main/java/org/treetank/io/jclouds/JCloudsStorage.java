@@ -9,10 +9,11 @@ import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.treetank.access.conf.ContructorProps;
+import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTException;
-import org.treetank.io.IBackendReader;
 import org.treetank.io.IBackend;
+import org.treetank.io.IBackendReader;
 import org.treetank.io.IBackendWriter;
 import org.treetank.io.bytepipe.ByteHandlerPipeline;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
@@ -49,15 +50,17 @@ public class JCloudsStorage implements IBackend {
      *            not only the location of the database
      * @param pNodeFac
      *            factory for the nodes
+     * @param pMetaFac
+     *            factory for meta page
      * @param pByteHandler
      *            handling any bytes
      * 
      */
     @Inject
     public JCloudsStorage(@Assisted Properties pProperties, INodeFactory pNodeFac,
-        IByteHandlerPipeline pByteHandler) {
+        IMetaEntryFactory pMetaFac, IByteHandlerPipeline pByteHandler) {
         mProperties = pProperties;
-        mFac = new PageFactory(pNodeFac);
+        mFac = new PageFactory(pNodeFac, pMetaFac);
         mByteHandler = (ByteHandlerPipeline)pByteHandler;
         mContext =
             ContextBuilder.newBuilder(mProperties.getProperty(ContructorProps.JCLOUDSTYPE)).overrides(
@@ -119,22 +122,6 @@ public class JCloudsStorage implements IBackend {
             returnVal = true;
         }
         return returnVal;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("JCloudsStorage [mFac=");
-        builder.append(mFac);
-        builder.append(", mByteHandler=");
-        builder.append(mByteHandler);
-        builder.append(", mProperties=");
-        builder.append(mProperties);
-        builder.append("]");
-        return builder.toString();
     }
 
 }

@@ -27,25 +27,29 @@
 
 package org.treetank.page;
 
+import static com.google.common.base.Objects.toStringHelper;
+
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
+import org.treetank.api.IMetaEntry;
 import org.treetank.page.interfaces.IPage;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
 /**
- * <h1>NamePageBinding</h1>
+ * <h1>MetaPage</h1>
  * 
  * <p>
- * Name page holds all names and their keys for a revision.
+ * This page stored variable key -> value mappings, whereas elements must implement the {@link IMetaEntry}s.
  * </p>
  */
-public final class NamePage implements IPage {
+public final class MetaPage implements IPage {
 
     /** Map the hash of a name to its name. */
-    private final Map<Integer, String> mNameMap;
+    private final Map<IMetaEntry, IMetaEntry> mMetaMap;
 
     /** Key of this page. */
     private final long mPageKey;
@@ -56,32 +60,32 @@ public final class NamePage implements IPage {
      * @param pPageKey
      *            key of this page
      */
-    public NamePage(final long pPageKey) {
-        mNameMap = new HashMap<Integer, String>();
+    public MetaPage(final long pPageKey) {
+        mMetaMap = new HashMap<IMetaEntry, IMetaEntry>();
         mPageKey = pPageKey;
     }
 
     /**
      * Get name belonging to name key.
      * 
-     * @param mKey
-     *            Name key identifying name.
-     * @return Name of name key.
+     * @param pKey
+     *            key identifying value.
+     * @return value of this key
      */
-    public String getName(final int mKey) {
-        return mNameMap.get(mKey);
+    public IMetaEntry getValue(final IMetaEntry pKey) {
+        return mMetaMap.get(pKey);
     }
 
     /**
      * Create name key given a name.
      * 
-     * @param paramKey
-     *            Key for given name.
-     * @param paramName
-     *            Name to create key for.
+     * @param pKey
+     *            Key to be set
+     * @param pValue
+     *            related value to be set
      */
-    public void setName(final int paramKey, final String paramName) {
-        mNameMap.put(paramKey, paramName);
+    public void setEntry(final IMetaEntry pKey, final IMetaEntry pValue) {
+        mMetaMap.put(pKey, pValue);
     }
 
     /**
@@ -89,8 +93,8 @@ public final class NamePage implements IPage {
      * 
      * @return name map
      */
-    public Map<Integer, String> getNameMap() {
-        return mNameMap;
+    public Map<IMetaEntry, IMetaEntry> getMetaMap() {
+        return mMetaMap;
     }
 
     /**
@@ -98,18 +102,19 @@ public final class NamePage implements IPage {
      */
     @Override
     public byte[] getByteRepresentation() {
-        final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
-        pOutput.writeInt(IConstants.NAMEPAGE);
-        pOutput.writeLong(mPageKey);
-        pOutput.writeInt(mNameMap.size());
-
-        for (final int key : mNameMap.keySet()) {
-            pOutput.writeInt(key);
-            final byte[] tmp = mNameMap.get(key).getBytes();
-            pOutput.writeInt(tmp.length);
-            pOutput.write(tmp);
+        final ByteArrayDataOutput output = ByteStreams.newDataOutput();
+        output.writeInt(IConstants.METAPAGE);
+        output.writeLong(mPageKey);
+        output.writeInt(mMetaMap.size());
+        for (final IMetaEntry key : mMetaMap.keySet()) {
+            final byte[] keyTmp = key.getByteRepresentation();
+            output.writeInt(keyTmp.length);
+            output.write(keyTmp);
+            final byte[] valTmp = mMetaMap.get(key).getByteRepresentation();
+            output.writeInt(valTmp.length);
+            output.write(valTmp);
         }
-        return pOutput.toByteArray();
+        return output.toByteArray();
     }
 
     /**
@@ -125,13 +130,23 @@ public final class NamePage implements IPage {
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("NamePage [mPageKey=");
-        builder.append(mPageKey);
-        builder.append(", mNameMap=");
-        builder.append(mNameMap);
-        builder.append("]");
-        return builder.toString();
+        return toStringHelper(this).add("mPageKey", mPageKey).add("mMetaMap", mMetaMap).toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(mPageKey, mMetaMap);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        return this.hashCode() == obj.hashCode();
     }
 
 }

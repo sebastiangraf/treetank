@@ -3,10 +3,12 @@
  */
 package org.treetank.revisioning;
 
-import static org.testng.AssertJUnit.assertTrue;
 import static org.testng.AssertJUnit.assertEquals;
-import static org.treetank.CoreTestHelper.getNodePage;
 import static org.testng.AssertJUnit.assertNull;
+import static org.testng.AssertJUnit.assertTrue;
+import static org.treetank.CoreTestHelper.getFakedStructure;
+import static org.treetank.CoreTestHelper.getNodePage;
+
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
@@ -14,6 +16,8 @@ import org.testng.annotations.Test;
 import org.treetank.CoreTestHelper;
 import org.treetank.cache.NodePageContainer;
 import org.treetank.exception.TTByteHandleException;
+import org.treetank.exception.TTIOException;
+import org.treetank.io.IBackendReader;
 import org.treetank.page.IConstants;
 import org.treetank.page.NodePage;
 
@@ -137,6 +141,75 @@ public class IRevisioningTest {
             // ...and check them suitable to the versioning approach
             pRevisionChecker[i].checkCompletePages(page, pages);
         }
+    }
+
+    /**
+     * Test method for
+     * {@link org.treetank.revisioning.IRevisioning#getRevRootKeys(int, long, long, IBackendReader)}.
+     * 
+     * @param pRevisioningClass
+     *            class for the revisioning approaches
+     * @param pRevisioning
+     *            the different revisioning approaches
+     * @param pBackendReaderGeneratorClass
+     *            class for the backend generator
+     * @param pBackendReaderGenerator
+     *            the different backend generators
+     * @throws TTIOException
+     * 
+     */
+    @Test(dataProvider = "initiateRevRootPages")
+    public void testRevRootRetrieval(Class<IRevisioning> pRevisioningClass, IRevisioning[] pRevisioning,
+        Class<IBackendReaderGenerator> pBackendReaderGeneratorClass,
+        IBackendReaderGenerator[] pBackendReaderGenerator, Class<ILoadRevRootChecker> pRevRootCheckerClass,
+        ILoadRevRootChecker[] pRevRootChecker) throws TTIOException {
+        // be sure you have enough checkers for the revisioning to check
+        assertEquals(pRevisioning.length, pBackendReaderGenerator.length);
+        assertEquals(pRevisioning.length, pRevRootChecker.length);
+
+        // for all revision-approaches...
+        for (int i = 0; i < pRevisioning.length; i++) {
+            long[] revRoots =
+                pRevisioning[i].getRevRootKeys(10, 1, 0, pBackendReaderGenerator[i].generateBackendReader());
+            pRevRootChecker[i].checkLoadRevRoot(revRoots);
+        }
+    }
+
+    /**
+     * Providing different implementations of the {@link IRevisioning} as Dataprovider to the test class.
+     * 
+     * @return different classes of the {@link IRevisioning} and <code>IRevisionChecker</code>
+     * @throws TTByteHandleException
+     */
+    @DataProvider(name = "initiateRevRootPages")
+    public Object[][] initiateRevRootPages() throws TTByteHandleException {
+        Object[][] returnVal = {
+            {
+                IRevisioning.class, new IRevisioning[] {
+                    new FullDump()
+                // , new Incremental(), new Differential(), new SlidingSnapshot()
+                }, IBackendReaderGenerator.class, new IBackendReaderGenerator[] {
+                    // test for fulldump
+                    new IBackendReaderGenerator() {
+                        @Override
+                        public IBackendReader generateBackendReader() throws TTIOException {
+                            int[] offsets = new int[5];
+                            return getFakedStructure(offsets);
+                        }
+                    }
+                }, ILoadRevRootChecker.class, new ILoadRevRootChecker[] {
+                    // test for fulldump
+                    new ILoadRevRootChecker() {
+                        @Override
+                        public void checkLoadRevRoot(long[] revRoots) {
+                            assertEquals(1, revRoots.length);
+                            assertEquals(6, revRoots[0]);
+                        }
+                    }
+                }
+            }
+        };
+        return returnVal;
     }
 
     /**
@@ -392,13 +465,33 @@ public class IRevisioningTest {
     }
 
     /**
-     * Note Page Generator for new NodePages.
+     * Node Page Generator for new NodePages.
      * 
      * @author Sebastian Graf, University of Konstanz
      * 
      */
     interface INodePageGenerator {
         NodePage[] generateNodePages();
+    }
+
+    /**
+     * Backend Reader generator for checking the loading of RevRootPages.
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
+    interface IBackendReaderGenerator {
+        IBackendReader generateBackendReader() throws TTIOException;
+    }
+
+    /**
+     * Interface to check loaded rev root pages.
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
+    interface ILoadRevRootChecker {
+        void checkLoadRevRoot(long[] revRoots);
     }
 
 }

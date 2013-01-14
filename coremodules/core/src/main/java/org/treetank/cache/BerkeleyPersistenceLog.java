@@ -30,6 +30,7 @@ package org.treetank.cache;
 import java.io.File;
 
 import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTIOException;
 
@@ -97,10 +98,13 @@ public final class BerkeleyPersistenceLog implements ICachedLog {
      *            the correct way
      * @param pNodeFac
      *            for deserialization of nodes
+     * @param pMetaFac
+     *            for deserialization of meta entries
      * @throws TTIOException
      *             Exception if IO is not successful
      */
-    public BerkeleyPersistenceLog(final File pFile, final INodeFactory pNodeFac) throws TTIOException {
+    public BerkeleyPersistenceLog(final File pFile, final INodeFactory pNodeFac,
+        final IMetaEntryFactory pMetaFac) throws TTIOException {
         mPlace =
             new File(new File(pFile, ResourceConfiguration.Paths.TransactionLog.getFile().getName()), Integer
                 .toString(counter));
@@ -121,7 +125,7 @@ public final class BerkeleyPersistenceLog implements ICachedLog {
             mDatabase = mEnv.openDatabase(null, NAME, dbConfig);
 
             mKeyBinding = new LogKeyBinding();
-            mValueBinding = new NodePageContainerBinding(pNodeFac);
+            mValueBinding = new NodePageContainerBinding(pNodeFac, pMetaFac);
 
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);

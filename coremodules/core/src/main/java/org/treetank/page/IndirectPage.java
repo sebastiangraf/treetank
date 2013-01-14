@@ -27,7 +27,10 @@
 
 package org.treetank.page;
 
+import static com.google.common.base.Objects.toStringHelper;
+
 import java.util.Arrays;
+import java.util.Objects;
 
 import org.treetank.page.interfaces.IReferencePage;
 
@@ -97,13 +100,24 @@ public final class IndirectPage implements IReferencePage {
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("IndirectPage [mPageKey=");
-        builder.append(mPageKey);
-        builder.append(", mReferenceKeys=");
-        builder.append(Arrays.toString(mReferenceKeys));
-        builder.append("]");
-        return builder.toString();
+        return toStringHelper(this).add("mPageKey", mPageKey).add("mReferenceKeys", Arrays.toString(mReferenceKeys))
+            .toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(mPageKey, Arrays.hashCode(mReferenceKeys));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        return this.hashCode() == obj.hashCode();
     }
 
 }

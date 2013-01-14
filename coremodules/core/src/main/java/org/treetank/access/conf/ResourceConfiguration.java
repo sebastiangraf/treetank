@@ -40,6 +40,7 @@ import java.util.Objects;
 import java.util.Properties;
 
 import org.treetank.access.Session;
+import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackend;
@@ -150,6 +151,9 @@ public final class ResourceConfiguration {
     /** Node Factory for deserializing nodes. */
     public final INodeFactory mNodeFac;
 
+    /** MetaEntry Factory for deserializing meta-entries. */
+    public final IMetaEntryFactory mMetaFac;
+
     // END MEMBERS FOR FIXED FIELDS
 
     /**
@@ -162,9 +166,9 @@ public final class ResourceConfiguration {
      */
     @Inject
     public ResourceConfiguration(@Assisted Properties pProperties, IBackendFactory pBackend,
-        IRevisioning pRevision, INodeFactory pNodeFac) {
+        IRevisioning pRevision, INodeFactory pNodeFac, IMetaEntryFactory pMetaFac) {
 
-        this(pProperties, pBackend.create(pProperties), pRevision, pNodeFac);
+        this(pProperties, pBackend.create(pProperties), pRevision, pNodeFac, pMetaFac);
     }
 
     /**
@@ -176,11 +180,12 @@ public final class ResourceConfiguration {
      * @param pNodeFac
      */
     private ResourceConfiguration(Properties pProperties, IBackend pStorage, IRevisioning pRevisioning,
-        INodeFactory pNodeFac) {
+        INodeFactory pNodeFac, IMetaEntryFactory pMetaFac) {
         mProperties = pProperties;
         mBackend = pStorage;
         mRevision = pRevisioning;
         mNodeFac = pNodeFac;
+        mMetaFac = pMetaFac;
     }
 
     /**
@@ -205,7 +210,8 @@ public final class ResourceConfiguration {
     }
 
     private static final String[] JSONNAMES = {
-        "revisioningClass", "nodeFactoryClass", "byteHandlerClasses", "storageClass", "properties"
+        "metaentryClass", "revisioningClass", "nodeFactoryClass", "byteHandlerClasses", "storageClass",
+        "properties"
     };
 
     public static void serialize(final ResourceConfiguration pConfig) throws TTIOException {
@@ -219,21 +225,23 @@ public final class ResourceConfiguration {
             FileWriter fileWriter = new FileWriter(file);
             JsonWriter jsonWriter = new JsonWriter(fileWriter);
             jsonWriter.beginObject();
+            // caring about the meta-entries
+            jsonWriter.name(JSONNAMES[0]).value(pConfig.mMetaFac.getClass().getName());
             // caring about the versioning
-            jsonWriter.name(JSONNAMES[0]).value(pConfig.mRevision.getClass().getName());
+            jsonWriter.name(JSONNAMES[1]).value(pConfig.mRevision.getClass().getName());
             // caring about the NodeFactory
-            jsonWriter.name(JSONNAMES[1]).value(pConfig.mNodeFac.getClass().getName());
+            jsonWriter.name(JSONNAMES[2]).value(pConfig.mNodeFac.getClass().getName());
             // caring about the ByteHandlers
             IByteHandlerPipeline byteHandler = pConfig.mBackend.getByteHandler();
-            jsonWriter.name(JSONNAMES[2]);
+            jsonWriter.name(JSONNAMES[3]);
             jsonWriter.beginArray();
             for (IByteHandler handler : byteHandler) {
                 jsonWriter.value(handler.getClass().getName());
             }
             jsonWriter.endArray();
             // caring about the storage
-            jsonWriter.name(JSONNAMES[3]).value(pConfig.mBackend.getClass().getName());
-            jsonWriter.name(JSONNAMES[4]);
+            jsonWriter.name(JSONNAMES[4]).value(pConfig.mBackend.getClass().getName());
+            jsonWriter.name(JSONNAMES[5]);
             jsonWriter.beginObject();
             for (String key : pConfig.mProperties.stringPropertyNames()) {
                 jsonWriter.name(key).value(pConfig.mProperties.getProperty(key));
@@ -267,16 +275,19 @@ public final class ResourceConfiguration {
             FileReader fileReader = new FileReader(file);
             JsonReader jsonReader = new JsonReader(fileReader);
             jsonReader.beginObject();
-            // caring about the versioning
+            // caring about the metapage
             jsonReader.nextName().equals(JSONNAMES[0]);
+            Class<?> metaPageClazz = Class.forName(jsonReader.nextString());
+            // caring about the versioning
+            jsonReader.nextName().equals(JSONNAMES[1]);
             Class<?> revClazz = Class.forName(jsonReader.nextString());
             // caring about the NodeFactory
-            jsonReader.nextName().equals(JSONNAMES[1]);
+            jsonReader.nextName().equals(JSONNAMES[2]);
             Class<?> nodeFacClazz = Class.forName(jsonReader.nextString());
 
             // caring about the ByteHandlers
             List<IByteHandler> handlerList = new ArrayList<IByteHandler>();
-            if (jsonReader.nextName().equals(JSONNAMES[2])) {
+            if (jsonReader.nextName().equals(JSONNAMES[3])) {
                 jsonReader.beginArray();
                 while (jsonReader.hasNext()) {
                     Class<?> handlerClazz = Class.forName(jsonReader.nextString());
@@ -288,9 +299,9 @@ public final class ResourceConfiguration {
             ByteHandlerPipeline pipeline =
                 new ByteHandlerPipeline(handlerList.toArray(new IByteHandler[handlerList.size()]));
             // caring about the storage
-            jsonReader.nextName().equals(JSONNAMES[3]);
-            Class<?> storageClazz = Class.forName(jsonReader.nextString());
             jsonReader.nextName().equals(JSONNAMES[4]);
+            Class<?> storageClazz = Class.forName(jsonReader.nextString());
+            jsonReader.nextName().equals(JSONNAMES[5]);
             Properties props = new Properties();
             jsonReader.beginObject();
             while (jsonReader.hasNext()) {
@@ -301,6 +312,9 @@ public final class ResourceConfiguration {
             jsonReader.close();
             fileReader.close();
 
+            Constructor<?> metapageCons = metaPageClazz.getConstructors()[0];
+            IMetaEntryFactory metaFac = (IMetaEntryFactory)metapageCons.newInstance();
+
             Constructor<?> nodeFacCons = nodeFacClazz.getConstructors()[0];
             INodeFactory nodeFactory = (INodeFactory)nodeFacCons.newInstance();
 
@@ -308,9 +322,9 @@ public final class ResourceConfiguration {
             IRevisioning revObject = (IRevisioning)revCons.newInstance();
 
             Constructor<?> storageCons = storageClazz.getConstructors()[0];
-            IBackend backend = (IBackend)storageCons.newInstance(props, nodeFactory, pipeline);
+            IBackend backend = (IBackend)storageCons.newInstance(props, nodeFactory, metaFac, pipeline);
 
-            return new ResourceConfiguration(props, backend, revObject, nodeFactory);
+            return new ResourceConfiguration(props, backend, revObject, nodeFactory, metaFac);
 
         } catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException
         | InvocationTargetException exc) {
@@ -339,7 +353,7 @@ public final class ResourceConfiguration {
      */
     @Override
     public String toString() {
-        return toStringHelper(this).add("mBackend", mBackend).add("mRevision", mRevision).add("mProperties",
+        return toStringHelper(this).add("mBackend", mBackend.getClass()).add("mRevision", mRevision).add("mProperties",
             mProperties).add("mNodeFac", mNodeFac).toString();
     }
 }

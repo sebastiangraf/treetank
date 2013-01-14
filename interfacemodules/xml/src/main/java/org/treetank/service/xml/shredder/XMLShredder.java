@@ -72,6 +72,7 @@ import org.treetank.io.IBackend.IBackendFactory;
 import org.treetank.node.DocumentRootNode;
 import org.treetank.node.ElementNode;
 import org.treetank.node.IConstants;
+import org.treetank.node.NodeMetaPageFactory;
 import org.treetank.node.TreeNodeFactory;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
@@ -357,7 +358,8 @@ public class XMLShredder implements Callable<Void> {
         Storage.createStorage(config);
         final IStorage db = Storage.openStorage(target);
         Properties props = StandardSettings.getStandardProperties(target.getAbsolutePath(), "shredded");
-        db.createResource(new ResourceConfiguration(props, storage, revision, new TreeNodeFactory()));
+        db.createResource(new ResourceConfiguration(props, storage, revision, new TreeNodeFactory(),
+            new NodeMetaPageFactory()));
         final ISession session = db.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
         final INodeWriteTrx wtx =
             new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);

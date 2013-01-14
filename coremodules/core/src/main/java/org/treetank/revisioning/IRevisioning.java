@@ -46,7 +46,21 @@ public interface IRevisioning {
     NodePageContainer combinePagesForModification(final long pNewPageKey, final NodePage[] pPages,
         final boolean pFullDump);
 
-    long[] getRevRootKeys(final int pRevToRestore, final long pLongStartKey, final long pSeqKey,
+    /**
+     * Getting the keys for the relevant revision root-pages to restore underlaying nodepages.
+     * 
+     * @param pRevToRestore
+     *            number of revisions necessary to restore one version
+     * @param pStartKey
+     *            starting key for getting the rest of the pages
+     * @param pSeqKey
+     *            the sequential key namely the version
+     * @param pReader
+     *            the reader for getting the intermediate pages and the link to the revision root pages
+     * @return an array with the keys to the revision root pages from the newest to the oldest
+     * @throws TTIOException
+     */
+    long[] getRevRootKeys(final int pRevToRestore, final long pStartKey, final long pSeqKey,
         final IBackendReader pReader) throws TTIOException;
 
 }

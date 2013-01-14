@@ -83,7 +83,7 @@ public class JCloudsReader implements IBackendReader {
             out.close();
             in.close();
             return mFac.deserializePage(decryptedPage);
-        } catch (final IOException | TTByteHandleException | NullPointerException exc) {
+        } catch (final IOException | TTByteHandleException exc) {
             throw new TTIOException(exc);
         }
     }
@@ -94,23 +94,4 @@ public class JCloudsReader implements IBackendReader {
     @Override
     public void close() throws TTIOException {
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("JCloudsReader [mBlobStore=");
-        builder.append(mBlobStore);
-        builder.append(", mFac=");
-        builder.append(mFac);
-        builder.append(", mByteHandler=");
-        builder.append(mByteHandler);
-        builder.append(", mResourceName=");
-        builder.append(mResourceName);
-        builder.append("]");
-        return builder.toString();
-    }
-
 }

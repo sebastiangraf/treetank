@@ -50,6 +50,7 @@ import org.treetank.exception.TTException;
 import org.treetank.io.IBackend.IBackendFactory;
 import org.treetank.iscsi.node.ByteNode;
 import org.treetank.iscsi.node.ByteNodeFactory;
+import org.treetank.iscsi.node.ISCSIMetaPageFactory;
 import org.treetank.revisioning.IRevisioning;
 
 import com.google.common.io.ByteArrayDataInput;
@@ -138,7 +139,8 @@ public class TreetankStorageModule implements IStorageModule {
 
         Properties props = StandardSettings.getStandardProperties(file.getAbsolutePath(), "jscsi-target");
         ResourceConfiguration mResourceConfig =
-            new ResourceConfiguration(props, backend, revision, new ByteNodeFactory());
+            new ResourceConfiguration(props, backend, revision, new ByteNodeFactory(),
+                new ISCSIMetaPageFactory());
         storage.createResource(mResourceConfig);
 
         session = storage.getSession(new SessionConfiguration("jscsi-target", null));

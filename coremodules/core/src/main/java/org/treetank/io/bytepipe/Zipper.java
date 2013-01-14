@@ -3,6 +3,8 @@
  */
 package org.treetank.io.bytepipe;
 
+import static com.google.common.base.Objects.toStringHelper;
+
 import java.io.ByteArrayOutputStream;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
@@ -77,34 +79,9 @@ public class Zipper implements IByteHandler {
      * {@inheritDoc}
      */
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((COMPRESSOR == null) ? 0 : COMPRESSOR.hashCode());
-        result = prime * result + ((DECOMPRESSOR == null) ? 0 : DECOMPRESSOR.hashCode());
-        return result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(Object obj) {
-        return obj.hashCode() == this.hashCode();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Zipper [mCompressor=");
-        builder.append(COMPRESSOR);
-        builder.append(", mDecompressor=");
-        builder.append(DECOMPRESSOR);
-        builder.append("]");
-        return builder.toString();
+        return toStringHelper(this).add("mCompressor", COMPRESSOR).add("mDecompressor", DECOMPRESSOR)
+            .toString();
     }
 
 }

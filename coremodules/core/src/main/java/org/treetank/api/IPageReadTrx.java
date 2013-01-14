@@ -5,6 +5,7 @@ package org.treetank.api;
 
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
+import org.treetank.page.MetaPage;
 import org.treetank.page.RevisionRootPage;
 
 /**
@@ -49,15 +50,6 @@ public interface IPageReadTrx {
     RevisionRootPage getActualRevisionRootPage() throws TTIOException;
 
     /**
-     * Getting name to a defined key.
-     * 
-     * @param pKey
-     *            the key where the string can be found e.g. a hash.
-     * @return the string to the related key.
-     */
-    String getName(final int pKey);
-
-    /**
      * Close the transaction.
      * 
      * @return true if successful, false otherwise
@@ -72,5 +64,12 @@ public interface IPageReadTrx {
      * @return true if closed, false otherwise
      */
     boolean isClosed();
+
+    /**
+     * Getting the map with the entire mapping for retrieving meta-information related to the bundle.
+     * 
+     * @return the meta page
+     */
+    MetaPage getMetaPage();
 
 }

@@ -10,13 +10,14 @@ import org.jclouds.Constants;
 import org.jclouds.filesystem.reference.FilesystemConstants;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.SessionConfiguration.ISessionConfigurationFactory;
+import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;
 import org.treetank.io.IBackend;
 import org.treetank.io.IBackend.IBackendFactory;
 import org.treetank.io.bytepipe.ByteHandlerPipeline;
-import org.treetank.io.bytepipe.Zipper;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
-import org.treetank.io.jclouds.JCloudsStorage;
+import org.treetank.io.bytepipe.Zipper;
+import org.treetank.page.DumbMetaEntryFactory;
 import org.treetank.page.DumbNodeFactory;
 import org.treetank.revisioning.Differential;
 import org.treetank.revisioning.IRevisioning;
@@ -43,6 +44,7 @@ public class GuiSettings extends AbstractModule {
     @Override
     protected void configure() {
         bind(INodeFactory.class).to(DumbNodeFactory.class);
+        bind(IMetaEntryFactory.class).to(DumbMetaEntryFactory.class);
         bind(IRevisioning.class).to(Differential.class);
         bind(IByteHandlerPipeline.class).toInstance(new ByteHandlerPipeline(new Zipper()));
         install(new FactoryModuleBuilder().implement(IBackend.class, backend).build(IBackendFactory.class));

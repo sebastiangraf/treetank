@@ -39,6 +39,8 @@ import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.node.ElementNode;
 import org.treetank.node.IConstants;
+import org.treetank.node.NodeMetaPageFactory;
+import org.treetank.node.NodeMetaPageFactory.MetaValue;
 import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IValNode;
@@ -148,8 +150,8 @@ public class NodeReadTrx implements INodeReadTrx {
         String name = "";
         String uri = "";
         if (mCurrentNode instanceof INameNode) {
-            name = mPageReadTrx.getName(((INameNode)mCurrentNode).getNameKey());
-            uri = mPageReadTrx.getName(((INameNode)mCurrentNode).getURIKey());
+            name = nameForKey(((INameNode)mCurrentNode).getNameKey());
+            uri = nameForKey(((INameNode)mCurrentNode).getURIKey());
         }
         return buildQName(uri, name);
     }
@@ -160,7 +162,7 @@ public class NodeReadTrx implements INodeReadTrx {
     @Override
     public final String getTypeOfCurrentNode() {
         assertNotClosed();
-        return mPageReadTrx.getName(mCurrentNode.getTypeKey());
+        return nameForKey(mCurrentNode.getTypeKey());
     }
 
     /**
@@ -169,7 +171,9 @@ public class NodeReadTrx implements INodeReadTrx {
     @Override
     public final String nameForKey(final int mKey) {
         assertNotClosed();
-        return mPageReadTrx.getName(mKey);
+        NodeMetaPageFactory.MetaKey key = new NodeMetaPageFactory.MetaKey(mKey);
+        NodeMetaPageFactory.MetaValue value = (MetaValue)mPageReadTrx.getMetaPage().getValue(key);
+        return value == null ? null : value.getData();
     }
 
     /**
