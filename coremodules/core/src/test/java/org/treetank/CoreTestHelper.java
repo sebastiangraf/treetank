@@ -211,32 +211,22 @@ public final class CoreTestHelper {
      * @return a {@link IBackendReader}-mock
      * @throws TTIOException
      */
-    public static IBackendReader getFakedStructure(int[][] offsets) throws TTIOException {
+    public static IBackendReader getFakedStructure(int[] offsets) throws TTIOException {
         assertEquals(5, offsets.length);
         // mocking the reader
         IBackendReader reader = mock(IBackendReader.class);
-
-        Map<Long, IndirectPage> pages = new HashMap<Long, IndirectPage>();
-        Long key = new Long(1);
-        IndirectPage page;
+        // variable storing the related keys to the pages created in the mock
+        long pKey = 1;
+        // iterating through the tree..
         for (int i = 0; i < offsets.length; i++) {
-
-            page = new IndirectPage(key);
-            pages.put(key, page);
-            Long parentKey = key;
-            for (int j = 0; j < offsets[i].length; j++) {
-
-                page = new IndirectPage(++key);
-                pages.get(parentKey).setReferenceKey(offsets[i][j], key.longValue());
-
-            }
-
+            // ...and create a new page with incrementing the page key
+            final IndirectPage page = new IndirectPage(pKey);
+            // setting the related key to the defined offset and...
+            page.setReferenceKey(offsets[i], ++pKey);
+            // ...tell the mock to react when the key is demanded.
+            when(reader.read(pKey - 1)).thenReturn(page);
         }
-
-        for (IndirectPage setPage : pages.values()) {
-            when(reader.read(setPage.getPageKey())).thenReturn(setPage);
-        }
-
+        // returning the mock
         return reader;
     }
 

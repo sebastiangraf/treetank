@@ -193,7 +193,7 @@ public class IRevisioningTest {
                     new IBackendReaderGenerator() {
                         @Override
                         public IBackendReader generateBackendReader() throws TTIOException {
-                            int[][] offsets = new int[5][1];
+                            int[] offsets = new int[5];
                             return getFakedStructure(offsets);
                         }
                     }
