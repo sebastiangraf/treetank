@@ -6,8 +6,9 @@ package org.treetank.revisioning;
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertNull;
 import static org.testng.AssertJUnit.assertTrue;
-import static org.treetank.CoreTestHelper.getFakedStructure;
 import static org.treetank.CoreTestHelper.getNodePage;
+
+import java.util.Arrays;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -160,18 +161,23 @@ public class IRevisioningTest {
      */
     @Test(dataProvider = "initiateRevRootPages")
     public void testRevRootRetrieval(Class<IRevisioning> pRevisioningClass, IRevisioning[] pRevisioning,
-        Class<IBackendReaderGenerator> pBackendReaderGeneratorClass,
-        IBackendReaderGenerator[] pBackendReaderGenerator, Class<ILoadRevRootChecker> pRevRootCheckerClass,
-        ILoadRevRootChecker[] pRevRootChecker) throws TTIOException {
+        Class<ILoadRevRootChecker> pRevRootCheckerClass, ILoadRevRootChecker[] pRevRootChecker)
+        throws TTIOException {
         // be sure you have enough checkers for the revisioning to check
-        assertEquals(pRevisioning.length, pBackendReaderGenerator.length);
         assertEquals(pRevisioning.length, pRevRootChecker.length);
+
+        int[] offsets = {
+            0, 0, 0, 0, 127
+        };
+        IBackendReader backend = CoreTestHelper.getFakedStructure(offsets);
 
         // for all revision-approaches...
         for (int i = 0; i < pRevisioning.length; i++) {
-            long[] revRoots =
-                pRevisioning[i].getRevRootKeys(10, 1, 0, pBackendReaderGenerator[i].generateBackendReader());
-            pRevRootChecker[i].checkLoadRevRoot(revRoots);
+            long[] revRoots = pRevisioning[i].getRevRootKeys(10, 1, 66, backend);
+            pRevRootChecker[i].checkLoadRevRootNotFull(revRoots);
+
+            revRoots = pRevisioning[i].getRevRootKeys(10, 1, 60, backend);
+            pRevRootChecker[i].checkLoadRevRootFull(revRoots);
         }
     }
 
@@ -186,24 +192,71 @@ public class IRevisioningTest {
         Object[][] returnVal = {
             {
                 IRevisioning.class, new IRevisioning[] {
-                    new FullDump()
-                // , new Incremental(), new Differential(), new SlidingSnapshot()
-                }, IBackendReaderGenerator.class, new IBackendReaderGenerator[] {
-                    // test for fulldump
-                    new IBackendReaderGenerator() {
-                        @Override
-                        public IBackendReader generateBackendReader() throws TTIOException {
-                            int[] offsets = new int[5];
-                            return getFakedStructure(offsets);
-                        }
-                    }
+                    new FullDump(), new Incremental(), new Differential(), new SlidingSnapshot()
                 }, ILoadRevRootChecker.class, new ILoadRevRootChecker[] {
                     // test for fulldump
                     new ILoadRevRootChecker() {
                         @Override
-                        public void checkLoadRevRoot(long[] revRoots) {
+                        public void checkLoadRevRootNotFull(long[] revRoots) {
                             assertEquals(1, revRoots.length);
-                            assertEquals(6, revRoots[0]);
+                            assertEquals(72, revRoots[0]);
+                        }
+
+                        @Override
+                        public void checkLoadRevRootFull(long[] revRoots) {
+                            assertEquals(1, revRoots.length);
+                            assertEquals(66, revRoots[0]);
+                        }
+                    }, // test for incremental
+                    new ILoadRevRootChecker() {
+                        @Override
+                        public void checkLoadRevRootNotFull(long[] revRoots) {
+                            long[] revs = {
+                                72, 71, 70, 69, 68, 67, 66
+                            };
+                            assertEquals(7, revRoots.length);
+                            assertTrue(Arrays.equals(revs, revRoots));
+                        }
+
+                        @Override
+                        public void checkLoadRevRootFull(long[] revRoots) {
+                            assertEquals(1, revRoots.length);
+                            assertEquals(66, revRoots[0]);
+                        }
+                    },// test for differential
+                    new ILoadRevRootChecker() {
+                        @Override
+                        public void checkLoadRevRootNotFull(long[] revRoots) {
+                            long[] revs = {
+                                72, 66
+                            };
+                            assertEquals(2, revRoots.length);
+                            assertTrue(Arrays.equals(revs, revRoots));
+                        }
+
+                        @Override
+                        public void checkLoadRevRootFull(long[] revRoots) {
+                            assertEquals(1, revRoots.length);
+                            assertEquals(66, revRoots[0]);
+                        }
+                    },// test for sliding
+                    new ILoadRevRootChecker() {
+                        @Override
+                        public void checkLoadRevRootNotFull(long[] revRoots) {
+                            long[] revs = {
+                                72, 71, 70, 69, 68, 67, 66, 65, 64, 63
+                            };
+                            assertEquals(10, revRoots.length);
+                            assertTrue(Arrays.equals(revs, revRoots));
+                        }
+
+                        @Override
+                        public void checkLoadRevRootFull(long[] revRoots) {
+                            long[] revs = {
+                                66, 65, 64, 63, 62, 61, 60, 59, 58, 57
+                            };
+                            assertEquals(10, revRoots.length);
+                            assertTrue(Arrays.equals(revs, revRoots));
                         }
                     }
                 }
@@ -355,13 +408,12 @@ public class IRevisioningTest {
                         }
                     },// check for Sliding Snapshot
                     new IRevisionChecker() {
-
                         @Override
                         public void checkCompletePages(NodePage pComplete, NodePage[] pFragments) {
                             for (int i = 0; i < pFragments.length; i++) {
                                 for (int j = i * 2; j < (i * 2) + 2; j++) {
-                                    assertEquals("Check for Incremental failed.", pFragments[i].getNode(j),
-                                        pComplete.getNode(j));
+                                    assertEquals("Check for Sliding Snapshot failed.", pFragments[i]
+                                        .getNode(j), pComplete.getNode(j));
                                 }
                             }
                         }
@@ -475,23 +527,15 @@ public class IRevisioningTest {
     }
 
     /**
-     * Backend Reader generator for checking the loading of RevRootPages.
-     * 
-     * @author Sebastian Graf, University of Konstanz
-     * 
-     */
-    interface IBackendReaderGenerator {
-        IBackendReader generateBackendReader() throws TTIOException;
-    }
-
-    /**
      * Interface to check loaded rev root pages.
      * 
      * @author Sebastian Graf, University of Konstanz
      * 
      */
     interface ILoadRevRootChecker {
-        void checkLoadRevRoot(long[] revRoots);
+        void checkLoadRevRootNotFull(long[] revRoots);
+
+        void checkLoadRevRootFull(long[] revRoots);
     }
 
 }

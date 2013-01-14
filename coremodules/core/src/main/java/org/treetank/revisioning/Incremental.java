@@ -88,9 +88,8 @@ public class Incremental implements IRevisioning {
      * {@inheritDoc}
      */
     @Override
-    public long[]
-        getRevRootKeys(int pRevToRestore, long pLongStartKey, long pSeqKey, IBackendReader pReader)
-            throws TTIOException {
+    public long[] getRevRootKeys(int pRevToRestore, long pLongStartKey, long pSeqKey, IBackendReader pReader)
+        throws TTIOException {
         final long currentRevKey = PageReadTrx.dereferenceLeafOfTree(pReader, pLongStartKey, pSeqKey);
         // Revision to retrieve is a full-dump
         if (pSeqKey % pRevToRestore == 0) {
@@ -104,6 +103,7 @@ public class Incremental implements IRevisioning {
             int i = 1;
             for (long rev = pSeqKey - 1; rev >= lastFullDumpRev; rev--) {
                 returnVal[i] = PageReadTrx.dereferenceLeafOfTree(pReader, pLongStartKey, rev);
+                i++;
             }
             return returnVal;
         }

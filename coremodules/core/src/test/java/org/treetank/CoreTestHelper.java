@@ -32,7 +32,6 @@ import static org.mockito.Mockito.when;
 import static org.testng.AssertJUnit.assertEquals;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Random;
@@ -219,12 +218,16 @@ public final class CoreTestHelper {
         long pKey = 1;
         // iterating through the tree..
         for (int i = 0; i < offsets.length; i++) {
-            // ...and create a new page with incrementing the page key
+            // ...and create a new page.
             final IndirectPage page = new IndirectPage(pKey);
-            // setting the related key to the defined offset and...
-            page.setReferenceKey(offsets[i], ++pKey);
+            long oldKey = pKey;
+            // set the offsets until the defined parameter...
+            for (int j = 0; j <= offsets[i]; j++) {
+                // ...by setting the related key to the defined offset and...
+                page.setReferenceKey(j, ++pKey);
+            }
             // ...tell the mock to react when the key is demanded.
-            when(reader.read(pKey - 1)).thenReturn(page);
+            when(reader.read(oldKey)).thenReturn(page);
         }
         // returning the mock
         return reader;
