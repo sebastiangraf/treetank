@@ -171,6 +171,11 @@ public class PageReadTrxTest {
         // 6 as base plus five times 127 as offsets on levels above
         assertEquals(641, key);
 
+        // false offset, not existing
+        offsets[0] = 0;
+        reader = getFakedStructure(offsets);
+        key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 34359738367l);
+        assertEquals(-1, key);
     }
 
     /**
@@ -178,7 +183,9 @@ public class PageReadTrxTest {
      */
     @Test
     public void testNodePageKey() {
-        // fail("Not yet implemented");
+        assertEquals(0, PageReadTrx.nodePageKey(0));
+        assertEquals(1, PageReadTrx.nodePageKey(128));
+        assertEquals(127, PageReadTrx.nodePageKey(16383));
     }
 
     /**
@@ -186,7 +193,9 @@ public class PageReadTrxTest {
      */
     @Test
     public void testNodePageOffset() {
-        // fail("Not yet implemented");
+        assertEquals(0, PageReadTrx.nodePageKey(0));
+        assertEquals(1, PageReadTrx.nodePageKey(128));
+        assertEquals(127, PageReadTrx.nodePageKey(16383));
     }
 
     /**
@@ -194,7 +203,10 @@ public class PageReadTrxTest {
      */
     @Test
     public void testGetMetaPage() {
-        // fail("Not yet implemented");
+        assertEquals(0, PageReadTrx.nodePageOffset(0));
+        assertEquals(127, PageReadTrx.nodePageOffset(127));
+        assertEquals(0, PageReadTrx.nodePageOffset(128));
+        assertEquals(127, PageReadTrx.nodePageOffset(16383));
     }
 
 }
