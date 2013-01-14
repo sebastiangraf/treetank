@@ -51,7 +51,7 @@ public class PageReadTrxTest {
         mHolder = CoreTestHelper.Holder.generateSession(config);
         IPageWriteTrx wtx = mHolder.getSession().beginPageWriteTransaction();
         int nodesPerRevision[] = {
-            5, 6, 7, 8, 9, 10
+//            16385, 16385, 16385, 16385, 16385, 16385, 16385
         };
 
         mNodes = CoreTestHelper.createRevisions(nodesPerRevision, wtx);

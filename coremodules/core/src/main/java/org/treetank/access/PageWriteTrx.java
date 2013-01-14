@@ -237,7 +237,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
         final INode delNode = new DeletedNode(pNode.getNodeKey());
         ((NodePage)container.getComplete()).setNode(nodePageOffset(pNode.getNodeKey()), delNode);
         ((NodePage)container.getModified()).setNode(nodePageOffset(pNode.getNodeKey()), delNode);
-        
+
         mLog.put(new LogKey(false, IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length, nodePageKey), container);
     }
 
@@ -291,6 +291,8 @@ public final class PageWriteTrx implements IPageWriteTrx {
         mPageWriter.write(mNewName);
         mPageWriter.write(mNewRoot);
         mPageWriter.writeUberPage(mNewUber);
+
+        mLog.clear();
 
         ((Session)mDelegate.mSession).setLastCommittedUberPage(mNewUber);
 
