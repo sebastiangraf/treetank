@@ -11,10 +11,15 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.CoreTestHelper;
+import org.treetank.CoreTestHelper.Holder;
 import org.treetank.ModuleFactory;
+import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
+import org.treetank.access.conf.StandardSettings;
+import org.treetank.api.IPageWriteTrx;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
+import org.treetank.page.DumbNodeFactory.DumbNode;
 
 import com.google.inject.Inject;
 
@@ -31,25 +36,25 @@ public class PageReadTrxTest {
     @Inject
     private IResourceConfigurationFactory mResourceConfig;
 
-    // private Holder mHolder;
-    //
-    // private DumbNode[][] mNodes;
+     private Holder mHolder;
+    
+     private DumbNode[][] mNodes;
 
     /**
      * @throws java.lang.Exception
      */
     @BeforeMethod
     public void setUp() throws Exception {
-        // final ResourceConfiguration config =
-        // mResourceConfig.create(StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1
-        // .getFile().getAbsolutePath(), CoreTestHelper.RESOURCENAME));
-        // mHolder = CoreTestHelper.Holder.generateSession(config);
-        // IPageWriteTrx wtx = mHolder.getSession().beginPageWriteTransaction();
-        // int nodesPerRevision[] = {
-        // 16385, 16385
-        // };
+        final ResourceConfiguration config =
+            mResourceConfig.create(StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1
+                .getFile().getAbsolutePath(), CoreTestHelper.RESOURCENAME));
+        mHolder = CoreTestHelper.Holder.generateSession(config);
+        IPageWriteTrx wtx = mHolder.getSession().beginPageWriteTransaction();
+        int nodesPerRevision[] = {
+            16385//, 16385
+        };
 
-        // mNodes = CoreTestHelper.createRevisions(nodesPerRevision, wtx);
+         mNodes = CoreTestHelper.createRevisions(nodesPerRevision, wtx);
     }
 
     /**
