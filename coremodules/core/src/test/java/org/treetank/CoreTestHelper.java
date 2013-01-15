@@ -101,7 +101,7 @@ public final class CoreTestHelper {
     }
 
     /** Common random instance for generating common tag names. */
-    public final static Random random = new Random();
+    public final static Random random = new Random(123l);
 
     private final static Map<File, IStorage> INSTANCES = new Hashtable<File, IStorage>();
 
@@ -250,8 +250,8 @@ public final class CoreTestHelper {
             returnVal[i] = new DumbNode[nodesPerRevision[i]];
             // inserting nodes on this transaction
             for (int j = 0; j < returnVal[i].length; j++) {
-                returnVal[i][j] =
-                    pWtx.createNode(new DumbNode(nodeCounter, CoreTestHelper.random.nextLong()));
+                returnVal[i][j] = new DumbNode(nodeCounter, CoreTestHelper.random.nextLong());
+                pWtx.setNode(returnVal[i][j]);
                 nodeCounter++;
             }
             // comitting data

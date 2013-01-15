@@ -414,7 +414,7 @@ public final class Storage implements IStorage {
             mLog.put(key, new NodePageContainer(page, page));
         }
 
-        page = new RevisionRootPage(newPageKey, 0, -1);
+        page = new RevisionRootPage(newPageKey, 0, 0);
 
         newPageKey = uberPage.incrementPageCounter();
         // establishing fresh NamePage

@@ -91,7 +91,7 @@ public final class NodeTestHelper {
     public static final void createDocumentRootNode(final INodeWriteTrx pWtx) throws TTException {
         final NodeDelegate nodeDel = new NodeDelegate(ROOT_NODE, NULL_NODE, 0);
         pWtx.getPageWtx()
-            .createNode(
+            .setNode(
                 new DocumentRootNode(nodeDel, new StructNodeDelegate(nodeDel, NULL_NODE, NULL_NODE,
                     NULL_NODE, 0)));
         pWtx.moveTo(org.treetank.node.IConstants.ROOT_NODE);

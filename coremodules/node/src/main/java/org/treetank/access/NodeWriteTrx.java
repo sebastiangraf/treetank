@@ -238,11 +238,12 @@ public class NodeWriteTrx implements INodeWriteTrx {
 
         final int nameKey = insertName(PageWriteTrx.buildName(pQName));
         final int namespaceKey = insertName(pQName.getNamespaceURI());
-        final NodeDelegate nodeDel = new NodeDelegate(getPtx().getMaxNodeKey() + 1, elementKey, 0);
+        final NodeDelegate nodeDel = new NodeDelegate(getPtx().incrementNodeKey(), elementKey, 0);
         final NameNodeDelegate nameDel = new NameNodeDelegate(nodeDel, nameKey, namespaceKey);
         final ValNodeDelegate valDel = new ValNodeDelegate(nodeDel, value);
 
-        final AttributeNode node = getPtx().createNode(new AttributeNode(nodeDel, nameDel, valDel));
+        final AttributeNode node = new AttributeNode(nodeDel, nameDel, valDel);
+        getPtx().setNode(node);
 
         final INode parentNode =
             (org.treetank.node.interfaces.INode)getPtx().prepareNodeForModification(node.getParentKey());
@@ -272,10 +273,11 @@ public class NodeWriteTrx implements INodeWriteTrx {
         final int prefixKey = insertName(pQName.getPrefix());
         final long elementKey = mDelegate.getCurrentNode().getNodeKey();
 
-        final NodeDelegate nodeDel = new NodeDelegate(getPtx().getMaxNodeKey() + 1, elementKey, 0);
+        final NodeDelegate nodeDel = new NodeDelegate(getPtx().incrementNodeKey(), elementKey, 0);
         final NameNodeDelegate nameDel = new NameNodeDelegate(nodeDel, prefixKey, uriKey);
 
-        final NamespaceNode node = getPtx().createNode(new NamespaceNode(nodeDel, nameDel));
+        final NamespaceNode node = new NamespaceNode(nodeDel, nameDel);
+        getPtx().setNode(node);
 
         final INode parentNode =
             (org.treetank.node.interfaces.INode)getPtx().prepareNodeForModification(node.getParentKey());
@@ -294,23 +296,25 @@ public class NodeWriteTrx implements INodeWriteTrx {
         final int nameKey = insertName(PageWriteTrx.buildName(mName));
         final int namespaceKey = insertName(mName.getNamespaceURI());
 
-        final NodeDelegate nodeDel = new NodeDelegate(getPtx().getMaxNodeKey() + 1, parentKey, 0);
+        final NodeDelegate nodeDel = new NodeDelegate(getPtx().incrementNodeKey(), parentKey, 0);
         final StructNodeDelegate structDel =
             new StructNodeDelegate(nodeDel, NULL_NODE, rightSibKey, mLeftSibKey, 0);
         final NameNodeDelegate nameDel = new NameNodeDelegate(nodeDel, nameKey, namespaceKey);
-
-        return getPtx().createNode(
-            new ElementNode(nodeDel, structDel, nameDel, new ArrayList<Long>(), new ArrayList<Long>()));
+        final ElementNode node =
+            new ElementNode(nodeDel, structDel, nameDel, new ArrayList<Long>(), new ArrayList<Long>());
+        getPtx().setNode(node);
+        return node;
     }
 
     private TextNode createTextNode(final long mParentKey, final long mLeftSibKey, final long rightSibKey,
         final byte[] mValue) throws TTException {
-        final NodeDelegate nodeDel = new NodeDelegate(getPtx().getMaxNodeKey() + 1, mParentKey, 0);
+        final NodeDelegate nodeDel = new NodeDelegate(getPtx().incrementNodeKey(), mParentKey, 0);
         final ValNodeDelegate valDel = new ValNodeDelegate(nodeDel, mValue);
         final StructNodeDelegate structDel =
             new StructNodeDelegate(nodeDel, NULL_NODE, rightSibKey, mLeftSibKey, 0);
-
-        return getPtx().createNode(new TextNode(nodeDel, structDel, valDel));
+        final TextNode node = new TextNode(nodeDel, structDel, valDel);
+        getPtx().setNode(node);
+        return node;
     }
 
     /**

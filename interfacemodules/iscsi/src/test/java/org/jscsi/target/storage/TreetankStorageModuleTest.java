@@ -50,113 +50,95 @@ import com.google.inject.Inject;
 @Guice(moduleFactory = ByteNodeModuleFactory.class)
 public class TreetankStorageModuleTest {
 
-  private TreetankStorageModule storageModule;
+    private TreetankStorageModule storageModule;
 
-  private int TEST_FILE_SIZE = 512 * 512;
+    private int TEST_FILE_SIZE = 512 * 512;
 
-  private StorageConfiguration configuration;
+    private StorageConfiguration configuration;
 
-  private File file;
+    private File file;
 
-  @Inject
-  private IResourceConfigurationFactory mResourceConfig;
+    @Inject
+    private IResourceConfigurationFactory mResourceConfig;
 
-  private ResourceConfiguration mResource;
+    private ResourceConfiguration mResource;
 
-  @BeforeClass
-  public void setUp() throws TTException {
+    @BeforeClass
+    public void setUp() throws TTException {
 
-    CoreTestHelper.deleteEverything();
-    Properties props = StandardSettings.getStandardProperties(
-        CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
-        CoreTestHelper.RESOURCENAME);
-    mResource = mResourceConfig.create(props);
-    CoreTestHelper.createResource(mResource);
+        CoreTestHelper.deleteEverything();
+        Properties props =
+            StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                CoreTestHelper.RESOURCENAME);
+        mResource = mResourceConfig.create(props);
+        CoreTestHelper.createResource(mResource);
 
-    file = CoreTestHelper.PATHS.PATH1.getFile();
-    configuration = CoreTestHelper.PATHS.PATH1.getConfig();
+        file = CoreTestHelper.PATHS.PATH1.getFile();
+        configuration = CoreTestHelper.PATHS.PATH1.getConfig();
 
-    storageModule = new TreetankStorageModule(512, 512, configuration, file);
-  }
-
-  @Test(groups = "Initial read write")
-  public void testReadAndWrite() throws TTException {
-
-    final byte[] writeArray = new byte[TEST_FILE_SIZE];
-    for (int i = 0; i < TEST_FILE_SIZE; ++i)
-      writeArray[i] = (byte) (Math.random() * 256);
-    final byte[] readArray = new byte[TEST_FILE_SIZE];
-
-    // write
-    try {
-      storageModule.write(writeArray,// bytes (source)
-          0,// bytesOffset
-          TEST_FILE_SIZE-50,// length
-          0);
-    } catch (IOException e1) {
-      e1.printStackTrace();
-      fail("Couldn't write.");
-    }// storage index
-    
-    System.arraycopy(writeArray, 0, readArray, 0, TEST_FILE_SIZE);
-    if (!Arrays.equals(writeArray,readArray))
-      fail("values do not match");
-    
-    // read
-    try {
-      storageModule.read(readArray,// bytes (destination)
-          0,// bytesOffset
-          TEST_FILE_SIZE-50,// length
-          0);
-    } catch (IOException e) {
-      e.printStackTrace();
-      fail("Couldn't read.");
-    }// storageIndex
-
-    // check for errors
-    if (!Arrays.equals(writeArray,readArray))
-      fail("values do not match");
-
-    byte[][] splitBytes = new byte[16][8192];
-
-    ByteArrayInputStream writeArrayInputStream = new ByteArrayInputStream(writeArray);
-    
-    for (int i = 0; i < splitBytes.length; i++) {
-      splitBytes[i] = new byte[8192];
-      try {
-        storageModule.read(splitBytes[i],// bytes (destination)
-            0,// bytesOffset
-            8192,// length
-            i * 16*512);
-      } catch (IOException e) {
-        e.printStackTrace();
-        fail("Couldn't read.");
-      }// storageIndex
-      byte[] b = new byte[8192];
-      System.out.println(i);
-      writeArrayInputStream.read(b, 0, 8192);
-      
-      assertTrue(Arrays.equals(splitBytes[i], b));
+        storageModule = new TreetankStorageModule(512, 512, configuration, file);
     }
 
-  }
+    @Test(groups = "Initial read write")
+    public void testReadAndWrite() throws TTException, IOException {
 
-  @Test(dependsOnGroups = "Initial read write")
-  public void testCheckBounds1() {
+        final byte[] writeArray = new byte[TEST_FILE_SIZE];
+        for (int i = 0; i < TEST_FILE_SIZE; ++i)
+            writeArray[i] = (byte)(CoreTestHelper.random.nextDouble() * 256);
+        final byte[] readArray = new byte[TEST_FILE_SIZE];
 
-    // wrong logical block address
-    int result = storageModule.checkBounds(-1,// logicalBlockAddress
-        1);// transferLengthInBlocks
-    assertEquals(1, result);
-    result = storageModule.checkBounds(2,// logicalBlockAddress
-        1);// transferLengthInBlocks
-    assertEquals(0, result);
-  }
+        System.arraycopy(writeArray, 0, readArray, 0, TEST_FILE_SIZE);
+        
+        // write
+        storageModule.write(writeArray,// bytes (source)
+            0,// bytesOffset
+            TEST_FILE_SIZE - 50,// length
+            0);
 
-  @Test
-  public void testOpen() {
+        // read
+        storageModule.read(readArray,// bytes (destination)
+            0,// bytesOffset
+            TEST_FILE_SIZE - 50,// length
+            0);
 
-    // behavior to test is performed in setUpBeforeClass()
-    assertTrue(storageModule != null);
-  }
+        // check for errors
+        assertTrue(Arrays.equals(writeArray, readArray));
+
+        byte[][] splitBytes = new byte[16][8192];
+
+        ByteArrayInputStream writeArrayInputStream = new ByteArrayInputStream(writeArray);
+
+        for (int i = 0; i < splitBytes.length; i++) {
+            splitBytes[i] = new byte[8192];
+            storageModule.read(splitBytes[i],// bytes (destination)
+                0,// bytesOffset
+                8192,// length
+                i * 16 * 512);
+            byte[] b = new byte[8192];
+            System.out.println(i);
+            writeArrayInputStream.read(b, 0, 8192);
+
+            assertTrue(Arrays.equals(splitBytes[i], b));
+        }
+
+    }
+
+    @Test(dependsOnGroups = "Initial read write")
+    public void testCheckBounds1() {
+
+        // wrong logical block address
+        int result = storageModule.checkBounds(-1,// logicalBlockAddress
+            1);// transferLengthInBlocks
+        assertEquals(1, result);
+        result = storageModule.checkBounds(2,// logicalBlockAddress
+            1);// transferLengthInBlocks
+        assertEquals(0, result);
+    }
+
+    @Test
+    public void testOpen() {
+
+        // behavior to test is performed in setUpBeforeClass()
+        assertTrue(storageModule != null);
+    }
 }

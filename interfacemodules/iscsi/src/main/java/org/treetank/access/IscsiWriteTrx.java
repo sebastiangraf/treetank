@@ -57,19 +57,21 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
      * {@inheritDoc}
      */
     @Override
-    public void insert(INode node) throws TTException {
-
+    public void bootstrap(byte[] bytes) throws TTException {
         if (mDelegate.getCurrentNode() != null) {
+            ByteNode node = new ByteNode(getPageTransaction().incrementNodeKey(), new byte[512]);
+            node.setVal(bytes);
+            node.setIndex(node.getNodeKey());
             ByteNode lastNode =
-                (ByteNode)getPageTransaction().prepareNodeForModification(
-                    getPageTransaction().getMaxNodeKey());
-            ((ByteNode)node).setPreviousNodeKey(lastNode.getNodeKey());
+                (ByteNode)getPageTransaction().prepareNodeForModification(node.getNodeKey() - 1);
+            node.setPreviousNodeKey(lastNode.getNodeKey());
             lastNode.setNextNodeKey(node.getNodeKey());
             getPageTransaction().finishNodeModification(lastNode);
-            getPageTransaction().createNode(node);
+            getPageTransaction().setNode(node);
         } else {
-            ((ByteNode)node).setIndex(0);
-            node = getPageTransaction().createNode(node);
+            ByteNode node = new ByteNode(0, new byte[512]);
+            node.setIndex(0);
+            getPageTransaction().setNode(node);
             mDelegate.moveTo(node.getNodeKey());
         }
 
@@ -79,11 +81,11 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
      * {@inheritDoc}
      */
     @Override
-    public void insertAfter(INode node) throws TTException {
+    public void insertAfter(byte[] vals) throws TTException {
 
+        ByteNode node = new ByteNode(getPageTransaction().incrementNodeKey(), new byte[512]);
         if (((ByteNode)mDelegate.getCurrentNode()).hasNext()) {
             // Linking the new node.
-
             ByteNode nextNode =
                 (ByteNode)getPageTransaction().prepareNodeForModification(
                     ((ByteNode)mDelegate.getCurrentNode()).getNextNodeKey());
@@ -93,10 +95,10 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
             incrementAllFollowingIndizes(mDelegate.getCurrentNode());
         }
 
-        ((ByteNode)node).setNextNodeKey(((ByteNode)mDelegate.getCurrentNode()).getNextNodeKey());
-        ((ByteNode)node).setPreviousNodeKey(((ByteNode)mDelegate.getCurrentNode()).getNodeKey());
-        ((ByteNode)node).setIndex(((ByteNode)mDelegate.getCurrentNode()).getIndex() + 1);
-        node = getPageTransaction().createNode(node);
+        node.setNextNodeKey(((ByteNode)mDelegate.getCurrentNode()).getNextNodeKey());
+        node.setPreviousNodeKey(((ByteNode)mDelegate.getCurrentNode()).getNodeKey());
+        node.setIndex(((ByteNode)mDelegate.getCurrentNode()).getIndex() + 1);
+        getPageTransaction().setNode(node);
 
         ByteNode currNode =
             (ByteNode)getPageTransaction()
@@ -135,7 +137,7 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
 
             long nodeKey = mDelegate.getCurrentNode().getNodeKey();
             INode deleteNode = new NodePage.DeletedNode(nodeKey);
-            getPageTransaction().createNode(deleteNode);
+            getPageTransaction().setNode(deleteNode);
 
             decrementAllFollowingIndizes(previousNode);
         }
@@ -267,24 +269,24 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
         return (PageWriteTrx)mDelegate.mPageReadTrx;
     }
 
-    /**
-     * A help method to increment the index of the given node.
-     * 
-     * @param node
-     * @return true if successful, false otherwise
-     * @throws TTException
-     */
-    private boolean incrementIndex(INode node) throws TTException {
-
-        if (node instanceof ByteNode) {
-            INode alter = getPageTransaction().prepareNodeForModification(node.getNodeKey());
-            ((ByteNode)alter).incIndex();
-            getPageTransaction().finishNodeModification(alter);
-            return true;
-        }
-
-        return false;
-    }
+    // /**
+    // * A help method to increment the index of the given node.
+    // *
+    // * @param node
+    // * @return true if successful, false otherwise
+    // * @throws TTException
+    // */
+    // private boolean incrementIndex(INode node) throws TTException {
+    //
+    // if (node instanceof ByteNode) {
+    // INode alter = getPageTransaction().prepareNodeForModification(node.getNodeKey());
+    // ((ByteNode)alter).incIndex();
+    // getPageTransaction().finishNodeModification(alter);
+    // return true;
+    // }
+    //
+    // return false;
+    // }
 
     /**
      * A help method to increment the indizes following to this node
@@ -337,8 +339,8 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
     }
 
     @Override
-    public long getMaxNodeKey() {
-        return getPageTransaction().getMaxNodeKey();
+    public boolean previousNode() {
+        return mDelegate.previousNode();
     }
 
 }

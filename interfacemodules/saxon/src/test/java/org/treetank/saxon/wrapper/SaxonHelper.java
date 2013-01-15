@@ -71,7 +71,9 @@ public final class SaxonHelper {
         final StorageConfiguration dbConfig = new StorageConfiguration(CoreTestHelper.PATHS.PATH1.getFile());
         Storage.createStorage(dbConfig);
         final IStorage storage = Storage.openStorage(CoreTestHelper.PATHS.PATH1.getFile());
-        Properties props = StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(), CoreTestHelper.RESOURCENAME);
+        Properties props =
+            StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                CoreTestHelper.RESOURCENAME);
         storage.createResource(resFac.create(props));
         final ISession session =
             storage.getSession(new SessionConfiguration(CoreTestHelper.RESOURCENAME, StandardSettings.KEY));
@@ -95,10 +97,9 @@ public final class SaxonHelper {
      */
     public static final void createDocumentRootNode(final INodeWriteTrx pWtx) throws TTException {
         final NodeDelegate nodeDel = new NodeDelegate(ROOT_NODE, NULL_NODE, 0);
-        pWtx.getPageWtx()
-            .createNode(
-                new DocumentRootNode(nodeDel, new StructNodeDelegate(nodeDel, NULL_NODE, NULL_NODE,
-                    NULL_NODE, 0)));
+        DocumentRootNode node =
+            new DocumentRootNode(nodeDel, new StructNodeDelegate(nodeDel, NULL_NODE, NULL_NODE, NULL_NODE, 0));
+        pWtx.getPageWtx().setNode(node);
         pWtx.moveTo(org.treetank.node.IConstants.ROOT_NODE);
     }
 

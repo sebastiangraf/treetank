@@ -173,11 +173,11 @@ public class UpdateTest {
                 HashKind.Rolling);
         NodeTestHelper.createDocumentRootNode(wtx);
         wtx.moveTo(ROOT_NODE);
+        assertEquals(14L, wtx.insertElementAsFirstChild(new QName("")));
         assertEquals(15L, wtx.insertElementAsFirstChild(new QName("")));
         assertEquals(16L, wtx.insertElementAsFirstChild(new QName("")));
-        assertEquals(17L, wtx.insertElementAsFirstChild(new QName("")));
         assertTrue(wtx.moveTo(wtx.getNode().getParentKey()));
-        assertEquals(18L, wtx.insertElementAsRightSibling(new QName("")));
+        assertEquals(17L, wtx.insertElementAsRightSibling(new QName("")));
         wtx.commit();
         wtx.close();
 
@@ -185,7 +185,7 @@ public class UpdateTest {
             new NodeWriteTrx(holder.getSession(), holder.getSession().beginPageWriteTransaction(),
                 HashKind.Rolling);
         assertTrue(wtx.moveTo(ROOT_NODE));
-        assertEquals(19L, wtx.insertElementAsFirstChild(new QName("")));
+        assertEquals(18L, wtx.insertElementAsFirstChild(new QName("")));
         wtx.commit();
         wtx.close();
 

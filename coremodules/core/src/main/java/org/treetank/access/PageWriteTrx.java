@@ -30,6 +30,7 @@ package org.treetank.access;
 import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 import static org.treetank.access.PageReadTrx.nodePageKey;
 import static org.treetank.access.PageReadTrx.nodePageOffset;
 
@@ -207,6 +208,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
      * @throws TTIOException
      *             if IO Error
      */
+    @Deprecated
     public <T extends INode> T createNode(final T pNode) throws TTException {
         // Allocate node key and increment node count.
         mNewRoot.incrementMaxNodeKey();
@@ -219,6 +221,19 @@ public final class PageWriteTrx implements IPageWriteTrx {
         page.setNode(nodePageOffset, pNode);
         mLog.put(new LogKey(false, IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length, seqPageKey), container);
         return pNode;
+    }
+
+    public long setNode(final INode pNode) throws TTException {
+        // Allocate node key and increment node count.
+        final long nodeKey = pNode.getNodeKey();
+        final long seqPageKey = nodePageKey(nodeKey);
+        final int nodePageOffset = nodePageOffset(nodeKey);
+        final int lastIndirectOffset = (int)nodeKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[2];
+        NodePageContainer container = prepareNodePage(lastIndirectOffset, seqPageKey);
+        final NodePage page = ((NodePage)container.getModified());
+        page.setNode(nodePageOffset, pNode);
+        mLog.put(new LogKey(false, IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length, seqPageKey), container);
+        return nodeKey;
     }
 
     /**
@@ -317,8 +332,8 @@ public final class PageWriteTrx implements IPageWriteTrx {
 
     }
 
-    public long getMaxNodeKey() {
-        return mNewRoot.getMaxNodeKey();
+    public long incrementNodeKey() {
+        return mNewRoot.incrementMaxNodeKey();
     }
 
     private NodePageContainer prepareNodePage(final int lastIndirectOffset, final long pSeqPageKey)
@@ -337,6 +352,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
             long newPageKey = mNewUber.incrementPageCounter();
             if (pageKey != 0) {
                 NodePage[] pages = mDelegate.getSnapshotPages(pSeqPageKey);
+                checkState(pages.length > 0);
                 if (mNewRoot.getRevision()
                     % Integer.parseInt(mDelegate.mSession.getConfig().mProperties
                         .getProperty(ContructorProps.NUMBERTORESTORE)) == 0) {

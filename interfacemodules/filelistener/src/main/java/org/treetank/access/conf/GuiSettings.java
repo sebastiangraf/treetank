@@ -35,9 +35,9 @@ public class GuiSettings extends AbstractModule {
         KEY = new SecretKeySpec(keyValue, "AES");
     }
 
-    private final Class backend;
+    private final Class<IBackend> backend;
 
-    public GuiSettings(Class backend) {
+    public GuiSettings(Class<IBackend> backend) {
         this.backend = backend;
     }
 

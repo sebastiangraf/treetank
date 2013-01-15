@@ -166,9 +166,10 @@ public class XMLShredder implements Callable<Void> {
         mLatch = new CountDownLatch(1);
         if (mWtx.getNode() == null) {
             final NodeDelegate nodeDel = new NodeDelegate(0, NULL_NODE, 0);
-            mWtx.getPageWtx().createNode(
+            DocumentRootNode node =
                 new DocumentRootNode(nodeDel, new StructNodeDelegate(nodeDel, NULL_NODE, NULL_NODE,
-                    NULL_NODE, 0)));
+                    NULL_NODE, 0));
+            mWtx.getPageWtx().setNode(node);
             mWtx.moveTo(org.treetank.node.IConstants.ROOT_NODE);
         }
     }
@@ -365,10 +366,9 @@ public class XMLShredder implements Callable<Void> {
             new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
         // generating root node
         final NodeDelegate nodeDel = new NodeDelegate(0, NULL_NODE, 0);
-        wtx.getPageWtx()
-            .createNode(
-                new DocumentRootNode(nodeDel, new StructNodeDelegate(nodeDel, NULL_NODE, NULL_NODE,
-                    NULL_NODE, 0)));
+        DocumentRootNode node =
+            new DocumentRootNode(nodeDel, new StructNodeDelegate(nodeDel, NULL_NODE, NULL_NODE, NULL_NODE, 0));
+        wtx.getPageWtx().setNode(node);
         wtx.moveTo(org.treetank.node.IConstants.ROOT_NODE);
 
         final XMLEventReader reader = createFileReader(new File(paramArgs[0]));

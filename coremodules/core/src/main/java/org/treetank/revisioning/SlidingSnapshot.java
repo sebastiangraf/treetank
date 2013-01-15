@@ -24,6 +24,7 @@ public class SlidingSnapshot implements IRevisioning {
      */
     @Override
     public NodePage combinePages(final NodePage[] pages) {
+        checkArgument(pages.length > 0, "At least one Nodepage must be provided");
         // create entire page..
         final NodePage returnVal = new NodePage(pages[0].getPageKey());
         // ...iterate through the nodes and check if it is stored..
@@ -50,6 +51,7 @@ public class SlidingSnapshot implements IRevisioning {
     @Override
     public NodePageContainer combinePagesForModification(long pNewPageKey, NodePage[] pPages,
         boolean pFullDump) {
+        checkArgument(pPages.length > 0, "At least one Nodepage must be provided");
         checkArgument(!pFullDump, "Full Dump not possible within sliding snapshot");
         // create pages for container..
         final NodePage[] returnVal = {
