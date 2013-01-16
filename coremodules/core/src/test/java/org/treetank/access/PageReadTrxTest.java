@@ -36,9 +36,9 @@ public class PageReadTrxTest {
     @Inject
     private IResourceConfigurationFactory mResourceConfig;
 
-     private Holder mHolder;
-    
-     private DumbNode[][] mNodes;
+    private Holder mHolder;
+
+    private DumbNode[][] mNodes;
 
     /**
      * @throws java.lang.Exception
@@ -51,10 +51,10 @@ public class PageReadTrxTest {
         mHolder = CoreTestHelper.Holder.generateSession(config);
         IPageWriteTrx wtx = mHolder.getSession().beginPageWriteTransaction();
         int nodesPerRevision[] = {
-            16385//, 16385
+            16383//, 1
         };
 
-         mNodes = CoreTestHelper.createRevisions(nodesPerRevision, wtx);
+        mNodes = CoreTestHelper.createRevisions(nodesPerRevision, wtx);
     }
 
     /**
@@ -215,7 +215,7 @@ public class PageReadTrxTest {
     public void testNodePageKey() {
         assertEquals(0, PageReadTrx.nodePageKey(0));
         assertEquals(1, PageReadTrx.nodePageKey(128));
-        assertEquals(127, PageReadTrx.nodePageKey(16383));
+
     }
 
     /**
@@ -223,9 +223,13 @@ public class PageReadTrxTest {
      */
     @Test
     public void testNodePageOffset() {
-        assertEquals(0, PageReadTrx.nodePageKey(0));
-        assertEquals(1, PageReadTrx.nodePageKey(128));
-        assertEquals(127, PageReadTrx.nodePageKey(16383));
+        assertEquals(0, PageReadTrx.nodePageOffset(0));
+        assertEquals(127, PageReadTrx.nodePageOffset(127));
+        assertEquals(0, PageReadTrx.nodePageOffset(128));
+        assertEquals(127, PageReadTrx.nodePageOffset(16383));
+        assertEquals(0, PageReadTrx.nodePageOffset(16384));
+        assertEquals(127, PageReadTrx.nodePageOffset(2097151));
+        assertEquals(0, PageReadTrx.nodePageOffset(2097152));
     }
 
     /**
@@ -233,10 +237,6 @@ public class PageReadTrxTest {
      */
     @Test
     public void testGetMetaPage() {
-        assertEquals(0, PageReadTrx.nodePageOffset(0));
-        assertEquals(127, PageReadTrx.nodePageOffset(127));
-        assertEquals(0, PageReadTrx.nodePageOffset(128));
-        assertEquals(127, PageReadTrx.nodePageOffset(16383));
     }
 
 }

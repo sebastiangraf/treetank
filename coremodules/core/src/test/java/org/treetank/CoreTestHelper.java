@@ -245,14 +245,12 @@ public final class CoreTestHelper {
     public static DumbNode[][] createRevisions(final int[] nodesPerRevision, final IPageWriteTrx pWtx)
         throws TTException {
         final DumbNode[][] returnVal = new DumbNode[nodesPerRevision.length][];
-        long nodeCounter = 0;
         for (int i = 0; i < nodesPerRevision.length; i++) {
             returnVal[i] = new DumbNode[nodesPerRevision[i]];
             // inserting nodes on this transaction
             for (int j = 0; j < returnVal[i].length; j++) {
-                returnVal[i][j] = new DumbNode(nodeCounter, CoreTestHelper.random.nextLong());
+                returnVal[i][j] = new DumbNode(pWtx.incrementNodeKey(), CoreTestHelper.random.nextLong());
                 pWtx.setNode(returnVal[i][j]);
-                nodeCounter++;
             }
             // comitting data
             pWtx.commit();
