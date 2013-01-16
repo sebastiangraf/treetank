@@ -457,11 +457,6 @@ public class NodeWriteTrx implements INodeWriteTrx {
         mDelegate.assertNotClosed();
         // Commit uber page.
         getPtx().commit();
-        final long revNumber = mDelegate.mPageReadTrx.getActualRevisionRootPage().getRevision();
-        getPtx().close();
-        // Reset internal transaction state to new uber page.
-        mDelegate.setPageTransaction(mSession.beginPageWriteTransaction(revNumber));
-
     }
 
     /**
