@@ -24,6 +24,8 @@
 
 package org.jscsi.target.storage;
 
+import static com.google.common.base.Objects.toStringHelper;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -31,7 +33,6 @@ import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.treetank.access.IscsiReadTrx;
 import org.treetank.access.IscsiWriteTrx;
 import org.treetank.access.StandardByteNodeSettings;
 import org.treetank.access.Storage;
@@ -39,11 +40,8 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.StorageConfiguration;
-import org.treetank.api.IIscsiReadTrx;
 import org.treetank.api.IIscsiWriteTrx;
 import org.treetank.api.INode;
-import org.treetank.api.IPageReadTrx;
-import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
 import org.treetank.exception.TTException;
@@ -84,26 +82,19 @@ public class TreetankStorageModule implements IStorageModule {
     private final int blockSize;
 
     /**
-     * The {@link StorageConfiguration} used for accessing the storage medium.
      * 
-     * @see #MODE
      */
-    private final StorageConfiguration conf;
+    private final IStorage storage;
 
     /**
      * 
      */
-    private IStorage storage = null;
+    private final ISession session;
 
     /**
      * 
      */
-    private ISession session = null;
-
-    /**
-     * 
-     */
-    IPageReadTrx pRtx = null;
+    private final IIscsiWriteTrx mRtx;
 
     /**
      * Creates a new {@link TreetankStorageModule} backed by the specified {@link IStorage}.
@@ -122,7 +113,6 @@ public class TreetankStorageModule implements IStorageModule {
 
         this.sizeInBlocks = sizeInBlocks;
         this.blockSize = blockSize;
-        this.conf = conf;
 
         Injector injector = Guice.createInjector(new StandardByteNodeSettings());
         IBackendFactory backend = injector.getInstance(IBackendFactory.class);
@@ -144,6 +134,7 @@ public class TreetankStorageModule implements IStorageModule {
         storage.createResource(mResourceConfig);
 
         session = storage.getSession(new SessionConfiguration("jscsi-target", null));
+        mRtx = new IscsiWriteTrx(session.beginPageWriteTransaction(), session);
 
         try {
             createStorage();
@@ -158,25 +149,20 @@ public class TreetankStorageModule implements IStorageModule {
         LOGGER.info("Creating storage with " + sizeInBlocks + " blocks of size 512.");
 
         try {
-            pRtx = session.beginPageWriteTransaction();
-            IscsiWriteTrx iWtx = new IscsiWriteTrx((IPageWriteTrx)pRtx, session);
 
-            INode node = iWtx.getCurrentNode();
+            INode node = this.mRtx.getCurrentNode();
 
             if (node != null)
                 return;
             for (int i = 0; i < sizeInBlocks; i++) {
-                ByteNode newNode = new ByteNode(i, new byte[(int)(blockSize)]);
-                newNode.setIndex(i);
                 try {
-                    ((IIscsiWriteTrx)iWtx).insert(newNode);
+                    this.mRtx.bootstrap(new byte[(int)(blockSize)]);
                 } catch (TTException e) {
                     throw new IOException("The creation of a new node was started and somehow didn't finish.");
                 }
             }
 
-            iWtx.commit();
-            session.deregisterPageTrx(pRtx);
+            this.mRtx.commit();
 
         } catch (TTException e) {
             // TODO Auto-generated catch block
@@ -212,37 +198,28 @@ public class TreetankStorageModule implements IStorageModule {
 
         LOGGER.info("Starting to read with param: \nbytesOffset = " + bytesOffset + "\nlength = " + length
             + "\nstorageIndex = " + storageIndex);
-        try {
-            // Using the most recent revision
-            if (bytesOffset + length > bytes.length)
-                throw new IOException();
-
-            int realIndex = (int)(storageIndex / blockSize);
-            LOGGER.info("Starting to read realIndex " + realIndex);
-
-            pRtx = session.beginPageReadTransaction(session.getMostRecentVersion());
-            IscsiReadTrx iRtx = new IscsiReadTrx(pRtx);
-
-            ByteArrayDataOutput output = ByteStreams.newDataOutput(length);
-
-            int inc = (length % blockSize == 0) ? 0 : 1;
-            for (int i = realIndex; i < ((length + storageIndex) / blockSize) + inc; i++) {
-                getNodeByIndex(iRtx, i);
-
-                INode node = iRtx.getCurrentNode();
-
-                byte[] val = ((ByteNode)node).getVal();
-
-                output.write(val);
-
-            }
-
-            System.arraycopy(output.toByteArray(), 0, bytes, bytesOffset, length);
-
-            session.deregisterPageTrx(pRtx);
-        } catch (TTException e) {
-            throw new IOException(e.getMessage());
+        // Using the most recent revision
+        if (bytesOffset + length > bytes.length) {
+            throw new IOException();
         }
+        int realIndex = (int)(storageIndex / blockSize);
+        LOGGER.info("Starting to read realIndex " + realIndex);
+
+        ByteArrayDataOutput output = ByteStreams.newDataOutput(length);
+
+        int inc = (length % blockSize == 0) ? 0 : 1;
+        for (long i = realIndex; i < ((length + storageIndex) / blockSize) + inc; i++) {
+            setCursorToIndex(i);
+
+            INode node = this.mRtx.getCurrentNode();
+
+            byte[] val = ((ByteNode)node).getVal();
+
+            output.write(val);
+
+        }
+
+        System.arraycopy(output.toByteArray(), 0, bytes, bytesOffset, length);
 
         LOGGER.info("Giving back bytes: " + Arrays.toString(bytes).substring(0, 1000));
     }
@@ -256,13 +233,11 @@ public class TreetankStorageModule implements IStorageModule {
             + "\nbytesOffset = " + bytesOffset + "\nlength = " + length + "\nstorageIndex = " + storageIndex);
         try {
             // Using the most recent revision
-            if (bytesOffset + length > bytes.length)
+            if (bytesOffset + length > bytes.length) {
                 throw new IOException();
+            }
 
             int realIndex = (int)(storageIndex / blockSize);
-
-            pRtx = session.beginPageWriteTransaction();
-            IscsiWriteTrx iWtx = new IscsiWriteTrx((IPageWriteTrx)pRtx, session);
 
             ByteArrayDataOutput output = ByteStreams.newDataOutput(length);
             System.out.println(bytes.length - (blockSize - (length % blockSize)));
@@ -273,58 +248,57 @@ public class TreetankStorageModule implements IStorageModule {
             LOGGER.info("Writing from node " + realIndex + " to node "
                 + (((length + storageIndex) / blockSize)));
 
-            for (int i = realIndex; i < ((length + storageIndex) / blockSize); i++) {
-                getNodeByIndex(iWtx, i);
+            for (long i = realIndex; i < ((length + storageIndex) / blockSize); i++) {
+                setCursorToIndex(i);
                 byte[] val = new byte[blockSize];
 
                 input.readFully(val);
 
-                iWtx.setValue(val);
+                this.mRtx.setValue(val);
             }
 
             if (length % blockSize != 0) {
-                getNodeByIndex(iWtx, (int)((length + storageIndex) / blockSize));
-                INode node = iWtx.getCurrentNode();
+                setCursorToIndex((int)((length + storageIndex) / blockSize));
+                INode node = this.mRtx.getCurrentNode();
 
                 byte[] val = ((ByteNode)node).getVal();
 
                 input.readFully(val, 0, (length % blockSize));
 
-                iWtx.setValue(val);
+                this.mRtx.setValue(val);
             }
 
-            iWtx.commit();
-            session.deregisterPageTrx(pRtx);
+            this.mRtx.commit();
         } catch (TTException e) {
             throw new IOException(e.getMessage());
         }
     }
 
-    private void getNodeByIndex(IIscsiReadTrx iRtx, int realIndex) throws IOException {
+    // private void getNodeByIndex(IIscsiReadTrx iRtx, int realIndex) throws IOException {
+    //
+    // INode node = iRtx.getCurrentNode();
+    //
+    // if (node == null) {
+    // throw new IOException(
+    // "It seems like no data has been written. Please do so and then try to read again.");
+    // }
+    //
+    // while (((ByteNode)node).getIndex() != realIndex && ((ByteNode)node).getNextNodeKey() != 0) {
+    // iRtx.nextNode();
+    // node = iRtx.getCurrentNode();
+    // }
+    //
+    // if (((ByteNode)node).getIndex() == realIndex) {
+    // return;
+    // } else {
+    // throw new IOException(
+    // "The index point you were seeking is not filled with data yet. Please check your bounds and try again.");
+    // }
+    // }
 
-        INode node = iRtx.getCurrentNode();
+    private void setCursorToIndex(long pIndex) throws IOException {
 
-        if (node == null) {
-            throw new IOException(
-                "It seems like no data has been written. Please do so and then try to read again.");
-        }
-
-        while (((ByteNode)node).getIndex() != realIndex && ((ByteNode)node).getNextNodeKey() != 0) {
-            iRtx.nextNode();
-            node = iRtx.getCurrentNode();
-        }
-
-        if (((ByteNode)node).getIndex() == realIndex) {
-            return;
-        } else {
-            throw new IOException(
-                "The index point you were seeking is not filled with data yet. Please check your bounds and try again.");
-        }
-    }
-
-    private void getNodeByIndex(IIscsiWriteTrx iWtx, int realIndex) throws IOException {
-
-        INode node = iWtx.getCurrentNode();
+        ByteNode node = (ByteNode)this.mRtx.getCurrentNode();
 
         if (node == null) {
             /*
@@ -336,24 +310,27 @@ public class TreetankStorageModule implements IStorageModule {
             // }
         }
 
-        while (((ByteNode)node).getIndex() != realIndex && ((ByteNode)node).getNextNodeKey() != 0) {
-            iWtx.nextNode();
-            node = iWtx.getCurrentNode();
-        }
-
-        if (((ByteNode)node).getIndex() != realIndex && ((ByteNode)node).getNextNodeKey() != 0) {
-            throw new IOException("The index structure seems to be damaged.");
+        if (node.getIndex() == pIndex) {
+            return;
+        } else if (node.getIndex() < pIndex) {
+            do {
+                this.mRtx.nextNode();
+                node = (ByteNode)this.mRtx.getCurrentNode();
+                if (node.getIndex() == pIndex) {
+                    return;
+                }
+            } while (node.getNextNodeKey() != 0);
         } else {
-            /*
-             * This code part is only used for lazy creation of nodes ByteNode newNode
-             * = new ByteNode( ((IIscsiWriteTrx) iWtx).getMaxNodeKey() + 1, new
-             * byte[(int) (blockSize)]); newNode.setIndex(realIndex); try {
-             * ((IIscsiWriteTrx) iWtx).insert(newNode);
-             * iWtx.moveTo(iWtx.getMaxNodeKey()); } catch (TTException e) { throw new
-             * IOException(
-             * "The creation of a new node was started and somehow didn't finish."); }
-             */
+            do {
+                this.mRtx.previousNode();
+                node = (ByteNode)this.mRtx.getCurrentNode();
+                if (node.getIndex() == pIndex) {
+                    return;
+                }
+            } while (node.getPreviousNodeKey() >= 0);
         }
+        throw new IOException(toStringHelper("Node never found with index").add("index", pIndex).toString());
+
     }
 
     /**
@@ -362,6 +339,8 @@ public class TreetankStorageModule implements IStorageModule {
     public void close() throws IOException {
 
         try {
+            mRtx.close();
+            session.close();
             storage.close();
 
             // A small hack, so the {@link IStorageModule} doesn't have to be altered

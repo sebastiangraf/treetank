@@ -36,9 +36,9 @@ public class PageReadTrxTest {
     @Inject
     private IResourceConfigurationFactory mResourceConfig;
 
-    private Holder mHolder;
-
-    private DumbNode[][] mNodes;
+     private Holder mHolder;
+    
+     private DumbNode[][] mNodes;
 
     /**
      * @throws java.lang.Exception
@@ -51,10 +51,10 @@ public class PageReadTrxTest {
         mHolder = CoreTestHelper.Holder.generateSession(config);
         IPageWriteTrx wtx = mHolder.getSession().beginPageWriteTransaction();
         int nodesPerRevision[] = {
-//            16385, 16385, 16385, 16385, 16385, 16385, 16385
+            16385//, 16385
         };
 
-        mNodes = CoreTestHelper.createRevisions(nodesPerRevision, wtx);
+         mNodes = CoreTestHelper.createRevisions(nodesPerRevision, wtx);
     }
 
     /**

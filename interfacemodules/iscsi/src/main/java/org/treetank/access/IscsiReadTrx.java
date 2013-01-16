@@ -92,6 +92,25 @@ public class IscsiReadTrx implements IIscsiReadTrx {
     }
   }
 
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public boolean previousNode() {
+    try {
+      if(mCurrentNode != null){
+        this.mCurrentNode = mPageReadTrx.getNode(((ByteNode) mCurrentNode).getPreviousNodeKey());
+      }
+      else{
+        return false;
+      }
+      return true;
+    } catch (TTException e) {
+      return false;
+    }
+  }
+  
   /**
    * {@inheritDoc}
    */

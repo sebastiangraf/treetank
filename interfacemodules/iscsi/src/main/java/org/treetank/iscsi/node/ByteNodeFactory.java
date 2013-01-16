@@ -37,25 +37,25 @@ import com.google.common.io.ByteStreams;
  */
 public class ByteNodeFactory implements INodeFactory {
 
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public INode deserializeNode(byte[] pData) {
-    ByteArrayDataInput input = ByteStreams.newDataInput(pData);
-    int size = input.readInt();
-    int index = input.readInt();
-    long nodeKey = input.readLong();
-    long previousNodeKey = input.readLong();
-    long nextNodeKey = input.readLong();
-    byte[] data = new byte[size];
-    input.readFully(data);
-    
-    ByteNode node = new ByteNode(nodeKey, data);
-    node.setIndex(index);
-    node.setNextNodeKey(nextNodeKey);
-    node.setPreviousNodeKey(previousNodeKey);
-    return node;
-  }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public INode deserializeNode(byte[] pData) {
+        ByteArrayDataInput input = ByteStreams.newDataInput(pData);
+        int size = input.readInt();
+        long index = input.readLong();
+        long nodeKey = input.readLong();
+        long previousNodeKey = input.readLong();
+        long nextNodeKey = input.readLong();
+        byte[] data = new byte[size];
+        input.readFully(data);
+
+        ByteNode node = new ByteNode(nodeKey, data);
+        node.setIndex(index);
+        node.setNextNodeKey(nextNodeKey);
+        node.setPreviousNodeKey(previousNodeKey);
+        return node;
+    }
 
 }

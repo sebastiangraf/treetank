@@ -27,22 +27,22 @@
 
 package org.treetank.access;
 
+import static org.testng.Assert.assertEquals;
+
 import java.util.Properties;
 
-import static org.testng.Assert.assertEquals;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.ByteNodeModuleFactory;
-import org.treetank.Holder;
 import org.treetank.CoreTestHelper;
+import org.treetank.Holder;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.INode;
 import org.treetank.exception.TTException;
-import org.treetank.iscsi.node.ByteNode;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
@@ -52,9 +52,9 @@ import com.google.inject.Inject;
 public final class TransactionTest {
 
     int size = 512;
-  
+
     private Holder holder;
-    
+
     @Inject
     private IResourceConfigurationFactory mResourceConfig;
 
@@ -63,7 +63,9 @@ public final class TransactionTest {
     @BeforeMethod
     public void setUp() throws TTException {
         CoreTestHelper.deleteEverything();
-        Properties props = StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(), CoreTestHelper.RESOURCENAME);
+        Properties props =
+            StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
         holder = Holder.generateWtx(mResource);
     }
@@ -73,55 +75,55 @@ public final class TransactionTest {
         ByteArrayDataOutput output = ByteStreams.newDataOutput(512);
         output.write(1);
 
-        holder.getIWtx().insert(new ByteNode(0, output.toByteArray()));
+        holder.getIWtx().bootstrap(output.toByteArray());
         output.write(2);
-        holder.getIWtx().insert(new ByteNode(holder.getPWtx().getMaxNodeKey()+1, output.toByteArray()));
+        holder.getIWtx().bootstrap(output.toByteArray());
         output.write(3);
-        holder.getIWtx().insert(new ByteNode(holder.getPWtx().getMaxNodeKey()+1, output.toByteArray()));
+        holder.getIWtx().bootstrap(output.toByteArray());
         output.write(4);
-        holder.getIWtx().insert(new ByteNode(holder.getPWtx().getMaxNodeKey()+1, output.toByteArray()));
+        holder.getIWtx().bootstrap(output.toByteArray());
         output.write(5);
-        holder.getIWtx().insertAfter(new ByteNode(holder.getPWtx().getMaxNodeKey()+1, output.toByteArray()));
-        
+        holder.getIWtx().insertAfter(output.toByteArray());
+
         INode node = holder.getIRtx().getCurrentNode();
         assertEquals(node.getNodeKey(), 0);
-        
+
         holder.getIRtx().nextNode();
         node = holder.getIRtx().getCurrentNode();
         assertEquals(node.getNodeKey(), 4);
-        
+
         holder.getIRtx().nextNode();
         node = holder.getIRtx().getCurrentNode();
         assertEquals(node.getNodeKey(), 1);
-        
+
         holder.getIRtx().nextNode();
         node = holder.getIRtx().getCurrentNode();
         assertEquals(node.getNodeKey(), 2);
-        
+
         holder.getIRtx().nextNode();
         node = holder.getIRtx().getCurrentNode();
         assertEquals(node.getNodeKey(), 3);
-        
+
         holder.getIWtx().moveTo(1);
         holder.getIWtx().remove();
-        
+
         holder.getIWtx().moveTo(0);
-        
+
         node = holder.getIRtx().getCurrentNode();
         assertEquals(node.getNodeKey(), 0);
-        
+
         holder.getIRtx().nextNode();
         node = holder.getIRtx().getCurrentNode();
         assertEquals(node.getNodeKey(), 4);
-        
+
         holder.getIRtx().nextNode();
         node = holder.getIRtx().getCurrentNode();
         assertEquals(node.getNodeKey(), 2);
-        
+
         holder.getIRtx().nextNode();
         node = holder.getIRtx().getCurrentNode();
         assertEquals(node.getNodeKey(), 3);
-        
+
     }
 
     @AfterMethod

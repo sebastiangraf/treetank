@@ -26,6 +26,7 @@ public class Differential implements IRevisioning {
     @Override
     public NodePage combinePages(final NodePage[] pages) {
         // check to have only the newer version and the related fulldump to read on
+        checkArgument(pages.length > 0, "At least one Nodepage must be provided");
         checkArgument(pages.length <= 2,
             "parameter should just consists of one or two single pages, depending if last page was fulldumped or not");
         // create entire page..

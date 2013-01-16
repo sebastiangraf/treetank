@@ -33,45 +33,58 @@ import org.treetank.exception.TTIOException;
 /**
  * 
  * @author Andreas Rain
- *
+ * 
  */
-public interface IIscsiReadTrx{
-  
-  /**
-   * Move the cursor to the given node key
-   * @param pKey
-   * @return true if successful, false otherwise
-   */
-  public boolean moveTo(long pKey);
-  
-  /**
-   * Move the cursor to the next node in the list
-   * @return true if successful, false otherwise
-   */
-  public boolean nextNode();
-  
-  /**
-   * A quick get method to get the value of the current node
-   * @return the value of the current node
-   */
-  public byte[] getValueOfCurrentNode();
-  
-  /**
-   * The node that the cursor currently points on
-   * @return the current node
-   */
-  public INode getCurrentNode();
-  
-  /**
-   * Close this transaction
-   * @throws TTIOException
-   */
-  public void close() throws TTIOException;
-  
-  /**
-   * Check whether or not this transaction has been closed
-   * @return true if closed, false otherwise
-   */
-  public boolean isClosed();
-  
+public interface IIscsiReadTrx {
+
+    /**
+     * Move the cursor to the given node key
+     * 
+     * @param pKey
+     * @return true if successful, false otherwise
+     */
+    public boolean moveTo(long pKey);
+
+    /**
+     * Move the cursor to the next node in the list
+     * 
+     * @return true if successful, false otherwise
+     */
+    public boolean nextNode();
+
+    /**
+     * Move the cursor to the previous node in the list
+     * 
+     * @return true if successful, false otherwise
+     */
+    public boolean previousNode();
+
+    /**
+     * A quick get method to get the value of the current node
+     * 
+     * @return the value of the current node
+     */
+    public byte[] getValueOfCurrentNode();
+
+    /**
+     * The node that the cursor currently points on
+     * 
+     * @return the current node
+     */
+    public INode getCurrentNode();
+
+    /**
+     * Close this transaction
+     * 
+     * @throws TTIOException
+     */
+    public void close() throws TTIOException;
+
+    /**
+     * Check whether or not this transaction has been closed
+     * 
+     * @return true if closed, false otherwise
+     */
+    public boolean isClosed();
+
 }

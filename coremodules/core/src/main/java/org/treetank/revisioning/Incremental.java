@@ -4,6 +4,7 @@
 package org.treetank.revisioning;
 
 import static com.google.common.base.Objects.toStringHelper;
+import static com.google.common.base.Preconditions.checkArgument;
 
 import org.treetank.access.PageReadTrx;
 import org.treetank.cache.NodePageContainer;
@@ -24,6 +25,7 @@ public class Incremental implements IRevisioning {
      */
     @Override
     public NodePage combinePages(final NodePage[] pages) {
+        checkArgument(pages.length > 0, "At least one Nodepage must be provided");
         // create entire page..
         final NodePage returnVal = new NodePage(pages[0].getPageKey());
         // ...iterate through the nodes and check if it is stored..
@@ -50,6 +52,7 @@ public class Incremental implements IRevisioning {
     @Override
     public NodePageContainer
         combinePagesForModification(long pNewPageKey, NodePage[] pages, boolean pFullDump) {
+        checkArgument(pages.length > 0, "At least one Nodepage must be provided");
         // create pages for container..
         final NodePage[] returnVal = {
             new NodePage(pages[0].getPageKey()), new NodePage(pNewPageKey)

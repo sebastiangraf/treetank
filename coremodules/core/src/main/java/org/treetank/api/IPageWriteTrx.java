@@ -27,22 +27,21 @@ import org.treetank.exception.TTException;
 public interface IPageWriteTrx extends IPageReadTrx {
 
     /**
-     * Getting most recent node key.
+     * Getting most recent node key and incrementing it.
      * 
      * @return the most recent node key.
      */
-    long getMaxNodeKey();
+    long incrementNodeKey();
 
     /**
-     * Creating a new node and storing the node in the page-layer.
+     * Setting a node and storing the node in the page-layer.
      * 
      * @param pnode
      *            the node to be stored.
-     * @return the same node, with node key
      * @throws TTException
      *             if anything weird happens.
      */
-    <T extends INode> T createNode(T pnode) throws TTException;
+    long setNode(INode pnode) throws TTException;
 
     /**
      * Simple commit of this page transaction to store the newest version.

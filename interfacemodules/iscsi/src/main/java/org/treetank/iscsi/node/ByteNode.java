@@ -36,204 +36,206 @@ import com.google.common.io.ByteStreams;
  */
 public class ByteNode implements INode {
 
-  /**
-   * The nodes key value, which is equal with it's position in the list.
-   */
-  long nodeKey = 0;
+    /**
+     * The nodes key value, which is equal with it's position in the list.
+     */
+    long nodeKey = 0;
 
-  /**
-   * The following nodes key
-   */
-  long nextNodeKey = 0;
+    /**
+     * The following nodes key
+     */
+    long nextNodeKey = 0;
 
-  /**
-   * The previous nodes key
-   */
-  long previousNodeKey = -1;
-  
-  /**
-   * The real index of this byte.
-   */
-  int index = 0;
+    /**
+     * The previous nodes key
+     */
+    long previousNodeKey = -1;
 
-  /**
-   * The size of the byte array in the node. The maximum size of a byte array in
-   * a {@link ByteNode} is 2^32 - 1. This is because in the deserialization the
-   * first 4 bytes determine the size of each node.
-   */
-  private int size = 0;
+    /**
+     * The real index of this byte.
+     */
+    long index = 0;
 
-  /**
-   * The content of this node in form of a byte array.
-   */
-  private byte[] val;
+    /**
+     * The size of the byte array in the node. The maximum size of a byte array in
+     * a {@link ByteNode} is 2^32 - 1. This is because in the deserialization the
+     * first 4 bytes determine the size of each node.
+     */
+    private int size = 0;
 
-  /**
-   * Standard constructor with a size of 512 bytes for each node.
-   */
-  public ByteNode(long nodeKey) {
-    this.nodeKey = nodeKey;
-    
-    size = 64;
-    val = new byte[64];
-  }
+    /**
+     * The content of this node in form of a byte array.
+     */
+    private byte[] val;
 
-  /**
-   * Creates a ByteNode with given bytes
-   * 
-   * @param content
-   *          , as byte array
-   */
-  public ByteNode(long nodeKey, byte[] content) {
-    this.nodeKey = nodeKey;
-    
-    size = content.length;
-    val = content;
-  }
+    /**
+     * Creates a ByteNode with given bytes
+     * 
+     * @param content
+     *            , as byte array
+     */
+    public ByteNode(long nodeKey, byte[] content) {
+        this.nodeKey = nodeKey;
+        size = content.length;
+        val = content;
+    }
 
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public byte[] getByteRepresentation() {
-    ByteArrayDataOutput output = ByteStreams.newDataOutput();
-    output.writeInt(size);
-    output.writeInt(index);
-    output.writeLong(nodeKey);
-    output.writeLong(previousNodeKey);
-    output.writeLong(nextNodeKey);
-    output.write(val);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] getByteRepresentation() {
+        ByteArrayDataOutput output = ByteStreams.newDataOutput();
+        output.writeInt(size);
+        output.writeLong(index);
+        output.writeLong(nodeKey);
+        output.writeLong(previousNodeKey);
+        output.writeLong(nextNodeKey);
+        output.write(val);
 
-    return output.toByteArray();
-  }
+        return output.toByteArray();
+    }
 
-  @Override
-  public long getNodeKey() {
+    @Override
+    public long getNodeKey() {
 
-    return this.nodeKey;
-  }
+        return this.nodeKey;
+    }
 
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public void setHash(long pHash) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setHash(long pHash) {
 
-  }
+    }
 
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public long getHash() {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long getHash() {
 
-    return this.nodeKey*previousNodeKey*nextNodeKey*31;
-  }
+        return this.nodeKey * previousNodeKey * nextNodeKey * 31;
+    }
 
-  /**
-   * Getting the byte array contained by this node.
-   * @return returns the byte array
-   */
-  public byte[] getVal() {
+    /**
+     * Getting the byte array contained by this node.
+     * 
+     * @return returns the byte array
+     */
+    public byte[] getVal() {
+        return val;
+    }
 
-    return val;
-  }
+    /**
+     * Replace the existing byte array with another byte array.
+     * 
+     * @param val
+     */
+    public void setVal(byte[] val) {
 
-  /**
-   * Replace the existing byte array with another byte array.
-   * @param val
-   */
-  public void setVal(byte[] val) {
+        this.val = val;
+    }
 
-    this.val = val;
-  }
+    /**
+     * The node key of the next node
+     * 
+     * @return returns the key as long
+     */
+    public long getNextNodeKey() {
 
-  /**
-   * The node key of the next node
-   * @return returns the key as long
-   */
-  public long getNextNodeKey() {
+        return nextNodeKey;
+    }
 
-    return nextNodeKey;
-  }
+    /**
+     * Determine if a node follows after this one.
+     * 
+     * @return returns true if a node follows
+     */
+    public boolean hasNext() {
+        return (this.nextNodeKey != 0);
+    }
 
-  /**
-   * Determine if a node follows after this one.
-   * @return returns true if a node follows
-   */
-  public boolean hasNext(){
-    return (this.nextNodeKey != 0);
-  }
-  
-  /**
-   * Set the link to the next node. Use the nodekey of that node.
-   * @param nextNodeKey as a long
-   */
-  public void setNextNodeKey(long nextNodeKey) {
+    /**
+     * Set the link to the next node. Use the nodekey of that node.
+     * 
+     * @param nextNodeKey
+     *            as a long
+     */
+    public void setNextNodeKey(long nextNodeKey) {
 
-    this.nextNodeKey = nextNodeKey;
-  }
+        this.nextNodeKey = nextNodeKey;
+    }
 
-  /**
-   * The node key of the previous node
-   * @return returns the key as long
-   */
-  public long getPreviousNodeKey() {
+    /**
+     * The node key of the previous node
+     * 
+     * @return returns the key as long
+     */
+    public long getPreviousNodeKey() {
 
-    return previousNodeKey;
-  }
-  
-  /**
-   * Set the link to the previous node. Use the nodekey of that node.
-   * @param previousNodeKey as a long
-   */
-  public void setPreviousNodeKey(long previousNodeKey) {
+        return previousNodeKey;
+    }
 
-    this.previousNodeKey = previousNodeKey;
-  }
+    /**
+     * Set the link to the previous node. Use the nodekey of that node.
+     * 
+     * @param previousNodeKey
+     *            as a long
+     */
+    public void setPreviousNodeKey(long previousNodeKey) {
 
-  /**
-   * Determine if a node preceids this node.
-   * @return returns true if a node follows
-   */
-  public boolean hasPrevious(){
-    return (this.previousNodeKey != -1);
-  }
-  
-  /**
-   * Getting the index of the node.
-   * @return returns the index as an int
-   */
-  public int getIndex() {
-  
-    return index;
-  }
-  
-  /**
-   * Reset the index of this node.
-   * @param index
-   */
-  public void setIndex(int index) {
-  
-    this.index = index;
-  }
-  
-  /**
-   * Increment the index of this node
-   * @return return the new index
-   */
-  public int incIndex(){
-    this.index++;
-    return this.index;
-  }
-  
-  /**
-   * Decrement the index of this node
-   * @return returns the new index of this node
-   */
-  public int decIndex(){
-    this.index--;
-    return this.index;
-  }
+        this.previousNodeKey = previousNodeKey;
+    }
+
+    /**
+     * Determine if a node preceids this node.
+     * 
+     * @return returns true if a node follows
+     */
+    public boolean hasPrevious() {
+        return (this.previousNodeKey != -1);
+    }
+
+    /**
+     * Getting the index of the node.
+     * 
+     * @return returns the index as an int
+     */
+    public long getIndex() {
+
+        return index;
+    }
+
+    /**
+     * Reset the index of this node.
+     * 
+     * @param index
+     */
+    public void setIndex(long index) {
+
+        this.index = index;
+    }
+
+    /**
+     * Increment the index of this node
+     * 
+     * @return return the new index
+     */
+    public long incIndex() {
+        this.index++;
+        return this.index;
+    }
+
+    /**
+     * Decrement the index of this node
+     * 
+     * @return returns the new index of this node
+     */
+    public long decIndex() {
+        this.index--;
+        return this.index;
+    }
 
 }

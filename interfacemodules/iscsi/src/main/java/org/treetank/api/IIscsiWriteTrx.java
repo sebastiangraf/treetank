@@ -27,67 +27,62 @@
 
 package org.treetank.api;
 
-import org.treetank.api.INode;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 
+public interface IIscsiWriteTrx extends IIscsiReadTrx {
 
-public interface IIscsiWriteTrx extends IIscsiReadTrx{
+    /**
+     * This method inserts the given node into the database.
+     * 
+     * @param node
+     * @throws TTException
+     */
+    public void bootstrap(byte[] vals) throws TTException;
 
-  /**
-   * This method inserts the given node into the database.
-   * @param node
-   * @throws TTException
-   */
-  public void insert(INode node) throws TTException;
+    /**
+     * This method inserts the given node, after
+     * the currently selected node and increments all
+     * following indizes.
+     * 
+     * @param node
+     * @throws TTException
+     */
+    public void insertAfter(byte[] vals) throws TTException;
 
-  /**
-   * This method inserts the given node, after
-   * the currently selected node and increments all
-   * following indizes.
-   * @param node
-   * @throws TTException
-   */
-  public void insertAfter(INode node) throws TTException;
+    /**
+     * Remove currently selected node.
+     * 
+     * @throws TTException
+     *             if node couldn't be removed
+     */
+    public void remove() throws TTException;
 
-  /**
-   * Remove currently selected node.
-   * 
-   * @throws TTException
-   *             if node couldn't be removed
-   */
-  public void remove() throws TTException;
-  
-  /**
-   * Set value of node.
-   * 
-   * @param pValue
-   *            new value of node
-   * @throws TTIOException
-   *             if value couldn't be set
-   */
-  public void setValue(final byte[] pValue) throws TTException;
+    /**
+     * Set value of node.
+     * 
+     * @param pValue
+     *            new value of node
+     * @throws TTIOException
+     *             if value couldn't be set
+     */
+    public void setValue(final byte[] pValue) throws TTException;
 
-  /**
-   * Commit all modifications of the exclusive write transaction. Even commit
-   * if there are no modification at all.
-   * 
-   * @throws TTException
-   *             if this revision couldn't be commited
-   */
-  public void commit() throws TTException;
+    /**
+     * Commit all modifications of the exclusive write transaction. Even commit
+     * if there are no modification at all.
+     * 
+     * @throws TTException
+     *             if this revision couldn't be commited
+     */
+    public void commit() throws TTException;
 
-  /**
-   * Abort all modifications of the exclusive write transaction.
-   * 
-   * @throws TTIOException
-   *             if this revision couldn't be aborted
-   */
-  public void abort() throws TTException;
-  
-  /**
-   * 
-   * @return the maximum node key in the list
-   */
-  public long getMaxNodeKey();
+    /**
+     * Abort all modifications of the exclusive write transaction.
+     * 
+     * @throws TTIOException
+     *             if this revision couldn't be aborted
+     */
+    public void abort() throws TTException;
+
 }
