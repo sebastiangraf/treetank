@@ -51,7 +51,7 @@ public class PageReadTrxTest {
         mHolder = CoreTestHelper.Holder.generateSession(config);
         IPageWriteTrx wtx = mHolder.getSession().beginPageWriteTransaction();
         int nodesPerRevision[] = {
-            16383//, 1
+            16383, 1
         };
 
         mNodes = CoreTestHelper.createRevisions(nodesPerRevision, wtx);
@@ -214,8 +214,12 @@ public class PageReadTrxTest {
     @Test
     public void testNodePageKey() {
         assertEquals(0, PageReadTrx.nodePageKey(0));
+        assertEquals(0, PageReadTrx.nodePageKey(127));
         assertEquals(1, PageReadTrx.nodePageKey(128));
-
+        assertEquals(127, PageReadTrx.nodePageKey(16383));
+        assertEquals(128, PageReadTrx.nodePageKey(16384));
+        assertEquals(16383, PageReadTrx.nodePageKey(2097151));
+        assertEquals(16384, PageReadTrx.nodePageKey(2097152));
     }
 
     /**
