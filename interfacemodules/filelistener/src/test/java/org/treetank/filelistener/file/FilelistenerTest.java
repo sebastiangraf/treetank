@@ -34,7 +34,8 @@ public class FilelistenerTest implements IWatchCallback {
         tmpDir = Files.createTempDir();
 
         try {
-            listener = new Filelistener();
+            //TODO check this, must set a parameter in the constructor
+            listener = new Filelistener(null);
             listener.watchDir(tmpDir);
             listener.startListening();
         } catch (IOException e) {
