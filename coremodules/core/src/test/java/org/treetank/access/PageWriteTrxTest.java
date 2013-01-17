@@ -3,6 +3,10 @@
  */
 package org.treetank.access;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
@@ -15,7 +19,6 @@ import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFact
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.exception.TTException;
-import org.treetank.exception.TTIOException;
 import org.treetank.page.DumbNodeFactory.DumbNode;
 
 import com.google.inject.Inject;
@@ -62,15 +65,18 @@ public class PageWriteTrxTest {
     public void testPrepareNodeForModification() throws TTException {
         IPageWriteTrx wtx = mHolder.getSession().beginPageWriteTransaction();
         int nodesPerRevision[] = {
-            16383
-        // , 1
-            };
+//            16384, 1
+            16385,1
+        };
 
         DumbNode[][] nodes = CoreTestHelper.createRevisions(nodesPerRevision, wtx);
-        long nodeCounter = 0;
-        for (DumbNode[] node : nodes) {
-            CoreTestHelper.checkStructure(node, wtx, nodeCounter);
+
+        // CoreTestHelper.createRevisions(nodesPerRevision, wtx);
+        List<DumbNode> list = new ArrayList<DumbNode>();
+        for (int i = 0; i < nodes.length; i++) {
+            list.addAll(Arrays.asList(nodes[i]));
         }
+//        CoreTestHelper.checkStructure(list, wtx);
 
     }
 
