@@ -37,7 +37,7 @@ import java.util.Properties;
 
 import javax.xml.namespace.QName;
 
-import org.treetank.access.PageWriteTrx;
+import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.Storage;
 import org.treetank.access.conf.ContructorProps;
 import org.treetank.access.conf.ResourceConfiguration;
@@ -127,7 +127,7 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
         final QName qName = rtx.getQNameOfCurrentNode();
         final String mURI = qName.getNamespaceURI();
         try {
-            mContHandler.endElement(mURI, qName.getLocalPart(), PageWriteTrx.buildName(qName));
+            mContHandler.endElement(mURI, qName.getLocalPart(), NodeWriteTrx.buildName(qName));
         } catch (final SAXException exc) {
             exc.printStackTrace();
         }
@@ -188,19 +188,19 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
                 paramRtx.moveToAttribute(i);
                 final QName qName = paramRtx.getQNameOfCurrentNode();
                 final String mURI = qName.getNamespaceURI();
-                atts.addAttribute(mURI, qName.getLocalPart(), PageWriteTrx.buildName(qName), paramRtx
+                atts.addAttribute(mURI, qName.getLocalPart(), NodeWriteTrx.buildName(qName), paramRtx
                     .getTypeOfCurrentNode(), paramRtx.getValueOfCurrentNode());
                 paramRtx.moveTo(key);
             }
 
             // Create SAX events.
             final QName qName = paramRtx.getQNameOfCurrentNode();
-            mContHandler.startElement(qName.getNamespaceURI(), qName.getLocalPart(), PageWriteTrx
+            mContHandler.startElement(qName.getNamespaceURI(), qName.getLocalPart(), NodeWriteTrx
                 .buildName(qName), atts);
 
             // Empty elements.
             if (!((ElementNode)paramRtx.getNode()).hasFirstChild()) {
-                mContHandler.endElement(qName.getNamespaceURI(), qName.getLocalPart(), PageWriteTrx
+                mContHandler.endElement(qName.getNamespaceURI(), qName.getLocalPart(), NodeWriteTrx
                     .buildName(qName));
             }
         } catch (final SAXException exc) {
@@ -244,7 +244,8 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
         Properties props = new Properties();
         props.setProperty(ContructorProps.STORAGEPATH, storage.getLocation().getAbsolutePath());
         props.setProperty(ContructorProps.RESOURCE, "shredded");
-        storage.createResource(new ResourceConfiguration(props, backend, revision, new TreeNodeFactory(), new NodeMetaPageFactory()));
+        storage.createResource(new ResourceConfiguration(props, backend, revision, new TreeNodeFactory(),
+            new NodeMetaPageFactory()));
         final ISession session =
             storage.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
 

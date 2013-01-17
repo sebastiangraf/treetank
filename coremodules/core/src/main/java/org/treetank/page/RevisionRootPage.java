@@ -92,8 +92,7 @@ public final class RevisionRootPage implements IRevisionPage, IReferencePage {
      * Increment number of nodes by one while allocating another key.
      */
     public long incrementMaxNodeKey() {
-        mMaxNodeKey += 1;
-        return mMaxNodeKey;
+        return mMaxNodeKey++;
     }
 
     @Override

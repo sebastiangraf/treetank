@@ -49,12 +49,7 @@ public class PageReadTrxTest {
             mResourceConfig.create(StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1
                 .getFile().getAbsolutePath(), CoreTestHelper.RESOURCENAME));
         mHolder = CoreTestHelper.Holder.generateSession(config);
-        IPageWriteTrx wtx = mHolder.getSession().beginPageWriteTransaction();
-        int nodesPerRevision[] = {
-            16383//, 1
-        };
 
-        mNodes = CoreTestHelper.createRevisions(nodesPerRevision, wtx);
     }
 
     /**

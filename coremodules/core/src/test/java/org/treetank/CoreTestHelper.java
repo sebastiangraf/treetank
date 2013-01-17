@@ -33,6 +33,7 @@ import static org.testng.AssertJUnit.assertEquals;
 
 import java.io.File;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -248,14 +249,37 @@ public final class CoreTestHelper {
         for (int i = 0; i < nodesPerRevision.length; i++) {
             returnVal[i] = new DumbNode[nodesPerRevision[i]];
             // inserting nodes on this transaction
-            for (int j = 0; j < returnVal[i].length; j++) {
+            for (int j = 0; j < nodesPerRevision[i]; j++) {
                 returnVal[i][j] = new DumbNode(pWtx.incrementNodeKey(), CoreTestHelper.random.nextLong());
                 pWtx.setNode(returnVal[i][j]);
+                // pWtx.setNode(new DumbNode(pWtx.incrementNodeKey(), CoreTestHelper.random.nextLong()));
             }
             // comitting data
             pWtx.commit();
         }
         return returnVal;
+        // return null;
+    }
+
+    /**
+     * Checking the transaction with nodes written sequentially.
+     * 
+     * @param pNodes
+     *            to be compared with
+     * @param pRtx
+     *            to check
+     * @param pStartKey
+     *            to start with
+     * @re
+     * @throws TTIOException
+     */
+    public static void checkStructure(final List<DumbNode> pNodes, final IPageReadTrx pRtx)
+        throws TTIOException {
+        long key = 0;
+        for (DumbNode node : pNodes) {
+            assertEquals(node, pRtx.getNode(key));
+            key++;
+        }
     }
 
     public static class Holder {
