@@ -258,6 +258,26 @@ public final class CoreTestHelper {
         return returnVal;
     }
 
+    /**
+     * Checking the transaction with nodes written sequentially.
+     * 
+     * @param pNodes
+     *            to be compared with
+     * @param pRtx
+     *            to check
+     * @param pStartKey
+     *            to start with
+     * @throws TTIOException
+     */
+    public static void checkStructure(final DumbNode[] pNodes, final IPageReadTrx pRtx, final long pStartKey)
+        throws TTIOException {
+        long key = pStartKey;
+        for (DumbNode node : pNodes) {
+            assertEquals(node, pRtx.getNode(key));
+            key++;
+        }
+    }
+
     public static class Holder {
 
         IStorage mStorage;

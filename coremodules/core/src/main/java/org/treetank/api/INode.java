@@ -22,6 +22,8 @@ public interface INode {
 
     /**
      * Gets unique {@link INode} key.
+     * This key should be set over the <code>IPageWtx.incrementNodeKey</code> for getting the correct offset
+     * within retrievals.
      * 
      * @return node key
      */

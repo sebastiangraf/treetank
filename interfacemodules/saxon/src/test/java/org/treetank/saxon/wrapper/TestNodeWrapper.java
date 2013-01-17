@@ -191,7 +191,7 @@ public class TestNodeWrapper {
             storage.getSession(new SessionConfiguration(CoreTestHelper.RESOURCENAME, StandardSettings.KEY));
         final INodeWriteTrx wtx =
             new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
-        SaxonHelper.createDocumentRootNode(wtx);
+        NodeTestHelper.createDocumentRootNode(wtx);
         final XMLEventReader reader = XMLShredder.createFileReader(source);
         final XMLShredder shredder = new XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();

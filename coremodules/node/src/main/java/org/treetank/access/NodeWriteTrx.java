@@ -236,7 +236,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
         final byte[] value = TypedValue.getBytes(pValue);
         final long elementKey = mDelegate.getCurrentNode().getNodeKey();
 
-        final int nameKey = insertName(PageWriteTrx.buildName(pQName));
+        final int nameKey = insertName(buildName(pQName));
         final int namespaceKey = insertName(pQName.getNamespaceURI());
         final NodeDelegate nodeDel = new NodeDelegate(getPtx().incrementNodeKey(), elementKey, 0);
         final NameNodeDelegate nameDel = new NameNodeDelegate(nodeDel, nameKey, namespaceKey);
@@ -293,7 +293,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
     private ElementNode createElementNode(final long parentKey, final long mLeftSibKey,
         final long rightSibKey, final long hash, final QName mName) throws TTException {
 
-        final int nameKey = insertName(PageWriteTrx.buildName(mName));
+        final int nameKey = insertName(buildName(mName));
         final int namespaceKey = insertName(mName.getNamespaceURI());
 
         final NodeDelegate nodeDel = new NodeDelegate(getPtx().incrementNodeKey(), parentKey, 0);
@@ -383,7 +383,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
 
         final INameNode node =
             (INameNode)getPtx().prepareNodeForModification(mDelegate.getCurrentNode().getNodeKey());
-        node.setNameKey(insertName(PageWriteTrx.buildName(paramName)));
+        node.setNameKey(insertName(buildName(paramName)));
         getPtx().finishNodeModification(node);
 
         mDelegate.setCurrentNode((INode)node);
@@ -946,6 +946,27 @@ public class NodeWriteTrx implements INodeWriteTrx {
     @Override
     public IPageWriteTrx getPageWtx() throws TTException {
         return getPtx();
+    }
+
+    /**
+     * Building name consisting out of prefix and name. NamespaceUri is not used
+     * over here.
+     * 
+     * @param pQName
+     *            the {@link QName} of an element
+     * @return a string with [prefix:]localname
+     */
+    public static String buildName(final QName pQName) {
+        if (pQName == null) {
+            throw new NullPointerException("mQName must not be null!");
+        }
+        String name;
+        if (pQName.getPrefix().isEmpty()) {
+            name = pQName.getLocalPart();
+        } else {
+            name = new StringBuilder(pQName.getPrefix()).append(":").append(pQName.getLocalPart()).toString();
+        }
+        return name;
     }
 
     /**

@@ -38,8 +38,6 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.xml.namespace.QName;
-
 import org.treetank.access.conf.ContructorProps;
 import org.treetank.api.IMetaEntry;
 import org.treetank.api.INode;
@@ -114,47 +112,6 @@ public final class PageWriteTrx implements IPageWriteTrx {
                 .getProperty(org.treetank.access.conf.ContructorProps.STORAGEPATH)),
                 pSession.getConfig().mNodeFac, pSession.getConfig().mMetaFac));
         setUpTransaction(pUberPage, pSession, pRepresentRev, pWriter);
-    }
-
-    private void setUpTransaction(final UberPage pUberPage, final ISession pSession,
-        final long pRepresentRev, final IBackendWriter pWriter) throws TTException {
-        mNewUber =
-            new UberPage(pUberPage.incrementPageCounter(), pUberPage.getRevisionNumber() + 1, pUberPage
-                .getPageCounter());
-        mNewUber.setReferenceKey(IReferencePage.GUARANTEED_INDIRECT_OFFSET,
-            pUberPage.getReferenceKeys()[IReferencePage.GUARANTEED_INDIRECT_OFFSET]);
-
-        mDelegate = new PageReadTrx(pSession, pUberPage, pRepresentRev, pWriter);
-
-        // Get previous revision root page..
-        final RevisionRootPage previousRevRoot = mDelegate.getActualRevisionRootPage();
-        // ...and using this data to initialize a fresh revision root including the pointers.
-        mNewRoot =
-            new RevisionRootPage(mNewUber.incrementPageCounter(), pRepresentRev + 1, previousRevRoot
-                .getMaxNodeKey());
-        mNewRoot.setReferenceKey(IReferencePage.GUARANTEED_INDIRECT_OFFSET, previousRevRoot
-            .getReferenceKeys()[IReferencePage.GUARANTEED_INDIRECT_OFFSET]);
-
-        // Prepare indirect tree to hold reference to prepared revision root
-        // nodePageReference.
-        long lastIndirectKey =
-            (mNewUber.getRevisionNumber() - ((mNewUber.getRevisionNumber() >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[2]) << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[2]));
-        LogKey indirectKey = preparePathToLeaf(true, mNewUber, lastIndirectKey);
-        NodePageContainer indirectContainer = mLog.get(indirectKey);
-        int offset = nodePageOffset(mNewUber.getRevisionNumber());
-        ((IndirectPage)indirectContainer.getModified()).setReferenceKey(offset, mNewRoot.getPageKey());
-        mLog.put(indirectKey, indirectContainer);
-
-        // Setting up a new namepage
-        Map<IMetaEntry, IMetaEntry> oldMap = mDelegate.mMetaPage.getMetaMap();
-        mNewName = new MetaPage(mNewUber.incrementPageCounter());
-
-        for (IMetaEntry key : oldMap.keySet()) {
-            mNewName.setEntry(key, oldMap.get(key));
-        }
-
-        mNewRoot.setReferenceKey(RevisionRootPage.NAME_REFERENCE_OFFSET, mNewName.getPageKey());
-
     }
 
     /**
@@ -443,6 +400,47 @@ public final class PageWriteTrx implements IPageWriteTrx {
         return key;
     }
 
+    private void setUpTransaction(final UberPage pUberPage, final ISession pSession,
+        final long pRepresentRev, final IBackendWriter pWriter) throws TTException {
+        mNewUber =
+            new UberPage(pUberPage.incrementPageCounter(), pUberPage.getRevisionNumber() + 1, pUberPage
+                .getPageCounter());
+        mNewUber.setReferenceKey(IReferencePage.GUARANTEED_INDIRECT_OFFSET,
+            pUberPage.getReferenceKeys()[IReferencePage.GUARANTEED_INDIRECT_OFFSET]);
+
+        mDelegate = new PageReadTrx(pSession, pUberPage, pRepresentRev, pWriter);
+
+        // Get previous revision root page..
+        final RevisionRootPage previousRevRoot = mDelegate.getActualRevisionRootPage();
+        // ...and using this data to initialize a fresh revision root including the pointers.
+        mNewRoot =
+            new RevisionRootPage(mNewUber.incrementPageCounter(), pRepresentRev + 1, previousRevRoot
+                .getMaxNodeKey());
+        mNewRoot.setReferenceKey(IReferencePage.GUARANTEED_INDIRECT_OFFSET, previousRevRoot
+            .getReferenceKeys()[IReferencePage.GUARANTEED_INDIRECT_OFFSET]);
+
+        // Prepare indirect tree to hold reference to prepared revision root
+        // nodePageReference.
+        long lastIndirectKey =
+            (mNewUber.getRevisionNumber() - ((mNewUber.getRevisionNumber() >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[2]) << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[2]));
+        LogKey indirectKey = preparePathToLeaf(true, mNewUber, lastIndirectKey);
+        NodePageContainer indirectContainer = mLog.get(indirectKey);
+        int offset = nodePageOffset(mNewUber.getRevisionNumber());
+        ((IndirectPage)indirectContainer.getModified()).setReferenceKey(offset, mNewRoot.getPageKey());
+        mLog.put(indirectKey, indirectContainer);
+
+        // Setting up a new namepage
+        Map<IMetaEntry, IMetaEntry> oldMap = mDelegate.mMetaPage.getMetaMap();
+        mNewName = new MetaPage(mNewUber.incrementPageCounter());
+
+        for (IMetaEntry key : oldMap.keySet()) {
+            mNewName.setEntry(key, oldMap.get(key));
+        }
+
+        mNewRoot.setReferenceKey(RevisionRootPage.NAME_REFERENCE_OFFSET, mNewName.getPageKey());
+
+    }
+
     /**
      * Current reference to actual rev-root page.
      * 
@@ -450,27 +448,6 @@ public final class PageWriteTrx implements IPageWriteTrx {
      */
     public RevisionRootPage getActualRevisionRootPage() {
         return mNewRoot;
-    }
-
-    /**
-     * Building name consisting out of prefix and name. NamespaceUri is not used
-     * over here.
-     * 
-     * @param pQName
-     *            the {@link QName} of an element
-     * @return a string with [prefix:]localname
-     */
-    public static String buildName(final QName pQName) {
-        if (pQName == null) {
-            throw new NullPointerException("mQName must not be null!");
-        }
-        String name;
-        if (pQName.getPrefix().isEmpty()) {
-            name = pQName.getLocalPart();
-        } else {
-            name = new StringBuilder(pQName.getPrefix()).append(":").append(pQName.getLocalPart()).toString();
-        }
-        return name;
     }
 
     /**

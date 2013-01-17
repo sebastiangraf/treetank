@@ -69,7 +69,7 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
             getPageTransaction().finishNodeModification(lastNode);
             getPageTransaction().setNode(node);
         } else {
-            ByteNode node = new ByteNode(0, new byte[512]);
+            ByteNode node = new ByteNode(getPageTransaction().incrementNodeKey(), new byte[512]);
             node.setIndex(0);
             getPageTransaction().setNode(node);
             mDelegate.moveTo(node.getNodeKey());
