@@ -34,7 +34,8 @@ public class FilelistenerTest implements IWatchCallback {
         tmpDir = Files.createTempDir();
 
         try {
-            listener = new Filelistener(this);
+            //TODO check this, must set a parameter in the constructor
+            listener = new Filelistener(null);
             listener.watchDir(tmpDir);
             listener.startListening();
         } catch (IOException e) {
@@ -93,22 +94,23 @@ public class FilelistenerTest implements IWatchCallback {
         assertTrue(dir.toFile().isDirectory(), "Is a directory");
 
         if (evtType == ENTRY_CREATE) {
-            assertTrue(file.toFile().getName().contains("test"));
-            assertTrue(file.toFile().getName().contains(".txt"));
-
+            assertFile(file);
             System.out.println("Fired create");
 
             createCounter++;
         } else if (evtType == ENTRY_DELETE) {
-            assertTrue(file.toFile().getName().contains("test"));
-            assertTrue(file.toFile().getName().contains(".txt"));
-
+            assertFile(file);
             System.out.println("Fired delete");
 
             deleteCounter--;
         } else if (evtType == ENTRY_MODIFY) {
-
+            assertFile(file);
         }
+    }
+
+    private void assertFile(Path file) {
+        assertTrue(file.toFile().getName().contains("test"));
+        assertTrue(file.toFile().getName().contains(".txt"));
     }
 
 }

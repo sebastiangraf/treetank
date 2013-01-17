@@ -167,11 +167,6 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
 
         // Commit uber page.
         getPageTransaction().commit();
-        final long revNumber = mDelegate.mPageReadTrx.getActualRevisionRootPage().getRevision();
-
-        getPageTransaction().close();
-        // Reset internal transaction state to new uber page.
-        mDelegate.setPageTransaction(mSession.beginPageWriteTransaction(revNumber));
 
     }
 
