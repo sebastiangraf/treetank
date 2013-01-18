@@ -16,7 +16,6 @@ import org.treetank.ModuleFactory;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.StandardSettings;
-import org.treetank.api.IPageWriteTrx;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
 import org.treetank.page.DumbNodeFactory.DumbNode;
@@ -203,19 +202,6 @@ public class PageReadTrxTest {
         assertEquals(-1, key);
     }
 
-    /**
-     * Test method for {@link org.treetank.access.PageReadTrx#nodePageKey(long)}.
-     */
-    @Test
-    public void testNodePageKey() {
-        assertEquals(0, PageReadTrx.nodePageKey(0));
-        assertEquals(0, PageReadTrx.nodePageKey(127));
-        assertEquals(1, PageReadTrx.nodePageKey(128));
-        assertEquals(127, PageReadTrx.nodePageKey(16383));
-        assertEquals(128, PageReadTrx.nodePageKey(16384));
-        assertEquals(16383, PageReadTrx.nodePageKey(2097151));
-        assertEquals(16384, PageReadTrx.nodePageKey(2097152));
-    }
 
     /**
      * Test method for {@link org.treetank.access.PageReadTrx#nodePageOffset(long)}.
