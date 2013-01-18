@@ -29,6 +29,7 @@ package org.treetank.access;
 
 import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -142,7 +143,7 @@ public class PageReadTrx implements IPageReadTrx {
         checkArgument(pNodeKey >= 0);
 
         // Calculate page and node part for given nodeKey.
-        final long seqNodePageKey = nodePageKey(pNodeKey);
+        final long seqNodePageKey = pNodeKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3];
         final int nodePageOffset = nodePageOffset(pNodeKey);
         NodePage page = mNodePageCache.getIfPresent(seqNodePageKey);
 
@@ -255,7 +256,7 @@ public class PageReadTrx implements IPageReadTrx {
                 break;
             }
         }
-
+        checkState(nodePages.size() > 0);
         return nodePages.toArray(new NodePage[nodePages.size()]);
 
     }
@@ -293,18 +294,6 @@ public class PageReadTrx implements IPageReadTrx {
 
         // Return reference to leaf of indirect tree.
         return pageKey;
-    }
-
-    /**
-     * Calculate node page key from a given node key.
-     * 
-     * @param pNodeKey
-     *            Node key to find node page key for.
-     * @return Node page key.
-     */
-    protected static final long nodePageKey(final long pNodeKey) {
-        final long nodePageKey = pNodeKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3];
-        return nodePageKey;
     }
 
     /**
