@@ -29,6 +29,7 @@ package org.treetank.access;
 
 import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -255,7 +256,7 @@ public class PageReadTrx implements IPageReadTrx {
                 break;
             }
         }
-
+        checkState(nodePages.size() > 0);
         return nodePages.toArray(new NodePage[nodePages.size()]);
 
     }
