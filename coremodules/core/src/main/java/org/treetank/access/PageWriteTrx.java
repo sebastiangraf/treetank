@@ -31,7 +31,6 @@ import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.treetank.access.PageReadTrx.nodePageKey;
 import static org.treetank.access.PageReadTrx.nodePageOffset;
 
 import java.io.File;
@@ -127,7 +126,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
      */
     public INode prepareNodeForModification(final long pNodeKey) throws TTException {
         checkArgument(pNodeKey >= 0);
-        final long seqNodePageKey = nodePageKey(pNodeKey);
+        final long seqNodePageKey = pNodeKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3];
         final int nodePageOffset = nodePageOffset(pNodeKey);
         final int lastIndirectOffset = (int)pNodeKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[2];
         NodePageContainer container = prepareNodePage(lastIndirectOffset, seqNodePageKey);
@@ -151,7 +150,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
      * @throws TTIOException
      */
     public void finishNodeModification(final INode pNode) throws TTIOException {
-        final long seqNodePageKey = nodePageKey(pNode.getNodeKey());
+        final long seqNodePageKey = pNode.getNodeKey() >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3];
         final int nodePageOffset = nodePageOffset(pNode.getNodeKey());
         LogKey key = new LogKey(false, IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length, seqNodePageKey);
         NodePageContainer container = mLog.get(key);
@@ -166,7 +165,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
     public long setNode(final INode pNode) throws TTException {
         // Allocate node key and increment node count.
         final long nodeKey = pNode.getNodeKey();
-        final long seqPageKey = nodePageKey(nodeKey);
+        final long seqPageKey = nodeKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3];
         final int nodePageOffset = nodePageOffset(nodeKey);
         final int lastIndirectOffset = (int)(nodeKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[2]);
         NodePageContainer container = prepareNodePage(lastIndirectOffset, seqPageKey);
@@ -186,7 +185,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
      */
     public void removeNode(final INode pNode) throws TTException {
         assert pNode != null;
-        final long nodePageKey = nodePageKey(pNode.getNodeKey());
+        final long nodePageKey = pNode.getNodeKey() >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3];
         final int lastIndirectOffset = (int)nodePageKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[2];
         NodePageContainer container = prepareNodePage(lastIndirectOffset, nodePageKey);
         final INode delNode = new DeletedNode(pNode.getNodeKey());
@@ -202,7 +201,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
     public INode getNode(final long pNodeKey) throws TTIOException {
 
         // Calculate page and node part for given nodeKey.
-        final long nodePageKey = nodePageKey(pNodeKey);
+        final long nodePageKey = pNodeKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3];
         final int nodePageOffset = nodePageOffset(pNodeKey);
 
         final NodePageContainer container =
