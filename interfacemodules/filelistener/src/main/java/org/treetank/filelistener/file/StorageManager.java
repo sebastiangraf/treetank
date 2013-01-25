@@ -3,16 +3,21 @@ package org.treetank.filelistener.file;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import org.treetank.access.Storage;
 import org.treetank.access.conf.GuiSettings;
+import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
+import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
 import org.treetank.exception.TTException;
 import org.treetank.filelistener.exceptions.StorageAlreadyExistsException;
 import org.treetank.filelistener.exceptions.StorageNotExistingException;
+import org.treetank.filelistener.file.node.FileNodeFactory;
+import org.treetank.filelistener.file.node.FilelistenerMetaPageFactory;
 import org.treetank.io.IBackend.IBackendFactory;
 import org.treetank.io.jclouds.JCloudsStorage;
 import org.treetank.revisioning.IRevisioning;
@@ -84,6 +89,15 @@ public class StorageManager {
             // Making it ready for usage.
             Storage.truncateStorage(configuration);
             Storage.createStorage(configuration);
+            
+            IStorage storage = Storage.openStorage(storageFile);
+            
+            Properties props = StandardSettings.getStandardProperties(storageFile.getAbsolutePath(), name);
+            ResourceConfiguration mResourceConfig =
+                new ResourceConfiguration(props, backend, revision, new FileNodeFactory(),
+                    new FilelistenerMetaPageFactory());
+            
+            storage.createResource(mResourceConfig);
         }
 
         return true;
