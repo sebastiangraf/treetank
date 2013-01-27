@@ -1,6 +1,7 @@
 package org.treetank.api;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
@@ -18,15 +19,15 @@ public interface IFilelistenerWriteTrx extends IFilelistenerPageTrx {
      * @param file
      * @param relativePath
      */
-    public void addFile(File file, String relativePath);
+    public void addFile(File pFile, String pRelativePath) throws TTException, IOException;
 
     /**
-     * Remove currently selected node.
+     * Remove file from desired path
      * 
      * @throws TTException
      *             if node couldn't be removed
      */
-    public void removeFile(long pkey) throws TTException;
+    public void removeFile(String pRelativePath) throws TTException;
 
     /**
      * Commit all modifications of the exclusive write transaction. Even commit
@@ -44,10 +45,4 @@ public interface IFilelistenerWriteTrx extends IFilelistenerPageTrx {
      *             if this revision couldn't be aborted
      */
     public void abort() throws TTException;
-
-    /**
-     * 
-     * @return the maximum node key in the list
-     */
-    public long getMaxNodeKey();
 }

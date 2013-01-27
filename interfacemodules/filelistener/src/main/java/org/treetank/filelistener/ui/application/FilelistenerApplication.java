@@ -73,8 +73,14 @@ public class FilelistenerApplication {
      */
     protected void createContents() {
         shell = new Shell();
-        shell.setBounds((int)(shell.getDisplay().getClientArea().width * 0.125), (int)(shell.getDisplay()
-            .getClientArea().height * 0.125), (int)(shell.getDisplay().getClientArea().width * 0.75),
+        
+        if(shell.getDisplay().getClientArea().width / shell.getDisplay().getClientArea().height < 2)
+            shell.setBounds((int)(shell.getDisplay().getClientArea().width * 0.125), (int)(shell.getDisplay()
+                .getClientArea().height * 0.125), (int)(shell.getDisplay().getClientArea().width * 0.75),
+                (int)(shell.getDisplay().getClientArea().height * 0.75));
+        else
+            shell.setBounds((int)(shell.getDisplay().getClientArea().width * 0.05), (int)(shell.getDisplay()
+            .getClientArea().height * 0.125), (int)(shell.getDisplay().getClientArea().width * 0.4),
             (int)(shell.getDisplay().getClientArea().height * 0.75));
         shell.setText("Treetank Fileservice");
 
@@ -98,6 +104,14 @@ public class FilelistenerApplication {
         mntmListenToA.setText("Listen to a folder");
 
         mntmExit = new MenuItem(menu_2, SWT.NONE);
+        mntmExit.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                composite.shutdown();
+                shell.dispose();
+                System.exit(0);
+            }
+        });
         mntmExit.setText("Exit");
 
         mntmEdit = new MenuItem(menu_1, SWT.CASCADE);

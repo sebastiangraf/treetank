@@ -1,5 +1,8 @@
 package org.treetank.api;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.treetank.exception.TTIOException;
 
 /**
@@ -10,12 +13,18 @@ import org.treetank.exception.TTIOException;
 public interface IFilelistenerPageTrx {
 
     /**
-     * The returned array consists of all the header filenode keys currently in
-     * the database.
+     * The returned array consists of all the relative paths there are in the storage.
      * 
      * @return
      */
-    public long[] getFileKeys();
+    public String[] getFilePaths();
+
+    /**
+     * The returned array consists of all the relative paths there are in the storage.
+     * 
+     * @return
+     */
+    public boolean fileExists(String pRelativePath);
 
     /**
      * This method allows you to get a full file using the node key of the
@@ -24,7 +33,7 @@ public interface IFilelistenerPageTrx {
      * @param pKey
      * @return true if successful, false otherwise
      */
-    public boolean getFullFile(long pKey);
+    public File getFullFile(String pRelativePath) throws TTIOException, IOException;
 
     /**
      * Close this transaction

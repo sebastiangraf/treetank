@@ -200,7 +200,6 @@
 			<activation>
 				<os>
 					<family>windows</family>
-					<arch>x86_x64</arch>
 				</os>
 			</activation>
 			<properties>

@@ -1,16 +1,19 @@
 package org.treetank.filelistener.ui.dialogs;
 
+import java.io.IOException;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.wb.swt.SWTResourceManager;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.treetank.filelistener.file.Filelistener;
 
 public class ListenToFolderDialog extends Dialog {
 
@@ -27,9 +30,9 @@ public class ListenToFolderDialog extends Dialog {
     /**
      * Properties for the storage to listen to
      */
-    private Text savePath;
-    private String listenFolder;
-    private String storageName;
+    private Text mSavePath;
+    private String mListenFolder;
+    private String mStorageName;
 
     /**
      * Create the dialog.
@@ -72,8 +75,8 @@ public class ListenToFolderDialog extends Dialog {
         lblFolder.setBounds(10, 10, 70, 17);
         lblFolder.setText("Folder:");
 
-        savePath = new Text(shell, SWT.BORDER);
-        savePath.setBounds(86, 10, 298, 27);
+        mSavePath = new Text(shell, SWT.BORDER);
+        mSavePath.setBounds(86, 10, 298, 27);
 
         button = new Button(shell, SWT.NONE);
         button.addSelectionListener(new SelectionAdapter() {
@@ -148,8 +151,8 @@ public class ListenToFolderDialog extends Dialog {
 
         dialog.open();
 
-        savePath.setText(dialog.getFilterPath());
-        this.storageName = savePath.getText();
+        mSavePath.setText(dialog.getFilterPath());
+        this.mListenFolder = mSavePath.getText();
     }
 
     protected void do_btnUseAnExisting_widgetSelected(final SelectionEvent e) {
@@ -166,7 +169,7 @@ public class ListenToFolderDialog extends Dialog {
         ChooseExisitingStorageDialog dialog = new ChooseExisitingStorageDialog(new Shell(), SWT.DIALOG_TRIM);
         dialog.open();
 
-        this.storageName = dialog.getStorageName();
+        this.mStorageName = dialog.getStorageName();
     }
 
     private void btnCreateStorageconfiguration() {
@@ -174,11 +177,17 @@ public class ListenToFolderDialog extends Dialog {
             new CreateStorageConfigurationDialog(new Shell(), SWT.DIALOG_TRIM);
         dialog.open();
 
-        this.storageName = dialog.getName();
+        this.mStorageName = dialog.getName();
     }
 
     private void btnSubmit() {
-        this.getParent().close();
+        try {
+            Filelistener.addFilelistener(this.mStorageName, this.mListenFolder);
+            
+            this.getParent().close();
+        } catch (ClassNotFoundException | IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void btnCancel() {
@@ -186,11 +195,11 @@ public class ListenToFolderDialog extends Dialog {
     }
 
     public String getListenFolder() {
-        return listenFolder;
+        return mListenFolder;
     }
 
     public String getStorageName() {
-        return storageName;
+        return mStorageName;
     }
 
 }
