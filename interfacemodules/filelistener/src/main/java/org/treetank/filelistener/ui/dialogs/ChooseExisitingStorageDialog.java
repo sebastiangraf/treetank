@@ -1,5 +1,7 @@
 package org.treetank.filelistener.ui.dialogs;
 
+import java.util.List;
+
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -65,9 +67,17 @@ public class ChooseExisitingStorageDialog extends Dialog {
         });
         combo.setBounds(10, 10, 272, 29);
 
-        for (String s : StorageManager.getStorages()) {
-            combo.add(s);
+        List<String> storages = StorageManager.getStorages();
+        
+        if(storages != null){
+            for (String s : StorageManager.getStorages()) {
+                combo.add(s);
+            }
         }
+        else{
+            combo.add("There are no existing storages.");
+        }
+        
 
         btnSubmit = new Button(shell, SWT.NONE);
         btnSubmit.addSelectionListener(new SelectionAdapter() {

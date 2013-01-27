@@ -26,16 +26,15 @@ public class FilelistenerMetaPageFactory implements IMetaEntryFactory{
     public IMetaEntry deserializeEntry(byte[] pData) {
         final ByteArrayDataInput input = ByteStreams.newDataInput(pData);
         final int kind = input.readInt();
-
-        final int valSize = input.readInt();
-        final byte[] bytes = new byte[valSize];
-        input.readFully(bytes);
         
         switch (kind) {
         case KEY:
+            final int valSize = input.readInt();
+            final byte[] bytes = new byte[valSize];
+            input.readFully(bytes);
             return new MetaKey(new String(bytes));
         case VALUE:
-            return new MetaValue(bytes);
+            return new MetaValue(input.readLong());
         }
         return null;
     }
@@ -71,6 +70,10 @@ public class FilelistenerMetaPageFactory implements IMetaEntryFactory{
             output.write(mKey.getBytes());
             return output.toByteArray();
         }
+        
+        public String getKey(){
+            return this.mKey;
+        }
 
         /**
          * {@inheritDoc}
@@ -98,7 +101,7 @@ public class FilelistenerMetaPageFactory implements IMetaEntryFactory{
      */
     public static class MetaValue implements IMetaEntry {
         /** Value Variable. */
-        private final byte[] mData;
+        private final long mData;
 
         /**
          * Constructor.
@@ -106,7 +109,7 @@ public class FilelistenerMetaPageFactory implements IMetaEntryFactory{
          * @param pData
          *            setting the value
          */
-        public MetaValue(final byte[] pData) {
+        public MetaValue(final long pData) {
             mData = pData;
         }
 
@@ -117,9 +120,7 @@ public class FilelistenerMetaPageFactory implements IMetaEntryFactory{
         public byte[] getByteRepresentation() {
             final ByteArrayDataOutput output = ByteStreams.newDataOutput();
             output.writeInt(VALUE);
-            final byte[] tmp = getData();
-            output.writeInt(tmp.length);
-            output.write(tmp);
+            output.writeLong(mData);
             return output.toByteArray();
         }
 
@@ -139,7 +140,7 @@ public class FilelistenerMetaPageFactory implements IMetaEntryFactory{
             return this.hashCode() == pObj.hashCode();
         }
 
-        public byte[] getData() {
+        public long getData() {
             return mData;
         }
 

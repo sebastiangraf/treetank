@@ -71,7 +71,7 @@ public class StorageManager {
         } else {
             StorageConfiguration configuration = new StorageConfiguration(storageFile);
 
-            Class clazz = null;
+            Class<?> clazz = null;
 
             switch (backendIndex) {
             case BACKEND_INDEX_JCLOUDS:
@@ -91,7 +91,7 @@ public class StorageManager {
             Storage.createStorage(configuration);
             
             IStorage storage = Storage.openStorage(storageFile);
-            
+
             Properties props = StandardSettings.getStandardProperties(storageFile.getAbsolutePath(), name);
             ResourceConfiguration mResourceConfig =
                 new ResourceConfiguration(props, backend, revision, new FileNodeFactory(),
@@ -106,6 +106,10 @@ public class StorageManager {
     public static List<String> getStorages() {
         File storageConfigurations = new File(STORAGE_CONFIGURATION_PATH);
         File[] children = storageConfigurations.listFiles();
+        
+        if(children == null){
+            return null;
+        }
 
         List<String> storages = new ArrayList<String>();
 
@@ -119,20 +123,13 @@ public class StorageManager {
 
     public static ISession getSession(String storageName) throws StorageNotExistingException, TTException {
         File storageFile = new File(STORAGE_CONFIGURATION_PATH + File.separator + storageName);
-
+        
         ISession session = null;
 
         if (!storageFile.exists()) {
             throw new StorageNotExistingException();
         } else {
             StorageConfiguration configuration = new StorageConfiguration(storageFile);
-
-            Class clazz = null;
-
-            // Creating and opening the storage.
-            // Making it ready for usage.
-            Storage.truncateStorage(configuration);
-            Storage.createStorage(configuration);
 
             IStorage storage = Storage.openStorage(storageFile);
 

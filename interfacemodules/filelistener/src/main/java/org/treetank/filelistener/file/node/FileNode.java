@@ -31,7 +31,7 @@ public class FileNode implements INode {
     /**
      * The size of the filenode
      */
-    public static final int FILENODESIZE = 0x512;
+    public static final int FILENODESIZE = 512;
 
     /**
      * NodeKey for EOF filenodes
@@ -55,14 +55,6 @@ public class FileNode implements INode {
     private boolean eof;
 
     /**
-     * Standard constructor with a size of 512 bytes for each node.
-     */
-    public FileNode(long nodeKey) {
-        this.nodeKey = nodeKey;
-        val = new byte[FILENODESIZE];
-    }
-
-    /**
      * Creates a Filenode with given bytes
      * 
      * @param content
@@ -72,7 +64,7 @@ public class FileNode implements INode {
     public FileNode(long nodeKey, byte[] content) throws WrongFilenodeDataLengthException {
         this.nodeKey = nodeKey;
 
-        if (content.length != 512) {
+        if (content.length != FILENODESIZE) {
             throw new WrongFilenodeDataLengthException();
         }
 
@@ -157,6 +149,14 @@ public class FileNode implements INode {
      */
     public boolean hasNext() {
         return !this.isEof();
+    }
+
+    public byte[] getVal() {
+        return val;
+    }
+
+    public void setVal(byte[] val) {
+        this.val = val;
     }
 
 }
