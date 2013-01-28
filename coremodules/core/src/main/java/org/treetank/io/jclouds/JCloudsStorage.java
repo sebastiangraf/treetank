@@ -66,12 +66,17 @@ public class JCloudsStorage implements IBackend {
         mFac = new PageFactory(pNodeFac, pMetaFac);
         mByteHandler = (ByteHandlerPipeline)pByteHandler;
         String[] awsCredentials = getCredentials();
-
-        mContext =
+        if (awsCredentials.length == 0) {
+            mContext =
+            ContextBuilder.newBuilder(mProperties.getProperty(ContructorProps.JCLOUDSTYPE)).overrides(
+                mProperties).buildView(
+                BlobStoreContext.class);
+        } else {
+            mContext =
             ContextBuilder.newBuilder(mProperties.getProperty(ContructorProps.JCLOUDSTYPE)).overrides(
                 mProperties).credentials(awsCredentials[0], awsCredentials[1]).buildView(
                 BlobStoreContext.class);
-
+        }
         mBlobStore = mContext.getBlobStore();
 
     }
