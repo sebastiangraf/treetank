@@ -1,25 +1,23 @@
 package org.treetank.filelistener.ui.application;
 
-import org.eclipse.swt.widgets.Dialog;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Composite;
+import java.io.IOException;
+
 import org.eclipse.swt.SWT;
-import org.treetank.filelistener.ui.composites.MainComposite;
-import org.treetank.filelistener.ui.dialogs.ListenToFolderDialog;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Shell;
+import org.treetank.filelistener.ui.composites.MainComposite;
+import org.treetank.filelistener.ui.dialogs.ListenToFolderDialog;
 
 public class FilelistenerApplication {
 
     protected Shell shell;
     private MainComposite composite;
-    private Menu menu;
     private Menu menu_1;
     private MenuItem mntmFile;
     private Menu menu_2;
@@ -140,6 +138,11 @@ public class FilelistenerApplication {
         ListenToFolderDialog dialog = new ListenToFolderDialog(new Shell(), SWT.DIALOG_TRIM);
         dialog.open();
 
-        composite.configurationListChanged();
+        try {
+            composite.configurationListChanged();
+        } catch (IOException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
     }
 }

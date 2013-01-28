@@ -80,7 +80,7 @@ public class FilelistenerPageTrx implements IFilelistenerPageTrx {
     public File getFullFile(String pRelativePath) throws TTIOException, IOException {
         MetaValue value = (MetaValue)mPageReadTrx.getMetaPage().getValue(new MetaKey(pRelativePath));
         
-        ByteArrayDataOutput output = ByteStreams.newDataOutput();
+        ByteArrayDataOutput output = ByteStreams.newDataOutput(FileNode.FILENODESIZE);
 
         FileNode node = (FileNode)mPageReadTrx.getNode(value.getData());
 
@@ -99,10 +99,6 @@ public class FilelistenerPageTrx implements IFilelistenerPageTrx {
         do{
             output.write(node.getVal());
             node = (FileNode)mPageReadTrx.getNode(node.getNextNodeKey());
-            
-            if(node.isEof()){
-                output.write(node.getVal());
-            }
         }
         while (!node.isEof());
         
