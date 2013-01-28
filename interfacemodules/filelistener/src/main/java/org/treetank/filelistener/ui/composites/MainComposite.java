@@ -13,10 +13,12 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.treetank.exception.TTException;
 import org.treetank.filelistener.exceptions.StorageNotExistingException;
 import org.treetank.filelistener.file.Filelistener;
+import org.treetank.filelistener.ui.dialogs.RestoreDialog;
 
 public class MainComposite extends Composite{
     private Label mLblFoldersYouAre;
@@ -139,10 +141,8 @@ public class MainComposite extends Composite{
                     try {
                         mListener.startListening();
                     } catch (StorageNotExistingException e1) {
-                        // TODO Auto-generated catch block
                         e1.printStackTrace();
                     } catch (TTException e1) {
-                        // TODO Auto-generated catch block
                         e1.printStackTrace();
                     }
                 }
@@ -166,5 +166,10 @@ public class MainComposite extends Composite{
             e.printStackTrace();
         }
         
+    }
+
+    public void restore() {
+        RestoreDialog d = new RestoreDialog(new Shell(), SWT.DIALOG_TRIM, mListener);
+        d.open();
     }
 }
