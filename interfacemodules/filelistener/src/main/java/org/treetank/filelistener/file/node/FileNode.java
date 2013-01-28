@@ -31,7 +31,7 @@ public class FileNode implements INode {
     /**
      * The size of the filenode
      */
-    public static final int FILENODESIZE = 512;
+    public static final int FILENODESIZE = 1048576;
 
     /**
      * NodeKey for EOF filenodes

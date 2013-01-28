@@ -145,7 +145,6 @@ public class ListenToFolderDialog extends Dialog {
     private void btnFolderDialog() {
         DirectoryDialog dialog = new DirectoryDialog(shell);
         dialog.setText("Choose a folder");
-        String platform = SWT.getPlatform();
         String homefolder = System.getProperty("user.home");
         dialog.setFilterPath(homefolder);
 

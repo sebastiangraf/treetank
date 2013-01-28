@@ -1,25 +1,24 @@
 package org.treetank.filelistener.ui.application;
 
-import org.eclipse.swt.widgets.Dialog;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Composite;
+import java.io.IOException;
+
 import org.eclipse.swt.SWT;
-import org.treetank.filelistener.ui.composites.MainComposite;
-import org.treetank.filelistener.ui.dialogs.ListenToFolderDialog;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Shell;
+import org.treetank.filelistener.ui.composites.MainComposite;
+import org.treetank.filelistener.ui.dialogs.ListenToFolderDialog;
+import org.treetank.filelistener.ui.dialogs.RestoreDialog;
 
 public class FilelistenerApplication {
 
     protected Shell shell;
-    private MainComposite composite;
-    private Menu menu;
+    private MainComposite mComposite;
     private Menu menu_1;
     private MenuItem mntmFile;
     private Menu menu_2;
@@ -31,6 +30,7 @@ public class FilelistenerApplication {
     private MenuItem mntmExit;
     private MenuItem mntmSettings_1;
     private MenuItem mntmAbout;
+    private MenuItem mntmRestoreConfigurationInto;
 
     /**
      * Launch the application.
@@ -53,7 +53,7 @@ public class FilelistenerApplication {
 
             @Override
             public void handleEvent(Event event) {
-                composite.setSize(shell.getClientArea().width, shell.getClientArea().height);
+                mComposite.setSize(shell.getClientArea().width, shell.getClientArea().height);
             }
 
         });
@@ -84,7 +84,7 @@ public class FilelistenerApplication {
             (int)(shell.getDisplay().getClientArea().height * 0.75));
         shell.setText("Treetank Fileservice");
 
-        composite = new MainComposite(shell, SWT.NONE);
+        mComposite = new MainComposite(shell, SWT.NONE);
 
         menu_1 = new Menu(shell, SWT.BAR);
 
@@ -102,12 +102,21 @@ public class FilelistenerApplication {
             }
         });
         mntmListenToA.setText("Listen to a folder");
+        
+        mntmRestoreConfigurationInto = new MenuItem(menu_2, SWT.NONE);
+        mntmRestoreConfigurationInto.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                do_mntmRestoreConfigurationInto_widgetSelected(e);
+            }
+        });
+        mntmRestoreConfigurationInto.setText("Restore configuration into a new folder");
 
         mntmExit = new MenuItem(menu_2, SWT.NONE);
         mntmExit.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                composite.shutdown();
+                mComposite.shutdown();
                 shell.dispose();
                 System.exit(0);
             }
@@ -140,6 +149,15 @@ public class FilelistenerApplication {
         ListenToFolderDialog dialog = new ListenToFolderDialog(new Shell(), SWT.DIALOG_TRIM);
         dialog.open();
 
-        composite.configurationListChanged();
+        try {
+            mComposite.configurationListChanged();
+        } catch (IOException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
+    }
+    
+    protected void do_mntmRestoreConfigurationInto_widgetSelected(final SelectionEvent e) {
+        mComposite.restore();
     }
 }

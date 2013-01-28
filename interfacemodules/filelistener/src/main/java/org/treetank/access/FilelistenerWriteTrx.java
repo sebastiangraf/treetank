@@ -1,11 +1,8 @@
 package org.treetank.access;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import org.treetank.api.IFilelistenerWriteTrx;
 import org.treetank.api.IPageWriteTrx;
@@ -18,8 +15,6 @@ import org.treetank.filelistener.file.node.FilelistenerMetaPageFactory.MetaKey;
 import org.treetank.filelistener.file.node.FilelistenerMetaPageFactory.MetaValue;
 
 import com.google.common.base.Preconditions;
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 
 /**
@@ -90,9 +85,10 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
     @Override
     public synchronized void addFile(File pFile, String pRelativePath) throws TTException, IOException {
         try {
-            byte[] fileBytes = Files.toByteArray(pFile);
+            BufferedInputStream stream = Files.asByteSource(pFile).openBufferedStream();
             
-            int byteCount = 0;
+            byte[] fileBytes = new byte[FileNode.FILENODESIZE];
+            stream.read(fileBytes);
             
             long newKey = getPageTransaction().incrementNodeKey();
 
@@ -108,54 +104,41 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
             // And adding it to the meta map
             getPageTransaction().createEntry(key, value);
 
-            ByteArrayDataInput fileBytesInput = ByteStreams.newDataInput(Files.toByteArray(pFile));
-
-            byte[] writingBytes = new byte[FileNode.FILENODESIZE];
-
             //Creating and setting the headernode.
             FileNode headerNode = new FileNode(newKey, new byte[FileNode.FILENODESIZE]);
             headerNode.setHeader(true);
             headerNode.setEof(false);
+                
+            headerNode.setVal(fileBytes);
             
-            try{
-                fileBytesInput.readFully(writingBytes);
-            }
-            catch(IllegalStateException e){
-                
-            }
-                
-            headerNode.setVal(writingBytes);
-            byteCount += FileNode.FILENODESIZE;
             getPageTransaction().setNode(headerNode);
             
             // Creating and setting following nodes based on the file size.
             FileNode node;
-            while(byteCount < fileBytes.length){
+            FileNode lastNode;
+            while(stream.read(fileBytes) >= 0){
                 node = new FileNode(getPageTransaction().incrementNodeKey(), new byte[FileNode.FILENODESIZE]);
                 node.setHeader(false);
-                System.out.println(byteCount);
-                if((byteCount + FileNode.FILENODESIZE) < fileBytes.length){
-                    node.setEof(false);
-                }
-                else{
-                    node.setEof(true);
-                }
+                node.setEof(false);
 
-                FileNode lastNode =
+                lastNode =
                     (FileNode)getPageTransaction().prepareNodeForModification(node.getNodeKey() - 1);
                 lastNode.setNextNodeKey(node.getNodeKey());
                 getPageTransaction().finishNodeModification(lastNode);
                 
-                if(fileBytes.length - byteCount >= FileNode.FILENODESIZE){
-                    fileBytesInput.readFully(writingBytes);
-                }
-                else{
-                    fileBytesInput.readFully(writingBytes, 0, fileBytes.length - byteCount);
-                }
-                node.setVal(writingBytes);
-                byteCount += FileNode.FILENODESIZE;
+                node.setVal(fileBytes);
                 getPageTransaction().setNode(node);
             }
+            
+            node = new FileNode(getPageTransaction().incrementNodeKey(), new byte[FileNode.FILENODESIZE]);
+            node.setHeader(false);
+            node.setEof(true);
+
+            lastNode =
+                (FileNode)getPageTransaction().prepareNodeForModification(node.getNodeKey() - 1);
+            lastNode.setNextNodeKey(node.getNodeKey());
+            getPageTransaction().finishNodeModification(lastNode);
+            getPageTransaction().setNode(node);
             
             Preconditions.checkArgument(getPageTransaction().getNode(newKey) != null);
             
@@ -172,8 +155,7 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
     public synchronized void removeFile(String pRelativePath) throws TTException {
         // If the file already exists we just override it
         // and remove the last meta entry since the key won't be correct anymore.
-        MetaValue value = (MetaValue) getPageTransaction().getMetaPage().getMetaMap().remove(new MetaKey(pRelativePath));
-        
+        getPageTransaction().getMetaPage().getMetaMap().remove(new MetaKey(pRelativePath));
     }
 
     /**

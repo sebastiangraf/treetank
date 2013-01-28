@@ -181,8 +181,13 @@ public class Filelistener {
         }
 
         // Closing all transactions.
-        for (IFilelistenerWriteTrx trx : mTrx.values()) {
-            trx.close();
+        try{
+            for (IFilelistenerWriteTrx trx : mTrx.values()) {
+                trx.close();
+            }
+        }
+        catch(IllegalStateException ise){
+            ise.printStackTrace();
         }
 
         // Closing all storages aswell.
@@ -194,14 +199,17 @@ public class Filelistener {
     /**
      * Shutdown listening to the defined folders and release all
      * bonds to Treetank.
+     * @throws IOException 
      */
-    public void shutDownListener() throws TTException {
+    public void shutDownListener() throws TTException, IOException {
         mExecutor.shutdown();
 
         Thread thr = mProcessingThread;
         if (thr != null) {
             thr.interrupt();
         }
+        
+        mWatcher.close();
 
         releaseSessions();
     }
@@ -226,7 +234,6 @@ public class Filelistener {
                 Object o = evt.context();
                 if (o instanceof Path) {
                     Path path = dir.resolve((Path)evt.context());
-
                     process(dir, path, eventType);
                 }
             }
@@ -278,8 +285,8 @@ public class Filelistener {
                             evtType);
                     worker.getQueue().offer(n);
 
-                    while (!worker.getQueue().contains(n))
-                        ;
+                    while (!worker.getQueue().contains(n));
+                    
                     worker.notify();
                 }
             }
@@ -287,6 +294,16 @@ public class Filelistener {
 
     }
 
+    /**
+     * In this method a subdirectory is being added to
+     * the system and watched.
+     * 
+     * This is necessary since the {@link WatchService}
+     * doesn't support watching a folder with higher depths
+     * than 1.
+     * @param root
+     * @param filePath
+     */
     private void addSubDirectory(Path root, Path filePath) {
         String listener = getListenerRootPath(root);
 
@@ -308,6 +325,15 @@ public class Filelistener {
         }
     }
 
+    /**
+     * This utility method allows you to
+     * get the root path for a subdirectory.
+     * 
+     * The root path is a directory that has been
+     * explicitly listened to and not just recursively.
+     * @param root
+     * @return returns the root path as a String
+     */
     private String getListenerRootPath(Path root) {
         String listener = "";
 
@@ -336,20 +362,7 @@ public class Filelistener {
 
         File listenerFilePaths = new File(StorageManager.ROOT_PATH + File.separator + "mapping.data");
 
-        if (!listenerFilePaths.exists()) {
-            java.nio.file.Files.createFile(listenerFilePaths.toPath());
-        } else {
-            byte[] bytes = java.nio.file.Files.readAllBytes(listenerFilePaths.toPath());
-
-            ByteArrayDataInput input = ByteStreams.newDataInput(bytes);
-
-            String key;
-            while ((key = input.readLine()) != null) {
-                String val = input.readLine();
-
-                mFilelistenerToPaths.put(key, val);
-            }
-        }
+        getFileListenersFromSystem(listenerFilePaths);
 
         return mFilelistenerToPaths;
     }
@@ -361,9 +374,11 @@ public class Filelistener {
      * @return
      */
     public boolean isWorking(Path dir) {
-        synchronized (mWorkers.get(getListenerRootPath(dir))) {
-            if (mWorkers.get(getListenerRootPath(dir)).isWorking()) {
-                return true;
+        if(mWorkers.get(getListenerRootPath(dir)) != null){
+            synchronized (mWorkers.get(getListenerRootPath(dir))) {
+                if (mWorkers.get(getListenerRootPath(dir)).isWorking()) {
+                    return true;
+                }
             }
         }
 
@@ -373,37 +388,22 @@ public class Filelistener {
     /**
      * Add a new filelistener to the system.
      * 
-     * @param storageName
-     * @param listenerPath
+     * @param pStorageName
+     * @param pListenerPath
      * @return return true if there has been a success.
      * @throws FileNotFoundException
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    public static boolean addFilelistener(String storageName, String listenerPath)
+    public static boolean addFilelistener(String pStorageName, String pListenerPath)
         throws FileNotFoundException, IOException, ClassNotFoundException {
         mFilelistenerToPaths = new HashMap<String, String>();
 
         File listenerFilePaths = new File(StorageManager.ROOT_PATH + File.separator + "mapping.data");
 
-        if (!listenerFilePaths.exists()) {
-            java.nio.file.Files.createFile(listenerFilePaths.toPath());
+        getFileListenersFromSystem(listenerFilePaths);
 
-            mFilelistenerToPaths.put(storageName, listenerPath);
-        } else {
-            byte[] bytes = java.nio.file.Files.readAllBytes(listenerFilePaths.toPath());
-
-            ByteArrayDataInput input = ByteStreams.newDataInput(bytes);
-
-            String key;
-            while ((key = input.readLine()) != null) {
-                String val = input.readLine();
-
-                mFilelistenerToPaths.put(key, val);
-            }
-
-            mFilelistenerToPaths.put(storageName, listenerPath);
-        }
+        mFilelistenerToPaths.put(pStorageName, pListenerPath);
 
         ByteArrayDataOutput output = ByteStreams.newDataOutput();
         for (Entry<String, String> e : mFilelistenerToPaths.entrySet()) {
@@ -415,6 +415,63 @@ public class Filelistener {
             StandardOpenOption.TRUNCATE_EXISTING);
 
         return true;
+    }
+    
+    /**
+     * You can remove a filelistener from the system identifying it with
+     * it's Storagename.
+     * 
+     * The listeners have to be shutdown to do this task.
+     * @param pStorageName
+     * @return
+     * @throws IOException
+     * @throws TTException 
+     */
+    public boolean removeFilelistener(String pStorageName) throws IOException, TTException{
+        mFilelistenerToPaths = new HashMap<String, String>();
+
+        File listenerFilePaths = new File(StorageManager.ROOT_PATH + File.separator + "mapping.data");
+
+        getFileListenersFromSystem(listenerFilePaths);
+
+        mFilelistenerToPaths.remove(pStorageName);
+        
+        StorageManager.removeStorage(pStorageName);
+
+        ByteArrayDataOutput output = ByteStreams.newDataOutput();
+        for (Entry<String, String> e : mFilelistenerToPaths.entrySet()) {
+            output.write((e.getKey() + "\n").getBytes());
+            output.write((e.getValue() + "\n").getBytes());
+        }
+
+        java.nio.file.Files.write(listenerFilePaths.toPath(), output.toByteArray(),
+            StandardOpenOption.TRUNCATE_EXISTING);
+
+        return true;
+    }
+    
+    /**
+     * This is a helper method that let's you initialize
+     * mFilelistenerToPaths with all the filelisteners that
+     * have been stored in the filesystem.
+     * @param pListenerFilePaths
+     * @throws IOException
+     */
+    private static void getFileListenersFromSystem(File pListenerFilePaths) throws IOException{
+        if (!pListenerFilePaths.exists()) {
+            java.nio.file.Files.createFile(pListenerFilePaths.toPath());
+        } else {
+            byte[] bytes = java.nio.file.Files.readAllBytes(pListenerFilePaths.toPath());
+
+            ByteArrayDataInput input = ByteStreams.newDataInput(bytes);
+
+            String key;
+            while ((key = input.readLine()) != null) {
+                String val = input.readLine();
+
+                mFilelistenerToPaths.put(key, val);
+            }
+        }
     }
 
     /**

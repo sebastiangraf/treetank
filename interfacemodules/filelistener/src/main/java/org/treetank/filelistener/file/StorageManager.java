@@ -89,25 +89,30 @@ public class StorageManager {
             // Making it ready for usage.
             Storage.truncateStorage(configuration);
             Storage.createStorage(configuration);
-            
+
             IStorage storage = Storage.openStorage(storageFile);
 
             Properties props = StandardSettings.getStandardProperties(storageFile.getAbsolutePath(), name);
             ResourceConfiguration mResourceConfig =
                 new ResourceConfiguration(props, backend, revision, new FileNodeFactory(),
                     new FilelistenerMetaPageFactory());
-            
+
             storage.createResource(mResourceConfig);
         }
 
         return true;
     }
 
+    /**
+     * Retrieve a list of all storages.
+     * 
+     * @return a list of all storage names
+     */
     public static List<String> getStorages() {
         File storageConfigurations = new File(STORAGE_CONFIGURATION_PATH);
         File[] children = storageConfigurations.listFiles();
-        
-        if(children == null){
+
+        if (children == null) {
             return null;
         }
 
@@ -121,15 +126,23 @@ public class StorageManager {
         return storages;
     }
 
+    /**
+     * Retrieve a session from the system for the given Storagename
+     * 
+     * @param storageName
+     * @return
+     * @throws StorageNotExistingException
+     * @throws TTException
+     */
     public static ISession getSession(String storageName) throws StorageNotExistingException, TTException {
         File storageFile = new File(STORAGE_CONFIGURATION_PATH + File.separator + storageName);
-        
+
         ISession session = null;
 
         if (!storageFile.exists()) {
             throw new StorageNotExistingException();
         } else {
-            StorageConfiguration configuration = new StorageConfiguration(storageFile);
+            new StorageConfiguration(storageFile);
 
             IStorage storage = Storage.openStorage(storageFile);
 
@@ -137,6 +150,50 @@ public class StorageManager {
         }
 
         return session;
+    }
+
+    /**
+     * Via this method you can
+     * remove a storage from the system.
+     * 
+     * It will delete the whole folder of the configuration.
+     * @param pStorageName
+     */
+    public static void removeStorage(String pStorageName) {
+        File storageConfigurations =
+            new File(new StringBuilder().append(STORAGE_CONFIGURATION_PATH).append(File.separator).append(
+                pStorageName).toString());
+        
+        for(File file : storageConfigurations.listFiles()){
+            if(file.isDirectory()){
+                removeRecursively(file);
+            }
+            else{
+                file.delete();
+            }
+        }
+        
+        storageConfigurations.delete();
+
+    }
+    
+    /**
+     * This utility method makes sure
+     * that every subfolder of the file
+     * is being deleted accuratly.
+     * @param pFile
+     */
+    private static void removeRecursively(File pFile){
+        for(File file : pFile.listFiles()){
+            if(file.isDirectory()){
+                removeRecursively(file);
+            }
+            else{
+                file.delete();
+            }
+        }
+        
+        pFile.delete();
     }
 
 }

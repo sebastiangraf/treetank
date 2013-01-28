@@ -44,8 +44,8 @@ public class FilesystemNotificationQueueWorker implements Callable<Void> {
                 handleWorktask(workTask);
                 mWorks = false;
                 
-                synchronized(this){
-                    this.notifyAll();
+                synchronized(mListener){
+                    mListener.notify();
                 }
             }
             else{
@@ -85,12 +85,8 @@ public class FilesystemNotificationQueueWorker implements Callable<Void> {
         else if(workTask.getEvtType() == ENTRY_DELETE){
             trx.removeFile(relativePath);
         }
-        System.out.println("Commited.");
         trx.commit();
-        
-        synchronized(mListener){
-            mListener.notify();
-        }
+        System.out.println("Commited.");
     }
 
     /**
