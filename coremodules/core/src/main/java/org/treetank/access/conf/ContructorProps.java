@@ -9,12 +9,12 @@ package org.treetank.access.conf;
  */
 public interface ContructorProps {
 
-    public static final String STORAGEPATH = "FILENAME";
+    public static final String STORAGEPATH = "treetank.filename";
     
-    public static final String RESOURCE = "RESOURCE";
+    public static final String RESOURCE = "treetank.resource";
 
-    public static final String JCLOUDSTYPE = "JCLOUDS";
+    public static final String JCLOUDSTYPE = "treetank.jclouds";
     
-    public static final String NUMBERTORESTORE = "NUMBERSTORESTORE";
+    public static final String NUMBERTORESTORE = "treetank.numbersofrestore";
     
 }

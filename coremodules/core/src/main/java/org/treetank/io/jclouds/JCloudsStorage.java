@@ -8,6 +8,7 @@ import java.util.Properties;
 import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.treetank.access.conf.ContructorProps;
 import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;
@@ -62,7 +63,7 @@ public class JCloudsStorage implements IBackend {
         mProperties = pProperties;
         mFac = new PageFactory(pNodeFac, pMetaFac);
         mByteHandler = (ByteHandlerPipeline)pByteHandler;
-        mContext =
+        mContext = 
             ContextBuilder.newBuilder(mProperties.getProperty(ContructorProps.JCLOUDSTYPE)).overrides(
                 mProperties).buildView(BlobStoreContext.class);
 
