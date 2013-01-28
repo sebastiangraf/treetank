@@ -3,6 +3,9 @@
  */
 package org.treetank.io.jclouds;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Properties;
 
 import org.jclouds.ContextBuilder;
@@ -62,9 +65,12 @@ public class JCloudsStorage implements IBackend {
         mProperties = pProperties;
         mFac = new PageFactory(pNodeFac, pMetaFac);
         mByteHandler = (ByteHandlerPipeline)pByteHandler;
+        String[] awsCredentials = getCredentials();
+
         mContext =
             ContextBuilder.newBuilder(mProperties.getProperty(ContructorProps.JCLOUDSTYPE)).overrides(
-                mProperties).buildView(BlobStoreContext.class);
+                mProperties).credentials(awsCredentials[0], awsCredentials[1]).buildView(
+                BlobStoreContext.class);
 
         mBlobStore = mContext.getBlobStore();
 
@@ -122,6 +128,27 @@ public class JCloudsStorage implements IBackend {
             returnVal = true;
         }
         return returnVal;
+    }
+
+    private static String[] getCredentials() {
+        File userStore =
+            new File(System.getProperty("user.home"), new StringBuilder(".imagecredentials").append(
+                File.separator).append("aws.properties").toString());
+        if (!userStore.exists()) {
+            return new String[0];
+        } else {
+            Properties props = new Properties();
+            try {
+                props.load(new FileReader(userStore));
+                return new String[] {
+                    props.getProperty("access"), props.getProperty("secret")
+                };
+
+            } catch (IOException exc) {
+                throw new RuntimeException(exc);
+            }
+        }
+
     }
 
 }

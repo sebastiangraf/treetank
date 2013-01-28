@@ -81,7 +81,7 @@
 		<module>interfacemodules/jax-rx</module>
 		<module>interfacemodules/xml</module>
 		<module>interfacemodules/iscsi</module>
-		<module>interfacemodules/filelistener</module>
+		<!--<module>interfacemodules/filelistener</module>-->
 	</modules>
 
 	<repositories>

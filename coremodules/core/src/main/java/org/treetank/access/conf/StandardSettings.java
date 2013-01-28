@@ -72,6 +72,7 @@ public class StandardSettings extends AbstractModule {
             .getName()).getAbsolutePath());
         properties.setProperty(ContructorProps.NUMBERTORESTORE, Integer.toString(4));
         properties.setProperty(Constants.PROPERTY_CREDENTIAL, "test");
+//        properties.setProperty(ContructorProps.JCLOUDSTYPE, "aws-s3");
         properties.setProperty(ContructorProps.JCLOUDSTYPE, "filesystem");
         // Class name for painter for imagehost
         // properties.setProperty(ImageStoreConstants.PROPERTY_BYTEPAINTER,
