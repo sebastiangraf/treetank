@@ -26,6 +26,7 @@
 		<groupId>treetank</groupId>
 		<artifactId>pom</artifactId>
 		<version>1.0.6-SNAPSHOT</version>
+		<relativePath>../../pom.xml</relativePath>
 	</parent>
 	<artifactId>filelistener</artifactId>
 	<name>Filelistener interface for Treetank</name>
