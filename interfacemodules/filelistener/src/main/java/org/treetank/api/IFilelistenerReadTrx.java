@@ -10,7 +10,7 @@ import org.treetank.exception.TTIOException;
  * @author Andreas Rain
  * 
  */
-public interface IFilelistenerPageTrx {
+public interface IFilelistenerReadTrx {
 
     /**
      * The returned array consists of all the relative paths there are in the storage.

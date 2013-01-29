@@ -26,14 +26,14 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
     private final ISession mSession;
 
     /** Delegator for the read access */
-    private final FilelistenerPageTrx mDelegate;
+    private final FilelistenerReadTrx mDelegate;
 
     /**
      * {@inheritDoc}
      */
     public FilelistenerWriteTrx(IPageWriteTrx pPageTrx, ISession pSession) throws TTException {
         mSession = pSession;
-        mDelegate = new FilelistenerPageTrx(pPageTrx);
+        mDelegate = new FilelistenerReadTrx(pPageTrx);
     }
 
     /**

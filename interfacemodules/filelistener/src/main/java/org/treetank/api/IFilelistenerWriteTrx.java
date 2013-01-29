@@ -11,7 +11,7 @@ import org.treetank.exception.TTIOException;
  * @author Andreas Rain
  * 
  */
-public interface IFilelistenerWriteTrx extends IFilelistenerPageTrx {
+public interface IFilelistenerWriteTrx extends IFilelistenerReadTrx {
 
     /**
      * Add a new file to the system
