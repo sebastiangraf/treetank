@@ -31,7 +31,7 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
  * @author Andreas Rain
  * 
  */
-public class ByteNodeModuleFactory implements IModuleFactory {
+public class ByteModuleFactory implements IModuleFactory {
 
     /**
      * {@inheritDoc}

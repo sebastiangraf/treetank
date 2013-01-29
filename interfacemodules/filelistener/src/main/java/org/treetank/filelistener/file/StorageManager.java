@@ -18,7 +18,9 @@ import org.treetank.filelistener.exceptions.StorageAlreadyExistsException;
 import org.treetank.filelistener.exceptions.StorageNotExistingException;
 import org.treetank.filelistener.file.node.FileNodeFactory;
 import org.treetank.filelistener.file.node.FilelistenerMetaPageFactory;
+import org.treetank.io.IBackend;
 import org.treetank.io.IBackend.IBackendFactory;
+import org.treetank.io.IOUtils;
 import org.treetank.io.jclouds.JCloudsStorage;
 import org.treetank.revisioning.IRevisioning;
 
@@ -71,7 +73,7 @@ public class StorageManager {
         } else {
             StorageConfiguration configuration = new StorageConfiguration(storageFile);
 
-            Class<?> clazz = null;
+            Class<? extends IBackend> clazz = null;
 
             switch (backendIndex) {
             case BACKEND_INDEX_JCLOUDS:
@@ -157,43 +159,20 @@ public class StorageManager {
      * remove a storage from the system.
      * 
      * It will delete the whole folder of the configuration.
+     * 
      * @param pStorageName
      */
     public static void removeStorage(String pStorageName) {
         File storageConfigurations =
             new File(new StringBuilder().append(STORAGE_CONFIGURATION_PATH).append(File.separator).append(
                 pStorageName).toString());
-        
-        for(File file : storageConfigurations.listFiles()){
-            if(file.isDirectory()){
-                removeRecursively(file);
-            }
-            else{
-                file.delete();
-            }
+
+        for (File file : storageConfigurations.listFiles()) {
+            IOUtils.recursiveDelete(file);
         }
-        
+
         storageConfigurations.delete();
 
-    }
-    
-    /**
-     * This utility method makes sure
-     * that every subfolder of the file
-     * is being deleted accuratly.
-     * @param pFile
-     */
-    private static void removeRecursively(File pFile){
-        for(File file : pFile.listFiles()){
-            if(file.isDirectory()){
-                removeRecursively(file);
-            }
-            else{
-                file.delete();
-            }
-        }
-        
-        pFile.delete();
     }
 
 }

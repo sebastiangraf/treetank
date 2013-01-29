@@ -35,7 +35,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
-import org.treetank.ByteNodeModuleFactory;
+import org.treetank.ByteModuleFactory;
 import org.treetank.CoreTestHelper;
 import org.treetank.Holder;
 import org.treetank.access.conf.ResourceConfiguration;
@@ -48,7 +48,7 @@ import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
 
-@Guice(moduleFactory = ByteNodeModuleFactory.class)
+@Guice(moduleFactory = ByteModuleFactory.class)
 public final class TransactionTest {
 
     int size = 512;

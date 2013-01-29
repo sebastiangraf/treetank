@@ -5,16 +5,29 @@ import static org.testng.Assert.assertTrue;
 
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.util.Properties;
 import java.util.Random;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
+import org.treetank.CoreTestHelper;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.StandardSettings;
+import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.filelistener.file.node.FileNode;
 
 import com.google.common.io.Files;
+import com.google.inject.Inject;
 
+@Guice(moduleFactory = FileModuleFactory.class)
 public class FilelistenerTest {
+
+    @Inject
+    private IResourceConfigurationFactory mResourceConfig;
+
+    private ResourceConfiguration mResource;
 
     private Filelistener listener;
 
@@ -25,7 +38,14 @@ public class FilelistenerTest {
 
     @BeforeMethod
     public void setUp() throws Exception {
-        tmpDir = Files.createTempDir();
+
+        CoreTestHelper.deleteEverything();
+        Properties props =
+            StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                CoreTestHelper.RESOURCENAME);
+        mResource = mResourceConfig.create(props);
+
+        tmpDir = CoreTestHelper.PATHS.PATH1.getFile();
         System.out.println(tmpDir.getAbsolutePath());
 
         listener = new Filelistener();

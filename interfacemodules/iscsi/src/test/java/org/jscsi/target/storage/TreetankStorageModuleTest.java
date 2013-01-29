@@ -37,7 +37,7 @@ import java.util.Properties;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
-import org.treetank.ByteNodeModuleFactory;
+import org.treetank.ByteModuleFactory;
 import org.treetank.CoreTestHelper;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
@@ -47,7 +47,7 @@ import org.treetank.exception.TTException;
 
 import com.google.inject.Inject;
 
-@Guice(moduleFactory = ByteNodeModuleFactory.class)
+@Guice(moduleFactory = ByteModuleFactory.class)
 public class TreetankStorageModuleTest {
 
     private TreetankStorageModule storageModule;
