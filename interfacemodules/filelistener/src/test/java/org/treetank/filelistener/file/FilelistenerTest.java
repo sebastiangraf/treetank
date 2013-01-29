@@ -21,14 +21,8 @@ import org.treetank.filelistener.file.node.FileNode;
 import com.google.common.io.Files;
 import com.google.inject.Inject;
 
-@Guice(moduleFactory = FileModuleFactory.class)
 public class FilelistenerTest {
-
-    @Inject
-    private IResourceConfigurationFactory mResourceConfig;
-
-    private ResourceConfiguration mResource;
-
+    
     private Filelistener listener;
 
     private File tmpDir;
@@ -38,15 +32,7 @@ public class FilelistenerTest {
 
     @BeforeMethod
     public void setUp() throws Exception {
-
-        CoreTestHelper.deleteEverything();
-        Properties props =
-            StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
-                CoreTestHelper.RESOURCENAME);
-        mResource = mResourceConfig.create(props);
-
-        tmpDir = CoreTestHelper.PATHS.PATH1.getFile();
-        System.out.println(tmpDir.getAbsolutePath());
+        tmpDir = Files.createTempDir();
 
         listener = new Filelistener();
         listener.watchDir(tmpDir);

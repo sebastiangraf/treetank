@@ -15,6 +15,8 @@ import org.treetank.filelistener.file.node.FilelistenerMetaPageFactory.MetaKey;
 import org.treetank.filelistener.file.node.FilelistenerMetaPageFactory.MetaValue;
 
 import com.google.common.base.Preconditions;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 
 /**
@@ -85,17 +87,18 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
     @Override
     public synchronized void addFile(File pFile, String pRelativePath) throws TTException, IOException {
         try {
+            int readingAmount = 0;
+            
             BufferedInputStream stream = Files.asByteSource(pFile).openBufferedStream();
             
             byte[] fileBytes = new byte[FileNode.FILENODESIZE];
-            stream.read(fileBytes);
+            readingAmount += stream.read(fileBytes);
             
             long newKey = getPageTransaction().incrementNodeKey();
 
             if (fileExists(pRelativePath)) {
                 removeFile(pRelativePath);
             }
-            
 
             // Setting a new header file node
             MetaKey key = new MetaKey(pRelativePath);
@@ -116,7 +119,9 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
             // Creating and setting following nodes based on the file size.
             FileNode node;
             FileNode lastNode;
-            while(stream.read(fileBytes) >= 0){
+            
+            int currentReadingAmount = 0;
+            while((currentReadingAmount = stream.read(fileBytes)) >= 0){
                 node = new FileNode(getPageTransaction().incrementNodeKey(), new byte[FileNode.FILENODESIZE]);
                 node.setHeader(false);
                 node.setEof(false);
@@ -128,16 +133,40 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
                 
                 node.setVal(fileBytes);
                 getPageTransaction().setNode(node);
+                
+                readingAmount += currentReadingAmount;
             }
             
-            node = new FileNode(getPageTransaction().incrementNodeKey(), new byte[FileNode.FILENODESIZE]);
+            System.out.println("HELLAU");
+            
+            ByteArrayDataOutput size = ByteStreams.newDataOutput(FileNode.FILENODESIZE);
+            
+            System.out.println("HELLAU");
+            size.write(readingAmount);
+            
+            System.out.println("HELLAU");
+            
+            node = new FileNode(getPageTransaction().incrementNodeKey(), size.toByteArray());
+            
+            System.out.println("HELLAU");
             node.setHeader(false);
             node.setEof(true);
 
             lastNode =
                 (FileNode)getPageTransaction().prepareNodeForModification(node.getNodeKey() - 1);
+            
+            System.out.println("HELLAU");
             lastNode.setNextNodeKey(node.getNodeKey());
+            
+            System.out.println("HELLAU");
+            
+            System.out.println(lastNode.getNodeKey());
+            System.out.println(lastNode.getNextNodeKey());
+            System.out.println(node.getNodeKey());
+            System.out.println(node.getNextNodeKey());
+            
             getPageTransaction().finishNodeModification(lastNode);
+            
             getPageTransaction().setNode(node);
             
             Preconditions.checkArgument(getPageTransaction().getNode(newKey) != null);
