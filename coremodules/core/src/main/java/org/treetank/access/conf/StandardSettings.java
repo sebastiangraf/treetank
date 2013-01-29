@@ -4,6 +4,8 @@
 package org.treetank.access.conf;
 
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.security.Key;
 import java.util.Properties;
 
@@ -66,14 +68,23 @@ public class StandardSettings extends AbstractModule {
         Properties properties = new Properties();
         properties.setProperty(ContructorProps.STORAGEPATH, pathToStorage);
         properties.setProperty(ContructorProps.RESOURCE, resource);
+        properties.setProperty(ContructorProps.NUMBERTORESTORE, Integer.toString(4));
         properties.setProperty(FilesystemConstants.PROPERTY_BASEDIR, new File(new File(new File(properties
             .getProperty(ContructorProps.STORAGEPATH), StorageConfiguration.Paths.Data.getFile().getName()),
             properties.getProperty(ContructorProps.RESOURCE)), ResourceConfiguration.Paths.Data.getFile()
             .getName()).getAbsolutePath());
-        properties.setProperty(ContructorProps.NUMBERTORESTORE, Integer.toString(4));
-        properties.setProperty(Constants.PROPERTY_CREDENTIAL, "test");
-//        properties.setProperty(ContructorProps.JCLOUDSTYPE, "aws-s3");
+
+        // properties.setProperty(ContructorProps.JCLOUDSTYPE, "aws-s3");
         properties.setProperty(ContructorProps.JCLOUDSTYPE, "filesystem");
+
+        String[] awsCredentials = getCredentials();
+        if (awsCredentials.length == 0) {
+            properties.setProperty(Constants.PROPERTY_CREDENTIAL, "test");
+        } else {
+            properties.setProperty(Constants.PROPERTY_IDENTITY, awsCredentials[0]);
+            properties.setProperty(Constants.PROPERTY_CREDENTIAL, awsCredentials[1]);
+        }
+
         // Class name for painter for imagehost
         // properties.setProperty(ImageStoreConstants.PROPERTY_BYTEPAINTER,
         // "org.jclouds.imagestore.imagegenerator.bytepainter.HexadecimalBytesToImagePainter");
@@ -84,4 +95,26 @@ public class StandardSettings extends AbstractModule {
         // "org.jclouds.imagestore.imagehoster.flickr.ImageHostFlickr");
         return properties;
     }
+
+    private static String[] getCredentials() {
+        File userStore =
+            new File(System.getProperty("user.home"), new StringBuilder(".imagecredentials").append(
+                File.separator).append("aws.properties").toString());
+        if (!userStore.exists()) {
+            return new String[0];
+        } else {
+            Properties props = new Properties();
+            try {
+                props.load(new FileReader(userStore));
+                return new String[] {
+                    props.getProperty("access"), props.getProperty("secret")
+                };
+
+            } catch (IOException exc) {
+                throw new RuntimeException(exc);
+            }
+        }
+
+    }
+
 }

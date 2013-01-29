@@ -69,7 +69,7 @@ import com.google.common.io.Files;
  */
 public final class CoreTestHelper {
 
-    public static final String RESOURCENAME = "tmp";
+    public static final String RESOURCENAME = "grave928134589762";
 
     /** Paths where the data is stored to. */
     public enum PATHS {
