@@ -355,8 +355,8 @@ public final class PageWriteTrx implements IPageWriteTrx {
                 final long newKey = mNewUber.incrementPageCounter();
                 page = new IndirectPage(newKey);
 
-                // ...check if there is an existing indirect page...
-                if (parentPage.getReferenceKeys()[parentOffset] != 0) {
+                // ...check if there is an existing indirect page over the parent...
+                if (parentPage.getReferenceKeys()[offset] != 0) {
                     IndirectPage oldPage;
                     // ...try to retrieve the former page from the log..
                     LogKey oldKey =
@@ -371,12 +371,10 @@ public final class PageWriteTrx implements IPageWriteTrx {
                         for (int i = 0; i < oldPage.getReferenceKeys().length; i++) {
                             page.setReferenceKey(i, oldPage.getReferenceKeys()[i]);
                         }
-                    } else {
-                        parentOffset = offset;
                     }
                 }
                 // Set the reference to the current revision..
-                parentPage.setReferenceKey(parentOffset, newKey);
+                parentPage.setReferenceKey(offset, newKey);
                 container = new NodePageContainer(parentPage, parentPage);
                 // .. and put the parent-reference to the log as well as the reference of the..
                 mLog.put(parentKey, container);

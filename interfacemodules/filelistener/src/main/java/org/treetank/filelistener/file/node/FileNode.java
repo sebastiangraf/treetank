@@ -63,11 +63,6 @@ public class FileNode implements INode {
      */
     public FileNode(long nodeKey, byte[] content) throws WrongFilenodeDataLengthException {
         this.nodeKey = nodeKey;
-
-        if (content.length != FILENODESIZE) {
-            throw new WrongFilenodeDataLengthException();
-        }
-
         val = content;
     }
 

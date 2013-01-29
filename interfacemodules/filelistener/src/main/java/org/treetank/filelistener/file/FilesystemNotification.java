@@ -2,6 +2,7 @@ package org.treetank.filelistener.file;
 
 import java.io.File;
 import java.nio.file.WatchEvent;
+import java.util.Objects;
 
 /**
  * This class is used to safe notifications
@@ -58,17 +59,14 @@ public class FilesystemNotification {
         return mEvtType;
     }
 
+    @Override
+    public int hashCode(){
+        return Objects.hash(mEvtType, mRelativePath, mRootPath, mFile);
+    }
+    
+    @Override
     public boolean equals(Object o) {
-        if (o instanceof FilesystemNotification) {
-            if (((FilesystemNotification)o).getEvtType() == this.getEvtType()
-                && ((FilesystemNotification)o).getRelativePath().equals(mRelativePath)
-                && ((FilesystemNotification)o).getRootPath().equals(mRootPath)
-                && ((FilesystemNotification)o).getFile().equals(mFile)) {
-                return true;
-            }
-        }
-
-        return false;
+        return this.hashCode() == o.hashCode();
     }
 
 }

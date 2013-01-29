@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.SWTResourceManager;
-import org.treetank.api.IFilelistenerPageTrx;
+import org.treetank.api.IFilelistenerReadTrx;
 import org.treetank.exception.TTIOException;
 import org.treetank.filelistener.file.Filelistener;
 
@@ -158,7 +158,7 @@ public class RestoreDialog extends Dialog {
     protected void do_mBtnSubmit_widgetSelected(final SelectionEvent e) {
         File f = new File(this.mListenFolder);
 
-        IFilelistenerPageTrx trx = mListener.getTrx(mCombo.getText());
+        IFilelistenerReadTrx trx = mListener.getTrx(mCombo.getText());
 
         if (!f.exists()) {
             // TODO: Errordialog no folder..

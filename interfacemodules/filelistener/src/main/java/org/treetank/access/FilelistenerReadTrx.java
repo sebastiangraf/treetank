@@ -3,7 +3,7 @@ package org.treetank.access;
 import java.io.File;
 import java.io.IOException;
 
-import org.treetank.api.IFilelistenerPageTrx;
+import org.treetank.api.IFilelistenerReadTrx;
 import org.treetank.api.IPageReadTrx;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
@@ -18,7 +18,7 @@ import com.google.common.io.Files;
 /**
  * @author Andreas Rain
  */
-public class FilelistenerPageTrx implements IFilelistenerPageTrx {
+public class FilelistenerReadTrx implements IFilelistenerReadTrx {
 
     /** State of transaction including all cached stuff. */
     protected IPageReadTrx mPageReadTrx;
@@ -35,7 +35,7 @@ public class FilelistenerPageTrx implements IFilelistenerPageTrx {
      * @throws TTIOException
      *             if something odd happens within the creation process.
      */
-    public FilelistenerPageTrx(final IPageReadTrx pPageTrx) throws TTException {
+    public FilelistenerReadTrx(final IPageReadTrx pPageTrx) throws TTException {
         mPageReadTrx = pPageTrx;
         mTmpDir = Files.createTempDir();
     }
