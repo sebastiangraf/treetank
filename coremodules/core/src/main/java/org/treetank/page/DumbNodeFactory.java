@@ -3,6 +3,8 @@
  */
 package org.treetank.page;
 
+import static com.google.common.base.Objects.toStringHelper;
+
 import java.util.Objects;
 
 import org.treetank.api.INode;
@@ -112,9 +114,7 @@ public class DumbNodeFactory implements INodeFactory {
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("DumbNodeFactory []");
-        return builder.toString();
+        return toStringHelper(this).toString();
     }
 
 }
