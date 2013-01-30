@@ -65,74 +65,40 @@ public class FilelistenerTest {
                     "test1.txt").toString());
             file1.createNewFile();
 
-            synchronized (listener) {
-                listener.wait();
-            }
-
             Files.write(randomBytes, file1);
-
-            synchronized (listener) {
-                listener.wait();
-            }
 
             File file2 =
                 new File(new StringBuilder().append(tmpDir.getAbsolutePath()).append(File.separator).append(
                     "test2.txt").toString());
             file2.createNewFile();
 
-            synchronized (listener) {
-                listener.wait();
-            }
-
+            rand = new Random(42+1);
             rand.nextBytes(randomBytes);
             Files.write(randomBytes, file2);
-
-            synchronized (listener) {
-                listener.wait();
-            }
 
             File file3 =
                 new File(new StringBuilder().append(tmpDir.getAbsolutePath()).append(File.separator).append(
                     "test3.txt").toString());
             file3.createNewFile();
-            Thread.sleep(2500);
 
-            synchronized (listener) {
-                listener.wait();
-            }
-
+            rand = new Random(42+2);
             rand.nextBytes(randomBytes);
             Files.write(randomBytes, file3);
 
-            synchronized (listener) {
-                listener.wait();
-            }
-
             assertTrue(file2.delete());
-
-            synchronized (listener) {
-                listener.wait();
-            }
 
             File file4 =
                 new File(new StringBuilder().append(tmpDir.getAbsolutePath()).append(File.separator).append(
                     "test4.txt").toString());
             file4.createNewFile();
 
-            synchronized (listener) {
-                listener.wait();
-            }
-
+            rand = new Random(42+3);
             rand.nextBytes(randomBytes);
             Files.write(randomBytes, file4);
 
             synchronized (listener) {
-                listener.wait();
-            }
-
-            synchronized (listener) {
                 while (listener.isWorking(tmpDir.toPath())) {
-                    listener.wait();
+                    this.wait();
                 }
             }
 
@@ -144,6 +110,10 @@ public class FilelistenerTest {
                         file1Tmp = listener.getTrx("test" + tmpDir.getName()).getFullFile("\\test1.txt");
                     } else {
                         file1Tmp = listener.getTrx("test" + tmpDir.getName()).getFullFile("/test1.txt");
+                    }
+                    
+                    if(Files.toByteArray(file1Tmp) != Files.toByteArray(file1)){
+                        file1Tmp = null;
                     }
                 } catch (NullPointerException e) {
                     Thread.sleep(2500);
@@ -162,12 +132,6 @@ public class FilelistenerTest {
 
             assertEquals(file1bytes, file1Tmpbytes);
 
-            synchronized (listener) {
-                while (listener.isWorking(tmpDir.toPath())) {
-                    listener.wait();
-                }
-            }
-
             File file3Tmp = null;
 
             while (file3Tmp == null) {
@@ -176,6 +140,10 @@ public class FilelistenerTest {
                         file3Tmp = listener.getTrx("test" + tmpDir.getName()).getFullFile("\\test3.txt");
                     } else {
                         file3Tmp = listener.getTrx("test" + tmpDir.getName()).getFullFile("/test3.txt");
+                    }
+                    
+                    if(Files.toByteArray(file3Tmp) != Files.toByteArray(file3)){
+                        file3Tmp = null;
                     }
                 } catch (NullPointerException e) {
                     Thread.sleep(2500);
@@ -194,12 +162,6 @@ public class FilelistenerTest {
 
             assertEquals(file3bytes, file3Tmpbytes);
 
-            synchronized (listener) {
-                while (listener.isWorking(tmpDir.toPath())) {
-                    listener.wait();
-                }
-            }
-
             File file4Tmp = null;
 
             while (file4Tmp == null) {
@@ -208,6 +170,10 @@ public class FilelistenerTest {
                         file4Tmp = listener.getTrx("test" + tmpDir.getName()).getFullFile("\\test4.txt");
                     } else {
                         file4Tmp = listener.getTrx("test" + tmpDir.getName()).getFullFile("/test4.txt");
+                    }
+                    
+                    if(Files.toByteArray(file4Tmp) != Files.toByteArray(file1)){
+                        file4Tmp = null;
                     }
                 } catch (NullPointerException e) {
                     Thread.sleep(2500);
@@ -218,12 +184,11 @@ public class FilelistenerTest {
 
             byte[] file4bytes = new byte[FileNode.FILENODESIZE];
             file4InputStream.read(file4bytes);
-
             BufferedInputStream file4TmpInputStream = Files.asByteSource(file4).openBufferedStream();
 
             byte[] file4Tmpbytes = new byte[FileNode.FILENODESIZE];
             file4TmpInputStream.read(file4Tmpbytes);
-
+            
             assertEquals(file4bytes, file4Tmpbytes);
         } catch (Exception exc) {
             destroy();

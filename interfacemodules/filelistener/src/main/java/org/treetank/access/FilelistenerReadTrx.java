@@ -1,7 +1,10 @@
 package org.treetank.access;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 import org.treetank.api.IFilelistenerReadTrx;
 import org.treetank.api.IPageReadTrx;
@@ -12,8 +15,10 @@ import org.treetank.filelistener.file.node.FilelistenerMetaPageFactory.MetaKey;
 import org.treetank.filelistener.file.node.FilelistenerMetaPageFactory.MetaValue;
 
 import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
+import com.google.common.io.OutputSupplier;
 
 /**
  * @author Andreas Rain
@@ -25,6 +30,9 @@ public class FilelistenerReadTrx implements IFilelistenerReadTrx {
 
     /** A dir used to generate the files in. */
     private final File mTmpDir;
+    
+    /** A special Key for empty files */
+    public static final long emptyFileKey = Long.MIN_VALUE;
 
     /**
      * Constructor.
@@ -79,10 +87,6 @@ public class FilelistenerReadTrx implements IFilelistenerReadTrx {
     @Override
     public File getFullFile(String pRelativePath) throws TTIOException, IOException {
         MetaValue value = (MetaValue)mPageReadTrx.getMetaPage().getValue(new MetaKey(pRelativePath));
-        
-        ByteArrayDataOutput output = ByteStreams.newDataOutput(FileNode.FILENODESIZE);
-
-        FileNode node = (FileNode)mPageReadTrx.getNode(value.getData());
 
         File file =
             new File(new StringBuilder().append(mTmpDir.getAbsolutePath()).append(File.separator).append(
@@ -93,16 +97,26 @@ public class FilelistenerReadTrx implements IFilelistenerReadTrx {
         }
 
         file.createNewFile();
+        
+        if(value.getData() == emptyFileKey){
+            return file;
+        }
+        
+        ByteArrayDataOutput output = ByteStreams.newDataOutput(FileNode.FILENODESIZE);
+
+        FileNode node = (FileNode)mPageReadTrx.getNode(value.getData());
+        
+        OutputSupplier<FileOutputStream> supplier = Files.newOutputStreamSupplier(file, true);
 
         // Iterating as long as we didn't find the end of the file
         // and writing the bytes to a temporary file.
         do{
-            output.write(node.getVal());
+            supplier.getOutput().write(node.getVal());
             node = (FileNode)mPageReadTrx.getNode(node.getNextNodeKey());
         }
         while (!node.isEof());
         
-        Files.write(output.toByteArray(), file);
+        supplier.getOutput().close();
         
         return file;
     }

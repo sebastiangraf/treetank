@@ -17,13 +17,13 @@ public class FilesystemNotificationQueueWorker implements Callable<Void> {
 
     /** Queue this worker is working on */
     private ConcurrentLinkedQueue<FilesystemNotification> mQueue;
-    
+
     /** Filelistener that created this worked */
     private Filelistener mListener;
-    
+
     /** Determine whether or not this callable has been disposed. */
     private boolean mDisposed = false;
-    
+
     private boolean mWorks = false;
 
     public FilesystemNotificationQueueWorker(Filelistener pListener) {
@@ -36,53 +36,51 @@ public class FilesystemNotificationQueueWorker implements Callable<Void> {
      * it will handle all filesystemchanges.
      */
     @Override
-    public Void call() throws FileNotFoundException, ClassNotFoundException, IOException, TTException, InterruptedException {
+    public Void call() throws FileNotFoundException, ClassNotFoundException, IOException, TTException,
+        InterruptedException {
         while (!mDisposed) {
-            if(!mQueue.isEmpty()){
+            if (!mQueue.isEmpty()) {
                 FilesystemNotification workTask = mQueue.poll();
                 mWorks = true;
                 handleWorktask(workTask);
-                mWorks = false;
-                
-                synchronized(mListener){
-                    mListener.notify();
-                }
-            }
-            else{
-                synchronized(this){
+
+                //if (mQueue.isEmpty()) {
+                    mWorks = false;
+
+                    synchronized (mListener) {
+                        mListener.notify();
+                    }
+                //}
+            } else {
+                synchronized (this) {
                     this.wait();
                 }
             }
         }
         return null;
     }
-    
-    private void handleWorktask(FilesystemNotification workTask) throws FileNotFoundException, ClassNotFoundException, IOException, TTException, InterruptedException{
+
+    private void handleWorktask(FilesystemNotification workTask) throws FileNotFoundException,
+        ClassNotFoundException, IOException, TTException, InterruptedException {
         IFilelistenerWriteTrx trx = null;
-        
+
         String relativePath = workTask.getRelativePath();
-        
-        for(Entry<String, String> e : Filelistener.getFilelisteners().entrySet()){
-            if(e.getValue().equals(workTask.getRootPath())){
+
+        for (Entry<String, String> e : Filelistener.getFilelisteners().entrySet()) {
+            if (e.getValue().equals(workTask.getRootPath())) {
                 trx = mListener.getTrx(e.getKey());
             }
         }
         System.out.println(workTask.getEvtType());
         System.out.println(relativePath);
-        if(workTask.getEvtType() == ENTRY_CREATE){
-            while(!workTask.getFile().exists()){
-                Thread.sleep(50);
-            }
-            
-            trx.addFile(workTask.getFile(), relativePath);
-        }
-        else if(workTask.getEvtType() == ENTRY_MODIFY){
+        if (workTask.getEvtType() == ENTRY_CREATE) {
+            trx.addEmptyFile(relativePath);
+        } else if (workTask.getEvtType() == ENTRY_MODIFY) {
             trx.removeFile(relativePath);
-            if(workTask.getFile().exists()){
+            if (workTask.getFile().exists()) {
                 trx.addFile(workTask.getFile(), relativePath);
             }
-        }
-        else if(workTask.getEvtType() == ENTRY_DELETE){
+        } else if (workTask.getEvtType() == ENTRY_DELETE) {
             trx.removeFile(relativePath);
         }
         trx.commit();
