@@ -19,6 +19,8 @@ import org.treetank.page.PageFactory;
 import org.treetank.page.UberPage;
 import org.treetank.page.interfaces.IPage;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.common.io.ByteStreams;
 
 /**
@@ -39,12 +41,16 @@ public class JCloudsReader implements IBackendReader {
     /** Resource name of this container and the database. */
     protected final String mResourceName;
 
+    /** Cache for reading data. */
+    private final Cache<Long, IPage> mCache;
+
     public JCloudsReader(BlobStore pBlobStore, PageFactory pFac, IByteHandlerPipeline pByteHandler,
         String pResourceName) throws TTException {
         mBlobStore = pBlobStore;
         mByteHandler = pByteHandler;
         mFac = pFac;
         mResourceName = pResourceName;
+        mCache = CacheBuilder.newBuilder().maximumSize(10000).build();
     }
 
     /**
@@ -73,19 +79,25 @@ public class JCloudsReader implements IBackendReader {
      */
     @Override
     public IPage read(long pKey) throws TTIOException {
-        try {
-            Blob blobRetrieved = mBlobStore.getBlob(mResourceName, Long.toString(pKey));
-            InputStream in = blobRetrieved.getPayload().getInput();
+        IPage returnval = mCache.getIfPresent(pKey);
+        if (returnval == null) {
+            try {
+                Blob blobRetrieved = mBlobStore.getBlob(mResourceName, Long.toString(pKey));
+                InputStream in = blobRetrieved.getPayload().getInput();
 
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            ByteStreams.copy(in, out);
-            byte[] decryptedPage = mByteHandler.deserialize(out.toByteArray());
-            out.close();
-            in.close();
-            return mFac.deserializePage(decryptedPage);
-        } catch (final IOException | TTByteHandleException exc) {
-            throw new TTIOException(exc);
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                ByteStreams.copy(in, out);
+                byte[] decryptedPage = mByteHandler.deserialize(out.toByteArray());
+                out.close();
+                in.close();
+                returnval = mFac.deserializePage(decryptedPage);
+                mCache.put(pKey, returnval);
+            } catch (final IOException | TTByteHandleException exc) {
+                throw new TTIOException(exc);
+            }
         }
+        return returnval;
+
     }
 
     /**
@@ -93,5 +105,6 @@ public class JCloudsReader implements IBackendReader {
      */
     @Override
     public void close() throws TTIOException {
+        mCache.invalidateAll();
     }
 }

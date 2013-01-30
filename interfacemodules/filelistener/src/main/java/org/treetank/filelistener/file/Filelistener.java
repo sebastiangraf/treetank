@@ -94,13 +94,7 @@ public class Filelistener {
             public void run() {
                 try {
                     processFileNotifications();
-                } catch (InterruptedException ex) {
-                    mProcessingThread = null;
-                } catch (TTException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
+                } catch (InterruptedException | TTException | IOException e) {
                     e.printStackTrace();
                 }
             }
@@ -336,7 +330,7 @@ public class Filelistener {
      */
     private String getListenerRootPath(Path root) {
         String listener = "";
-
+        
         for (String s : mFilelistenerToPaths.values()) {
             if (root.toString().contains(s)) {
                 listener = s;

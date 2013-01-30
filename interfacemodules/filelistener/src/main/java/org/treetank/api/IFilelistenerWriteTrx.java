@@ -45,4 +45,12 @@ public interface IFilelistenerWriteTrx extends IFilelistenerReadTrx {
      *             if this revision couldn't be aborted
      */
     public void abort() throws TTException;
+
+    /**
+     * Add an empty file in case of ENTRY_CREATE event.
+     * @param pRelativePath
+     * @throws TTException
+     * @throws IOException
+     */
+    void addEmptyFile(String pRelativePath) throws TTException, IOException;
 }

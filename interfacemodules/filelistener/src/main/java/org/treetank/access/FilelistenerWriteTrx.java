@@ -3,13 +3,13 @@ package org.treetank.access;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.treetank.api.IFilelistenerWriteTrx;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.filelistener.exceptions.WrongFilenodeDataLengthException;
 import org.treetank.filelistener.file.node.FileNode;
 import org.treetank.filelistener.file.node.FilelistenerMetaPageFactory.MetaKey;
 import org.treetank.filelistener.file.node.FilelistenerMetaPageFactory.MetaValue;
@@ -77,6 +77,19 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
     public boolean isClosed() {
         return mDelegate.isClosed();
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public synchronized void addEmptyFile(String pRelativePath) throws TTException, IOException {
+        MetaKey key = new MetaKey(pRelativePath);
+        MetaValue value = new MetaValue(FilelistenerReadTrx.emptyFileKey);
+        getPageTransaction().createEntry(key, value);
+        
+        return;
+    }
+    
 
     /**
      * {@inheritDoc}
@@ -86,93 +99,83 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
      */
     @Override
     public synchronized void addFile(File pFile, String pRelativePath) throws TTException, IOException {
-        try {
-            int readingAmount = 0;
-            
-            BufferedInputStream stream = Files.asByteSource(pFile).openBufferedStream();
-            
-            byte[] fileBytes = new byte[FileNode.FILENODESIZE];
-            readingAmount += stream.read(fileBytes);
-            
-            long newKey = getPageTransaction().incrementNodeKey();
-
-            if (fileExists(pRelativePath)) {
-                removeFile(pRelativePath);
-            }
-
-            // Setting a new header file node
+        int readingAmount = 0;
+        
+        BufferedInputStream stream = Files.asByteSource(pFile).openBufferedStream();
+        
+        byte[] fileBytes = new byte[FileNode.FILENODESIZE];
+        readingAmount += stream.read(fileBytes);
+        
+        if(readingAmount <= 0){
             MetaKey key = new MetaKey(pRelativePath);
-            MetaValue value = new MetaValue(newKey);
-
-            // And adding it to the meta map
+            MetaValue value = new MetaValue(FilelistenerReadTrx.emptyFileKey);
             getPageTransaction().createEntry(key, value);
+            
+            return;
+        }
+        
+        long newKey = getPageTransaction().incrementNodeKey();
 
-            //Creating and setting the headernode.
-            FileNode headerNode = new FileNode(newKey, new byte[FileNode.FILENODESIZE]);
-            headerNode.setHeader(true);
-            headerNode.setEof(false);
-                
-            headerNode.setVal(fileBytes);
-            
-            getPageTransaction().setNode(headerNode);
-            
-            // Creating and setting following nodes based on the file size.
-            FileNode node;
-            FileNode lastNode;
-            
-            int currentReadingAmount = 0;
-            while((currentReadingAmount = stream.read(fileBytes)) >= 0){
-                node = new FileNode(getPageTransaction().incrementNodeKey(), new byte[FileNode.FILENODESIZE]);
-                node.setHeader(false);
-                node.setEof(false);
+        if (fileExists(pRelativePath)) {
+            removeFile(pRelativePath);
+        }
 
-                lastNode =
-                    (FileNode)getPageTransaction().prepareNodeForModification(node.getNodeKey() - 1);
-                lastNode.setNextNodeKey(node.getNodeKey());
-                getPageTransaction().finishNodeModification(lastNode);
-                
-                node.setVal(fileBytes);
-                getPageTransaction().setNode(node);
-                
-                readingAmount += currentReadingAmount;
-            }
+        // Setting a new header file node
+        MetaKey key = new MetaKey(pRelativePath);
+        MetaValue value = new MetaValue(newKey);
+
+        // And adding it to the meta map
+        getPageTransaction().createEntry(key, value);
+
+        //Creating and setting the headernode.
+        FileNode headerNode = new FileNode(newKey, new byte[FileNode.FILENODESIZE]);
+        headerNode.setHeader(true);
+        headerNode.setEof(false);
             
-            System.out.println("HELLAU");
+        headerNode.setVal(fileBytes);
+        
+        getPageTransaction().setNode(headerNode);
+        
+        // Creating and setting following nodes based on the file size.
+        FileNode node;
+        FileNode lastNode;
+        
+        int currentReadingAmount = 0;
+        while((currentReadingAmount = stream.read(fileBytes = new byte[FileNode.FILENODESIZE])) > 0){
+            System.out.println(currentReadingAmount);
+            byte[] slice = Arrays.copyOf(fileBytes, currentReadingAmount);
             
-            ByteArrayDataOutput size = ByteStreams.newDataOutput(FileNode.FILENODESIZE);
-            
-            System.out.println("HELLAU");
-            size.write(readingAmount);
-            
-            System.out.println("HELLAU");
-            
-            node = new FileNode(getPageTransaction().incrementNodeKey(), size.toByteArray());
-            
-            System.out.println("HELLAU");
+            node = new FileNode(getPageTransaction().incrementNodeKey(), slice);
             node.setHeader(false);
-            node.setEof(true);
-
+            node.setEof(false);
+            
             lastNode =
                 (FileNode)getPageTransaction().prepareNodeForModification(node.getNodeKey() - 1);
-            
-            System.out.println("HELLAU");
             lastNode.setNextNodeKey(node.getNodeKey());
-            
-            System.out.println("HELLAU");
-            
-            System.out.println(lastNode.getNodeKey());
-            System.out.println(lastNode.getNextNodeKey());
-            System.out.println(node.getNodeKey());
-            System.out.println(node.getNextNodeKey());
-            
             getPageTransaction().finishNodeModification(lastNode);
-            
             getPageTransaction().setNode(node);
             
-            Preconditions.checkArgument(getPageTransaction().getNode(newKey) != null);
-            
-        } catch (WrongFilenodeDataLengthException e) {
+            readingAmount += currentReadingAmount;
         }
+        
+        ByteArrayDataOutput size = ByteStreams.newDataOutput();
+        size.writeInt(readingAmount);
+        
+        node = new FileNode(getPageTransaction().incrementNodeKey(), size.toByteArray());
+        
+        node.setHeader(false);
+        node.setEof(true);
+
+        lastNode =
+            (FileNode)getPageTransaction().prepareNodeForModification(node.getNodeKey() - 1);
+        
+        lastNode.setNextNodeKey(node.getNodeKey());
+        
+        getPageTransaction().finishNodeModification(lastNode);
+        
+        getPageTransaction().setNode(node);
+        
+        Preconditions.checkArgument(getPageTransaction().getNode(newKey) != null);
         
         System.out.println("Done writing.");
     }

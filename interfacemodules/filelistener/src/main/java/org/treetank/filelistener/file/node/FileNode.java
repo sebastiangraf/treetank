@@ -61,7 +61,7 @@ public class FileNode implements INode {
      *            , as byte array
      * @throws WrongFilenodeDataLengthException
      */
-    public FileNode(long nodeKey, byte[] content) throws WrongFilenodeDataLengthException {
+    public FileNode(long nodeKey, byte[] content){
         this.nodeKey = nodeKey;
         val = content;
     }
@@ -73,6 +73,7 @@ public class FileNode implements INode {
         output.writeLong(nextNodeKey);
         output.writeBoolean(header);
         output.writeBoolean(eof);
+        output.writeInt(val.length);
         output.write(val);
 
         return output.toByteArray();

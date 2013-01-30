@@ -23,19 +23,16 @@ public class FileNodeFactory implements INodeFactory {
         long nextNodeKey = input.readLong();
         boolean header = input.readBoolean();
         boolean eof = input.readBoolean();
-        byte[] data = new byte[FileNode.FILENODESIZE];
+        int length = input.readInt();
+        byte[] data = new byte[length];
         input.readFully(data);
 
         FileNode node = null;
-        try {
-            node = new FileNode(nodeKey, data);
-            node.setNextNodeKey(nextNodeKey);
-            node.setHeader(header);
-            node.setEof(eof);
-        } catch (WrongFilenodeDataLengthException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        node = new FileNode(nodeKey, data);
+        node.setNextNodeKey(nextNodeKey);
+        node.setHeader(header);
+        node.setEof(eof);
+
         return node;
     }
 }

@@ -82,7 +82,6 @@ public class MainComposite extends Composite{
                     try {
                         mListener.startListening();
                     } catch (StorageNotExistingException | TTException e1) {
-                        // TODO Auto-generated catch block
                         e1.printStackTrace();
                     }
                 }
