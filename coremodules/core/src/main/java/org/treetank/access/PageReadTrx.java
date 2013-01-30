@@ -53,9 +53,6 @@ import org.treetank.page.UberPage;
 import org.treetank.page.interfaces.IReferencePage;
 import org.treetank.revisioning.IRevisioning;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-
 /**
  * <h1>PageReadTrx</h1>
  * 
@@ -83,17 +80,6 @@ public class PageReadTrx implements IPageReadTrx {
     /** Cached name page of this revision. */
     protected final MetaPage mMetaPage;
 
-    /**
-     * Internal reference to cache. This cache takes the sequential numbering of the pages instead of the
-     * absolute, storage-relevant numbering.
-     */
-    private final Cache<Long, NodePage> mNodePageCache;
-
-    /**
-     * Internal reference to cache. This cache takes the versions as key.
-     */
-    private final Cache<Long, RevisionRootPage> mRevisionRootCache;
-
     /** Configuration of the session */
     protected final ISession mSession;
 
@@ -116,8 +102,6 @@ public class PageReadTrx implements IPageReadTrx {
      */
     protected PageReadTrx(final ISession pSession, final UberPage pUberpage, final long pRevKey,
         final IBackendReader pReader) throws TTException {
-        mNodePageCache = CacheBuilder.newBuilder().maximumSize(10000).build();
-        mRevisionRootCache = CacheBuilder.newBuilder().maximumSize(10).build();
         mSession = pSession;
         mPageReader = pReader;
         mUberPage = pUberpage;
@@ -145,15 +129,10 @@ public class PageReadTrx implements IPageReadTrx {
         // Calculate page and node part for given nodeKey.
         final long seqNodePageKey = pNodeKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3];
         final int nodePageOffset = nodePageOffset(pNodeKey);
-        NodePage page = mNodePageCache.getIfPresent(seqNodePageKey);
-
-        if (page == null) {
-            final NodePage[] revs = getSnapshotPages(seqNodePageKey);
-            // Build up the complete page.
-            final IRevisioning revision = mSession.getConfig().mRevision;
-            page = revision.combinePages(revs);
-            mNodePageCache.put(seqNodePageKey, page);
-        }
+        final NodePage[] revs = getSnapshotPages(seqNodePageKey);
+        // Build up the complete page.
+        final IRevisioning revision = mSession.getConfig().mRevision;
+        NodePage page = revision.combinePages(revs);
         final INode returnVal = page.getNode(nodePageOffset);
         return checkItemIfDeleted(returnVal);
     }
@@ -168,8 +147,6 @@ public class PageReadTrx implements IPageReadTrx {
         if (!mClose) {
             mSession.deregisterPageTrx(this);
             mPageReader.close();
-            mNodePageCache.invalidateAll();
-            mRevisionRootCache.invalidateAll();
             mClose = true;
             return true;
         } else {
@@ -241,11 +218,7 @@ public class PageReadTrx implements IPageReadTrx {
                     .getRevision(), mPageReader);
 
         for (long i : revKeys) {
-            RevisionRootPage rootPage = mRevisionRootCache.getIfPresent(i);
-            if (rootPage == null) {
-                rootPage = (RevisionRootPage)mPageReader.read(i);
-                mRevisionRootCache.put(i, rootPage);
-            }
+            RevisionRootPage rootPage = (RevisionRootPage)mPageReader.read(i);
 
             // Searching for the related NodePage within all referenced pages.
             final long nodePageKey =
