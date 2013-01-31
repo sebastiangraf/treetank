@@ -331,64 +331,70 @@ public final class PageWriteTrx implements IPageWriteTrx {
     private LogKey preparePathToLeaf(final boolean pIsRootLevel, final IReferencePage pPage,
         final long pElementKey) throws TTException {
 
-        // Initial state pointing to the indirect page of level 0.
-        int offset = -1;
-        int parentOffset = IReferencePage.GUARANTEED_INDIRECT_OFFSET;
-        long levelKey = pElementKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[2];
+        // computing the ordernumbers within all level. The ordernumbers are the position in the sequence of
+        // all pages within the same level.
+        // ranges are for level 0: 0-127; level 1: 0-16383; level 2: 0-2097151; level 3: 0-268435455; ;level
+        // 4: 0-34359738367
+        long seqPageKey = -1;
+        // since the revision points to a page, the sequence-key bases on the last indirect-layer directly
+        // within the search after a revision,...
+        if (pIsRootLevel) {
+            seqPageKey = pElementKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3];
+        } // ...whereas one layer above is used for the nodes based on the offsets pointing to nodes
+          // instead of pages.
+        else {
+            seqPageKey = pElementKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[2];
+        }
+
+        long[] orderNumber = new long[IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length];
+        for (int level = 0; level < orderNumber.length; level++) {
+            orderNumber[level] = seqPageKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
+        }
+
         IReferencePage page = null;
         IReferencePage parentPage = pPage;
         LogKey key = null;
         LogKey parentKey = new LogKey(pIsRootLevel, -1, 0);
 
-        // Iterate through all levels.
-        for (int level = 0; level < IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; level++) {
-            offset = (int)(levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level]);
-            levelKey -= offset << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
-
-            // for each level, take a sharp look if the indirectpage was already modified within this
-            // transaction
-            key = new LogKey(pIsRootLevel, level, parentOffset * IConstants.CONTENT_COUNT + offset);
+        // Iterate through all levels...
+        for (int level = 0; level < orderNumber.length; level++) {
+            // ...see if the actual page requested is already in the log
+            key = new LogKey(pIsRootLevel, level, orderNumber[level]);
             NodePageContainer container = mLog.get(key);
-            // if not...
+            // if the page is not existing,..
             if (container == null) {
-                // ...generating a new page and let it point to the last offset of the last page and ...
+                // ..create a new page
                 final long newKey = mNewUber.incrementPageCounter();
                 page = new IndirectPage(newKey);
 
-                // ...check if there is an existing indirect page over the parent...
+                // compute the offset of the newpage
+                int offset = nodePageOffset(orderNumber[level]);
+
+                // if there existed the same page in former versions (referencable over the offset within
+                // the parent)...
                 if (parentPage.getReferenceKeys()[offset] != 0) {
-                    IndirectPage oldPage;
-                    // ...try to retrieve the former page from the log..
-                    LogKey oldKey =
-                        new LogKey(pIsRootLevel, level, parentOffset * IConstants.CONTENT_COUNT + offset - 1);
-                    NodePageContainer oldContainer = mLog.get(oldKey);
-                    // ..since then the page was entirely filled. If not, read the page from a former
-                    // revision..
-                    if (oldContainer == null) {
-                        // ..from the persistent storage ...
-                        oldPage = (IndirectPage)mPageWriter.read(parentPage.getReferenceKeys()[parentOffset]);
-                        // ...and copy all references and put it in the transaction log.
-                        for (int i = 0; i < oldPage.getReferenceKeys().length; i++) {
-                            page.setReferenceKey(i, oldPage.getReferenceKeys()[i]);
-                        }
+                    IReferencePage oldPage =
+                        (IReferencePage)mPageWriter.read(parentPage.getReferenceKeys()[offset]);
+                    for (int i = 0; i < oldPage.getReferenceKeys().length; i++) {
+                        page.setReferenceKey(i, oldPage.getReferenceKeys()[i]);
                     }
                 }
-                // Set the reference to the current revision..
+                // Set the newKey on the computed offset
                 parentPage.setReferenceKey(offset, newKey);
-                container = new NodePageContainer(parentPage, parentPage);
                 // .. and put the parent-reference to the log as well as the reference of the..
+                container = new NodePageContainer(parentPage, parentPage);
                 mLog.put(parentKey, container);
                 // ...current page.
                 container = new NodePageContainer(page, page);
                 mLog.put(key, container);
-            } else {
+
+            } // if the page is already in the log, get it simply from the log.
+            else {
                 page = (IndirectPage)container.getModified();
             }
-
             // finally, set the new pagekey for the next level
             parentKey = key;
             parentPage = page;
-            parentOffset = offset;
         }
 
         // Return reference to leaf of indirect tree.
@@ -422,7 +428,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
         ((IndirectPage)indirectContainer.getModified()).setReferenceKey(offset, mNewRoot.getPageKey());
         mLog.put(indirectKey, indirectContainer);
 
-        // Setting up a new namepage
+        // Setting up a new metapage
         Map<IMetaEntry, IMetaEntry> oldMap = mDelegate.mMetaPage.getMetaMap();
         mNewName = new MetaPage(mNewUber.incrementPageCounter());
 

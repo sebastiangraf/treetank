@@ -252,13 +252,11 @@ public final class CoreTestHelper {
             for (int j = 0; j < nodesPerRevision[i]; j++) {
                 returnVal[i][j] = new DumbNode(pWtx.incrementNodeKey(), CoreTestHelper.random.nextLong());
                 pWtx.setNode(returnVal[i][j]);
-                // pWtx.setNode(new DumbNode(pWtx.incrementNodeKey(), CoreTestHelper.random.nextLong()));
             }
             // comitting data
             pWtx.commit();
         }
         return returnVal;
-        // return null;
     }
 
     /**

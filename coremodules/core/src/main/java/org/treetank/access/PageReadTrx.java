@@ -251,24 +251,23 @@ public class PageReadTrx implements IPageReadTrx {
      */
     public static final long dereferenceLeafOfTree(final IBackendReader pReader, final long pStartKey,
         final long pSeqPageKey) throws TTIOException {
-
-        // Initial state pointing to the indirect page of level 0.
-        int[] offsets = new int[IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length];
-        long levelKey = pSeqPageKey;
-        long lastOffset = 0;
-
-        for (int level = 0; level < offsets.length; level++) {
-            lastOffset = levelKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
-            levelKey -= lastOffset << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
-            offsets[level] = (int)lastOffset;
+        //computing the ordernumbers within all level. The ordernumbers are the position in the sequence of all pages within the same level.
+        //ranges are for level 0: 0-127; level 1: 0-16383; level 2: 0-2097151; level 3: 0-268435455; ;level 4: 0-34359738367
+        long[] orderNumber = new long[IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length];
+        for (int level = 0; level < orderNumber.length; level++) {
+            orderNumber[level] = pSeqPageKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
         }
 
+        // Initial state pointing to the indirect page of level 0.
         long pageKey = pStartKey;
         IndirectPage page = null;
-        // Iterate through all levels.
-        for (int level = 0; level < offsets.length; level++) {
+        // Iterate through all levels...
+        for (int level = 0; level < orderNumber.length; level++) {
+            //..read the pages and..
             page = (IndirectPage)pReader.read(pageKey);
-            pageKey = page.getReferenceKeys()[offsets[level]];
+            //..compute the offsets out of the order-numbers pre-computed before.
+            pageKey = page.getReferenceKeys()[nodePageOffset(orderNumber[level])];
+            //if the pageKey is 0, return -1 to distinguish mark non-written pages explicitely.
             if (pageKey == 0) {
                 return -1;
             }
@@ -286,6 +285,8 @@ public class PageReadTrx implements IPageReadTrx {
      * @return Offset into node page.
      */
     protected static final int nodePageOffset(final long pNodeKey) {
+        // INP_LEVEL_PAGE_COUNT_EXPONENT[3] is only taken to get the difference between 2^7 and the actual
+        // nodekey as offset. It has nothing to do with the levels.
         final long nodePageOffset =
             (pNodeKey - ((pNodeKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3]) << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3]));
         return (int)nodePageOffset;

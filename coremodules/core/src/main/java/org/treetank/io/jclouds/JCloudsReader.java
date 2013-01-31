@@ -42,7 +42,7 @@ public class JCloudsReader implements IBackendReader {
     protected final String mResourceName;
 
     /** Cache for reading data. */
-    private final Cache<Long, IPage> mCache;
+    protected final Cache<Long, IPage> mCache;
 
     public JCloudsReader(BlobStore pBlobStore, PageFactory pFac, IByteHandlerPipeline pByteHandler,
         String pResourceName) throws TTException {
