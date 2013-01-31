@@ -63,16 +63,6 @@ public class PageWriteTrxTest {
      */
     @Test
     public void testPrepareNodeForModification() throws TTException {
-        IPageWriteTrx wtx = mHolder.getSession().beginPageWriteTransaction();
-        int[] nodesPerRevision = new int[127];
-        Arrays.fill(nodesPerRevision, 1);
-
-        DumbNode[][] nodes = CoreTestHelper.createRevisions(nodesPerRevision, wtx);
-        List<DumbNode> list = new ArrayList<DumbNode>();
-        for (int i = 0; i < nodes.length; i++) {
-            list.addAll(Arrays.asList(nodes[i]));
-        }
-        CoreTestHelper.checkStructure(list, wtx);
 
     }
 
@@ -87,10 +77,21 @@ public class PageWriteTrxTest {
 
     /**
      * Test method for {@link org.treetank.access.PageWriteTrx#setNode(org.treetank.api.INode)}.
+     * 
+     * @throws TTException
      */
     @Test
-    public void testSetNode() {
-        // fail("Not yet implemented");
+    public void testSetNode() throws TTException {
+        IPageWriteTrx wtx = mHolder.getSession().beginPageWriteTransaction();
+        int[] nodesPerRevision = new int[129];
+        Arrays.fill(nodesPerRevision, 16385);
+
+        DumbNode[][] nodes = CoreTestHelper.createRevisions(nodesPerRevision, wtx);
+        List<DumbNode> list = new ArrayList<DumbNode>();
+        for (int i = 0; i < nodes.length; i++) {
+            list.addAll(Arrays.asList(nodes[i]));
+        }
+        CoreTestHelper.checkStructure(list, wtx);
     }
 
     /**

@@ -335,10 +335,20 @@ public final class PageWriteTrx implements IPageWriteTrx {
         // all pages within the same level.
         // ranges are for level 0: 0-127; level 1: 0-16383; level 2: 0-2097151; level 3: 0-268435455; ;level
         // 4: 0-34359738367
-        long pSeqPageKey = pElementKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[2];
+        long seqPageKey = -1;
+        // since the revision points to a page, the sequence-key bases on the last indirect-layer directly
+        // within the search after a revision,...
+        if (pIsRootLevel) {
+            seqPageKey = pElementKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3];
+        } // ...whereas one layer above is used for the nodes based on the offsets pointing to nodes
+          // instead of pages.
+        else {
+            seqPageKey = pElementKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[2];
+        }
+
         long[] orderNumber = new long[IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length];
         for (int level = 0; level < orderNumber.length; level++) {
-            orderNumber[level] = pSeqPageKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
+            orderNumber[level] = seqPageKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
         }
 
         IReferencePage page = null;
@@ -418,7 +428,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
         ((IndirectPage)indirectContainer.getModified()).setReferenceKey(offset, mNewRoot.getPageKey());
         mLog.put(indirectKey, indirectContainer);
 
-        // Setting up a new namepage
+        // Setting up a new metapage
         Map<IMetaEntry, IMetaEntry> oldMap = mDelegate.mMetaPage.getMetaMap();
         mNewName = new MetaPage(mNewUber.incrementPageCounter());
 
