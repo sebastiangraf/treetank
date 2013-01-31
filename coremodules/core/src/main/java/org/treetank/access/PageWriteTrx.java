@@ -385,7 +385,6 @@ public final class PageWriteTrx implements IPageWriteTrx {
             // finally, set the new pagekey for the next level
             parentKey = key;
             parentPage = page;
-
         }
 
         // Return reference to leaf of indirect tree.

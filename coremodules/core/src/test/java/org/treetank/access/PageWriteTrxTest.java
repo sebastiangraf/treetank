@@ -65,7 +65,7 @@ public class PageWriteTrxTest {
     public void testPrepareNodeForModification() throws TTException {
         IPageWriteTrx wtx = mHolder.getSession().beginPageWriteTransaction();
         int nodesPerRevision[] = {
-            16384, 128//, 128, 16384
+            2097153, 2097153, 2097153, 2097153
         };
 
         DumbNode[][] nodes = CoreTestHelper.createRevisions(nodesPerRevision, wtx);
