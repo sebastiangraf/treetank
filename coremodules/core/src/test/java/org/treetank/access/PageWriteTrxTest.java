@@ -68,8 +68,6 @@ public class PageWriteTrxTest {
         Arrays.fill(nodesPerRevision, 16385);
 
         DumbNode[][] nodes = CoreTestHelper.createRevisions(nodesPerRevision, wtx);
-
-        // CoreTestHelper.createRevisions(nodesPerRevision, wtx);
         List<DumbNode> list = new ArrayList<DumbNode>();
         for (int i = 0; i < nodes.length; i++) {
             list.addAll(Arrays.asList(nodes[i]));
