@@ -331,6 +331,11 @@ public final class PageWriteTrx implements IPageWriteTrx {
     private LogKey preparePathToLeaf(final boolean pIsRootLevel, final IReferencePage pPage,
         final long pElementKey) throws TTException {
 
+        
+        
+        
+        
+        
         // Initial state pointing to the indirect page of level 0.
         int offset = -1;
         int parentOffset = IReferencePage.GUARANTEED_INDIRECT_OFFSET;
