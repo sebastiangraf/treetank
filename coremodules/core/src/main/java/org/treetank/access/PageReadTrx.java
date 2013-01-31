@@ -286,6 +286,8 @@ public class PageReadTrx implements IPageReadTrx {
      * @return Offset into node page.
      */
     protected static final int nodePageOffset(final long pNodeKey) {
+        // INP_LEVEL_PAGE_COUNT_EXPONENT[3] is only taken to get the difference between 2^7 and the actual
+        // nodekey as offset. It has nothing to do with the levels.
         final long nodePageOffset =
             (pNodeKey - ((pNodeKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3]) << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3]));
         return (int)nodePageOffset;
