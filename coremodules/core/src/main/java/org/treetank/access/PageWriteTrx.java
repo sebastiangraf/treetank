@@ -1,5 +1,5 @@
 /**
- * w * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
+ * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -128,14 +128,14 @@ public final class PageWriteTrx implements IPageWriteTrx {
     public INode prepareNodeForModification(final long pNodeKey) throws TTException {
         checkArgument(pNodeKey >= 0);
         final int nodePageOffset = nodePageOffset(pNodeKey);
-        LogContainer<NodePage> container = prepareNodePage(pNodeKey);
+        LogContainer<IPage> container = prepareNodePage(pNodeKey);
 
-        INode node = container.getModified().getNode(nodePageOffset);
+        INode node = ((NodePage)container.getModified()).getNode(nodePageOffset);
         if (node == null) {
-            final INode oldNode = container.getComplete().getNode(nodePageOffset);
+            final INode oldNode = ((NodePage)container.getComplete()).getNode(nodePageOffset);
             checkNotNull(oldNode);
             node = oldNode;
-            container.getModified().setNode(nodePageOffset, node);
+            ((NodePage)container.getModified()).setNode(nodePageOffset, node);
         }
         return node;
     }
@@ -152,8 +152,8 @@ public final class PageWriteTrx implements IPageWriteTrx {
         final long seqNodePageKey = pNode.getNodeKey() >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3];
         final int nodePageOffset = nodePageOffset(pNode.getNodeKey());
         LogKey key = new LogKey(false, IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length, seqNodePageKey);
-        LogContainer<NodePage> container = mLog.get(key);
-        NodePage page = container.getModified();
+        LogContainer<IPage> container = mLog.get(key);
+        NodePage page = (NodePage)container.getModified();
         page.setNode(nodePageOffset, pNode);
         mLog.put(key, container);
     }
@@ -166,8 +166,8 @@ public final class PageWriteTrx implements IPageWriteTrx {
         final long nodeKey = pNode.getNodeKey();
         final long seqPageKey = nodeKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3];
         final int nodePageOffset = nodePageOffset(nodeKey);
-        LogContainer<NodePage> container = prepareNodePage(nodeKey);
-        final NodePage page = container.getModified();
+        LogContainer<IPage> container = prepareNodePage(nodeKey);
+        final NodePage page = ((NodePage)container.getModified());
         page.setNode(nodePageOffset, pNode);
         mLog.put(new LogKey(false, IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length, seqPageKey), container);
         return nodeKey;
@@ -184,10 +184,10 @@ public final class PageWriteTrx implements IPageWriteTrx {
     public void removeNode(final INode pNode) throws TTException {
         assert pNode != null;
         final long nodePageKey = pNode.getNodeKey() >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3];
-        LogContainer<NodePage> container = prepareNodePage(pNode.getNodeKey());
+        LogContainer<IPage> container = prepareNodePage(pNode.getNodeKey());
         final INode delNode = new DeletedNode(pNode.getNodeKey());
-        container.getComplete().setNode(nodePageOffset(pNode.getNodeKey()), delNode);
-        container.getModified().setNode(nodePageOffset(pNode.getNodeKey()), delNode);
+        ((NodePage)container.getComplete()).setNode(nodePageOffset(pNode.getNodeKey()), delNode);
+        ((NodePage)container.getModified()).setNode(nodePageOffset(pNode.getNodeKey()), delNode);
 
         mLog.put(new LogKey(false, IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length, nodePageKey), container);
     }
@@ -201,19 +201,19 @@ public final class PageWriteTrx implements IPageWriteTrx {
         final long nodePageKey = pNodeKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3];
         final int nodePageOffset = nodePageOffset(pNodeKey);
 
-        final LogContainer<NodePage> container =
+        final LogContainer<IPage> container =
             mLog.get(new LogKey(false, IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length, nodePageKey));
         // Page was not modified yet, delegate to read or..
         if (container == null) {
             return mDelegate.getNode(pNodeKey);
         }// ...page was modified, but not this node, take the complete part, or...
-        else if (container.getModified().getNode(nodePageOffset) == null) {
-            final INode item = container.getComplete().getNode(nodePageOffset);
+        else if (((NodePage)container.getModified()).getNode(nodePageOffset) == null) {
+            final INode item = ((NodePage)container.getComplete()).getNode(nodePageOffset);
             return mDelegate.checkItemIfDeleted(item);
 
         }// ...page was modified and the modification touched this node.
         else {
-            final INode item = container.getModified().getNode(nodePageOffset);
+            final INode item = ((NodePage)container.getModified()).getNode(nodePageOffset);
             return mDelegate.checkItemIfDeleted(item);
         }
 
@@ -234,9 +234,9 @@ public final class PageWriteTrx implements IPageWriteTrx {
 
     public void commit() throws TTException {
 
-        Iterator<Map.Entry<LogKey, LogContainer<? extends IPage>>> entries = mLog.getIterator();
+        Iterator<Map.Entry<LogKey, LogContainer<IPage>>> entries = mLog.getIterator();
         while (entries.hasNext()) {
-            Map.Entry<LogKey, LogContainer<? extends IPage>> next = entries.next();
+            Map.Entry<LogKey, LogContainer<IPage>> next = entries.next();
             mPageWriter.write(next.getValue().getModified());
         }
         mPageWriter.write(mNewName);
@@ -273,20 +273,20 @@ public final class PageWriteTrx implements IPageWriteTrx {
         return mNewRoot.incrementMaxNodeKey();
     }
 
-    private LogContainer<NodePage> prepareNodePage(final long pNodeKey) throws TTException {
+    private LogContainer<IPage> prepareNodePage(final long pNodeKey) throws TTException {
 
         final long seqNodePageKey = pNodeKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3];
 
         LogKey key = new LogKey(false, IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length, seqNodePageKey);
         // See if on nodePageLevel, there are any pages...
-        LogContainer<NodePage> container = mLog.get(key);
+        LogContainer<IPage> container = mLog.get(key);
         // ... and start dereferencing of not.
         if (container == null) {
             LogKey indirectKey = preparePathToLeaf(false, mNewRoot, pNodeKey);
 
-            LogContainer<IndirectPage> indirectContainer = mLog.get(indirectKey);
+            LogContainer<IPage> indirectContainer = mLog.get(indirectKey);
             int nodeOffset = nodePageOffset(seqNodePageKey);
-            long pageKey = indirectContainer.getModified().getReferenceKeys()[nodeOffset];
+            long pageKey = ((IndirectPage)indirectContainer.getModified()).getReferenceKeys()[nodeOffset];
 
             long newPageKey = mNewUber.incrementPageCounter();
             if (pageKey != 0) {
@@ -305,9 +305,9 @@ public final class PageWriteTrx implements IPageWriteTrx {
                 }
             } else {
                 NodePage newPage = new NodePage(newPageKey);
-                container = new LogContainer<NodePage>(newPage, newPage);
+                container = new LogContainer<IPage>(newPage, newPage);
             }
-            indirectContainer.getModified().setReferenceKey(nodeOffset, newPageKey);
+            ((IndirectPage)indirectContainer.getModified()).setReferenceKey(nodeOffset, newPageKey);
             mLog.put(indirectKey, indirectContainer);
             mLog.put(key, container);
         }
@@ -361,7 +361,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
         for (int level = 0; level < orderNumber.length; level++) {
             // ...see if the actual page requested is already in the log
             key = new LogKey(pIsRootLevel, level, orderNumber[level]);
-            LogContainer<IReferencePage> container = mLog.get(key);
+            LogContainer<IPage> container = mLog.get(key);
             // if the page is not existing,..
             if (container == null) {
                 // ..create a new page
@@ -383,15 +383,15 @@ public final class PageWriteTrx implements IPageWriteTrx {
                 // Set the newKey on the computed offset
                 parentPage.setReferenceKey(offset, newKey);
                 // .. and put the parent-reference to the log as well as the reference of the..
-                container = new LogContainer<IReferencePage>(parentPage, parentPage);
+                container = new LogContainer<IPage>(parentPage, parentPage);
                 mLog.put(parentKey, container);
                 // ...current page.
-                container = new LogContainer<IReferencePage>(page, page);
+                container = new LogContainer<IPage>(page, page);
                 mLog.put(key, container);
 
             } // if the page is already in the log, get it simply from the log.
             else {
-                page = container.getModified();
+                page = (IReferencePage)container.getModified();
             }
             // finally, set the new pagekey for the next level
             parentKey = key;
@@ -424,12 +424,12 @@ public final class PageWriteTrx implements IPageWriteTrx {
         // Prepare indirect tree to hold reference to prepared revision root
         // nodePageReference.
         LogKey indirectKey = preparePathToLeaf(true, mNewUber, mNewUber.getRevisionNumber());
-        LogContainer<IndirectPage> indirectContainer = mLog.get(indirectKey);
+        LogContainer<IPage> indirectContainer = mLog.get(indirectKey);
         int offset = nodePageOffset(mNewUber.getRevisionNumber());
-        indirectContainer.getModified().setReferenceKey(offset, mNewRoot.getPageKey());
+        ((IndirectPage)indirectContainer.getModified()).setReferenceKey(offset, mNewRoot.getPageKey());
         mLog.put(indirectKey, indirectContainer);
 
-        // Setting up a new metapage
+        // Setting up a new namepage
         Map<IMetaEntry, IMetaEntry> oldMap = mDelegate.mMetaPage.getMetaMap();
         mNewName = new MetaPage(mNewUber.incrementPageCounter());
 

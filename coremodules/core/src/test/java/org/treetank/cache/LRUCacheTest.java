@@ -76,12 +76,12 @@ public class LRUCacheTest {
         }
 
         @Override
-        public <K extends IPage> LogContainer<K> get(final LogKey mKey) {
+        public LogContainer<IPage> get(final LogKey mKey) {
             return null;
         }
 
         @Override
-        public void put(final LogKey mKey, final LogContainer<? extends IPage> mPage) {
+        public void put(final LogKey mKey, final LogContainer<IPage> mPage) {
             // Not used over here
         }
 

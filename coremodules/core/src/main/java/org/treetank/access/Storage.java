@@ -455,9 +455,9 @@ public final class Storage implements IStorage {
 
         writer.writeUberPage(uberPage);
 
-        Iterator<Map.Entry<LogKey, LogContainer<? extends IPage>>> entries = mLog.getIterator();
+        Iterator<Map.Entry<LogKey, LogContainer<IPage>>> entries = mLog.getIterator();
         while (entries.hasNext()) {
-            Map.Entry<LogKey, LogContainer<? extends IPage>> next = entries.next();
+            Map.Entry<LogKey, LogContainer<IPage>> next = entries.next();
             writer.write(next.getValue().getModified());
         }
         writer.close();

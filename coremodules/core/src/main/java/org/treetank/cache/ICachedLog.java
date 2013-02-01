@@ -59,7 +59,7 @@ public interface ICachedLog {
      * @throws TTIOException
      *             if get fails
      */
-    <K extends IPage> LogContainer<K> get(final LogKey mKey) throws TTIOException;
+    LogContainer<IPage> get(final LogKey mKey) throws TTIOException;
 
     /**
      * Putting an {@link LogContainer} into the cache with a corresponding
@@ -72,7 +72,7 @@ public interface ICachedLog {
      * @throws TTIOException
      *             if put fails
      */
-    void put(final LogKey mKey, final LogContainer<? extends IPage> mPage) throws TTIOException;
+    void put(final LogKey mKey, final LogContainer<IPage> mPage) throws TTIOException;
 
     /** Getting iterator from this log. */
     CacheLogIterator getIterator();
@@ -83,19 +83,19 @@ public interface ICachedLog {
      * @author Sebastian Graf, University of Konstanz
      * 
      */
-    static class TransactionLogEntry implements Map.Entry<LogKey, LogContainer<? extends IPage>> {
+    static class TransactionLogEntry implements Map.Entry<LogKey, LogContainer<IPage>> {
 
         /** Key of the log. */
         final LogKey mKey;
 
         /** Container of the log. */
-        final LogContainer<? extends IPage> mContainer;
+        final LogContainer<IPage> mContainer;
 
         /**
          * Constructor.
          * 
          */
-        public TransactionLogEntry(final LogKey pKey, final LogContainer<? extends IPage> pContainer) {
+        public TransactionLogEntry(final LogKey pKey, final LogContainer<IPage> pContainer) {
             mKey = pKey;
             mContainer = pContainer;
         }
@@ -112,7 +112,7 @@ public interface ICachedLog {
          * {@inheritDoc}
          */
         @Override
-        public LogContainer<? extends IPage> getValue() {
+        public LogContainer<IPage> getValue() {
             return mContainer;
         }
 
@@ -120,7 +120,7 @@ public interface ICachedLog {
          * {@inheritDoc}
          */
         @Override
-        public LogContainer<? extends IPage> setValue(LogContainer<? extends IPage> value) {
+        public LogContainer<IPage> setValue(LogContainer<IPage> value) {
             throw new UnsupportedOperationException();
         }
     }

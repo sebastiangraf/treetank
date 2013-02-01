@@ -24,14 +24,14 @@ import com.sleepycat.je.OperationStatus;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public class CacheLogIterator implements Iterator<Map.Entry<LogKey, LogContainer<? extends IPage>>>,
-    Iterable<Map.Entry<LogKey, LogContainer<? extends IPage>>> {
+public class CacheLogIterator implements Iterator<Map.Entry<LogKey, LogContainer<IPage>>>,
+    Iterable<Map.Entry<LogKey, LogContainer<IPage>>> {
 
     private int i = 0;
 
     private final BerkeleyPersistenceLog mSecondLog;
 
-    private List<Map.Entry<LogKey, LogContainer<? extends IPage>>> mEntries;
+    private List<Map.Entry<LogKey, LogContainer<IPage>>> mEntries;
 
     private Cursor mCursor;
     private DatabaseEntry valueEntry;
@@ -39,7 +39,7 @@ public class CacheLogIterator implements Iterator<Map.Entry<LogKey, LogContainer
 
     public CacheLogIterator(final LRUCache pFirstLog, final BerkeleyPersistenceLog pSecondLog) {
         mSecondLog = pSecondLog;
-        mEntries = new ArrayList<Map.Entry<LogKey, LogContainer<? extends IPage>>>();
+        mEntries = new ArrayList<Map.Entry<LogKey, LogContainer<IPage>>>();
         if (pFirstLog != null) {
             mEntries.addAll(pFirstLog.map.entrySet());
         }
@@ -81,9 +81,9 @@ public class CacheLogIterator implements Iterator<Map.Entry<LogKey, LogContainer
      * {@inheritDoc}
      */
     @Override
-    public Map.Entry<LogKey, LogContainer<? extends IPage>> next() {
+    public Map.Entry<LogKey, LogContainer<IPage>> next() {
         if (i < LRUCache.CACHE_CAPACITY) {
-            Map.Entry<LogKey, LogContainer<? extends IPage>> returnVal = mEntries.get(i);
+            Map.Entry<LogKey, LogContainer<IPage>> returnVal = mEntries.get(i);
             i++;
             return returnVal;
         } else {
@@ -105,7 +105,7 @@ public class CacheLogIterator implements Iterator<Map.Entry<LogKey, LogContainer
      * {@inheritDoc}
      */
     @Override
-    public Iterator<Map.Entry<LogKey, LogContainer<? extends IPage>>> iterator() {
+    public Iterator<Map.Entry<LogKey, LogContainer<IPage>>> iterator() {
         return this;
     }
 

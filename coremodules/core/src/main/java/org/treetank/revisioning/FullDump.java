@@ -4,13 +4,14 @@
 package org.treetank.revisioning;
 
 import static com.google.common.base.Objects.toStringHelper;
+import static com.google.common.base.Preconditions.checkArgument;
 
 import org.treetank.access.PageReadTrx;
 import org.treetank.cache.LogContainer;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
 import org.treetank.page.NodePage;
-import static com.google.common.base.Preconditions.checkArgument;
+import org.treetank.page.interfaces.IPage;
 
 /**
  * FullDump versioning of {@link NodePage}s.
@@ -37,7 +38,7 @@ public class FullDump implements IRevisioning {
      * {@inheritDoc}
      */
     @Override
-    public LogContainer<NodePage> combinePagesForModification(long pNewPageKey, NodePage[] pages,
+    public LogContainer<IPage> combinePagesForModification(long pNewPageKey, NodePage[] pages,
         boolean fullDump) {
         checkArgument(pages.length == 1, "parameter should just consists of one single page");
         checkArgument(fullDump, "Because of the nature, fulldump should occur always");
@@ -50,8 +51,8 @@ public class FullDump implements IRevisioning {
             returnVal[1].setNode(i, pages[0].getNode(i));
         }
 
-        final LogContainer<NodePage> cont = new LogContainer<NodePage>(returnVal[0], returnVal[1]);
-        return cont;
+        return new LogContainer<IPage>(returnVal[0], returnVal[1]);
+
     }
 
     /**

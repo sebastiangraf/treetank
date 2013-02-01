@@ -139,7 +139,7 @@ public final class BerkeleyPersistenceLog implements ICachedLog {
      * {@inheritDoc}
      */
     @Override
-    public void put(final LogKey mKey, final LogContainer<? extends IPage> mPage) throws TTIOException {
+    public void put(final LogKey mKey, final LogContainer<IPage> mPage) throws TTIOException {
         final DatabaseEntry valueEntry = new DatabaseEntry();
         final DatabaseEntry keyEntry = new DatabaseEntry();
 
@@ -172,15 +172,15 @@ public final class BerkeleyPersistenceLog implements ICachedLog {
      * {@inheritDoc}
      */
     @Override
-    public <K extends IPage> LogContainer<K> get(final LogKey mKey) throws TTIOException {
+    public LogContainer<IPage> get(final LogKey mKey) throws TTIOException {
         final DatabaseEntry valueEntry = new DatabaseEntry();
         final DatabaseEntry keyEntry = new DatabaseEntry();
         mKeyBinding.objectToEntry(mKey, keyEntry);
         try {
             final OperationStatus status = mDatabase.get(null, keyEntry, valueEntry, LockMode.DEFAULT);
-            LogContainer<K> val = null;
+            LogContainer<IPage> val = null;
             if (status == OperationStatus.SUCCESS) {
-                val = (LogContainer<K>)mValueBinding.entryToObject(valueEntry);
+                val = mValueBinding.entryToObject(valueEntry);
             }
 
             return val;
