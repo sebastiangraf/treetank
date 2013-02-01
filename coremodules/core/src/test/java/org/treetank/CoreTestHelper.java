@@ -32,6 +32,8 @@ import static org.mockito.Mockito.when;
 import static org.testng.AssertJUnit.assertEquals;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -237,24 +239,48 @@ public final class CoreTestHelper {
     /**
      * Utility method to create nodes per revision.
      * 
-     * @param nodesPerRevision
+     * @param pNodesPerRevision
      *            to create
      * @param pWtx
      *            to store to.
      * @throws TTException
      */
-    public static DumbNode[][] createRevisions(final int[] nodesPerRevision, final IPageWriteTrx pWtx)
+    public static DumbNode[][] createRevisions(final int[] pNodesPerRevision, final IPageWriteTrx pWtx)
         throws TTException {
-        final DumbNode[][] returnVal = new DumbNode[nodesPerRevision.length][];
-        for (int i = 0; i < nodesPerRevision.length; i++) {
-            returnVal[i] = new DumbNode[nodesPerRevision[i]];
-            // inserting nodes on this transaction
-            for (int j = 0; j < nodesPerRevision[i]; j++) {
-                returnVal[i][j] = new DumbNode(pWtx.incrementNodeKey(), CoreTestHelper.random.nextLong());
+        final DumbNode[][] returnVal = createNodes(pNodesPerRevision);
+        for (int i = 0; i < returnVal.length; i++) {
+            for (int j = 0; j < returnVal[i].length; j++) {
+                returnVal[i][j].setNodeKey(pWtx.incrementNodeKey());
                 pWtx.setNode(returnVal[i][j]);
             }
-            // comitting data
             pWtx.commit();
+        }
+        return returnVal;
+    }
+
+    public static DumbNode[][] createNodesInTreetank(Holder pHolder) throws TTException {
+        IPageWriteTrx wtx = pHolder.getSession().beginPageWriteTransaction();
+        int[] nodesPerRevision = new int[129];
+        Arrays.fill(nodesPerRevision, 16385);
+        DumbNode[][] nodes = CoreTestHelper.createRevisions(nodesPerRevision, wtx);
+        wtx.close();
+        return nodes;
+    }
+    
+    /**
+     * Generating new nodes pased on a given number of nodes within a revision
+     * 
+     * @param pNodesPerRevision
+     *            denote the number of nodes within all versions
+     * @return a two-dimensional array containing the nodes.
+     */
+    public static DumbNode[][] createNodes(final int[] pNodesPerRevision) {
+        final DumbNode[][] returnVal = new DumbNode[pNodesPerRevision.length][];
+        for (int i = 0; i < pNodesPerRevision.length; i++) {
+            returnVal[i] = new DumbNode[pNodesPerRevision[i]];
+            for (int j = 0; j < pNodesPerRevision[i]; j++) {
+                returnVal[i][j] = new DumbNode(0, CoreTestHelper.random.nextLong());
+            }
         }
         return returnVal;
     }
@@ -266,9 +292,6 @@ public final class CoreTestHelper {
      *            to be compared with
      * @param pRtx
      *            to check
-     * @param pStartKey
-     *            to start with
-     * @re
      * @throws TTIOException
      */
     public static void checkStructure(final List<DumbNode> pNodes, final IPageReadTrx pRtx)
@@ -278,6 +301,21 @@ public final class CoreTestHelper {
             assertEquals(node, pRtx.getNode(key));
             key++;
         }
+    }
+
+    /**
+     * Combining multiple nodes to one overall list.
+     * 
+     * @param pNodes
+     *            to be combined
+     * @return a list of all data in one list.
+     */
+    public static List<DumbNode> combineNodes(final DumbNode[][] pNodes) {
+        List<DumbNode> list = new ArrayList<DumbNode>();
+        for (int i = 0; i < pNodes.length; i++) {
+            list.addAll(Arrays.asList(pNodes[i]));
+        }
+        return list;
     }
 
     public static class Holder {

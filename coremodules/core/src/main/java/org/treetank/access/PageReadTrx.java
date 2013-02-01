@@ -123,9 +123,8 @@ public class PageReadTrx implements IPageReadTrx {
      *             if the read to the persistent storage fails
      */
     public INode getNode(final long pNodeKey) throws TTIOException {
-
         checkArgument(pNodeKey >= 0);
-
+        checkState(!mClose, "Transaction already closed");
         // Calculate page and node part for given nodeKey.
         final long seqNodePageKey = pNodeKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3];
         final int nodePageOffset = nodePageOffset(pNodeKey);
@@ -164,6 +163,7 @@ public class PageReadTrx implements IPageReadTrx {
      *             if something odd happens within the creation process.
      */
     public RevisionRootPage getActualRevisionRootPage() throws TTIOException {
+        checkState(!mClose, "Transaction already closed");
         return mRootPage;
     }
 
@@ -251,8 +251,10 @@ public class PageReadTrx implements IPageReadTrx {
      */
     public static final long dereferenceLeafOfTree(final IBackendReader pReader, final long pStartKey,
         final long pSeqPageKey) throws TTIOException {
-        //computing the ordernumbers within all level. The ordernumbers are the position in the sequence of all pages within the same level.
-        //ranges are for level 0: 0-127; level 1: 0-16383; level 2: 0-2097151; level 3: 0-268435455; ;level 4: 0-34359738367
+        // computing the ordernumbers within all level. The ordernumbers are the position in the sequence of
+        // all pages within the same level.
+        // ranges are for level 0: 0-127; level 1: 0-16383; level 2: 0-2097151; level 3: 0-268435455; ;level
+        // 4: 0-34359738367
         long[] orderNumber = new long[IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length];
         for (int level = 0; level < orderNumber.length; level++) {
             orderNumber[level] = pSeqPageKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
@@ -263,11 +265,11 @@ public class PageReadTrx implements IPageReadTrx {
         IndirectPage page = null;
         // Iterate through all levels...
         for (int level = 0; level < orderNumber.length; level++) {
-            //..read the pages and..
+            // ..read the pages and..
             page = (IndirectPage)pReader.read(pageKey);
-            //..compute the offsets out of the order-numbers pre-computed before.
+            // ..compute the offsets out of the order-numbers pre-computed before.
             pageKey = page.getReferenceKeys()[nodePageOffset(orderNumber[level])];
-            //if the pageKey is 0, return -1 to distinguish mark non-written pages explicitely.
+            // if the pageKey is 0, return -1 to distinguish mark non-written pages explicitely.
             if (pageKey == 0) {
                 return -1;
             }
@@ -306,6 +308,7 @@ public class PageReadTrx implements IPageReadTrx {
      */
     @Override
     public MetaPage getMetaPage() {
+        checkState(!mClose, "Transaction already closed");
         return mMetaPage;
     }
 

@@ -4,6 +4,9 @@
 package org.treetank.access;
 
 import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertFalse;
+import static org.testng.AssertJUnit.assertTrue;
+import static org.testng.AssertJUnit.fail;
 import static org.treetank.CoreTestHelper.getFakedStructure;
 
 import org.testng.annotations.AfterMethod;
@@ -16,6 +19,8 @@ import org.treetank.ModuleFactory;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.StandardSettings;
+import org.treetank.api.IPageReadTrx;
+import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
 import org.treetank.page.DumbNodeFactory.DumbNode;
@@ -36,8 +41,6 @@ public class PageReadTrxTest {
     private IResourceConfigurationFactory mResourceConfig;
 
     private Holder mHolder;
-
-    private DumbNode[][] mNodes;
 
     /**
      * @throws java.lang.Exception
@@ -61,18 +64,46 @@ public class PageReadTrxTest {
 
     /**
      * Test method for {@link org.treetank.access.PageReadTrx#getNode(long)}.
+     * 
+     * @throws TTException
      */
     @Test
-    public void testGetNode() {
-        // fail("Not yet implemented");
+    public void testGetNode() throws TTException {
+        DumbNode[][] nodes = CoreTestHelper.createNodesInTreetank(mHolder);
+        // checking for all versions
+        long nodeKey = 0;
+        for (int i = 0; i < nodes.length; i++) {
+            final IPageReadTrx rtx = mHolder.getSession().beginPageReadTransaction(i + 1);
+            for (DumbNode node : nodes[i]) {
+                assertEquals(node, rtx.getNode(nodeKey));
+                nodeKey++;
+            }
+            rtx.close();
+        }
+
     }
 
     /**
      * Test method for {@link org.treetank.access.PageReadTrx#close()}.
+     * 
+     * @throws TTException
      */
     @Test
-    public void testClose() {
-        // fail("Not yet implemented");
+    public void testClose() throws TTException {
+        IPageReadTrx rtx =
+            mHolder.getSession().beginPageReadTransaction(mHolder.getSession().getMostRecentVersion());
+        rtx.getMetaPage();
+        assertFalse(rtx.isClosed());
+        assertTrue(rtx.close());
+        try {
+            rtx.getMetaPage();
+            fail();
+        } catch (IllegalStateException exc) {
+            // must be thrown
+        }
+        assertFalse(rtx.close());
+        assertTrue(rtx.isClosed());
+
     }
 
     /**
@@ -201,7 +232,6 @@ public class PageReadTrxTest {
         key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 34359738367l);
         assertEquals(-1, key);
     }
-
 
     /**
      * Test method for {@link org.treetank.access.PageReadTrx#nodePageOffset(long)}.
