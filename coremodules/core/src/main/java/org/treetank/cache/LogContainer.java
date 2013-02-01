@@ -27,6 +27,10 @@
 
 package org.treetank.cache;
 
+import static com.google.common.base.Objects.toStringHelper;
+
+import java.util.Objects;
+
 import org.treetank.page.NodePage;
 import org.treetank.page.interfaces.IPage;
 
@@ -47,11 +51,11 @@ import org.treetank.page.interfaces.IPage;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public final class NodePageContainer {
+public final class LogContainer<E extends IPage> {
 
-    private final IPage mComplete;
+    private final E mComplete;
 
-    private final IPage mModified;
+    private final E mModified;
 
     /**
      * Constructor with both, complete and modifying page.
@@ -61,7 +65,7 @@ public final class NodePageContainer {
      * @param pModifying
      *            to be used as a base for this container
      */
-    public NodePageContainer(final IPage pComplete, final IPage pModifying) {
+    public LogContainer(final E pComplete, final E pModifying) {
         this.mComplete = pComplete;
         this.mModified = pModifying;
     }
@@ -71,7 +75,7 @@ public final class NodePageContainer {
      * 
      * @return the complete page
      */
-    public IPage getComplete() {
+    public E getComplete() {
         return mComplete;
     }
 
@@ -80,7 +84,7 @@ public final class NodePageContainer {
      * 
      * @return the modified page
      */
-    public IPage getModified() {
+    public E getModified() {
         return mModified;
     }
 
@@ -89,42 +93,15 @@ public final class NodePageContainer {
      */
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((mComplete == null) ? 0 : mComplete.hashCode());
-        result = prime * result + ((mModified == null) ? 0 : mModified.hashCode());
-        return result;
+        return Objects.hash(mComplete, mModified);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean equals(final Object mObj) {
-        if (this == mObj) {
-            return true;
-        }
-
-        if (mObj == null) {
-            return false;
-        }
-
-        if (getClass() != mObj.getClass()) {
-            return false;
-        }
-
-        final NodePageContainer other = (NodePageContainer)mObj;
-        if (mComplete == null) {
-            if (other.mComplete != null) {
-                return false;
-            }
-        } else if (!mComplete.equals(other.mComplete)) {
-            return false;
-        } else if (!mModified.equals(other.mModified)) {
-            return false;
-        }
-
-        return true;
+    public boolean equals(Object obj) {
+        return this.hashCode() == obj.hashCode();
     }
 
     /**
@@ -132,12 +109,7 @@ public final class NodePageContainer {
      */
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder("Complete page: ");
-        builder.append(mComplete.toString());
-        builder.append("\nModified page: ");
-        builder.append(mModified.toString());
-        return builder.toString();
-
+        return toStringHelper(this).add("mComplete", mComplete).add("mModified", mModified).toString();
     }
 
 }

@@ -39,8 +39,8 @@ public class DumbNodeFactory implements INodeFactory {
      */
     public static class DumbNode implements INode {
 
-        final long mNodeKey;
-        final long mHash;
+        long mNodeKey;
+        long mHash;
 
         /**
          * Simple constructor.
@@ -77,10 +77,16 @@ public class DumbNodeFactory implements INodeFactory {
         /**
          * {@inheritDoc}
          */
+        public void setNodeKey(final long pNodeKey) {
+            mNodeKey = pNodeKey;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public void setHash(long pHash) {
-            throw new UnsupportedOperationException();
-
+            mHash = pHash;
         }
 
         /**

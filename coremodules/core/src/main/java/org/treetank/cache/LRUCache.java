@@ -33,6 +33,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.treetank.exception.TTIOException;
+import org.treetank.page.interfaces.IPage;
 
 /**
  * An LRU cache, based on <code>LinkedHashMap</code>. This cache can hold an
@@ -51,7 +52,7 @@ public final class LRUCache implements ICachedLog {
     /**
      * The collection to hold the maps.
      */
-    protected final Map<LogKey, NodePageContainer> map;
+    protected final Map<LogKey, LogContainer<IPage>> map;
 
     /**
      * The reference to the second cache.
@@ -68,12 +69,12 @@ public final class LRUCache implements ICachedLog {
      */
     public LRUCache(final ICachedLog paramSecondCache) {
         mSecondCache = paramSecondCache;
-        map = new LinkedHashMap<LogKey, NodePageContainer>(CACHE_CAPACITY) {
+        map = new LinkedHashMap<LogKey, LogContainer<IPage>>(CACHE_CAPACITY) {
             // (an anonymous inner class)
             private static final long serialVersionUID = 1;
 
             @Override
-            protected boolean removeEldestEntry(final Map.Entry<LogKey, NodePageContainer> mEldest) {
+            protected boolean removeEldestEntry(final Map.Entry<LogKey, LogContainer<IPage>> mEldest) {
                 boolean returnVal = false;
                 if (size() > CACHE_CAPACITY) {
                     try {
@@ -92,8 +93,8 @@ public final class LRUCache implements ICachedLog {
     /**
      * {@inheritDoc}
      */
-    public NodePageContainer get(final LogKey pKey) throws TTIOException {
-        NodePageContainer page = map.get(pKey);
+    public LogContainer<IPage> get(final LogKey pKey) throws TTIOException {
+        LogContainer<IPage> page = map.get(pKey);
         if (page == null) {
             page = mSecondCache.get(pKey);
         }
@@ -103,7 +104,7 @@ public final class LRUCache implements ICachedLog {
     /**
      * {@inheritDoc}
      */
-    public void put(final LogKey pKey, final NodePageContainer pValue) throws TTIOException {
+    public void put(final LogKey pKey, final LogContainer<IPage> pValue) throws TTIOException {
         map.put(pKey, pValue);
         if (mSecondCache.get(pKey) != null) {
             mSecondCache.put(pKey, pValue);
@@ -124,8 +125,8 @@ public final class LRUCache implements ICachedLog {
      * 
      * @return a <code>Collection</code> with a copy of the cache content.
      */
-    public Collection<Map.Entry<LogKey, NodePageContainer>> getAll() {
-        return new ArrayList<Map.Entry<LogKey, NodePageContainer>>(map.entrySet());
+    public Collection<Map.Entry<LogKey, LogContainer<IPage>>> getAll() {
+        return new ArrayList<Map.Entry<LogKey, LogContainer<IPage>>>(map.entrySet());
     }
 
     /**

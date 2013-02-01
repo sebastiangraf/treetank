@@ -4,6 +4,9 @@
 package org.treetank.access;
 
 import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertFalse;
+import static org.testng.AssertJUnit.assertTrue;
+import static org.testng.AssertJUnit.fail;
 import static org.treetank.CoreTestHelper.getFakedStructure;
 
 import org.testng.annotations.AfterMethod;
@@ -15,7 +18,12 @@ import org.treetank.CoreTestHelper.Holder;
 import org.treetank.ModuleFactory;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
+import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
+import org.treetank.api.IPageReadTrx;
+import org.treetank.api.ISession;
+import org.treetank.api.IStorage;
+import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
 import org.treetank.page.DumbNodeFactory.DumbNode;
@@ -36,8 +44,6 @@ public class PageReadTrxTest {
     private IResourceConfigurationFactory mResourceConfig;
 
     private Holder mHolder;
-
-    private DumbNode[][] mNodes;
 
     /**
      * @throws java.lang.Exception
@@ -61,34 +67,36 @@ public class PageReadTrxTest {
 
     /**
      * Test method for {@link org.treetank.access.PageReadTrx#getNode(long)}.
+     * 
+     * @throws TTException
      */
     @Test
-    public void testGetNode() {
-        // fail("Not yet implemented");
+    public void testGetNode() throws TTException {
+        DumbNode[][] nodes = CoreTestHelper.createNodesInTreetank(mHolder);
+        // checking for all versions
+        long nodeKey = 0;
+        for (int i = 0; i < nodes.length; i++) {
+            final IPageReadTrx rtx = mHolder.getSession().beginPageReadTransaction(i + 1);
+            for (DumbNode node : nodes[i]) {
+                assertEquals(node, rtx.getNode(nodeKey));
+                nodeKey++;
+            }
+            rtx.close();
+        }
+
     }
 
     /**
-     * Test method for {@link org.treetank.access.PageReadTrx#close()}.
+     * Test method for {@link org.treetank.access.PageReadTrx#close()} and
+     * {@link org.treetank.access.PageReadTrx#isClosed()}.
+     * 
+     * @throws TTException
      */
     @Test
-    public void testClose() {
-        // fail("Not yet implemented");
-    }
-
-    /**
-     * Test method for {@link org.treetank.access.PageReadTrx#getActualRevisionRootPage()}.
-     */
-    @Test
-    public void testGetActualRevisionRootPage() {
-        // fail("Not yet implemented");
-    }
-
-    /**
-     * Test method for {@link org.treetank.access.PageReadTrx#isClosed()}.
-     */
-    @Test
-    public void testIsClosed() {
-        // fail("Not yet implemented");
+    public void testCloseAndIsClosed() throws TTException {
+        IPageReadTrx rtx =
+            mHolder.getSession().beginPageReadTransaction(mHolder.getSession().getMostRecentVersion());
+        testClose(mHolder.getStorage(), mHolder.getSession(), rtx);
     }
 
     /**
@@ -202,7 +210,6 @@ public class PageReadTrxTest {
         assertEquals(-1, key);
     }
 
-
     /**
      * Test method for {@link org.treetank.access.PageReadTrx#nodePageOffset(long)}.
      */
@@ -222,6 +229,42 @@ public class PageReadTrxTest {
      */
     @Test
     public void testGetMetaPage() {
+    }
+
+    protected static void
+        testClose(final IStorage pStorage, final ISession pSession, final IPageReadTrx pRtx)
+            throws TTException {
+
+        IPageReadTrx rtx = pRtx;
+
+        // explicit closing of one transaction
+        rtx.getMetaPage();
+        assertFalse(rtx.isClosed());
+        assertTrue(rtx.close());
+        try {
+            rtx.getMetaPage();
+            fail();
+        } catch (IllegalStateException exc) {
+            // must be thrown
+        }
+        assertFalse(rtx.close());
+        assertTrue(rtx.isClosed());
+
+        // implicit closing over session
+        rtx = pSession.beginPageReadTransaction(pSession.getMostRecentVersion());
+        assertFalse(rtx.isClosed());
+        assertTrue(pSession.close());
+        assertFalse(rtx.close());
+        assertTrue(rtx.isClosed());
+
+        // implicit closing over storage
+        ISession session = pStorage.getSession(new SessionConfiguration(CoreTestHelper.RESOURCENAME, null));
+        rtx = session.beginPageReadTransaction(session.getMostRecentVersion());
+        assertFalse(rtx.isClosed());
+        assertTrue(pStorage.close());
+        assertFalse(rtx.close());
+        assertTrue(rtx.isClosed());
+        assertFalse(session.close());
     }
 
 }

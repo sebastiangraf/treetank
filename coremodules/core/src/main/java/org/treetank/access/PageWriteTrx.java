@@ -44,8 +44,8 @@ import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.cache.BerkeleyPersistenceLog;
 import org.treetank.cache.LRUCache;
+import org.treetank.cache.LogContainer;
 import org.treetank.cache.LogKey;
-import org.treetank.cache.NodePageContainer;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendWriter;
@@ -56,6 +56,7 @@ import org.treetank.page.NodePage;
 import org.treetank.page.NodePage.DeletedNode;
 import org.treetank.page.RevisionRootPage;
 import org.treetank.page.UberPage;
+import org.treetank.page.interfaces.IPage;
 import org.treetank.page.interfaces.IReferencePage;
 
 /**
@@ -125,9 +126,10 @@ public final class PageWriteTrx implements IPageWriteTrx {
      *             if IO Error
      */
     public INode prepareNodeForModification(final long pNodeKey) throws TTException {
+        checkState(!mDelegate.isClosed(), "Transaction already closed");
         checkArgument(pNodeKey >= 0);
         final int nodePageOffset = nodePageOffset(pNodeKey);
-        NodePageContainer container = prepareNodePage(pNodeKey);
+        LogContainer<IPage> container = prepareNodePage(pNodeKey);
 
         INode node = ((NodePage)container.getModified()).getNode(nodePageOffset);
         if (node == null) {
@@ -148,10 +150,11 @@ public final class PageWriteTrx implements IPageWriteTrx {
      * @throws TTIOException
      */
     public void finishNodeModification(final INode pNode) throws TTIOException {
+        checkState(!mDelegate.isClosed(), "Transaction already closed");
         final long seqNodePageKey = pNode.getNodeKey() >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3];
         final int nodePageOffset = nodePageOffset(pNode.getNodeKey());
         LogKey key = new LogKey(false, IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length, seqNodePageKey);
-        NodePageContainer container = mLog.get(key);
+        LogContainer<IPage> container = mLog.get(key);
         NodePage page = (NodePage)container.getModified();
         page.setNode(nodePageOffset, pNode);
         mLog.put(key, container);
@@ -161,11 +164,12 @@ public final class PageWriteTrx implements IPageWriteTrx {
      * {@inheritDoc}
      */
     public long setNode(final INode pNode) throws TTException {
+        checkState(!mDelegate.isClosed(), "Transaction already closed");
         // Allocate node key and increment node count.
         final long nodeKey = pNode.getNodeKey();
         final long seqPageKey = nodeKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3];
         final int nodePageOffset = nodePageOffset(nodeKey);
-        NodePageContainer container = prepareNodePage(nodeKey);
+        LogContainer<IPage> container = prepareNodePage(nodeKey);
         final NodePage page = ((NodePage)container.getModified());
         page.setNode(nodePageOffset, pNode);
         mLog.put(new LogKey(false, IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length, seqPageKey), container);
@@ -181,9 +185,10 @@ public final class PageWriteTrx implements IPageWriteTrx {
      *             if the removal fails
      */
     public void removeNode(final INode pNode) throws TTException {
-        assert pNode != null;
+        checkState(!mDelegate.isClosed(), "Transaction already closed");
+        checkNotNull(pNode);
         final long nodePageKey = pNode.getNodeKey() >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3];
-        NodePageContainer container = prepareNodePage(pNode.getNodeKey());
+        LogContainer<IPage> container = prepareNodePage(pNode.getNodeKey());
         final INode delNode = new DeletedNode(pNode.getNodeKey());
         ((NodePage)container.getComplete()).setNode(nodePageOffset(pNode.getNodeKey()), delNode);
         ((NodePage)container.getModified()).setNode(nodePageOffset(pNode.getNodeKey()), delNode);
@@ -195,12 +200,12 @@ public final class PageWriteTrx implements IPageWriteTrx {
      * {@inheritDoc}
      */
     public INode getNode(final long pNodeKey) throws TTIOException {
-
+        checkState(!mDelegate.isClosed(), "Transaction already closed");
         // Calculate page and node part for given nodeKey.
         final long nodePageKey = pNodeKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3];
         final int nodePageOffset = nodePageOffset(pNodeKey);
 
-        final NodePageContainer container =
+        final LogContainer<IPage> container =
             mLog.get(new LogKey(false, IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length, nodePageKey));
         // Page was not modified yet, delegate to read or..
         if (container == null) {
@@ -228,14 +233,15 @@ public final class PageWriteTrx implements IPageWriteTrx {
      *             if something odd happens while storing the new key
      */
     public void createEntry(final IMetaEntry key, IMetaEntry value) throws TTIOException {
+        checkState(!mDelegate.isClosed(), "Transaction already closed");
         mNewName.setEntry(key, value);
     }
 
     public void commit() throws TTException {
-
-        Iterator<Map.Entry<LogKey, NodePageContainer>> entries = mLog.getIterator();
+        checkState(!mDelegate.isClosed(), "Transaction already closed");
+        Iterator<Map.Entry<LogKey, LogContainer<IPage>>> entries = mLog.getIterator();
         while (entries.hasNext()) {
-            Map.Entry<LogKey, NodePageContainer> next = entries.next();
+            Map.Entry<LogKey, LogContainer<IPage>> next = entries.next();
             mPageWriter.write(next.getValue().getModified());
         }
         mPageWriter.write(mNewName);
@@ -260,30 +266,29 @@ public final class PageWriteTrx implements IPageWriteTrx {
             mDelegate.close();
             mLog.clear();
             mDelegate.mSession.deregisterPageTrx(this);
-            // mPageWriter.close();
             return true;
         } else {
             return false;
         }
-
     }
 
     public long incrementNodeKey() {
+        checkState(!mDelegate.isClosed(), "Transaction already closed");
         return mNewRoot.incrementMaxNodeKey();
     }
 
-    private NodePageContainer prepareNodePage(final long pNodeKey) throws TTException {
+    private LogContainer<IPage> prepareNodePage(final long pNodeKey) throws TTException {
 
         final long seqNodePageKey = pNodeKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3];
 
         LogKey key = new LogKey(false, IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length, seqNodePageKey);
         // See if on nodePageLevel, there are any pages...
-        NodePageContainer container = mLog.get(key);
+        LogContainer<IPage> container = mLog.get(key);
         // ... and start dereferencing of not.
         if (container == null) {
             LogKey indirectKey = preparePathToLeaf(false, mNewRoot, pNodeKey);
 
-            NodePageContainer indirectContainer = mLog.get(indirectKey);
+            LogContainer<IPage> indirectContainer = mLog.get(indirectKey);
             int nodeOffset = nodePageOffset(seqNodePageKey);
             long pageKey = ((IndirectPage)indirectContainer.getModified()).getReferenceKeys()[nodeOffset];
 
@@ -304,7 +309,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
                 }
             } else {
                 NodePage newPage = new NodePage(newPageKey);
-                container = new NodePageContainer(newPage, newPage);
+                container = new LogContainer<IPage>(newPage, newPage);
             }
             ((IndirectPage)indirectContainer.getModified()).setReferenceKey(nodeOffset, newPageKey);
             mLog.put(indirectKey, indirectContainer);
@@ -360,7 +365,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
         for (int level = 0; level < orderNumber.length; level++) {
             // ...see if the actual page requested is already in the log
             key = new LogKey(pIsRootLevel, level, orderNumber[level]);
-            NodePageContainer container = mLog.get(key);
+            LogContainer<IPage> container = mLog.get(key);
             // if the page is not existing,..
             if (container == null) {
                 // ..create a new page
@@ -382,15 +387,15 @@ public final class PageWriteTrx implements IPageWriteTrx {
                 // Set the newKey on the computed offset
                 parentPage.setReferenceKey(offset, newKey);
                 // .. and put the parent-reference to the log as well as the reference of the..
-                container = new NodePageContainer(parentPage, parentPage);
+                container = new LogContainer<IPage>(parentPage, parentPage);
                 mLog.put(parentKey, container);
                 // ...current page.
-                container = new NodePageContainer(page, page);
+                container = new LogContainer<IPage>(page, page);
                 mLog.put(key, container);
 
             } // if the page is already in the log, get it simply from the log.
             else {
-                page = (IndirectPage)container.getModified();
+                page = (IReferencePage)container.getModified();
             }
             // finally, set the new pagekey for the next level
             parentKey = key;
@@ -412,7 +417,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
         mDelegate = new PageReadTrx(pSession, pUberPage, pRepresentRev, pWriter);
 
         // Get previous revision root page..
-        final RevisionRootPage previousRevRoot = mDelegate.getActualRevisionRootPage();
+        final RevisionRootPage previousRevRoot = mDelegate.mRootPage;
         // ...and using this data to initialize a fresh revision root including the pointers.
         mNewRoot =
             new RevisionRootPage(mNewUber.incrementPageCounter(), pRepresentRev + 1, previousRevRoot
@@ -423,12 +428,12 @@ public final class PageWriteTrx implements IPageWriteTrx {
         // Prepare indirect tree to hold reference to prepared revision root
         // nodePageReference.
         LogKey indirectKey = preparePathToLeaf(true, mNewUber, mNewUber.getRevisionNumber());
-        NodePageContainer indirectContainer = mLog.get(indirectKey);
+        LogContainer<IPage> indirectContainer = mLog.get(indirectKey);
         int offset = nodePageOffset(mNewUber.getRevisionNumber());
         ((IndirectPage)indirectContainer.getModified()).setReferenceKey(offset, mNewRoot.getPageKey());
         mLog.put(indirectKey, indirectContainer);
 
-        // Setting up a new metapage
+        // Setting up a new namepage
         Map<IMetaEntry, IMetaEntry> oldMap = mDelegate.mMetaPage.getMetaMap();
         mNewName = new MetaPage(mNewUber.incrementPageCounter());
 
@@ -441,12 +446,11 @@ public final class PageWriteTrx implements IPageWriteTrx {
     }
 
     /**
-     * Current reference to actual rev-root page.
-     * 
-     * @return the current revision root page
+     * {@inheritDoc}
      */
-    public RevisionRootPage getActualRevisionRootPage() {
-        return mNewRoot;
+    public long getRevision() throws TTIOException {
+        checkState(!mDelegate.isClosed(), "Transaction already closed");
+        return mNewRoot.getRevision();
     }
 
     /**
@@ -471,6 +475,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
      */
     @Override
     public MetaPage getMetaPage() {
+        checkState(!mDelegate.isClosed(), "Transaction already closed");
         return mNewName;
     }
 

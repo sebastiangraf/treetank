@@ -179,7 +179,7 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
         mDelegate.assertNotClosed();
 
         long revisionToSet = 0;
-        revisionToSet = mDelegate.mPageReadTrx.getActualRevisionRootPage().getRevision() - 1;
+        revisionToSet = mDelegate.mPageReadTrx.getRevision() - 1;
 
         getPageTransaction().close();
 

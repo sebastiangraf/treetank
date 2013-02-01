@@ -6,10 +6,11 @@ package org.treetank.revisioning;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import org.treetank.access.PageReadTrx;
-import org.treetank.cache.NodePageContainer;
+import org.treetank.cache.LogContainer;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
 import org.treetank.page.NodePage;
+import org.treetank.page.interfaces.IPage;
 
 /**
  * Sliding Snapshot versioning of {@link NodePage}s.
@@ -49,7 +50,7 @@ public class SlidingSnapshot implements IRevisioning {
      * {@inheritDoc}
      */
     @Override
-    public NodePageContainer combinePagesForModification(long pNewPageKey, NodePage[] pPages,
+    public LogContainer<IPage> combinePagesForModification(long pNewPageKey, NodePage[] pPages,
         boolean pFullDump) {
         checkArgument(pPages.length > 0, "At least one Nodepage must be provided");
         checkArgument(!pFullDump, "Full Dump not possible within sliding snapshot");
@@ -75,16 +76,15 @@ public class SlidingSnapshot implements IRevisioning {
             }
         }
         // return the container
-        return new NodePageContainer(returnVal[0], returnVal[1]);
+        return new LogContainer<IPage>(returnVal[0], returnVal[1]);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public long[]
-        getRevRootKeys(int pRevToRestore, long pLongStartKey, long pSeqKey, IBackendReader pReader)
-            throws TTIOException {
+    public long[] getRevRootKeys(int pRevToRestore, long pLongStartKey, long pSeqKey, IBackendReader pReader)
+        throws TTIOException {
         long[] returnVal = new long[pRevToRestore];
         long revCounter = pSeqKey;
         for (int i = 0; i < returnVal.length; i++) {

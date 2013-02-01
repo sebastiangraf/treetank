@@ -6,7 +6,6 @@ package org.treetank.api;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.page.MetaPage;
-import org.treetank.page.RevisionRootPage;
 
 /**
  * Read-Transaction of a page ensuring read-only access to any pages.
@@ -41,13 +40,14 @@ public interface IPageReadTrx {
     INode getNode(final long pKey) throws TTIOException;
 
     /**
-     * Getting the most related {@link RevisionRootPage} for additional content.
-     * 
-     * @return the related {@link RevisionRootPage}
-     * @throws TTIOException
-     *             if deserialization fails.
+     * // * Getting the revision number of this transaction
+     * // *
+     * // * @return the revision number of this transaction
+     * // * @throws TTIOException
+     * // * if deserialization fails.
+     * //
      */
-    RevisionRootPage getActualRevisionRootPage() throws TTIOException;
+     long getRevision() throws TTIOException;
 
     /**
      * Close the transaction.

@@ -33,6 +33,7 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTIOException;
+import org.treetank.page.interfaces.IPage;
 
 import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseConfig;
@@ -138,7 +139,7 @@ public final class BerkeleyPersistenceLog implements ICachedLog {
      * {@inheritDoc}
      */
     @Override
-    public void put(final LogKey mKey, final NodePageContainer mPage) throws TTIOException {
+    public void put(final LogKey mKey, final LogContainer<IPage> mPage) throws TTIOException {
         final DatabaseEntry valueEntry = new DatabaseEntry();
         final DatabaseEntry keyEntry = new DatabaseEntry();
 
@@ -171,13 +172,13 @@ public final class BerkeleyPersistenceLog implements ICachedLog {
      * {@inheritDoc}
      */
     @Override
-    public NodePageContainer get(final LogKey mKey) throws TTIOException {
+    public LogContainer<IPage> get(final LogKey mKey) throws TTIOException {
         final DatabaseEntry valueEntry = new DatabaseEntry();
         final DatabaseEntry keyEntry = new DatabaseEntry();
         mKeyBinding.objectToEntry(mKey, keyEntry);
         try {
             final OperationStatus status = mDatabase.get(null, keyEntry, valueEntry, LockMode.DEFAULT);
-            NodePageContainer val = null;
+            LogContainer<IPage> val = null;
             if (status == OperationStatus.SUCCESS) {
                 val = mValueBinding.entryToObject(valueEntry);
             }

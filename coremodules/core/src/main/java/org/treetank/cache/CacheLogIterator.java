@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.treetank.cache.ICachedLog.TransactionLogEntry;
+import org.treetank.page.interfaces.IPage;
 
 import com.sleepycat.je.Cursor;
 import com.sleepycat.je.DatabaseEntry;
@@ -23,14 +24,14 @@ import com.sleepycat.je.OperationStatus;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public class CacheLogIterator implements Iterator<Map.Entry<LogKey, NodePageContainer>>,
-    Iterable<Map.Entry<LogKey, NodePageContainer>> {
+public class CacheLogIterator implements Iterator<Map.Entry<LogKey, LogContainer<IPage>>>,
+    Iterable<Map.Entry<LogKey, LogContainer<IPage>>> {
 
     private int i = 0;
 
     private final BerkeleyPersistenceLog mSecondLog;
 
-    private List<Map.Entry<LogKey, NodePageContainer>> mEntries;
+    private List<Map.Entry<LogKey, LogContainer<IPage>>> mEntries;
 
     private Cursor mCursor;
     private DatabaseEntry valueEntry;
@@ -38,7 +39,7 @@ public class CacheLogIterator implements Iterator<Map.Entry<LogKey, NodePageCont
 
     public CacheLogIterator(final LRUCache pFirstLog, final BerkeleyPersistenceLog pSecondLog) {
         mSecondLog = pSecondLog;
-        mEntries = new ArrayList<Map.Entry<LogKey, NodePageContainer>>();
+        mEntries = new ArrayList<Map.Entry<LogKey, LogContainer<IPage>>>();
         if (pFirstLog != null) {
             mEntries.addAll(pFirstLog.map.entrySet());
         }
@@ -80,9 +81,9 @@ public class CacheLogIterator implements Iterator<Map.Entry<LogKey, NodePageCont
      * {@inheritDoc}
      */
     @Override
-    public Map.Entry<LogKey, NodePageContainer> next() {
-        if (i <LRUCache.CACHE_CAPACITY) {
-            Map.Entry<LogKey, NodePageContainer> returnVal = mEntries.get(i);
+    public Map.Entry<LogKey, LogContainer<IPage>> next() {
+        if (i < LRUCache.CACHE_CAPACITY) {
+            Map.Entry<LogKey, LogContainer<IPage>> returnVal = mEntries.get(i);
             i++;
             return returnVal;
         } else {
@@ -104,7 +105,7 @@ public class CacheLogIterator implements Iterator<Map.Entry<LogKey, NodePageCont
      * {@inheritDoc}
      */
     @Override
-    public Iterator<Map.Entry<LogKey, NodePageContainer>> iterator() {
+    public Iterator<Map.Entry<LogKey, LogContainer<IPage>>> iterator() {
         return this;
     }
 

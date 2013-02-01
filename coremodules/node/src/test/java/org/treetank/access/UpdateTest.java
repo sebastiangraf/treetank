@@ -49,6 +49,7 @@ import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFact
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.INodeWriteTrx;
+import org.treetank.api.IPageReadTrx;
 import org.treetank.exception.TTException;
 import org.treetank.node.interfaces.IStructNode;
 
@@ -124,11 +125,11 @@ public class UpdateTest {
         wtx.commit();
         wtx.close();
 
-        INodeReadTrx rtx =
-            new NodeReadTrx(holder.getSession().beginPageReadTransaction(
-                holder.getSession().getMostRecentVersion()));
+        IPageReadTrx pRtx =
+            holder.getSession().beginPageReadTransaction(holder.getSession().getMostRecentVersion());
+        INodeReadTrx rtx = new NodeReadTrx(pRtx);
 
-        assertEquals(3L, holder.getPRtx().getActualRevisionRootPage().getRevision());
+        assertEquals(2L, pRtx.getRevision());
 
         // Insert 100 children.
         for (int i = 1; i <= 10; i++) {

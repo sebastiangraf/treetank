@@ -29,6 +29,7 @@ package org.treetank.cache;
 import org.treetank.CoreTestHelper;
 import org.treetank.exception.TTException;
 import org.treetank.page.NodePage;
+import org.treetank.page.interfaces.IPage;
 
 /**
  * Helper class for testing the cache.
@@ -53,7 +54,7 @@ public class CacheTestHelper {
 
                 LogKey toStore = new LogKey(true, i, j);
                 PAGES[i][j] = CoreTestHelper.getNodePage(0, 0, CoreTestHelper.random.nextLong());
-                cache.put(toStore, new NodePageContainer(PAGES[i][j], PAGES[i][j]));
+                cache.put(toStore, new LogContainer<IPage>(PAGES[i][j], PAGES[i][j]));
             }
         }
     }
