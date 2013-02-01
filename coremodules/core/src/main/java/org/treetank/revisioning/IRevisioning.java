@@ -3,7 +3,7 @@
  */
 package org.treetank.revisioning;
 
-import org.treetank.cache.NodePageContainer;
+import org.treetank.cache.LogContainer;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
 import org.treetank.page.NodePage;
@@ -43,7 +43,7 @@ public interface IRevisioning {
      * @return a NodePageContainer holding a complete NodePage for reading a one
      *         for writing
      */
-    NodePageContainer combinePagesForModification(final long pNewPageKey, final NodePage[] pPages,
+    LogContainer<NodePage> combinePagesForModification(final long pNewPageKey, final NodePage[] pPages,
         final boolean pFullDump);
 
     /**

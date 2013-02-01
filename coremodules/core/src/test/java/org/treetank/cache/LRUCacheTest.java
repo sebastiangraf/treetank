@@ -54,7 +54,7 @@ public class LRUCacheTest {
         for (int i = 1; i < CacheTestHelper.PAGES.length; i++) {
             for (int j = 1; j < CacheTestHelper.PAGES[i].length; j++) {
                 LogKey toRetrieve = new LogKey(true, i, j);
-                final NodePageContainer cont = cache.get(toRetrieve);
+                final LogContainer<? extends IPage> cont = cache.get(toRetrieve);
                 final IPage current = cont.getComplete();
                 assertEquals(CacheTestHelper.PAGES[i][j], current);
             }
@@ -76,12 +76,12 @@ public class LRUCacheTest {
         }
 
         @Override
-        public NodePageContainer get(final LogKey mKey) {
+        public <K extends IPage> LogContainer<K> get(final LogKey mKey) {
             return null;
         }
 
         @Override
-        public void put(final LogKey mKey, final NodePageContainer mPage) {
+        public void put(final LogKey mKey, final LogContainer<? extends IPage> mPage) {
             // Not used over here
         }
 

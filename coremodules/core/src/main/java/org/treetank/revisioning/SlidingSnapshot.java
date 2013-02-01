@@ -6,7 +6,7 @@ package org.treetank.revisioning;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import org.treetank.access.PageReadTrx;
-import org.treetank.cache.NodePageContainer;
+import org.treetank.cache.LogContainer;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
 import org.treetank.page.NodePage;
@@ -49,7 +49,7 @@ public class SlidingSnapshot implements IRevisioning {
      * {@inheritDoc}
      */
     @Override
-    public NodePageContainer combinePagesForModification(long pNewPageKey, NodePage[] pPages,
+    public LogContainer<NodePage> combinePagesForModification(long pNewPageKey, NodePage[] pPages,
         boolean pFullDump) {
         checkArgument(pPages.length > 0, "At least one Nodepage must be provided");
         checkArgument(!pFullDump, "Full Dump not possible within sliding snapshot");
@@ -75,7 +75,7 @@ public class SlidingSnapshot implements IRevisioning {
             }
         }
         // return the container
-        return new NodePageContainer(returnVal[0], returnVal[1]);
+        return new LogContainer<NodePage>(returnVal[0], returnVal[1]);
     }
 
     /**

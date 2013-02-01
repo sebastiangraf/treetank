@@ -15,12 +15,13 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.treetank.CoreTestHelper;
-import org.treetank.cache.NodePageContainer;
+import org.treetank.cache.LogContainer;
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
 import org.treetank.page.IConstants;
 import org.treetank.page.NodePage;
+import org.treetank.page.interfaces.IPage;
 
 /**
  * Test for {@link IRevisioning}-interface.
@@ -84,7 +85,7 @@ public class IRevisioningTest {
                 // ...get the node pages for not full-dump test and...
                 final NodePage[] pages = pNodeGenerator[i].generateNodePages();
                 // ..recombine them...
-                final NodePageContainer page = pRevisioning[i].combinePagesForModification(0, pages, true);
+                final LogContainer<? extends IPage> page = pRevisioning[i].combinePagesForModification(0, pages, true);
                 // ...and check them suitable to the versioning approach
                 pRevisionChecker[i].checkCompletePagesForModification(page, pages, true);
             }
@@ -99,7 +100,7 @@ public class IRevisioningTest {
                 // ...get the node pages for full-dump test and...
                 final NodePage[] pages = pNodeGenerator[i].generateNodePages();
                 // ..recombine them...
-                final NodePageContainer page = pRevisioning[i].combinePagesForModification(0, pages, false);
+                final LogContainer<? extends IPage> page = pRevisioning[i].combinePagesForModification(0, pages, false);
                 // ...and check them suitable to the versioning approach
                 pRevisionChecker[i].checkCompletePagesForModification(page, pages, false);
             }
@@ -292,7 +293,7 @@ public class IRevisioningTest {
                         }
 
                         @Override
-                        public void checkCompletePagesForModification(NodePageContainer pComplete,
+                        public void checkCompletePagesForModification(LogContainer<? extends IPage> pComplete,
                             NodePage[] pFragments, boolean pFullDump) {
                             // must always be true since it is the Fulldump
                             assertTrue(pFullDump);
@@ -330,7 +331,7 @@ public class IRevisioningTest {
                         }
 
                         @Override
-                        public void checkCompletePagesForModification(NodePageContainer pComplete,
+                        public void checkCompletePagesForModification(LogContainer<? extends IPage> pComplete,
                             NodePage[] pFragments, boolean pFullDump) {
                             NodePage complete = (NodePage)pComplete.getComplete();
                             NodePage modified = (NodePage)pComplete.getModified();
@@ -381,7 +382,7 @@ public class IRevisioningTest {
                         }
 
                         @Override
-                        public void checkCompletePagesForModification(NodePageContainer pComplete,
+                        public void checkCompletePagesForModification(LogContainer<? extends IPage> pComplete,
                             NodePage[] pFragments, boolean pFullDump) {
                             NodePage complete = (NodePage)pComplete.getComplete();
                             NodePage modified = (NodePage)pComplete.getModified();
@@ -419,7 +420,7 @@ public class IRevisioningTest {
                         }
 
                         @Override
-                        public void checkCompletePagesForModification(NodePageContainer pComplete,
+                        public void checkCompletePagesForModification(LogContainer<? extends IPage> pComplete,
                             NodePage[] pFragments, boolean fullDump) {
                             NodePage complete = (NodePage)pComplete.getComplete();
                             NodePage modified = (NodePage)pComplete.getModified();
@@ -512,7 +513,7 @@ public class IRevisioningTest {
     interface IRevisionChecker {
         void checkCompletePages(NodePage pComplete, NodePage[] pFragments);
 
-        void checkCompletePagesForModification(NodePageContainer pComplete, NodePage[] pFragments,
+        void checkCompletePagesForModification(LogContainer<? extends IPage> pComplete, NodePage[] pFragments,
             boolean fullDump);
     }
 

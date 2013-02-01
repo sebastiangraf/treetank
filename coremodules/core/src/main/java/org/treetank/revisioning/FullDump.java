@@ -6,7 +6,7 @@ package org.treetank.revisioning;
 import static com.google.common.base.Objects.toStringHelper;
 
 import org.treetank.access.PageReadTrx;
-import org.treetank.cache.NodePageContainer;
+import org.treetank.cache.LogContainer;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
 import org.treetank.page.NodePage;
@@ -37,8 +37,8 @@ public class FullDump implements IRevisioning {
      * {@inheritDoc}
      */
     @Override
-    public NodePageContainer
-        combinePagesForModification(long pNewPageKey, NodePage[] pages, boolean fullDump) {
+    public LogContainer<NodePage> combinePagesForModification(long pNewPageKey, NodePage[] pages,
+        boolean fullDump) {
         checkArgument(pages.length == 1, "parameter should just consists of one single page");
         checkArgument(fullDump, "Because of the nature, fulldump should occur always");
         final NodePage[] returnVal = {
@@ -50,7 +50,7 @@ public class FullDump implements IRevisioning {
             returnVal[1].setNode(i, pages[0].getNode(i));
         }
 
-        final NodePageContainer cont = new NodePageContainer(returnVal[0], returnVal[1]);
+        final LogContainer<NodePage> cont = new LogContainer<NodePage>(returnVal[0], returnVal[1]);
         return cont;
     }
 
@@ -66,9 +66,8 @@ public class FullDump implements IRevisioning {
      * {@inheritDoc}
      */
     @Override
-    public long[]
-        getRevRootKeys(int pRevToRestore, long pLongStartKey, long pSeqKey, IBackendReader pReader)
-            throws TTIOException {
+    public long[] getRevRootKeys(int pRevToRestore, long pLongStartKey, long pSeqKey, IBackendReader pReader)
+        throws TTIOException {
         final long currentRevKey = PageReadTrx.dereferenceLeafOfTree(pReader, pLongStartKey, pSeqKey);
         return new long[] {
             currentRevKey

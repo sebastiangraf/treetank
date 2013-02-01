@@ -7,7 +7,7 @@ import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import org.treetank.access.PageReadTrx;
-import org.treetank.cache.NodePageContainer;
+import org.treetank.cache.LogContainer;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
 import org.treetank.page.NodePage;
@@ -50,7 +50,7 @@ public class Incremental implements IRevisioning {
      * {@inheritDoc}
      */
     @Override
-    public NodePageContainer
+    public LogContainer<NodePage>
         combinePagesForModification(long pNewPageKey, NodePage[] pages, boolean pFullDump) {
         checkArgument(pages.length > 0, "At least one Nodepage must be provided");
         // create pages for container..
@@ -76,7 +76,7 @@ public class Incremental implements IRevisioning {
             }
         }
         // return the container
-        return new NodePageContainer(returnVal[0], returnVal[1]);
+        return new LogContainer<NodePage>(returnVal[0], returnVal[1]);
     }
 
     /**

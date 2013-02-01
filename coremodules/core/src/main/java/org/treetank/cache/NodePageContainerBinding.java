@@ -39,7 +39,7 @@ import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
 
-public class NodePageContainerBinding extends TupleBinding<NodePageContainer> {
+public class NodePageContainerBinding extends TupleBinding<LogContainer<? extends IPage>> {
 
     private final PageFactory mFac;
 
@@ -56,7 +56,7 @@ public class NodePageContainerBinding extends TupleBinding<NodePageContainer> {
     }
 
     @Override
-    public NodePageContainer entryToObject(final TupleInput arg0) {
+    public LogContainer<? extends IPage> entryToObject(final TupleInput arg0) {
         final ByteArrayDataInput data = ByteStreams.newDataInput(arg0.getBufferBytes());
 
         final int completeLength = data.readInt();
@@ -68,11 +68,11 @@ public class NodePageContainerBinding extends TupleBinding<NodePageContainer> {
 
         final IPage current = mFac.deserializePage(completeBytes);
         final IPage modified = mFac.deserializePage(modifiedBytes);
-        return new NodePageContainer(current, modified);
+        return new LogContainer<IPage>(current, modified);
     }
 
     @Override
-    public void objectToEntry(final NodePageContainer arg0, final TupleOutput arg1) {
+    public void objectToEntry(final LogContainer<? extends IPage> arg0, final TupleOutput arg1) {
         final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
         final byte[] completeData = arg0.getComplete().getByteRepresentation();
         final byte[] modifiedData = arg0.getModified().getByteRepresentation();
