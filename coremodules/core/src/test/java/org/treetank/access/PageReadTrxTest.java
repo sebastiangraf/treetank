@@ -18,8 +18,11 @@ import org.treetank.CoreTestHelper.Holder;
 import org.treetank.ModuleFactory;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
+import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.IPageReadTrx;
+import org.treetank.api.ISession;
+import org.treetank.api.IStorage;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
@@ -84,42 +87,16 @@ public class PageReadTrxTest {
     }
 
     /**
-     * Test method for {@link org.treetank.access.PageReadTrx#close()}.
+     * Test method for {@link org.treetank.access.PageReadTrx#close()} and
+     * {@link org.treetank.access.PageReadTrx#isClosed()}.
      * 
      * @throws TTException
      */
     @Test
-    public void testClose() throws TTException {
+    public void testCloseAndIsClosed() throws TTException {
         IPageReadTrx rtx =
             mHolder.getSession().beginPageReadTransaction(mHolder.getSession().getMostRecentVersion());
-        rtx.getMetaPage();
-        assertFalse(rtx.isClosed());
-        assertTrue(rtx.close());
-        try {
-            rtx.getMetaPage();
-            fail();
-        } catch (IllegalStateException exc) {
-            // must be thrown
-        }
-        assertFalse(rtx.close());
-        assertTrue(rtx.isClosed());
-
-    }
-
-    /**
-     * Test method for {@link org.treetank.access.PageReadTrx#getActualRevisionRootPage()}.
-     */
-    @Test
-    public void testGetActualRevisionRootPage() {
-        // fail("Not yet implemented");
-    }
-
-    /**
-     * Test method for {@link org.treetank.access.PageReadTrx#isClosed()}.
-     */
-    @Test
-    public void testIsClosed() {
-        // fail("Not yet implemented");
+        testClose(mHolder.getStorage(), mHolder.getSession(), rtx);
     }
 
     /**
@@ -252,6 +229,42 @@ public class PageReadTrxTest {
      */
     @Test
     public void testGetMetaPage() {
+    }
+
+    protected static void
+        testClose(final IStorage pStorage, final ISession pSession, final IPageReadTrx pRtx)
+            throws TTException {
+
+        IPageReadTrx rtx = pRtx;
+
+        // explicit closing of one transaction
+        rtx.getMetaPage();
+        assertFalse(rtx.isClosed());
+        assertTrue(rtx.close());
+        try {
+            rtx.getMetaPage();
+            fail();
+        } catch (IllegalStateException exc) {
+            // must be thrown
+        }
+        assertFalse(rtx.close());
+        assertTrue(rtx.isClosed());
+
+        // implicit closing over session
+        rtx = pSession.beginPageReadTransaction(pSession.getMostRecentVersion());
+        assertFalse(rtx.isClosed());
+        assertTrue(pSession.close());
+        assertFalse(rtx.close());
+        assertTrue(rtx.isClosed());
+
+        // implicit closing over storage
+        ISession session = pStorage.getSession(new SessionConfiguration(CoreTestHelper.RESOURCENAME, null));
+        rtx = session.beginPageReadTransaction(session.getMostRecentVersion());
+        assertFalse(rtx.isClosed());
+        assertTrue(pStorage.close());
+        assertFalse(rtx.close());
+        assertTrue(rtx.isClosed());
+        assertFalse(session.close());
     }
 
 }

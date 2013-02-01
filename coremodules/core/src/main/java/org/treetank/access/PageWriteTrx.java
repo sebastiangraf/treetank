@@ -126,6 +126,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
      *             if IO Error
      */
     public INode prepareNodeForModification(final long pNodeKey) throws TTException {
+        checkState(!mDelegate.isClosed(), "Transaction already closed");
         checkArgument(pNodeKey >= 0);
         final int nodePageOffset = nodePageOffset(pNodeKey);
         LogContainer<IPage> container = prepareNodePage(pNodeKey);
@@ -149,6 +150,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
      * @throws TTIOException
      */
     public void finishNodeModification(final INode pNode) throws TTIOException {
+        checkState(!mDelegate.isClosed(), "Transaction already closed");
         final long seqNodePageKey = pNode.getNodeKey() >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3];
         final int nodePageOffset = nodePageOffset(pNode.getNodeKey());
         LogKey key = new LogKey(false, IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length, seqNodePageKey);
@@ -162,6 +164,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
      * {@inheritDoc}
      */
     public long setNode(final INode pNode) throws TTException {
+        checkState(!mDelegate.isClosed(), "Transaction already closed");
         // Allocate node key and increment node count.
         final long nodeKey = pNode.getNodeKey();
         final long seqPageKey = nodeKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3];
@@ -182,7 +185,8 @@ public final class PageWriteTrx implements IPageWriteTrx {
      *             if the removal fails
      */
     public void removeNode(final INode pNode) throws TTException {
-        assert pNode != null;
+        checkState(!mDelegate.isClosed(), "Transaction already closed");
+        checkNotNull(pNode);
         final long nodePageKey = pNode.getNodeKey() >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3];
         LogContainer<IPage> container = prepareNodePage(pNode.getNodeKey());
         final INode delNode = new DeletedNode(pNode.getNodeKey());
@@ -196,7 +200,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
      * {@inheritDoc}
      */
     public INode getNode(final long pNodeKey) throws TTIOException {
-
+        checkState(!mDelegate.isClosed(), "Transaction already closed");
         // Calculate page and node part for given nodeKey.
         final long nodePageKey = pNodeKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3];
         final int nodePageOffset = nodePageOffset(pNodeKey);
@@ -229,11 +233,12 @@ public final class PageWriteTrx implements IPageWriteTrx {
      *             if something odd happens while storing the new key
      */
     public void createEntry(final IMetaEntry key, IMetaEntry value) throws TTIOException {
+        checkState(!mDelegate.isClosed(), "Transaction already closed");
         mNewName.setEntry(key, value);
     }
 
     public void commit() throws TTException {
-
+        checkState(!mDelegate.isClosed(), "Transaction already closed");
         Iterator<Map.Entry<LogKey, LogContainer<IPage>>> entries = mLog.getIterator();
         while (entries.hasNext()) {
             Map.Entry<LogKey, LogContainer<IPage>> next = entries.next();
@@ -261,15 +266,14 @@ public final class PageWriteTrx implements IPageWriteTrx {
             mDelegate.close();
             mLog.clear();
             mDelegate.mSession.deregisterPageTrx(this);
-            // mPageWriter.close();
             return true;
         } else {
             return false;
         }
-
     }
 
     public long incrementNodeKey() {
+        checkState(!mDelegate.isClosed(), "Transaction already closed");
         return mNewRoot.incrementMaxNodeKey();
     }
 
@@ -413,7 +417,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
         mDelegate = new PageReadTrx(pSession, pUberPage, pRepresentRev, pWriter);
 
         // Get previous revision root page..
-        final RevisionRootPage previousRevRoot = mDelegate.getActualRevisionRootPage();
+        final RevisionRootPage previousRevRoot = mDelegate.mRootPage;
         // ...and using this data to initialize a fresh revision root including the pointers.
         mNewRoot =
             new RevisionRootPage(mNewUber.incrementPageCounter(), pRepresentRev + 1, previousRevRoot
@@ -442,12 +446,11 @@ public final class PageWriteTrx implements IPageWriteTrx {
     }
 
     /**
-     * Current reference to actual rev-root page.
-     * 
-     * @return the current revision root page
+     * {@inheritDoc}
      */
-    public RevisionRootPage getActualRevisionRootPage() {
-        return mNewRoot;
+    public long getRevision() throws TTIOException {
+        checkState(!mDelegate.isClosed(), "Transaction already closed");
+        return mNewRoot.getRevision();
     }
 
     /**
@@ -472,6 +475,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
      */
     @Override
     public MetaPage getMetaPage() {
+        checkState(!mDelegate.isClosed(), "Transaction already closed");
         return mNewName;
     }
 

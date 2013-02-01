@@ -258,15 +258,24 @@ public final class CoreTestHelper {
         return returnVal;
     }
 
+    /**
+     * Create nodes in different versions in Treetank and check directly afterwards the structure.
+     * 
+     * @param pHolder
+     *            for getting the transaction
+     * @return a two-dimensional array of nodes.
+     * @throws TTException
+     */
     public static DumbNode[][] createNodesInTreetank(Holder pHolder) throws TTException {
         IPageWriteTrx wtx = pHolder.getSession().beginPageWriteTransaction();
-        int[] nodesPerRevision = new int[129];
+        int[] nodesPerRevision = new int[10];
         Arrays.fill(nodesPerRevision, 16385);
         DumbNode[][] nodes = CoreTestHelper.createRevisions(nodesPerRevision, wtx);
+        checkStructure(combineNodes(nodes), wtx);
         wtx.close();
         return nodes;
     }
-    
+
     /**
      * Generating new nodes pased on a given number of nodes within a revision
      * 

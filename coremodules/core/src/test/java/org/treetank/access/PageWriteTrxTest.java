@@ -118,14 +118,6 @@ public class PageWriteTrxTest {
     }
 
     /**
-     * Test method for {@link org.treetank.access.PageWriteTrx#close()}.
-     */
-    @Test
-    public void testClose() {
-        // fail("Not yet implemented");
-    }
-
-    /**
      * Test method for {@link org.treetank.access.PageWriteTrx#incrementNodeKey()}.
      */
     @Test
@@ -142,11 +134,15 @@ public class PageWriteTrxTest {
     }
 
     /**
-     * Test method for {@link org.treetank.access.PageWriteTrx#isClosed()}.
+     * Test method for {@link org.treetank.access.PageWriteTrx#close()} and
+     * {@link org.treetank.access.PageWriteTrx#isClosed()}.
+     * 
+     * @throws TTException
      */
     @Test
-    public void testIsClosed() {
-        // fail("Not yet implemented");
+    public void testCloseAndIsClosed() throws TTException {
+        IPageWriteTrx rtx = mHolder.getSession().beginPageWriteTransaction();
+        PageReadTrxTest.testClose(mHolder.getStorage(), mHolder.getSession(), rtx);
     }
 
     /**

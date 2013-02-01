@@ -75,7 +75,7 @@ public class PageReadTrx implements IPageReadTrx {
     private final UberPage mUberPage;
 
     /** Cached root page of this revision. */
-    private final RevisionRootPage mRootPage;
+    protected final RevisionRootPage mRootPage;
 
     /** Cached name page of this revision. */
     protected final MetaPage mMetaPage;
@@ -155,16 +155,11 @@ public class PageReadTrx implements IPageReadTrx {
     }
 
     /**
-     * Current reference to actual rev-root page.
-     * 
-     * @return the current revision root page
-     * 
-     * @throws TTIOException
-     *             if something odd happens within the creation process.
+     * {@inheritDoc}
      */
-    public RevisionRootPage getActualRevisionRootPage() throws TTIOException {
+    public long getRevision() throws TTIOException {
         checkState(!mClose, "Transaction already closed");
-        return mRootPage;
+        return mRootPage.getRevision();
     }
 
     /**
