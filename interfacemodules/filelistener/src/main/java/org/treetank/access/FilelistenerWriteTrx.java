@@ -77,7 +77,7 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
     public boolean isClosed() {
         return mDelegate.isClosed();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -86,10 +86,9 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
         MetaKey key = new MetaKey(pRelativePath);
         MetaValue value = new MetaValue(FilelistenerReadTrx.emptyFileKey);
         getPageTransaction().createEntry(key, value);
-        
+
         return;
     }
-    
 
     /**
      * {@inheritDoc}
@@ -100,20 +99,20 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
     @Override
     public synchronized void addFile(File pFile, String pRelativePath) throws TTException, IOException {
         int readingAmount = 0;
-        
+
         BufferedInputStream stream = Files.asByteSource(pFile).openBufferedStream();
-        
+
         byte[] fileBytes = new byte[FileNode.FILENODESIZE];
         readingAmount += stream.read(fileBytes);
-        
-        if(readingAmount <= 0){
+
+        if (readingAmount <= 0) {
             MetaKey key = new MetaKey(pRelativePath);
             MetaValue value = new MetaValue(FilelistenerReadTrx.emptyFileKey);
             getPageTransaction().createEntry(key, value);
-            
+
             return;
         }
-        
+
         long newKey = getPageTransaction().incrementNodeKey();
 
         if (fileExists(pRelativePath)) {
@@ -127,56 +126,54 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
         // And adding it to the meta map
         getPageTransaction().createEntry(key, value);
 
-        //Creating and setting the headernode.
+        // Creating and setting the headernode.
         FileNode headerNode = new FileNode(newKey, new byte[FileNode.FILENODESIZE]);
         headerNode.setHeader(true);
         headerNode.setEof(false);
-            
+
         headerNode.setVal(fileBytes);
-        
+
         getPageTransaction().setNode(headerNode);
-        
+
         // Creating and setting following nodes based on the file size.
         FileNode node;
         FileNode lastNode;
-        
+
         int currentReadingAmount = 0;
-        while((currentReadingAmount = stream.read(fileBytes = new byte[FileNode.FILENODESIZE])) > 0){
+        while ((currentReadingAmount = stream.read(fileBytes = new byte[FileNode.FILENODESIZE])) > 0) {
             System.out.println(currentReadingAmount);
             byte[] slice = Arrays.copyOf(fileBytes, currentReadingAmount);
-            
+
             node = new FileNode(getPageTransaction().incrementNodeKey(), slice);
             node.setHeader(false);
             node.setEof(false);
-            
-            lastNode =
-                (FileNode)getPageTransaction().prepareNodeForModification(node.getNodeKey() - 1);
+
+            lastNode = (FileNode)getPageTransaction().prepareNodeForModification(node.getNodeKey() - 1);
             lastNode.setNextNodeKey(node.getNodeKey());
             getPageTransaction().finishNodeModification(lastNode);
             getPageTransaction().setNode(node);
-            
+
             readingAmount += currentReadingAmount;
         }
-        
+
         ByteArrayDataOutput size = ByteStreams.newDataOutput();
         size.writeInt(readingAmount);
-        
+
         node = new FileNode(getPageTransaction().incrementNodeKey(), size.toByteArray());
-        
+
         node.setHeader(false);
         node.setEof(true);
 
-        lastNode =
-            (FileNode)getPageTransaction().prepareNodeForModification(node.getNodeKey() - 1);
-        
+        lastNode = (FileNode)getPageTransaction().prepareNodeForModification(node.getNodeKey() - 1);
+
         lastNode.setNextNodeKey(node.getNodeKey());
-        
+
         getPageTransaction().finishNodeModification(lastNode);
-        
+
         getPageTransaction().setNode(node);
-        
+
         Preconditions.checkArgument(getPageTransaction().getNode(newKey) != null);
-        
+
         System.out.println("Done writing.");
     }
 
@@ -220,7 +217,7 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
         mDelegate.assertNotClosed();
 
         long revisionToSet = 0;
-        revisionToSet = mDelegate.mPageReadTrx.getActualRevisionRootPage().getRevision() - 1;
+        revisionToSet = mDelegate.mPageReadTrx.getRevision() - 1;
 
         getPageTransaction().close();
 
