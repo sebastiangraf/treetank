@@ -40,14 +40,14 @@ public interface IPageReadTrx {
     INode getNode(final long pKey) throws TTIOException;
 
     /**
-     * // * Getting the revision number of this transaction
-     * // *
-     * // * @return the revision number of this transaction
-     * // * @throws TTIOException
-     * // * if deserialization fails.
-     * //
+     * Getting the revision number of this transaction
+     * 
+     * @return the revision number of this transaction
+     * @throws TTIOException
+     *             if deserialization fails.
+     * 
      */
-     long getRevision() throws TTIOException;
+    long getRevision() throws TTIOException;
 
     /**
      * Close the transaction.

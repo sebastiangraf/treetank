@@ -126,14 +126,6 @@ public class PageWriteTrxTest {
     }
 
     /**
-     * Test method for {@link org.treetank.access.PageWriteTrx#getActualRevisionRootPage()}.
-     */
-    @Test
-    public void testGetActualRevisionRootPage() {
-        // fail("Not yet implemented");
-    }
-
-    /**
      * Test method for {@link org.treetank.access.PageWriteTrx#close()} and
      * {@link org.treetank.access.PageWriteTrx#isClosed()}.
      * 
