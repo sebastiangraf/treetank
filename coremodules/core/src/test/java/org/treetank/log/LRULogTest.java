@@ -25,69 +25,77 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.cache;
+package org.treetank.log;
 
 import static org.testng.AssertJUnit.assertEquals;
 
-import java.io.File;
-import java.util.Properties;
-
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
-import org.treetank.ModuleFactory;
-import org.treetank.CoreTestHelper;
-import org.treetank.access.conf.ResourceConfiguration;
-import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
-import org.treetank.access.conf.StandardSettings;
-import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
+import org.treetank.log.LogIterator;
+import org.treetank.log.ILog;
+import org.treetank.log.LRULog;
+import org.treetank.log.LogContainer;
+import org.treetank.log.LogKey;
 import org.treetank.page.interfaces.IPage;
 
-import com.google.inject.Inject;
+/**
+ * @author Sebastian Graf, University of Konstanz
+ * 
+ */
+public class LRULogTest {
 
-@Guice(moduleFactory = ModuleFactory.class)
-public class BerkeleyPersistentCacheTest {
-
-    @Inject
-    private IResourceConfigurationFactory mResourceConfig;
-
-    private ICachedLog cache;
+    private ILog cache;
 
     @BeforeMethod
     public void setUp() throws TTException {
-        CoreTestHelper.deleteEverything();
-        CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile());
-        Properties props =
-            StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
-                CoreTestHelper.RESOURCENAME);
-        ResourceConfiguration conf = mResourceConfig.create(props);
-        CoreTestHelper.createResource(conf);
-
-        cache =
-            new BerkeleyPersistenceLog(new File(new File(CoreTestHelper.PATHS.PATH1.getFile(),
-                StorageConfiguration.Paths.Data.getFile().getName()), CoreTestHelper.RESOURCENAME),
-                conf.mNodeFac, conf.mMetaFac);
-        CacheTestHelper.setUp(true, cache);
+        cache = new LRULog(new NullCache());
+        LogTestHelper.setUp(false, cache);
     }
 
     @Test
     public void test() throws TTIOException {
-        for (int i = 0; i < CacheTestHelper.PAGES.length; i++) {
-            for (int j = 0; j < CacheTestHelper.PAGES[i].length; j++) {
-                final LogContainer<? extends IPage> cont = cache.get(new LogKey(true, i, j));
+        for (int i = 1; i < LogTestHelper.PAGES.length; i++) {
+            for (int j = 1; j < LogTestHelper.PAGES[i].length; j++) {
+                LogKey toRetrieve = new LogKey(true, i, j);
+                final LogContainer<? extends IPage> cont = cache.get(toRetrieve);
                 final IPage current = cont.getComplete();
-                assertEquals(CacheTestHelper.PAGES[i][j], current);
+                assertEquals(LogTestHelper.PAGES[i][j], current);
             }
-
         }
-        cache.clear();
+
     }
 
-    @AfterMethod
-    public void tearDown() throws TTException {
-        CoreTestHelper.closeEverything();
+    static class NullCache implements ILog {
+        /**
+         * Constructor.
+         */
+        public NullCache() {
+            super();
+        }
+
+        @Override
+        public void clear() {
+            // Not used over here
+        }
+
+        @Override
+        public LogContainer<IPage> get(final LogKey mKey) {
+            return null;
+        }
+
+        @Override
+        public void put(final LogKey mKey, final LogContainer<IPage> mPage) {
+            // Not used over here
+        }
+
+        @Override
+        public LogIterator getIterator() {
+            // Not used over here
+            return null;
+        }
+
     }
+
 }

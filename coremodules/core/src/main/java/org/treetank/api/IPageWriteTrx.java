@@ -44,6 +44,15 @@ public interface IPageWriteTrx extends IPageReadTrx {
     long setNode(INode pnode) throws TTException;
 
     /**
+     * Removing the node from the storage.
+     * 
+     * @param pNode
+     *            to be removed
+     * @throws TTException
+     */
+    void removeNode(final INode pNode) throws TTException;
+
+    /**
      * Simple commit of this page transaction to store the newest version.
      * 
      * @return true of successful, false otherwise

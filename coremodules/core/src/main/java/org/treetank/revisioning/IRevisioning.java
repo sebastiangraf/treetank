@@ -3,9 +3,9 @@
  */
 package org.treetank.revisioning;
 
-import org.treetank.cache.LogContainer;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
+import org.treetank.log.LogContainer;
 import org.treetank.page.NodePage;
 import org.treetank.page.interfaces.IPage;
 

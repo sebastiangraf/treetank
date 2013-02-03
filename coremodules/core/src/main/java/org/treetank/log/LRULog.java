@@ -25,7 +25,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.cache;
+package org.treetank.log;
+
+import static com.google.common.base.Objects.toStringHelper;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,7 +44,7 @@ import org.treetank.page.interfaces.IPage;
  * 
  * @author Sebastian Graf, University of Konstanz
  */
-public final class LRUCache implements ICachedLog {
+public final class LRULog implements ILog {
 
     /**
      * Capacity of the cache. Number of stored pages
@@ -57,7 +59,7 @@ public final class LRUCache implements ICachedLog {
     /**
      * The reference to the second cache.
      */
-    private final ICachedLog mSecondCache;
+    private final ILog mSecondCache;
 
     /**
      * Creates a new LRU cache.
@@ -67,7 +69,7 @@ public final class LRUCache implements ICachedLog {
      *            when it gets removed from the first one.
      * 
      */
-    public LRUCache(final ICachedLog paramSecondCache) {
+    public LRULog(final ILog paramSecondCache) {
         mSecondCache = paramSecondCache;
         map = new LinkedHashMap<LogKey, LogContainer<IPage>>(CACHE_CAPACITY) {
             // (an anonymous inner class)
@@ -134,23 +136,16 @@ public final class LRUCache implements ICachedLog {
      */
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("First Cache: ");
-        builder.append(this.map.toString());
-        builder.append("\n");
-        builder.append("\n");
-        builder.append("Second Cache: ");
-        builder.append(this.mSecondCache.toString());
-        return builder.toString();
+        return toStringHelper(this).add("First Cache", map).add("Second Cache", mSecondCache).toString();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public CacheLogIterator getIterator() {
+    public LogIterator getIterator() {
         // TODO fix this one, iterator should be handled in a better component-adhering way.
-        return new CacheLogIterator(this, (BerkeleyPersistenceLog)mSecondCache);
+        return new LogIterator(this, (BerkeleyPersistenceLog)mSecondCache);
     }
 
 }

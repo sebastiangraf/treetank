@@ -52,7 +52,7 @@ public class JCloudsWriter implements IBackendWriter {
         Blob blob = blobbuilder.build();
         blob.setPayload(decryptedPage);
         mReader.mBlobStore.putBlob(mReader.mResourceName, blob);
-//        mReader.mCache.put(pPage.getPageKey(), pPage);
+        mReader.mCache.put(pPage.getPageKey(), pPage);
     }
 
     /**

@@ -24,12 +24,42 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package org.treetank.log;
+
+import org.treetank.CoreTestHelper;
+import org.treetank.exception.TTException;
+import org.treetank.log.ILog;
+import org.treetank.log.LRULog;
+import org.treetank.log.LogContainer;
+import org.treetank.log.LogKey;
+import org.treetank.page.NodePage;
+import org.treetank.page.interfaces.IPage;
 
 /**
- * Implementation for the caches. The caches can either be <code>ICache</code> instances or
- * <code>AbstractPersistentCache</code> instances.
+ * Helper class for testing the cache.
  * 
  * @author Sebastian Graf, University of Konstanz
+ * 
  */
-package org.treetank.cache;
+public class LogTestHelper {
 
+    // private final static int VERSIONSTORESTORE = 100;
+
+    protected static NodePage[][] PAGES;
+
+    public static void setUp(boolean overflow, final ILog cache) throws TTException {
+        if (overflow) {
+            PAGES = new NodePage[LRULog.CACHE_CAPACITY / 5][LRULog.CACHE_CAPACITY / 5];
+        } else {
+            PAGES = new NodePage[LRULog.CACHE_CAPACITY / 10][LRULog.CACHE_CAPACITY / 10];
+        }
+        for (int i = 0; i < PAGES.length; i++) {
+            for (int j = 0; j < PAGES[i].length; j++) {
+
+                LogKey toStore = new LogKey(true, i, j);
+                PAGES[i][j] = CoreTestHelper.getNodePage(0, 0, CoreTestHelper.random.nextLong());
+                cache.put(toStore, new LogContainer<IPage>(PAGES[i][j], PAGES[i][j]));
+            }
+        }
+    }
+}

@@ -25,7 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.cache;
+package org.treetank.log;
 
 import java.util.Map;
 
@@ -41,7 +41,7 @@ import org.treetank.page.interfaces.IPage;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public interface ICachedLog {
+public interface ILog {
     /**
      * Clearing the cache. That is removing all elements.
      * 
@@ -75,7 +75,7 @@ public interface ICachedLog {
     void put(final LogKey mKey, final LogContainer<IPage> mPage) throws TTIOException;
 
     /** Getting iterator from this log. */
-    CacheLogIterator getIterator();
+    LogIterator getIterator();
 
     /**
      * Class representing one entry in the transaction-log

@@ -42,13 +42,13 @@ import org.treetank.api.IMetaEntry;
 import org.treetank.api.INode;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
-import org.treetank.cache.BerkeleyPersistenceLog;
-import org.treetank.cache.LRUCache;
-import org.treetank.cache.LogContainer;
-import org.treetank.cache.LogKey;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendWriter;
+import org.treetank.log.BerkeleyPersistenceLog;
+import org.treetank.log.LRULog;
+import org.treetank.log.LogContainer;
+import org.treetank.log.LogKey;
 import org.treetank.page.IConstants;
 import org.treetank.page.IndirectPage;
 import org.treetank.page.MetaPage;
@@ -72,7 +72,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
     private final IBackendWriter mPageWriter;
 
     /** Cache to store the changes in this writetransaction. */
-    private final LRUCache mLog;
+    private final LRULog mLog;
 
     /** Reference to the actual uberPage. */
     private UberPage mNewUber;
@@ -108,7 +108,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
 
         mPageWriter = pWriter;
         mLog =
-            new LRUCache(new BerkeleyPersistenceLog(new File(pSession.getConfig().mProperties
+            new LRULog(new BerkeleyPersistenceLog(new File(pSession.getConfig().mProperties
                 .getProperty(org.treetank.access.conf.ContructorProps.STORAGEPATH)),
                 pSession.getConfig().mNodeFac, pSession.getConfig().mMetaFac));
         setUpTransaction(pUberPage, pSession, pRepresentRev, pWriter);
@@ -184,6 +184,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
      * @throws TTIOException
      *             if the removal fails
      */
+    @Override
     public void removeNode(final INode pNode) throws TTException {
         checkState(!mDelegate.isClosed(), "Transaction already closed");
         checkNotNull(pNode);

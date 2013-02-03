@@ -7,9 +7,9 @@ import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import org.treetank.access.PageReadTrx;
-import org.treetank.cache.LogContainer;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
+import org.treetank.log.LogContainer;
 import org.treetank.page.NodePage;
 import org.treetank.page.interfaces.IPage;
 

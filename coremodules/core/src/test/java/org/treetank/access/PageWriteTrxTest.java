@@ -93,10 +93,26 @@ public class PageWriteTrxTest {
 
     /**
      * Test method for {@link org.treetank.access.PageWriteTrx#removeNode(org.treetank.api.INode)}.
+     * 
+     * @throws TTException
      */
     @Test
-    public void testRemoveNode() {
-        // fail("Not yet implemented");
+    public void testRemoveNode() throws TTException {
+//        DumbNode[][] nodes = CoreTestHelper.createNodesInTreetank(mHolder);
+//        List<DumbNode> list = CoreTestHelper.combineNodes(nodes);
+//        final IPageWriteTrx wtx = mHolder.getSession().beginPageWriteTransaction();
+//        int elementsDeleted = 10;
+//        int revisions = 100;
+//        for (int i = 0; i < revisions; i++) {
+//            for (int j = 0; j < elementsDeleted; j++) {
+//                int nextElementKey = (int)Math.abs(CoreTestHelper.random.nextLong() % list.size());
+//                if (list.get(nextElementKey) != null) {
+//                    wtx.removeNode(list.get(nextElementKey));
+//                    list.set(nextElementKey, null);
+//                }
+//            }
+//        }
+
     }
 
     /**

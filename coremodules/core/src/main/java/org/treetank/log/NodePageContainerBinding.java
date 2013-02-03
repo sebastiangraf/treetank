@@ -25,7 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.cache;
+package org.treetank.log;
 
 import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;

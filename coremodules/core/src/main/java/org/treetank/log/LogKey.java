@@ -1,4 +1,4 @@
-package org.treetank.cache;
+package org.treetank.log;
 
 /**
  * Container for Key-Entry in the log determining the level and the the sequence in the level.

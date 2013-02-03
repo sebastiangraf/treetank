@@ -44,17 +44,17 @@ import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
-import org.treetank.cache.BerkeleyPersistenceLog;
-import org.treetank.cache.ICachedLog;
-import org.treetank.cache.LRUCache;
-import org.treetank.cache.LogKey;
-import org.treetank.cache.LogContainer;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackend;
 import org.treetank.io.IBackendReader;
 import org.treetank.io.IBackendWriter;
 import org.treetank.io.IOUtils;
+import org.treetank.log.BerkeleyPersistenceLog;
+import org.treetank.log.ILog;
+import org.treetank.log.LRULog;
+import org.treetank.log.LogContainer;
+import org.treetank.log.LogKey;
 import org.treetank.page.IConstants;
 import org.treetank.page.IndirectPage;
 import org.treetank.page.MetaPage;
@@ -392,8 +392,8 @@ public final class Storage implements IStorage {
      */
     private static void bootstrap(final Storage pStorage, final ResourceConfiguration pResourceConf)
         throws TTException {
-        ICachedLog mLog =
-            new LRUCache(new BerkeleyPersistenceLog(new File(pResourceConf.mProperties
+        ILog mLog =
+            new LRULog(new BerkeleyPersistenceLog(new File(pResourceConf.mProperties
                 .getProperty(org.treetank.access.conf.ContructorProps.STORAGEPATH)), pResourceConf.mNodeFac,
                 pResourceConf.mMetaFac));
 

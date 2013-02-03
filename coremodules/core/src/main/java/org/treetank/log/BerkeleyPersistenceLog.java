@@ -25,7 +25,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.cache;
+package org.treetank.log;
+
+import static com.google.common.base.Objects.toStringHelper;
 
 import java.io.File;
 
@@ -52,7 +54,7 @@ import com.sleepycat.je.OperationStatus;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public final class BerkeleyPersistenceLog implements ICachedLog {
+public final class BerkeleyPersistenceLog implements ILog {
 
     /**
      * Name for the database.
@@ -194,23 +196,16 @@ public final class BerkeleyPersistenceLog implements ICachedLog {
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("BerkeleyPersistenceLog [mPlace=");
-        builder.append(mPlace);
-        builder.append(", mBackend=");
-        builder.append(mDatabase);
-        builder.append(", mEnv=");
-        builder.append(mEnv);
-        builder.append("]");
-        return builder.toString();
+        return toStringHelper(this).add("mPlace", mPlace).add("mBackend", mDatabase).add("mEnv", mEnv)
+            .toString();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public CacheLogIterator getIterator() {
-        return new CacheLogIterator(null, this);
+    public LogIterator getIterator() {
+        return new LogIterator(null, this);
     }
 
 }
