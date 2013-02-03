@@ -24,14 +24,14 @@ import com.sleepycat.je.OperationStatus;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public class LogIterator implements Iterator<Map.Entry<LogKey, LogContainer<IPage>>>,
-    Iterable<Map.Entry<LogKey, LogContainer<IPage>>> {
+public class LogIterator implements Iterator<Map.Entry<LogKey, LogValue<IPage>>>,
+    Iterable<Map.Entry<LogKey, LogValue<IPage>>> {
 
     private int i = 0;
 
     private final BerkeleyPersistenceLog mSecondLog;
 
-    private List<Map.Entry<LogKey, LogContainer<IPage>>> mEntries;
+    private List<Map.Entry<LogKey, LogValue<IPage>>> mEntries;
 
     private Cursor mCursor;
     private DatabaseEntry valueEntry;
@@ -39,7 +39,7 @@ public class LogIterator implements Iterator<Map.Entry<LogKey, LogContainer<IPag
 
     public LogIterator(final LRULog pFirstLog, final BerkeleyPersistenceLog pSecondLog) {
         mSecondLog = pSecondLog;
-        mEntries = new ArrayList<Map.Entry<LogKey, LogContainer<IPage>>>();
+        mEntries = new ArrayList<Map.Entry<LogKey, LogValue<IPage>>>();
         if (pFirstLog != null) {
             mEntries.addAll(pFirstLog.map.entrySet());
         }
@@ -81,9 +81,9 @@ public class LogIterator implements Iterator<Map.Entry<LogKey, LogContainer<IPag
      * {@inheritDoc}
      */
     @Override
-    public Map.Entry<LogKey, LogContainer<IPage>> next() {
+    public Map.Entry<LogKey, LogValue<IPage>> next() {
         if (i < LRULog.CACHE_CAPACITY) {
-            Map.Entry<LogKey, LogContainer<IPage>> returnVal = mEntries.get(i);
+            Map.Entry<LogKey, LogValue<IPage>> returnVal = mEntries.get(i);
             i++;
             return returnVal;
         } else {
@@ -105,7 +105,7 @@ public class LogIterator implements Iterator<Map.Entry<LogKey, LogContainer<IPag
      * {@inheritDoc}
      */
     @Override
-    public Iterator<Map.Entry<LogKey, LogContainer<IPage>>> iterator() {
+    public Iterator<Map.Entry<LogKey, LogValue<IPage>>> iterator() {
         return this;
     }
 

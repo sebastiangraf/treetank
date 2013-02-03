@@ -39,7 +39,7 @@ import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
 
-public class NodePageContainerBinding extends TupleBinding<LogContainer<IPage>> {
+public class LogValueBinding extends TupleBinding<LogValue<IPage>> {
 
     private final PageFactory mFac;
 
@@ -51,12 +51,15 @@ public class NodePageContainerBinding extends TupleBinding<LogContainer<IPage>> 
      * @param pMetaFac
      *            for the deserialization of meta-entries
      */
-    public NodePageContainerBinding(final INodeFactory pNodeFac, final IMetaEntryFactory pMetaFac) {
+    public LogValueBinding(final INodeFactory pNodeFac, final IMetaEntryFactory pMetaFac) {
         mFac = new PageFactory(pNodeFac, pMetaFac);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public LogContainer<IPage> entryToObject(final TupleInput arg0) {
+    public LogValue<IPage> entryToObject(final TupleInput arg0) {
         final ByteArrayDataInput data = ByteStreams.newDataInput(arg0.getBufferBytes());
 
         final int completeLength = data.readInt();
@@ -68,11 +71,14 @@ public class NodePageContainerBinding extends TupleBinding<LogContainer<IPage>> 
 
         final IPage current = mFac.deserializePage(completeBytes);
         final IPage modified = mFac.deserializePage(modifiedBytes);
-        return new LogContainer<IPage>(current, modified);
+        return new LogValue<IPage>(current, modified);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void objectToEntry(final LogContainer<IPage> arg0, final TupleOutput arg1) {
+    public void objectToEntry(final LogValue<IPage> arg0, final TupleOutput arg1) {
         final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
         final byte[] completeData = arg0.getComplete().getByteRepresentation();
         final byte[] modifiedData = arg0.getModified().getByteRepresentation();

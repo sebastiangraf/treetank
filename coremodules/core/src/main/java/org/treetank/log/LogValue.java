@@ -51,7 +51,7 @@ import org.treetank.page.interfaces.IPage;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public final class LogContainer<E extends IPage> {
+public final class LogValue<E extends IPage> {
 
     private final E mComplete;
 
@@ -65,7 +65,7 @@ public final class LogContainer<E extends IPage> {
      * @param pModifying
      *            to be used as a base for this container
      */
-    public LogContainer(final E pComplete, final E pModifying) {
+    public LogValue(final E pComplete, final E pModifying) {
         this.mComplete = pComplete;
         this.mModified = pModifying;
     }

@@ -30,7 +30,7 @@ import org.treetank.CoreTestHelper;
 import org.treetank.exception.TTException;
 import org.treetank.log.ILog;
 import org.treetank.log.LRULog;
-import org.treetank.log.LogContainer;
+import org.treetank.log.LogValue;
 import org.treetank.log.LogKey;
 import org.treetank.page.NodePage;
 import org.treetank.page.interfaces.IPage;
@@ -58,7 +58,7 @@ public class LogTestHelper {
 
                 LogKey toStore = new LogKey(true, i, j);
                 PAGES[i][j] = CoreTestHelper.getNodePage(0, 0, CoreTestHelper.random.nextLong());
-                cache.put(toStore, new LogContainer<IPage>(PAGES[i][j], PAGES[i][j]));
+                cache.put(toStore, new LogValue<IPage>(PAGES[i][j], PAGES[i][j]));
             }
         }
     }

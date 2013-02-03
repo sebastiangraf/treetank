@@ -46,7 +46,7 @@ import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.log.BerkeleyPersistenceLog;
 import org.treetank.log.ILog;
-import org.treetank.log.LogContainer;
+import org.treetank.log.LogValue;
 import org.treetank.log.LogKey;
 import org.treetank.page.interfaces.IPage;
 
@@ -81,7 +81,7 @@ public class BerkeleyPersistentLogTest {
     public void test() throws TTIOException {
         for (int i = 0; i < LogTestHelper.PAGES.length; i++) {
             for (int j = 0; j < LogTestHelper.PAGES[i].length; j++) {
-                final LogContainer<? extends IPage> cont = cache.get(new LogKey(true, i, j));
+                final LogValue<? extends IPage> cont = cache.get(new LogKey(true, i, j));
                 final IPage current = cont.getComplete();
                 assertEquals(LogTestHelper.PAGES[i][j], current);
             }

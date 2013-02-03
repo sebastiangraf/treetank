@@ -53,7 +53,7 @@ import org.treetank.io.IOUtils;
 import org.treetank.log.BerkeleyPersistenceLog;
 import org.treetank.log.ILog;
 import org.treetank.log.LRULog;
-import org.treetank.log.LogContainer;
+import org.treetank.log.LogValue;
 import org.treetank.log.LogKey;
 import org.treetank.page.IConstants;
 import org.treetank.page.IndirectPage;
@@ -412,7 +412,7 @@ public final class Storage implements IStorage {
             newPageKey = uberPage.incrementPageCounter();
             page.setReferenceKey(0, newPageKey);
             LogKey key = new LogKey(true, i, 0);
-            mLog.put(key, new LogContainer<IPage>(page, page));
+            mLog.put(key, new LogValue<IPage>(page, page));
         }
 
         page = new RevisionRootPage(newPageKey, 0, 0);
@@ -422,13 +422,13 @@ public final class Storage implements IStorage {
         MetaPage namePage = new MetaPage(newPageKey);
         page.setReferenceKey(RevisionRootPage.NAME_REFERENCE_OFFSET, newPageKey);
         LogKey key = new LogKey(false, -1, -1);
-        mLog.put(key, new LogContainer<IPage>(namePage, namePage));
+        mLog.put(key, new LogValue<IPage>(namePage, namePage));
 
         newPageKey = uberPage.incrementPageCounter();
         IndirectPage indirectPage = new IndirectPage(newPageKey);
         page.setReferenceKey(IReferencePage.GUARANTEED_INDIRECT_OFFSET, newPageKey);
         key = new LogKey(false, -1, 0);
-        mLog.put(key, new LogContainer<IPage>(page, page));
+        mLog.put(key, new LogValue<IPage>(page, page));
 
         // --- Create node tree
         // ----------------------------------------------------
@@ -442,22 +442,22 @@ public final class Storage implements IStorage {
             newPageKey = uberPage.incrementPageCounter();
             page.setReferenceKey(0, newPageKey);
             key = new LogKey(false, i, 0);
-            mLog.put(key, new LogContainer<IPage>(page, page));
+            mLog.put(key, new LogValue<IPage>(page, page));
             page = new IndirectPage(newPageKey);
         }
 
         final NodePage ndp = new NodePage(newPageKey);
         key = new LogKey(false, IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length, 0);
-        mLog.put(key, new LogContainer<IPage>(ndp, ndp));
+        mLog.put(key, new LogValue<IPage>(ndp, ndp));
 
         IBackend storage = pResourceConf.mBackend;
         IBackendWriter writer = storage.getWriter();
 
         writer.writeUberPage(uberPage);
 
-        Iterator<Map.Entry<LogKey, LogContainer<IPage>>> entries = mLog.getIterator();
+        Iterator<Map.Entry<LogKey, LogValue<IPage>>> entries = mLog.getIterator();
         while (entries.hasNext()) {
-            Map.Entry<LogKey, LogContainer<IPage>> next = entries.next();
+            Map.Entry<LogKey, LogValue<IPage>> next = entries.next();
             writer.write(next.getValue().getModified());
         }
         writer.close();

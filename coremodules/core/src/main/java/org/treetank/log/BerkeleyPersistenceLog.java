@@ -84,7 +84,7 @@ public final class BerkeleyPersistenceLog implements ILog {
     /**
      * Binding for the value which is a page with related Nodes.
      */
-    protected final transient NodePageContainerBinding mValueBinding;
+    protected final transient LogValueBinding mValueBinding;
 
     /**
      * Counter to give every instance a different place.
@@ -122,7 +122,7 @@ public final class BerkeleyPersistenceLog implements ILog {
             mEnv = new Environment(mPlace, config);
             setUp();
             mKeyBinding = new LogKeyBinding();
-            mValueBinding = new NodePageContainerBinding(pNodeFac, pMetaFac);
+            mValueBinding = new LogValueBinding(pNodeFac, pMetaFac);
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
 
@@ -141,7 +141,7 @@ public final class BerkeleyPersistenceLog implements ILog {
      * {@inheritDoc}
      */
     @Override
-    public void put(final LogKey mKey, final LogContainer<IPage> mPage) throws TTIOException {
+    public void put(final LogKey mKey, final LogValue<IPage> mPage) throws TTIOException {
         final DatabaseEntry valueEntry = new DatabaseEntry();
         final DatabaseEntry keyEntry = new DatabaseEntry();
 
@@ -174,13 +174,13 @@ public final class BerkeleyPersistenceLog implements ILog {
      * {@inheritDoc}
      */
     @Override
-    public LogContainer<IPage> get(final LogKey mKey) throws TTIOException {
+    public LogValue<IPage> get(final LogKey mKey) throws TTIOException {
         final DatabaseEntry valueEntry = new DatabaseEntry();
         final DatabaseEntry keyEntry = new DatabaseEntry();
         mKeyBinding.objectToEntry(mKey, keyEntry);
         try {
             final OperationStatus status = mDatabase.get(null, keyEntry, valueEntry, LockMode.DEFAULT);
-            LogContainer<IPage> val = null;
+            LogValue<IPage> val = null;
             if (status == OperationStatus.SUCCESS) {
                 val = mValueBinding.entryToObject(valueEntry);
             }

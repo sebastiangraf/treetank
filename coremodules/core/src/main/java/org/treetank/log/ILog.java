@@ -54,15 +54,15 @@ public interface ILog {
      * Getting a page related to a given nodepagekey.
      * 
      * @param mKey
-     *            the key for the requested {@link LogContainer}
-     * @return {@link LogContainer} instance related to this key
+     *            the key for the requested {@link LogValue}
+     * @return {@link LogValue} instance related to this key
      * @throws TTIOException
      *             if get fails
      */
-    LogContainer<IPage> get(final LogKey mKey) throws TTIOException;
+    LogValue<IPage> get(final LogKey mKey) throws TTIOException;
 
     /**
-     * Putting an {@link LogContainer} into the cache with a corresponding
+     * Putting an {@link LogValue} into the cache with a corresponding
      * nodepagekey.
      * 
      * @param mKey
@@ -72,7 +72,7 @@ public interface ILog {
      * @throws TTIOException
      *             if put fails
      */
-    void put(final LogKey mKey, final LogContainer<IPage> mPage) throws TTIOException;
+    void put(final LogKey mKey, final LogValue<IPage> mPage) throws TTIOException;
 
     /** Getting iterator from this log. */
     LogIterator getIterator();
@@ -83,19 +83,19 @@ public interface ILog {
      * @author Sebastian Graf, University of Konstanz
      * 
      */
-    static class TransactionLogEntry implements Map.Entry<LogKey, LogContainer<IPage>> {
+    static class TransactionLogEntry implements Map.Entry<LogKey, LogValue<IPage>> {
 
         /** Key of the log. */
         final LogKey mKey;
 
         /** Container of the log. */
-        final LogContainer<IPage> mContainer;
+        final LogValue<IPage> mContainer;
 
         /**
          * Constructor.
          * 
          */
-        public TransactionLogEntry(final LogKey pKey, final LogContainer<IPage> pContainer) {
+        public TransactionLogEntry(final LogKey pKey, final LogValue<IPage> pContainer) {
             mKey = pKey;
             mContainer = pContainer;
         }
@@ -112,7 +112,7 @@ public interface ILog {
          * {@inheritDoc}
          */
         @Override
-        public LogContainer<IPage> getValue() {
+        public LogValue<IPage> getValue() {
             return mContainer;
         }
 
@@ -120,7 +120,7 @@ public interface ILog {
          * {@inheritDoc}
          */
         @Override
-        public LogContainer<IPage> setValue(LogContainer<IPage> value) {
+        public LogValue<IPage> setValue(LogValue<IPage> value) {
             throw new UnsupportedOperationException();
         }
     }

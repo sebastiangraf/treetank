@@ -5,7 +5,7 @@ package org.treetank.revisioning;
 
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
-import org.treetank.log.LogContainer;
+import org.treetank.log.LogValue;
 import org.treetank.page.NodePage;
 import org.treetank.page.interfaces.IPage;
 
@@ -44,7 +44,7 @@ public interface IRevisioning {
      * @return a NodePageContainer holding a complete NodePage for reading a one
      *         for writing
      */
-    LogContainer<IPage> combinePagesForModification(final long pNewPageKey, final NodePage[] pPages,
+    LogValue<IPage> combinePagesForModification(final long pNewPageKey, final NodePage[] pPages,
         final boolean pFullDump);
 
     /**
