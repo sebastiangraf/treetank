@@ -31,8 +31,10 @@ import static org.testng.AssertJUnit.assertEquals;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import org.treetank.CoreTestHelper;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
+import org.treetank.page.NodePage;
 import org.treetank.page.interfaces.IPage;
 
 /**
@@ -41,24 +43,35 @@ import org.treetank.page.interfaces.IPage;
  */
 public class LRULogTest {
 
-    private LRULog cache;
+    private NodePage[][] mPages;
 
     @BeforeMethod
     public void setUp() throws TTException {
-//        cache = new LRULog(null);
-//        LogTestHelper.setUp(false, cache);
+
+        // cache = new LRULog(null);
+
+        mPages = new NodePage[10000][10000];
+        for (int i = 0; i < mPages.length; i++) {
+            for (int j = 0; j < mPages[i].length; j++) {
+
+                LogKey toStore = new LogKey(true, i, j);
+                mPages[i][j] = CoreTestHelper.getNodePage(0, 0, CoreTestHelper.random.nextLong());
+                // cache.put(toStore, new LogValue(mPages[i][j], mPages[i][j]));
+            }
+        }
+
     }
 
     @Test
     public void test() throws TTIOException {
-//        for (int i = 1; i < LogTestHelper.PAGES.length; i++) {
-//            for (int j = 1; j < LogTestHelper.PAGES[i].length; j++) {
-//                LogKey toRetrieve = new LogKey(true, i, j);
-//                final LogValue<? extends IPage> cont = cache.get(toRetrieve);
-//                final IPage current = cont.getComplete();
-//                assertEquals(LogTestHelper.PAGES[i][j], current);
-//            }
-//        }
+        // for (int i = 1; i < LogTestHelper.PAGES.length; i++) {
+        // for (int j = 1; j < LogTestHelper.PAGES[i].length; j++) {
+        // LogKey toRetrieve = new LogKey(true, i, j);
+        // final LogValue<? extends IPage> cont = cache.get(toRetrieve);
+        // final IPage current = cont.getComplete();
+        // assertEquals(LogTestHelper.PAGES[i][j], current);
+        // }
+        // }
 
     }
 

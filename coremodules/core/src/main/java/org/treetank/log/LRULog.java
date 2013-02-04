@@ -29,14 +29,17 @@ package org.treetank.log;
 
 import static com.google.common.base.Objects.toStringHelper;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.io.File;
+import java.util.Iterator;
 
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.api.IMetaEntryFactory;
+import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTIOException;
-import org.treetank.page.interfaces.IPage;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.sleepycat.je.Cursor;
 import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseConfig;
 import com.sleepycat.je.DatabaseEntry;
@@ -94,17 +97,32 @@ public final class LRULog {
     private transient Environment mEnv;
 
     /**
+     * Counter to give every instance a different place.
+     */
+    private static int counter = 0;
+
+    /**
      * Creates a new LRU cache.
      * 
-     * @param paramSecondCache
-     *            the reference to the second cache where the data is stored
-     *            when it gets removed from the first one.
+     * @param pFile
+     *            Location of the cache.
+     * @param pNodeFac
+     *            NodeFactory for generating nodes adhering to the used interface
+     * @param pMetaFac
+     *            MetaFactory for generating meta-entries adhering to the used interface
+     * @throws TTIOException
      * 
      */
-    public LRULog() {
+    public LRULog(final File pFile, final INodeFactory pNodeFac, final IMetaEntryFactory pMetaFac)
+        throws TTIOException {
         map = CacheBuilder.newBuilder().maximumSize(CACHE_CAPACITY).build();
         mKeyBinding = new LogKeyBinding();
         mValueBinding = new LogValueBinding(pNodeFac, pMetaFac);
+
+        final File realPlace =
+            new File(new File(pFile, ResourceConfiguration.Paths.TransactionLog.getFile().getName()), Integer
+                .toString(counter));
+        counter++;
 
         try {
             /* Create a new, transactional database environment */
@@ -112,13 +130,10 @@ public final class LRULog {
             config.setAllowCreate(true);
             config.setLocking(false);
             config.setCacheSize(1024 * 1024);
-            mEnv = new Environment(mPlace, config);
+            mEnv = new Environment(realPlace, config);
             setUp();
-            mKeyBinding = new LogKeyBinding();
-            mValueBinding = new LogValueBinding(pNodeFac, pMetaFac);
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
-
         }
 
     }
@@ -138,7 +153,6 @@ public final class LRULog {
                 if (status == OperationStatus.SUCCESS) {
                     val = mValueBinding.entryToObject(valueEntry);
                 }
-
                 return val;
             } catch (final DatabaseException exc) {
                 throw new TTIOException(exc);
@@ -180,7 +194,6 @@ public final class LRULog {
     }
 
     private void setUp() {
-        /* Make a database within that environment */
         final DatabaseConfig dbConfig = new DatabaseConfig();
         dbConfig.setAllowCreate(true);
         dbConfig.setExclusiveCreate(true);
@@ -195,12 +208,76 @@ public final class LRULog {
         return toStringHelper(this).add("First Cache", map).add("mDatabase", mDatabase).toString();
     }
 
-    // /**
-    // * {@inheritDoc}
-    // */
-    // public LogIterator getIterator() {
-    // // TODO fix this one, iterator should be handled in a better component-adhering way.
-    // return new LogIterator(this, mSecondCache);
-    // }
+    /**
+     * Returning all elements as Iterator.
+     * 
+     * @return new LogIterator-instance
+     */
+    public LogIterator getIterator() {
+        return new LogIterator();
+    }
+
+    class LogIterator implements Iterator<LogValue>, Iterable<LogValue> {
+
+        private Cursor mCursor;
+        private DatabaseEntry valueEntry;
+        private DatabaseEntry keyEntry;
+
+        /**
+         * 
+         * Constructor.
+         * 
+         */
+        public LogIterator() {
+            mCursor = mDatabase.openCursor(null, null);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Iterator<LogValue> iterator() {
+            return this;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean hasNext() {
+            boolean returnVal = false;
+            valueEntry = new DatabaseEntry();
+            keyEntry = new DatabaseEntry();
+            try {
+                final OperationStatus status = mCursor.getNext(keyEntry, valueEntry, LockMode.DEFAULT);
+                if (status == OperationStatus.SUCCESS) {
+                    returnVal = true;
+                }
+            } catch (final DatabaseException exc) {
+                throw new RuntimeException(exc);
+            }
+            if (returnVal == false) {
+                mCursor.close();
+            }
+            return returnVal;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public LogValue next() {
+            return mValueBinding.entryToObject(valueEntry);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+
+    }
 
 }

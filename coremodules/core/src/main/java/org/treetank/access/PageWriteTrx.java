@@ -45,7 +45,6 @@ import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendWriter;
-import org.treetank.log.BerkeleyPersistenceLog;
 import org.treetank.log.LRULog;
 import org.treetank.log.LogKey;
 import org.treetank.log.LogValue;
@@ -107,9 +106,9 @@ public final class PageWriteTrx implements IPageWriteTrx {
 
         mPageWriter = pWriter;
         mLog =
-            new LRULog(new BerkeleyPersistenceLog(new File(pSession.getConfig().mProperties
+            new LRULog(new File(pSession.getConfig().mProperties
                 .getProperty(org.treetank.access.conf.ContructorProps.STORAGEPATH)),
-                pSession.getConfig().mNodeFac, pSession.getConfig().mMetaFac));
+                pSession.getConfig().mNodeFac, pSession.getConfig().mMetaFac);
         setUpTransaction(pUberPage, pSession, pRepresentRev, pWriter);
     }
 
@@ -239,10 +238,10 @@ public final class PageWriteTrx implements IPageWriteTrx {
 
     public void commit() throws TTException {
         checkState(!mDelegate.isClosed(), "Transaction already closed");
-        Iterator<Map.Entry<LogKey, LogValue>> entries = mLog.getIterator();
+        Iterator<LogValue> entries = mLog.getIterator();
         while (entries.hasNext()) {
-            Map.Entry<LogKey, LogValue> next = entries.next();
-            mPageWriter.write(next.getValue().getModified());
+            LogValue next = entries.next();
+            mPageWriter.write(next.getModified());
         }
         mPageWriter.write(mNewName);
         mPageWriter.write(mNewRoot);

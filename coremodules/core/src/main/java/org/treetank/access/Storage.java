@@ -50,7 +50,6 @@ import org.treetank.io.IBackend;
 import org.treetank.io.IBackendReader;
 import org.treetank.io.IBackendWriter;
 import org.treetank.io.IOUtils;
-import org.treetank.log.BerkeleyPersistenceLog;
 import org.treetank.log.LRULog;
 import org.treetank.log.LogKey;
 import org.treetank.log.LogValue;
@@ -391,9 +390,9 @@ public final class Storage implements IStorage {
     private static void bootstrap(final Storage pStorage, final ResourceConfiguration pResourceConf)
         throws TTException {
         LRULog mLog =
-            new LRULog(new BerkeleyPersistenceLog(new File(pResourceConf.mProperties
+            new LRULog(new File(pResourceConf.mProperties
                 .getProperty(org.treetank.access.conf.ContructorProps.STORAGEPATH)), pResourceConf.mNodeFac,
-                pResourceConf.mMetaFac));
+                pResourceConf.mMetaFac);
 
         UberPage uberPage = new UberPage(1, 0, 2);
         long newPageKey = uberPage.incrementPageCounter();
@@ -453,10 +452,10 @@ public final class Storage implements IStorage {
 
         writer.writeUberPage(uberPage);
 
-        Iterator<Map.Entry<LogKey, LogValue>> entries = mLog.getIterator();
+        Iterator<LogValue> entries = mLog.getIterator();
         while (entries.hasNext()) {
-            Map.Entry<LogKey, LogValue> next = entries.next();
-            writer.write(next.getValue().getModified());
+            LogValue next = entries.next();
+            writer.write(next.getModified());
         }
         writer.close();
 
