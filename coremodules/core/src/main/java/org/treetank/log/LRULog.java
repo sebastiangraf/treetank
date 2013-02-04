@@ -124,6 +124,7 @@ public final class LRULog {
         final File realPlace =
             new File(new File(pFile, ResourceConfiguration.Paths.TransactionLog.getFile().getName()), Integer
                 .toString(counter));
+        realPlace.mkdirs();
         counter++;
 
         try {

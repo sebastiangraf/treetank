@@ -34,6 +34,8 @@ public class LogKey {
     /**
      * Constructor.
      * 
+     * @param pRootLevel
+     *            is key part of the revision-part or the node-part
      * @param pLevel
      *            to be set.
      * @param pSeq

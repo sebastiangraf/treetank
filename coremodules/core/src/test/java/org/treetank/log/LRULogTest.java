@@ -27,52 +27,126 @@
 
 package org.treetank.log;
 
-import static org.testng.AssertJUnit.assertEquals;
+import java.io.File;
+import java.util.Properties;
 
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.CoreTestHelper;
+import org.treetank.ModuleFactory;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
+import org.treetank.access.conf.StandardSettings;
+import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.page.NodePage;
 import org.treetank.page.interfaces.IPage;
 
+import com.google.inject.Inject;
+
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertNull;
+import static org.testng.AssertJUnit.assertNotNull;
+
 /**
  * @author Sebastian Graf, University of Konstanz
  * 
  */
+@Guice(moduleFactory = ModuleFactory.class)
 public class LRULogTest {
+
+    @Inject
+    private IResourceConfigurationFactory mResourceConfig;
 
     private NodePage[][] mPages;
 
+    private LRULog cache;
+
+    private static final int LEVEL = 100;
+    private static final int ELEMENTS = 100;
+
     @BeforeMethod
     public void setUp() throws TTException {
+        CoreTestHelper.deleteEverything();
+        CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile());
+        Properties props =
+            StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                CoreTestHelper.RESOURCENAME);
+        ResourceConfiguration conf = mResourceConfig.create(props);
+        CoreTestHelper.createResource(conf);
+        cache =
+            new LRULog(new File(new File(CoreTestHelper.PATHS.PATH1.getFile(),
+                StorageConfiguration.Paths.Data.getFile().getName()), CoreTestHelper.RESOURCENAME),
+                conf.mNodeFac, conf.mMetaFac);
 
-        // cache = new LRULog(null);
-
-        mPages = new NodePage[10000][10000];
-        for (int i = 0; i < mPages.length; i++) {
-            for (int j = 0; j < mPages[i].length; j++) {
-
-                LogKey toStore = new LogKey(true, i, j);
-                mPages[i][j] = CoreTestHelper.getNodePage(0, 0, CoreTestHelper.random.nextLong());
-                // cache.put(toStore, new LogValue(mPages[i][j], mPages[i][j]));
-            }
-        }
-
+        mPages = new NodePage[LEVEL][ELEMENTS];
+        insertData();
     }
 
     @Test
-    public void test() throws TTIOException {
-        // for (int i = 1; i < LogTestHelper.PAGES.length; i++) {
-        // for (int j = 1; j < LogTestHelper.PAGES[i].length; j++) {
-        // LogKey toRetrieve = new LogKey(true, i, j);
-        // final LogValue<? extends IPage> cont = cache.get(toRetrieve);
-        // final IPage current = cont.getComplete();
-        // assertEquals(LogTestHelper.PAGES[i][j], current);
-        // }
-        // }
+    public void testSimpleInsert() throws TTIOException {
+        // testing for elements
+        for (int i = 0; i < LEVEL; i++) {
+            for (int j = 0; j < ELEMENTS; j++) {
+                LogKey toRetrieve = new LogKey(true, i, j);
+                final LogValue cont = cache.get(toRetrieve);
+                final IPage current = cont.getComplete();
+                assertEquals(mPages[i][j], current);
+            }
+        }
+    }
 
+    @Test
+    public void testClearAndNull() throws TTIOException {
+        // testing for null
+        LogValue nullValue = cache.get(new LogKey(true, -1, -1));
+        assertNull(nullValue);
+        LogValue value = cache.get(new LogKey(true, 0, 0));
+        assertNotNull(value);
+        cache.clear();
+        for (int i = 0; i < LEVEL; i++) {
+            for (int j = 0; j < ELEMENTS; j++) {
+                LogKey toRetrieve = new LogKey(true, i, j);
+                final LogValue cont = cache.get(toRetrieve);
+                assertNull(cont);
+            }
+        }
+    }
+
+    @Test
+    public void testClearAndReInsert() throws TTIOException {
+        // testing for clear
+        cache.clear();
+        for (int i = 0; i < LEVEL; i++) {
+            for (int j = 0; j < ELEMENTS; j++) {
+                LogKey toRetrieve = new LogKey(true, i, j);
+                final LogValue cont = cache.get(toRetrieve);
+                assertNull(cont);
+            }
+        }
+
+        // inserting data again
+        insertData();
+        for (int i = 0; i < LEVEL; i++) {
+            for (int j = 0; j < ELEMENTS; j++) {
+                LogKey toRetrieve = new LogKey(true, i, j);
+                final LogValue cont = cache.get(toRetrieve);
+                final IPage current = cont.getComplete();
+                assertEquals(mPages[i][j], current);
+            }
+        }
+    }
+
+    private void insertData() throws TTIOException {
+        for (int i = 0; i < mPages.length; i++) {
+            for (int j = 0; j < mPages[i].length; j++) {
+                LogKey toStore = new LogKey(true, i, j);
+                mPages[i][j] = CoreTestHelper.getNodePage(0, 0, CoreTestHelper.random.nextLong());
+                cache.put(toStore, new LogValue(mPages[i][j], mPages[i][j]));
+            }
+        }
     }
 
 }
