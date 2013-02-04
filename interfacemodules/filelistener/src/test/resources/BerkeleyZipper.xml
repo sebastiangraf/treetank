@@ -1,0 +1,7 @@
+<suite name="BerkeleyZipper">
+	<test name="BerkeleyZipper">
+		<packages>
+            <package name="org.treetank.access.test" />
+		</packages>
+	</test>
+</suite>

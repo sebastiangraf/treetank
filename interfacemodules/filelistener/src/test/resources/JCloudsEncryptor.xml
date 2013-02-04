@@ -1,0 +1,7 @@
+<suite name="JCloudsEncryptor">
+	<test name="JCloudsEncryptor">
+		<packages>
+			<package name="org.treetank.access.test" />
+		</packages>
+	</test>
+</suite>

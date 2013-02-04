@@ -1,0 +1,8 @@
+<suite name="EntireSuite">
+	<suite-files>
+		<suite-file path="./BerkeleyZipper.xml" />
+        <suite-file path="./BerkeleyEncryptor.xml" />
+        <suite-file path="./JCloudsZipper.xml" />
+        <suite-file path="./JCloudsEncryptor.xml" />
+	</suite-files>
+</suite>
