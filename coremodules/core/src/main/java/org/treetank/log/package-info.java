@@ -26,8 +26,9 @@
  */
 
 /**
- * Implementation for the caches. The caches can either be <code>ICache</code> instances or
- * <code>AbstractPersistentCache</code> instances.
+ * Implementation for the log. The log is at the moment a Berkeley-DB implementation and created for each
+ * transaction. Furthermore, the commit iterates simply over the log to persist the changes stored within each
+ * single transaction in the backend.
  * 
  * @author Sebastian Graf, University of Konstanz
  */
