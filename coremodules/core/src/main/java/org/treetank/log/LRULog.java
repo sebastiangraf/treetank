@@ -169,23 +169,17 @@ public final class LRULog {
      */
     public void put(final LogKey pKey, final LogValue pValue) throws TTIOException {
         map.put(pKey, pValue);
-        new Thread(new Runnable() {
+        final DatabaseEntry valueEntry = new DatabaseEntry();
+        final DatabaseEntry keyEntry = new DatabaseEntry();
 
-            @Override
-            public void run() {
-                final DatabaseEntry valueEntry = new DatabaseEntry();
-                final DatabaseEntry keyEntry = new DatabaseEntry();
+        mKeyBinding.objectToEntry(pKey, keyEntry);
+        mValueBinding.objectToEntry(pValue, valueEntry);
+        try {
+            mDatabase.put(null, keyEntry, valueEntry);
 
-                mKeyBinding.objectToEntry(pKey, keyEntry);
-                mValueBinding.objectToEntry(pValue, valueEntry);
-                try {
-                    mDatabase.put(null, keyEntry, valueEntry);
-
-                } catch (final DatabaseException exc) {
-                    throw new RuntimeException(exc);
-                }
-            }
-        }).start();
+        } catch (final DatabaseException exc) {
+            throw new RuntimeException(exc);
+        }
 
     }
 
