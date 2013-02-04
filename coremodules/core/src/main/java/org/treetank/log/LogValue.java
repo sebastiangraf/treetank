@@ -173,8 +173,8 @@ public final class LogValue {
             final byte[] modifiedData = arg0.getModified().getByteRepresentation();
             pOutput.writeInt(completeData.length);
             pOutput.writeInt(modifiedData.length);
-            pOutput.write(arg0.getComplete().getByteRepresentation());
-            pOutput.write(arg0.getModified().getByteRepresentation());
+            pOutput.write(completeData);
+            pOutput.write(modifiedData);
             arg1.write(pOutput.toByteArray());
         }
     }
