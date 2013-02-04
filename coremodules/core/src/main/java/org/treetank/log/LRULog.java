@@ -36,6 +36,8 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTIOException;
+import org.treetank.log.LogKey.LogKeyBinding;
+import org.treetank.log.LogValue.LogValueBinding;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;

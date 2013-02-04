@@ -1,5 +1,16 @@
 package org.treetank.log;
 
+import static com.google.common.base.Objects.toStringHelper;
+
+import java.util.Objects;
+
+import com.google.common.io.ByteArrayDataInput;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
+import com.sleepycat.bind.tuple.TupleBinding;
+import com.sleepycat.bind.tuple.TupleInput;
+import com.sleepycat.bind.tuple.TupleOutput;
+
 /**
  * Container for Key-Entry in the log determining the level and the the sequence in the level.
  * Needed for the WriteTrx for getting inserting any modified pages in the right order since the page-key can
@@ -66,29 +77,8 @@ public class LogKey {
      * {@inheritDoc}
      */
     @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("LogKey [mRootLevel=");
-        builder.append(mRootLevel);
-        builder.append(", mLevel=");
-        builder.append(mLevel);
-        builder.append(", mSeq=");
-        builder.append(mSeq);
-        builder.append("]");
-        return builder.toString();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (int)(mLevel ^ (mLevel >>> 32));
-        result = prime * result + (mRootLevel ? 1231 : 1237);
-        result = prime * result + (int)(mSeq ^ (mSeq >>> 32));
-        return result;
+        return Objects.hash(mLevel, mRootLevel, mSeq);
     }
 
     /**
@@ -96,20 +86,48 @@ public class LogKey {
      */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        LogKey other = (LogKey)obj;
-        if (mLevel != other.mLevel)
-            return false;
-        if (mRootLevel != other.mRootLevel)
-            return false;
-        if (mSeq != other.mSeq)
-            return false;
-        return true;
+        return this.hashCode() == obj.hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return toStringHelper(this).add("mRootLevel", mRootLevel).add("mLevel", mLevel).add("mSeq", mSeq)
+            .toString();
+    }
+
+    /**
+     * Binding for serializing LogKeys in the BDB.
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
+    static class LogKeyBinding extends TupleBinding<LogKey> {
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public LogKey entryToObject(TupleInput arg0) {
+            final ByteArrayDataInput data = ByteStreams.newDataInput(arg0.getBufferBytes());
+            final LogKey key = new LogKey(data.readBoolean(), data.readLong(), data.readLong());
+            return key;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void objectToEntry(LogKey arg0, TupleOutput arg1) {
+            final ByteArrayDataOutput output = ByteStreams.newDataOutput();
+            output.writeBoolean(arg0.isRootLevel());
+            output.writeLong(arg0.getLevel());
+            output.writeLong(arg0.getSeq());
+            arg1.write(output.toByteArray());
+        }
+
     }
 
 }
