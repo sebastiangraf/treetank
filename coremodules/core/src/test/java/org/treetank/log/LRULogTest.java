@@ -27,8 +27,14 @@
 
 package org.treetank.log;
 
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertNotNull;
+import static org.testng.AssertJUnit.assertNull;
+import static org.testng.AssertJUnit.assertTrue;
 import java.io.File;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
@@ -41,14 +47,12 @@ import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
+import org.treetank.log.LRULog.LogIterator;
+import org.treetank.page.IConstants;
 import org.treetank.page.NodePage;
 import org.treetank.page.interfaces.IPage;
 
 import com.google.inject.Inject;
-
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertNull;
-import static org.testng.AssertJUnit.assertNotNull;
 
 /**
  * @author Sebastian Graf, University of Konstanz
@@ -61,8 +65,8 @@ public class LRULogTest {
     private IResourceConfigurationFactory mResourceConfig;
 
     private NodePage[][] mPages;
-
-    private LRULog cache;
+    private LRULog mCache;
+    private Set<NodePage> mPageSet;
 
     private static final int LEVEL = 100;
     private static final int ELEMENTS = 100;
@@ -76,7 +80,7 @@ public class LRULogTest {
                 CoreTestHelper.RESOURCENAME);
         ResourceConfiguration conf = mResourceConfig.create(props);
         CoreTestHelper.createResource(conf);
-        cache =
+        mCache =
             new LRULog(new File(new File(CoreTestHelper.PATHS.PATH1.getFile(),
                 StorageConfiguration.Paths.Data.getFile().getName()), CoreTestHelper.RESOURCENAME),
                 conf.mNodeFac, conf.mMetaFac);
@@ -87,66 +91,69 @@ public class LRULogTest {
 
     @Test
     public void testSimpleInsert() throws TTIOException {
-        // testing for elements
-        for (int i = 0; i < LEVEL; i++) {
-            for (int j = 0; j < ELEMENTS; j++) {
-                LogKey toRetrieve = new LogKey(true, i, j);
-                final LogValue cont = cache.get(toRetrieve);
-                final IPage current = cont.getComplete();
-                assertEquals(mPages[i][j], current);
-            }
-        }
+        checkContent();
     }
 
     @Test
     public void testClearAndNull() throws TTIOException {
         // testing for null
-        LogValue nullValue = cache.get(new LogKey(true, -1, -1));
+        LogValue nullValue = mCache.get(new LogKey(true, -1, -1));
         assertNull(nullValue);
-        LogValue value = cache.get(new LogKey(true, 0, 0));
+        LogValue value = mCache.get(new LogKey(true, 0, 0));
         assertNotNull(value);
-        cache.clear();
-        for (int i = 0; i < LEVEL; i++) {
-            for (int j = 0; j < ELEMENTS; j++) {
-                LogKey toRetrieve = new LogKey(true, i, j);
-                final LogValue cont = cache.get(toRetrieve);
-                assertNull(cont);
-            }
-        }
+        mCache.clear();
+        checkNull();
     }
 
     @Test
     public void testClearAndReInsert() throws TTIOException {
         // testing for clear
-        cache.clear();
-        for (int i = 0; i < LEVEL; i++) {
-            for (int j = 0; j < ELEMENTS; j++) {
-                LogKey toRetrieve = new LogKey(true, i, j);
-                final LogValue cont = cache.get(toRetrieve);
-                assertNull(cont);
-            }
-        }
+        mCache.clear();
+        checkNull();
 
         // inserting data again
         insertData();
+        checkContent();
+    }
+
+    private void checkContent() throws TTIOException {
         for (int i = 0; i < LEVEL; i++) {
             for (int j = 0; j < ELEMENTS; j++) {
                 LogKey toRetrieve = new LogKey(true, i, j);
-                final LogValue cont = cache.get(toRetrieve);
+                final LogValue cont = mCache.get(toRetrieve);
                 final IPage current = cont.getComplete();
                 assertEquals(mPages[i][j], current);
+            }
+        }
+        LogIterator it = mCache.getIterator();
+        for (LogValue val : it) {
+            assertEquals(val.getComplete(), val.getModified());
+            assertTrue(mPageSet.contains(val.getComplete()));
+        }
+    }
+
+    private void checkNull() throws TTIOException {
+        for (int i = 0; i < LEVEL; i++) {
+            for (int j = 0; j < ELEMENTS; j++) {
+                LogKey toRetrieve = new LogKey(true, i, j);
+                final LogValue cont = mCache.get(toRetrieve);
+                assertNull(cont);
             }
         }
     }
 
     private void insertData() throws TTIOException {
+        mPageSet = new HashSet<NodePage>();
         for (int i = 0; i < mPages.length; i++) {
             for (int j = 0; j < mPages[i].length; j++) {
                 LogKey toStore = new LogKey(true, i, j);
-                mPages[i][j] = CoreTestHelper.getNodePage(0, 0, CoreTestHelper.random.nextLong());
-                cache.put(toStore, new LogValue(mPages[i][j], mPages[i][j]));
+                mPages[i][j] =
+                    CoreTestHelper.getNodePage(0, IConstants.CONTENT_COUNT, CoreTestHelper.random.nextLong());
+                mCache.put(toStore, new LogValue(mPages[i][j], mPages[i][j]));
+                mPageSet.add(mPages[i][j]);
             }
         }
+        assertEquals(LEVEL * ELEMENTS, mPageSet.size());
     }
 
 }
