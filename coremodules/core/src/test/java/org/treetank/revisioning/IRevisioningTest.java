@@ -21,7 +21,6 @@ import org.treetank.io.IBackendReader;
 import org.treetank.log.LogValue;
 import org.treetank.page.IConstants;
 import org.treetank.page.NodePage;
-import org.treetank.page.interfaces.IPage;
 
 /**
  * Test for {@link IRevisioning}-interface.
@@ -85,7 +84,7 @@ public class IRevisioningTest {
                 // ...get the node pages for not full-dump test and...
                 final NodePage[] pages = pNodeGenerator[i].generateNodePages();
                 // ..recombine them...
-                final LogValue<? extends IPage> page = pRevisioning[i].combinePagesForModification(0, pages, true);
+                final LogValue page = pRevisioning[i].combinePagesForModification(0, pages, true);
                 // ...and check them suitable to the versioning approach
                 pRevisionChecker[i].checkCompletePagesForModification(page, pages, true);
             }
@@ -100,7 +99,7 @@ public class IRevisioningTest {
                 // ...get the node pages for full-dump test and...
                 final NodePage[] pages = pNodeGenerator[i].generateNodePages();
                 // ..recombine them...
-                final LogValue<? extends IPage> page = pRevisioning[i].combinePagesForModification(0, pages, false);
+                final LogValue page = pRevisioning[i].combinePagesForModification(0, pages, false);
                 // ...and check them suitable to the versioning approach
                 pRevisionChecker[i].checkCompletePagesForModification(page, pages, false);
             }
@@ -293,7 +292,7 @@ public class IRevisioningTest {
                         }
 
                         @Override
-                        public void checkCompletePagesForModification(LogValue<? extends IPage> pComplete,
+                        public void checkCompletePagesForModification(LogValue pComplete,
                             NodePage[] pFragments, boolean pFullDump) {
                             // must always be true since it is the Fulldump
                             assertTrue(pFullDump);
@@ -331,7 +330,7 @@ public class IRevisioningTest {
                         }
 
                         @Override
-                        public void checkCompletePagesForModification(LogValue<? extends IPage> pComplete,
+                        public void checkCompletePagesForModification(LogValue pComplete,
                             NodePage[] pFragments, boolean pFullDump) {
                             NodePage complete = (NodePage)pComplete.getComplete();
                             NodePage modified = (NodePage)pComplete.getModified();
@@ -382,7 +381,7 @@ public class IRevisioningTest {
                         }
 
                         @Override
-                        public void checkCompletePagesForModification(LogValue<? extends IPage> pComplete,
+                        public void checkCompletePagesForModification(LogValue pComplete,
                             NodePage[] pFragments, boolean pFullDump) {
                             NodePage complete = (NodePage)pComplete.getComplete();
                             NodePage modified = (NodePage)pComplete.getModified();
@@ -420,7 +419,7 @@ public class IRevisioningTest {
                         }
 
                         @Override
-                        public void checkCompletePagesForModification(LogValue<? extends IPage> pComplete,
+                        public void checkCompletePagesForModification(LogValue pComplete,
                             NodePage[] pFragments, boolean fullDump) {
                             NodePage complete = (NodePage)pComplete.getComplete();
                             NodePage modified = (NodePage)pComplete.getModified();
@@ -513,8 +512,7 @@ public class IRevisioningTest {
     interface IRevisionChecker {
         void checkCompletePages(NodePage pComplete, NodePage[] pFragments);
 
-        void checkCompletePagesForModification(LogValue<? extends IPage> pComplete, NodePage[] pFragments,
-            boolean fullDump);
+        void checkCompletePagesForModification(LogValue pComplete, NodePage[] pFragments, boolean fullDump);
     }
 
     /**

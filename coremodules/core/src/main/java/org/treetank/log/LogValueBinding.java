@@ -39,7 +39,7 @@ import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
 
-public class LogValueBinding extends TupleBinding<LogValue<IPage>> {
+public class LogValueBinding extends TupleBinding<LogValue> {
 
     private final PageFactory mFac;
 
@@ -59,7 +59,7 @@ public class LogValueBinding extends TupleBinding<LogValue<IPage>> {
      * {@inheritDoc}
      */
     @Override
-    public LogValue<IPage> entryToObject(final TupleInput arg0) {
+    public LogValue entryToObject(final TupleInput arg0) {
         final ByteArrayDataInput data = ByteStreams.newDataInput(arg0.getBufferBytes());
 
         final int completeLength = data.readInt();
@@ -71,14 +71,14 @@ public class LogValueBinding extends TupleBinding<LogValue<IPage>> {
 
         final IPage current = mFac.deserializePage(completeBytes);
         final IPage modified = mFac.deserializePage(modifiedBytes);
-        return new LogValue<IPage>(current, modified);
+        return new LogValue(current, modified);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void objectToEntry(final LogValue<IPage> arg0, final TupleOutput arg1) {
+    public void objectToEntry(final LogValue arg0, final TupleOutput arg1) {
         final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
         final byte[] completeData = arg0.getComplete().getByteRepresentation();
         final byte[] modifiedData = arg0.getModified().getByteRepresentation();

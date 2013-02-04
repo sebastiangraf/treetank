@@ -10,7 +10,6 @@ import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
 import org.treetank.log.LogValue;
 import org.treetank.page.NodePage;
-import org.treetank.page.interfaces.IPage;
 
 /**
  * Sliding Snapshot versioning of {@link NodePage}s.
@@ -50,8 +49,7 @@ public class SlidingSnapshot implements IRevisioning {
      * {@inheritDoc}
      */
     @Override
-    public LogValue<IPage> combinePagesForModification(long pNewPageKey, NodePage[] pPages,
-        boolean pFullDump) {
+    public LogValue combinePagesForModification(long pNewPageKey, NodePage[] pPages, boolean pFullDump) {
         checkArgument(pPages.length > 0, "At least one Nodepage must be provided");
         checkArgument(!pFullDump, "Full Dump not possible within sliding snapshot");
         // create pages for container..
@@ -76,7 +74,7 @@ public class SlidingSnapshot implements IRevisioning {
             }
         }
         // return the container
-        return new LogValue<IPage>(returnVal[0], returnVal[1]);
+        return new LogValue(returnVal[0], returnVal[1]);
     }
 
     /**

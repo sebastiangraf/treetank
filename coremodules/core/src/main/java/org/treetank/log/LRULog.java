@@ -29,13 +29,22 @@ package org.treetank.log;
 
 import static com.google.common.base.Objects.toStringHelper;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.treetank.exception.TTIOException;
 import org.treetank.page.interfaces.IPage;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.sleepycat.je.Database;
+import com.sleepycat.je.DatabaseConfig;
+import com.sleepycat.je.DatabaseEntry;
+import com.sleepycat.je.DatabaseException;
+import com.sleepycat.je.Environment;
+import com.sleepycat.je.EnvironmentConfig;
+import com.sleepycat.je.LockMode;
+import com.sleepycat.je.OperationStatus;
 
 /**
  * An LRU cache, based on <code>LinkedHashMap</code>. This cache can hold an
@@ -44,22 +53,45 @@ import org.treetank.page.interfaces.IPage;
  * 
  * @author Sebastian Graf, University of Konstanz
  */
-public final class LRULog implements ILog {
+public final class LRULog {
 
     /**
      * Capacity of the cache. Number of stored pages
      */
-    static final int CACHE_CAPACITY = 100;
+    private static final int CACHE_CAPACITY = 100;
+
+    /**
+     * Name for the database.
+     */
+    private static final String NAME = "berkeleyCache";
 
     /**
      * The collection to hold the maps.
      */
-    protected final Map<LogKey, LogValue<IPage>> map;
+    private final Cache<LogKey, LogValue> map;
+
+    // ------------
+    // starting second cache variables
+    // ------------
+    /**
+     * Binding for the key, which is the nodepage.
+     */
+    private final transient LogKeyBinding mKeyBinding;
 
     /**
-     * The reference to the second cache.
+     * Binding for the value which is a page with related Nodes.
      */
-    private final ILog mSecondCache;
+    private final transient LogValueBinding mValueBinding;
+
+    /**
+     * Berkeley database.
+     */
+    private transient Database mDatabase;
+
+    /**
+     * Berkeley Environment for the database.
+     */
+    private transient Environment mEnv;
 
     /**
      * Creates a new LRU cache.
@@ -69,36 +101,48 @@ public final class LRULog implements ILog {
      *            when it gets removed from the first one.
      * 
      */
-    public LRULog(final ILog paramSecondCache) {
-        mSecondCache = paramSecondCache;
-        map = new LinkedHashMap<LogKey, LogValue<IPage>>(CACHE_CAPACITY) {
-            // (an anonymous inner class)
-            private static final long serialVersionUID = 1;
+    public LRULog() {
+        map = CacheBuilder.newBuilder().maximumSize(CACHE_CAPACITY).build();
+        mKeyBinding = new LogKeyBinding();
+        mValueBinding = new LogValueBinding(pNodeFac, pMetaFac);
 
-            @Override
-            protected boolean removeEldestEntry(final Map.Entry<LogKey, LogValue<IPage>> mEldest) {
-                boolean returnVal = false;
-                if (size() > CACHE_CAPACITY) {
-                    try {
-                        mSecondCache.put(mEldest.getKey(), mEldest.getValue());
-                    } catch (final TTIOException exc) {
-                        throw new RuntimeException(exc);
-                    }
-                    returnVal = true;
-                }
-                return returnVal;
+        try {
+            /* Create a new, transactional database environment */
+            final EnvironmentConfig config = new EnvironmentConfig();
+            config.setAllowCreate(true);
+            config.setLocking(false);
+            config.setCacheSize(1024 * 1024);
+            mEnv = new Environment(mPlace, config);
+            setUp();
+            mKeyBinding = new LogKeyBinding();
+            mValueBinding = new LogValueBinding(pNodeFac, pMetaFac);
+        } catch (final DatabaseException exc) {
+            throw new TTIOException(exc);
 
-            }
-        };
+        }
+
     }
 
     /**
      * {@inheritDoc}
      */
-    public LogValue<IPage> get(final LogKey pKey) throws TTIOException {
-        LogValue<IPage> page = map.get(pKey);
+    public LogValue get(final LogKey pKey) throws TTIOException {
+        LogValue page = map.getIfPresent(pKey);
         if (page == null) {
-            page = mSecondCache.get(pKey);
+            final DatabaseEntry valueEntry = new DatabaseEntry();
+            final DatabaseEntry keyEntry = new DatabaseEntry();
+            mKeyBinding.objectToEntry(pKey, keyEntry);
+            try {
+                final OperationStatus status = mDatabase.get(null, keyEntry, valueEntry, LockMode.DEFAULT);
+                LogValue val = null;
+                if (status == OperationStatus.SUCCESS) {
+                    val = mValueBinding.entryToObject(valueEntry);
+                }
+
+                return val;
+            } catch (final DatabaseException exc) {
+                throw new TTIOException(exc);
+            }
         }
         return page;
     }
@@ -106,10 +150,18 @@ public final class LRULog implements ILog {
     /**
      * {@inheritDoc}
      */
-    public void put(final LogKey pKey, final LogValue<IPage> pValue) throws TTIOException {
+    public void put(final LogKey pKey, final LogValue pValue) throws TTIOException {
         map.put(pKey, pValue);
-        if (mSecondCache.get(pKey) != null) {
-            mSecondCache.put(pKey, pValue);
+        final DatabaseEntry valueEntry = new DatabaseEntry();
+        final DatabaseEntry keyEntry = new DatabaseEntry();
+
+        mKeyBinding.objectToEntry(pKey, keyEntry);
+        mValueBinding.objectToEntry(pValue, valueEntry);
+        try {
+            mDatabase.put(null, keyEntry, valueEntry);
+
+        } catch (final DatabaseException exc) {
+            throw new TTIOException(exc);
         }
     }
 
@@ -117,18 +169,22 @@ public final class LRULog implements ILog {
      * {@inheritDoc}
      */
     public void clear() throws TTIOException {
-        map.clear();
-        mSecondCache.clear();
+        map.invalidateAll();
+        try {
+            mDatabase.close();
+            mEnv.removeDatabase(null, NAME);
+            setUp();
+        } catch (final DatabaseException exc) {
+            throw new TTIOException(exc);
+        }
     }
 
-    /**
-     * Returns a <code>Collection</code> that contains a copy of all cache
-     * entries.
-     * 
-     * @return a <code>Collection</code> with a copy of the cache content.
-     */
-    public Collection<Map.Entry<LogKey, LogValue<IPage>>> getAll() {
-        return new ArrayList<Map.Entry<LogKey, LogValue<IPage>>>(map.entrySet());
+    private void setUp() {
+        /* Make a database within that environment */
+        final DatabaseConfig dbConfig = new DatabaseConfig();
+        dbConfig.setAllowCreate(true);
+        dbConfig.setExclusiveCreate(true);
+        mDatabase = mEnv.openDatabase(null, NAME, dbConfig);
     }
 
     /**
@@ -136,16 +192,15 @@ public final class LRULog implements ILog {
      */
     @Override
     public String toString() {
-        return toStringHelper(this).add("First Cache", map).add("Second Cache", mSecondCache).toString();
+        return toStringHelper(this).add("First Cache", map).add("mDatabase", mDatabase).toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public LogIterator getIterator() {
-        // TODO fix this one, iterator should be handled in a better component-adhering way.
-        return new LogIterator(this, (BerkeleyPersistenceLog)mSecondCache);
-    }
+    // /**
+    // * {@inheritDoc}
+    // */
+    // public LogIterator getIterator() {
+    // // TODO fix this one, iterator should be handled in a better component-adhering way.
+    // return new LogIterator(this, mSecondCache);
+    // }
 
 }

@@ -11,7 +11,6 @@ import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
 import org.treetank.log.LogValue;
 import org.treetank.page.NodePage;
-import org.treetank.page.interfaces.IPage;
 
 /**
  * FullDump versioning of {@link NodePage}s.
@@ -38,8 +37,7 @@ public class FullDump implements IRevisioning {
      * {@inheritDoc}
      */
     @Override
-    public LogValue<IPage> combinePagesForModification(long pNewPageKey, NodePage[] pages,
-        boolean fullDump) {
+    public LogValue combinePagesForModification(long pNewPageKey, NodePage[] pages, boolean fullDump) {
         checkArgument(pages.length == 1, "parameter should just consists of one single page");
         checkArgument(fullDump, "Because of the nature, fulldump should occur always");
         final NodePage[] returnVal = {
@@ -51,7 +49,7 @@ public class FullDump implements IRevisioning {
             returnVal[1].setNode(i, pages[0].getNode(i));
         }
 
-        return new LogValue<IPage>(returnVal[0], returnVal[1]);
+        return new LogValue(returnVal[0], returnVal[1]);
 
     }
 

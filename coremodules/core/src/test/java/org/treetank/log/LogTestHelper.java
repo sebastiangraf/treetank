@@ -28,12 +28,7 @@ package org.treetank.log;
 
 import org.treetank.CoreTestHelper;
 import org.treetank.exception.TTException;
-import org.treetank.log.ILog;
-import org.treetank.log.LRULog;
-import org.treetank.log.LogValue;
-import org.treetank.log.LogKey;
 import org.treetank.page.NodePage;
-import org.treetank.page.interfaces.IPage;
 
 /**
  * Helper class for testing the cache.
@@ -47,7 +42,7 @@ public class LogTestHelper {
 
     protected static NodePage[][] PAGES;
 
-    public static void setUp(boolean overflow, final ILog cache) throws TTException {
+    public static void setUp(boolean overflow, final BerkeleyPersistenceLog cache) throws TTException {
         if (overflow) {
             PAGES = new NodePage[LRULog.CACHE_CAPACITY / 5][LRULog.CACHE_CAPACITY / 5];
         } else {
@@ -58,7 +53,23 @@ public class LogTestHelper {
 
                 LogKey toStore = new LogKey(true, i, j);
                 PAGES[i][j] = CoreTestHelper.getNodePage(0, 0, CoreTestHelper.random.nextLong());
-                cache.put(toStore, new LogValue<IPage>(PAGES[i][j], PAGES[i][j]));
+                cache.put(toStore, new LogValue(PAGES[i][j], PAGES[i][j]));
+            }
+        }
+    }
+
+    public static void setUp(boolean overflow, final LRULog cache) throws TTException {
+        if (overflow) {
+            PAGES = new NodePage[LRULog.CACHE_CAPACITY / 5][LRULog.CACHE_CAPACITY / 5];
+        } else {
+            PAGES = new NodePage[LRULog.CACHE_CAPACITY / 10][LRULog.CACHE_CAPACITY / 10];
+        }
+        for (int i = 0; i < PAGES.length; i++) {
+            for (int j = 0; j < PAGES[i].length; j++) {
+
+                LogKey toStore = new LogKey(true, i, j);
+                PAGES[i][j] = CoreTestHelper.getNodePage(0, 0, CoreTestHelper.random.nextLong());
+                cache.put(toStore, new LogValue(PAGES[i][j], PAGES[i][j]));
             }
         }
     }

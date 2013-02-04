@@ -8,9 +8,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.treetank.log.ILog.TransactionLogEntry;
-import org.treetank.page.interfaces.IPage;
-
 import com.sleepycat.je.Cursor;
 import com.sleepycat.je.DatabaseEntry;
 import com.sleepycat.je.DatabaseException;
@@ -24,14 +21,14 @@ import com.sleepycat.je.OperationStatus;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public class LogIterator implements Iterator<Map.Entry<LogKey, LogValue<IPage>>>,
-    Iterable<Map.Entry<LogKey, LogValue<IPage>>> {
+public class LogIterator implements Iterator<Map.Entry<LogKey, LogValue>>,
+    Iterable<Map.Entry<LogKey, LogValue>> {
 
     private int i = 0;
 
     private final BerkeleyPersistenceLog mSecondLog;
 
-    private List<Map.Entry<LogKey, LogValue<IPage>>> mEntries;
+    private List<Map.Entry<LogKey, LogValue>> mEntries;
 
     private Cursor mCursor;
     private DatabaseEntry valueEntry;
@@ -39,10 +36,7 @@ public class LogIterator implements Iterator<Map.Entry<LogKey, LogValue<IPage>>>
 
     public LogIterator(final LRULog pFirstLog, final BerkeleyPersistenceLog pSecondLog) {
         mSecondLog = pSecondLog;
-        mEntries = new ArrayList<Map.Entry<LogKey, LogValue<IPage>>>();
-        if (pFirstLog != null) {
-            mEntries.addAll(pFirstLog.map.entrySet());
-        }
+        mEntries = new ArrayList<Map.Entry<LogKey, LogValue>>();
         mCursor = mSecondLog.mDatabase.openCursor(null, null);
     }
 
@@ -81,9 +75,9 @@ public class LogIterator implements Iterator<Map.Entry<LogKey, LogValue<IPage>>>
      * {@inheritDoc}
      */
     @Override
-    public Map.Entry<LogKey, LogValue<IPage>> next() {
+    public Map.Entry<LogKey, LogValue> next() {
         if (i < LRULog.CACHE_CAPACITY) {
-            Map.Entry<LogKey, LogValue<IPage>> returnVal = mEntries.get(i);
+            Map.Entry<LogKey, LogValue> returnVal = mEntries.get(i);
             i++;
             return returnVal;
         } else {
@@ -105,8 +99,56 @@ public class LogIterator implements Iterator<Map.Entry<LogKey, LogValue<IPage>>>
      * {@inheritDoc}
      */
     @Override
-    public Iterator<Map.Entry<LogKey, LogValue<IPage>>> iterator() {
+    public Iterator<Map.Entry<LogKey, LogValue>> iterator() {
         return this;
+    }
+
+    /**
+     * Class representing one entry in the transaction-log
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
+    static class TransactionLogEntry implements Map.Entry<LogKey, LogValue> {
+
+        /** Key of the log. */
+        final LogKey mKey;
+
+        /** Container of the log. */
+        final LogValue mContainer;
+
+        /**
+         * Constructor.
+         * 
+         */
+        public TransactionLogEntry(final LogKey pKey, final LogValue pContainer) {
+            mKey = pKey;
+            mContainer = pContainer;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public LogKey getKey() {
+            return mKey;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public LogValue getValue() {
+            return mContainer;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public LogValue setValue(LogValue value) {
+            throw new UnsupportedOperationException();
+        }
     }
 
 }

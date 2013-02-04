@@ -36,18 +36,14 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
-import org.treetank.ModuleFactory;
 import org.treetank.CoreTestHelper;
+import org.treetank.ModuleFactory;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.log.BerkeleyPersistenceLog;
-import org.treetank.log.ILog;
-import org.treetank.log.LogValue;
-import org.treetank.log.LogKey;
 import org.treetank.page.interfaces.IPage;
 
 import com.google.inject.Inject;
@@ -58,7 +54,7 @@ public class BerkeleyPersistentLogTest {
     @Inject
     private IResourceConfigurationFactory mResourceConfig;
 
-    private ILog cache;
+    private BerkeleyPersistenceLog cache;
 
     @BeforeMethod
     public void setUp() throws TTException {
@@ -81,7 +77,7 @@ public class BerkeleyPersistentLogTest {
     public void test() throws TTIOException {
         for (int i = 0; i < LogTestHelper.PAGES.length; i++) {
             for (int j = 0; j < LogTestHelper.PAGES[i].length; j++) {
-                final LogValue<? extends IPage> cont = cache.get(new LogKey(true, i, j));
+                final LogValue cont = cache.get(new LogKey(true, i, j));
                 final IPage current = cont.getComplete();
                 assertEquals(LogTestHelper.PAGES[i][j], current);
             }

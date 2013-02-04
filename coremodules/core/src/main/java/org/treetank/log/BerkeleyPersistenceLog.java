@@ -35,7 +35,6 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTIOException;
-import org.treetank.page.interfaces.IPage;
 
 import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseConfig;
@@ -54,7 +53,7 @@ import com.sleepycat.je.OperationStatus;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public final class BerkeleyPersistenceLog implements ILog {
+public final class BerkeleyPersistenceLog {
 
     /**
      * Name for the database.
@@ -140,8 +139,7 @@ public final class BerkeleyPersistenceLog implements ILog {
     /**
      * {@inheritDoc}
      */
-    @Override
-    public void put(final LogKey mKey, final LogValue<IPage> mPage) throws TTIOException {
+    public void put(final LogKey mKey, final LogValue mPage) throws TTIOException {
         final DatabaseEntry valueEntry = new DatabaseEntry();
         final DatabaseEntry keyEntry = new DatabaseEntry();
 
@@ -159,7 +157,6 @@ public final class BerkeleyPersistenceLog implements ILog {
     /**
      * {@inheritDoc}
      */
-    @Override
     public void clear() throws TTIOException {
         try {
             mDatabase.close();
@@ -173,14 +170,13 @@ public final class BerkeleyPersistenceLog implements ILog {
     /**
      * {@inheritDoc}
      */
-    @Override
-    public LogValue<IPage> get(final LogKey mKey) throws TTIOException {
+    public LogValue get(final LogKey mKey) throws TTIOException {
         final DatabaseEntry valueEntry = new DatabaseEntry();
         final DatabaseEntry keyEntry = new DatabaseEntry();
         mKeyBinding.objectToEntry(mKey, keyEntry);
         try {
             final OperationStatus status = mDatabase.get(null, keyEntry, valueEntry, LockMode.DEFAULT);
-            LogValue<IPage> val = null;
+            LogValue val = null;
             if (status == OperationStatus.SUCCESS) {
                 val = mValueBinding.entryToObject(valueEntry);
             }
@@ -203,7 +199,6 @@ public final class BerkeleyPersistenceLog implements ILog {
     /**
      * {@inheritDoc}
      */
-    @Override
     public LogIterator getIterator() {
         return new LogIterator(null, this);
     }
