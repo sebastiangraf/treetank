@@ -3,6 +3,7 @@
  */
 package org.treetank.access;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.testng.AssertJUnit.assertEquals;
@@ -109,15 +110,25 @@ public class PageWriteTrxTest {
      * 
      * @throws TTException
      */
+    @Test
     public void testSetNode() throws TTException {
         final IPageWriteTrx wtx = mHolder.getSession().beginPageWriteTransaction();
-        int elementsToSet = 16385;
+        int elementsToSet = 128;
+        List<DumbNode> nodes = new ArrayList<DumbNode>();
         for (int i = 0; i < elementsToSet; i++) {
             long nodeKey = wtx.incrementNodeKey();
-            DumbNode node = new DumbNode(nodeKey, CoreTestHelper.random.nextLong());
+            nodes.add(new DumbNode(nodeKey, CoreTestHelper.random.nextLong()));
             assertNull(wtx.getNode(nodeKey));
-            wtx.setNode(node);
-            assertEquals(node, wtx.getNode(nodeKey));
+            wtx.setNode(nodes.get(i));
+            assertEquals(nodes.get(i), wtx.getNode(nodeKey));
+        }
+        wtx.commit();
+
+        for (int i = 0; i < elementsToSet; i++) {
+            assertEquals(nodes.get(i), wtx.getNode(i));
+            nodes.set(i, new DumbNode(i, CoreTestHelper.random.nextLong()));
+            wtx.setNode(nodes.get(i));
+            assertEquals(nodes.get(i), wtx.getNode(i));
         }
 
     }
