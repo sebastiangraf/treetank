@@ -247,7 +247,7 @@ public final class CoreTestHelper {
     public static final DumbNode[][] createNodesInTreetank(Holder pHolder) throws TTException {
         IPageWriteTrx wtx = pHolder.getSession().beginPageWriteTransaction();
         int[] nodesPerRevision = new int[10];
-        Arrays.fill(nodesPerRevision, 16385);
+        Arrays.fill(nodesPerRevision, 128);
         DumbNode[][] nodes = CoreTestHelper.createRevisions(nodesPerRevision, wtx);
         checkStructure(combineNodes(nodes), wtx);
         wtx.close();

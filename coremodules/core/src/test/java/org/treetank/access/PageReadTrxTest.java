@@ -100,6 +100,17 @@ public class PageReadTrxTest {
     }
 
     /**
+     * Test method for {@link org.treetank.access.PageReadTrx#getRevision()}.
+     * 
+     * @throws TTException
+     */
+    @Test
+    public void testRevision() throws TTException {
+        CoreTestHelper.createNodesInTreetank(mHolder);
+        testRevision(mHolder.getSession());
+    }
+
+    /**
      * Test method for {@link org.treetank.access.PageReadTrx#checkItemIfDeleted(org.treetank.api.INode)}.
      */
     @Test
@@ -229,7 +240,15 @@ public class PageReadTrxTest {
      */
     @Test
     public void testGetMetaPage() {
-        
+
+    }
+
+    protected static void testRevision(final ISession pSession) throws TTException {
+        for (long i = 0; i <= pSession.getMostRecentVersion(); i++) {
+            final IPageReadTrx rtx = pSession.beginPageReadTransaction(i);
+            assertEquals(i, rtx.getRevision());
+            rtx.close();
+        }
     }
 
     protected static void

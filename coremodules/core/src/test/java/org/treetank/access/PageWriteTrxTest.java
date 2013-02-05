@@ -3,9 +3,9 @@
  */
 package org.treetank.access;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+
+import static org.testng.AssertJUnit.assertEquals;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -17,7 +17,6 @@ import org.treetank.ModuleFactory;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.StandardSettings;
-import org.treetank.api.IPageReadTrx;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.exception.TTException;
 import org.treetank.page.DumbNodeFactory.DumbNode;
@@ -65,7 +64,21 @@ public class PageWriteTrxTest {
     @Test
     public void testPrepareNodeForModification() throws TTException {
         IPageWriteTrx wtx = mHolder.getSession().beginPageWriteTransaction();
+        wtx.close();
+    }
 
+    /**
+     * Test method for {@link org.treetank.access.PageWriteTrx#getRevision()}.
+     * 
+     * @throws TTException
+     */
+    @Test
+    public void testRevision() throws TTException {
+        CoreTestHelper.createNodesInTreetank(mHolder);
+        PageReadTrxTest.testRevision(mHolder.getSession());
+        IPageWriteTrx wtx = mHolder.getSession().beginPageWriteTransaction();
+        assertEquals(mHolder.getSession().getMostRecentVersion() + 1, wtx.getRevision());
+        wtx.close();
     }
 
     /**
