@@ -73,17 +73,7 @@ public class PageReadTrxTest {
     @Test
     public void testGetNode() throws TTException {
         DumbNode[][] nodes = CoreTestHelper.createNodesInTreetank(mHolder);
-        // checking for all versions
-        long nodeKey = 0;
-        for (int i = 0; i < nodes.length; i++) {
-            final IPageReadTrx rtx = mHolder.getSession().beginPageReadTransaction(i + 1);
-            for (DumbNode node : nodes[i]) {
-                assertEquals(node, rtx.getNode(nodeKey));
-                nodeKey++;
-            }
-            rtx.close();
-        }
-
+        testGet(mHolder.getSession(), nodes);
     }
 
     /**
@@ -241,6 +231,18 @@ public class PageReadTrxTest {
     @Test
     public void testGetMetaPage() {
 
+    }
+
+    protected static void testGet(final ISession pSession, final DumbNode[][] pNodes) throws TTException {
+        long nodeKey = 0;
+        for (int i = 0; i < pNodes.length; i++) {
+            final IPageReadTrx rtx = pSession.beginPageReadTransaction(i + 1);
+            for (DumbNode node : pNodes[i]) {
+                assertEquals(node, rtx.getNode(nodeKey));
+                nodeKey++;
+            }
+            rtx.close();
+        }
     }
 
     protected static void testRevision(final ISession pSession) throws TTException {

@@ -6,7 +6,7 @@ package org.treetank.access;
 import java.util.List;
 
 import static org.testng.AssertJUnit.assertEquals;
-
+import static org.testng.AssertJUnit.assertNull;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
@@ -91,17 +91,35 @@ public class PageWriteTrxTest {
     }
 
     /**
-     * Test method for {@link org.treetank.access.PageWriteTrx#setNode(org.treetank.api.INode)} and
-     * {@link org.treetank.access.PageWriteTrx#getNode(long)}.
+     * Test method for {@link org.treetank.access.PageWriteTrx#getNode(long)}.
      * 
      * @throws TTException
      */
     @Test
-    public void testSetAndGetNode() throws TTException {
+    public void testGetNode() throws TTException {
         DumbNode[][] nodes = CoreTestHelper.createNodesInTreetank(mHolder);
+        PageReadTrxTest.testGet(mHolder.getSession(), nodes);
         List<DumbNode> list = CoreTestHelper.combineNodes(nodes);
         final IPageWriteTrx wtx = mHolder.getSession().beginPageWriteTransaction();
         CoreTestHelper.checkStructure(list, wtx);
+    }
+
+    /**
+     * Test method for {@link org.treetank.access.PageWriteTrx#setNode(org.treetank.api.INode)}.
+     * 
+     * @throws TTException
+     */
+    public void testSetNode() throws TTException {
+        final IPageWriteTrx wtx = mHolder.getSession().beginPageWriteTransaction();
+        int elementsToSet = 16385;
+        for (int i = 0; i < elementsToSet; i++) {
+            long nodeKey = wtx.incrementNodeKey();
+            DumbNode node = new DumbNode(nodeKey, CoreTestHelper.random.nextLong());
+            assertNull(wtx.getNode(nodeKey));
+            wtx.setNode(node);
+            assertEquals(node, wtx.getNode(nodeKey));
+        }
+
     }
 
     /**
