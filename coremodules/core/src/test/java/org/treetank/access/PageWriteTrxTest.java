@@ -3,11 +3,12 @@
  */
 package org.treetank.access;
 
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.fail;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertNull;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
@@ -113,12 +114,16 @@ public class PageWriteTrxTest {
     @Test
     public void testSetNode() throws TTException {
         final IPageWriteTrx wtx = mHolder.getSession().beginPageWriteTransaction();
-        int elementsToSet = 128;
+        int elementsToSet = 16385;
         List<DumbNode> nodes = new ArrayList<DumbNode>();
         for (int i = 0; i < elementsToSet; i++) {
             long nodeKey = wtx.incrementNodeKey();
             nodes.add(new DumbNode(nodeKey, CoreTestHelper.random.nextLong()));
-            assertNull(wtx.getNode(nodeKey));
+            try{
+                wtx.getNode(nodeKey);
+                fail();
+            }catch(IllegalStateException exc) {
+            }
             wtx.setNode(nodes.get(i));
             assertEquals(nodes.get(i), wtx.getNode(nodeKey));
         }

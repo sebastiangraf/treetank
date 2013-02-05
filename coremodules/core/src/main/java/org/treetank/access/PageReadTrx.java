@@ -179,7 +179,7 @@ public class PageReadTrx implements IPageReadTrx {
      */
     protected final INode checkItemIfDeleted(final INode pToCheck) {
         if (pToCheck == null || pToCheck instanceof DeletedNode) {
-            return null;
+            throw new IllegalStateException(new StringBuilder("Node not existing.").toString());
         } else {
             return pToCheck;
         }
