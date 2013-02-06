@@ -159,8 +159,8 @@ public class IBackendTest {
             MetaPage returnVal = new MetaPage(pKey);
             for (int i = 0; i < IConstants.CONTENT_COUNT; i++) {
                 returnVal.getMetaMap().put(
-                    new DumbMetaEntryFactory.MetaKey(CoreTestHelper.random.nextLong()),
-                    new DumbMetaEntryFactory.MetaValue(CoreTestHelper.random.nextLong()));
+                    new DumbMetaEntryFactory.DumbKey(CoreTestHelper.random.nextLong()),
+                    new DumbMetaEntryFactory.DumbValue(CoreTestHelper.random.nextLong()));
             }
             return returnVal;
         } else if (whichPage < 0.6) {

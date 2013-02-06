@@ -79,7 +79,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
     private RevisionRootPage mNewRoot;
 
     /** Last reference to the actual namePage. */
-    private MetaPage mNewName;
+    private MetaPage mNewMeta;
 
     /** Delegate for read access. */
     private PageReadTrx mDelegate;
@@ -219,19 +219,23 @@ public final class PageWriteTrx implements IPageWriteTrx {
     }
 
     /**
-     * Creating a namekey for a given name.
-     * 
-     * @param pName
-     *            for which the key should be created.
-     * @return an int, representing the namekey
-     * @throws TTIOException
-     *             if something odd happens while storing the new key
+     * {@inheritDoc}
      */
-    public void createEntry(final IMetaEntry key, IMetaEntry value) throws TTIOException {
+    @Override
+    public boolean createEntry(final IMetaEntry key, IMetaEntry value) throws TTIOException {
         checkState(!mDelegate.isClosed(), "Transaction already closed");
-        mNewName.setEntry(key, value);
+        if (mNewMeta.getMetaMap().get(key) != null) {
+            return false;
+        }
+        mNewMeta.setEntry(key, value);
+        return true;
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
     public void commit() throws TTException {
         checkState(!mDelegate.isClosed(), "Transaction already closed");
         Iterator<LogValue> entries = mLog.getIterator();
@@ -239,7 +243,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
             LogValue next = entries.next();
             mPageWriter.write(next.getModified());
         }
-        mPageWriter.write(mNewName);
+        mPageWriter.write(mNewMeta);
         mPageWriter.write(mNewRoot);
         mPageWriter.writeUberPage(mNewUber);
 
@@ -436,13 +440,13 @@ public final class PageWriteTrx implements IPageWriteTrx {
 
         // Setting up a new namepage
         Map<IMetaEntry, IMetaEntry> oldMap = mDelegate.mMetaPage.getMetaMap();
-        mNewName = new MetaPage(mNewUber.incrementPageCounter());
+        mNewMeta = new MetaPage(mNewUber.incrementPageCounter());
 
         for (IMetaEntry key : oldMap.keySet()) {
-            mNewName.setEntry(key, oldMap.get(key));
+            mNewMeta.setEntry(key, oldMap.get(key));
         }
 
-        mNewRoot.setReferenceKey(RevisionRootPage.NAME_REFERENCE_OFFSET, mNewName.getPageKey());
+        mNewRoot.setReferenceKey(RevisionRootPage.NAME_REFERENCE_OFFSET, mNewMeta.getPageKey());
 
     }
 
@@ -477,7 +481,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
     @Override
     public MetaPage getMetaPage() {
         checkState(!mDelegate.isClosed(), "Transaction already closed");
-        return mNewName;
+        return mNewMeta;
     }
 
 }

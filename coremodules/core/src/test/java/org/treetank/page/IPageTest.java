@@ -12,8 +12,8 @@ import org.testng.annotations.Test;
 import org.treetank.CoreTestHelper;
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.io.bytepipe.IByteHandler;
-import org.treetank.page.DumbMetaEntryFactory.MetaKey;
-import org.treetank.page.DumbMetaEntryFactory.MetaValue;
+import org.treetank.page.DumbMetaEntryFactory.DumbKey;
+import org.treetank.page.DumbMetaEntryFactory.DumbValue;
 import org.treetank.page.interfaces.IPage;
 
 /**
@@ -67,7 +67,7 @@ public class IPageTest {
         }
         // MetaPage setup
         MetaPage metaPage = new MetaPage(CoreTestHelper.random.nextLong());
-        metaPage.setEntry(new MetaKey(CoreTestHelper.random.nextLong()), new MetaValue(CoreTestHelper.random
+        metaPage.setEntry(new DumbKey(CoreTestHelper.random.nextLong()), new DumbValue(CoreTestHelper.random
             .nextLong()));
 
         Object[][] returnVal = {

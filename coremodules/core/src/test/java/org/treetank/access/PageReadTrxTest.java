@@ -72,7 +72,7 @@ public class PageReadTrxTest {
      */
     @Test
     public void testGetNode() throws TTException {
-        DumbNode[][] nodes = CoreTestHelper.createNodesInTreetank(mHolder);
+        DumbNode[][] nodes = CoreTestHelper.createTestData(mHolder);
         testGet(mHolder.getSession(), nodes);
     }
 
@@ -96,7 +96,7 @@ public class PageReadTrxTest {
      */
     @Test
     public void testRevision() throws TTException {
-        CoreTestHelper.createNodesInTreetank(mHolder);
+        CoreTestHelper.createTestData(mHolder);
         testRevision(mHolder.getSession());
     }
 
@@ -114,6 +114,14 @@ public class PageReadTrxTest {
     @Test
     public void testGetSnapshotPages() {
         // fail("Not yet implemented");
+    }
+
+    /**
+     * Test method for {@link org.treetank.access.PageReadTrx#getMetaPage()}.
+     */
+    @Test
+    public void testGetMetaPage() {
+
     }
 
     /**
@@ -223,14 +231,6 @@ public class PageReadTrxTest {
         assertEquals(0, PageReadTrx.nodePageOffset(16384));
         assertEquals(127, PageReadTrx.nodePageOffset(2097151));
         assertEquals(0, PageReadTrx.nodePageOffset(2097152));
-    }
-
-    /**
-     * Test method for {@link org.treetank.access.PageReadTrx#getMetaPage()}.
-     */
-    @Test
-    public void testGetMetaPage() {
-
     }
 
     protected static void testGet(final ISession pSession, final DumbNode[][] pNodes) throws TTException {

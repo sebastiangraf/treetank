@@ -53,6 +53,8 @@ import org.treetank.api.IStorage;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
+import org.treetank.page.DumbMetaEntryFactory.DumbKey;
+import org.treetank.page.DumbMetaEntryFactory.DumbValue;
 import org.treetank.page.DumbNodeFactory.DumbNode;
 import org.treetank.page.IndirectPage;
 import org.treetank.page.NodePage;
@@ -244,12 +246,12 @@ public final class CoreTestHelper {
      * @return a two-dimensional array of nodes.
      * @throws TTException
      */
-    public static final DumbNode[][] createNodesInTreetank(Holder pHolder) throws TTException {
+    public static final DumbNode[][] createTestData(Holder pHolder) throws TTException {
         IPageWriteTrx wtx = pHolder.getSession().beginPageWriteTransaction();
         int[] nodesPerRevision = new int[10];
         Arrays.fill(nodesPerRevision, 128);
-        DumbNode[][] nodes = CoreTestHelper.createRevisions(nodesPerRevision, wtx);
-        checkStructure(combineNodes(nodes), wtx);
+        DumbNode[][] nodes = CoreTestHelper.insertWithTransaction(nodesPerRevision, wtx);
+        checkStructure(combineNodes(nodes), wtx, 0);
         wtx.close();
         return nodes;
     }
@@ -263,21 +265,81 @@ public final class CoreTestHelper {
      *            to store to.
      * @throws TTException
      */
-    public static final DumbNode[][] createRevisions(final int[] pNodesPerRevision, final IPageWriteTrx pWtx)
-        throws TTException {
+    public static final DumbNode[][] insertWithTransaction(final int[] pNodesPerRevision,
+        final IPageWriteTrx pWtx) throws TTException {
         final DumbNode[][] returnVal = createNodes(pNodesPerRevision);
         for (int i = 0; i < returnVal.length; i++) {
             for (int j = 0; j < returnVal[i].length; j++) {
-                returnVal[i][j].setNodeKey(pWtx.incrementNodeKey());
+                final long nodeKey = pWtx.incrementNodeKey();
+                returnVal[i][j].setNodeKey(nodeKey);
                 pWtx.setNode(returnVal[i][j]);
+                assertEquals(returnVal[i][j], pWtx.getNode(nodeKey));
             }
+            checkStructure(Arrays.asList(returnVal[i]), pWtx, i * returnVal[i].length);
             pWtx.commit();
         }
         return returnVal;
     }
 
     /**
-     * Generating new nodes pased on a given number of nodes within a revision
+     * Utility method to create nodes per revision.
+     * 
+     * @param List
+     *            <Map.Entry<DumbKey, DumbValue>>
+     *            to create
+     * @param pWtx
+     *            to store to.
+     * @throws TTException
+     */
+    public static final List<Map.Entry<DumbKey, DumbValue>> insertWithTransaction(final int pNumbers,
+        final IPageWriteTrx pWtx) throws TTException {
+        List<Map.Entry<DumbKey, DumbValue>> returnVal = createMetaEntries(pNumbers);
+        for (Map.Entry<DumbKey, DumbValue> entry : returnVal) {
+            pWtx.createEntry(entry.getKey(), entry.getValue());
+        }
+        
+        pWtx.commit();
+        return returnVal;
+    }
+
+    /**
+     * Creating a list of meta entries for testing the meta-page stuff
+     * 
+     * @param pNumbers
+     *            of entries
+     * @return a list containing map-entries of dumbvalues and dumbkeys.
+     */
+    public static final List<Map.Entry<DumbKey, DumbValue>> createMetaEntries(final int pNumbers) {
+        final List<Map.Entry<DumbKey, DumbValue>> returnVal =
+            new ArrayList<Map.Entry<DumbKey, DumbValue>>(pNumbers);
+        for (int i = 0; i < pNumbers; i++) {
+            final DumbKey key = new DumbKey(CoreTestHelper.random.nextLong());
+            final DumbValue value = new DumbValue(CoreTestHelper.random.nextLong());
+            returnVal.add(new Map.Entry<DumbKey, DumbValue>() {
+                @Override
+                public DumbKey getKey() {
+                    return key;
+                }
+
+                @Override
+                public DumbValue getValue() {
+                    return value;
+                }
+
+                @Override
+                public DumbValue setValue(DumbValue value) {
+                    throw new UnsupportedOperationException();
+                }
+
+            });
+
+        }
+
+        return returnVal;
+    }
+
+    /**
+     * Generating new nodes passed on a given number of nodes within a revision
      * 
      * @param pNodesPerRevision
      *            denote the number of nodes within all versions
@@ -303,9 +365,9 @@ public final class CoreTestHelper {
      *            to check
      * @throws TTIOException
      */
-    public static final void checkStructure(final List<DumbNode> pNodes, final IPageReadTrx pRtx)
-        throws TTIOException {
-        long key = 0;
+    public static final void checkStructure(final List<DumbNode> pNodes, final IPageReadTrx pRtx,
+        final long startKey) throws TTIOException {
+        long key = startKey;
         for (DumbNode node : pNodes) {
             assertEquals(node, pRtx.getNode(key));
             key++;

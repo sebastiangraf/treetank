@@ -77,7 +77,7 @@ public class PageWriteTrxTest {
      */
     @Test
     public void testRevision() throws TTException {
-        CoreTestHelper.createNodesInTreetank(mHolder);
+        CoreTestHelper.createTestData(mHolder);
         PageReadTrxTest.testRevision(mHolder.getSession());
         IPageWriteTrx wtx = mHolder.getSession().beginPageWriteTransaction();
         assertEquals(mHolder.getSession().getMostRecentVersion() + 1, wtx.getRevision());
@@ -100,11 +100,11 @@ public class PageWriteTrxTest {
      */
     @Test
     public void testGetNode() throws TTException {
-        DumbNode[][] nodes = CoreTestHelper.createNodesInTreetank(mHolder);
+        DumbNode[][] nodes = CoreTestHelper.createTestData(mHolder);
         PageReadTrxTest.testGet(mHolder.getSession(), nodes);
         List<DumbNode> list = CoreTestHelper.combineNodes(nodes);
         final IPageWriteTrx wtx = mHolder.getSession().beginPageWriteTransaction();
-        CoreTestHelper.checkStructure(list, wtx);
+        CoreTestHelper.checkStructure(list, wtx, 0);
     }
 
     /**
