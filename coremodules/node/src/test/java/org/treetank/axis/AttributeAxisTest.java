@@ -64,16 +64,16 @@ public class AttributeAxisTest {
     @BeforeMethod
     public void setUp() throws TTException {
         CoreTestHelper.deleteEverything();
-        Properties props = StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(), CoreTestHelper.RESOURCENAME);
+        Properties props =
+            StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
         NodeTestHelper.createTestDocument(mResource);
-        holder =
-            Holder.generateWtx(mResource);
+        holder = Holder.generateWtx(mResource);
     }
 
     @AfterMethod
     public void tearDown() throws TTException {
-        holder.close();
         CoreTestHelper.deleteEverything();
     }
 
@@ -104,6 +104,7 @@ public class AttributeAxisTest {
     @Test
     public void testMultipleAttributes() throws TTException {
         final INodeWriteTrx wtx = holder.getNWtx();
+        wtx.moveTo(ROOT_NODE);
         final long nodeKey = wtx.insertElementAsFirstChild(new QName("foo"));
         wtx.insertAttribute(new QName("foo0"), "0");
         wtx.moveTo(nodeKey);
