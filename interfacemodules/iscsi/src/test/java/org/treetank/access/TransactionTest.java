@@ -70,7 +70,7 @@ public final class TransactionTest {
         holder = Holder.generateWtx(mResource);
     }
 
-    @Test
+    @Test(enabled = false)
     public void testJustEverything() throws TTException {
         ByteArrayDataOutput output = ByteStreams.newDataOutput(512);
         output.write(1);

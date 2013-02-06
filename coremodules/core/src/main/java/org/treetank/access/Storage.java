@@ -44,24 +44,21 @@ import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
-import org.treetank.cache.BerkeleyPersistenceLog;
-import org.treetank.cache.ICachedLog;
-import org.treetank.cache.LRUCache;
-import org.treetank.cache.LogKey;
-import org.treetank.cache.LogContainer;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackend;
 import org.treetank.io.IBackendReader;
 import org.treetank.io.IBackendWriter;
 import org.treetank.io.IOUtils;
+import org.treetank.log.LRULog;
+import org.treetank.log.LogKey;
+import org.treetank.log.LogValue;
 import org.treetank.page.IConstants;
 import org.treetank.page.IndirectPage;
 import org.treetank.page.MetaPage;
 import org.treetank.page.NodePage;
 import org.treetank.page.RevisionRootPage;
 import org.treetank.page.UberPage;
-import org.treetank.page.interfaces.IPage;
 import org.treetank.page.interfaces.IReferencePage;
 
 /**
@@ -392,10 +389,10 @@ public final class Storage implements IStorage {
      */
     private static void bootstrap(final Storage pStorage, final ResourceConfiguration pResourceConf)
         throws TTException {
-        ICachedLog mLog =
-            new LRUCache(new BerkeleyPersistenceLog(new File(pResourceConf.mProperties
+        LRULog mLog =
+            new LRULog(new File(pResourceConf.mProperties
                 .getProperty(org.treetank.access.conf.ContructorProps.STORAGEPATH)), pResourceConf.mNodeFac,
-                pResourceConf.mMetaFac));
+                pResourceConf.mMetaFac);
 
         UberPage uberPage = new UberPage(1, 0, 2);
         long newPageKey = uberPage.incrementPageCounter();
@@ -412,7 +409,7 @@ public final class Storage implements IStorage {
             newPageKey = uberPage.incrementPageCounter();
             page.setReferenceKey(0, newPageKey);
             LogKey key = new LogKey(true, i, 0);
-            mLog.put(key, new LogContainer<IPage>(page, page));
+            mLog.put(key, new LogValue(page, page));
         }
 
         page = new RevisionRootPage(newPageKey, 0, 0);
@@ -422,13 +419,13 @@ public final class Storage implements IStorage {
         MetaPage namePage = new MetaPage(newPageKey);
         page.setReferenceKey(RevisionRootPage.NAME_REFERENCE_OFFSET, newPageKey);
         LogKey key = new LogKey(false, -1, -1);
-        mLog.put(key, new LogContainer<IPage>(namePage, namePage));
+        mLog.put(key, new LogValue(namePage, namePage));
 
         newPageKey = uberPage.incrementPageCounter();
         IndirectPage indirectPage = new IndirectPage(newPageKey);
         page.setReferenceKey(IReferencePage.GUARANTEED_INDIRECT_OFFSET, newPageKey);
         key = new LogKey(false, -1, 0);
-        mLog.put(key, new LogContainer<IPage>(page, page));
+        mLog.put(key, new LogValue(page, page));
 
         // --- Create node tree
         // ----------------------------------------------------
@@ -442,24 +439,25 @@ public final class Storage implements IStorage {
             newPageKey = uberPage.incrementPageCounter();
             page.setReferenceKey(0, newPageKey);
             key = new LogKey(false, i, 0);
-            mLog.put(key, new LogContainer<IPage>(page, page));
+            mLog.put(key, new LogValue(page, page));
             page = new IndirectPage(newPageKey);
         }
 
         final NodePage ndp = new NodePage(newPageKey);
         key = new LogKey(false, IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length, 0);
-        mLog.put(key, new LogContainer<IPage>(ndp, ndp));
+        mLog.put(key, new LogValue(ndp, ndp));
 
         IBackend storage = pResourceConf.mBackend;
         IBackendWriter writer = storage.getWriter();
 
         writer.writeUberPage(uberPage);
 
-        Iterator<Map.Entry<LogKey, LogContainer<IPage>>> entries = mLog.getIterator();
+        Iterator<LogValue> entries = mLog.getIterator();
         while (entries.hasNext()) {
-            Map.Entry<LogKey, LogContainer<IPage>> next = entries.next();
-            writer.write(next.getValue().getModified());
+            LogValue next = entries.next();
+            writer.write(next.getModified());
         }
+        mLog.close();
         writer.close();
 
     }

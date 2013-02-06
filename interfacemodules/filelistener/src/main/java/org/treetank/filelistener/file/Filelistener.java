@@ -420,8 +420,9 @@ public class Filelistener {
      * @return
      * @throws IOException
      * @throws TTException 
+     * @throws StorageNotExistingException 
      */
-    public boolean removeFilelistener(String pStorageName) throws IOException, TTException{
+    public boolean removeFilelistener(String pStorageName) throws IOException, TTException, StorageNotExistingException{
         mFilelistenerToPaths = new HashMap<String, String>();
 
         File listenerFilePaths = new File(StorageManager.ROOT_PATH + File.separator + "mapping.data");

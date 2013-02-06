@@ -55,7 +55,7 @@ public class Holder {
     public static Holder generateWtx(ResourceConfiguration pConf) throws TTException {
         Holder holder = new Holder();
         holder.mHolder = CoreTestHelper.Holder.generateWtx(pConf);
-        holder.mNRtx = new NodeWriteTrx(holder.mHolder.mSession, holder.mHolder.mPageWTrx, HashKind.Rolling);
+        holder.mNRtx = new NodeWriteTrx(holder.mHolder.mSession, holder.mHolder.mPageWTrx, HashKind.None);
         return holder;
     }
 

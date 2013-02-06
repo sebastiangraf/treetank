@@ -149,6 +149,7 @@ public class StorageManager {
             IStorage storage = Storage.openStorage(storageFile);
 
             session = storage.getSession(new SessionConfiguration(storageName, null));
+
         }
 
         return session;
@@ -161,17 +162,15 @@ public class StorageManager {
      * It will delete the whole folder of the configuration.
      * 
      * @param pStorageName
+     * @throws TTException
+     * @throws StorageNotExistingException
      */
-    public static void removeStorage(String pStorageName) {
-        File storageConfigurations =
+    public static void removeStorage(String pStorageName) throws TTException, StorageNotExistingException {
+        File storageConfiguration =
             new File(new StringBuilder().append(STORAGE_CONFIGURATION_PATH).append(File.separator).append(
                 pStorageName).toString());
 
-        for (File file : storageConfigurations.listFiles()) {
-            IOUtils.recursiveDelete(file);
-        }
-
-        storageConfigurations.delete();
+        IOUtils.recursiveDelete(storageConfiguration);
 
     }
 

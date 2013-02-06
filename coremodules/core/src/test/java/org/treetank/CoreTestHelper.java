@@ -185,7 +185,7 @@ public final class CoreTestHelper {
      *            key of the nodepage
      * @return a {@link NodePage} filled
      */
-    public static NodePage getNodePage(final int offset, final int length, final long nodePageKey) {
+    public static final NodePage getNodePage(final int offset, final int length, final long nodePageKey) {
         final NodePage page = new NodePage(nodePageKey);
         for (int i = offset; i < length; i++) {
             page.setNode(i, generateOne());
@@ -213,7 +213,7 @@ public final class CoreTestHelper {
      * @return a {@link IBackendReader}-mock
      * @throws TTIOException
      */
-    public static IBackendReader getFakedStructure(int[] offsets) throws TTIOException {
+    public static final IBackendReader getFakedStructure(int[] offsets) throws TTIOException {
         assertEquals(5, offsets.length);
         // mocking the reader
         IBackendReader reader = mock(IBackendReader.class);
@@ -237,6 +237,24 @@ public final class CoreTestHelper {
     }
 
     /**
+     * Create nodes in different versions in Treetank and check directly afterwards the structure.
+     * 
+     * @param pHolder
+     *            for getting the transaction
+     * @return a two-dimensional array of nodes.
+     * @throws TTException
+     */
+    public static final DumbNode[][] createNodesInTreetank(Holder pHolder) throws TTException {
+        IPageWriteTrx wtx = pHolder.getSession().beginPageWriteTransaction();
+        int[] nodesPerRevision = new int[10];
+        Arrays.fill(nodesPerRevision, 128);
+        DumbNode[][] nodes = CoreTestHelper.createRevisions(nodesPerRevision, wtx);
+        checkStructure(combineNodes(nodes), wtx);
+        wtx.close();
+        return nodes;
+    }
+
+    /**
      * Utility method to create nodes per revision.
      * 
      * @param pNodesPerRevision
@@ -245,7 +263,7 @@ public final class CoreTestHelper {
      *            to store to.
      * @throws TTException
      */
-    public static DumbNode[][] createRevisions(final int[] pNodesPerRevision, final IPageWriteTrx pWtx)
+    public static final DumbNode[][] createRevisions(final int[] pNodesPerRevision, final IPageWriteTrx pWtx)
         throws TTException {
         final DumbNode[][] returnVal = createNodes(pNodesPerRevision);
         for (int i = 0; i < returnVal.length; i++) {
@@ -259,31 +277,13 @@ public final class CoreTestHelper {
     }
 
     /**
-     * Create nodes in different versions in Treetank and check directly afterwards the structure.
-     * 
-     * @param pHolder
-     *            for getting the transaction
-     * @return a two-dimensional array of nodes.
-     * @throws TTException
-     */
-    public static DumbNode[][] createNodesInTreetank(Holder pHolder) throws TTException {
-        IPageWriteTrx wtx = pHolder.getSession().beginPageWriteTransaction();
-        int[] nodesPerRevision = new int[10];
-        Arrays.fill(nodesPerRevision, 16385);
-        DumbNode[][] nodes = CoreTestHelper.createRevisions(nodesPerRevision, wtx);
-        checkStructure(combineNodes(nodes), wtx);
-        wtx.close();
-        return nodes;
-    }
-
-    /**
      * Generating new nodes pased on a given number of nodes within a revision
      * 
      * @param pNodesPerRevision
      *            denote the number of nodes within all versions
      * @return a two-dimensional array containing the nodes.
      */
-    public static DumbNode[][] createNodes(final int[] pNodesPerRevision) {
+    public static final DumbNode[][] createNodes(final int[] pNodesPerRevision) {
         final DumbNode[][] returnVal = new DumbNode[pNodesPerRevision.length][];
         for (int i = 0; i < pNodesPerRevision.length; i++) {
             returnVal[i] = new DumbNode[pNodesPerRevision[i]];
@@ -303,7 +303,7 @@ public final class CoreTestHelper {
      *            to check
      * @throws TTIOException
      */
-    public static void checkStructure(final List<DumbNode> pNodes, final IPageReadTrx pRtx)
+    public static final void checkStructure(final List<DumbNode> pNodes, final IPageReadTrx pRtx)
         throws TTIOException {
         long key = 0;
         for (DumbNode node : pNodes) {
@@ -319,7 +319,7 @@ public final class CoreTestHelper {
      *            to be combined
      * @return a list of all data in one list.
      */
-    public static List<DumbNode> combineNodes(final DumbNode[][] pNodes) {
+    public static final List<DumbNode> combineNodes(final DumbNode[][] pNodes) {
         List<DumbNode> list = new ArrayList<DumbNode>();
         for (int i = 0; i < pNodes.length; i++) {
             list.addAll(Arrays.asList(pNodes[i]));

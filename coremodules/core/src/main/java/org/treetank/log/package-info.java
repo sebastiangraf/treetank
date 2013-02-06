@@ -24,38 +24,13 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.treetank.cache;
-
-import org.treetank.CoreTestHelper;
-import org.treetank.exception.TTException;
-import org.treetank.page.NodePage;
-import org.treetank.page.interfaces.IPage;
 
 /**
- * Helper class for testing the cache.
+ * Implementation for the log. The log is at the moment a Berkeley-DB implementation and created for each
+ * transaction. Furthermore, the commit iterates simply over the log to persist the changes stored within each
+ * single transaction in the backend.
  * 
  * @author Sebastian Graf, University of Konstanz
- * 
  */
-public class CacheTestHelper {
+package org.treetank.log;
 
-    // private final static int VERSIONSTORESTORE = 100;
-
-    protected static NodePage[][] PAGES;
-
-    public static void setUp(boolean overflow, final ICachedLog cache) throws TTException {
-        if (overflow) {
-            PAGES = new NodePage[LRUCache.CACHE_CAPACITY / 5][LRUCache.CACHE_CAPACITY / 5];
-        } else {
-            PAGES = new NodePage[LRUCache.CACHE_CAPACITY / 10][LRUCache.CACHE_CAPACITY / 10];
-        }
-        for (int i = 0; i < PAGES.length; i++) {
-            for (int j = 0; j < PAGES[i].length; j++) {
-
-                LogKey toStore = new LogKey(true, i, j);
-                PAGES[i][j] = CoreTestHelper.getNodePage(0, 0, CoreTestHelper.random.nextLong());
-                cache.put(toStore, new LogContainer<IPage>(PAGES[i][j], PAGES[i][j]));
-            }
-        }
-    }
-}

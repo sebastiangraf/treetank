@@ -87,9 +87,11 @@ public class SessionTest {
         // generate first valid write transaction
         final IPageWriteTrx pWtx1 = mSession.beginPageWriteTransaction();
         assertNotNull(pWtx1);
+        pWtx1.close();
         // generate second valid write transaction
         final IPageWriteTrx pWtx2 = mSession.beginPageWriteTransaction(0);
         assertNotNull(pWtx2);
+        pWtx2.close();
         // asserting they are different
         assertNotSame(pWtx1, pWtx2);
         // beginning transaction with invalid revision number
