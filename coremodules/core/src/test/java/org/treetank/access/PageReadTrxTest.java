@@ -73,17 +73,7 @@ public class PageReadTrxTest {
     @Test
     public void testGetNode() throws TTException {
         DumbNode[][] nodes = CoreTestHelper.createNodesInTreetank(mHolder);
-        // checking for all versions
-        long nodeKey = 0;
-        for (int i = 0; i < nodes.length; i++) {
-            final IPageReadTrx rtx = mHolder.getSession().beginPageReadTransaction(i + 1);
-            for (DumbNode node : nodes[i]) {
-                assertEquals(node, rtx.getNode(nodeKey));
-                nodeKey++;
-            }
-            rtx.close();
-        }
-
+        testGet(mHolder.getSession(), nodes);
     }
 
     /**
@@ -97,6 +87,17 @@ public class PageReadTrxTest {
         IPageReadTrx rtx =
             mHolder.getSession().beginPageReadTransaction(mHolder.getSession().getMostRecentVersion());
         testClose(mHolder.getStorage(), mHolder.getSession(), rtx);
+    }
+
+    /**
+     * Test method for {@link org.treetank.access.PageReadTrx#getRevision()}.
+     * 
+     * @throws TTException
+     */
+    @Test
+    public void testRevision() throws TTException {
+        CoreTestHelper.createNodesInTreetank(mHolder);
+        testRevision(mHolder.getSession());
     }
 
     /**
@@ -229,6 +230,27 @@ public class PageReadTrxTest {
      */
     @Test
     public void testGetMetaPage() {
+
+    }
+
+    protected static void testGet(final ISession pSession, final DumbNode[][] pNodes) throws TTException {
+        long nodeKey = 0;
+        for (int i = 0; i < pNodes.length; i++) {
+            final IPageReadTrx rtx = pSession.beginPageReadTransaction(i + 1);
+            for (DumbNode node : pNodes[i]) {
+                assertEquals(node, rtx.getNode(nodeKey));
+                nodeKey++;
+            }
+            rtx.close();
+        }
+    }
+
+    protected static void testRevision(final ISession pSession) throws TTException {
+        for (long i = 0; i <= pSession.getMostRecentVersion(); i++) {
+            final IPageReadTrx rtx = pSession.beginPageReadTransaction(i);
+            assertEquals(i, rtx.getRevision());
+            rtx.close();
+        }
     }
 
     protected static void

@@ -25,14 +25,24 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.cache;
+package org.treetank.log;
 
 import static com.google.common.base.Objects.toStringHelper;
 
 import java.util.Objects;
 
+import org.treetank.api.IMetaEntryFactory;
+import org.treetank.api.INodeFactory;
 import org.treetank.page.NodePage;
+import org.treetank.page.PageFactory;
 import org.treetank.page.interfaces.IPage;
+
+import com.google.common.io.ByteArrayDataInput;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
+import com.sleepycat.bind.tuple.TupleBinding;
+import com.sleepycat.bind.tuple.TupleInput;
+import com.sleepycat.bind.tuple.TupleOutput;
 
 /**
  * <h1>NodePageContainer</h1> This class acts as a container for revisioned {@link NodePage}s. Each
@@ -51,11 +61,11 @@ import org.treetank.page.interfaces.IPage;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public final class LogContainer<E extends IPage> {
+public final class LogValue {
 
-    private final E mComplete;
+    private final IPage mComplete;
 
-    private final E mModified;
+    private final IPage mModified;
 
     /**
      * Constructor with both, complete and modifying page.
@@ -65,7 +75,7 @@ public final class LogContainer<E extends IPage> {
      * @param pModifying
      *            to be used as a base for this container
      */
-    public LogContainer(final E pComplete, final E pModifying) {
+    public LogValue(final IPage pComplete, final IPage pModifying) {
         this.mComplete = pComplete;
         this.mModified = pModifying;
     }
@@ -75,7 +85,7 @@ public final class LogContainer<E extends IPage> {
      * 
      * @return the complete page
      */
-    public E getComplete() {
+    public IPage getComplete() {
         return mComplete;
     }
 
@@ -84,7 +94,7 @@ public final class LogContainer<E extends IPage> {
      * 
      * @return the modified page
      */
-    public E getModified() {
+    public IPage getModified() {
         return mModified;
     }
 
@@ -112,4 +122,60 @@ public final class LogContainer<E extends IPage> {
         return toStringHelper(this).add("mComplete", mComplete).add("mModified", mModified).toString();
     }
 
+    /**
+     * Binding for serializing LogValues in the BDB.
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
+    static class LogValueBinding extends TupleBinding<LogValue> {
+
+        private final PageFactory mFac;
+
+        /**
+         * Constructor
+         * 
+         * @param pNodeFac
+         *            for the deserialization of nodes
+         * @param pMetaFac
+         *            for the deserialization of meta-entries
+         */
+        public LogValueBinding(final INodeFactory pNodeFac, final IMetaEntryFactory pMetaFac) {
+            mFac = new PageFactory(pNodeFac, pMetaFac);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public LogValue entryToObject(final TupleInput arg0) {
+            final ByteArrayDataInput data = ByteStreams.newDataInput(arg0.getBufferBytes());
+
+            final int completeLength = data.readInt();
+            final int modifiedLength = data.readInt();
+            byte[] completeBytes = new byte[completeLength];
+            byte[] modifiedBytes = new byte[modifiedLength];
+            data.readFully(completeBytes);
+            data.readFully(modifiedBytes);
+
+            final IPage current = mFac.deserializePage(completeBytes);
+            final IPage modified = mFac.deserializePage(modifiedBytes);
+            return new LogValue(current, modified);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void objectToEntry(final LogValue arg0, final TupleOutput arg1) {
+            final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
+            final byte[] completeData = arg0.getComplete().getByteRepresentation();
+            final byte[] modifiedData = arg0.getModified().getByteRepresentation();
+            pOutput.writeInt(completeData.length);
+            pOutput.writeInt(modifiedData.length);
+            pOutput.write(completeData);
+            pOutput.write(modifiedData);
+            arg1.write(pOutput.toByteArray());
+        }
+    }
 }

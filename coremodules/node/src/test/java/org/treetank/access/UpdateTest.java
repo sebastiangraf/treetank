@@ -88,6 +88,7 @@ public class UpdateTest {
             new NodeReadTrx(holder.getSession().beginPageReadTransaction(
                 holder.getSession().getMostRecentVersion()));
         INodeWriteTrx wtx = holder.getNWtx();
+        wtx.moveTo(ROOT_NODE);
         wtx.insertElementAsFirstChild(new QName(""));
         nodeIsolation(rtx);
         wtx.commit();
@@ -200,7 +201,6 @@ public class UpdateTest {
         // Document root.
         wtx.insertElementAsFirstChild(new QName(""));
         for (int i = 0; i < 256 * 256 + 1; i++) {
-            // wtx.insertTextAsRightSibling("");
             wtx.insertElementAsRightSibling(new QName(""));
         }
 

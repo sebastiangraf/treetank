@@ -29,7 +29,6 @@ package org.treetank.access;
 
 import static com.google.common.base.Preconditions.checkState;
 import static org.treetank.node.IConstants.NULL_NODE;
-import static org.treetank.node.IConstants.ROOT_NODE;
 
 import javax.xml.namespace.QName;
 
@@ -72,7 +71,7 @@ public class NodeReadTrx implements INodeReadTrx {
      */
     public NodeReadTrx(final IPageReadTrx pPageTrx) throws TTException {
         mPageReadTrx = pPageTrx;
-        mCurrentNode = (org.treetank.node.interfaces.INode)mPageReadTrx.getNode(ROOT_NODE);
+        mCurrentNode = (org.treetank.node.interfaces.INode)mPageReadTrx.getNode(IConstants.ROOT_NODE);
     }
 
     /**

@@ -3,8 +3,11 @@
  */
 package org.treetank.access;
 
+import static org.testng.AssertJUnit.assertNull;
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.fail;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.testng.annotations.AfterMethod;
@@ -17,7 +20,6 @@ import org.treetank.ModuleFactory;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.StandardSettings;
-import org.treetank.api.IPageReadTrx;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.exception.TTException;
 import org.treetank.page.DumbNodeFactory.DumbNode;
@@ -65,7 +67,21 @@ public class PageWriteTrxTest {
     @Test
     public void testPrepareNodeForModification() throws TTException {
         IPageWriteTrx wtx = mHolder.getSession().beginPageWriteTransaction();
+        wtx.close();
+    }
 
+    /**
+     * Test method for {@link org.treetank.access.PageWriteTrx#getRevision()}.
+     * 
+     * @throws TTException
+     */
+    @Test
+    public void testRevision() throws TTException {
+        CoreTestHelper.createNodesInTreetank(mHolder);
+        PageReadTrxTest.testRevision(mHolder.getSession());
+        IPageWriteTrx wtx = mHolder.getSession().beginPageWriteTransaction();
+        assertEquals(mHolder.getSession().getMostRecentVersion() + 1, wtx.getRevision());
+        wtx.close();
     }
 
     /**
@@ -78,25 +94,77 @@ public class PageWriteTrxTest {
     }
 
     /**
-     * Test method for {@link org.treetank.access.PageWriteTrx#setNode(org.treetank.api.INode)} and
-     * {@link org.treetank.access.PageWriteTrx#getNode(long)}.
+     * Test method for {@link org.treetank.access.PageWriteTrx#getNode(long)}.
      * 
      * @throws TTException
      */
     @Test
-    public void testSetAndGetNode() throws TTException {
+    public void testGetNode() throws TTException {
         DumbNode[][] nodes = CoreTestHelper.createNodesInTreetank(mHolder);
+        PageReadTrxTest.testGet(mHolder.getSession(), nodes);
         List<DumbNode> list = CoreTestHelper.combineNodes(nodes);
         final IPageWriteTrx wtx = mHolder.getSession().beginPageWriteTransaction();
         CoreTestHelper.checkStructure(list, wtx);
     }
 
     /**
-     * Test method for {@link org.treetank.access.PageWriteTrx#removeNode(org.treetank.api.INode)}.
+     * Test method for {@link org.treetank.access.PageWriteTrx#setNode(org.treetank.api.INode)}.
+     * 
+     * @throws TTException
      */
     @Test
-    public void testRemoveNode() {
-        // fail("Not yet implemented");
+    public void testSetNode() throws TTException {
+        final IPageWriteTrx wtx = mHolder.getSession().beginPageWriteTransaction();
+        int elementsToSet = 16385;
+        List<DumbNode> nodes = new ArrayList<DumbNode>();
+        for (int i = 0; i < elementsToSet; i++) {
+            long nodeKey = wtx.incrementNodeKey();
+            nodes.add(new DumbNode(nodeKey, CoreTestHelper.random.nextLong()));
+            if (i == 0) {
+                assertNull(wtx.getNode(nodeKey));
+            } else {
+                try {
+                    wtx.getNode(nodeKey);
+                    fail();
+                } catch (IllegalStateException exc) {
+                }
+            }
+            wtx.setNode(nodes.get(i));
+            assertEquals(nodes.get(i), wtx.getNode(nodeKey));
+        }
+        wtx.commit();
+
+        for (int i = 0; i < elementsToSet; i++) {
+            assertEquals(nodes.get(i), wtx.getNode(i));
+            nodes.set(i, new DumbNode(i, CoreTestHelper.random.nextLong()));
+            wtx.setNode(nodes.get(i));
+            assertEquals(nodes.get(i), wtx.getNode(i));
+        }
+
+    }
+
+    /**
+     * Test method for {@link org.treetank.access.PageWriteTrx#removeNode(org.treetank.api.INode)}.
+     * 
+     * @throws TTException
+     */
+    @Test
+    public void testRemoveNode() throws TTException {
+        // DumbNode[][] nodes = CoreTestHelper.createNodesInTreetank(mHolder);
+        // List<DumbNode> list = CoreTestHelper.combineNodes(nodes);
+        // final IPageWriteTrx wtx = mHolder.getSession().beginPageWriteTransaction();
+        // int elementsDeleted = 10;
+        // int revisions = 1;
+        // for (int i = 0; i < revisions; i++) {
+        // for (int j = 0; j < elementsDeleted; j++) {
+        // int nextElementKey = (int)Math.abs(CoreTestHelper.random.nextLong() % list.size());
+        // if (list.get(nextElementKey) != null) {
+        // wtx.removeNode(list.get(nextElementKey));
+        // list.set(nextElementKey, null);
+        // }
+        // }
+        // }
+        // wtx.close();
     }
 
     /**
@@ -122,14 +190,6 @@ public class PageWriteTrxTest {
      */
     @Test
     public void testIncrementNodeKey() {
-        // fail("Not yet implemented");
-    }
-
-    /**
-     * Test method for {@link org.treetank.access.PageWriteTrx#getActualRevisionRootPage()}.
-     */
-    @Test
-    public void testGetActualRevisionRootPage() {
         // fail("Not yet implemented");
     }
 

@@ -133,7 +133,14 @@ public class PageReadTrx implements IPageReadTrx {
         final IRevisioning revision = mSession.getConfig().mRevision;
         NodePage page = revision.combinePages(revs);
         final INode returnVal = page.getNode(nodePageOffset);
-        return checkItemIfDeleted(returnVal);
+        // root-node is excluded from the checkagainst deletion based on the necesssity of the node-layer to
+        // reference against this node while creation of the transaction
+        if (pNodeKey > 0) {
+            return checkItemIfDeleted(returnVal);
+        } else {
+            return returnVal;
+        }
+
     }
 
     /**
@@ -178,7 +185,9 @@ public class PageReadTrx implements IPageReadTrx {
      * @return the item if it is valid, null otherwise
      */
     protected final INode checkItemIfDeleted(final INode pToCheck) {
-        if (pToCheck == null || pToCheck instanceof DeletedNode) {
+        if (pToCheck == null) {
+            throw new IllegalStateException(new StringBuilder("Node not existing.").toString());
+        } else if (pToCheck instanceof DeletedNode) {
             return null;
         } else {
             return pToCheck;

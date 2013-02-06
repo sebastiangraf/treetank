@@ -206,22 +206,12 @@ public class XMLShredderTest {
     @Test
     public void testAttributesNSPrefix() throws Exception {
         // Setup expected session.
-        final IStorage storage = CoreTestHelper.getDatabase(PATHS.PATH1.getFile());
-        Properties props =
-            StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
-                CoreTestHelper.RESOURCENAME);
-        mResource = mResourceConfig.create(props);
-        storage.createResource(mResource);
-        final ISession expectedSession2 =
-            storage.getSession(new SessionConfiguration(CoreTestHelper.RESOURCENAME, StandardSettings.KEY));
-        final INodeWriteTrx expectedTrx2 =
-            new NodeWriteTrx(expectedSession2, expectedSession2.beginPageWriteTransaction(), HashKind.Rolling);
-        XMLTestHelper.DocumentCreater.createWithoutNamespace(expectedTrx2);
-        expectedTrx2.commit();
+        XMLTestHelper.DocumentCreater.createWithoutNamespace(holder.getNWtx());
+        holder.getNWtx().commit();
 
         // Setup parsed session.
         final IStorage database2 = CoreTestHelper.getDatabase(PATHS.PATH2.getFile());
-        props =
+        Properties props =
             StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH2.getFile().getAbsolutePath(),
                 CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
@@ -240,18 +230,18 @@ public class XMLShredderTest {
         final INodeReadTrx rtx =
             new NodeReadTrx(session2.beginPageReadTransaction(session2.getMostRecentVersion()));
         rtx.moveTo(ROOT_NODE);
-        final Iterator<Long> expectedAttributes = new DescendantAxis(expectedTrx2);
+        final Iterator<Long> expectedAttributes = new DescendantAxis(holder.getNWtx());
         final Iterator<Long> attributes = new DescendantAxis(rtx);
 
         while (expectedAttributes.hasNext() && attributes.hasNext()) {
-            if (expectedTrx2.getNode().getKind() == IConstants.ELEMENT
+            if (holder.getNWtx().getNode().getKind() == IConstants.ELEMENT
                 || rtx.getNode().getKind() == IConstants.ELEMENT) {
-                AssertJUnit.assertEquals(((ElementNode)expectedTrx2.getNode()).getNamespaceCount(),
+                AssertJUnit.assertEquals(((ElementNode)holder.getNWtx().getNode()).getNamespaceCount(),
                     ((ElementNode)rtx.getNode()).getNamespaceCount());
-                AssertJUnit.assertEquals(((ElementNode)expectedTrx2.getNode()).getAttributeCount(),
+                AssertJUnit.assertEquals(((ElementNode)holder.getNWtx().getNode()).getAttributeCount(),
                     ((ElementNode)rtx.getNode()).getAttributeCount());
-                for (int i = 0; i < ((ElementNode)expectedTrx2.getNode()).getAttributeCount(); i++) {
-                    AssertJUnit.assertEquals(expectedTrx2.getQNameOfCurrentNode(), rtx
+                for (int i = 0; i < ((ElementNode)holder.getNWtx().getNode()).getAttributeCount(); i++) {
+                    AssertJUnit.assertEquals(holder.getNWtx().getQNameOfCurrentNode(), rtx
                         .getQNameOfCurrentNode());
                 }
             }

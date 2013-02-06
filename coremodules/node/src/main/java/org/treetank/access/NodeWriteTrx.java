@@ -566,55 +566,54 @@ public class NodeWriteTrx implements INodeWriteTrx {
     /**
      * Adapting everything for remove operations.
      * 
-     * @param paramOldNode
+     * @param pOldNode
      *            pointer of the old node to be replaces
      * @throws TTIOException
      *             if anything weird happens
      */
-    private void adaptForRemove(final IStructNode paramOldNode) throws TTException {
-        assert paramOldNode != null;
+    private void adaptForRemove(final IStructNode pOldNode) throws TTException {
+        assert pOldNode != null;
 
         // Adapt left sibling node if there is one.
-        if (paramOldNode.hasLeftSibling()) {
+        if (pOldNode.hasLeftSibling()) {
             final IStructNode leftSibling =
-                (IStructNode)getPtx().prepareNodeForModification(paramOldNode.getLeftSiblingKey());
-            leftSibling.setRightSiblingKey(paramOldNode.getRightSiblingKey());
+                (IStructNode)getPtx().prepareNodeForModification(pOldNode.getLeftSiblingKey());
+            leftSibling.setRightSiblingKey(pOldNode.getRightSiblingKey());
             getPtx().finishNodeModification(leftSibling);
         }
 
         // Adapt right sibling node if there is one.
-        if (paramOldNode.hasRightSibling()) {
+        if (pOldNode.hasRightSibling()) {
             final IStructNode rightSibling =
-                (IStructNode)getPtx().prepareNodeForModification(paramOldNode.getRightSiblingKey());
-            rightSibling.setLeftSiblingKey(paramOldNode.getLeftSiblingKey());
+                (IStructNode)getPtx().prepareNodeForModification(pOldNode.getRightSiblingKey());
+            rightSibling.setLeftSiblingKey(pOldNode.getLeftSiblingKey());
             getPtx().finishNodeModification(rightSibling);
         }
 
         // Adapt parent, if node has now left sibling it is a first child.
-        final IStructNode parent =
-            (IStructNode)getPtx().prepareNodeForModification(paramOldNode.getParentKey());
-        if (!paramOldNode.hasLeftSibling()) {
-            parent.setFirstChildKey(paramOldNode.getRightSiblingKey());
+        final IStructNode parent = (IStructNode)getPtx().prepareNodeForModification(pOldNode.getParentKey());
+        if (!pOldNode.hasLeftSibling()) {
+            parent.setFirstChildKey(pOldNode.getRightSiblingKey());
         }
         parent.decrementChildCount();
         getPtx().finishNodeModification(parent);
 
-        if (paramOldNode.getKind() == IConstants.ELEMENT) {
+        if (pOldNode.getKind() == IConstants.ELEMENT) {
             // removing attributes
-            for (int i = 0; i < ((ElementNode)paramOldNode).getAttributeCount(); i++) {
-                moveTo(((ElementNode)paramOldNode).getAttributeKey(i));
+            for (int i = 0; i < ((ElementNode)pOldNode).getAttributeCount(); i++) {
+                moveTo(((ElementNode)pOldNode).getAttributeKey(i));
                 getPtx().removeNode(mDelegate.getCurrentNode());
             }
             // removing namespaces
-            moveTo(paramOldNode.getNodeKey());
-            for (int i = 0; i < ((ElementNode)paramOldNode).getNamespaceCount(); i++) {
-                moveTo(((ElementNode)paramOldNode).getNamespaceKey(i));
+            moveTo(pOldNode.getNodeKey());
+            for (int i = 0; i < ((ElementNode)pOldNode).getNamespaceCount(); i++) {
+                moveTo(((ElementNode)pOldNode).getNamespaceKey(i));
                 getPtx().removeNode(mDelegate.getCurrentNode());
             }
         }
 
         // Remove old node.
-        getPtx().removeNode(paramOldNode);
+        getPtx().removeNode(pOldNode);
     }
 
     // ////////////////////////////////////////////////////////////
@@ -707,7 +706,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      */
     private void postorderAdd() throws TTException {
         // start with hash to add
-        final INode startNode = mDelegate.getCurrentNode();
+        final long startKey = mDelegate.getCurrentNode().getNodeKey();
         // long for adapting the hash of the parent
         long hashCodeForParent = 0;
         // adapting the parent if the current node is no structural one.
@@ -754,7 +753,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
             }
         } while (moveTo(cursorToRoot.getParentKey()));
 
-        mDelegate.setCurrentNode(startNode);
+        moveTo(startKey);
     }
 
     /**
