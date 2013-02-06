@@ -201,7 +201,6 @@ public class UpdateTest {
         // Document root.
         wtx.insertElementAsFirstChild(new QName(""));
         for (int i = 0; i < 256 * 256 + 1; i++) {
-            // wtx.insertTextAsRightSibling("");
             wtx.insertElementAsRightSibling(new QName(""));
         }
 

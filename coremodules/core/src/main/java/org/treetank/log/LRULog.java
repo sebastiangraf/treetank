@@ -39,8 +39,6 @@ import org.treetank.exception.TTIOException;
 import org.treetank.log.LogKey.LogKeyBinding;
 import org.treetank.log.LogValue.LogValueBinding;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import com.sleepycat.je.Cursor;
 import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseConfig;
@@ -60,24 +58,12 @@ import com.sleepycat.je.OperationStatus;
  */
 public final class LRULog {
 
-    /**
-     * Capacity of the cache. Number of stored pages
-     */
-    private static final int CACHE_CAPACITY = 100;
 
     /**
      * Name for the database.
      */
     private static final String NAME = "berkeleyCache";
 
-    /**
-     * The collection to hold the maps.
-     */
-    private final Cache<LogKey, LogValue> map;
-
-    // ------------
-    // starting second cache variables
-    // ------------
     /**
      * Binding for the key, which is the nodepage.
      */
@@ -89,19 +75,14 @@ public final class LRULog {
     private final transient LogValueBinding mValueBinding;
 
     /**
-     * Berkeley database.
-     */
-    private transient Database mDatabase;
-
-    /**
      * Berkeley Environment for the database.
      */
-    private transient Environment mEnv;
+    private final transient Environment mEnv;
 
     /**
-     * Counter to give every instance a different place.
+     * Berkeley database.
      */
-    private static int counter = 0;
+    private final transient Database mDatabase;
 
     /**
      * Creates a new LRU cache.
@@ -117,24 +98,23 @@ public final class LRULog {
      */
     public LRULog(final File pFile, final INodeFactory pNodeFac, final IMetaEntryFactory pMetaFac)
         throws TTIOException {
-        map = CacheBuilder.newBuilder().maximumSize(CACHE_CAPACITY).build();
         mKeyBinding = new LogKeyBinding();
         mValueBinding = new LogValueBinding(pNodeFac, pMetaFac);
 
         final File realPlace =
-            new File(new File(pFile, ResourceConfiguration.Paths.TransactionLog.getFile().getName()), Integer
-                .toString(counter));
+            new File(pFile, ResourceConfiguration.Paths.TransactionLog.getFile().getName());
         realPlace.mkdirs();
-        counter++;
 
         try {
-            /* Create a new, transactional database environment */
             final EnvironmentConfig config = new EnvironmentConfig();
             config.setAllowCreate(true);
             config.setLocking(false);
             config.setCacheSize(1024 * 1024);
             mEnv = new Environment(realPlace, config);
-            setUp();
+            final DatabaseConfig dbConfig = new DatabaseConfig();
+            dbConfig.setAllowCreate(true);
+            dbConfig.setExclusiveCreate(true);
+            mDatabase = mEnv.openDatabase(null, NAME, dbConfig);
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
         }
@@ -145,30 +125,25 @@ public final class LRULog {
      * {@inheritDoc}
      */
     public LogValue get(final LogKey pKey) throws TTIOException {
-        LogValue page = map.getIfPresent(pKey);
-        if (page == null) {
-            final DatabaseEntry valueEntry = new DatabaseEntry();
-            final DatabaseEntry keyEntry = new DatabaseEntry();
-            mKeyBinding.objectToEntry(pKey, keyEntry);
-            try {
-                final OperationStatus status = mDatabase.get(null, keyEntry, valueEntry, LockMode.DEFAULT);
-                LogValue val = null;
-                if (status == OperationStatus.SUCCESS) {
-                    val = mValueBinding.entryToObject(valueEntry);
-                }
-                return val;
-            } catch (final DatabaseException exc) {
-                throw new TTIOException(exc);
+        final DatabaseEntry valueEntry = new DatabaseEntry();
+        final DatabaseEntry keyEntry = new DatabaseEntry();
+        mKeyBinding.objectToEntry(pKey, keyEntry);
+        try {
+            final OperationStatus status = mDatabase.get(null, keyEntry, valueEntry, LockMode.DEFAULT);
+            LogValue val = null;
+            if (status == OperationStatus.SUCCESS) {
+                val = mValueBinding.entryToObject(valueEntry);
             }
+            return val;
+        } catch (final DatabaseException exc) {
+            throw new TTIOException(exc);
         }
-        return page;
     }
 
     /**
      * {@inheritDoc}
      */
     public void put(final LogKey pKey, final LogValue pValue) throws TTIOException {
-        map.put(pKey, pValue);
         final DatabaseEntry valueEntry = new DatabaseEntry();
         final DatabaseEntry keyEntry = new DatabaseEntry();
 
@@ -186,22 +161,14 @@ public final class LRULog {
     /**
      * {@inheritDoc}
      */
-    public void clear() throws TTIOException {
-        map.invalidateAll();
+    public void close() throws TTIOException {
         try {
             mDatabase.close();
             mEnv.removeDatabase(null, NAME);
-            setUp();
+            mEnv.close();
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
         }
-    }
-
-    private void setUp() {
-        final DatabaseConfig dbConfig = new DatabaseConfig();
-        dbConfig.setAllowCreate(true);
-        dbConfig.setExclusiveCreate(true);
-        mDatabase = mEnv.openDatabase(null, NAME, dbConfig);
     }
 
     /**
@@ -209,7 +176,7 @@ public final class LRULog {
      */
     @Override
     public String toString() {
-        return toStringHelper(this).add("First Cache", map).add("mDatabase", mDatabase).toString();
+        return toStringHelper(this).add("mDatabase", mDatabase).toString();
     }
 
     /**

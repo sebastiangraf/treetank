@@ -591,8 +591,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
         }
 
         // Adapt parent, if node has now left sibling it is a first child.
-        final IStructNode parent =
-            (IStructNode)getPtx().prepareNodeForModification(pOldNode.getParentKey());
+        final IStructNode parent = (IStructNode)getPtx().prepareNodeForModification(pOldNode.getParentKey());
         if (!pOldNode.hasLeftSibling()) {
             parent.setFirstChildKey(pOldNode.getRightSiblingKey());
         }
@@ -707,7 +706,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      */
     private void postorderAdd() throws TTException {
         // start with hash to add
-        final INode startNode = mDelegate.getCurrentNode();
+        final long startKey = mDelegate.getCurrentNode().getNodeKey();
         // long for adapting the hash of the parent
         long hashCodeForParent = 0;
         // adapting the parent if the current node is no structural one.
@@ -754,7 +753,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
             }
         } while (moveTo(cursorToRoot.getParentKey()));
 
-        mDelegate.setCurrentNode(startNode);
+        moveTo(startKey);
     }
 
     /**

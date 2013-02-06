@@ -70,7 +70,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
     private final IBackendWriter mPageWriter;
 
     /** Cache to store the changes in this writetransaction. */
-    private final LRULog mLog;
+    private LRULog mLog;
 
     /** Reference to the actual uberPage. */
     private UberPage mNewUber;
@@ -105,10 +105,6 @@ public final class PageWriteTrx implements IPageWriteTrx {
         final long pRepresentRev) throws TTException {
 
         mPageWriter = pWriter;
-        mLog =
-            new LRULog(new File(pSession.getConfig().mProperties
-                .getProperty(org.treetank.access.conf.ContructorProps.STORAGEPATH)),
-                pSession.getConfig().mNodeFac, pSession.getConfig().mMetaFac);
         setUpTransaction(pUberPage, pSession, pRepresentRev, pWriter);
     }
 
@@ -247,7 +243,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
         mPageWriter.write(mNewRoot);
         mPageWriter.writeUberPage(mNewUber);
 
-        mLog.clear();
+        mLog.close();
 
         ((Session)mDelegate.mSession).setLastCommittedUberPage(mNewUber);
         setUpTransaction(mNewUber, mDelegate.mSession, mNewUber.getRevisionNumber(), mPageWriter);
@@ -263,7 +259,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
     public boolean close() throws TTIOException {
         if (!mDelegate.isClosed()) {
             mDelegate.close();
-            mLog.clear();
+            mLog.close();
             mDelegate.mSession.deregisterPageTrx(this);
             return true;
         } else {
@@ -407,6 +403,12 @@ public final class PageWriteTrx implements IPageWriteTrx {
 
     private void setUpTransaction(final UberPage pUberPage, final ISession pSession,
         final long pRepresentRev, final IBackendWriter pWriter) throws TTException {
+
+        mLog =
+            new LRULog(new File(pSession.getConfig().mProperties
+                .getProperty(org.treetank.access.conf.ContructorProps.STORAGEPATH)),
+                pSession.getConfig().mNodeFac, pSession.getConfig().mMetaFac);
+
         mNewUber =
             new UberPage(pUberPage.incrementPageCounter(), pUberPage.getRevisionNumber() + 1, pUberPage
                 .getPageCounter());

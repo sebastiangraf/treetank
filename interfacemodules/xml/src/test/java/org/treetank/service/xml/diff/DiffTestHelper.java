@@ -40,7 +40,10 @@ import java.util.Set;
 import javax.xml.stream.XMLStreamException;
 
 import org.mockito.InOrder;
-import org.treetank.Holder;
+import org.treetank.CoreTestHelper.Holder;
+import org.treetank.access.NodeWriteTrx;
+import org.treetank.access.NodeWriteTrx.HashKind;
+import org.treetank.api.INodeWriteTrx;
 import org.treetank.exception.TTException;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.service.xml.XMLTestHelper;
@@ -57,7 +60,11 @@ public final class DiffTestHelper {
     protected static final long TIMEOUT_S = 5;
 
     static void setUpFirst(final Holder paramHolder) throws TTException {
-        XMLTestHelper.DocumentCreater.createVersioned(paramHolder.getNWtx());
+        final INodeWriteTrx wtx =
+            new NodeWriteTrx(paramHolder.getSession(), paramHolder.getSession().beginPageWriteTransaction(),
+                HashKind.Rolling);
+        XMLTestHelper.DocumentCreater.createVersioned(wtx);
+        wtx.close();
     }
 
     static void setUpSecond(final Holder paramHolder) throws TTException, IOException, XMLStreamException {
@@ -86,25 +93,28 @@ public final class DiffTestHelper {
 
     }
 
-    private static void initializeData(final Holder paramHolder, final File... paramFile)
-        throws TTException, IOException, XMLStreamException {
+    private static void initializeData(final Holder paramHolder, final File... paramFile) throws TTException,
+        IOException, XMLStreamException {
+
+        final INodeWriteTrx wtx =
+            new NodeWriteTrx(paramHolder.getSession(), paramHolder.getSession().beginPageWriteTransaction(),
+                HashKind.Rolling);
 
         int i = 0;
         for (final File file : paramFile) {
             XMLShredder init;
             if (i == 0) {
                 init =
-                    new XMLShredder(paramHolder.getNWtx(), XMLShredder.createFileReader(file),
-                        EShredderInsert.ADDASFIRSTCHILD);
+                    new XMLShredder(wtx, XMLShredder.createFileReader(file), EShredderInsert.ADDASFIRSTCHILD);
             } else {
                 init =
-                    new XMLUpdateShredder(paramHolder.getNWtx(), XMLShredder.createFileReader(file),
+                    new XMLUpdateShredder(wtx, XMLShredder.createFileReader(file),
                         EShredderInsert.ADDASFIRSTCHILD, file, EShredderCommit.COMMIT);
             }
             i++;
             init.call();
         }
-
+        wtx.close();
     }
 
     static IDiffObserver createMock() {

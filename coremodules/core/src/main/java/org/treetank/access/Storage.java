@@ -457,6 +457,7 @@ public final class Storage implements IStorage {
             LogValue next = entries.next();
             writer.write(next.getModified());
         }
+        mLog.close();
         writer.close();
 
     }

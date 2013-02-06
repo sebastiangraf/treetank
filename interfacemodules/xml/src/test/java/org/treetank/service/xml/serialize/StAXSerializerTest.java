@@ -81,7 +81,9 @@ public class StAXSerializerTest {
     @BeforeMethod
     public void setUp() throws TTException {
         CoreTestHelper.deleteEverything();
-        Properties props = StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(), CoreTestHelper.RESOURCENAME);
+        Properties props =
+            StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
         NodeTestHelper.createTestDocument(mResource);
         holder = Holder.generateWtx(mResource);
@@ -93,133 +95,125 @@ public class StAXSerializerTest {
     }
 
     @Test
-    public void testStAXSerializer() {
-        try {
+    public void testStAXSerializer() throws TTException, XMLStreamException {
 
-            final ByteArrayOutputStream out = new ByteArrayOutputStream();
-            final XMLSerializerBuilder builder = new XMLSerializerBuilder(holder.getSession(), out);
-            builder.setDeclaration(false);
-            final XMLSerializer xmlSerializer = builder.build();
-            xmlSerializer.call();
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        final XMLSerializerBuilder builder = new XMLSerializerBuilder(holder.getSession(), out);
+        builder.setDeclaration(false);
+        final XMLSerializer xmlSerializer = builder.build();
+        xmlSerializer.call();
 
-            final INodeReadTrx rtx =
-                new NodeReadTrx(holder.getSession().beginPageReadTransaction(
-                    holder.getSession().getMostRecentVersion()));
-            StAXSerializer serializer = new StAXSerializer(new DescendantAxis(rtx), rtx);
-            final StringBuilder strBuilder = new StringBuilder();
-            boolean isEmptyElement = false;
+        final INodeReadTrx rtx =
+            new NodeReadTrx(holder.getSession().beginPageReadTransaction(
+                holder.getSession().getMostRecentVersion()));
+        StAXSerializer serializer = new StAXSerializer(new DescendantAxis(rtx), rtx);
+        final StringBuilder strBuilder = new StringBuilder();
+        boolean isEmptyElement = false;
 
-            while (serializer.hasNext()) {
-                XMLEvent event = serializer.nextEvent();
+        while (serializer.hasNext()) {
+            XMLEvent event = serializer.nextEvent();
 
-                switch (event.getEventType()) {
-                case XMLStreamConstants.START_DOCUMENT:
-                    strBuilder.append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
-                    break;
-                case XMLStreamConstants.START_ELEMENT:
-                    emitElement(event, strBuilder);
+            switch (event.getEventType()) {
+            case XMLStreamConstants.START_DOCUMENT:
+                strBuilder.append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
+                break;
+            case XMLStreamConstants.START_ELEMENT:
+                emitElement(event, strBuilder);
 
-                    if (serializer.peek().getEventType() == XMLStreamConstants.END_ELEMENT) {
-                        strBuilder.append("/>");
-                        isEmptyElement = true;
-                    } else {
-                        strBuilder.append('>');
-                    }
-                    break;
-                case XMLStreamConstants.END_ELEMENT:
-                    if (isEmptyElement) {
-                        isEmptyElement = false;
-                    } else {
-                        emitQName(true, event, strBuilder);
-                        strBuilder.append('>');
-                    }
-                    break;
-                case XMLStreamConstants.CHARACTERS:
-                    strBuilder.append(((Characters)event).getData());
-                    break;
+                if (serializer.peek().getEventType() == XMLStreamConstants.END_ELEMENT) {
+                    strBuilder.append("/>");
+                    isEmptyElement = true;
+                } else {
+                    strBuilder.append('>');
                 }
+                break;
+            case XMLStreamConstants.END_ELEMENT:
+                if (isEmptyElement) {
+                    isEmptyElement = false;
+                } else {
+                    emitQName(true, event, strBuilder);
+                    strBuilder.append('>');
+                }
+                break;
+            case XMLStreamConstants.CHARACTERS:
+                strBuilder.append(((Characters)event).getData());
+                break;
             }
-
-            assertEquals(out.toString(), strBuilder.toString());
-
-            // Check getElementText().
-            // ========================================================
-            holder.getNRtx().moveTo(ROOT_NODE);
-            serializer = new StAXSerializer(new DescendantAxis(rtx), rtx);
-            String elemText = null;
-
-            // <p:a>
-            if (serializer.hasNext()) {
-                serializer.next();
-                elemText = serializer.getElementText();
-            }
-            assertEquals("oops1foooops2baroops3", elemText);
-
-            // oops1
-            checkForException(serializer);
-
-            // <b>
-            if (serializer.hasNext()) {
-                serializer.next();
-                elemText = serializer.getElementText();
-            }
-            assertEquals("foo", elemText);
-
-            // foo
-            checkForException(serializer);
-
-            // <c>
-            if (serializer.hasNext()) {
-                serializer.next();
-                elemText = serializer.getElementText();
-            }
-            assertEquals("", elemText);
-
-            // </c>
-            checkForException(serializer);
-
-            // </b>
-            checkForException(serializer);
-
-            // oops2
-            checkForException(serializer);
-
-            // <b p:x='y'>
-            if (serializer.hasNext()) {
-                serializer.next();
-                elemText = serializer.getElementText();
-            }
-            assertEquals("bar", elemText);
-
-            // <c>
-            if (serializer.hasNext()) {
-                serializer.next();
-                elemText = serializer.getElementText();
-            }
-            assertEquals("", elemText);
-
-            // </c>
-            checkForException(serializer);
-
-            // bar
-            checkForException(serializer);
-
-            // </b>
-            checkForException(serializer);
-
-            // oops3
-            checkForException(serializer);
-
-            // </p:a>
-            checkForException(serializer);
-            rtx.close();
-        } catch (final XMLStreamException e) {
-            Assert.fail("XML error while parsing: " + e.getMessage());
-        } catch (final TTException e) {
-            Assert.fail("Treetank exception occured: " + e.getMessage());
-        } catch (final Exception e) {
-            Assert.fail("Any exception occured: " + e.getMessage());
         }
+
+        assertEquals(out.toString(), strBuilder.toString());
+
+        // Check getElementText().
+        // ========================================================
+        holder.getNRtx().moveTo(ROOT_NODE);
+        serializer = new StAXSerializer(new DescendantAxis(rtx), rtx);
+        String elemText = null;
+
+        // <p:a>
+        if (serializer.hasNext()) {
+            serializer.next();
+            elemText = serializer.getElementText();
+        }
+        assertEquals("oops1foooops2baroops3", elemText);
+
+        // oops1
+        checkForException(serializer);
+
+        // <b>
+        if (serializer.hasNext()) {
+            serializer.next();
+            elemText = serializer.getElementText();
+        }
+        assertEquals("foo", elemText);
+
+        // foo
+        checkForException(serializer);
+
+        // <c>
+        if (serializer.hasNext()) {
+            serializer.next();
+            elemText = serializer.getElementText();
+        }
+        assertEquals("", elemText);
+
+        // </c>
+        checkForException(serializer);
+
+        // </b>
+        checkForException(serializer);
+
+        // oops2
+        checkForException(serializer);
+
+        // <b p:x='y'>
+        if (serializer.hasNext()) {
+            serializer.next();
+            elemText = serializer.getElementText();
+        }
+        assertEquals("bar", elemText);
+
+        // <c>
+        if (serializer.hasNext()) {
+            serializer.next();
+            elemText = serializer.getElementText();
+        }
+        assertEquals("", elemText);
+
+        // </c>
+        checkForException(serializer);
+
+        // bar
+        checkForException(serializer);
+
+        // </b>
+        checkForException(serializer);
+
+        // oops3
+        checkForException(serializer);
+
+        // </p:a>
+        checkForException(serializer);
+        rtx.close();
     }
 
     /**

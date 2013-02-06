@@ -43,14 +43,14 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
-import org.treetank.Holder;
-import org.treetank.NodeModuleFactory;
 import org.treetank.CoreTestHelper;
+import org.treetank.CoreTestHelper.Holder;
+import org.treetank.NodeModuleFactory;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.ResourceConfiguration;
-import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
+import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.exception.TTException;
 import org.treetank.service.xml.XMLTestHelper;
@@ -82,7 +82,7 @@ public final class XMLUpdateShredderTest {
             StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
                 CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
-        holder = Holder.generateWtx(mResource);
+        holder = CoreTestHelper.Holder.generateSession(mResource);
         XMLUnit.setIgnoreComments(true);
         XMLUnit.setIgnoreWhitespace(true);
     }
@@ -224,6 +224,7 @@ public final class XMLUpdateShredderTest {
         // Shredder files.
         for (final File file : list) {
             if (file.getName().endsWith(".xml")) {
+
                 final INodeWriteTrx wtx =
                     new NodeWriteTrx(holder.getSession(), holder.getSession().beginPageWriteTransaction(),
                         HashKind.Rolling);
