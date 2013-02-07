@@ -30,7 +30,7 @@ package org.treetank;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.AssertJUnit.assertEquals;
-
+import static org.testng.AssertJUnit.assertNotNull;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,6 +45,7 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.StorageConfiguration;
+import org.treetank.api.IMetaEntry;
 import org.treetank.api.INode;
 import org.treetank.api.IPageReadTrx;
 import org.treetank.api.IPageWriteTrx;
@@ -57,6 +58,7 @@ import org.treetank.page.DumbMetaEntryFactory.DumbKey;
 import org.treetank.page.DumbMetaEntryFactory.DumbValue;
 import org.treetank.page.DumbNodeFactory.DumbNode;
 import org.treetank.page.IndirectPage;
+import org.treetank.page.MetaPage;
 import org.treetank.page.NodePage;
 
 import com.google.common.io.Files;
@@ -250,7 +252,7 @@ public final class CoreTestHelper {
         IPageWriteTrx wtx = pHolder.getSession().beginPageWriteTransaction();
         int[] nodesPerRevision = new int[10];
         Arrays.fill(nodesPerRevision, 128);
-        DumbNode[][] nodes = CoreTestHelper.insertWithTransaction(nodesPerRevision, wtx);
+        DumbNode[][] nodes = CoreTestHelper.insertNodesWithTransaction(nodesPerRevision, wtx);
         checkStructure(combineNodes(nodes), wtx, 0);
         wtx.close();
         return nodes;
@@ -265,7 +267,7 @@ public final class CoreTestHelper {
      *            to store to.
      * @throws TTException
      */
-    public static final DumbNode[][] insertWithTransaction(final int[] pNodesPerRevision,
+    public static final DumbNode[][] insertNodesWithTransaction(final int[] pNodesPerRevision,
         final IPageWriteTrx pWtx) throws TTException {
         final DumbNode[][] returnVal = createNodes(pNodesPerRevision);
         for (int i = 0; i < returnVal.length; i++) {
@@ -291,13 +293,13 @@ public final class CoreTestHelper {
      *            to store to.
      * @throws TTException
      */
-    public static final List<Map.Entry<DumbKey, DumbValue>> insertWithTransaction(final int pNumbers,
+    public static final List<Map.Entry<DumbKey, DumbValue>> insertMetaWithTransaction(final int pNumbers,
         final IPageWriteTrx pWtx) throws TTException {
         List<Map.Entry<DumbKey, DumbValue>> returnVal = createMetaEntries(pNumbers);
         for (Map.Entry<DumbKey, DumbValue> entry : returnVal) {
             pWtx.createEntry(entry.getKey(), entry.getValue());
+            checkStructure(returnVal, pWtx);
         }
-        
         pWtx.commit();
         return returnVal;
     }
@@ -354,6 +356,26 @@ public final class CoreTestHelper {
             }
         }
         return returnVal;
+    }
+
+    /**
+     * Checking the transaction with meta entries written.
+     * 
+     * @param pEntries
+     *            to be compared with
+     * @param pRtx
+     *            to check
+     * @throws TTIOException
+     */
+    public static final void checkStructure(final List<Map.Entry<DumbKey, DumbValue>> pEntries,
+        final IPageReadTrx pRtx) throws TTIOException {
+        Map<IMetaEntry, IMetaEntry> map = pRtx.getMetaPage().getMetaMap();
+        for (Map.Entry<DumbKey, DumbValue> entry : pEntries) {
+            IMetaEntry value = map.remove(entry.getKey());
+            assertNotNull(value);
+            assertEquals(entry.getValue(), value);
+        }
+        assertEquals(0, map.size());
     }
 
     /**
