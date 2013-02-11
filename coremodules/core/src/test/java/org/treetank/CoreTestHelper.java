@@ -248,6 +248,40 @@ public final class CoreTestHelper {
      * @return a two-dimensional array of nodes.
      * @throws TTException
      */
+    public static final List<List<Map.Entry<DumbKey, DumbValue>>> createTestMeta(Holder pHolder)
+        throws TTException {
+        final int[] pNumbers = new int[10];
+        Arrays.fill(pNumbers, 200);
+        final List<List<Map.Entry<DumbKey, DumbValue>>> returnVal =
+            new ArrayList<List<Map.Entry<DumbKey, DumbValue>>>();
+        // adding null for revision 0
+        returnVal.add(new ArrayList<Map.Entry<DumbKey, DumbValue>>());
+        // adding all data for upcoming revisions
+        for (int i = 0; i < pNumbers.length; i++) {
+            IPageWriteTrx wtx = pHolder.getSession().beginPageWriteTransaction();
+            List<Map.Entry<DumbKey, DumbValue>> dataPerVersion = insertMetaWithTransaction(pNumbers[i], wtx);
+            returnVal.add(dataPerVersion);
+            wtx.close();
+        }
+        // aggregating the values since entries are build upon each other
+        for (int i = 0; i < returnVal.size(); i++) {
+            List<Map.Entry<DumbKey, DumbValue>> entriesPerVersion = returnVal.get(i);
+            for (int j = i + 1; j < returnVal.size(); j++) {
+                returnVal.get(j).addAll(entriesPerVersion);
+            }
+        }
+
+        return returnVal;
+    }
+
+    /**
+     * Create nodes in different versions in Treetank and check directly afterwards the structure.
+     * 
+     * @param pHolder
+     *            for getting the transaction
+     * @return a two-dimensional array of nodes.
+     * @throws TTException
+     */
     public static final DumbNode[][] createTestData(Holder pHolder) throws TTException {
         IPageWriteTrx wtx = pHolder.getSession().beginPageWriteTransaction();
         int[] nodesPerRevision = new int[10];
@@ -298,7 +332,7 @@ public final class CoreTestHelper {
         List<Map.Entry<DumbKey, DumbValue>> returnVal = createMetaEntries(pNumbers);
         for (Map.Entry<DumbKey, DumbValue> entry : returnVal) {
             pWtx.createEntry(entry.getKey(), entry.getValue());
-            checkStructure(returnVal, pWtx);
+            // checkStructure(returnVal, pWtx);
         }
         pWtx.commit();
         return returnVal;

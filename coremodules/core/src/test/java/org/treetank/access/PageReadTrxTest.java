@@ -9,6 +9,9 @@ import static org.testng.AssertJUnit.assertTrue;
 import static org.testng.AssertJUnit.fail;
 import static org.treetank.CoreTestHelper.getFakedStructure;
 
+import java.util.List;
+import java.util.Map;
+
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
@@ -20,13 +23,17 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
+import org.treetank.api.IMetaEntry;
 import org.treetank.api.IPageReadTrx;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
+import org.treetank.page.DumbMetaEntryFactory.DumbKey;
+import org.treetank.page.DumbMetaEntryFactory.DumbValue;
 import org.treetank.page.DumbNodeFactory.DumbNode;
+import org.treetank.page.MetaPage;
 
 import com.google.inject.Inject;
 
@@ -118,10 +125,13 @@ public class PageReadTrxTest {
 
     /**
      * Test method for {@link org.treetank.access.PageReadTrx#getMetaPage()}.
+     * 
+     * @throws TTException
      */
     @Test
-    public void testGetMetaPage() {
-
+    public void testGetMetaPage() throws TTException {
+        List<List<Map.Entry<DumbKey, DumbValue>>> data = CoreTestHelper.createTestMeta(mHolder);
+        testMeta(mHolder.getSession(), data);
     }
 
     /**
@@ -231,6 +241,16 @@ public class PageReadTrxTest {
         assertEquals(0, PageReadTrx.nodePageOffset(16384));
         assertEquals(127, PageReadTrx.nodePageOffset(2097151));
         assertEquals(0, PageReadTrx.nodePageOffset(2097152));
+    }
+
+    protected static void testMeta(final ISession pSession,
+        final List<List<Map.Entry<DumbKey, DumbValue>>> pEntries) throws TTException {
+        long i = 0;
+        for (List<Map.Entry<DumbKey, DumbValue>> entriesPerRev : pEntries) {
+            final IPageReadTrx rtx = pSession.beginPageReadTransaction(i);
+            CoreTestHelper.checkStructure(entriesPerRev, rtx);
+            i++;
+        }
     }
 
     protected static void testGet(final ISession pSession, final DumbNode[][] pNodes) throws TTException {
