@@ -23,7 +23,6 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
-import org.treetank.api.IMetaEntry;
 import org.treetank.api.IPageReadTrx;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
@@ -33,7 +32,6 @@ import org.treetank.io.IBackendReader;
 import org.treetank.page.DumbMetaEntryFactory.DumbKey;
 import org.treetank.page.DumbMetaEntryFactory.DumbValue;
 import org.treetank.page.DumbNodeFactory.DumbNode;
-import org.treetank.page.MetaPage;
 
 import com.google.inject.Inject;
 
@@ -248,7 +246,7 @@ public class PageReadTrxTest {
         long i = 0;
         for (List<Map.Entry<DumbKey, DumbValue>> entriesPerRev : pEntries) {
             final IPageReadTrx rtx = pSession.beginPageReadTransaction(i);
-            CoreTestHelper.checkStructure(entriesPerRev, rtx);
+            CoreTestHelper.checkStructure(entriesPerRev, rtx, true);
             i++;
         }
     }

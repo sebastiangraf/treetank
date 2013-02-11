@@ -31,10 +31,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertNotNull;
+import static org.testng.AssertJUnit.assertTrue;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -58,9 +57,10 @@ import org.treetank.page.DumbMetaEntryFactory.DumbKey;
 import org.treetank.page.DumbMetaEntryFactory.DumbValue;
 import org.treetank.page.DumbNodeFactory.DumbNode;
 import org.treetank.page.IndirectPage;
-import org.treetank.page.MetaPage;
 import org.treetank.page.NodePage;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.io.Files;
 
 /**
@@ -110,7 +110,7 @@ public final class CoreTestHelper {
     /** Common random instance for generating common tag names. */
     public final static Random random = new Random(123l);
 
-    private final static Map<File, IStorage> INSTANCES = new Hashtable<File, IStorage>();
+    private final static Map<File, IStorage> INSTANCES = Maps.newHashMap();
 
     /**
      * Getting a database and create one of not existing. This includes the
@@ -252,25 +252,18 @@ public final class CoreTestHelper {
         throws TTException {
         final int[] pNumbers = new int[10];
         Arrays.fill(pNumbers, 200);
-        final List<List<Map.Entry<DumbKey, DumbValue>>> returnVal =
-            new ArrayList<List<Map.Entry<DumbKey, DumbValue>>>();
+        final List<List<Map.Entry<DumbKey, DumbValue>>> returnVal = Lists.newArrayList();
         // adding null for revision 0
-        returnVal.add(new ArrayList<Map.Entry<DumbKey, DumbValue>>());
+        final List<Map.Entry<DumbKey, DumbValue>> firstRevList = Lists.newArrayList();
+        returnVal.add(firstRevList);
         // adding all data for upcoming revisions
         for (int i = 0; i < pNumbers.length; i++) {
             IPageWriteTrx wtx = pHolder.getSession().beginPageWriteTransaction();
-            List<Map.Entry<DumbKey, DumbValue>> dataPerVersion = insertMetaWithTransaction(pNumbers[i], wtx);
+            List<Map.Entry<DumbKey, DumbValue>> dataPerVersion =
+                insertMetaWithTransaction(pNumbers[i], wtx, returnVal.get(i));
             returnVal.add(dataPerVersion);
             wtx.close();
         }
-        // aggregating the values since entries are build upon each other
-        for (int i = 0; i < returnVal.size(); i++) {
-            List<Map.Entry<DumbKey, DumbValue>> entriesPerVersion = returnVal.get(i);
-            for (int j = i + 1; j < returnVal.size(); j++) {
-                returnVal.get(j).addAll(entriesPerVersion);
-            }
-        }
-
         return returnVal;
     }
 
@@ -328,12 +321,17 @@ public final class CoreTestHelper {
      * @throws TTException
      */
     public static final List<Map.Entry<DumbKey, DumbValue>> insertMetaWithTransaction(final int pNumbers,
-        final IPageWriteTrx pWtx) throws TTException {
+        final IPageWriteTrx pWtx, List<Map.Entry<DumbKey, DumbValue>> pAlreadyExistingEntries)
+        throws TTException {
         List<Map.Entry<DumbKey, DumbValue>> returnVal = createMetaEntries(pNumbers);
+        List<Map.Entry<DumbKey, DumbValue>> toCheck = Lists.newArrayList();
+        assertTrue(pAlreadyExistingEntries.isEmpty() != toCheck.addAll(pAlreadyExistingEntries));
         for (Map.Entry<DumbKey, DumbValue> entry : returnVal) {
-            pWtx.createEntry(entry.getKey(), entry.getValue());
-            // checkStructure(returnVal, pWtx);
+            assertTrue(toCheck.add(entry));
+            assertTrue(pWtx.createEntry(entry.getKey(), entry.getValue()));
+            checkStructure(toCheck, pWtx, true);
         }
+        assertTrue(pAlreadyExistingEntries.isEmpty() != returnVal.addAll(pAlreadyExistingEntries));
         pWtx.commit();
         return returnVal;
     }
@@ -346,8 +344,7 @@ public final class CoreTestHelper {
      * @return a list containing map-entries of dumbvalues and dumbkeys.
      */
     public static final List<Map.Entry<DumbKey, DumbValue>> createMetaEntries(final int pNumbers) {
-        final List<Map.Entry<DumbKey, DumbValue>> returnVal =
-            new ArrayList<Map.Entry<DumbKey, DumbValue>>(pNumbers);
+        final List<Map.Entry<DumbKey, DumbValue>> returnVal = Lists.newArrayList();
         for (int i = 0; i < pNumbers; i++) {
             final DumbKey key = new DumbKey(CoreTestHelper.random.nextLong());
             final DumbValue value = new DumbValue(CoreTestHelper.random.nextLong());
@@ -399,11 +396,19 @@ public final class CoreTestHelper {
      *            to be compared with
      * @param pRtx
      *            to check
+     * @param pWorkOnClone
+     *            parameter if the check should occur on cloned structure
      * @throws TTIOException
      */
     public static final void checkStructure(final List<Map.Entry<DumbKey, DumbValue>> pEntries,
-        final IPageReadTrx pRtx) throws TTIOException {
-        Map<IMetaEntry, IMetaEntry> map = pRtx.getMetaPage().getMetaMap();
+        final IPageReadTrx pRtx, final boolean pWorkOnClone) throws TTIOException {
+        Map<IMetaEntry, IMetaEntry> map;
+        if (pWorkOnClone) {
+            map = Maps.newHashMap();
+            map.putAll(pRtx.getMetaPage().getMetaMap());
+        } else {
+            map = pRtx.getMetaPage().getMetaMap();
+        }
         for (Map.Entry<DumbKey, DumbValue> entry : pEntries) {
             IMetaEntry value = map.remove(entry.getKey());
             assertNotNull(value);
@@ -438,7 +443,7 @@ public final class CoreTestHelper {
      * @return a list of all data in one list.
      */
     public static final List<DumbNode> combineNodes(final DumbNode[][] pNodes) {
-        List<DumbNode> list = new ArrayList<DumbNode>();
+        List<DumbNode> list = Lists.newArrayList();
         for (int i = 0; i < pNodes.length; i++) {
             list.addAll(Arrays.asList(pNodes[i]));
         }

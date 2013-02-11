@@ -4,11 +4,13 @@
 package org.treetank.access;
 
 import static org.testng.AssertJUnit.assertNull;
+import static org.testng.AssertJUnit.assertTrue;
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.fail;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -22,6 +24,8 @@ import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFact
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.exception.TTException;
+import org.treetank.page.DumbMetaEntryFactory.DumbKey;
+import org.treetank.page.DumbMetaEntryFactory.DumbValue;
 import org.treetank.page.DumbNodeFactory.DumbNode;
 
 import com.google.inject.Inject;
@@ -91,6 +95,24 @@ public class PageWriteTrxTest {
     @Test
     public void testFinishNodeModification() {
         // fail("Not yet implemented");
+    }
+
+    /**
+     * Test method for {@link org.treetank.access.PageWriteTrx#getMetaPage()}.
+     * 
+     * @throws TTException
+     */
+    @Test
+    public void testGetMetaPage() throws TTException {
+        List<List<Map.Entry<DumbKey, DumbValue>>> meta = CoreTestHelper.createTestMeta(mHolder);
+        PageReadTrxTest.testMeta(mHolder.getSession(), meta);
+        IPageWriteTrx wtx = mHolder.getSession().beginPageWriteTransaction();
+        CoreTestHelper.checkStructure(meta.get(meta.size() - 1), wtx, false);
+        wtx.commit();
+        assertTrue(wtx.close());
+        wtx = mHolder.getSession().beginPageWriteTransaction();
+        assertEquals(0, wtx.getMetaPage().getMetaMap().size());
+
     }
 
     /**
@@ -203,14 +225,6 @@ public class PageWriteTrxTest {
     public void testCloseAndIsClosed() throws TTException {
         IPageWriteTrx rtx = mHolder.getSession().beginPageWriteTransaction();
         PageReadTrxTest.testClose(mHolder.getStorage(), mHolder.getSession(), rtx);
-    }
-
-    /**
-     * Test method for {@link org.treetank.access.PageWriteTrx#getMetaPage()}.
-     */
-    @Test
-    public void testGetMetaPage() {
-        // fail("Not yet implemented");
     }
 
 }
