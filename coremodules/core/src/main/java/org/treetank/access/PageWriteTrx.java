@@ -171,12 +171,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
     }
 
     /**
-     * Removing a node from the storage.
-     * 
-     * @param pNode
-     *            {@link INode} to be removed
-     * @throws TTIOException
-     *             if the removal fails
+     * {@inheritDoc}
      */
     @Override
     public void removeNode(final INode pNode) throws TTException {
@@ -243,10 +238,8 @@ public final class PageWriteTrx implements IPageWriteTrx {
 
     /**
      * {@inheritDoc}
-     * 
-     * @throws TTIOException
-     *             if something weird happened in the storage
      */
+    @Override
     public boolean close() throws TTIOException {
         if (!mDelegate.isClosed()) {
             mDelegate.close();
@@ -258,9 +251,39 @@ public final class PageWriteTrx implements IPageWriteTrx {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public long incrementNodeKey() {
         checkState(!mDelegate.isClosed(), "Transaction already closed");
         return mNewRoot.incrementMaxNodeKey();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long getRevision() throws TTIOException {
+        checkState(!mDelegate.isClosed(), "Transaction already closed");
+        return mNewRoot.getRevision();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isClosed() {
+        return mDelegate.isClosed();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public MetaPage getMetaPage() {
+        checkState(!mDelegate.isClosed(), "Transaction already closed");
+        return mNewMeta;
     }
 
     private LogValue prepareNodePage(final long pNodeKey) throws TTException {
@@ -440,35 +463,10 @@ public final class PageWriteTrx implements IPageWriteTrx {
     /**
      * {@inheritDoc}
      */
-    public long getRevision() throws TTIOException {
-        checkState(!mDelegate.isClosed(), "Transaction already closed");
-        return mNewRoot.getRevision();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isClosed() {
-        return mDelegate.isClosed();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         return toStringHelper(this).add("mPageWriter", mPageWriter).add("mLog", mLog).add("mRootPage",
             mNewRoot).add("mDelegate", mDelegate).toString();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public MetaPage getMetaPage() {
-        checkState(!mDelegate.isClosed(), "Transaction already closed");
-        return mNewMeta;
     }
 
 }

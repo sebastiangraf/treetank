@@ -252,9 +252,19 @@ public class PageReadTrxTest {
     }
 
     protected static void testGet(final ISession pSession, final DumbNode[][] pNodes) throws TTException {
+        // check against invalid nodekey
+        IPageReadTrx rtx = pSession.beginPageReadTransaction(0);
+        try {
+            rtx.getNode(-1);
+            fail();
+        } catch (IllegalArgumentException exc) {
+            // must be thrown
+        }
+        rtx.close();
+        // check against stored structure
         long nodeKey = 0;
         for (int i = 0; i < pNodes.length; i++) {
-            final IPageReadTrx rtx = pSession.beginPageReadTransaction(i + 1);
+            rtx = pSession.beginPageReadTransaction(i + 1);
             for (DumbNode node : pNodes[i]) {
                 assertEquals(node, rtx.getNode(nodeKey));
                 nodeKey++;
@@ -287,6 +297,19 @@ public class PageReadTrxTest {
         } catch (IllegalStateException exc) {
             // must be thrown
         }
+        try {
+            rtx.getRevision();
+            fail();
+        } catch (IllegalStateException exc) {
+            // must be thrown
+        }
+        try {
+            rtx.getNode(0);
+            fail();
+        } catch (IllegalStateException exc) {
+            // must be thrown
+        }
+
         assertFalse(rtx.close());
         assertTrue(rtx.isClosed());
 

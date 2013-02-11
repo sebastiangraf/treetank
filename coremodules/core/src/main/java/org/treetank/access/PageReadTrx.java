@@ -135,10 +135,10 @@ public class PageReadTrx implements IPageReadTrx {
         final INode returnVal = page.getNode(nodePageOffset);
         // root-node is excluded from the checkagainst deletion based on the necesssity of the node-layer to
         // reference against this node while creation of the transaction
-        if (pNodeKey > 0) {
-            return checkItemIfDeleted(returnVal);
-        } else {
+        if (pNodeKey == 0) {
             return returnVal;
+        } else {
+            return checkItemIfDeleted(returnVal);
         }
 
     }
@@ -175,6 +175,15 @@ public class PageReadTrx implements IPageReadTrx {
     @Override
     public boolean isClosed() {
         return mClose;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public MetaPage getMetaPage() {
+        checkState(!mClose, "Transaction already closed");
+        return mMetaPage;
     }
 
     /**
@@ -242,6 +251,21 @@ public class PageReadTrx implements IPageReadTrx {
     }
 
     /**
+     * Calculate node page offset for a given node key.
+     * 
+     * @param pNodeKey
+     *            Node key to find offset for.
+     * @return Offset into node page.
+     */
+    protected static final int nodePageOffset(final long pNodeKey) {
+        // INP_LEVEL_PAGE_COUNT_EXPONENT[3] is only taken to get the difference between 2^7 and the actual
+        // nodekey as offset. It has nothing to do with the levels.
+        final long nodePageOffset =
+            (pNodeKey - ((pNodeKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3]) << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3]));
+        return (int)nodePageOffset;
+    }
+
+    /**
      * Find reference pointing to leaf page of an indirect tree.
      * 
      * @param pStartKey
@@ -284,36 +308,12 @@ public class PageReadTrx implements IPageReadTrx {
     }
 
     /**
-     * Calculate node page offset for a given node key.
-     * 
-     * @param pNodeKey
-     *            Node key to find offset for.
-     * @return Offset into node page.
-     */
-    protected static final int nodePageOffset(final long pNodeKey) {
-        // INP_LEVEL_PAGE_COUNT_EXPONENT[3] is only taken to get the difference between 2^7 and the actual
-        // nodekey as offset. It has nothing to do with the levels.
-        final long nodePageOffset =
-            (pNodeKey - ((pNodeKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3]) << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3]));
-        return (int)nodePageOffset;
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
     public String toString() {
         return toStringHelper(this).add("mPageReader", mPageReader).add("mPageReader", mUberPage).add(
             "mRootPage", mRootPage).add("mClose", mClose).toString();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public MetaPage getMetaPage() {
-        checkState(!mClose, "Transaction already closed");
-        return mMetaPage;
     }
 
 }
