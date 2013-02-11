@@ -219,19 +219,6 @@ public final class PageWriteTrx implements IPageWriteTrx {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean createEntry(final IMetaEntry key, IMetaEntry value) throws TTIOException {
-        checkState(!mDelegate.isClosed(), "Transaction already closed");
-        if (mNewMeta.getMetaMap().get(key) != null) {
-            return false;
-        }
-        mNewMeta.setEntry(key, value);
-        return true;
-    }
-
-    /**
      * 
      * {@inheritDoc}
      */

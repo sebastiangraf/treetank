@@ -4,7 +4,6 @@
 package org.treetank.api;
 
 import org.treetank.exception.TTException;
-import org.treetank.exception.TTIOException;
 
 /**
  * Write-Transaction of a page ensuring read- and write access to any pages.
@@ -62,21 +61,5 @@ public interface IPageWriteTrx extends IPageReadTrx {
      */
     void commit() throws TTException;
 
-    /**
-     * Creating a metaentry for a given key in a persisted map. Used for any kind of meta-information like
-     * tagnames, paths, etc.
-     * Note that this structure is versioned as entire dumb always whereas it should be utilized only for
-     * meta-information.
-     * 
-     * @param key
-     *            key for the map
-     * @param value
-     *            value in the map
-     * @return true if insert was successful, false otherwise.
-     * 
-     * @throws TTIOException
-     *             if something odd happens while storing the new key
-     */
-    boolean createEntry(final IMetaEntry key, IMetaEntry value) throws TTIOException;
 
 }

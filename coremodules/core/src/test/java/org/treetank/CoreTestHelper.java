@@ -31,6 +31,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertNotNull;
+import static org.testng.AssertJUnit.assertNull;
 import static org.testng.AssertJUnit.assertTrue;
 import java.io.File;
 import java.util.Arrays;
@@ -328,7 +329,7 @@ public final class CoreTestHelper {
         assertTrue(pAlreadyExistingEntries.isEmpty() != toCheck.addAll(pAlreadyExistingEntries));
         for (Map.Entry<DumbKey, DumbValue> entry : returnVal) {
             assertTrue(toCheck.add(entry));
-            assertTrue(pWtx.createEntry(entry.getKey(), entry.getValue()));
+            assertNull(pWtx.getMetaPage().getMetaMap().put(entry.getKey(), entry.getValue()));
             checkStructure(toCheck, pWtx, true);
         }
         assertTrue(pAlreadyExistingEntries.isEmpty() != returnVal.addAll(pAlreadyExistingEntries));
