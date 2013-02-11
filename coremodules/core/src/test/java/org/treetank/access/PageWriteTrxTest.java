@@ -22,6 +22,7 @@ import org.treetank.ModuleFactory;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.StandardSettings;
+import org.treetank.api.IPageReadTrx;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.exception.TTException;
 import org.treetank.page.DumbMetaEntryFactory.DumbKey;
@@ -162,6 +163,12 @@ public class PageWriteTrxTest {
             wtx.setNode(nodes.get(i));
             assertEquals(nodes.get(i), wtx.getNode(i));
         }
+        wtx.commit();
+
+        final IPageReadTrx rtx =
+            mHolder.getSession().beginPageReadTransaction(mHolder.getSession().getMostRecentVersion());
+        CoreTestHelper.checkStructure(nodes, rtx, 0);
+        CoreTestHelper.checkStructure(nodes, wtx, 0);
 
     }
 
@@ -172,21 +179,31 @@ public class PageWriteTrxTest {
      */
     @Test
     public void testRemoveNode() throws TTException {
-//        DumbNode[][] nodes = CoreTestHelper.createTestData(mHolder);
-//        List<DumbNode> list = CoreTestHelper.combineNodes(nodes);
-//        final IPageWriteTrx wtx = mHolder.getSession().beginPageWriteTransaction();
-//        int elementsDeleted = 10;
-//        int revisions = 1;
-//        for (int i = 0; i < revisions; i++) {
-//            for (int j = 0; j < elementsDeleted; j++) {
-//                int nextElementKey = (int)Math.abs(CoreTestHelper.random.nextLong() % list.size());
-//                if (list.get(nextElementKey) != null) {
-//                    wtx.removeNode(list.get(nextElementKey));
-//                    list.set(nextElementKey, null);
-//                }
-//            }
-//        }
-//        wtx.close();
+        DumbNode[][] nodes = CoreTestHelper.createTestData(mHolder);
+        List<DumbNode> list = CoreTestHelper.combineNodes(nodes);
+        final IPageWriteTrx wtx = mHolder.getSession().beginPageWriteTransaction();
+        int elementsDeleted = 10;
+        int revisions = 1;
+        for (int i = 0; i < revisions; i++) {
+            for (int j = 0; j < elementsDeleted; j++) {
+                int nextElementKey = (int)Math.abs(CoreTestHelper.random.nextLong() % list.size());
+                if (list.get(nextElementKey) != null) {
+                    wtx.removeNode(list.get(nextElementKey));
+                    list.set(nextElementKey, null);
+                }
+            }
+            CoreTestHelper.checkStructure(list, wtx, 0);
+            wtx.commit();
+            CoreTestHelper.checkStructure(list, wtx, 0);
+            final IPageReadTrx rtx =
+                mHolder.getSession().beginPageReadTransaction(mHolder.getSession().getMostRecentVersion());
+            CoreTestHelper.checkStructure(list, rtx, 0);
+            rtx.close();
+        }
+        wtx.close();
+        final IPageReadTrx rtx =
+            mHolder.getSession().beginPageReadTransaction(mHolder.getSession().getMostRecentVersion());
+        CoreTestHelper.checkStructure(list, rtx, 0);
     }
 
     /**

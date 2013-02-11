@@ -30,6 +30,7 @@ package org.treetank.page;
 import org.treetank.api.IMetaEntry;
 import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;
+import org.treetank.page.NodePage.DeletedNode;
 import org.treetank.page.interfaces.IPage;
 
 import com.google.common.io.ByteArrayDataInput;
@@ -83,7 +84,12 @@ public final class PageFactory {
                 if (length != IConstants.NULL_NODE) {
                     byte[] toread = new byte[length];
                     input.readFully(toread);
-                    nodePage.getNodes()[offset] = mNodeFac.deserializeNode(toread);
+                    final ByteArrayDataInput singleNodeInput = ByteStreams.newDataInput(toread);
+                    if (singleNodeInput.readInt() == IConstants.NULL_NODE) {
+                        nodePage.getNodes()[offset] = new DeletedNode(singleNodeInput.readLong());
+                    } else {
+                        nodePage.getNodes()[offset] = mNodeFac.deserializeNode(toread);
+                    }
                 }
             }
             return nodePage;

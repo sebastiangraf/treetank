@@ -28,11 +28,7 @@ public class DumbNodeFactory implements INodeFactory {
     @Override
     public INode deserializeNode(byte[] pSource) {
         final ByteArrayDataInput input = ByteStreams.newDataInput(pSource);
-        try {
-            return new DumbNode(input.readLong(), input.readLong());
-        } catch (IllegalStateException exc) {
-            throw new RuntimeException(exc);
-        }
+        return new DumbNode(input.readLong(), input.readLong());
     }
 
     /**
