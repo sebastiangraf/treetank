@@ -106,22 +106,6 @@ public class PageReadTrxTest {
     }
 
     /**
-     * Test method for {@link org.treetank.access.PageReadTrx#checkItemIfDeleted(org.treetank.api.INode)}.
-     */
-    @Test
-    public void testCheckItemIfDeleted() {
-        // fail("Not yet implemented");
-    }
-
-    /**
-     * Test method for {@link org.treetank.access.PageReadTrx#getSnapshotPages(long)}.
-     */
-    @Test
-    public void testGetSnapshotPages() {
-        // fail("Not yet implemented");
-    }
-
-    /**
      * Test method for {@link org.treetank.access.PageReadTrx#getMetaPage()}.
      * 
      * @throws TTException

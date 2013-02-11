@@ -172,21 +172,21 @@ public class PageWriteTrxTest {
      */
     @Test
     public void testRemoveNode() throws TTException {
-        // DumbNode[][] nodes = CoreTestHelper.createNodesInTreetank(mHolder);
-        // List<DumbNode> list = CoreTestHelper.combineNodes(nodes);
-        // final IPageWriteTrx wtx = mHolder.getSession().beginPageWriteTransaction();
-        // int elementsDeleted = 10;
-        // int revisions = 1;
-        // for (int i = 0; i < revisions; i++) {
-        // for (int j = 0; j < elementsDeleted; j++) {
-        // int nextElementKey = (int)Math.abs(CoreTestHelper.random.nextLong() % list.size());
-        // if (list.get(nextElementKey) != null) {
-        // wtx.removeNode(list.get(nextElementKey));
-        // list.set(nextElementKey, null);
-        // }
-        // }
-        // }
-        // wtx.close();
+        DumbNode[][] nodes = CoreTestHelper.createTestData(mHolder);
+        List<DumbNode> list = CoreTestHelper.combineNodes(nodes);
+        final IPageWriteTrx wtx = mHolder.getSession().beginPageWriteTransaction();
+        int elementsDeleted = 10;
+        int revisions = 1;
+        for (int i = 0; i < revisions; i++) {
+            for (int j = 0; j < elementsDeleted; j++) {
+                int nextElementKey = (int)Math.abs(CoreTestHelper.random.nextLong() % list.size());
+                if (list.get(nextElementKey) != null) {
+                    wtx.removeNode(list.get(nextElementKey));
+                    list.set(nextElementKey, null);
+                }
+            }
+        }
+        wtx.close();
     }
 
     /**

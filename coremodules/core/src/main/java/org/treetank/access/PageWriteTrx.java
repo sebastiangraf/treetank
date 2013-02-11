@@ -448,7 +448,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
         ((IndirectPage)indirectContainer.getModified()).setReferenceKey(offset, mNewRoot.getPageKey());
         mLog.put(indirectKey, indirectContainer);
 
-        // Setting up a new namepage
+        // Setting up a new metapage
         Map<IMetaEntry, IMetaEntry> oldMap = mDelegate.mMetaPage.getMetaMap();
         mNewMeta = new MetaPage(mNewUber.incrementPageCounter());
 
