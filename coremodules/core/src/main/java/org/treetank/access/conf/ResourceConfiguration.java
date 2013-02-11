@@ -354,6 +354,6 @@ public final class ResourceConfiguration {
     @Override
     public String toString() {
         return toStringHelper(this).add("mBackend", mBackend.getClass()).add("mRevision", mRevision).add("mProperties",
-            mProperties).add("mNodeFac", mNodeFac).toString();
+            mProperties).add("mNodeFac", mNodeFac.getClass().getName()).toString();
     }
 }

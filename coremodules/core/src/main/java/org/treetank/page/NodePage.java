@@ -204,5 +204,13 @@ public class NodePage implements IPage {
             return mHash;
         }
 
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String toString() {
+            return toStringHelper(this).add("mNodeKey", mNodeKey).add("mHash", mHash).toString();
+        }
+        
     }
 }

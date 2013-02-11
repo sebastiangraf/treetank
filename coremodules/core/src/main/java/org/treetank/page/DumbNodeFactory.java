@@ -117,14 +117,14 @@ public class DumbNodeFactory implements INodeFactory {
             return this.hashCode() == obj.hashCode();
         }
 
-    }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String toString() {
+            return toStringHelper(this).add("mNodeKey", mNodeKey).add("mHash", mHash).toString();
+        }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return toStringHelper(this).toString();
     }
 
 }

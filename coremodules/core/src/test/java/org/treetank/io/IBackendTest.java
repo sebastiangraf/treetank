@@ -59,6 +59,7 @@ public class IBackendTest {
             assertEquals(new StringBuilder("Check for ").append(pBackends.getClass()).append(" failed.")
                 .toString(), page1, page3);
             backendReader.close();
+
             backend.close();
             backend.truncate();
         }
@@ -90,6 +91,10 @@ public class IBackendTest {
                 assertEquals(new StringBuilder("Check for ").append(pBackends.getClass()).append(" failed.")
                     .toString(), pages.get(i), page3);
             }
+            backendReader.close();
+
+            backend.close();
+            backend.truncate();
         }
     }
 
