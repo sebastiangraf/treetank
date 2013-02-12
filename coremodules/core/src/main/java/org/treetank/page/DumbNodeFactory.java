@@ -28,11 +28,7 @@ public class DumbNodeFactory implements INodeFactory {
     @Override
     public INode deserializeNode(byte[] pSource) {
         final ByteArrayDataInput input = ByteStreams.newDataInput(pSource);
-        try {
-            return new DumbNode(input.readLong(), input.readLong());
-        } catch (IllegalStateException exc) {
-            throw new RuntimeException(exc);
-        }
+        return new DumbNode(input.readLong(), input.readLong());
     }
 
     /**
@@ -117,14 +113,14 @@ public class DumbNodeFactory implements INodeFactory {
             return this.hashCode() == obj.hashCode();
         }
 
-    }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String toString() {
+            return toStringHelper(this).add("mNodeKey", mNodeKey).add("mHash", mHash).toString();
+        }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return toStringHelper(this).toString();
     }
 
 }

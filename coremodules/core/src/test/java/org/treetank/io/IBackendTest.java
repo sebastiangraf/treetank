@@ -59,6 +59,7 @@ public class IBackendTest {
             assertEquals(new StringBuilder("Check for ").append(pBackends.getClass()).append(" failed.")
                 .toString(), page1, page3);
             backendReader.close();
+
             backend.close();
             backend.truncate();
         }
@@ -90,6 +91,10 @@ public class IBackendTest {
                 assertEquals(new StringBuilder("Check for ").append(pBackends.getClass()).append(" failed.")
                     .toString(), pages.get(i), page3);
             }
+            backendReader.close();
+
+            backend.close();
+            backend.truncate();
         }
     }
 
@@ -159,8 +164,8 @@ public class IBackendTest {
             MetaPage returnVal = new MetaPage(pKey);
             for (int i = 0; i < IConstants.CONTENT_COUNT; i++) {
                 returnVal.getMetaMap().put(
-                    new DumbMetaEntryFactory.MetaKey(CoreTestHelper.random.nextLong()),
-                    new DumbMetaEntryFactory.MetaValue(CoreTestHelper.random.nextLong()));
+                    new DumbMetaEntryFactory.DumbKey(CoreTestHelper.random.nextLong()),
+                    new DumbMetaEntryFactory.DumbValue(CoreTestHelper.random.nextLong()));
             }
             return returnVal;
         } else if (whichPage < 0.6) {

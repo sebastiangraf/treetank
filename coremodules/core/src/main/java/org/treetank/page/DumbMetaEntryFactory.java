@@ -22,18 +22,18 @@ public class DumbMetaEntryFactory implements IMetaEntryFactory {
         final int kind = input.readInt();
         switch (kind) {
         case KEY:
-            return new MetaKey(input.readLong());
+            return new DumbKey(input.readLong());
         case VALUE:
-            return new MetaValue(input.readLong());
+            return new DumbValue(input.readLong());
         }
         return null;
     }
 
-    public static class MetaKey implements IMetaEntry {
+    public static class DumbKey implements IMetaEntry {
 
         private final long mData;
 
-        public MetaKey(final long pData) {
+        public DumbKey(final long pData) {
             mData = pData;
         }
 
@@ -70,11 +70,11 @@ public class DumbMetaEntryFactory implements IMetaEntryFactory {
         }
     }
 
-    public static class MetaValue implements IMetaEntry {
+    public static class DumbValue implements IMetaEntry {
 
         private final long mData;
 
-        public MetaValue(final long pData) {
+        public DumbValue(final long pData) {
             mData = pData;
         }
 

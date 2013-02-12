@@ -153,7 +153,7 @@ public final class LRULog {
             mDatabase.put(null, keyEntry, valueEntry);
 
         } catch (final DatabaseException exc) {
-            throw new RuntimeException(exc);
+            throw new TTIOException(exc);
         }
 
     }

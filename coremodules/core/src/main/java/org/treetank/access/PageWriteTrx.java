@@ -79,7 +79,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
     private RevisionRootPage mNewRoot;
 
     /** Last reference to the actual namePage. */
-    private MetaPage mNewName;
+    private MetaPage mNewMeta;
 
     /** Delegate for read access. */
     private PageReadTrx mDelegate;
@@ -171,12 +171,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
     }
 
     /**
-     * Removing a node from the storage.
-     * 
-     * @param pNode
-     *            {@link INode} to be removed
-     * @throws TTIOException
-     *             if the removal fails
+     * {@inheritDoc}
      */
     @Override
     public void removeNode(final INode pNode) throws TTException {
@@ -219,19 +214,10 @@ public final class PageWriteTrx implements IPageWriteTrx {
     }
 
     /**
-     * Creating a namekey for a given name.
      * 
-     * @param pName
-     *            for which the key should be created.
-     * @return an int, representing the namekey
-     * @throws TTIOException
-     *             if something odd happens while storing the new key
+     * {@inheritDoc}
      */
-    public void createEntry(final IMetaEntry key, IMetaEntry value) throws TTIOException {
-        checkState(!mDelegate.isClosed(), "Transaction already closed");
-        mNewName.setEntry(key, value);
-    }
-
+    @Override
     public void commit() throws TTException {
         checkState(!mDelegate.isClosed(), "Transaction already closed");
         Iterator<LogValue> entries = mLog.getIterator();
@@ -239,7 +225,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
             LogValue next = entries.next();
             mPageWriter.write(next.getModified());
         }
-        mPageWriter.write(mNewName);
+        mPageWriter.write(mNewMeta);
         mPageWriter.write(mNewRoot);
         mPageWriter.writeUberPage(mNewUber);
 
@@ -252,10 +238,8 @@ public final class PageWriteTrx implements IPageWriteTrx {
 
     /**
      * {@inheritDoc}
-     * 
-     * @throws TTIOException
-     *             if something weird happened in the storage
      */
+    @Override
     public boolean close() throws TTIOException {
         if (!mDelegate.isClosed()) {
             mDelegate.close();
@@ -267,9 +251,39 @@ public final class PageWriteTrx implements IPageWriteTrx {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public long incrementNodeKey() {
         checkState(!mDelegate.isClosed(), "Transaction already closed");
         return mNewRoot.incrementMaxNodeKey();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long getRevision() throws TTIOException {
+        checkState(!mDelegate.isClosed(), "Transaction already closed");
+        return mNewRoot.getRevision();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isClosed() {
+        return mDelegate.isClosed();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public MetaPage getMetaPage() {
+        checkState(!mDelegate.isClosed(), "Transaction already closed");
+        return mNewMeta;
     }
 
     private LogValue prepareNodePage(final long pNodeKey) throws TTException {
@@ -434,32 +448,16 @@ public final class PageWriteTrx implements IPageWriteTrx {
         ((IndirectPage)indirectContainer.getModified()).setReferenceKey(offset, mNewRoot.getPageKey());
         mLog.put(indirectKey, indirectContainer);
 
-        // Setting up a new namepage
+        // Setting up a new metapage
         Map<IMetaEntry, IMetaEntry> oldMap = mDelegate.mMetaPage.getMetaMap();
-        mNewName = new MetaPage(mNewUber.incrementPageCounter());
+        mNewMeta = new MetaPage(mNewUber.incrementPageCounter());
 
         for (IMetaEntry key : oldMap.keySet()) {
-            mNewName.setEntry(key, oldMap.get(key));
+            mNewMeta.setEntry(key, oldMap.get(key));
         }
 
-        mNewRoot.setReferenceKey(RevisionRootPage.NAME_REFERENCE_OFFSET, mNewName.getPageKey());
+        mNewRoot.setReferenceKey(RevisionRootPage.NAME_REFERENCE_OFFSET, mNewMeta.getPageKey());
 
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public long getRevision() throws TTIOException {
-        checkState(!mDelegate.isClosed(), "Transaction already closed");
-        return mNewRoot.getRevision();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isClosed() {
-        return mDelegate.isClosed();
     }
 
     /**
@@ -469,15 +467,6 @@ public final class PageWriteTrx implements IPageWriteTrx {
     public String toString() {
         return toStringHelper(this).add("mPageWriter", mPageWriter).add("mLog", mLog).add("mRootPage",
             mNewRoot).add("mDelegate", mDelegate).toString();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public MetaPage getMetaPage() {
-        checkState(!mDelegate.isClosed(), "Transaction already closed");
-        return mNewName;
     }
 
 }

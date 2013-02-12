@@ -27,6 +27,8 @@
 
 package org.treetank.io.berkeley;
 
+import static com.google.common.base.Objects.toStringHelper;
+
 import java.io.File;
 import java.util.Properties;
 
@@ -77,13 +79,13 @@ public final class BerkeleyStorage implements IBackend {
     private static final String NAME = "berkeleyDatabase";
 
     /** Berkeley Environment for the database. */
-    private Environment mEnv = null;
+    private final Environment mEnv;
 
     /** Transaction for DB-Operations. */
-    private Transaction mTxn = null;
+    private final Transaction mTxn;
 
     /** Storage instance per session. */
-    private Database mDatabase = null;
+    private final Database mDatabase;
 
     /** Binding for de/-serializing pages. */
     private final TupleBinding<IPage> mPageBinding;
@@ -123,39 +125,25 @@ public final class BerkeleyStorage implements IBackend {
         mPageBinding = new PageBinding();
         mByteHandler = pByteHandler;
         mFac = new PageFactory(pNodeFac, pMetaFac);
+        try {
+            final EnvironmentConfig config = new EnvironmentConfig();
+            config.setTransactional(true);
+            config.setCacheSize(1024 * 1024);
+            config.setAllowCreate(true);
+            mEnv = new Environment(mFile, config);
 
-    }
+            final DatabaseConfig conf = new DatabaseConfig();
+            conf.setTransactional(true);
+            conf.setAllowCreate(true);
 
-    /**
-     * Setting up the database after having the storage object. Necessary because folder creation takes not
-     * place within the storage but within the ResourceConfiguration.
-     * 
-     * @throws TTIOException
-     */
-    private synchronized final void setUpIfNecessary() throws TTIOException {
-        final DatabaseConfig conf = new DatabaseConfig();
-        conf.setTransactional(true);
-        conf.setKeyPrefixing(true);
+            mTxn = mEnv.beginTransaction(null, null);
 
-        final EnvironmentConfig config = new EnvironmentConfig();
-        config.setTransactional(true);
-        config.setCacheSize(1024 * 1024);
+            mDatabase = mEnv.openDatabase(mTxn, NAME, conf);
 
-        if (mEnv == null) {
-
-            if (mFile.listFiles().length == 0) {
-                conf.setAllowCreate(true);
-                config.setAllowCreate(true);
-            }
-
-            try {
-                mEnv = new Environment(mFile, config);
-                mTxn = mEnv.beginTransaction(null, null);
-                mDatabase = mEnv.openDatabase(mTxn, NAME, conf);
-            } catch (final DatabaseException exc) {
-                throw new TTIOException(exc);
-            }
+        } catch (final DatabaseException exc) {
+            throw new TTIOException(exc);
         }
+
     }
 
     /**
@@ -164,8 +152,7 @@ public final class BerkeleyStorage implements IBackend {
     @Override
     public synchronized IBackendReader getReader() throws TTIOException {
         try {
-            setUpIfNecessary();
-            return new BerkeleyReader(mDatabase, mPageBinding);
+            return new BerkeleyReader(mEnv.beginTransaction(null, null), mDatabase, mPageBinding);
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
         }
@@ -176,8 +163,7 @@ public final class BerkeleyStorage implements IBackend {
      */
     @Override
     public synchronized IBackendWriter getWriter() throws TTIOException {
-        setUpIfNecessary();
-        return new BerkeleyWriter(mDatabase, mPageBinding);
+        return new BerkeleyWriter(mEnv.beginTransaction(null, null), mDatabase, mPageBinding);
     }
 
     /**
@@ -186,12 +172,10 @@ public final class BerkeleyStorage implements IBackend {
     @Override
     public synchronized void close() throws TTIOException {
         try {
-            setUpIfNecessary();
             mEnv.sync();
             mTxn.commit();
             mDatabase.close();
             mEnv.close();
-            mEnv = null;
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
         }
@@ -207,8 +191,6 @@ public final class BerkeleyStorage implements IBackend {
      */
     @Override
     public synchronized boolean truncate() throws TTException {
-        setUpIfNecessary();
-        // mEnv.removeDatabase(null, NAME);
         return IOUtils.recursiveDelete(mFile);
     }
 
@@ -217,15 +199,8 @@ public final class BerkeleyStorage implements IBackend {
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("BerkeleyStorage [mByteHandler=");
-        builder.append(mByteHandler);
-        builder.append(", mFile=");
-        builder.append(mFile);
-        builder.append(", mFac=");
-        builder.append(mFac);
-        builder.append("]");
-        return builder.toString();
+        return toStringHelper(this).add("mByteHandler", mByteHandler).add("mFile", mFile).add("mFac", mFac)
+            .toString();
     }
 
     /**

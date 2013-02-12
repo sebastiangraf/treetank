@@ -58,6 +58,9 @@ public final class BerkeleyWriter implements IBackendWriter {
     /** Current {@link BerkeleyReader} to read with. */
     private final BerkeleyReader mReader;
 
+    /** Transaction for this writer. */
+    private final Transaction mTxn;
+
     /**
      * Simple constructor starting with an {@link Environment} and a {@link Storage}.
      * 
@@ -71,14 +74,11 @@ public final class BerkeleyWriter implements IBackendWriter {
      * @throws TTIOException
      *             if something odd happens
      */
-    public BerkeleyWriter(Database pDatabase, TupleBinding<IPage> pPageBinding) throws TTIOException {
-        try {
-            mDatabase = pDatabase;
-        } catch (final DatabaseException exc) {
-            throw new TTIOException(exc);
-        }
-
-        mReader = new BerkeleyReader(mDatabase, pPageBinding);
+    public BerkeleyWriter(final Transaction pTxn, final Database pDatabase,
+        final TupleBinding<IPage> pPageBinding) throws TTIOException {
+        mTxn = pTxn;
+        mDatabase = pDatabase;
+        mReader = new BerkeleyReader(pTxn, mDatabase, pPageBinding);
     }
 
     /**
@@ -94,7 +94,7 @@ public final class BerkeleyWriter implements IBackendWriter {
         TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(page.getPageKey(), keyEntry);
 
         // final OperationStatus status = mBackend.put(mTxn, keyEntry, valueEntry);
-        final OperationStatus status = mDatabase.put(null, keyEntry, valueEntry);
+        final OperationStatus status = mDatabase.put(mTxn, keyEntry, valueEntry);
         if (status != OperationStatus.SUCCESS) {
             throw new TTIOException(new StringBuilder("Write of ").append(page.toString()).append(" failed!")
                 .toString());
@@ -115,6 +115,8 @@ public final class BerkeleyWriter implements IBackendWriter {
      */
     @Override
     public void close() throws TTIOException {
+        // containing inlaying transaction commit
+        mReader.close();
     }
 
     /**
@@ -140,8 +142,7 @@ public final class BerkeleyWriter implements IBackendWriter {
         TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(pageKey, valueEntry);
 
         try {
-            // mBackend.put(mTxn, keyEntry, valueEntry);
-            mDatabase.put(null, keyEntry, valueEntry);
+            mDatabase.put(mTxn, keyEntry, valueEntry);
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
         }
