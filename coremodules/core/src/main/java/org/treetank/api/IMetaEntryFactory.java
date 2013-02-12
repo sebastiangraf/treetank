@@ -3,6 +3,10 @@
  */
 package org.treetank.api;
 
+import java.io.DataInput;
+
+import org.treetank.exception.TTIOException;
+
 /**
  * Creating MetaEntries based on the implementation and the bundle.
  * 
@@ -17,7 +21,9 @@ public interface IMetaEntryFactory {
      * @param pData
      *            byte representation.
      * @return the created metaEntry.
+     * @throws TTIOException
+     *             if anything weird happens
      */
-    IMetaEntry deserializeEntry(final byte[] pData);
+    IMetaEntry deserializeEntry(final DataInput pData) throws TTIOException;
 
 }

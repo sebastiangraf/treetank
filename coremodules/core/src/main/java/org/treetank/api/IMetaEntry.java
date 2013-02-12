@@ -3,6 +3,10 @@
  */
 package org.treetank.api;
 
+import java.io.DataOutput;
+
+import org.treetank.exception.TTIOException;
+
 /**
  * All entries in the MetaPage must implement this interface for guaranteeing serialization.
  * This applies to Keys as well as to values.
@@ -13,9 +17,11 @@ package org.treetank.api;
 public interface IMetaEntry {
 
     /**
-     * Getting the bytes out of an entry of one meta-page-entry.
+     * Serializing to given dataput
      * 
-     * @return the bytes of this entry.
+     * @param pOutput
+     *            to serialize to
+     * @throws TTIOException
      */
-    byte[] getByteRepresentation();
+    void serialize(final DataOutput pOutput) throws TTIOException;
 }

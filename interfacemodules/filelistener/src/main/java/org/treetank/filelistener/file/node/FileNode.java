@@ -1,10 +1,11 @@
 package org.treetank.filelistener.file.node;
 
-import org.treetank.api.INode;
-import org.treetank.filelistener.exceptions.WrongFilenodeDataLengthException;
+import java.io.DataOutput;
+import java.io.IOException;
 
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
+import org.treetank.api.INode;
+import org.treetank.exception.TTIOException;
+import org.treetank.filelistener.exceptions.WrongFilenodeDataLengthException;
 
 /**
  * A sequence of Filenodes represents a full file. A Filnode has a content size
@@ -61,22 +62,29 @@ public class FileNode implements INode {
      *            , as byte array
      * @throws WrongFilenodeDataLengthException
      */
-    public FileNode(long nodeKey, byte[] content){
+    public FileNode(long nodeKey, byte[] content) {
         this.nodeKey = nodeKey;
         val = content;
     }
 
-    @Override
-    public byte[] getByteRepresentation() {
-        ByteArrayDataOutput output = ByteStreams.newDataOutput();
-        output.writeLong(nodeKey);
-        output.writeLong(nextNodeKey);
-        output.writeBoolean(header);
-        output.writeBoolean(eof);
-        output.writeInt(val.length);
-        output.write(val);
-
-        return output.toByteArray();
+    /**
+     * Serializing to given dataput
+     * 
+     * @param pOutput
+     *            to serialize to
+     * @throws TTIOException
+     */
+    public void serialize(final DataOutput output) throws TTIOException {
+        try {
+            output.writeLong(nodeKey);
+            output.writeLong(nextNodeKey);
+            output.writeBoolean(header);
+            output.writeBoolean(eof);
+            output.writeInt(val.length);
+            output.write(val);
+        } catch (final IOException exc) {
+            throw new TTIOException(exc);
+        }
     }
 
     @Override

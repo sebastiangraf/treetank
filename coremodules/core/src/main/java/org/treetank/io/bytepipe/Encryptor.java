@@ -5,10 +5,14 @@ package org.treetank.io.bytepipe;
 
 import static com.google.common.base.Objects.toStringHelper;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.Cipher;
+import javax.crypto.CipherInputStream;
+import javax.crypto.CipherOutputStream;
 import javax.crypto.NoSuchPaddingException;
 
 import org.treetank.access.conf.SessionConfiguration;
@@ -23,7 +27,6 @@ import org.treetank.exception.TTByteHandleException;
 public class Encryptor implements IByteHandler {
 
     private static final String ALGORITHM = "AES";
-    private static final int ITERATIONS = 2;
 
     /** Cipher to perform encryption and decryption operations. */
     private static final Cipher CIPHER;
@@ -40,16 +43,10 @@ public class Encryptor implements IByteHandler {
      * 
      * @throws TTByteHandleException
      */
-    public byte[] serialize(final byte[] pToSerialize) throws TTByteHandleException {
+    public OutputStream serialize(final OutputStream pToSerialize) throws TTByteHandleException {
         try {
             CIPHER.init(Cipher.ENCRYPT_MODE, SessionConfiguration.getInstance().getKey());
-
-            byte[] toEncrypt = pToSerialize;
-            for (int i = 0; i < ITERATIONS; i++) {
-                byte[] encValue = CIPHER.doFinal(toEncrypt);
-                toEncrypt = encValue;
-            }
-            return toEncrypt;
+            return new CipherOutputStream(pToSerialize, CIPHER);
         } catch (final GeneralSecurityException exc) {
             throw new TTByteHandleException(exc);
         }
@@ -58,17 +55,10 @@ public class Encryptor implements IByteHandler {
     /**
      * {@inheritDoc}
      */
-    public byte[] deserialize(byte[] pToDeserialize) throws TTByteHandleException {
+    public InputStream deserialize(InputStream pToDeserialize) throws TTByteHandleException {
         try {
             CIPHER.init(Cipher.DECRYPT_MODE, SessionConfiguration.getInstance().getKey());
-
-            byte[] toDecrypt = pToDeserialize;
-            for (int i = 0; i < ITERATIONS; i++) {
-                byte[] decValue = CIPHER.doFinal(toDecrypt);
-                toDecrypt = decValue;
-            }
-            return toDecrypt;
-
+            return new CipherInputStream(pToDeserialize, CIPHER);
         } catch (final GeneralSecurityException exc) {
             throw new TTByteHandleException(exc);
         }

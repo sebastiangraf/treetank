@@ -3,6 +3,10 @@
  */
 package org.treetank.api;
 
+import java.io.DataOutput;
+
+import org.treetank.exception.TTIOException;
+
 /**
  * Overall {@link INode}-Interface for the interaction with the page-layer. All
  * persistence functionality must be handled over this interface while all
@@ -14,11 +18,13 @@ package org.treetank.api;
 public interface INode {
 
     /**
-     * Getting the byte representation of the {@link INode}.
+     * Serializing to given dataput
      * 
-     * @return the byte representation of this {@link INode}
+     * @param pOutput
+     *            to serialize to
+     * @throws TTIOException
      */
-    byte[] getByteRepresentation();
+    void serialize(final DataOutput pOutput) throws TTIOException;
 
     /**
      * Gets unique {@link INode} key.

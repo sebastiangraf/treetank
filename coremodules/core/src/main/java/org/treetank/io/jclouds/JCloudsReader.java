@@ -3,10 +3,8 @@
  */
 package org.treetank.io.jclouds;
 
-import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
@@ -21,7 +19,6 @@ import org.treetank.page.interfaces.IPage;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.google.common.io.ByteStreams;
 
 /**
  * @author Sebastian Graf, University of Konstanz
@@ -60,14 +57,13 @@ public class JCloudsReader implements IBackendReader {
     public UberPage readUber() throws TTIOException {
         try {
             Blob blobRetrieved = mBlobStore.getBlob(mResourceName, Long.toString(-1l));
-            InputStream in = blobRetrieved.getPayload().getInput();
-            DataInputStream datain = new DataInputStream(in);
+            DataInputStream datain =
+                new DataInputStream(mByteHandler.deserialize(blobRetrieved.getPayload().getInput()));
             long uberpagekey = datain.readLong();
             final UberPage page = (UberPage)read(uberpagekey);
             datain.close();
-            in.close();
             return page;
-        } catch (final IOException exc) {
+        } catch (final IOException | TTByteHandleException exc) {
             throw new TTIOException(exc);
         }
     }
@@ -83,16 +79,11 @@ public class JCloudsReader implements IBackendReader {
         if (returnval == null) {
             try {
                 Blob blobRetrieved = mBlobStore.getBlob(mResourceName, Long.toString(pKey));
-                InputStream in = blobRetrieved.getPayload().getInput();
-
-                ByteArrayOutputStream out = new ByteArrayOutputStream();
-                ByteStreams.copy(in, out);
-                byte[] decryptedPage = mByteHandler.deserialize(out.toByteArray());
-                out.close();
-                in.close();
-                returnval = mFac.deserializePage(decryptedPage);
+                DataInputStream datain =
+                    new DataInputStream(mByteHandler.deserialize(blobRetrieved.getPayload().getInput()));
+                returnval = mFac.deserializePage(datain);
                 mCache.put(pKey, returnval);
-            } catch (final IOException | TTByteHandleException exc) {
+            } catch (TTByteHandleException exc) {
                 throw new TTIOException(exc);
             }
         }

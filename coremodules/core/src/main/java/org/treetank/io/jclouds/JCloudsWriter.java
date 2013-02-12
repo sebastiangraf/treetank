@@ -45,12 +45,15 @@ public class JCloudsWriter implements IBackendWriter {
      * {@inheritDoc}
      */
     @Override
-    public void write(IPage pPage) throws TTIOException, TTByteHandleException {
-        final byte[] rawPage = pPage.getByteRepresentation();
-        final byte[] decryptedPage = mReader.mByteHandler.serialize(rawPage);
+    public void write(final IPage pPage) throws TTIOException, TTByteHandleException {
+        ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+        DataOutputStream dataOut = new DataOutputStream(mReader.mByteHandler.serialize(byteOut));
+        pPage.serialize(dataOut);
+
         BlobBuilder blobbuilder = mReader.mBlobStore.blobBuilder(Long.toString(pPage.getPageKey()));
         Blob blob = blobbuilder.build();
-        blob.setPayload(decryptedPage);
+        blob.setPayload(byteOut.toByteArray());
+
         mReader.mBlobStore.putBlob(mReader.mResourceName, blob);
         mReader.mCache.put(pPage.getPageKey(), pPage);
     }

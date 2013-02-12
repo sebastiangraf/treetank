@@ -27,13 +27,16 @@
 
 package org.treetank.node;
 
+import static com.google.common.base.Objects.toStringHelper;
+
+import java.io.DataOutput;
+import java.io.IOException;
+
+import org.treetank.exception.TTIOException;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
 import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IStructNode;
-
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
 
 /**
  * <h1>DocumentNode</h1>
@@ -285,20 +288,6 @@ public final class DocumentRootNode implements INode, IStructNode {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("DocumentRootNode [mDel=");
-        builder.append(mDel);
-        builder.append(", mStrucDel=");
-        builder.append(mStrucDel);
-        builder.append("]");
-        return builder.toString();
-    }
-
-    /**
      * Getting the inlying {@link NodeDelegate}.
      * 
      * @return
@@ -320,12 +309,25 @@ public final class DocumentRootNode implements INode, IStructNode {
      * {@inheritDoc}
      */
     @Override
-    public byte[] getByteRepresentation() {
-        final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
-        pOutput.writeInt(IConstants.ROOT);
-        pOutput.write(mDel.getByteRepresentation());
-        pOutput.write(mStrucDel.getByteRepresentation());
-        return pOutput.toByteArray();
+    public String toString() {
+        return toStringHelper(this).add("mDel", mDel).add("mStrucDel", mStrucDel).toString();
+    }
+
+    /**
+     * Serializing to given dataput
+     * 
+     * @param pOutput
+     *            to serialize to
+     * @throws TTIOException
+     */
+    public void serialize(final DataOutput pOutput) throws TTIOException {
+        try {
+            pOutput.writeInt(IConstants.ROOT);
+            mDel.serialize(pOutput);
+            mStrucDel.serialize(pOutput);
+        } catch (final IOException exc) {
+            throw new TTIOException(exc);
+        }
     }
 
 }

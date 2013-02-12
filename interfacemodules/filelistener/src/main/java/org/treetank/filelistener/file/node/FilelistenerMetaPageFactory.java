@@ -1,13 +1,13 @@
 package org.treetank.filelistener.file.node;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
 import java.util.Objects;
 
 import org.treetank.api.IMetaEntry;
 import org.treetank.api.IMetaEntryFactory;
-
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
+import org.treetank.exception.TTIOException;
 
 /**
  * This factory is used to give the treetank
@@ -15,28 +15,32 @@ import com.google.common.io.ByteStreams;
  * uses to store the data.
  * 
  * @author Andreas Rain
- *
+ * 
  */
-public class FilelistenerMetaPageFactory implements IMetaEntryFactory{
-    
+public class FilelistenerMetaPageFactory implements IMetaEntryFactory {
+
     private final static int KEY = 1;
     private final static int VALUE = 2;
 
     @Override
-    public IMetaEntry deserializeEntry(byte[] pData) {
-        final ByteArrayDataInput input = ByteStreams.newDataInput(pData);
-        final int kind = input.readInt();
-        
-        switch (kind) {
-        case KEY:
-            final int valSize = input.readInt();
-            final byte[] bytes = new byte[valSize];
-            input.readFully(bytes);
-            return new MetaKey(new String(bytes));
-        case VALUE:
-            return new MetaValue(input.readLong());
+    public IMetaEntry deserializeEntry(DataInput input) throws TTIOException {
+        try {
+            final int kind = input.readInt();
+
+            switch (kind) {
+            case KEY:
+                final int valSize = input.readInt();
+                final byte[] bytes = new byte[valSize];
+                input.readFully(bytes);
+                return new MetaKey(new String(bytes));
+            case VALUE:
+                return new MetaValue(input.readLong());
+            default:
+                throw new IllegalStateException("Kind not defined.");
+            }
+        } catch (final IOException exc) {
+            throw new TTIOException(exc);
         }
-        return null;
     }
 
     /**
@@ -63,15 +67,17 @@ public class FilelistenerMetaPageFactory implements IMetaEntryFactory{
          * {@inheritDoc}
          */
         @Override
-        public byte[] getByteRepresentation() {
-            final ByteArrayDataOutput output = ByteStreams.newDataOutput();
-            output.writeInt(KEY);
-            output.writeInt(mKey.getBytes().length);
-            output.write(mKey.getBytes());
-            return output.toByteArray();
+        public void serialize(final DataOutput output) throws TTIOException {
+            try {
+                output.writeInt(KEY);
+                output.writeInt(mKey.getBytes().length);
+                output.write(mKey.getBytes());
+            } catch (final IOException exc) {
+                throw new TTIOException(exc);
+            }
         }
-        
-        public String getKey(){
+
+        public String getKey() {
             return this.mKey;
         }
 
@@ -117,11 +123,13 @@ public class FilelistenerMetaPageFactory implements IMetaEntryFactory{
          * {@inheritDoc}
          */
         @Override
-        public byte[] getByteRepresentation() {
-            final ByteArrayDataOutput output = ByteStreams.newDataOutput();
-            output.writeInt(VALUE);
-            output.writeLong(mData);
-            return output.toByteArray();
+        public void serialize(final DataOutput output) throws TTIOException {
+            try {
+                output.writeInt(VALUE);
+                output.writeLong(mData);
+            } catch (final IOException exc) {
+                throw new TTIOException(exc);
+            }
         }
 
         /**

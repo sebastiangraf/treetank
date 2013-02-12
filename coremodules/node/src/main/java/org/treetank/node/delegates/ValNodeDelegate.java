@@ -26,14 +26,16 @@
  */
 package org.treetank.node.delegates;
 
-import java.util.Arrays;
+import static com.google.common.base.Objects.toStringHelper;
 
+import java.io.DataOutput;
+import java.io.IOException;
+
+import org.treetank.exception.TTIOException;
 import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.IValNode;
 
 import com.google.common.hash.Hasher;
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
 
 /**
  * Delegate method for all nodes containing \"value\"-data. That means that
@@ -193,23 +195,22 @@ public class ValNodeDelegate implements IValNode {
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("ValNodeDelegate [mDelegate=");
-        builder.append(mDelegate);
-        builder.append(", mVal=");
-        builder.append(Arrays.toString(mVal));
-        builder.append("]");
-        return builder.toString();
+        return toStringHelper(this).add("mDelegate", mDelegate).add("mVal", mVal).toString();
     }
 
     /**
-     * {@inheritDoc}
+     * Serializing to given dataput
+     * 
+     * @param pOutput
+     *            to serialize to
+     * @throws TTIOException
      */
-    @Override
-    public byte[] getByteRepresentation() {
-        final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
-        pOutput.writeInt(getRawValue().length);
-        pOutput.write(getRawValue());
-        return pOutput.toByteArray();
+    public void serialize(final DataOutput pOutput) throws TTIOException {
+        try {
+            pOutput.writeInt(getRawValue().length);
+            pOutput.write(getRawValue());
+        } catch (final IOException exc) {
+            throw new TTIOException(exc);
+        }
     }
 }

@@ -11,10 +11,15 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.treetank.CoreTestHelper;
 import org.treetank.exception.TTByteHandleException;
+import org.treetank.exception.TTIOException;
 import org.treetank.io.bytepipe.IByteHandler;
 import org.treetank.page.DumbMetaEntryFactory.DumbKey;
 import org.treetank.page.DumbMetaEntryFactory.DumbValue;
 import org.treetank.page.interfaces.IPage;
+
+import com.google.common.io.ByteArrayDataInput;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 
 /**
  * Test class for all classes implementing the {@link IPage} interface.
@@ -32,17 +37,24 @@ public class IPageTest {
      *            IPage as class
      * @param pHandlers
      *            different pages
+     * @throws TTIOException
      */
     @Test(dataProvider = "instantiatePages")
-    public void testByteRepresentation(Class<IPage> clazz, IPage[] pHandlers) {
+    public void testByteRepresentation(Class<IPage> clazz, IPage[] pPages) throws TTIOException {
         final PageFactory fac = new PageFactory(new DumbNodeFactory(), new DumbMetaEntryFactory());
 
-        for (final IPage handler : pHandlers) {
-            final byte[] pageBytes = handler.getByteRepresentation();
+        for (final IPage page : pPages) {
+            ByteArrayDataOutput output = ByteStreams.newDataOutput();
+            page.serialize(output);
+            byte[] firstSerialized = output.toByteArray();
+            ByteArrayDataInput input = ByteStreams.newDataInput(firstSerialized);
 
-            final IPage serializedPage = fac.deserializePage(pageBytes);
-            assertTrue(new StringBuilder("Check for ").append(handler.getClass()).append(" failed.")
-                .toString(), Arrays.equals(pageBytes, serializedPage.getByteRepresentation()));
+            final IPage serializedPage = fac.deserializePage(input);
+            output = ByteStreams.newDataOutput();
+            serializedPage.serialize(output);
+            byte[] secondSerialized = output.toByteArray();
+            assertTrue(new StringBuilder("Check for ").append(page.getClass()).append(" failed.").toString(),
+                Arrays.equals(firstSerialized, secondSerialized));
         }
     }
 

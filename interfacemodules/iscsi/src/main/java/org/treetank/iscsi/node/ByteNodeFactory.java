@@ -24,11 +24,12 @@
 
 package org.treetank.iscsi.node;
 
+import java.io.DataInput;
+import java.io.IOException;
+
 import org.treetank.api.INode;
 import org.treetank.api.INodeFactory;
-
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteStreams;
+import org.treetank.exception.TTIOException;
 
 /**
  * This factory is used to deserialize {@link ByteNode}
@@ -39,23 +40,27 @@ public class ByteNodeFactory implements INodeFactory {
 
     /**
      * {@inheritDoc}
+     * 
      */
     @Override
-    public INode deserializeNode(byte[] pData) {
-        ByteArrayDataInput input = ByteStreams.newDataInput(pData);
-        int size = input.readInt();
-        long index = input.readLong();
-        long nodeKey = input.readLong();
-        long previousNodeKey = input.readLong();
-        long nextNodeKey = input.readLong();
-        byte[] data = new byte[size];
-        input.readFully(data);
+    public INode deserializeNode(DataInput input) throws TTIOException {
+        try {
+            int size = input.readInt();
+            long index = input.readLong();
+            long nodeKey = input.readLong();
+            long previousNodeKey = input.readLong();
+            long nextNodeKey = input.readLong();
+            byte[] data = new byte[size];
+            input.readFully(data);
 
-        ByteNode node = new ByteNode(nodeKey, data);
-        node.setIndex(index);
-        node.setNextNodeKey(nextNodeKey);
-        node.setPreviousNodeKey(previousNodeKey);
-        return node;
+            ByteNode node = new ByteNode(nodeKey, data);
+            node.setIndex(index);
+            node.setNextNodeKey(nextNodeKey);
+            node.setPreviousNodeKey(previousNodeKey);
+            return node;
+        } catch (final IOException exc) {
+            throw new TTIOException(exc);
+        }
     }
 
 }

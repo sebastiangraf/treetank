@@ -27,6 +27,12 @@
 
 package org.treetank.node;
 
+import static com.google.common.base.Objects.toStringHelper;
+
+import java.io.DataOutput;
+import java.io.IOException;
+
+import org.treetank.exception.TTIOException;
 import org.treetank.node.delegates.NameNodeDelegate;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
@@ -36,8 +42,6 @@ import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IValNode;
 
 import com.google.common.hash.Hasher;
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
 
 /**
  * <h1>AttributeNode</h1>
@@ -68,8 +72,8 @@ public final class AttributeNode implements INode, IValNode, INameNode {
      *            {@link ValNodeDelegate} to be set
      * 
      */
-    public AttributeNode(final NodeDelegate pDel,
-            final NameNodeDelegate pNameDel, final ValNodeDelegate pValDel) {
+    public AttributeNode(final NodeDelegate pDel, final NameNodeDelegate pNameDel,
+        final ValNodeDelegate pValDel) {
         mDel = pDel;
         mNameDel = pNameDel;
         mValDel = pValDel;
@@ -129,22 +133,6 @@ public final class AttributeNode implements INode, IValNode, INameNode {
      */
     public void setHash(final long pHash) {
         mDel.setHash(pHash);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("AttributeNode [mDel=");
-        builder.append(mDel);
-        builder.append(", mNameDel=");
-        builder.append(mNameDel);
-        builder.append(", mValDel=");
-        builder.append(mValDel);
-        builder.append("]");
-        return builder.toString();
     }
 
     /**
@@ -287,13 +275,27 @@ public final class AttributeNode implements INode, IValNode, INameNode {
      * {@inheritDoc}
      */
     @Override
-    public byte[] getByteRepresentation() {
-        final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
-        pOutput.writeInt(IConstants.ATTRIBUTE);
-        pOutput.write(mDel.getByteRepresentation());
-        pOutput.write(mNameDel.getByteRepresentation());
-        pOutput.write(mValDel.getByteRepresentation());
-        return pOutput.toByteArray();
+    public String toString() {
+        return toStringHelper(this).add("mDel", mDel).add("mNameDel", mNameDel).add("mValDel", mValDel)
+            .toString();
+    }
+
+    /**
+     * Serializing to given dataput
+     * 
+     * @param pOutput
+     *            to serialize to
+     * @throws TTIOException
+     */
+    public void serialize(final DataOutput pOutput) throws TTIOException {
+        try {
+            pOutput.writeInt(IConstants.ATTRIBUTE);
+            mDel.serialize(pOutput);
+            mNameDel.serialize(pOutput);
+            mValDel.serialize(pOutput);
+        } catch (final IOException exc) {
+            throw new TTIOException(exc);
+        }
     }
 
 }

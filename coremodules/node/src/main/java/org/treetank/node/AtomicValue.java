@@ -27,17 +27,16 @@
 
 package org.treetank.node;
 
+import static com.google.common.base.Objects.toStringHelper;
 import static org.treetank.node.IConstants.NULL_NODE;
 
-import java.util.Arrays;
+import java.io.DataOutput;
 
+import org.treetank.exception.TTIOException;
 import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IValNode;
 import org.treetank.utils.NamePageHash;
 import org.treetank.utils.TypedValue;
-
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
 
 /**
  * <h1>AtomicValue</h1>
@@ -242,22 +241,6 @@ public class AtomicValue implements INode, IValNode {
         return Double.parseDouble(new String(mValue));
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("AtomicValue [mValue=");
-        builder.append(Arrays.toString(mValue));
-        builder.append(", mType=");
-        builder.append(mType);
-        builder.append(", mItemKey=");
-        builder.append(mItemKey);
-        builder.append("]");
-        return builder.toString();
-    }
-
     @Override
     public void setHash(long hash) {
         throw new UnsupportedOperationException();
@@ -299,9 +282,19 @@ public class AtomicValue implements INode, IValNode {
      * {@inheritDoc}
      */
     @Override
-    public byte[] getByteRepresentation() {
-        final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
-        return pOutput.toByteArray();
+    public String toString() {
+        return toStringHelper(this).add("mValue", mValue).add("mType", mType).add("mItemKey", mItemKey)
+            .toString();
+    }
+
+    /**
+     * Serializing to given dataput
+     * 
+     * @param pOutput
+     *            to serialize to
+     * @throws TTIOException
+     */
+    public void serialize(final DataOutput pOutput) throws TTIOException {
     }
 
 }

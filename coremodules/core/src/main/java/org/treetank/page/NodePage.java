@@ -28,14 +28,14 @@ package org.treetank.page;
 
 import static com.google.common.base.Objects.toStringHelper;
 
+import java.io.DataOutput;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Objects;
 
 import org.treetank.api.INode;
+import org.treetank.exception.TTIOException;
 import org.treetank.page.interfaces.IPage;
-
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
 
 /**
  * <h1>NodePage</h1>
@@ -106,20 +106,25 @@ public class NodePage implements IPage {
      * {@inheritDoc}
      */
     @Override
-    public byte[] getByteRepresentation() {
-        final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
-        pOutput.writeInt(IConstants.NODEPAGE);
-        pOutput.writeLong(mPageKey);
-        for (final INode node : getNodes()) {
-            if (node == null) {
-                pOutput.writeInt(IConstants.NULL_NODE);
-            } else {
-                byte[] nodeBytes = node.getByteRepresentation();
-                pOutput.writeInt(nodeBytes.length);
-                pOutput.write(nodeBytes);
+    public void serialize(final DataOutput pOutput) throws TTIOException {
+        try {
+            pOutput.writeInt(IConstants.NODEPAGE);
+            pOutput.writeLong(mPageKey);
+            for (final INode node : getNodes()) {
+                if (node == null) {
+                    pOutput.writeInt(IConstants.NULL_NODE);
+                } else {
+                    if (node instanceof DeletedNode) {
+                        pOutput.writeInt(IConstants.DELETEDNODE);
+                    } else {
+                        pOutput.writeInt(IConstants.INTERFACENODE);
+                    }
+                    node.serialize(pOutput);
+                }
             }
+        } catch (final IOException exc) {
+            throw new TTIOException(exc);
         }
-        return pOutput.toByteArray();
     }
 
     /**
@@ -178,14 +183,18 @@ public class NodePage implements IPage {
         }
 
         /**
-         * {@inheritDoc}
+         * Serializing to given dataput
+         * 
+         * @param pOutput
+         *            to serialize to
+         * @throws TTIOException
          */
-        @Override
-        public byte[] getByteRepresentation() {
-            final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
-            pOutput.writeInt(IConstants.NULL_NODE);
-            pOutput.writeLong(mNodeKey);
-            return pOutput.toByteArray();
+        public void serialize(final DataOutput pOutput) throws TTIOException {
+            try {
+                pOutput.writeLong(mNodeKey);
+            } catch (final IOException exc) {
+                throw new TTIOException(exc);
+            }
         }
 
         /**
@@ -211,6 +220,6 @@ public class NodePage implements IPage {
         public String toString() {
             return toStringHelper(this).add("mNodeKey", mNodeKey).add("mHash", mHash).toString();
         }
-        
+
     }
 }

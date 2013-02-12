@@ -29,13 +29,13 @@ package org.treetank.page;
 
 import static com.google.common.base.Objects.toStringHelper;
 
+import java.io.DataOutput;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Objects;
 
+import org.treetank.exception.TTIOException;
 import org.treetank.page.interfaces.IReferencePage;
-
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
 
 /**
  * <h1>UberPage</h1>
@@ -88,14 +88,16 @@ public final class UberPage implements IReferencePage {
      * {@inheritDoc}
      */
     @Override
-    public byte[] getByteRepresentation() {
-        final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
-        pOutput.writeInt(IConstants.UBERPAGE);
-        pOutput.writeLong(mPageKey);
-        pOutput.writeLong(mRevisionCount);
-        pOutput.writeLong(mPageCounter);
-        pOutput.writeLong(mReferenceKeys[0]);
-        return pOutput.toByteArray();
+    public void serialize(final DataOutput pOutput) throws TTIOException {
+        try {
+            pOutput.writeInt(IConstants.UBERPAGE);
+            pOutput.writeLong(mPageKey);
+            pOutput.writeLong(mRevisionCount);
+            pOutput.writeLong(mPageCounter);
+            pOutput.writeLong(mReferenceKeys[0]);
+        } catch (final IOException exc) {
+            throw new TTIOException(exc);
+        }
     }
 
     /**

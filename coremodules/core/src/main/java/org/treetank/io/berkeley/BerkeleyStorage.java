@@ -29,6 +29,10 @@ package org.treetank.io.berkeley;
 
 import static com.google.common.base.Objects.toStringHelper;
 
+import java.io.DataInput;
+import java.io.DataInputStream;
+import java.io.DataOutput;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.util.Properties;
 
@@ -38,7 +42,6 @@ import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;
-import org.treetank.exception.TTByteHandleException;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackend;
@@ -49,8 +52,6 @@ import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.page.PageFactory;
 import org.treetank.page.interfaces.IPage;
 
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.sleepycat.bind.tuple.TupleBinding;
@@ -216,20 +217,11 @@ public final class BerkeleyStorage implements IBackend {
          */
         @Override
         public IPage entryToObject(final TupleInput arg0) {
-            final ByteArrayDataOutput data = ByteStreams.newDataOutput();
-            int result = arg0.read();
-            while (result != -1) {
-                byte b = (byte)result;
-                data.write(b);
-                result = arg0.read();
-            }
-            byte[] resultBytes;
             try {
-                resultBytes = mByteHandler.deserialize(data.toByteArray());
-                return mFac.deserializePage(resultBytes);
-            } catch (TTByteHandleException e) {
-                e.printStackTrace();
-                return null;
+                DataInput in = new DataInputStream(mByteHandler.deserialize(arg0));
+                return mFac.deserializePage(in);
+            } catch (TTException exc) {
+                throw new RuntimeException(exc);
             }
         }
 
@@ -238,14 +230,13 @@ public final class BerkeleyStorage implements IBackend {
          */
         @Override
         public void objectToEntry(final IPage arg0, final TupleOutput arg1) {
-            final byte[] pagebytes = arg0.getByteRepresentation();
             try {
-                arg1.write(mByteHandler.serialize(pagebytes));
-            } catch (TTByteHandleException e) {
-                e.printStackTrace();
+                final DataOutput output = new DataOutputStream(mByteHandler.serialize(arg1));
+                arg0.serialize(output);
+            } catch (final TTException exc) {
+                throw new RuntimeException(exc);
             }
         }
-
     }
 
 }

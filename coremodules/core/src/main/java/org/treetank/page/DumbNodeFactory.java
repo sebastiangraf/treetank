@@ -5,14 +5,14 @@ package org.treetank.page;
 
 import static com.google.common.base.Objects.toStringHelper;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
 import java.util.Objects;
 
 import org.treetank.api.INode;
 import org.treetank.api.INodeFactory;
-
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
+import org.treetank.exception.TTIOException;
 
 /**
  * Simple Factory for generating {@link DumbNode}s mainly for testing the page-layer.
@@ -24,11 +24,15 @@ public class DumbNodeFactory implements INodeFactory {
 
     /**
      * {@inheritDoc}
+     * 
      */
     @Override
-    public INode deserializeNode(byte[] pSource) {
-        final ByteArrayDataInput input = ByteStreams.newDataInput(pSource);
-        return new DumbNode(input.readLong(), input.readLong());
+    public INode deserializeNode(DataInput pSource) throws TTIOException {
+        try {
+            return new DumbNode(pSource.readLong(), pSource.readLong());
+        } catch (final IOException exc) {
+            throw new TTIOException(exc);
+        }
     }
 
     /**
@@ -56,14 +60,19 @@ public class DumbNodeFactory implements INodeFactory {
         }
 
         /**
-         * {@inheritDoc}
+         * Serializing to given dataput
+         * 
+         * @param pOutput
+         *            to serialize to
+         * @throws TTIOException
          */
-        @Override
-        public byte[] getByteRepresentation() {
-            final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
-            pOutput.writeLong(mNodeKey);
-            pOutput.writeLong(mHash);
-            return pOutput.toByteArray();
+        public void serialize(final DataOutput pOutput) throws TTIOException {
+            try {
+                pOutput.writeLong(mNodeKey);
+                pOutput.writeLong(mHash);
+            } catch (final IOException exc) {
+                throw new TTIOException(exc);
+            }
         }
 
         /**
