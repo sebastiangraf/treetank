@@ -5,6 +5,8 @@ package org.treetank.io.bytepipe;
 
 import static com.google.common.base.Objects.toStringHelper;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -44,23 +46,23 @@ public final class ByteHandlerPipeline implements IByteHandlerPipeline {
     /**
      * {@inheritDoc}
      */
-    public byte[] serialize(final byte[] pToSerialize) throws TTByteHandleException {
-        byte[] pipeData = pToSerialize;
+    public OutputStream serialize(final OutputStream pToSerialize) throws TTByteHandleException {
+        OutputStream lastOutput = pToSerialize;
         for (IByteHandler part : mParts) {
-            pipeData = part.serialize(pipeData);
+            lastOutput = part.serialize(lastOutput);
         }
-        return pipeData;
+        return lastOutput;
     }
 
     /**
      * {@inheritDoc}
      */
-    public byte[] deserialize(final byte[] pToDeserialize) throws TTByteHandleException {
-        byte[] pipeData = pToDeserialize;
-        for (int i = mParts.size() - 1; i >= 0; i--) {
-            pipeData = mParts.get(i).deserialize(pipeData);
+    public InputStream deserialize(final InputStream pToDeserialize) throws TTByteHandleException {
+        InputStream lastInput = pToDeserialize;
+        for (IByteHandler part : mParts) {
+            lastInput = part.deserialize(lastInput);
         }
-        return pipeData;
+        return lastInput;
     }
 
     /**

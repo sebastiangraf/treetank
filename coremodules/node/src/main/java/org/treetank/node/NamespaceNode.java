@@ -27,14 +27,18 @@
 
 package org.treetank.node;
 
+import static com.google.common.base.Objects.toStringHelper;
+
+import java.io.DataOutput;
+import java.io.IOException;
+
+import org.treetank.exception.TTIOException;
 import org.treetank.node.delegates.NameNodeDelegate;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.INode;
 
 import com.google.common.hash.Hasher;
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
 
 /**
  * <h1>NamespaceNode</h1>
@@ -202,20 +206,6 @@ public final class NamespaceNode implements INode, INameNode {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("NamespaceNode [mDel=");
-        builder.append(mDel);
-        builder.append(", mNameDel=");
-        builder.append(mNameDel);
-        builder.append("]");
-        return builder.toString();
-    }
-
-    /**
      * Getting the inlying {@link NodeDelegate}.
      * 
      * @return
@@ -232,16 +222,30 @@ public final class NamespaceNode implements INode, INameNode {
     NameNodeDelegate getNameNodeDelegate() {
         return mNameDel;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
-    public byte[] getByteRepresentation() {
-        final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
-        pOutput.writeInt(IConstants.NAMESPACE);
-        pOutput.write(mDel.getByteRepresentation());
-        pOutput.write(mNameDel.getByteRepresentation());
-        return pOutput.toByteArray();
+    public String toString() {
+        return toStringHelper(this).add("mDel", mDel).add("mNameDel", mNameDel).toString();
     }
+
+    /**
+     * Serializing to given dataput
+     * 
+     * @param pOutput
+     *            to serialize to
+     * @throws TTIOException
+     */
+    public void serialize(final DataOutput pOutput) throws TTIOException {
+        try {
+            pOutput.writeInt(IConstants.NAMESPACE);
+            mDel.serialize(pOutput);
+            mNameDel.serialize(pOutput);
+        } catch (final IOException exc) {
+            throw new TTIOException(exc);
+        }
+    }
+
 }

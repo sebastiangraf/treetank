@@ -44,11 +44,10 @@ public interface IConstants {
     public final static int INDIRCTPAGE = 4;
     public final static int REVISIONROOTPAGE = 5;
 
-    /** Null-Id for the key within the reference. */
-    public static final long NULL_ID = -15;
-
     /** ID for not existing nodes. */
     public final static int NULL_NODE = -22;
+    public final static int DELETEDNODE = -44;
+    public final static int INTERFACENODE = -66;
 
     /** Count of indirect references in indirect page. */
     public static final int CONTENT_COUNT = 128;

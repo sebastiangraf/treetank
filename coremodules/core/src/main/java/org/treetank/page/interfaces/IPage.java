@@ -26,6 +26,9 @@
  */
 package org.treetank.page.interfaces;
 
+import java.io.DataOutput;
+
+import org.treetank.exception.TTIOException;
 
 /**
  * Interface to represent one page.
@@ -38,18 +41,20 @@ package org.treetank.page.interfaces;
 public interface IPage {
 
     /**
-     * Getting the byte representation of the node
-     * 
-     * @return a byte-array representing the data of the page
-     */
-    byte[] getByteRepresentation();
-
-    /**
      * Getting the key of a page for dereferencing over any pointers as well, the access in the log and for
      * retrieving pages from the persistent storage.
      * 
      * @return the key of the page
      */
     long getPageKey();
+
+    /**
+     * Serializing to given dataput
+     * 
+     * @param pOutput
+     *            to serialize to
+     * @throws TTIOException
+     */
+    void serialize(final DataOutput pOutput) throws TTIOException;
 
 }

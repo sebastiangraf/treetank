@@ -42,10 +42,7 @@ public class StandardSettings extends AbstractModule {
     private static byte[] keyValue = new byte[] {
         'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k'
     };
-    public static final Key KEY;
-    static {
-        KEY = new SecretKeySpec(keyValue, "AES");
-    }
+    public static final Key KEY = new SecretKeySpec(keyValue, "AES");
 
     @Override
     protected void configure() {
@@ -98,8 +95,8 @@ public class StandardSettings extends AbstractModule {
 
     private static String[] getCredentials() {
         File userStore =
-            new File(System.getProperty("user.home"), new StringBuilder(".imagecredentials").append(
-                File.separator).append("aws.properties").toString());
+            new File(System.getProperty("user.home"), new StringBuilder(".credentials")
+                .append(File.separator).append("aws.properties").toString());
         if (!userStore.exists()) {
             return new String[0];
         } else {

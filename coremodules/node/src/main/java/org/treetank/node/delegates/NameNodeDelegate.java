@@ -29,13 +29,17 @@
  */
 package org.treetank.node.delegates;
 
+import static com.google.common.base.Objects.toStringHelper;
+
+import java.io.DataOutput;
+import java.io.IOException;
+
+import org.treetank.exception.TTIOException;
 import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.INode;
 
 import com.google.common.hash.Hasher;
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
 
 /**
  * Delegate method for all nodes containing \"naming\"-data. That means that
@@ -90,7 +94,6 @@ public class NameNodeDelegate implements INode, INameNode {
     public long getHash() {
         return mDelegate.getHash();
     }
-
 
     /**
      * Delegate method for getNodeKey.
@@ -216,25 +219,24 @@ public class NameNodeDelegate implements INode, INameNode {
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("NameNodeDelegate [mDelegate=");
-        builder.append(mDelegate);
-        builder.append(", mNameKey=");
-        builder.append(mNameKey);
-        builder.append(", mUriKey=");
-        builder.append(mUriKey);
-        builder.append("]");
-        return builder.toString();
+        return toStringHelper(this).add("mDelegate", mDelegate).add("mNameKey", mNameKey).add("mUriKey",
+            mUriKey).toString();
     }
 
     /**
-     * {@inheritDoc}
+     * Serializing to given dataput
+     * 
+     * @param pOutput
+     *            to serialize to
+     * @throws TTIOException
      */
-    @Override
-    public byte[] getByteRepresentation() {
-        final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
-        pOutput.writeInt(getNameKey());
-        pOutput.writeInt(getURIKey());
-        return pOutput.toByteArray();
+    public void serialize(final DataOutput pOutput) throws TTIOException {
+        try {
+            pOutput.writeInt(getNameKey());
+            pOutput.writeInt(getURIKey());
+        } catch (final IOException exc) {
+            throw new TTIOException(exc);
+        }
     }
+
 }

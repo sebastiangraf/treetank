@@ -1,7 +1,11 @@
 package org.treetank.iscsi.node;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+
 import org.treetank.api.IMetaEntry;
 import org.treetank.api.IMetaEntryFactory;
+import org.treetank.exception.TTIOException;
 
 /**
  * Implementation for iSCSI Meta information, at the moment not really used.
@@ -12,11 +16,10 @@ import org.treetank.api.IMetaEntryFactory;
 public class ISCSIMetaPageFactory implements IMetaEntryFactory {
 
     @Override
-    public IMetaEntry deserializeEntry(byte[] pData) {
+    public IMetaEntry deserializeEntry(DataInput pData) {
         return new IMetaEntry() {
             @Override
-            public byte[] getByteRepresentation() {
-                return new byte[0];
+            public void serialize(DataOutput pOutput) throws TTIOException {
             }
         };
     }

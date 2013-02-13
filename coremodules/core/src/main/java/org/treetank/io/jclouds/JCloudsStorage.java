@@ -121,7 +121,7 @@ public class JCloudsStorage implements IBackend {
             mBlobStore.deleteContainer(mProperties.getProperty(ContructorProps.RESOURCE));
             returnVal = true;
         }
+        mContext.close();
         return returnVal;
     }
-
 }
