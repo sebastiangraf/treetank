@@ -3,8 +3,10 @@
  */
 package org.treetank.page;
 
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertNotSame;
 import static org.testng.AssertJUnit.assertTrue;
-
+import static org.testng.AssertJUnit.assertFalse;
 import java.util.Arrays;
 
 import org.testng.annotations.DataProvider;
@@ -35,7 +37,7 @@ public class IPageTest {
      * 
      * @param clazz
      *            IPage as class
-     * @param pHandlers
+     * @param pPages
      *            different pages
      * @throws TTIOException
      */
@@ -55,7 +57,32 @@ public class IPageTest {
             byte[] secondSerialized = output.toByteArray();
             assertTrue(new StringBuilder("Check for ").append(page.getClass()).append(" failed.").toString(),
                 Arrays.equals(firstSerialized, secondSerialized));
+
         }
+    }
+
+    /**
+     * Test method for {@link org.treetank.page.interfaces.IPage} and
+     * {@link org.treetank.page.interfaces.IPage#getByteRepresentation()}.
+     * 
+     * @param clazz
+     *            IPage as class
+     * @param pPages
+     *            different pages
+     * @throws TTIOException
+     */
+    @Test(dataProvider = "instantiatePages")
+    public void testEqualsAndHashCode(Class<IPage> clazz, IPage[] pPages) throws TTIOException {
+
+        for (int i = 0; i < pPages.length; i++) {
+            IPage onePage = pPages[i % pPages.length];
+            IPage secondPage = pPages[(i + 1) % pPages.length];
+            assertEquals(onePage.hashCode(), onePage.hashCode());
+            assertNotSame(onePage.hashCode(), secondPage.hashCode());
+            assertTrue(onePage.equals(onePage));
+            assertFalse(onePage.equals(secondPage));
+        }
+
     }
 
     /**

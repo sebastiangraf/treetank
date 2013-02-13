@@ -66,17 +66,6 @@ public final class MetaPage implements IPage {
     }
 
     /**
-     * Get name belonging to name key.
-     * 
-     * @param pKey
-     *            key identifying value.
-     * @return value of this key
-     */
-    public IMetaEntry getValue(final IMetaEntry pKey) {
-        return mMetaMap.get(pKey);
-    }
-
-    /**
      * Create name key given a name.
      * 
      * @param pKey
