@@ -95,8 +95,8 @@ public class StandardSettings extends AbstractModule {
 
     private static String[] getCredentials() {
         File userStore =
-            new File(System.getProperty("user.home"), new StringBuilder(".imagecredentials").append(
-                File.separator).append("aws.properties").toString());
+            new File(System.getProperty("user.home"), new StringBuilder(".credentials")
+                .append(File.separator).append("aws.properties").toString());
         if (!userStore.exists()) {
             return new String[0];
         } else {

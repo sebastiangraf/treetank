@@ -10,6 +10,7 @@ import java.util.Properties;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.treetank.CoreTestHelper;
+import org.treetank.access.conf.ContructorProps;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.StorageConfiguration;
@@ -21,8 +22,8 @@ import org.treetank.exception.TTIOException;
 import org.treetank.io.berkeley.BerkeleyStorage;
 import org.treetank.io.bytepipe.ByteHandlerPipeline;
 import org.treetank.io.bytepipe.Encryptor;
-import org.treetank.io.bytepipe.Zipper;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
+import org.treetank.io.bytepipe.Zipper;
 import org.treetank.io.jclouds.JCloudsStorage;
 import org.treetank.io.ram.RAMStorage;
 import org.treetank.page.DumbMetaEntryFactory;
@@ -65,7 +66,6 @@ public class IBackendTest {
                 .toString(), page1, page3);
             backendReader.close();
 
-            backend.close();
             backend.truncate();
         }
     }
@@ -74,7 +74,7 @@ public class IBackendTest {
     public void testOtherReferences(Class<IBackend> clazz, IBackend[] pBackends) throws TTException {
         // initializing structure
         Map<Long, IPage> pages = new HashMap<Long, IPage>();
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 200; i++) {
             pages.put(new Long(i), generatePage(i));
         }
 
@@ -98,7 +98,6 @@ public class IBackendTest {
             }
             backendReader.close();
 
-            backend.close();
             backend.truncate();
         }
     }
@@ -125,16 +124,15 @@ public class IBackendTest {
         INodeFactory nodeFac = new DumbNodeFactory();
         IMetaEntryFactory metaFac = new DumbMetaEntryFactory();
 
-        Object[][] returnVal =
+        Object[][] returnVal = {
             {
-                {
-                    IBackend.class,
-                    new IBackend[] {
-                        createBerkeleyStorage(nodeFac, handler, metaFac),
-                        createJCloudsStorage(nodeFac, handler, metaFac), new RAMStorage(handler)
-                    }
+                IBackend.class, new IBackend[] {
+                     createBerkeleyStorage(nodeFac, handler, metaFac),
+                     createLocalJCloudsStorage(nodeFac, handler, metaFac), new RAMStorage(handler)
+//                    createAWSJCloudsStorage(nodeFac, handler, metaFac)
                 }
-            };
+            }
+        };
         return returnVal;
     }
 
@@ -152,7 +150,22 @@ public class IBackendTest {
         return new BerkeleyStorage(props, pNodeFac, pMetaFac, pHandler);
     }
 
-    private static IBackend createJCloudsStorage(INodeFactory pNodeFac, IByteHandlerPipeline pHandler,
+    private static IBackend createAWSJCloudsStorage(INodeFactory pNodeFac, IByteHandlerPipeline pHandler,
+        IMetaEntryFactory pMetaFac) throws TTIOException {
+        File rootFolderToCreate = Files.createTempDir();
+        File fileToCreate =
+            new File(new File(new File(rootFolderToCreate, StorageConfiguration.Paths.Data.getFile()
+                .getName()), CoreTestHelper.RESOURCENAME), ResourceConfiguration.Paths.Data.getFile()
+                .getName());
+        fileToCreate.mkdirs();
+        Properties props =
+            StandardSettings.getStandardProperties(rootFolderToCreate.getAbsolutePath(),
+                CoreTestHelper.RESOURCENAME);
+        props.setProperty(ContructorProps.JCLOUDSTYPE, "aws-s3");
+        return new JCloudsStorage(props, pNodeFac, pMetaFac, pHandler);
+    }
+
+    private static IBackend createLocalJCloudsStorage(INodeFactory pNodeFac, IByteHandlerPipeline pHandler,
         IMetaEntryFactory pMetaFac) throws TTIOException {
         File rootFolderToCreate = Files.createTempDir();
         File fileToCreate =

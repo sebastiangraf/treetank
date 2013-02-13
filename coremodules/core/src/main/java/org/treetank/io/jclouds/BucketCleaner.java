@@ -24,12 +24,12 @@ public class BucketCleaner {
     public static void main(String[] args) {
         String[] awsCredentials = getCredentials();
         if (awsCredentials.length == 0) {
-            System.out.println("Please set credentials in .imagestore!");
+            System.out.println("Please set credentials in .credentials!");
             System.exit(-1);
         }
 
         String[] containerName = {
-            "test1359451392383-0", "test1359451503894-0", "test1359451364565-0", "test1359451328163-0", "grave928134589762"
+            "grave928134589762"
         };
 
         BlobStoreContext context =
@@ -54,7 +54,7 @@ public class BucketCleaner {
 
     private static String[] getCredentials() {
         File userStore =
-            new File(System.getProperty("user.home"), new StringBuilder(".imagecredentials").append(
+            new File(System.getProperty("user.home"), new StringBuilder(".credentials").append(
                 File.separator).append("aws.properties").toString());
         if (!userStore.exists()) {
             return new String[0];

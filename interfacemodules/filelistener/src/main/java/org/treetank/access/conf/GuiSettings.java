@@ -2,8 +2,6 @@ package org.treetank.access.conf;
 
 import java.security.Key;
 
-import javax.crypto.spec.SecretKeySpec;
-
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.SessionConfiguration.ISessionConfigurationFactory;
 import org.treetank.api.IMetaEntryFactory;
@@ -21,14 +19,6 @@ import org.treetank.revisioning.IRevisioning;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 public class GuiSettings extends StandardSettings {
-
-    private static byte[] keyValue = new byte[] {
-        'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k'
-    };
-    public static final Key KEY;
-    static {
-        KEY = new SecretKeySpec(keyValue, "AES");
-    }
 
     private final Class<? extends IBackend> backend;
 

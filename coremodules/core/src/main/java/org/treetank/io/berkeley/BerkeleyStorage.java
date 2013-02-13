@@ -195,6 +195,12 @@ public final class BerkeleyStorage implements IBackend {
      */
     @Override
     public synchronized boolean truncate() throws TTException {
+        mTxn.abort();
+        mDatabase.close();
+        if (mEnv.getDatabaseNames().contains(NAME)) {
+            mEnv.removeDatabase(null, NAME);
+        }
+        mEnv.close();
         return IOUtils.recursiveDelete(mFile);
     }
 

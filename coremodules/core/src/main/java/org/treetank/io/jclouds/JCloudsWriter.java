@@ -50,7 +50,6 @@ public class JCloudsWriter implements IBackendWriter {
             ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
             DataOutputStream dataOut = new DataOutputStream(mReader.mByteHandler.serialize(byteOut));
             pPage.serialize(dataOut);
-
             dataOut.close();
 
             BlobBuilder blobbuilder = mReader.mBlobStore.blobBuilder(Long.toString(pPage.getPageKey()));
@@ -59,7 +58,7 @@ public class JCloudsWriter implements IBackendWriter {
 
             mReader.mBlobStore.putBlob(mReader.mResourceName, blob);
             mReader.mCache.put(pPage.getPageKey(), pPage);
-        } catch (final IOException exc) {
+        } catch (final Exception exc) {
             throw new TTIOException(exc);
         }
     }
