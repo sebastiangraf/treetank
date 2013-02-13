@@ -93,6 +93,10 @@ public class IPageTest {
      */
     @DataProvider(name = "instantiatePages")
     public Object[][] instantiatePages() throws TTByteHandleException {
+        // UberPage setup
+        UberPage uberPage =
+            new UberPage(CoreTestHelper.random.nextLong(), CoreTestHelper.random.nextLong(),
+                CoreTestHelper.random.nextLong());
         // IndirectPage setup
         IndirectPage indirectPage = new IndirectPage(CoreTestHelper.random.nextLong());
         // RevisionRootPage setup
@@ -112,7 +116,7 @@ public class IPageTest {
         Object[][] returnVal = {
             {
                 IPage.class, new IPage[] {
-                    indirectPage, revRootPage, nodePage, metaPage
+                    indirectPage, revRootPage, nodePage, metaPage, uberPage
                 }
             }
         };
