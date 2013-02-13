@@ -46,16 +46,22 @@ public class JCloudsWriter implements IBackendWriter {
      */
     @Override
     public void write(final IPage pPage) throws TTIOException, TTByteHandleException {
-        ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
-        DataOutputStream dataOut = new DataOutputStream(mReader.mByteHandler.serialize(byteOut));
-        pPage.serialize(dataOut);
+        try {
+            ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+            DataOutputStream dataOut = new DataOutputStream(mReader.mByteHandler.serialize(byteOut));
+            pPage.serialize(dataOut);
 
-        BlobBuilder blobbuilder = mReader.mBlobStore.blobBuilder(Long.toString(pPage.getPageKey()));
-        Blob blob = blobbuilder.build();
-        blob.setPayload(byteOut.toByteArray());
+            dataOut.close();
 
-        mReader.mBlobStore.putBlob(mReader.mResourceName, blob);
-        mReader.mCache.put(pPage.getPageKey(), pPage);
+            BlobBuilder blobbuilder = mReader.mBlobStore.blobBuilder(Long.toString(pPage.getPageKey()));
+            Blob blob = blobbuilder.build();
+            blob.setPayload(byteOut.toByteArray());
+
+            mReader.mBlobStore.putBlob(mReader.mResourceName, blob);
+            mReader.mCache.put(pPage.getPageKey(), pPage);
+        } catch (final IOException exc) {
+            throw new TTIOException(exc);
+        }
     }
 
     /**
@@ -82,12 +88,12 @@ public class JCloudsWriter implements IBackendWriter {
         try {
             long key = page.getPageKey();
             write(page);
-
             BlobBuilder blobbuilder = mReader.mBlobStore.blobBuilder(Long.toString(-1L));
             Blob blob = blobbuilder.build();
             ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
             DataOutputStream dataOut = new DataOutputStream(byteOut);
             dataOut.writeLong(key);
+            dataOut.close();
             blob.setPayload(byteOut.toByteArray());
             mReader.mBlobStore.putBlob(mReader.mResourceName, blob);
         } catch (final IOException exc) {

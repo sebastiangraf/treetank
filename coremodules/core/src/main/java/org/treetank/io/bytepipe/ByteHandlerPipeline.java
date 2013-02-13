@@ -59,8 +59,8 @@ public final class ByteHandlerPipeline implements IByteHandlerPipeline {
      */
     public InputStream deserialize(final InputStream pToDeserialize) throws TTByteHandleException {
         InputStream lastInput = pToDeserialize;
-        for (int i = mParts.size() - 1; i >= 0; i--) {
-            lastInput = mParts.get(i).deserialize(lastInput);
+        for (IByteHandler part : mParts) {
+            lastInput = part.deserialize(lastInput);
         }
         return lastInput;
     }

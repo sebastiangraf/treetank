@@ -3,11 +3,12 @@
  */
 package org.treetank.io.bytepipe;
 
-import java.io.IOException;
+import static com.google.common.base.Objects.toStringHelper;
+
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.InflaterInputStream;
 
 import org.treetank.exception.TTByteHandleException;
 
@@ -23,24 +24,22 @@ public class Zipper implements IByteHandler {
      * {@inheritDoc}
      */
     public OutputStream serialize(final OutputStream pToSerialize) throws TTByteHandleException {
-//        try {
-//            return new GZIPOutputStream(pToSerialize);
-//        } catch (final IOException exc) {
-//            throw new TTByteHandleException(exc);
-//        }
-        return pToSerialize;
+        return new DeflaterOutputStream(pToSerialize);
     }
 
     /**
      * {@inheritDoc}
      */
     public InputStream deserialize(final InputStream pToDeserialize) throws TTByteHandleException {
-//        try {
-//            return new GZIPInputStream(pToDeserialize);
-//        } catch (final IOException exc) {
-//            throw new TTByteHandleException(exc);
-//        }
-        return pToDeserialize;
+        return new InflaterInputStream(pToDeserialize);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return toStringHelper(this).toString();
     }
 
 }

@@ -9,6 +9,7 @@ import static org.testng.AssertJUnit.assertTrue;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.Key;
 import java.util.Arrays;
@@ -21,9 +22,7 @@ import org.treetank.CoreTestHelper;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.exception.TTByteHandleException;
 
-import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
-import com.google.common.primitives.Bytes;
 
 /**
  * @author Sebastian Graf, University of Konstanz
@@ -42,24 +41,34 @@ public class IByteHandlerTest {
     public void testSerializeAndDeserialize(Class<IByteHandler> clazz, IByteHandler[] pHandlers)
         throws TTByteHandleException, IOException {
         for (final IByteHandler handler : pHandlers) {
-//            final byte[] bytes = CoreTestHelper.generateRandomBytes(10000);
-//
-//            ByteArrayOutputStream output = new ByteArrayOutputStream();
-//            OutputStream handledOutout = handler.serialize(output);
-//
-//            ByteArrayInputStream input = new ByteArrayInputStream(bytes);
-//            ByteStreams.copy(input, output);
-//
-//            assertFalse(new StringBuilder("Check for ").append(handler.getClass()).append(" failed.")
-//                .toString(), Arrays.equals(bytes, output.toByteArray()));
+            final int datasize = 10000;
+            final byte[] bytes = CoreTestHelper.generateRandomBytes(datasize);
 
-            // OutputStream deserialized = handler.deserialize(handledOutout);
-            //
-            //
-            //
-            //
-            // assertTrue(new StringBuilder("Check for ").append(handler.getClass()).append(" failed.")
-            // .toString(), Arrays.equals(bytes, output.toByteArray()));
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
+            OutputStream handledOutout = handler.serialize(output);
+
+            ByteArrayInputStream input = new ByteArrayInputStream(bytes);
+            ByteStreams.copy(input, handledOutout);
+            output.close();
+            handledOutout.close();
+            input.close();
+
+            final byte[] encoded = output.toByteArray();
+            assertFalse(new StringBuilder("Check for ").append(handler.getClass()).append(" failed.")
+                .toString(), Arrays.equals(bytes, encoded));
+
+            input = new ByteArrayInputStream(encoded);
+            InputStream handledInput = handler.deserialize(input);
+            output = new ByteArrayOutputStream();
+            ByteStreams.copy(handledInput, output);
+            output.close();
+            handledInput.close();
+            input.close();
+
+            final byte[] decoded = output.toByteArray();
+
+            assertTrue(new StringBuilder("Check for ").append(handler.getClass()).append(" failed.")
+                .toString(), Arrays.equals(bytes, decoded));
         }
     }
 
@@ -93,4 +102,5 @@ public class IByteHandlerTest {
             };
         return returnVal;
     }
+
 }

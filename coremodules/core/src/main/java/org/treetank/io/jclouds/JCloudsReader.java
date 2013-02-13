@@ -57,13 +57,12 @@ public class JCloudsReader implements IBackendReader {
     public UberPage readUber() throws TTIOException {
         try {
             Blob blobRetrieved = mBlobStore.getBlob(mResourceName, Long.toString(-1l));
-            DataInputStream datain =
-                new DataInputStream(mByteHandler.deserialize(blobRetrieved.getPayload().getInput()));
+            DataInputStream datain = new DataInputStream(blobRetrieved.getPayload().getInput());
             long uberpagekey = datain.readLong();
             final UberPage page = (UberPage)read(uberpagekey);
             datain.close();
             return page;
-        } catch (final IOException | TTByteHandleException exc) {
+        } catch (final IOException exc) {
             throw new TTIOException(exc);
         }
     }
@@ -82,8 +81,9 @@ public class JCloudsReader implements IBackendReader {
                 DataInputStream datain =
                     new DataInputStream(mByteHandler.deserialize(blobRetrieved.getPayload().getInput()));
                 returnval = mFac.deserializePage(datain);
+                datain.close();
                 mCache.put(pKey, returnval);
-            } catch (TTByteHandleException exc) {
+            } catch (IOException | TTByteHandleException exc) {
                 throw new TTIOException(exc);
             }
         }
