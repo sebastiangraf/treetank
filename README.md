@@ -47,8 +47,7 @@ Treetank is maintained by:
 
 Current subprojects are:
 
-* Binding to Filesystems and iSCSI (over jSCSI)
-* Implementing graphical user interface
+* Andreas Rain (Binding to Filesystems and iSCSI (over jSCSI) and Implementing graphical user interface)
 
 Concluded subprojects were:
 
