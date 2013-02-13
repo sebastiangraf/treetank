@@ -39,7 +39,6 @@ Any questions, just contact sebastian.graf AT uni-konstanz.de
 
 This work is released in the public domain under the BSD 3-clause license
 
-
 ##Involved People
 
 Treetank is maintained by:
@@ -48,14 +47,15 @@ Treetank is maintained by:
 
 Current subprojects are:
 
-* Wolfgang Miller (Binding of Treetank to cloud backends)
+* Binding to Filesystems and iSCSI (over jSCSI)
+* Implementing graphical user interface
 
 Concluded subprojects were:
 
+* Nuray Gürler (Maven Websites)
 * Patrick Lang (Encryption layer)
-* Johannes Lichtenberger (Visualization of temporal trees)
-* Johannes Lichtenberger (Evaluation of several versioning approaches)
-* Patrick Lang (Encryption layer)
+* Johannes Lichtenberger (Visualization of temporal trees and Evaluation of several versioning approaches)
+* Wolfgang Miller (Binding of Treetank to cloud backends)
 * Lukas Lewandowski (Jax-RX binding)
 * Tina Scherer (native XPath2 engine)
-* Marc Kramis (first drafts of Treetank core)
+* Marc Kramis (first draft1 of Treetank core)
