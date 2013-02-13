@@ -42,10 +42,7 @@ public class StandardSettings extends AbstractModule {
     private static byte[] keyValue = new byte[] {
         'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k'
     };
-    public static final Key KEY;
-    static {
-        KEY = new SecretKeySpec(keyValue, "AES");
-    }
+    public static final Key KEY = new SecretKeySpec(keyValue, "AES");
 
     @Override
     protected void configure() {

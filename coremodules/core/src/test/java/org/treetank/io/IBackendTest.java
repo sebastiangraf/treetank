@@ -20,6 +20,8 @@ import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.berkeley.BerkeleyStorage;
 import org.treetank.io.bytepipe.ByteHandlerPipeline;
+import org.treetank.io.bytepipe.Encryptor;
+import org.treetank.io.bytepipe.Zipper;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.io.jclouds.JCloudsStorage;
 import org.treetank.io.ram.RAMStorage;
@@ -36,6 +38,9 @@ import org.treetank.page.interfaces.IPage;
 import com.google.common.io.Files;
 
 public class IBackendTest {
+
+    private ByteHandlerPipeline handler = new ByteHandlerPipeline(new Encryptor(StandardSettings.KEY),
+        new Zipper());
 
     @Test(dataProvider = "instantiateBackend")
     public void testFirstRef(Class<IBackend> clazz, IBackend[] pBackends) throws TTException {
@@ -98,6 +103,16 @@ public class IBackendTest {
         }
     }
 
+    @Test(dataProvider = "instantiateBackend")
+    public void testHandler(Class<IBackend> clazz, IBackend[] pBackends) throws TTException {
+        // initializing structure
+
+        // checking for backends
+        for (final IBackend backend : pBackends) {
+            assertEquals(handler.toString(), backend.getByteHandler().toString());
+        }
+    }
+
     /**
      * Providing different implementations of the {@link IBackend}s.
      * 
@@ -109,7 +124,6 @@ public class IBackendTest {
 
         INodeFactory nodeFac = new DumbNodeFactory();
         IMetaEntryFactory metaFac = new DumbMetaEntryFactory();
-        IByteHandlerPipeline handler = new ByteHandlerPipeline();
 
         Object[][] returnVal =
             {

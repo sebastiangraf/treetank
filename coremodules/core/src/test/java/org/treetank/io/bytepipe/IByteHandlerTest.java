@@ -20,6 +20,7 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.treetank.CoreTestHelper;
 import org.treetank.access.conf.SessionConfiguration;
+import org.treetank.access.conf.StandardSettings;
 import org.treetank.exception.TTByteHandleException;
 
 import com.google.common.io.ByteStreams;
@@ -94,9 +95,10 @@ public class IByteHandlerTest {
                 {
                     IByteHandler.class,
                     new ByteHandlerPipeline[] {
-                        new ByteHandlerPipeline(new Encryptor()), new ByteHandlerPipeline(new Zipper()),
-                        new ByteHandlerPipeline(new Encryptor(), new Zipper()),
-                        new ByteHandlerPipeline(new Zipper(), new Encryptor())
+                        new ByteHandlerPipeline(new Encryptor(StandardSettings.KEY)),
+                        new ByteHandlerPipeline(new Zipper()),
+                        new ByteHandlerPipeline(new Encryptor(StandardSettings.KEY), new Zipper()),
+                        new ByteHandlerPipeline(new Zipper(), new Encryptor(StandardSettings.KEY))
                     }
                 }
             };

@@ -250,7 +250,7 @@ public final class ResourceConfiguration {
             jsonWriter.endObject();
             jsonWriter.close();
             fileWriter.close();
-        } catch (IOException exc) {
+        } catch (final IOException exc) {
             throw new TTIOException(exc);
         }
     }

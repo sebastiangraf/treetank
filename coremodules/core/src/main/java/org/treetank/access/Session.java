@@ -126,9 +126,7 @@ public final class Session implements ISession {
         if (!mClosed) {
             // Forcibly close all open transactions.
             for (final IPageReadTrx rtx : mPageTrxs) {
-                if (!rtx.close()) {
-                    return false;
-                }
+                rtx.close();
             }
 
             // Immediately release all resources.

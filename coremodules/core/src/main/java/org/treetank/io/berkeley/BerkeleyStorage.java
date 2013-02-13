@@ -35,6 +35,8 @@ import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Properties;
 
 import org.treetank.access.conf.ContructorProps;
@@ -219,8 +221,10 @@ public final class BerkeleyStorage implements IBackend {
         @Override
         public IPage entryToObject(final TupleInput arg0) {
             try {
-                final DataInput in = new DataInputStream(mByteHandler.deserialize(arg0));
+                final InputStream handledStream = mByteHandler.deserialize(arg0);
+                final DataInput in = new DataInputStream(handledStream);
                 final IPage returnVal = mFac.deserializePage(in);
+                handledStream.close();
                 arg0.close();
                 return returnVal;
             } catch (IOException | TTException exc) {
@@ -234,8 +238,10 @@ public final class BerkeleyStorage implements IBackend {
         @Override
         public void objectToEntry(final IPage arg0, final TupleOutput arg1) {
             try {
-                final DataOutput output = new DataOutputStream(mByteHandler.serialize(arg1));
+                final OutputStream handledStream = mByteHandler.serialize(arg1);
+                final DataOutput output = new DataOutputStream(handledStream);
                 arg0.serialize(output);
+                handledStream.close();
                 arg1.close();
             } catch (IOException | TTException exc) {
                 throw new RuntimeException(exc);

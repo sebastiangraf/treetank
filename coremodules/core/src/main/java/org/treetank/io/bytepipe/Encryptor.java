@@ -7,7 +7,8 @@ import static com.google.common.base.Objects.toStringHelper;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
+import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.Cipher;
@@ -15,8 +16,9 @@ import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
 import javax.crypto.NoSuchPaddingException;
 
-import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.exception.TTByteHandleException;
+
+import com.google.inject.Inject;
 
 /**
  * Decorator for encrypting any content.
@@ -25,6 +27,20 @@ import org.treetank.exception.TTByteHandleException;
  * 
  */
 public class Encryptor implements IByteHandler {
+
+    /** Key for de-/encryption. */
+    private final Key mKey;
+
+    /**
+     * Constructor.
+     * 
+     * @param pKey
+     *            to be injected
+     */
+    @Inject
+    public Encryptor(final Key pKey) {
+        mKey = pKey;
+    }
 
     private static final String ALGORITHM = "AES";
 
@@ -45,9 +61,9 @@ public class Encryptor implements IByteHandler {
      */
     public OutputStream serialize(final OutputStream pToSerialize) throws TTByteHandleException {
         try {
-            CIPHER.init(Cipher.ENCRYPT_MODE, SessionConfiguration.getInstance().getKey());
+            CIPHER.init(Cipher.ENCRYPT_MODE, mKey);
             return new CipherOutputStream(pToSerialize, CIPHER);
-        } catch (final GeneralSecurityException exc) {
+        } catch (final InvalidKeyException exc) {
             throw new TTByteHandleException(exc);
         }
     }
@@ -57,9 +73,9 @@ public class Encryptor implements IByteHandler {
      */
     public InputStream deserialize(InputStream pToDeserialize) throws TTByteHandleException {
         try {
-            CIPHER.init(Cipher.DECRYPT_MODE, SessionConfiguration.getInstance().getKey());
+            CIPHER.init(Cipher.DECRYPT_MODE, mKey);
             return new CipherInputStream(pToDeserialize, CIPHER);
-        } catch (final GeneralSecurityException exc) {
+        } catch (final InvalidKeyException exc) {
             throw new TTByteHandleException(exc);
         }
 
