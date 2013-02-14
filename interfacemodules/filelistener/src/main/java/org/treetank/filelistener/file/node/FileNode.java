@@ -93,10 +93,6 @@ public class FileNode implements INode {
     }
 
     @Override
-    public void setHash(long pHash) {
-    }
-
-    @Override
     public long getHash() {
         return this.nodeKey * nextNodeKey * 31;
     }

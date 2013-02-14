@@ -94,14 +94,6 @@ public class DumbNodeFactory implements INodeFactory {
          * {@inheritDoc}
          */
         @Override
-        public void setHash(long pHash) {
-            mHash = pHash;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
         public long getHash() {
             return mHash;
         }

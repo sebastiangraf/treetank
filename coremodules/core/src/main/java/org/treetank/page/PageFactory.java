@@ -31,7 +31,6 @@ import static com.google.common.base.Objects.toStringHelper;
 
 import java.io.DataInput;
 import java.io.IOException;
-import java.util.Objects;
 
 import org.treetank.api.IMetaEntry;
 import org.treetank.api.IMetaEntryFactory;
@@ -131,22 +130,6 @@ public final class PageFactory {
         } catch (final IOException exc) {
             throw new TTIOException(exc);
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        return Objects.hash(mNodeFac, mEntryFac);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(Object obj) {
-        return this.hashCode() == obj.hashCode();
     }
 
     /**

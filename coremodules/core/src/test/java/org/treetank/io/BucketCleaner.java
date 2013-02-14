@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.treetank.io.jclouds;
+package org.treetank.io;
 
 import java.io.File;
 import java.io.FileReader;

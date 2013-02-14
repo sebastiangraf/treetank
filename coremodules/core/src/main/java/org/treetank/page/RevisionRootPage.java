@@ -95,6 +95,9 @@ public final class RevisionRootPage implements IRevisionPage, IReferencePage {
         return mMaxNodeKey++;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long getRevision() {
         return mRevision;
@@ -126,11 +129,17 @@ public final class RevisionRootPage implements IRevisionPage, IReferencePage {
         return mPageKey;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long[] getReferenceKeys() {
         return mReferenceKeys;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setReferenceKey(int pIndex, long pKey) {
         mReferenceKeys[pIndex] = pKey;
