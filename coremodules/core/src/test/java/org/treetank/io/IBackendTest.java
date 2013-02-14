@@ -74,7 +74,7 @@ public class IBackendTest {
     public void testOtherReferences(Class<IBackend> clazz, IBackend[] pBackends) throws TTException {
         // initializing structure
         Map<Long, IPage> pages = new HashMap<Long, IPage>();
-        for (int i = 0; i < 200; i++) {
+        for (int i = 0; i < 100; i++) {
             pages.put(new Long(i), generatePage(i));
         }
 
@@ -124,15 +124,17 @@ public class IBackendTest {
         INodeFactory nodeFac = new DumbNodeFactory();
         IMetaEntryFactory metaFac = new DumbMetaEntryFactory();
 
-        Object[][] returnVal = {
+        Object[][] returnVal =
             {
-                IBackend.class, new IBackend[] {
-                     createBerkeleyStorage(nodeFac, handler, metaFac),
-                     createLocalJCloudsStorage(nodeFac, handler, metaFac), new RAMStorage(handler)
-//                    createAWSJCloudsStorage(nodeFac, handler, metaFac)
+                {
+                    IBackend.class,
+                    new IBackend[] {
+                        createBerkeleyStorage(nodeFac, handler, metaFac),
+                        createLocalJCloudsStorage(nodeFac, handler, metaFac), new RAMStorage(handler)
+//                        createAWSJCloudsStorage(nodeFac, handler, metaFac)
+                    }
                 }
-            }
-        };
+            };
         return returnVal;
     }
 
