@@ -28,7 +28,6 @@
 package org.treetank.access;
 
 import static com.google.common.base.Objects.toStringHelper;
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.treetank.access.PageReadTrx.nodePageOffset;
