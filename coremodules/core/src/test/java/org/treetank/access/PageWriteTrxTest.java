@@ -3,12 +3,13 @@
  */
 package org.treetank.access;
 
+import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertNull;
 import static org.testng.AssertJUnit.assertTrue;
-import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.fail;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
