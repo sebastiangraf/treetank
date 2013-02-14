@@ -102,10 +102,10 @@ public class WorkerHelperTest {
     @BeforeMethod
     public void setUp() throws FileNotFoundException, TTException {
         CoreTestHelper.deleteEverything();
-        CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile());
+        CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile());
         workerHelper = WorkerHelper.getInstance();
         treetank =
-            new DatabaseRepresentation(CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile()),
+            new DatabaseRepresentation(CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile()),
                 mStorageFac, mRevisioning);
         InputStream inputfile = WorkerHelperTest.class.getClass().getResourceAsStream("/factbook.xml");
         treetank.shred(inputfile, RESOURCENAME);

@@ -49,7 +49,7 @@ public class ResourceConfigurationTest {
     @Test
     public void testDeSerialize() throws Exception {
         Properties props = StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(), CoreTestHelper.RESOURCENAME);
-        CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile());
+        CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile());
         ResourceConfiguration resConf = mResourceConfig.create(props);
         CoreTestHelper.createResource(resConf);
         ResourceConfiguration serializedConf =

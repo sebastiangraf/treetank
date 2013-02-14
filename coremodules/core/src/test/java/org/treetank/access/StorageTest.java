@@ -159,7 +159,7 @@ public class StorageTest {
         ISession sameSession =
             mStorage.getSession(new SessionConfiguration(mResource.mProperties
                 .getProperty(ContructorProps.RESOURCE), null));
-        assertTrue(session == sameSession);
+        assertEquals(session,sameSession);
     }
 
     @Test

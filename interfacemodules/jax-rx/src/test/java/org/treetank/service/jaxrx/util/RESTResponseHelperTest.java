@@ -106,7 +106,7 @@ public class RESTResponseHelperTest {
     @BeforeMethod
     public void before() throws TTException {
         CoreTestHelper.deleteEverything();
-        CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile());
+        CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile());
     }
 
     @AfterMethod
@@ -137,7 +137,7 @@ public class RESTResponseHelperTest {
         availResources.add(SHAKE);
 
         final DatabaseRepresentation treetank =
-            new DatabaseRepresentation(CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile()),
+            new DatabaseRepresentation(CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile()),
                 mStorageFac, mRevisioning);
         InputStream input = NodeIdRepresentationTest.class.getClass().getResourceAsStream(RESPATH);
         treetank.shred(input, FACT);
@@ -156,7 +156,7 @@ public class RESTResponseHelperTest {
         input.close();
 
         final StreamingOutput result =
-            RESTResponseHelper.buildResponseOfDomLR(CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1
+            RESTResponseHelper.buildResponseOfDomLR(CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1
                 .getFile()), mStorageFac, mRevisioning);
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         result.write(outputStream);

@@ -77,7 +77,7 @@ public class LRULogTest {
     @BeforeMethod
     public void setUp() throws TTException {
         CoreTestHelper.deleteEverything();
-        CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile());
+        CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile());
         Properties props =
             StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
                 CoreTestHelper.RESOURCENAME);

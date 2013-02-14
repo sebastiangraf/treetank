@@ -150,11 +150,11 @@ public class NodeIdRepresentationTest {
     @BeforeMethod
     public void setUp() throws Exception {
         CoreTestHelper.deleteEverything();
-        CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile());
+        CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile());
         ridWorker =
-            new NodeIdRepresentation(CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile()));
+            new NodeIdRepresentation(CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile()));
         treetank =
-            new DatabaseRepresentation(CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile()),
+            new DatabaseRepresentation(CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile()),
                 mStorageFac, mRevisioning);
         final InputStream input =
             NodeIdRepresentationTest.class.getClass().getResourceAsStream("/factbook.xml");
