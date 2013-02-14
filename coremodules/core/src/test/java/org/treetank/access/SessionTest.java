@@ -21,6 +21,7 @@ import org.treetank.ModuleFactory;
 import org.treetank.access.conf.ContructorProps;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
+import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.IPageReadTrx;
 import org.treetank.api.IPageWriteTrx;
@@ -127,12 +128,15 @@ public class SessionTest {
         // truncate open session
         try {
             // try to truncate the resource
+            assertTrue(mSession.close());
             mSession.truncate();
             fail();
         } catch (IllegalStateException exc) {
             // must be thrown
         }
-        assertTrue(mSession.close());
+        mSession =
+            CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile()).getSession(
+                new SessionConfiguration(CoreTestHelper.RESOURCENAME, StandardSettings.KEY));
         assertTrue(mSession.truncate());
         assertFalse(mSession.truncate());
     }

@@ -32,7 +32,6 @@ import static com.google.common.base.Preconditions.checkState;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -88,7 +87,7 @@ public final class Storage implements IStorage {
      */
     private Storage(final StorageConfiguration pStorageConf) throws TTException {
         mStorageConfig = pStorageConf;
-        mSessions = new HashMap<String, Session>();
+        mSessions = new ConcurrentHashMap<String, Session>();
 
     }
 
@@ -254,7 +253,7 @@ public final class Storage implements IStorage {
             "Please close all session before truncating!");
         if (existsResource(pSesConf.getResource())) {
             ISession session = getSession(pSesConf);
-            if (session.close() && session.truncate()) {
+            if (session.truncate()) {
                 return true;
             } else {
                 return false;
