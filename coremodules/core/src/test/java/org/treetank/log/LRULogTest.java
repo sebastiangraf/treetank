@@ -44,6 +44,7 @@ import org.treetank.CoreTestHelper;
 import org.treetank.ModuleFactory;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
+import org.treetank.access.conf.ContructorProps;
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.exception.TTException;
@@ -84,9 +85,8 @@ public class LRULogTest {
         mResource = mResourceConfig.create(props);
         CoreTestHelper.createResource(mResource);
         mCache =
-            new LRULog(new File(new File(CoreTestHelper.PATHS.PATH1.getFile(),
-                StorageConfiguration.Paths.Data.getFile().getName()), CoreTestHelper.RESOURCENAME),
-                mResource.mNodeFac, mResource.mMetaFac);
+            new LRULog(new File(props.getProperty(ContructorProps.RESOURCEPATH)), mResource.mNodeFac,
+                mResource.mMetaFac);
 
         mPages = new NodePage[LEVEL][ELEMENTS];
         insertData();

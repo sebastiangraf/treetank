@@ -6,6 +6,7 @@ package org.treetank.access.conf;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.security.Key;
 import java.util.Properties;
 
@@ -65,11 +66,13 @@ public class StandardSettings extends AbstractModule {
         Properties properties = new Properties();
         properties.setProperty(ContructorProps.STORAGEPATH, pathToStorage);
         properties.setProperty(ContructorProps.RESOURCE, resource);
+        properties.setProperty(ContructorProps.RESOURCEPATH, FileSystems.getDefault().getPath(pathToStorage,
+            StorageConfiguration.Paths.Data.getFile().getName(), resource).toString());
         properties.setProperty(ContructorProps.NUMBERTORESTORE, Integer.toString(4));
-        properties.setProperty(FilesystemConstants.PROPERTY_BASEDIR, new File(new File(new File(properties
-            .getProperty(ContructorProps.STORAGEPATH), StorageConfiguration.Paths.Data.getFile().getName()),
-            properties.getProperty(ContructorProps.RESOURCE)), ResourceConfiguration.Paths.Data.getFile()
-            .getName()).getAbsolutePath());
+
+        properties.setProperty(FilesystemConstants.PROPERTY_BASEDIR, FileSystems.getDefault().getPath(
+            properties.getProperty(ContructorProps.RESOURCEPATH),
+            ResourceConfiguration.Paths.Data.getFile().getName()).toString());
 
         // properties.setProperty(ContructorProps.JCLOUDSTYPE, "aws-s3");
         properties.setProperty(ContructorProps.JCLOUDSTYPE, "filesystem");

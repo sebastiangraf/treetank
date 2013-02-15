@@ -356,9 +356,8 @@ public final class Storage implements IStorage {
     private static void bootstrap(final Storage pStorage, final ResourceConfiguration pResourceConf)
         throws TTException {
         LRULog mLog =
-            new LRULog(new File(pResourceConf.mProperties
-                .getProperty(org.treetank.access.conf.ContructorProps.STORAGEPATH)), pResourceConf.mNodeFac,
-                pResourceConf.mMetaFac);
+            new LRULog(new File(pResourceConf.mProperties.getProperty(ContructorProps.RESOURCEPATH)),
+                pResourceConf.mNodeFac, pResourceConf.mMetaFac);
 
         UberPage uberPage = new UberPage(1, 0, 2);
         long newPageKey = uberPage.incrementPageCounter();

@@ -107,7 +107,6 @@ public final class PageWriteTrx implements IPageWriteTrx {
         setUpTransaction(pUberPage, pSession, pRepresentRev, pWriter);
     }
 
-
     /**
      * {@inheritDoc}
      */
@@ -374,7 +373,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
 
         mLog =
             new LRULog(new File(pSession.getConfig().mProperties
-                .getProperty(org.treetank.access.conf.ContructorProps.STORAGEPATH)),
+                .getProperty(org.treetank.access.conf.ContructorProps.RESOURCEPATH)),
                 pSession.getConfig().mNodeFac, pSession.getConfig().mMetaFac);
 
         mNewUber =
