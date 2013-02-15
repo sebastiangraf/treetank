@@ -6,7 +6,6 @@ import static org.testng.AssertJUnit.assertNotNull;
 import static org.testng.AssertJUnit.assertTrue;
 import static org.testng.AssertJUnit.fail;
 
-import java.io.File;
 import java.util.Properties;
 
 import org.testng.annotations.AfterMethod;
@@ -23,7 +22,6 @@ import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
 import org.treetank.exception.TTException;
-import org.treetank.io.IOUtils;
 
 import com.google.inject.Inject;
 

@@ -48,8 +48,8 @@ public class SessionTest {
         CoreTestHelper.deleteEverything();
         mHolder = CoreTestHelper.Holder.generateStorage();
         final ResourceConfiguration config =
-            mResourceConfig.create(StandardSettings.getProps(CoreTestHelper.PATHS.PATH1
-                .getFile().getAbsolutePath(), CoreTestHelper.RESOURCENAME));
+            mResourceConfig.create(StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
+                .getAbsolutePath(), CoreTestHelper.RESOURCENAME));
         CoreTestHelper.Holder.generateSession(mHolder, config);
     }
 
@@ -135,7 +135,12 @@ public class SessionTest {
             mHolder.getStorage().getSession(
                 new SessionConfiguration(CoreTestHelper.RESOURCENAME, StandardSettings.KEY));
         assertTrue(session.truncate());
-        assertFalse(session.truncate());
+        try {
+            session.truncate();
+        } catch (IllegalStateException exc) {
+            // must be thrown
+        }
+
     }
 
     @Test
