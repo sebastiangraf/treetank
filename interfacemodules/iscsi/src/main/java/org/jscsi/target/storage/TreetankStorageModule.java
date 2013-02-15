@@ -127,11 +127,11 @@ public class TreetankStorageModule implements IStorageModule {
 
         storage = Storage.openStorage(file);
 
-        Properties props = StandardSettings.getStandardProperties(file.getAbsolutePath(), "jscsi-target");
+        Properties props = StandardSettings.getPropsAndCreateStructure(file.getAbsolutePath(), "jscsi-target");
         ResourceConfiguration mResourceConfig =
             new ResourceConfiguration(props, backend, revision, new ByteNodeFactory(),
                 new ISCSIMetaPageFactory());
-        storage.createResource(mResourceConfig);
+        storage.intitializeResource(mResourceConfig);
 
         session = storage.getSession(new SessionConfiguration("jscsi-target", null));
         mRtx = new IscsiWriteTrx(session.beginPageWriteTransaction(), session);

@@ -52,16 +52,20 @@ public class Holder {
 
     private INodeReadTrx mNRtx;
 
-    public static Holder generateWtx(ResourceConfiguration pConf) throws TTException {
+    public static Holder generateWtx(CoreTestHelper.Holder pHolder, ResourceConfiguration pConf)
+        throws TTException {
         Holder holder = new Holder();
-        holder.mHolder = CoreTestHelper.Holder.generateWtx(pConf);
+        holder.mHolder = pHolder;
+        CoreTestHelper.Holder.generateWtx(pHolder, pConf);
         holder.mNRtx = new NodeWriteTrx(holder.mHolder.mSession, holder.mHolder.mPageWTrx, HashKind.None);
         return holder;
     }
 
-    public static Holder generateRtx(ResourceConfiguration pConf) throws TTException {
+    public static Holder generateRtx(CoreTestHelper.Holder pHolder, ResourceConfiguration pConf)
+        throws TTException {
         Holder holder = new Holder();
-        holder.mHolder = CoreTestHelper.Holder.generateRtx(pConf);
+        holder.mHolder = pHolder;
+        CoreTestHelper.Holder.generateRtx(pHolder, pConf);
         holder.mNRtx = new NodeReadTrx(holder.mHolder.mPageRTrx);
         return holder;
     }

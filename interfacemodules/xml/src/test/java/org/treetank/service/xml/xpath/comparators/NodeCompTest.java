@@ -65,15 +65,16 @@ public class NodeCompTest {
     @BeforeMethod
     public void setUp() throws TTException {
         CoreTestHelper.deleteEverything();
+        CoreTestHelper.Holder holder = CoreTestHelper.Holder.generateStorage();
         Properties props =
-            StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
-                CoreTestHelper.RESOURCENAME);
+            StandardSettings.getPropsAndCreateStructure(CoreTestHelper.PATHS.PATH1.getFile()
+                .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
         NodeTestHelper.createTestDocument(mResource);
-        holder = Holder.generateRtx(mResource);
+        this.holder = Holder.generateRtx(holder, mResource);
         comparator =
-            new NodeComp(holder.getNRtx(), new LiteralExpr(holder.getNRtx(), -2), new LiteralExpr(holder
-                .getNRtx(), -1), CompKind.IS);
+            new NodeComp(this.holder.getNRtx(), new LiteralExpr(this.holder.getNRtx(), -2), new LiteralExpr(
+                this.holder.getNRtx(), -1), CompKind.IS);
     }
 
     @AfterMethod

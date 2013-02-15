@@ -301,11 +301,14 @@ public class DatabaseRepresentation {
         ISession session = null;
         boolean abort = false;
         try {
-            Properties properties =
-                StandardSettings.getStandardProperties(mDatabase.getLocation().getAbsolutePath(), resource);
+            if (!mDatabase.existsResource(resource)) {
+                Properties properties =
+                    StandardSettings.getPropsAndCreateStructure(mDatabase.getLocation().getAbsolutePath(),
+                        resource);
 
-            mDatabase.createResource(new ResourceConfiguration(properties, mStorageFac, mRevision,
-                NODEFACTORY, METAFAC));
+                mDatabase.intitializeResource(new ResourceConfiguration(properties, mStorageFac, mRevision,
+                    NODEFACTORY, METAFAC));
+            }
 
             session = mDatabase.getSession(new SessionConfiguration(resource, StandardSettings.KEY));
             pWtx = session.beginPageWriteTransaction();

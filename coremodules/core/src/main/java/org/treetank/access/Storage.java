@@ -31,12 +31,14 @@ import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.treetank.access.conf.ContructorProps;
+import org.treetank.access.conf.ConstructorProps;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StorageConfiguration;
@@ -108,9 +110,7 @@ public final class Storage implements IStorage {
         throws TTIOException {
         boolean returnVal = true;
         // if file is existing, skipping
-        if (pStorageConfig.mFile.exists()) {
-            return false;
-        } else {
+        if (!pStorageConfig.mFile.exists() && pStorageConfig.mFile.mkdirs()) {
             returnVal =
                 IOUtils.createFolderStructure(pStorageConfig.mFile, StorageConfiguration.Paths.values());
             // serialization of the config
@@ -121,6 +121,8 @@ public final class Storage implements IStorage {
                 pStorageConfig.mFile.delete();
             }
             return returnVal;
+        } else {
+            return false;
         }
     }
 
@@ -180,31 +182,22 @@ public final class Storage implements IStorage {
      * {@inheritDoc}
      */
     @Override
-    public synchronized boolean createResource(final ResourceConfiguration pResConf) throws TTException {
+    public synchronized boolean intitializeResource(final ResourceConfiguration pResConf) throws TTException {
         boolean returnVal = true;
         // Setting the missing params in the settings, this overrides already
         // set data.
-        final File path =
-            new File(new File(pResConf.mProperties.getProperty(ContructorProps.STORAGEPATH),
-                StorageConfiguration.Paths.Data.getFile().getName()), pResConf.mProperties
-                .getProperty(ContructorProps.RESOURCE));
-        // if file is existing, skipping
-        if (path.exists()) {
-            return false;
-        } else {
-            returnVal = IOUtils.createFolderStructure(path, ResourceConfiguration.Paths.values());
+        final File path = new File(pResConf.mProperties.getProperty(ConstructorProps.RESOURCEPATH));
+        if (!checkIfResourceIsInitialized(path)) {
 
             // serialization of the config
             ResourceConfiguration.serialize(pResConf);
-            // if something was not correct, delete the partly created
-            // substructure
-            checkState(returnVal, "Failure, please remove folder %s manually!", pResConf.mProperties
-                .getProperty(ContructorProps.STORAGEPATH));
 
             // Boostrapping the Storage, this is quite dirty because of the initialization of the key, i
             // guess..however...
             bootstrap(this, pResConf);
             return returnVal;
+        } else {
+            return false;
         }
     }
 
@@ -319,13 +312,7 @@ public final class Storage implements IStorage {
         final File resourceFile =
             new File(new File(mStorageConfig.mFile, StorageConfiguration.Paths.Data.getFile().getName()),
                 pResourceName);
-        // if file is existing and folder is a tt-dataplace, delete it
-        if (resourceFile.exists()
-            && IOUtils.compareStructure(resourceFile, ResourceConfiguration.Paths.values()) == 0) {
-            return true;
-        } else {
-            return false;
-        }
+        return checkIfResourceIsInitialized(resourceFile);
     }
 
     /**
@@ -333,7 +320,15 @@ public final class Storage implements IStorage {
      */
     @Override
     public String[] listResources() {
-        return new File(mStorageConfig.mFile, StorageConfiguration.Paths.Data.getFile().getName()).list();
+        final File[] files =
+            new File(mStorageConfig.mFile, StorageConfiguration.Paths.Data.getFile().getName()).listFiles();
+        List<String> returnVal = new ArrayList<String>();
+        for (final File file : files) {
+            if (checkIfResourceIsInitialized(file)) {
+                returnVal.add(file.getName());
+            }
+        }
+        return returnVal.toArray(new String[returnVal.size()]);
     }
 
     /**
@@ -342,6 +337,20 @@ public final class Storage implements IStorage {
     @Override
     public File getLocation() {
         return mStorageConfig.mFile;
+    }
+
+    private static boolean checkIfResourceIsInitialized(final File pFile) {
+        boolean returnVal = pFile.exists();
+        if (returnVal) {
+            if (IOUtils.compareStructure(pFile, ResourceConfiguration.Paths.values()) == 0) {
+                if (new File(pFile, ResourceConfiguration.Paths.ConfigBinary.getFile().getName()).length() == 0) {
+                    returnVal = false;
+                }
+            } else {
+                returnVal = false;
+            }
+        }
+        return returnVal;
     }
 
     /**
@@ -355,8 +364,8 @@ public final class Storage implements IStorage {
      */
     private static void bootstrap(final Storage pStorage, final ResourceConfiguration pResourceConf)
         throws TTException {
-        LRULog mLog =
-            new LRULog(new File(pResourceConf.mProperties.getProperty(ContructorProps.RESOURCEPATH)),
+        final LRULog log =
+            new LRULog(new File(pResourceConf.mProperties.getProperty(ConstructorProps.RESOURCEPATH)),
                 pResourceConf.mNodeFac, pResourceConf.mMetaFac);
 
         UberPage uberPage = new UberPage(1, 0, 2);
@@ -374,7 +383,7 @@ public final class Storage implements IStorage {
             newPageKey = uberPage.incrementPageCounter();
             page.setReferenceKey(0, newPageKey);
             LogKey key = new LogKey(true, i, 0);
-            mLog.put(key, new LogValue(page, page));
+            log.put(key, new LogValue(page, page));
         }
 
         page = new RevisionRootPage(newPageKey, 0, 0);
@@ -384,13 +393,13 @@ public final class Storage implements IStorage {
         MetaPage namePage = new MetaPage(newPageKey);
         page.setReferenceKey(RevisionRootPage.NAME_REFERENCE_OFFSET, newPageKey);
         LogKey key = new LogKey(false, -1, -1);
-        mLog.put(key, new LogValue(namePage, namePage));
+        log.put(key, new LogValue(namePage, namePage));
 
         newPageKey = uberPage.incrementPageCounter();
         IndirectPage indirectPage = new IndirectPage(newPageKey);
         page.setReferenceKey(IReferencePage.GUARANTEED_INDIRECT_OFFSET, newPageKey);
         key = new LogKey(false, -1, 0);
-        mLog.put(key, new LogValue(page, page));
+        log.put(key, new LogValue(page, page));
 
         // --- Create node tree
         // ----------------------------------------------------
@@ -404,25 +413,25 @@ public final class Storage implements IStorage {
             newPageKey = uberPage.incrementPageCounter();
             page.setReferenceKey(0, newPageKey);
             key = new LogKey(false, i, 0);
-            mLog.put(key, new LogValue(page, page));
+            log.put(key, new LogValue(page, page));
             page = new IndirectPage(newPageKey);
         }
 
         final NodePage ndp = new NodePage(newPageKey);
         key = new LogKey(false, IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length, 0);
-        mLog.put(key, new LogValue(ndp, ndp));
+        log.put(key, new LogValue(ndp, ndp));
 
         IBackend storage = pResourceConf.mBackend;
         IBackendWriter writer = storage.getWriter();
 
         writer.writeUberPage(uberPage);
 
-        Iterator<LogValue> entries = mLog.getIterator();
+        Iterator<LogValue> entries = log.getIterator();
         while (entries.hasNext()) {
             LogValue next = entries.next();
             writer.write(next.getModified());
         }
-        mLog.close();
+        log.close();
         writer.close();
 
     }

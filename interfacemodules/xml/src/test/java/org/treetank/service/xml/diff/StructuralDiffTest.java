@@ -69,9 +69,12 @@ public final class StructuralDiffTest {
     @BeforeMethod
     public void setUp() throws TTException {
         CoreTestHelper.deleteEverything();
-        Properties props = StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(), CoreTestHelper.RESOURCENAME);
+        holder = CoreTestHelper.Holder.generateStorage();
+        Properties props =
+            StandardSettings.getPropsAndCreateStructure(CoreTestHelper.PATHS.PATH1.getFile()
+                .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
-        holder = Holder.generateSession(mResource);
+        Holder.generateSession(holder, mResource);
         mObserver = DiffTestHelper.createMock();
     }
 

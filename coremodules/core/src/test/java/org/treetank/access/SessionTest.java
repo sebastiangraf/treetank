@@ -10,15 +10,14 @@ import static org.testng.AssertJUnit.assertNotSame;
 import static org.testng.AssertJUnit.assertTrue;
 import static org.testng.AssertJUnit.fail;
 
-import java.util.Properties;
-
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.CoreTestHelper;
+import org.treetank.CoreTestHelper.Holder;
 import org.treetank.ModuleFactory;
-import org.treetank.access.conf.ContructorProps;
+import org.treetank.access.conf.ConstructorProps;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.SessionConfiguration;
@@ -42,18 +41,16 @@ public class SessionTest {
     @Inject
     private IResourceConfigurationFactory mResourceConfig;
 
-    private ISession mSession;
-
-    private ResourceConfiguration mResource;
+    private Holder mHolder;
 
     @BeforeMethod
     public void setUp() throws Exception {
         CoreTestHelper.deleteEverything();
-        Properties props =
-            StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
-                CoreTestHelper.RESOURCENAME);
-        mResource = mResourceConfig.create(props);
-        mSession = CoreTestHelper.Holder.generateSession(mResource).getSession();
+        mHolder = CoreTestHelper.Holder.generateStorage();
+        final ResourceConfiguration config =
+            mResourceConfig.create(StandardSettings.getPropsAndCreateStructure(CoreTestHelper.PATHS.PATH1
+                .getFile().getAbsolutePath(), CoreTestHelper.RESOURCENAME));
+        CoreTestHelper.Holder.generateSession(mHolder, config);
     }
 
     /**
@@ -67,16 +64,16 @@ public class SessionTest {
     @Test
     public void testBeginPageReadTransaction() throws TTException {
         // generate first valid read transaction
-        final IPageReadTrx pRtx1 = mSession.beginPageReadTransaction(0);
+        final IPageReadTrx pRtx1 = mHolder.getSession().beginPageReadTransaction(0);
         assertNotNull(pRtx1);
         // generate second valid read transaction
-        final IPageReadTrx pRtx2 = mSession.beginPageReadTransaction(0);
+        final IPageReadTrx pRtx2 = mHolder.getSession().beginPageReadTransaction(0);
         assertNotNull(pRtx2);
         // asserting they are different
         assertNotSame(pRtx1, pRtx2);
         // beginning transaction with invalid revision number
         try {
-            mSession.beginPageReadTransaction(1);
+            mHolder.getSession().beginPageReadTransaction(1);
             fail();
         } catch (IllegalArgumentException exc) {
             // must be thrown
@@ -86,18 +83,18 @@ public class SessionTest {
     @Test
     public void testBeginPageWriteTransaction() throws TTException {
         // generate first valid write transaction
-        final IPageWriteTrx pWtx1 = mSession.beginPageWriteTransaction();
+        final IPageWriteTrx pWtx1 = mHolder.getSession().beginPageWriteTransaction();
         assertNotNull(pWtx1);
         pWtx1.close();
         // generate second valid write transaction
-        final IPageWriteTrx pWtx2 = mSession.beginPageWriteTransaction(0);
+        final IPageWriteTrx pWtx2 = mHolder.getSession().beginPageWriteTransaction(0);
         assertNotNull(pWtx2);
         pWtx2.close();
         // asserting they are different
         assertNotSame(pWtx1, pWtx2);
         // beginning transaction with invalid revision number
         try {
-            mSession.beginPageWriteTransaction(1);
+            mHolder.getSession().beginPageWriteTransaction(1);
             fail();
         } catch (IllegalArgumentException exc) {
             // must be thrown
@@ -108,15 +105,15 @@ public class SessionTest {
     @Test
     public void testClose() throws TTException {
         // generate inlaying write transaction
-        final IPageWriteTrx pWtx1 = mSession.beginPageWriteTransaction();
+        final IPageWriteTrx pWtx1 = mHolder.getSession().beginPageWriteTransaction();
         // close the session
-        assertTrue(mSession.close());
-        assertFalse(mSession.close());
+        assertTrue(mHolder.getSession().close());
+        assertFalse(mHolder.getSession().close());
         assertTrue(pWtx1.isClosed());
         // beginning transaction with valid revision number on closed session
         try {
             // try to truncate the resource
-            mSession.beginPageWriteTransaction(0);
+            mHolder.getSession().beginPageWriteTransaction(0);
             fail();
         } catch (IllegalStateException exc) {
             // must be thrown
@@ -128,28 +125,28 @@ public class SessionTest {
         // truncate open session
         try {
             // try to truncate the resource
-            assertTrue(mSession.close());
-            mSession.truncate();
+            assertTrue(mHolder.getSession().close());
+            mHolder.getSession().truncate();
             fail();
         } catch (IllegalStateException exc) {
             // must be thrown
         }
-        mSession =
-            CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile()).getSession(
+        ISession session =
+            mHolder.getStorage().getSession(
                 new SessionConfiguration(CoreTestHelper.RESOURCENAME, StandardSettings.KEY));
-        assertTrue(mSession.truncate());
-        assertFalse(mSession.truncate());
+        assertTrue(session.truncate());
+        assertFalse(session.truncate());
     }
 
     @Test
     public void testGetMostRecentVersion() {
-        assertEquals(0, mSession.getMostRecentVersion());
+        assertEquals(0, mHolder.getSession().getMostRecentVersion());
     }
 
     @Test
     public void testGetConfig() {
-        assertEquals(mResource.mProperties.getProperty(ContructorProps.RESOURCE),
-            mSession.getConfig().mProperties.getProperty(ContructorProps.RESOURCE));
+        assertEquals(CoreTestHelper.RESOURCENAME, mHolder.getSession().getConfig().mProperties
+            .getProperty(ConstructorProps.RESOURCE));
     }
 
 }

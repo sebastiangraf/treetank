@@ -100,14 +100,15 @@ public final class TestNodeWrapperS9ApiXSLT {
     @BeforeMethod
     public void setUp() throws Exception {
         CoreTestHelper.deleteEverything();
+        holder = CoreTestHelper.Holder.generateStorage();
         final StorageConfiguration dbConfig = new StorageConfiguration(CoreTestHelper.PATHS.PATH1.getFile());
         Storage.createStorage(dbConfig);
         final IStorage databaseBooks = Storage.openStorage(CoreTestHelper.PATHS.PATH1.getFile());
         Properties props =
-            StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
-                CoreTestHelper.RESOURCENAME);
+            StandardSettings.getPropsAndCreateStructure(CoreTestHelper.PATHS.PATH1.getFile()
+                .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
         ResourceConfiguration resConfig = mResourceConfig.create(props);
-        databaseBooks.createResource(resConfig);
+        databaseBooks.intitializeResource(resConfig);
         final ISession session =
             databaseBooks.getSession(new SessionConfiguration(CoreTestHelper.RESOURCENAME,
                 StandardSettings.KEY));
@@ -120,7 +121,7 @@ public final class TestNodeWrapperS9ApiXSLT {
         wtx.close();
         session.close();
         databaseBooks.close();
-        holder = CoreTestHelper.Holder.generateSession(resConfig);
+        CoreTestHelper.Holder.generateSession(holder, resConfig);
 
         saxonTransform(BOOKS, STYLESHEET);
 

@@ -1,11 +1,12 @@
 package org.treetank.access;
 
+import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.AssertJUnit.assertNotNull;
 import static org.testng.AssertJUnit.assertTrue;
-import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.fail;
 
+import java.io.File;
 import java.util.Properties;
 
 import org.testng.annotations.AfterMethod;
@@ -14,7 +15,7 @@ import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.CoreTestHelper;
 import org.treetank.ModuleFactory;
-import org.treetank.access.conf.ContructorProps;
+import org.treetank.access.conf.ConstructorProps;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.SessionConfiguration;
@@ -22,6 +23,7 @@ import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
 import org.treetank.exception.TTException;
+import org.treetank.io.IOUtils;
 
 import com.google.inject.Inject;
 
@@ -45,9 +47,10 @@ public class StorageTest {
     @BeforeMethod
     public void setUp() throws Exception {
         CoreTestHelper.deleteEverything();
+        createStorage();
         Properties props =
-            StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
-                CoreTestHelper.RESOURCENAME);
+            StandardSettings.getPropsAndCreateStructure(CoreTestHelper.PATHS.PATH1.getFile()
+                .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
     }
 
@@ -65,16 +68,13 @@ public class StorageTest {
     @Test
     public void testCreateAndExistsAndTruncateStorage() throws TTException {
         // check if exists
-        assertFalse(Storage.existsStorage(CoreTestHelper.PATHS.PATH1.getFile()));
-        createStorage();
-        // check if exists
         assertTrue(Storage.existsStorage(CoreTestHelper.PATHS.PATH1.getFile()));
         // unsuccessful re-creation
         assertFalse(Storage.createStorage(CoreTestHelper.PATHS.PATH1.getConfig()));
         // check against non-existing storage
         assertFalse(Storage.existsStorage(CoreTestHelper.PATHS.PATH2.getFile()));
         // creating a new resource, successful
-        assertTrue(mStorage.createResource(mResource));
+        assertTrue(mStorage.intitializeResource(mResource));
         assertTrue(mStorage.close());
         // removing storage
         Storage.truncateStorage(CoreTestHelper.PATHS.PATH1.getConfig());
@@ -87,13 +87,12 @@ public class StorageTest {
         mStorage = Storage.openStorage(CoreTestHelper.PATHS.PATH1.getFile());
         assertNotNull(mStorage);
         // check against resource, should not exist
-        assertFalse(mStorage.existsResource(mResource.mProperties.getProperty(ContructorProps.RESOURCE)));
+        assertFalse(mStorage.existsResource(mResource.mProperties.getProperty(ConstructorProps.RESOURCE)));
 
     }
 
     @Test
     public void testOpenStorage() throws TTException {
-        createStorage();
         // get another storage and check if the internal singleton is pointing to the same reference
         IStorage storage = Storage.openStorage(CoreTestHelper.PATHS.PATH1.getFile());
         assertTrue(storage == mStorage);
@@ -109,21 +108,20 @@ public class StorageTest {
 
     @Test
     public void testCreateAndExistsAndTruncateResource() throws TTException {
-        createStorage();
         // creating a new resource, successful
-        assertTrue(mStorage.createResource(mResource));
+        assertTrue(mStorage.intitializeResource(mResource));
         // check if existing, successful
-        assertTrue(mStorage.existsResource(mResource.mProperties.getProperty(ContructorProps.RESOURCE)));
+        assertTrue(mStorage.existsResource(mResource.mProperties.getProperty(ConstructorProps.RESOURCE)));
         // creating the same resource, unsuccessful
-        assertFalse(mStorage.createResource(mResource));
+        assertFalse(mStorage.intitializeResource(mResource));
         // getting the session
         ISession session =
             mStorage.getSession(new SessionConfiguration(mResource.mProperties
-                .getProperty(ContructorProps.RESOURCE), null));
+                .getProperty(ConstructorProps.RESOURCE), null));
         try {
             // try to truncate the resource
             mStorage.truncateResource(new SessionConfiguration(mResource.mProperties
-                .getProperty(ContructorProps.RESOURCE), null));
+                .getProperty(ConstructorProps.RESOURCE), null));
             fail();
         } catch (IllegalStateException exc) {
             // must be thrown
@@ -131,46 +129,46 @@ public class StorageTest {
         assertTrue(session.close());
         // truncating resource
         assertTrue(mStorage.truncateResource(new SessionConfiguration(mResource.mProperties
-            .getProperty(ContructorProps.RESOURCE), null)));
+            .getProperty(ConstructorProps.RESOURCE), null)));
         // trying to truncate not existing resource
         assertFalse(mStorage.truncateResource(new SessionConfiguration("notExistingResource", null)));
         // check against resource, should not exist
-        assertFalse(mStorage.existsResource(mResource.mProperties.getProperty(ContructorProps.RESOURCE)));
+        assertFalse(mStorage.existsResource(mResource.mProperties.getProperty(ConstructorProps.RESOURCE)));
         // creating a new resource, successful
-        assertTrue(mStorage.createResource(mResource));
+        IOUtils.createFolderStructure(new File(mResource.mProperties
+            .getProperty(ConstructorProps.RESOURCEPATH)), ResourceConfiguration.Paths.values());
+        assertTrue(mStorage.intitializeResource(mResource));
         // check if existing, successful
-        assertTrue(mStorage.existsResource(mResource.mProperties.getProperty(ContructorProps.RESOURCE)));
+        assertTrue(mStorage.existsResource(mResource.mProperties.getProperty(ConstructorProps.RESOURCE)));
         // creating the same resource, unsuccessful
-        assertFalse(mStorage.createResource(mResource));
+        assertFalse(mStorage.intitializeResource(mResource));
     }
 
     @Test
     public void testGetSession() throws TTException {
-        createStorage();
         // creating a new resource, successful
-        assertTrue(mStorage.createResource(mResource));
+        assertTrue(mStorage.intitializeResource(mResource));
         // getting the session
         ISession session =
             mStorage.getSession(new SessionConfiguration(mResource.mProperties
-                .getProperty(ContructorProps.RESOURCE), null));
+                .getProperty(ConstructorProps.RESOURCE), null));
         // asserting new resource and bootstrap was successful
         assertEquals(0, session.getMostRecentVersion());
         // instance-check to have only one session per resource
         ISession sameSession =
             mStorage.getSession(new SessionConfiguration(mResource.mProperties
-                .getProperty(ContructorProps.RESOURCE), null));
-        assertEquals(session,sameSession);
+                .getProperty(ConstructorProps.RESOURCE), null));
+        assertEquals(session, sameSession);
     }
 
     @Test
     public void testClose() throws TTException {
-        createStorage();
         // creating a new resource, successful
-        assertTrue(mStorage.createResource(mResource));
+        assertTrue(mStorage.intitializeResource(mResource));
         // generating a session for test of inlying close
         ISession session =
             mStorage.getSession(new SessionConfiguration(mResource.mProperties
-                .getProperty(ContructorProps.RESOURCE), null));
+                .getProperty(ConstructorProps.RESOURCE), null));
         // closing storage with inlying session
         assertTrue(mStorage.close());
         // check that second close is unsuccessful
@@ -180,18 +178,20 @@ public class StorageTest {
 
     @Test
     public void testListResourcesAndLocation() throws TTException {
-        createStorage();
         // checking location
         assertEquals(CoreTestHelper.PATHS.PATH1.getFile(), mStorage.getLocation());
         // no resources, checking against it
         assertEquals(0, mStorage.listResources().length);
         // creating a resource and checking against the new resource
-        assertTrue(mStorage.createResource(mResource));
+        assertTrue(mStorage.intitializeResource(mResource));
         assertEquals(1, mStorage.listResources().length);
-        assertEquals(mResource.mProperties.getProperty(ContructorProps.RESOURCE), mStorage.listResources()[0]);
+        assertEquals(mResource.mProperties.getProperty(ConstructorProps.RESOURCE),
+            mStorage.listResources()[0]);
     }
 
     private void createStorage() throws TTException {
+        // check if exists
+        assertFalse(Storage.existsStorage(CoreTestHelper.PATHS.PATH1.getFile()));
         // Creating Storage, successful
         assertTrue(Storage.createStorage(CoreTestHelper.PATHS.PATH1.getConfig()));
         // Opening Storage and check it is not null

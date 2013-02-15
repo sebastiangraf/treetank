@@ -35,7 +35,6 @@ import org.treetank.access.Session;
 import org.treetank.access.Storage;
 
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import com.google.inject.assistedinject.Assisted;
 
 /**

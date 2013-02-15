@@ -199,9 +199,9 @@ public final class ResourceConfiguration {
         try {
 
             final File file =
-                new File(new File(new File(pConfig.mProperties.getProperty(ContructorProps.STORAGEPATH),
+                new File(new File(new File(pConfig.mProperties.getProperty(ConstructorProps.STORAGEPATH),
                     StorageConfiguration.Paths.Data.getFile().getName()), pConfig.mProperties
-                    .getProperty(ContructorProps.RESOURCE)), Paths.ConfigBinary.getFile().getName());
+                    .getProperty(ConstructorProps.RESOURCE)), Paths.ConfigBinary.getFile().getName());
 
             FileWriter fileWriter = new FileWriter(file);
             JsonWriter jsonWriter = new JsonWriter(fileWriter);

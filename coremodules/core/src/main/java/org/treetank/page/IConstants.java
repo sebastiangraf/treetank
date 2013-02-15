@@ -28,7 +28,7 @@
 package org.treetank.page;
 
 /**
- * <h1>ContructorProps</h1>
+ * <h1>ConstructorProps</h1>
  * 
  * <p>
  * Interface to hold all constants of the pagelayer.

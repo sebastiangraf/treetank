@@ -34,6 +34,7 @@ public class ResourceConfigurationTest {
     @BeforeMethod
     public void setUp() throws TTException {
         CoreTestHelper.deleteEverything();
+        CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile());
     }
 
     @AfterMethod
@@ -48,13 +49,15 @@ public class ResourceConfigurationTest {
      */
     @Test
     public void testDeSerialize() throws Exception {
-        Properties props = StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(), CoreTestHelper.RESOURCENAME);
+        Properties props =
+            StandardSettings.getPropsAndCreateStructure(CoreTestHelper.PATHS.PATH1.getFile()
+                .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
         CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile());
         ResourceConfiguration resConf = mResourceConfig.create(props);
         CoreTestHelper.createResource(resConf);
         ResourceConfiguration serializedConf =
-            ResourceConfiguration.deserialize(new File(props.getProperty(ContructorProps.STORAGEPATH)), props
-                .getProperty(ContructorProps.RESOURCE));
+            ResourceConfiguration.deserialize(new File(props.getProperty(ConstructorProps.STORAGEPATH)),
+                props.getProperty(ConstructorProps.RESOURCE));
         assertEquals(resConf.toString(), serializedConf.toString());
 
     }

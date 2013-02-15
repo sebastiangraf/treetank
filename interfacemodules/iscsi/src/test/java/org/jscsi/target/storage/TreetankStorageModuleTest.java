@@ -26,7 +26,6 @@ package org.jscsi.target.storage;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -65,11 +64,11 @@ public class TreetankStorageModuleTest {
 
     @BeforeClass
     public void setUp() throws TTException {
-
         CoreTestHelper.deleteEverything();
+        CoreTestHelper.Holder.generateStorage();
         Properties props =
-            StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
-                CoreTestHelper.RESOURCENAME);
+            StandardSettings.getPropsAndCreateStructure(CoreTestHelper.PATHS.PATH1.getFile()
+                .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
         CoreTestHelper.createResource(mResource);
 
@@ -88,7 +87,7 @@ public class TreetankStorageModuleTest {
         final byte[] readArray = new byte[TEST_FILE_SIZE];
 
         System.arraycopy(writeArray, 0, readArray, 0, TEST_FILE_SIZE);
-        
+
         // write
         storageModule.write(writeArray,// bytes (source)
             0,// bytesOffset

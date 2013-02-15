@@ -18,8 +18,10 @@ import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFact
 import org.treetank.access.conf.SessionConfiguration.ISessionConfigurationFactory;
 import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;
+import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackend;
 import org.treetank.io.IBackend.IBackendFactory;
+import org.treetank.io.IOUtils;
 import org.treetank.io.bytepipe.ByteHandlerPipeline;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.io.bytepipe.Zipper;
@@ -62,20 +64,21 @@ public class StandardSettings extends AbstractModule {
         install(new FactoryModuleBuilder().build(ISessionConfigurationFactory.class));
     }
 
-    public static Properties getStandardProperties(final String pathToStorage, final String resource) {
+    public static Properties getPropsAndCreateStructure(final String pathToStorage, final String resource)
+        throws TTIOException {
         Properties properties = new Properties();
-        properties.setProperty(ContructorProps.STORAGEPATH, pathToStorage);
-        properties.setProperty(ContructorProps.RESOURCE, resource);
-        properties.setProperty(ContructorProps.RESOURCEPATH, FileSystems.getDefault().getPath(pathToStorage,
+        properties.setProperty(ConstructorProps.STORAGEPATH, pathToStorage);
+        properties.setProperty(ConstructorProps.RESOURCE, resource);
+        properties.setProperty(ConstructorProps.RESOURCEPATH, FileSystems.getDefault().getPath(pathToStorage,
             StorageConfiguration.Paths.Data.getFile().getName(), resource).toString());
-        properties.setProperty(ContructorProps.NUMBERTORESTORE, Integer.toString(4));
+        properties.setProperty(ConstructorProps.NUMBERTORESTORE, Integer.toString(4));
 
         properties.setProperty(FilesystemConstants.PROPERTY_BASEDIR, FileSystems.getDefault().getPath(
-            properties.getProperty(ContructorProps.RESOURCEPATH),
+            properties.getProperty(ConstructorProps.RESOURCEPATH),
             ResourceConfiguration.Paths.Data.getFile().getName()).toString());
 
-        // properties.setProperty(ContructorProps.JCLOUDSTYPE, "aws-s3");
-        properties.setProperty(ContructorProps.JCLOUDSTYPE, "filesystem");
+        // properties.setProperty(ConstructorProps.JCLOUDSTYPE, "aws-s3");
+        properties.setProperty(ConstructorProps.JCLOUDSTYPE, "filesystem");
 
         String[] awsCredentials = getCredentials();
         if (awsCredentials.length == 0) {
@@ -93,7 +96,14 @@ public class StandardSettings extends AbstractModule {
         // "org.jclouds.imagestore.imagehoster.file.ImageHostFile");
         // properties.setProperty(ImageStoreConstants.PROPERTY_IMAGEHOSTER,
         // "org.jclouds.imagestore.imagehoster.flickr.ImageHostFlickr");
-        return properties;
+
+        if (IOUtils.createFolderStructure(new File(properties.getProperty(ConstructorProps.RESOURCEPATH)),
+            ResourceConfiguration.Paths.values())) {
+            return properties;
+        } else {
+            throw new IllegalStateException(
+                "Creation of resource not successful. Maybe the storage was not created beforehand?");
+        }
     }
 
     private static String[] getCredentials() {

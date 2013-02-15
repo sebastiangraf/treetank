@@ -47,9 +47,10 @@ public class Holder {
 
     private IIscsiReadTrx mIRtx;
 
-    public static Holder generateWtx(ResourceConfiguration pConf) throws TTException {
+    public static Holder generateWtx(CoreTestHelper.Holder pHolder, ResourceConfiguration pConf)
+        throws TTException {
         final Holder holder = new Holder();
-        holder.mHolder = CoreTestHelper.Holder.generateWtx(pConf);
+        holder.mHolder = pHolder;
         holder.mIRtx = new IscsiWriteTrx(holder.mHolder.mPageWTrx, holder.mHolder.mSession);
         return holder;
     }

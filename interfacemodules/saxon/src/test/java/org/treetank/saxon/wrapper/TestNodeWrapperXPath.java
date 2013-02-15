@@ -91,10 +91,13 @@ public final class TestNodeWrapperXPath {
     @BeforeMethod
     public void setUp() throws TTException, XPathFactoryConfigurationException {
         CoreTestHelper.deleteEverything();
-        Properties props = StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(), CoreTestHelper.RESOURCENAME);
+        CoreTestHelper.Holder holder = CoreTestHelper.Holder.generateStorage();
+        Properties props =
+            StandardSettings.getPropsAndCreateStructure(CoreTestHelper.PATHS.PATH1.getFile()
+                .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
         ResourceConfiguration resource = mResourceConfig.create(props);
         NodeTestHelper.createTestDocument(resource);
-        holder = Holder.generateRtx(resource);
+        this.holder = Holder.generateRtx(holder, resource);
 
         // Saxon setup.
         System.setProperty("javax.xml.xpath.XPathFactory:" + NamespaceConstant.OBJECT_MODEL_SAXON,

@@ -32,23 +32,21 @@ public class IOUtils {
     public static boolean createFolderStructure(final File pFile, IConfigurationPath[] pPaths)
         throws TTIOException {
         boolean returnVal = true;
-        returnVal = pFile.mkdirs();
-        if (returnVal) {
-            // creation of folder structure
-            for (IConfigurationPath paths : pPaths) {
-                final File toCreate = new File(pFile, paths.getFile().getName());
-                if (paths.isFolder()) {
-                    returnVal = toCreate.mkdir();
-                } else {
-                    try {
-                        returnVal = toCreate.createNewFile();
-                    } catch (final IOException exc) {
-                        throw new TTIOException(exc);
-                    }
+        pFile.mkdir();
+        // creation of folder structure
+        for (IConfigurationPath paths : pPaths) {
+            final File toCreate = new File(pFile, paths.getFile().getName());
+            if (paths.isFolder()) {
+                returnVal = toCreate.mkdir();
+            } else {
+                try {
+                    returnVal = toCreate.createNewFile();
+                } catch (final IOException exc) {
+                    throw new TTIOException(exc);
                 }
-                if (!returnVal) {
-                    break;
-                }
+            }
+            if (!returnVal) {
+                break;
             }
         }
         return returnVal;

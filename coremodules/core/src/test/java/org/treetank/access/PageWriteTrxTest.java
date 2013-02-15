@@ -50,10 +50,12 @@ public class PageWriteTrxTest {
      */
     @BeforeMethod
     public void setUp() throws Exception {
+        CoreTestHelper.deleteEverything();
+        mHolder = CoreTestHelper.Holder.generateStorage();
         final ResourceConfiguration config =
-            mResourceConfig.create(StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1
+            mResourceConfig.create(StandardSettings.getPropsAndCreateStructure(CoreTestHelper.PATHS.PATH1
                 .getFile().getAbsolutePath(), CoreTestHelper.RESOURCENAME));
-        mHolder = CoreTestHelper.Holder.generateSession(config);
+        CoreTestHelper.Holder.generateSession(mHolder, config);
     }
 
     /**

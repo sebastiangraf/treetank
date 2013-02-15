@@ -36,7 +36,7 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.treetank.access.conf.ContructorProps;
+import org.treetank.access.conf.ConstructorProps;
 import org.treetank.api.IMetaEntry;
 import org.treetank.api.INode;
 import org.treetank.api.IPageWriteTrx;
@@ -260,7 +260,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
                 checkState(pages.length > 0);
                 if (mNewRoot.getRevision()
                     % Integer.parseInt(mDelegate.mSession.getConfig().mProperties
-                        .getProperty(ContructorProps.NUMBERTORESTORE)) == 0) {
+                        .getProperty(ConstructorProps.NUMBERTORESTORE)) == 0) {
                     container =
                         mDelegate.mSession.getConfig().mRevision.combinePagesForModification(newPageKey,
                             pages, true);
@@ -373,7 +373,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
 
         mLog =
             new LRULog(new File(pSession.getConfig().mProperties
-                .getProperty(org.treetank.access.conf.ContructorProps.RESOURCEPATH)),
+                .getProperty(org.treetank.access.conf.ConstructorProps.RESOURCEPATH)),
                 pSession.getConfig().mNodeFac, pSession.getConfig().mMetaFac);
 
         mNewUber =

@@ -67,10 +67,11 @@ import org.treetank.exception.TTIOException;
  */
 public interface IStorage {
     /**
-     * Creation of a resource. Since databases can consist out of several
-     * resources, those can be created within this method. This includes the
-     * creation of a suitable folder structure as well as the serialization of
-     * the configuration of this resource.
+     * Initialization of a resource. Since databases can consist out of several
+     * resources, those can be created within this method. This includes only the initialization, the
+     * creation of a suitable folder structure must take beforehand for example within the creation of
+     * properties.
+     * This is necessary because of Guice relying on completely provided structures for their data-backends.
      * 
      * @param pResConf
      *            the config of the resource
@@ -78,7 +79,7 @@ public interface IStorage {
      * @throws TTIOException
      *             if anything happens while creating the resource
      */
-    boolean createResource(final ResourceConfiguration pResConf) throws TTException;
+    boolean intitializeResource(final ResourceConfiguration pResConf) throws TTException;
 
     /**
      * Getting the session associated within this database.

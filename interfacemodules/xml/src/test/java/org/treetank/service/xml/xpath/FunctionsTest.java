@@ -64,13 +64,13 @@ public class FunctionsTest {
     @BeforeMethod
     public void setUp() throws TTException {
         CoreTestHelper.deleteEverything();
+        CoreTestHelper.Holder holder = CoreTestHelper.Holder.generateStorage();
         Properties props =
-        StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
-            CoreTestHelper.RESOURCENAME);
+            StandardSettings.getPropsAndCreateStructure(CoreTestHelper.PATHS.PATH1.getFile()
+                .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
         NodeTestHelper.createTestDocument(mResource);
-        holder =
-            Holder.generateRtx(mResource);
+        this.holder = Holder.generateRtx(holder, mResource);
     }
 
     @AfterMethod
@@ -557,7 +557,5 @@ public class FunctionsTest {
                 result
             });
     }
-
-  
 
 }
