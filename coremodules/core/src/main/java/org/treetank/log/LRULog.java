@@ -102,7 +102,6 @@ public final class LRULog {
 
         final File realPlace =
             new File(pFile, ResourceConfiguration.Paths.TransactionLog.getFile().getName());
-        realPlace.mkdirs();
         try {
             final EnvironmentConfig config = new EnvironmentConfig();
             config.setAllowCreate(true);
