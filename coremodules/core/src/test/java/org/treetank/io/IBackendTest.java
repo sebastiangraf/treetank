@@ -47,8 +47,10 @@ public class IBackendTest {
 
         for (final IBackendCreator backendCreator : pBackends) {
             CoreTestHelper.deleteEverything();
-            CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile());
+            IOUtils.createFolderStructure(CoreTestHelper.PATHS.PATH1.getFile(), ResourceConfiguration.Paths
+                .values());
             final IBackend backend = backendCreator.getBackend();
+            backend.initialize();
             final UberPage page1 =
                 new UberPage(CoreTestHelper.random.nextLong(), CoreTestHelper.random.nextLong(),
                     CoreTestHelper.random.nextLong());
@@ -83,11 +85,11 @@ public class IBackendTest {
 
         // checking for backends
         for (final IBackendCreator backendCreator : pBackends) {
-
             CoreTestHelper.deleteEverything();
-            CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile());
+            IOUtils.createFolderStructure(CoreTestHelper.PATHS.PATH1.getFile(), ResourceConfiguration.Paths
+                .values());
             final IBackend backend = backendCreator.getBackend();
-
+            backend.initialize();
             final IBackendWriter backendWriter = backend.getWriter();
             for (Long i : pages.keySet()) {
                 // same instance check
@@ -117,8 +119,10 @@ public class IBackendTest {
         // checking for backends
         for (final IBackendCreator backendCreator : pBackends) {
             CoreTestHelper.deleteEverything();
-            CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile());
+            IOUtils.createFolderStructure(CoreTestHelper.PATHS.PATH1.getFile(), ResourceConfiguration.Paths
+                .values());
             final IBackend backend = backendCreator.getBackend();
+            backend.initialize();
             assertEquals(handler.toString(), backend.getByteHandler().toString());
             backend.truncate();
         }
@@ -155,12 +159,16 @@ public class IBackendTest {
                             return new RAMStorage(handler);
                         }
 
-                    }/*, new IBackendCreator() {
-                        @Override
-                        public IBackend getBackend() throws TTIOException {
-                            return createAWSJCloudsStorage(nodeFac, handler, metaFac);
-                        }
-                    }*/
+                    }
+                /*
+                 * , new IBackendCreator() {
+                 * 
+                 * @Override
+                 * public IBackend getBackend() throws TTIOException {
+                 * return createAWSJCloudsStorage(nodeFac, handler, metaFac);
+                 * }
+                 * }
+                 */
                 }
             }
         };
@@ -170,15 +178,17 @@ public class IBackendTest {
     private static IBackend createBerkeleyStorage(INodeFactory pNodeFac, IByteHandlerPipeline pHandler,
         IMetaEntryFactory pMetaFac) throws TTIOException {
         Properties props =
-            StandardSettings.getPropsAndCreateStructure(CoreTestHelper.PATHS.PATH1.getFile()
-                .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
+            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                CoreTestHelper.RESOURCENAME);
+        props.setProperty(ConstructorProps.RESOURCEPATH, CoreTestHelper.PATHS.PATH1.getFile()
+            .getAbsolutePath());
         return new BerkeleyStorage(props, pNodeFac, pMetaFac, pHandler);
     }
 
     private static IBackend createAWSJCloudsStorage(INodeFactory pNodeFac, IByteHandlerPipeline pHandler,
         IMetaEntryFactory pMetaFac) throws TTIOException {
         Properties props =
-            StandardSettings.getPropsAndCreateStructure(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
                 CoreTestHelper.RESOURCENAME);
         props.setProperty(ConstructorProps.JCLOUDSTYPE, "aws-s3");
         return new JCloudsStorage(props, pNodeFac, pMetaFac, pHandler);
@@ -187,7 +197,7 @@ public class IBackendTest {
     private static IBackend createLocalJCloudsStorage(INodeFactory pNodeFac, IByteHandlerPipeline pHandler,
         IMetaEntryFactory pMetaFac) throws TTIOException {
         Properties props =
-            StandardSettings.getPropsAndCreateStructure(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
                 CoreTestHelper.RESOURCENAME);
         return new JCloudsStorage(props, pNodeFac, pMetaFac, pHandler);
     }

@@ -79,7 +79,7 @@ public interface IStorage {
      * @throws TTIOException
      *             if anything happens while creating the resource
      */
-    boolean intitializeResource(final ResourceConfiguration pResConf) throws TTException;
+    boolean createResource(final ResourceConfiguration pResConf) throws TTException;
 
     /**
      * Getting the session associated within this database.

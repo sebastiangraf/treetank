@@ -32,7 +32,7 @@ public class IOUtils {
     public static boolean createFolderStructure(final File pFile, IConfigurationPath[] pPaths)
         throws TTIOException {
         boolean returnVal = true;
-        pFile.mkdir();
+        pFile.mkdirs();
         // creation of folder structure
         for (IConfigurationPath paths : pPaths) {
             final File toCreate = new File(pFile, paths.getFile().getName());

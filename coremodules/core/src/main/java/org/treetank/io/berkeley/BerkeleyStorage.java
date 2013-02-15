@@ -82,13 +82,13 @@ public final class BerkeleyStorage implements IBackend {
     private static final String NAME = "berkeleyDatabase";
 
     /** Berkeley Environment for the database. */
-    private final Environment mEnv;
+    private Environment mEnv;
 
     /** Transaction for DB-Operations. */
-    private final Transaction mTxn;
+    private Transaction mTxn;
 
     /** Storage instance per session. */
-    private final Database mDatabase;
+    private Database mDatabase;
 
     /** Binding for de/-serializing pages. */
     private final TupleBinding<IPage> mPageBinding;
@@ -127,6 +127,10 @@ public final class BerkeleyStorage implements IBackend {
         mPageBinding = new PageBinding();
         mByteHandler = pByteHandler;
         mFac = new PageFactory(pNodeFac, pMetaFac);
+
+    }
+
+    public void initialize() throws TTIOException {
         try {
             final EnvironmentConfig config = new EnvironmentConfig();
             config.setTransactional(true);
@@ -145,7 +149,6 @@ public final class BerkeleyStorage implements IBackend {
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
         }
-
     }
 
     /**

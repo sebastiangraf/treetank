@@ -87,6 +87,11 @@ public interface IBackend {
     boolean truncate() throws TTException;
 
     /**
+     * Initializing the storage.
+     */
+    void initialize() throws TTIOException;
+
+    /**
      * 
      * Factory for generating an {@link IBackend}-instance. Needed mainly
      * because of Guice-Assisted utilization.

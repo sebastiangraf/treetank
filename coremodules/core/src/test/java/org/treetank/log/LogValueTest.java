@@ -43,7 +43,7 @@ public class LogValueTest {
         CoreTestHelper.deleteEverything();
         CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile());
         Properties props =
-            StandardSettings.getPropsAndCreateStructure(CoreTestHelper.PATHS.PATH1.getFile()
+            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
                 .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
         mConf = mResourceConfig.create(props);
     }

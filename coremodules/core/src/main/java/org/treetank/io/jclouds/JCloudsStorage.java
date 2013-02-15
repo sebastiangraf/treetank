@@ -12,6 +12,7 @@ import org.treetank.access.conf.ConstructorProps;
 import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTException;
+import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackend;
 import org.treetank.io.IBackendReader;
 import org.treetank.io.IBackendWriter;
@@ -119,5 +120,10 @@ public class JCloudsStorage implements IBackend {
         }
         mContext.close();
         return returnVal;
+    }
+
+    @Override
+    public void initialize() throws TTIOException {
+        // not needed over here
     }
 }
