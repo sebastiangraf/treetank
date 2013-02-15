@@ -21,6 +21,7 @@ import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackend;
 import org.treetank.io.IBackend.IBackendFactory;
+import org.treetank.io.berkeley.BerkeleyStorage;
 import org.treetank.io.bytepipe.ByteHandlerPipeline;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.io.bytepipe.Zipper;
@@ -63,8 +64,7 @@ public class StandardSettings extends AbstractModule {
         install(new FactoryModuleBuilder().build(ISessionConfigurationFactory.class));
     }
 
-    public static Properties getProps(final String pathToStorage, final String resource)
-        throws TTIOException {
+    public static Properties getProps(final String pathToStorage, final String resource) throws TTIOException {
         Properties properties = new Properties();
         properties.setProperty(ConstructorProps.STORAGEPATH, pathToStorage);
         properties.setProperty(ConstructorProps.RESOURCE, resource);

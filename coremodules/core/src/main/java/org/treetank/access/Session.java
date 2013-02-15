@@ -99,7 +99,8 @@ public final class Session implements ISession {
 
     public IPageReadTrx beginPageReadTransaction(final long pRevKey) throws TTException {
         assertAccess(pRevKey);
-        final PageReadTrx trx = new PageReadTrx(this, mLastCommittedUberPage, pRevKey, mResourceConfig.mBackend.getReader());
+        final PageReadTrx trx =
+            new PageReadTrx(this, mLastCommittedUberPage, pRevKey, mResourceConfig.mBackend.getReader());
         mPageTrxs.add(trx);
         return trx;
     }
@@ -147,6 +148,15 @@ public final class Session implements ISession {
     public boolean truncate() throws TTException {
         checkState(!mClosed, "Session must be opened to truncate.");
         if (mResourceConfig.mBackend.truncate()) {
+            // Forcibly close all open transactions.
+            for (final IPageReadTrx rtx : mPageTrxs) {
+                rtx.close();
+            }
+            // Immediately release all resources.
+            mLastCommittedUberPage = null;
+            mPageTrxs.clear();
+            mDatabase.mSessions.remove(mSessionConfig.getResource());
+            mClosed = true;
             return IOUtils.recursiveDelete(new File(new File(mDatabase.getLocation(),
                 StorageConfiguration.Paths.Data.getFile().getName()), mSessionConfig.getResource()));
         } else {
