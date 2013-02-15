@@ -34,9 +34,9 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
+import org.treetank.CoreTestHelper;
 import org.treetank.Holder;
 import org.treetank.NodeModuleFactory;
-import org.treetank.CoreTestHelper;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.StandardSettings;
@@ -68,12 +68,13 @@ public class XMarkTest {
     @BeforeMethod
     public void setUp() throws Exception {
         CoreTestHelper.deleteEverything();
+        CoreTestHelper.Holder holder = CoreTestHelper.Holder.generateStorage();
         Properties props =
-        StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
-            CoreTestHelper.RESOURCENAME);
+            StandardSettings.getPropsAndCreateStructure(CoreTestHelper.PATHS.PATH1.getFile()
+                .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
-        holder = Holder.generateWtx(mResource);
-        new XMLShredder(holder.getNWtx(), XMLShredder.createFileReader(new File(XML)),
+        this.holder = Holder.generateWtx(holder, mResource);
+        new XMLShredder(this.holder.getNWtx(), XMLShredder.createFileReader(new File(XML)),
             EShredderInsert.ADDASFIRSTCHILD).call();
     }
 

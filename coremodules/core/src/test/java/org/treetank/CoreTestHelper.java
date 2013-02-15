@@ -138,7 +138,7 @@ public final class CoreTestHelper {
 
     public static final boolean createResource(final ResourceConfiguration resConf) throws TTException {
         final IStorage storage = CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile());
-        return storage.createResource(resConf);
+        return storage.intitializeResource(resConf);
     }
 
     /**
@@ -460,33 +460,29 @@ public final class CoreTestHelper {
         IPageReadTrx mPageRTrx;
         IPageWriteTrx mPageWTrx;
 
-        public static Holder generateStorage(ResourceConfiguration pConf) throws TTException {
+        public static Holder generateStorage() throws TTException {
             Holder holder = new Holder();
             holder.mStorage = CoreTestHelper.getStorage(PATHS.PATH1.getFile());
-            holder.mStorage.createResource(pConf);
             return holder;
         }
 
-        public static Holder generateSession(ResourceConfiguration pConf) throws TTException {
-            Holder holder = generateStorage(pConf);
-            holder.mSession =
-                holder.mStorage.getSession(new SessionConfiguration(CoreTestHelper.RESOURCENAME,
+        public static void generateSession(Holder pHolder, ResourceConfiguration pConf) throws TTException {
+            pHolder.mStorage.intitializeResource(pConf);
+            pHolder.mSession =
+                pHolder.mStorage.getSession(new SessionConfiguration(CoreTestHelper.RESOURCENAME,
                     StandardSettings.KEY));
-            return holder;
         }
 
-        public static Holder generateWtx(ResourceConfiguration pConf) throws TTException {
-            final Holder holder = generateSession(pConf);
-            holder.mPageWTrx = holder.mSession.beginPageWriteTransaction();
-            holder.mPageRTrx = holder.mPageWTrx;
-            return holder;
+        public static void generateWtx(Holder pHolder, ResourceConfiguration pConf) throws TTException {
+            generateSession(pHolder, pConf);
+            pHolder.mPageWTrx = pHolder.mSession.beginPageWriteTransaction();
+            pHolder.mPageRTrx = pHolder.mPageWTrx;
         }
 
-        public static Holder generateRtx(ResourceConfiguration pConf) throws TTException {
-            final Holder holder = generateSession(pConf);
-            holder.mPageRTrx =
-                holder.mSession.beginPageReadTransaction(holder.mSession.getMostRecentVersion());
-            return holder;
+        public static void generateRtx(Holder pHolder, ResourceConfiguration pConf) throws TTException {
+            generateSession(pHolder, pConf);
+            pHolder.mPageRTrx =
+                pHolder.mSession.beginPageReadTransaction(pHolder.mSession.getMostRecentVersion());
         }
 
         public IStorage getStorage() {

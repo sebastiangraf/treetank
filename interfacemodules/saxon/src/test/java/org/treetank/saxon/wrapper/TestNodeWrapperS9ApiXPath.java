@@ -70,11 +70,13 @@ public final class TestNodeWrapperS9ApiXPath {
     @BeforeMethod
     public void beforeMethod() throws TTException {
         CoreTestHelper.deleteEverything();
-        Properties props = StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(), CoreTestHelper.RESOURCENAME);
-        ResourceConfiguration mResource =
-            mResourceConfig.create(props);
+        CoreTestHelper.Holder holder = CoreTestHelper.Holder.generateStorage();
+        Properties props =
+            StandardSettings.getPropsAndCreateStructure(CoreTestHelper.PATHS.PATH1.getFile()
+                .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
+        ResourceConfiguration mResource = mResourceConfig.create(props);
         NodeTestHelper.createTestDocument(mResource);
-        holder = Holder.generateRtx(mResource);
+        this.holder = Holder.generateRtx(holder, mResource);
         XMLUnit.setIgnoreWhitespace(true);
     }
 
@@ -149,10 +151,9 @@ public final class TestNodeWrapperS9ApiXPath {
         }
         strBuilder.append("</result>");
 
-        assertEquals("expected pieces to be similar",
-            "<result><b xmlns:p=\"ns\">foo<c xmlns:p=\"ns\"/>\n"+
-        "</b><b xmlns:p=\"ns\" p:x=\"y\">\n   "
-                + "<c xmlns:p=\"ns\"/>bar</b></result>", strBuilder.toString());
+        assertEquals("expected pieces to be similar", "<result><b xmlns:p=\"ns\">foo<c xmlns:p=\"ns\"/>\n"
+            + "</b><b xmlns:p=\"ns\" p:x=\"y\">\n   " + "<c xmlns:p=\"ns\"/>bar</b></result>", strBuilder
+            .toString());
     }
 
     @Test

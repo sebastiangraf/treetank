@@ -7,7 +7,7 @@ package org.treetank.access.conf;
  * 
  * @author Sebastian Graf, University of Konstanz
  */
-public interface ContructorProps {
+public interface ConstructorProps {
 
     public static final String STORAGEPATH = "treetank.storagepath";
     

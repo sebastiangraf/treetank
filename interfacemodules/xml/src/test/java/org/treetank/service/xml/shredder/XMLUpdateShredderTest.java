@@ -78,11 +78,12 @@ public final class XMLUpdateShredderTest {
     @BeforeMethod
     public void setUp() throws TTException {
         CoreTestHelper.deleteEverything();
+        holder = CoreTestHelper.Holder.generateStorage();
         Properties props =
-            StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
-                CoreTestHelper.RESOURCENAME);
+            StandardSettings.getPropsAndCreateStructure(CoreTestHelper.PATHS.PATH1.getFile()
+                .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
-        holder = CoreTestHelper.Holder.generateSession(mResource);
+        CoreTestHelper.Holder.generateSession(holder, mResource);
         XMLUnit.setIgnoreComments(true);
         XMLUnit.setIgnoreWhitespace(true);
     }

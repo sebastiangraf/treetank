@@ -97,12 +97,13 @@ public class TestNodeWrapper {
     @BeforeMethod
     public void beforeMethod() throws TTException {
         CoreTestHelper.deleteEverything();
+        CoreTestHelper.Holder holder = CoreTestHelper.Holder.generateStorage();
         Properties props =
-            StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
-                CoreTestHelper.RESOURCENAME);
+            StandardSettings.getPropsAndCreateStructure(CoreTestHelper.PATHS.PATH1.getFile()
+                .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
         NodeTestHelper.createTestDocument(mResource);
-        holder = Holder.generateRtx(mResource);
+        this.holder = Holder.generateRtx(holder, mResource);
 
         final Processor proc = new Processor(false);
         final Configuration config = proc.getUnderlyingConfiguration();
@@ -173,9 +174,9 @@ public class TestNodeWrapper {
         Storage.createStorage(db2);
         final IStorage storage = Storage.openStorage(CoreTestHelper.PATHS.PATH2.getFile());
         Properties props =
-            StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH2.getFile().getAbsolutePath(),
-                CoreTestHelper.RESOURCENAME);
-        storage.createResource(mResourceConfig.create(props));
+            StandardSettings.getPropsAndCreateStructure(CoreTestHelper.PATHS.PATH2.getFile()
+                .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
+        storage.intitializeResource(mResourceConfig.create(props));
         final ISession session =
             storage.getSession(new SessionConfiguration(CoreTestHelper.RESOURCENAME, StandardSettings.KEY));
         final INodeWriteTrx wtx =

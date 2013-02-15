@@ -69,11 +69,12 @@ public class FullDiffTest {
     @BeforeMethod
     public void setUp() throws TTException {
         CoreTestHelper.deleteEverything();
+        holder = CoreTestHelper.Holder.generateStorage();
         Properties props =
-            StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
-                CoreTestHelper.RESOURCENAME);
+            StandardSettings.getPropsAndCreateStructure(CoreTestHelper.PATHS.PATH1.getFile()
+                .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
-        holder = Holder.generateSession(mResource);
+        Holder.generateSession(holder, mResource);
         mObserver = DiffTestHelper.createMock();
     }
 

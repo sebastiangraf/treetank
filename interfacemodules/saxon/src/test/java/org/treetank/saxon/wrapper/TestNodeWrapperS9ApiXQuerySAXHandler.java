@@ -71,12 +71,13 @@ public class TestNodeWrapperS9ApiXQuerySAXHandler {
     @BeforeMethod
     public void beforeMethod() throws Exception {
         CoreTestHelper.deleteEverything();
-        SaxonHelper.createBookDB(mResourceConfig);
+        holder = CoreTestHelper.Holder.generateStorage();
         Properties props =
-            StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
-                CoreTestHelper.RESOURCENAME);
+            StandardSettings.getPropsAndCreateStructure(CoreTestHelper.PATHS.PATH1.getFile()
+                .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
+        SaxonHelper.createBookDB(mResourceConfig);
         ResourceConfiguration mResource = mResourceConfig.create(props);
-        holder = CoreTestHelper.Holder.generateSession(mResource);
+        CoreTestHelper.Holder.generateSession(holder, mResource);
     }
 
     @AfterMethod

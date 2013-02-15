@@ -75,12 +75,13 @@ public class XMarkBenchTest {
     @BeforeMethod
     public void setUp() throws Exception {
         CoreTestHelper.deleteEverything();
+        CoreTestHelper.Holder holder = CoreTestHelper.Holder.generateStorage();
         Properties props =
-        StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
-            CoreTestHelper.RESOURCENAME);
+            StandardSettings.getPropsAndCreateStructure(CoreTestHelper.PATHS.PATH1.getFile()
+                .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
-        holder = Holder.generateWtx(mResource);
-        new XMLShredder(holder.getNWtx(), XMLShredder.createFileReader(new File(XML)),
+        this.holder = Holder.generateWtx(holder, mResource);
+        new XMLShredder(this.holder.getNWtx(), XMLShredder.createFileReader(new File(XML)),
             EShredderInsert.ADDASFIRSTCHILD).call();
     }
 
@@ -88,7 +89,7 @@ public class XMarkBenchTest {
     public void tearDown() throws TTException {
         CoreTestHelper.deleteEverything();
     }
-    
+
     @Test
     public void xMarkTest_Q1() throws TTXPathException {
         String query = xmbq.getQuery(1, FACTOR);

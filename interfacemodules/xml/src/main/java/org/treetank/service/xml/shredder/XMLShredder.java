@@ -359,8 +359,8 @@ public class XMLShredder implements Callable<Void> {
         Storage.truncateStorage(config);
         Storage.createStorage(config);
         final IStorage db = Storage.openStorage(target);
-        Properties props = StandardSettings.getStandardProperties(target.getAbsolutePath(), "shredded");
-        db.createResource(new ResourceConfiguration(props, storage, revision, new TreeNodeFactory(),
+        Properties props = StandardSettings.getPropsAndCreateStructure(target.getAbsolutePath(), "shredded");
+        db.intitializeResource(new ResourceConfiguration(props, storage, revision, new TreeNodeFactory(),
             new NodeMetaPageFactory()));
         final ISession session = db.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
         final INodeWriteTrx wtx =

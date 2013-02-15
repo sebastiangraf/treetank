@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.treetank.access.conf.ContructorProps;
+import org.treetank.access.conf.ConstructorProps;
 import org.treetank.api.INode;
 import org.treetank.api.IPageReadTrx;
 import org.treetank.api.ISession;
@@ -226,7 +226,7 @@ public class PageReadTrx implements IPageReadTrx {
         // Getting the keys for the revRoots
         long[] revKeys =
             mSession.getConfig().mRevision.getRevRootKeys(Integer.parseInt(mSession.getConfig().mProperties
-                .getProperty(ContructorProps.NUMBERTORESTORE)),
+                .getProperty(ConstructorProps.NUMBERTORESTORE)),
                 mUberPage.getReferenceKeys()[IReferencePage.GUARANTEED_INDIRECT_OFFSET], mRootPage
                     .getRevision(), mPageReader);
 

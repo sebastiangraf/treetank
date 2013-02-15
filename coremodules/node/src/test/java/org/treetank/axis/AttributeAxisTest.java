@@ -64,12 +64,13 @@ public class AttributeAxisTest {
     @BeforeMethod
     public void setUp() throws TTException {
         CoreTestHelper.deleteEverything();
+        final CoreTestHelper.Holder holder = CoreTestHelper.Holder.generateStorage();
         Properties props =
-            StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
-                CoreTestHelper.RESOURCENAME);
+            StandardSettings.getPropsAndCreateStructure(CoreTestHelper.PATHS.PATH1.getFile()
+                .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
         NodeTestHelper.createTestDocument(mResource);
-        holder = Holder.generateWtx(mResource);
+        this.holder = Holder.generateWtx(holder, mResource);
     }
 
     @AfterMethod

@@ -39,10 +39,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Properties;
 
-import org.treetank.access.conf.ContructorProps;
+import org.treetank.access.conf.ConstructorProps;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
-import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTException;
@@ -122,9 +121,8 @@ public final class BerkeleyStorage implements IBackend {
         IMetaEntryFactory pMetaFac, IByteHandlerPipeline pByteHandler) throws TTIOException {
 
         mFile =
-            new File(new File(new File(pProperties.getProperty(ContructorProps.STORAGEPATH),
-                StorageConfiguration.Paths.Data.getFile().getName()), pProperties
-                .getProperty(ContructorProps.RESOURCE)), ResourceConfiguration.Paths.Data.getFile().getName());
+            new File(pProperties.getProperty(ConstructorProps.RESOURCEPATH), ResourceConfiguration.Paths.Data
+                .getFile().getName());
 
         mPageBinding = new PageBinding();
         mByteHandler = pByteHandler;
