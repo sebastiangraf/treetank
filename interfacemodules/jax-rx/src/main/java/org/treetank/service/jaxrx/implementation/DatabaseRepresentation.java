@@ -303,10 +303,10 @@ public class DatabaseRepresentation {
         try {
             if (!mDatabase.existsResource(resource)) {
                 Properties properties =
-                    StandardSettings.getPropsAndCreateStructure(mDatabase.getLocation().getAbsolutePath(),
+                    StandardSettings.getProps(mDatabase.getLocation().getAbsolutePath(),
                         resource);
 
-                mDatabase.intitializeResource(new ResourceConfiguration(properties, mStorageFac, mRevision,
+                mDatabase.createResource(new ResourceConfiguration(properties, mStorageFac, mRevision,
                     NODEFACTORY, METAFAC));
             }
 

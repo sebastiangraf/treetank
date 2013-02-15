@@ -244,7 +244,7 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
         Properties props = new Properties();
         props.setProperty(ConstructorProps.STORAGEPATH, storage.getLocation().getAbsolutePath());
         props.setProperty(ConstructorProps.RESOURCE, "shredded");
-        storage.intitializeResource(new ResourceConfiguration(props, backend, revision, new TreeNodeFactory(),
+        storage.createResource(new ResourceConfiguration(props, backend, revision, new TreeNodeFactory(),
             new NodeMetaPageFactory()));
         final ISession session =
             storage.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));

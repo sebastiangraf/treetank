@@ -70,7 +70,7 @@ public final class NodeTestHelper {
      */
     public static void createTestDocument(ResourceConfiguration mResourceConfig) throws TTException {
         final IStorage storage = CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile());
-        assertTrue(storage.intitializeResource(mResourceConfig));
+        assertTrue(storage.createResource(mResourceConfig));
         final ISession session =
             storage.getSession(new SessionConfiguration(CoreTestHelper.RESOURCENAME, StandardSettings.KEY));
         final IPageWriteTrx pWtx = session.beginPageWriteTransaction();
