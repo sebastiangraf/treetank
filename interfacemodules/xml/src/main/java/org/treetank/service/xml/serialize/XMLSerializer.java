@@ -462,7 +462,7 @@ public final class XMLSerializer extends AbsSerializer {
         Properties props = new Properties();
         props.setProperty(ConstructorProps.STORAGEPATH, target.getAbsolutePath());
         props.setProperty(ConstructorProps.RESOURCE, "shredded");
-        db.intitializeResource(new ResourceConfiguration(props, storage, revision, new TreeNodeFactory(),new NodeMetaPageFactory()));
+        db.createResource(new ResourceConfiguration(props, storage, revision, new TreeNodeFactory(),new NodeMetaPageFactory()));
         final ISession session = db.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
 
         final XMLSerializer serializer = new XMLSerializerBuilder(session, outputStream).build();

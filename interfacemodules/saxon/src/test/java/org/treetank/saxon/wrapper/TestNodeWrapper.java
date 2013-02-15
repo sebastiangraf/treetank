@@ -99,7 +99,7 @@ public class TestNodeWrapper {
         CoreTestHelper.deleteEverything();
         CoreTestHelper.Holder holder = CoreTestHelper.Holder.generateStorage();
         Properties props =
-            StandardSettings.getPropsAndCreateStructure(CoreTestHelper.PATHS.PATH1.getFile()
+            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
                 .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
         NodeTestHelper.createTestDocument(mResource);
@@ -174,9 +174,9 @@ public class TestNodeWrapper {
         Storage.createStorage(db2);
         final IStorage storage = Storage.openStorage(CoreTestHelper.PATHS.PATH2.getFile());
         Properties props =
-            StandardSettings.getPropsAndCreateStructure(CoreTestHelper.PATHS.PATH2.getFile()
+            StandardSettings.getProps(CoreTestHelper.PATHS.PATH2.getFile()
                 .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
-        storage.intitializeResource(mResourceConfig.create(props));
+        storage.createResource(mResourceConfig.create(props));
         final ISession session =
             storage.getSession(new SessionConfiguration(CoreTestHelper.RESOURCENAME, StandardSettings.KEY));
         final INodeWriteTrx wtx =

@@ -105,10 +105,10 @@ public final class TestNodeWrapperS9ApiXSLT {
         Storage.createStorage(dbConfig);
         final IStorage databaseBooks = Storage.openStorage(CoreTestHelper.PATHS.PATH1.getFile());
         Properties props =
-            StandardSettings.getPropsAndCreateStructure(CoreTestHelper.PATHS.PATH1.getFile()
+            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
                 .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
         ResourceConfiguration resConfig = mResourceConfig.create(props);
-        databaseBooks.intitializeResource(resConfig);
+        databaseBooks.createResource(resConfig);
         final ISession session =
             databaseBooks.getSession(new SessionConfiguration(CoreTestHelper.RESOURCENAME,
                 StandardSettings.KEY));

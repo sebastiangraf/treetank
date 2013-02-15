@@ -31,7 +31,7 @@ import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertNotNull;
 import static org.testng.AssertJUnit.assertNull;
 import static org.testng.AssertJUnit.assertTrue;
-import java.io.File;
+
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
@@ -42,13 +42,13 @@ import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.CoreTestHelper;
 import org.treetank.ModuleFactory;
+import org.treetank.access.conf.ConstructorProps;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
-import org.treetank.access.conf.ConstructorProps;
 import org.treetank.access.conf.StandardSettings;
-import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
+import org.treetank.io.IOUtils;
 import org.treetank.log.LRULog.LogIterator;
 import org.treetank.page.IConstants;
 import org.treetank.page.NodePage;
@@ -77,16 +77,16 @@ public class LRULogTest {
 
     @BeforeMethod
     public void setUp() throws TTException {
-        CoreTestHelper.deleteEverything();
-        CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile());
+        IOUtils.recursiveDelete(CoreTestHelper.PATHS.PATH1.getFile());
+        IOUtils.createFolderStructure(CoreTestHelper.PATHS.PATH1.getFile(), ResourceConfiguration.Paths
+            .values());
         Properties props =
-            StandardSettings.getPropsAndCreateStructure(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
                 CoreTestHelper.RESOURCENAME);
+        props.setProperty(ConstructorProps.RESOURCEPATH, CoreTestHelper.PATHS.PATH1.getFile()
+            .getAbsolutePath());
         mResource = mResourceConfig.create(props);
-        CoreTestHelper.createResource(mResource);
-        mCache =
-            new LRULog(new File(props.getProperty(ConstructorProps.RESOURCEPATH)), mResource.mNodeFac,
-                mResource.mMetaFac);
+        mCache = new LRULog(CoreTestHelper.PATHS.PATH1.getFile(), mResource.mNodeFac, mResource.mMetaFac);
 
         mPages = new NodePage[LEVEL][ELEMENTS];
         insertData();
@@ -95,6 +95,7 @@ public class LRULogTest {
     @AfterMethod
     public void tearDown() throws TTException {
         mCache.close();
+        IOUtils.recursiveDelete(CoreTestHelper.PATHS.PATH1.getFile());
     }
 
     @Test
@@ -110,10 +111,7 @@ public class LRULogTest {
         LogValue value = mCache.get(new LogKey(true, 0, 0));
         assertNotNull(value);
         mCache.close();
-        mCache =
-            new LRULog(new File(new File(CoreTestHelper.PATHS.PATH1.getFile(),
-                StorageConfiguration.Paths.Data.getFile().getName()), CoreTestHelper.RESOURCENAME),
-                mResource.mNodeFac, mResource.mMetaFac);
+        mCache = new LRULog(CoreTestHelper.PATHS.PATH1.getFile(), mResource.mNodeFac, mResource.mMetaFac);
         checkNull();
     }
 
@@ -121,10 +119,7 @@ public class LRULogTest {
     public void testClearAndReInsert() throws TTIOException {
         // testing for clear
         mCache.close();
-        mCache =
-            new LRULog(new File(new File(CoreTestHelper.PATHS.PATH1.getFile(),
-                StorageConfiguration.Paths.Data.getFile().getName()), CoreTestHelper.RESOURCENAME),
-                mResource.mNodeFac, mResource.mMetaFac);
+        mCache = new LRULog(CoreTestHelper.PATHS.PATH1.getFile(), mResource.mNodeFac, mResource.mMetaFac);
         checkNull();
 
         // inserting data again

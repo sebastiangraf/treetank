@@ -93,7 +93,7 @@ public final class TestNodeWrapperXPath {
         CoreTestHelper.deleteEverything();
         CoreTestHelper.Holder holder = CoreTestHelper.Holder.generateStorage();
         Properties props =
-            StandardSettings.getPropsAndCreateStructure(CoreTestHelper.PATHS.PATH1.getFile()
+            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
                 .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
         ResourceConfiguration resource = mResourceConfig.create(props);
         NodeTestHelper.createTestDocument(resource);

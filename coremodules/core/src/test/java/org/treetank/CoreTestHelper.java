@@ -138,7 +138,7 @@ public final class CoreTestHelper {
 
     public static final boolean createResource(final ResourceConfiguration resConf) throws TTException {
         final IStorage storage = CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile());
-        return storage.intitializeResource(resConf);
+        return storage.createResource(resConf);
     }
 
     /**
@@ -467,7 +467,7 @@ public final class CoreTestHelper {
         }
 
         public static void generateSession(Holder pHolder, ResourceConfiguration pConf) throws TTException {
-            pHolder.mStorage.intitializeResource(pConf);
+            pHolder.mStorage.createResource(pConf);
             pHolder.mSession =
                 pHolder.mStorage.getSession(new SessionConfiguration(CoreTestHelper.RESOURCENAME,
                     StandardSettings.KEY));

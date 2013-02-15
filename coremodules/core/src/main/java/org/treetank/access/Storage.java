@@ -31,9 +31,7 @@ import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -182,12 +180,13 @@ public final class Storage implements IStorage {
      * {@inheritDoc}
      */
     @Override
-    public synchronized boolean intitializeResource(final ResourceConfiguration pResConf) throws TTException {
+    public synchronized boolean createResource(final ResourceConfiguration pResConf) throws TTException {
         boolean returnVal = true;
         // Setting the missing params in the settings, this overrides already
         // set data.
         final File path = new File(pResConf.mProperties.getProperty(ConstructorProps.RESOURCEPATH));
-        if (!checkIfResourceIsInitialized(path)) {
+        if (!path.exists() && path.mkdir()) {
+            returnVal = IOUtils.createFolderStructure(path, ResourceConfiguration.Paths.values());
 
             // serialization of the config
             ResourceConfiguration.serialize(pResConf);
@@ -277,7 +276,7 @@ public final class Storage implements IStorage {
                 "Resource could not be opened (since it was not created?) at location %s", resourceFile);
             ResourceConfiguration config =
                 ResourceConfiguration.deserialize(mStorageConfig.mFile, pSessionConf.getResource());
-
+            config.mBackend.initialize();
             // reading first reference and instantiate this.
             final IBackendReader backendReader = config.mBackend.getReader();
             UberPage page = backendReader.readUber();
@@ -312,7 +311,7 @@ public final class Storage implements IStorage {
         final File resourceFile =
             new File(new File(mStorageConfig.mFile, StorageConfiguration.Paths.Data.getFile().getName()),
                 pResourceName);
-        return checkIfResourceIsInitialized(resourceFile);
+        return resourceFile.exists();
     }
 
     /**
@@ -320,15 +319,7 @@ public final class Storage implements IStorage {
      */
     @Override
     public String[] listResources() {
-        final File[] files =
-            new File(mStorageConfig.mFile, StorageConfiguration.Paths.Data.getFile().getName()).listFiles();
-        List<String> returnVal = new ArrayList<String>();
-        for (final File file : files) {
-            if (checkIfResourceIsInitialized(file)) {
-                returnVal.add(file.getName());
-            }
-        }
-        return returnVal.toArray(new String[returnVal.size()]);
+        return new File(mStorageConfig.mFile, StorageConfiguration.Paths.Data.getFile().getName()).list();
     }
 
     /**
@@ -337,20 +328,6 @@ public final class Storage implements IStorage {
     @Override
     public File getLocation() {
         return mStorageConfig.mFile;
-    }
-
-    private static boolean checkIfResourceIsInitialized(final File pFile) {
-        boolean returnVal = pFile.exists();
-        if (returnVal) {
-            if (IOUtils.compareStructure(pFile, ResourceConfiguration.Paths.values()) == 0) {
-                if (new File(pFile, ResourceConfiguration.Paths.ConfigBinary.getFile().getName()).length() == 0) {
-                    returnVal = false;
-                }
-            } else {
-                returnVal = false;
-            }
-        }
-        return returnVal;
     }
 
     /**
@@ -422,6 +399,7 @@ public final class Storage implements IStorage {
         log.put(key, new LogValue(ndp, ndp));
 
         IBackend storage = pResourceConf.mBackend;
+        storage.initialize();
         IBackendWriter writer = storage.getWriter();
 
         writer.writeUberPage(uberPage);
@@ -433,6 +411,7 @@ public final class Storage implements IStorage {
         }
         log.close();
         writer.close();
+        storage.close();
 
     }
 

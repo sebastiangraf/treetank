@@ -48,7 +48,7 @@ public class SessionTest {
         CoreTestHelper.deleteEverything();
         mHolder = CoreTestHelper.Holder.generateStorage();
         final ResourceConfiguration config =
-            mResourceConfig.create(StandardSettings.getPropsAndCreateStructure(CoreTestHelper.PATHS.PATH1
+            mResourceConfig.create(StandardSettings.getProps(CoreTestHelper.PATHS.PATH1
                 .getFile().getAbsolutePath(), CoreTestHelper.RESOURCENAME));
         CoreTestHelper.Holder.generateSession(mHolder, config);
     }

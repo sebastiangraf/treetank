@@ -21,7 +21,6 @@ import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackend;
 import org.treetank.io.IBackend.IBackendFactory;
-import org.treetank.io.IOUtils;
 import org.treetank.io.bytepipe.ByteHandlerPipeline;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.io.bytepipe.Zipper;
@@ -64,7 +63,7 @@ public class StandardSettings extends AbstractModule {
         install(new FactoryModuleBuilder().build(ISessionConfigurationFactory.class));
     }
 
-    public static Properties getPropsAndCreateStructure(final String pathToStorage, final String resource)
+    public static Properties getProps(final String pathToStorage, final String resource)
         throws TTIOException {
         Properties properties = new Properties();
         properties.setProperty(ConstructorProps.STORAGEPATH, pathToStorage);
@@ -97,13 +96,8 @@ public class StandardSettings extends AbstractModule {
         // properties.setProperty(ImageStoreConstants.PROPERTY_IMAGEHOSTER,
         // "org.jclouds.imagestore.imagehoster.flickr.ImageHostFlickr");
 
-        if (IOUtils.createFolderStructure(new File(properties.getProperty(ConstructorProps.RESOURCEPATH)),
-            ResourceConfiguration.Paths.values())) {
-            return properties;
-        } else {
-            throw new IllegalStateException(
-                "Creation of resource not successful. Maybe the storage was not created beforehand?");
-        }
+        return properties;
+
     }
 
     private static String[] getCredentials() {

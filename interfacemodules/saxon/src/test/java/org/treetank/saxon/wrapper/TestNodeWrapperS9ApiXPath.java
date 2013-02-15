@@ -72,7 +72,7 @@ public final class TestNodeWrapperS9ApiXPath {
         CoreTestHelper.deleteEverything();
         CoreTestHelper.Holder holder = CoreTestHelper.Holder.generateStorage();
         Properties props =
-            StandardSettings.getPropsAndCreateStructure(CoreTestHelper.PATHS.PATH1.getFile()
+            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
                 .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
         ResourceConfiguration mResource = mResourceConfig.create(props);
         NodeTestHelper.createTestDocument(mResource);

@@ -73,7 +73,7 @@ public class TestNodeWrapperS9ApiXQuerySAXHandler {
         CoreTestHelper.deleteEverything();
         holder = CoreTestHelper.Holder.generateStorage();
         Properties props =
-            StandardSettings.getPropsAndCreateStructure(CoreTestHelper.PATHS.PATH1.getFile()
+            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
                 .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
         SaxonHelper.createBookDB(mResourceConfig);
         ResourceConfiguration mResource = mResourceConfig.create(props);

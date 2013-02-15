@@ -94,12 +94,12 @@ public class StorageManager {
 
             IStorage storage = Storage.openStorage(storageFile);
 
-            Properties props = StandardSettings.getPropsAndCreateStructure(storageFile.getAbsolutePath(), name);
+            Properties props = StandardSettings.getProps(storageFile.getAbsolutePath(), name);
             ResourceConfiguration mResourceConfig =
                 new ResourceConfiguration(props, backend, revision, new FileNodeFactory(),
                     new FilelistenerMetaPageFactory());
 
-            storage.intitializeResource(mResourceConfig);
+            storage.createResource(mResourceConfig);
         }
 
         return true;

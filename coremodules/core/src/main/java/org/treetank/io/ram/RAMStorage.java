@@ -82,4 +82,9 @@ public class RAMStorage implements IBackend {
 
     }
 
+    @Override
+    public void initialize() throws TTIOException {
+        // not needed over here
+    }
+
 }
