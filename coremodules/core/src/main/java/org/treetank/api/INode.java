@@ -36,15 +36,6 @@ public interface INode {
     long getNodeKey();
 
     /**
-     * Setting the actual hash of the structure.
-     * 
-     * @param pHash
-     *            hash to be set for this {@link INode}
-     * 
-     */
-    void setHash(final long pHash);
-
-    /**
      * Getting the persistent stored hash.
      * 
      * @return the hash of this {@link INode}

@@ -104,9 +104,9 @@ public class RestXPathProcessorTest {
     public void setUpGlobal() throws TTException {
         CoreTestHelper.deleteEverything();
         rxProcessor =
-            new RestXPathProcessor(CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile()));
+            new RestXPathProcessor(CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile()));
         final InputStream xmlInput = RestXPathProcessorTest.class.getResourceAsStream("/books.xml");
-        new DatabaseRepresentation(CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile()),
+        new DatabaseRepresentation(CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile()),
             mStorageFac, mRevisioning).shred(xmlInput, RESOURCENAME);
     }
 
@@ -120,7 +120,7 @@ public class RestXPathProcessorTest {
     @Test
     public final void testRestXPathProcessor() throws TTException {
         final RestXPathProcessor reference =
-            new RestXPathProcessor(CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile()));
+            new RestXPathProcessor(CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile()));
         assertNotNull("checks if the reference is not null and constructor works", reference);
     }
 

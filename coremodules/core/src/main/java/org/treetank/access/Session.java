@@ -145,7 +145,7 @@ public final class Session implements ISession {
      * {@inheritDoc}
      */
     public boolean truncate() throws TTException {
-        checkState(mClosed, "Session must be closed before truncated.");
+        checkState(!mClosed, "Session must be opened to truncate.");
         if (mResourceConfig.mBackend.truncate()) {
             return IOUtils.recursiveDelete(new File(new File(mDatabase.getLocation(),
                 StorageConfiguration.Paths.Data.getFile().getName()), mSessionConfig.getResource()));

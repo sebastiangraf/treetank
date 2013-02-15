@@ -125,6 +125,7 @@ public final class BerkeleyStorage implements IBackend {
             new File(new File(new File(pProperties.getProperty(ContructorProps.STORAGEPATH),
                 StorageConfiguration.Paths.Data.getFile().getName()), pProperties
                 .getProperty(ContructorProps.RESOURCE)), ResourceConfiguration.Paths.Data.getFile().getName());
+        mFile.mkdirs();
 
         mPageBinding = new PageBinding();
         mByteHandler = pByteHandler;

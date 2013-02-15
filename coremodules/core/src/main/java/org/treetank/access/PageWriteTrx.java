@@ -28,7 +28,6 @@
 package org.treetank.access;
 
 import static com.google.common.base.Objects.toStringHelper;
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.treetank.access.PageReadTrx.nodePageOffset;
@@ -106,52 +105,6 @@ public final class PageWriteTrx implements IPageWriteTrx {
 
         mPageWriter = pWriter;
         setUpTransaction(pUberPage, pSession, pRepresentRev, pWriter);
-    }
-
-    /**
-     * Prepare a node for modification. This is getting the node from the
-     * (persistence) layer, storing the page in the cache and setting up the
-     * node for upcoming modification. Note that this only occurs for {@link INode}s.
-     * 
-     * @param pNodeKey
-     *            key of the node to be modified
-     * @return an {@link INode} instance
-     * @throws TTIOException
-     *             if IO Error
-     */
-    public INode prepareNodeForModification(final long pNodeKey) throws TTException {
-        checkState(!mDelegate.isClosed(), "Transaction already closed");
-        checkArgument(pNodeKey >= 0);
-        final int nodePageOffset = nodePageOffset(pNodeKey);
-        LogValue container = prepareNodePage(pNodeKey);
-
-        INode node = ((NodePage)container.getModified()).getNode(nodePageOffset);
-        if (node == null) {
-            final INode oldNode = ((NodePage)container.getComplete()).getNode(nodePageOffset);
-            checkNotNull(oldNode);
-            node = oldNode;
-            ((NodePage)container.getModified()).setNode(nodePageOffset, node);
-        }
-        return node;
-    }
-
-    /**
-     * Finishing the node modification. That is storing the node including the
-     * page in the cache.
-     * 
-     * @param pNode
-     *            the node to be modified
-     * @throws TTIOException
-     */
-    public void finishNodeModification(final INode pNode) throws TTIOException {
-        checkState(!mDelegate.isClosed(), "Transaction already closed");
-        final long seqNodePageKey = pNode.getNodeKey() >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3];
-        final int nodePageOffset = nodePageOffset(pNode.getNodeKey());
-        LogKey key = new LogKey(false, IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length, seqNodePageKey);
-        LogValue container = mLog.get(key);
-        NodePage page = (NodePage)container.getModified();
-        page.setNode(nodePageOffset, pNode);
-        mLog.put(key, container);
     }
 
     /**
@@ -420,7 +373,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
 
         mLog =
             new LRULog(new File(pSession.getConfig().mProperties
-                .getProperty(org.treetank.access.conf.ContructorProps.STORAGEPATH)),
+                .getProperty(org.treetank.access.conf.ContructorProps.RESOURCEPATH)),
                 pSession.getConfig().mNodeFac, pSession.getConfig().mMetaFac);
 
         mNewUber =

@@ -88,7 +88,7 @@ public final class XPathWriteTransactionTest {
         XMLShredder.main(XML, CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath());
 
         // Verify.
-        storage = CoreTestHelper.getDatabase(PATHS.PATH1.getFile());
+        storage = CoreTestHelper.getStorage(PATHS.PATH1.getFile());
         Properties props = new Properties();
         props.put(ContructorProps.STORAGEPATH, CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath());
         props.put(ContructorProps.RESOURCE, "shredded");

@@ -48,29 +48,26 @@ import net.sf.saxon.type.Type;
 import net.sf.saxon.value.UntypedAtomicValue;
 import net.sf.saxon.value.Value;
 
-import org.jclouds.Constants;
-import org.jclouds.filesystem.reference.FilesystemConstants;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
-import org.treetank.Holder;
-import org.treetank.NodeTestHelper;
-import org.treetank.NodeModuleFactory;
 import org.treetank.CoreTestHelper;
-import org.treetank.access.Storage;
+import org.treetank.Holder;
+import org.treetank.NodeModuleFactory;
+import org.treetank.NodeTestHelper;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
-import org.treetank.access.conf.ContructorProps;
-import org.treetank.access.conf.StorageConfiguration;
+import org.treetank.access.Storage;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
-import org.treetank.api.IStorage;
+import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
+import org.treetank.api.IStorage;
 import org.treetank.exception.TTException;
 import org.treetank.service.xml.shredder.EShredderInsert;
 import org.treetank.service.xml.shredder.XMLShredder;
@@ -175,17 +172,9 @@ public class TestNodeWrapper {
 
         Storage.createStorage(db2);
         final IStorage storage = Storage.openStorage(CoreTestHelper.PATHS.PATH2.getFile());
-        Properties props = new Properties();
-        props.setProperty(org.treetank.access.conf.ContructorProps.STORAGEPATH, CoreTestHelper.PATHS.PATH2.getFile()
-            .getAbsolutePath());
-        props.setProperty(org.treetank.access.conf.ContructorProps.RESOURCE, CoreTestHelper.RESOURCENAME);
-        props.setProperty(FilesystemConstants.PROPERTY_BASEDIR, new File(new File(new File(props
-            .getProperty(ContructorProps.STORAGEPATH), StorageConfiguration.Paths.Data.getFile().getName()), props
-            .getProperty(ContructorProps.RESOURCE)), ResourceConfiguration.Paths.Data.getFile().getName())
-            .getAbsolutePath());
-        props.setProperty(Constants.PROPERTY_CREDENTIAL, "test");
-        props.setProperty(ContructorProps.JCLOUDSTYPE, "filesystem");
-        props.setProperty(ContructorProps.NUMBERTORESTORE, Integer.toString(5));
+        Properties props =
+            StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH2.getFile().getAbsolutePath(),
+                CoreTestHelper.RESOURCENAME);
         storage.createResource(mResourceConfig.create(props));
         final ISession session =
             storage.getSession(new SessionConfiguration(CoreTestHelper.RESOURCENAME, StandardSettings.KEY));

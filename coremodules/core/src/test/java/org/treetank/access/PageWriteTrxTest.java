@@ -3,9 +3,9 @@
  */
 package org.treetank.access;
 
+import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertNull;
 import static org.testng.AssertJUnit.assertTrue;
-import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.fail;
 
 import java.util.ArrayList;
@@ -87,15 +87,6 @@ public class PageWriteTrxTest {
         IPageWriteTrx wtx = mHolder.getSession().beginPageWriteTransaction();
         assertEquals(mHolder.getSession().getMostRecentVersion() + 1, wtx.getRevision());
         wtx.close();
-    }
-
-    /**
-     * Test method for {@link org.treetank.access.PageWriteTrx#finishNodeModification(org.treetank.api.INode)}
-     * .
-     */
-    @Test
-    public void testFinishNodeModification() {
-        // fail("Not yet implemented");
     }
 
     /**
@@ -204,22 +195,6 @@ public class PageWriteTrxTest {
         final IPageReadTrx rtx =
             mHolder.getSession().beginPageReadTransaction(mHolder.getSession().getMostRecentVersion());
         CoreTestHelper.checkStructure(list, rtx, 0);
-    }
-
-    /**
-     * Test method for {@link org.treetank.access.PageWriteTrx#commit()}.
-     */
-    @Test
-    public void testCommit() {
-        // fail("Not yet implemented");
-    }
-
-    /**
-     * Test method for {@link org.treetank.access.PageWriteTrx#incrementNodeKey()}.
-     */
-    @Test
-    public void testIncrementNodeKey() {
-        // fail("Not yet implemented");
     }
 
     /**

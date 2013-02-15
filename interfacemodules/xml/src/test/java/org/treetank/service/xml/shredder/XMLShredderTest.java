@@ -111,7 +111,7 @@ public class XMLShredderTest {
         NodeTestHelper.createDocumentRootNode(expectedTrx);
 
         // Verify.
-        final IStorage database2 = CoreTestHelper.getDatabase(PATHS.PATH2.getFile());
+        final IStorage database2 = CoreTestHelper.getStorage(PATHS.PATH2.getFile());
         final ISession session =
             database2.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
         final INodeReadTrx rtx =
@@ -162,7 +162,7 @@ public class XMLShredderTest {
         shredder2.call();
 
         // Setup expected session.
-        final IStorage database2 = CoreTestHelper.getDatabase(PATHS.PATH2.getFile());
+        final IStorage database2 = CoreTestHelper.getStorage(PATHS.PATH2.getFile());
         Properties props =
             StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH2.getFile().getAbsolutePath(),
                 "shredded");
@@ -210,7 +210,7 @@ public class XMLShredderTest {
         holder.getNWtx().commit();
 
         // Setup parsed session.
-        final IStorage database2 = CoreTestHelper.getDatabase(PATHS.PATH2.getFile());
+        final IStorage database2 = CoreTestHelper.getStorage(PATHS.PATH2.getFile());
         Properties props =
             StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH2.getFile().getAbsolutePath(),
                 CoreTestHelper.RESOURCENAME);
@@ -252,7 +252,7 @@ public class XMLShredderTest {
 
     @Test
     public void testShreddingLargeText() throws Exception {
-        final IStorage storage = CoreTestHelper.getDatabase(PATHS.PATH2.getFile());
+        final IStorage storage = CoreTestHelper.getStorage(PATHS.PATH2.getFile());
         Properties props =
             StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH2.getFile().getAbsolutePath(),
                 "shredded");

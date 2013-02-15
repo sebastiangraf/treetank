@@ -122,7 +122,7 @@ public final class CoreTestHelper {
      * @return a database-obj
      * @throws TTException
      */
-    public static final IStorage getDatabase(final File file) throws TTException {
+    public static final IStorage getStorage(final File file) throws TTException {
         if (INSTANCES.containsKey(file)) {
             return INSTANCES.get(file);
         } else {
@@ -137,7 +137,7 @@ public final class CoreTestHelper {
     }
 
     public static final boolean createResource(final ResourceConfiguration resConf) throws TTException {
-        final IStorage storage = CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile());
+        final IStorage storage = CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile());
         return storage.createResource(resConf);
     }
 
@@ -462,7 +462,7 @@ public final class CoreTestHelper {
 
         public static Holder generateStorage(ResourceConfiguration pConf) throws TTException {
             Holder holder = new Holder();
-            holder.mStorage = CoreTestHelper.getDatabase(PATHS.PATH1.getFile());
+            holder.mStorage = CoreTestHelper.getStorage(PATHS.PATH1.getFile());
             holder.mStorage.createResource(pConf);
             return holder;
         }

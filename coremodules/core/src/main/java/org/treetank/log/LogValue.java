@@ -33,6 +33,7 @@ import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.DataOutput;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.Objects;
 
 import org.treetank.api.IMetaEntryFactory;
@@ -155,8 +156,9 @@ public final class LogValue {
                 final DataInput data = new DataInputStream(arg0);
                 final IPage current = mFac.deserializePage(data);
                 final IPage modified = mFac.deserializePage(data);
+                arg0.close();
                 return new LogValue(current, modified);
-            } catch (final TTIOException exc) {
+            } catch (IOException | TTIOException exc) {
                 throw new RuntimeException(exc);
             }
         }
@@ -170,7 +172,8 @@ public final class LogValue {
                 final DataOutput data = new DataOutputStream(arg1);
                 arg0.getComplete().serialize(data);
                 arg0.getModified().serialize(data);
-            } catch (final TTIOException exc) {
+                arg1.close();
+            } catch (IOException | TTIOException exc) {
                 throw new RuntimeException(exc);
             }
         }

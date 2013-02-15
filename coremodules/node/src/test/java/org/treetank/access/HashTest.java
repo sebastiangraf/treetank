@@ -247,7 +247,7 @@ public class HashTest {
     }
 
     private INodeWriteTrx createWtx(final HashKind kind) throws TTException {
-        final IStorage storage = CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile());
+        final IStorage storage = CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile());
         Properties props = StandardSettings.getStandardProperties(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(), CoreTestHelper.RESOURCENAME);
         ResourceConfiguration res = mResourceConfig.create(props);
         CoreTestHelper.createResource(res);

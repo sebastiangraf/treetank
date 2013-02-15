@@ -62,11 +62,10 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
             ByteNode node = new ByteNode(getPageTransaction().incrementNodeKey(), new byte[512]);
             node.setVal(bytes);
             node.setIndex(node.getNodeKey());
-            ByteNode lastNode =
-                (ByteNode)getPageTransaction().prepareNodeForModification(node.getNodeKey() - 1);
+            ByteNode lastNode = (ByteNode)getPageTransaction().getNode(node.getNodeKey() - 1);
             node.setPreviousNodeKey(lastNode.getNodeKey());
             lastNode.setNextNodeKey(node.getNodeKey());
-            getPageTransaction().finishNodeModification(lastNode);
+            getPageTransaction().setNode(lastNode);
             getPageTransaction().setNode(node);
         } else {
             ByteNode node = new ByteNode(getPageTransaction().incrementNodeKey(), new byte[512]);
@@ -87,10 +86,10 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
         if (((ByteNode)mDelegate.getCurrentNode()).hasNext()) {
             // Linking the new node.
             ByteNode nextNode =
-                (ByteNode)getPageTransaction().prepareNodeForModification(
+                (ByteNode)getPageTransaction().getNode(
                     ((ByteNode)mDelegate.getCurrentNode()).getNextNodeKey());
             nextNode.setPreviousNodeKey(node.getNodeKey());
-            getPageTransaction().finishNodeModification(nextNode);
+            getPageTransaction().setNode(nextNode);
 
             incrementAllFollowingIndizes(mDelegate.getCurrentNode());
         }
@@ -100,12 +99,10 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
         node.setIndex(((ByteNode)mDelegate.getCurrentNode()).getIndex() + 1);
         getPageTransaction().setNode(node);
 
-        ByteNode currNode =
-            (ByteNode)getPageTransaction()
-                .prepareNodeForModification(mDelegate.getCurrentNode().getNodeKey());
+        ByteNode currNode = (ByteNode)getPageTransaction().getNode(mDelegate.getCurrentNode().getNodeKey());
 
         currNode.setNextNodeKey(node.getNodeKey());
-        getPageTransaction().finishNodeModification(currNode);
+        getPageTransaction().setNode(currNode);
 
     }
 
@@ -120,20 +117,20 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
         if (((ByteNode)mDelegate.getCurrentNode()).hasPrevious()
             && ((ByteNode)mDelegate.getCurrentNode()).hasNext()) {
             ByteNode previousNode =
-                (ByteNode)getPageTransaction().prepareNodeForModification(
+                (ByteNode)getPageTransaction().getNode(
                     ((ByteNode)mDelegate.getCurrentNode()).getPreviousNodeKey());
 
             previousNode.setNextNodeKey(((ByteNode)mDelegate.getCurrentNode()).getNextNodeKey());
 
-            getPageTransaction().finishNodeModification(previousNode);
+            getPageTransaction().setNode(previousNode);
 
             ByteNode nextNode =
-                (ByteNode)getPageTransaction().prepareNodeForModification(
+                (ByteNode)getPageTransaction().getNode(
                     ((ByteNode)mDelegate.getCurrentNode()).getNextNodeKey());
 
             nextNode.setPreviousNodeKey(previousNode.getNodeKey());
 
-            getPageTransaction().finishNodeModification(nextNode);
+            getPageTransaction().setNode(nextNode);
 
             long nodeKey = mDelegate.getCurrentNode().getNodeKey();
             INode deleteNode = new NodePage.DeletedNode(nodeKey);
@@ -150,11 +147,9 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
     @Override
     public void setValue(byte[] val) throws TTException {
 
-        ByteNode node =
-            (ByteNode)getPageTransaction()
-                .prepareNodeForModification(mDelegate.getCurrentNode().getNodeKey());
+        ByteNode node = (ByteNode)getPageTransaction().getNode(mDelegate.getCurrentNode().getNodeKey());
         node.setVal(val);
-        getPageTransaction().finishNodeModification(node);
+        getPageTransaction().setNode(node);
     }
 
     /**
@@ -299,9 +294,9 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
         ByteNode nextNode = (ByteNode)node;
 
         do {
-            nextNode = (ByteNode)getPageTransaction().prepareNodeForModification(nextNode.getNextNodeKey());
+            nextNode = (ByteNode)getPageTransaction().getNode(nextNode.getNextNodeKey());
             nextNode.incIndex();
-            getPageTransaction().finishNodeModification(nextNode);
+            getPageTransaction().setNode(nextNode);
 
         } while (nextNode.hasNext());
 
@@ -324,9 +319,9 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
         ByteNode nextNode = (ByteNode)node;
 
         do {
-            nextNode = (ByteNode)getPageTransaction().prepareNodeForModification(nextNode.getNextNodeKey());
+            nextNode = (ByteNode)getPageTransaction().getNode(nextNode.getNextNodeKey());
             nextNode.decIndex();
-            getPageTransaction().finishNodeModification(nextNode);
+            getPageTransaction().setNode(nextNode);
 
         } while (nextNode.hasNext());
 

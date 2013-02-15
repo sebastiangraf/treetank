@@ -44,7 +44,7 @@ import org.treetank.page.interfaces.IPage;
  * A node page stores a set of nodes.
  * </p>
  */
-public class NodePage implements IPage {
+public final class NodePage implements IPage {
 
     /** Key of node page. This is the base key of all contained nodes. */
     private final long mPageKey;
@@ -68,37 +68,37 @@ public class NodePage implements IPage {
      * 
      * @return Node page key.
      */
-    public final long getPageKey() {
+    public long getPageKey() {
         return mPageKey;
     }
 
     /**
      * Get node at a given offset.
      * 
-     * @param mOffset
+     * @param pOffset
      *            Offset of node within local node page.
      * @return Node at given offset.
      */
-    public INode getNode(final int mOffset) {
-        return getNodes()[mOffset];
+    public INode getNode(final int pOffset) {
+        return getNodes()[pOffset];
     }
 
     /**
      * Overwrite a single node at a given offset.
      * 
-     * @param mOffset
+     * @param pOffset
      *            Offset of node to overwrite in this node page.
-     * @param mNode
+     * @param pNode
      *            Node to store at given nodeOffset.
      */
-    public void setNode(final int mOffset, final INode mNode) {
-        getNodes()[mOffset] = mNode;
+    public void setNode(final int pOffset, final INode pNode) {
+        getNodes()[pOffset] = pNode;
     }
 
     /**
      * @return the mNodes
      */
-    public final INode[] getNodes() {
+    public INode[] getNodes() {
         return mNodes;
     }
 
@@ -173,36 +173,23 @@ public class NodePage implements IPage {
         }
 
         /**
-         * Delegate method for getNodeKey.
-         * 
-         * @return
-         * @see org.treetank.node.delegates.NodeDelegate#getNodeKey()
+         * {@inheritDoc}
          */
+        @Override
         public long getNodeKey() {
             return mNodeKey;
-        }
-
-        /**
-         * Serializing to given dataput
-         * 
-         * @param pOutput
-         *            to serialize to
-         * @throws TTIOException
-         */
-        public void serialize(final DataOutput pOutput) throws TTIOException {
-            try {
-                pOutput.writeLong(mNodeKey);
-            } catch (final IOException exc) {
-                throw new TTIOException(exc);
-            }
         }
 
         /**
          * {@inheritDoc}
          */
         @Override
-        public void setHash(long pHash) {
-            mHash = pHash;
+        public void serialize(final DataOutput pOutput) throws TTIOException {
+            try {
+                pOutput.writeLong(mNodeKey);
+            } catch (final IOException exc) {
+                throw new TTIOException(exc);
+            }
         }
 
         /**

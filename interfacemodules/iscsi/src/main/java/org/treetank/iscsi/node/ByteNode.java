@@ -26,6 +26,7 @@ package org.treetank.iscsi.node;
 
 import java.io.DataOutput;
 import java.io.IOException;
+import java.util.Objects;
 
 import org.treetank.api.INode;
 import org.treetank.exception.TTIOException;
@@ -111,17 +112,8 @@ public class ByteNode implements INode {
      * {@inheritDoc}
      */
     @Override
-    public void setHash(long pHash) {
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public long getHash() {
-
-        return this.nodeKey * previousNodeKey * nextNodeKey * 31;
+        return Objects.hash(nodeKey,nextNodeKey,previousNodeKey,index);
     }
 
     /**
