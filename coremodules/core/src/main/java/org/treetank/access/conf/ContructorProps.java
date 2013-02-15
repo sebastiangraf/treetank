@@ -12,6 +12,8 @@ public interface ContructorProps {
     public static final String STORAGEPATH = "treetank.filename";
     
     public static final String RESOURCE = "treetank.resource";
+    
+    public static final String RESOURCEPATH = "treetank.resource";
 
     public static final String JCLOUDSTYPE = "treetank.jclouds";
     

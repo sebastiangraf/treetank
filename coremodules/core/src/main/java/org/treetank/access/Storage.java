@@ -31,7 +31,6 @@ import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -112,25 +111,8 @@ public final class Storage implements IStorage {
         if (pStorageConfig.mFile.exists()) {
             return false;
         } else {
-            returnVal = pStorageConfig.mFile.mkdirs();
-            if (returnVal) {
-                // creation of folder structure
-                for (StorageConfiguration.Paths paths : StorageConfiguration.Paths.values()) {
-                    final File toCreate = new File(pStorageConfig.mFile, paths.getFile().getName());
-                    if (paths.isFolder()) {
-                        returnVal = toCreate.mkdir();
-                    } else {
-                        try {
-                            returnVal = toCreate.createNewFile();
-                        } catch (final IOException exc) {
-                            throw new TTIOException(exc);
-                        }
-                    }
-                    if (!returnVal) {
-                        break;
-                    }
-                }
-            }
+            returnVal =
+                IOUtils.createFolderStructure(pStorageConfig.mFile, StorageConfiguration.Paths.values());
             // serialization of the config
             StorageConfiguration.serialize(pStorageConfig);
             // if something was not correct, delete the partly created
@@ -177,7 +159,8 @@ public final class Storage implements IStorage {
      */
     public static synchronized boolean existsStorage(final File pStoragePath) {
         // if file is existing and folder is a tt-dataplace, delete it
-        if (pStoragePath.exists() && StorageConfiguration.Paths.compareStructure(pStoragePath) == 0) {
+        if (pStoragePath.exists()
+            && IOUtils.compareStructure(pStoragePath, StorageConfiguration.Paths.values()) == 0) {
             return true;
         } else {
             return false;
@@ -209,25 +192,8 @@ public final class Storage implements IStorage {
         if (path.exists()) {
             return false;
         } else {
-            returnVal = path.mkdir();
-            if (returnVal) {
-                // creation of the folder structure
-                for (ResourceConfiguration.Paths paths : ResourceConfiguration.Paths.values()) {
-                    final File toCreate = new File(path, paths.getFile().getName());
-                    if (paths.isFolder()) {
-                        returnVal = toCreate.mkdir();
-                    } else {
-                        try {
-                            returnVal = toCreate.createNewFile();
-                        } catch (final IOException exc) {
-                            throw new TTIOException(exc);
-                        }
-                    }
-                    if (!returnVal) {
-                        break;
-                    }
-                }
-            }
+            returnVal = IOUtils.createFolderStructure(path, ResourceConfiguration.Paths.values());
+
             // serialization of the config
             ResourceConfiguration.serialize(pResConf);
             // if something was not correct, delete the partly created
@@ -354,7 +320,8 @@ public final class Storage implements IStorage {
             new File(new File(mStorageConfig.mFile, StorageConfiguration.Paths.Data.getFile().getName()),
                 pResourceName);
         // if file is existing and folder is a tt-dataplace, delete it
-        if (resourceFile.exists() && ResourceConfiguration.Paths.compareStructure(resourceFile) == 0) {
+        if (resourceFile.exists()
+            && IOUtils.compareStructure(resourceFile, ResourceConfiguration.Paths.values()) == 0) {
             return true;
         } else {
             return false;
