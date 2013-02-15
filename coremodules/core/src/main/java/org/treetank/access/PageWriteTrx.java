@@ -28,7 +28,6 @@
 package org.treetank.access;
 
 import static com.google.common.base.Objects.toStringHelper;
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.treetank.access.PageReadTrx.nodePageOffset;
@@ -79,7 +78,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
     private RevisionRootPage mNewRoot;
 
     /** Last reference to the actual namePage. */
-    private MetaPage mNewName;
+    private MetaPage mNewMeta;
 
     /** Delegate for read access. */
     private PageReadTrx mDelegate;
@@ -109,52 +108,6 @@ public final class PageWriteTrx implements IPageWriteTrx {
     }
 
     /**
-     * Prepare a node for modification. This is getting the node from the
-     * (persistence) layer, storing the page in the cache and setting up the
-     * node for upcoming modification. Note that this only occurs for {@link INode}s.
-     * 
-     * @param pNodeKey
-     *            key of the node to be modified
-     * @return an {@link INode} instance
-     * @throws TTIOException
-     *             if IO Error
-     */
-    public INode prepareNodeForModification(final long pNodeKey) throws TTException {
-        checkState(!mDelegate.isClosed(), "Transaction already closed");
-        checkArgument(pNodeKey >= 0);
-        final int nodePageOffset = nodePageOffset(pNodeKey);
-        LogValue container = prepareNodePage(pNodeKey);
-
-        INode node = ((NodePage)container.getModified()).getNode(nodePageOffset);
-        if (node == null) {
-            final INode oldNode = ((NodePage)container.getComplete()).getNode(nodePageOffset);
-            checkNotNull(oldNode);
-            node = oldNode;
-            ((NodePage)container.getModified()).setNode(nodePageOffset, node);
-        }
-        return node;
-    }
-
-    /**
-     * Finishing the node modification. That is storing the node including the
-     * page in the cache.
-     * 
-     * @param pNode
-     *            the node to be modified
-     * @throws TTIOException
-     */
-    public void finishNodeModification(final INode pNode) throws TTIOException {
-        checkState(!mDelegate.isClosed(), "Transaction already closed");
-        final long seqNodePageKey = pNode.getNodeKey() >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3];
-        final int nodePageOffset = nodePageOffset(pNode.getNodeKey());
-        LogKey key = new LogKey(false, IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length, seqNodePageKey);
-        LogValue container = mLog.get(key);
-        NodePage page = (NodePage)container.getModified();
-        page.setNode(nodePageOffset, pNode);
-        mLog.put(key, container);
-    }
-
-    /**
      * {@inheritDoc}
      */
     public long setNode(final INode pNode) throws TTException {
@@ -171,12 +124,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
     }
 
     /**
-     * Removing a node from the storage.
-     * 
-     * @param pNode
-     *            {@link INode} to be removed
-     * @throws TTIOException
-     *             if the removal fails
+     * {@inheritDoc}
      */
     @Override
     public void removeNode(final INode pNode) throws TTException {
@@ -219,19 +167,10 @@ public final class PageWriteTrx implements IPageWriteTrx {
     }
 
     /**
-     * Creating a namekey for a given name.
      * 
-     * @param pName
-     *            for which the key should be created.
-     * @return an int, representing the namekey
-     * @throws TTIOException
-     *             if something odd happens while storing the new key
+     * {@inheritDoc}
      */
-    public void createEntry(final IMetaEntry key, IMetaEntry value) throws TTIOException {
-        checkState(!mDelegate.isClosed(), "Transaction already closed");
-        mNewName.setEntry(key, value);
-    }
-
+    @Override
     public void commit() throws TTException {
         checkState(!mDelegate.isClosed(), "Transaction already closed");
         Iterator<LogValue> entries = mLog.getIterator();
@@ -239,7 +178,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
             LogValue next = entries.next();
             mPageWriter.write(next.getModified());
         }
-        mPageWriter.write(mNewName);
+        mPageWriter.write(mNewMeta);
         mPageWriter.write(mNewRoot);
         mPageWriter.writeUberPage(mNewUber);
 
@@ -252,10 +191,8 @@ public final class PageWriteTrx implements IPageWriteTrx {
 
     /**
      * {@inheritDoc}
-     * 
-     * @throws TTIOException
-     *             if something weird happened in the storage
      */
+    @Override
     public boolean close() throws TTIOException {
         if (!mDelegate.isClosed()) {
             mDelegate.close();
@@ -267,9 +204,39 @@ public final class PageWriteTrx implements IPageWriteTrx {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public long incrementNodeKey() {
         checkState(!mDelegate.isClosed(), "Transaction already closed");
         return mNewRoot.incrementMaxNodeKey();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long getRevision() throws TTIOException {
+        checkState(!mDelegate.isClosed(), "Transaction already closed");
+        return mNewRoot.getRevision();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isClosed() {
+        return mDelegate.isClosed();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public MetaPage getMetaPage() {
+        checkState(!mDelegate.isClosed(), "Transaction already closed");
+        return mNewMeta;
     }
 
     private LogValue prepareNodePage(final long pNodeKey) throws TTException {
@@ -406,7 +373,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
 
         mLog =
             new LRULog(new File(pSession.getConfig().mProperties
-                .getProperty(org.treetank.access.conf.ContructorProps.STORAGEPATH)),
+                .getProperty(org.treetank.access.conf.ContructorProps.RESOURCEPATH)),
                 pSession.getConfig().mNodeFac, pSession.getConfig().mMetaFac);
 
         mNewUber =
@@ -434,32 +401,16 @@ public final class PageWriteTrx implements IPageWriteTrx {
         ((IndirectPage)indirectContainer.getModified()).setReferenceKey(offset, mNewRoot.getPageKey());
         mLog.put(indirectKey, indirectContainer);
 
-        // Setting up a new namepage
+        // Setting up a new metapage
         Map<IMetaEntry, IMetaEntry> oldMap = mDelegate.mMetaPage.getMetaMap();
-        mNewName = new MetaPage(mNewUber.incrementPageCounter());
+        mNewMeta = new MetaPage(mNewUber.incrementPageCounter());
 
         for (IMetaEntry key : oldMap.keySet()) {
-            mNewName.setEntry(key, oldMap.get(key));
+            mNewMeta.setEntry(key, oldMap.get(key));
         }
 
-        mNewRoot.setReferenceKey(RevisionRootPage.NAME_REFERENCE_OFFSET, mNewName.getPageKey());
+        mNewRoot.setReferenceKey(RevisionRootPage.NAME_REFERENCE_OFFSET, mNewMeta.getPageKey());
 
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public long getRevision() throws TTIOException {
-        checkState(!mDelegate.isClosed(), "Transaction already closed");
-        return mNewRoot.getRevision();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isClosed() {
-        return mDelegate.isClosed();
     }
 
     /**
@@ -469,15 +420,6 @@ public final class PageWriteTrx implements IPageWriteTrx {
     public String toString() {
         return toStringHelper(this).add("mPageWriter", mPageWriter).add("mLog", mLog).add("mRootPage",
             mNewRoot).add("mDelegate", mDelegate).toString();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public MetaPage getMetaPage() {
-        checkState(!mDelegate.isClosed(), "Transaction already closed");
-        return mNewName;
     }
 
 }

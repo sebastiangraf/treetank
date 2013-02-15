@@ -9,6 +9,9 @@ import static org.testng.AssertJUnit.assertTrue;
 import static org.testng.AssertJUnit.fail;
 import static org.treetank.CoreTestHelper.getFakedStructure;
 
+import java.util.List;
+import java.util.Map;
+
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
@@ -26,6 +29,8 @@ import org.treetank.api.IStorage;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
+import org.treetank.page.DumbMetaEntryFactory.DumbKey;
+import org.treetank.page.DumbMetaEntryFactory.DumbValue;
 import org.treetank.page.DumbNodeFactory.DumbNode;
 
 import com.google.inject.Inject;
@@ -72,7 +77,7 @@ public class PageReadTrxTest {
      */
     @Test
     public void testGetNode() throws TTException {
-        DumbNode[][] nodes = CoreTestHelper.createNodesInTreetank(mHolder);
+        DumbNode[][] nodes = CoreTestHelper.createTestData(mHolder);
         testGet(mHolder.getSession(), nodes);
     }
 
@@ -96,24 +101,19 @@ public class PageReadTrxTest {
      */
     @Test
     public void testRevision() throws TTException {
-        CoreTestHelper.createNodesInTreetank(mHolder);
+        CoreTestHelper.createTestData(mHolder);
         testRevision(mHolder.getSession());
     }
 
     /**
-     * Test method for {@link org.treetank.access.PageReadTrx#checkItemIfDeleted(org.treetank.api.INode)}.
+     * Test method for {@link org.treetank.access.PageReadTrx#getMetaPage()}.
+     * 
+     * @throws TTException
      */
     @Test
-    public void testCheckItemIfDeleted() {
-        // fail("Not yet implemented");
-    }
-
-    /**
-     * Test method for {@link org.treetank.access.PageReadTrx#getSnapshotPages(long)}.
-     */
-    @Test
-    public void testGetSnapshotPages() {
-        // fail("Not yet implemented");
+    public void testGetMetaPage() throws TTException {
+        List<List<Map.Entry<DumbKey, DumbValue>>> data = CoreTestHelper.createTestMeta(mHolder);
+        testMeta(mHolder.getSession(), data);
     }
 
     /**
@@ -225,18 +225,30 @@ public class PageReadTrxTest {
         assertEquals(0, PageReadTrx.nodePageOffset(2097152));
     }
 
-    /**
-     * Test method for {@link org.treetank.access.PageReadTrx#getMetaPage()}.
-     */
-    @Test
-    public void testGetMetaPage() {
-
+    protected static void testMeta(final ISession pSession,
+        final List<List<Map.Entry<DumbKey, DumbValue>>> pEntries) throws TTException {
+        long i = 0;
+        for (List<Map.Entry<DumbKey, DumbValue>> entriesPerRev : pEntries) {
+            final IPageReadTrx rtx = pSession.beginPageReadTransaction(i);
+            CoreTestHelper.checkStructure(entriesPerRev, rtx, true);
+            i++;
+        }
     }
 
     protected static void testGet(final ISession pSession, final DumbNode[][] pNodes) throws TTException {
+        // check against invalid nodekey
+        IPageReadTrx rtx = pSession.beginPageReadTransaction(0);
+        try {
+            rtx.getNode(-1);
+            fail();
+        } catch (IllegalArgumentException exc) {
+            // must be thrown
+        }
+        rtx.close();
+        // check against stored structure
         long nodeKey = 0;
         for (int i = 0; i < pNodes.length; i++) {
-            final IPageReadTrx rtx = pSession.beginPageReadTransaction(i + 1);
+            rtx = pSession.beginPageReadTransaction(i + 1);
             for (DumbNode node : pNodes[i]) {
                 assertEquals(node, rtx.getNode(nodeKey));
                 nodeKey++;
@@ -269,6 +281,19 @@ public class PageReadTrxTest {
         } catch (IllegalStateException exc) {
             // must be thrown
         }
+        try {
+            rtx.getRevision();
+            fail();
+        } catch (IllegalStateException exc) {
+            // must be thrown
+        }
+        try {
+            rtx.getNode(0);
+            fail();
+        } catch (IllegalStateException exc) {
+            // must be thrown
+        }
+
         assertFalse(rtx.close());
         assertTrue(rtx.isClosed());
 

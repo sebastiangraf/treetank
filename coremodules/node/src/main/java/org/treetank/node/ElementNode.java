@@ -27,19 +27,20 @@
 
 package org.treetank.node;
 
+import static com.google.common.base.Objects.toStringHelper;
 import static org.treetank.node.IConstants.NULL_NODE;
 
+import java.io.DataOutput;
+import java.io.IOException;
 import java.util.List;
 
+import org.treetank.exception.TTIOException;
 import org.treetank.node.delegates.NameNodeDelegate;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
 import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IStructNode;
-
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
 
 /**
  * <h1>ElementNode</h1>
@@ -422,26 +423,6 @@ public final class ElementNode implements INode, IStructNode, INameNode {
      * {@inheritDoc}
      */
     @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("ElementNode [mDel=");
-        builder.append(mDel);
-        builder.append(", mStrucDel=");
-        builder.append(mStrucDel);
-        builder.append(", mNameDel=");
-        builder.append(mNameDel);
-        builder.append(", mAttributeKeys=");
-        builder.append(mAttributeKeys);
-        builder.append(", mNamespaceKeys=");
-        builder.append(mNamespaceKeys);
-        builder.append("]");
-        return builder.toString();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public int hashCode() {
         return mNameDel.hashCode();
     }
@@ -485,21 +466,35 @@ public final class ElementNode implements INode, IStructNode, INameNode {
      * {@inheritDoc}
      */
     @Override
-    public byte[] getByteRepresentation() {
-        final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
-        pOutput.writeInt(IConstants.ELEMENT);
-        pOutput.write(mDel.getByteRepresentation());
-        pOutput.write(mStrucDel.getByteRepresentation());
-        pOutput.write(mNameDel.getByteRepresentation());
-        pOutput.writeInt(getAttributeCount());
-        for (int i = 0; i < getAttributeCount(); i++) {
-            pOutput.writeLong(getAttributeKey(i));
+    public String toString() {
+        return toStringHelper(this).add("mDel", mDel).add("mStrucDel", mStrucDel).add("mNameDel", mNameDel)
+            .add("mAttributeKeys", mAttributeKeys).add("mNamespaceKeys", mNamespaceKeys).toString();
+    }
+
+    /**
+     * Serializing to given dataput
+     * 
+     * @param pOutput
+     *            to serialize to
+     * @throws TTIOException
+     */
+    public void serialize(final DataOutput pOutput) throws TTIOException {
+        try {
+            pOutput.writeInt(IConstants.ELEMENT);
+            mDel.serialize(pOutput);
+            mStrucDel.serialize(pOutput);
+            mNameDel.serialize(pOutput);
+            pOutput.writeInt(getAttributeCount());
+            for (int i = 0; i < getAttributeCount(); i++) {
+                pOutput.writeLong(getAttributeKey(i));
+            }
+            pOutput.writeInt(getNamespaceCount());
+            for (int i = 0; i < getNamespaceCount(); i++) {
+                pOutput.writeLong(getNamespaceKey(i));
+            }
+        } catch (final IOException exc) {
+            throw new TTIOException(exc);
         }
-        pOutput.writeInt(getNamespaceCount());
-        for (int i = 0; i < getNamespaceCount(); i++) {
-            pOutput.writeLong(getNamespaceKey(i));
-        }
-        return pOutput.toByteArray();
     }
 
 }

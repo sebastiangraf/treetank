@@ -171,7 +171,7 @@ public class NodeReadTrx implements INodeReadTrx {
     public final String nameForKey(final int mKey) {
         assertNotClosed();
         NodeMetaPageFactory.MetaKey key = new NodeMetaPageFactory.MetaKey(mKey);
-        NodeMetaPageFactory.MetaValue value = (MetaValue)mPageReadTrx.getMetaPage().getValue(key);
+        NodeMetaPageFactory.MetaValue value = (MetaValue)mPageReadTrx.getMetaPage().getMetaMap().get(key);
         return value == null ? null : value.getData();
     }
 

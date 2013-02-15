@@ -29,17 +29,20 @@ package org.treetank.log;
 
 import static com.google.common.base.Objects.toStringHelper;
 
+import java.io.DataInput;
+import java.io.DataInputStream;
+import java.io.DataOutput;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.Objects;
 
 import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;
+import org.treetank.exception.TTIOException;
 import org.treetank.page.NodePage;
 import org.treetank.page.PageFactory;
 import org.treetank.page.interfaces.IPage;
 
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
 import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
@@ -149,18 +152,15 @@ public final class LogValue {
          */
         @Override
         public LogValue entryToObject(final TupleInput arg0) {
-            final ByteArrayDataInput data = ByteStreams.newDataInput(arg0.getBufferBytes());
-
-            final int completeLength = data.readInt();
-            final int modifiedLength = data.readInt();
-            byte[] completeBytes = new byte[completeLength];
-            byte[] modifiedBytes = new byte[modifiedLength];
-            data.readFully(completeBytes);
-            data.readFully(modifiedBytes);
-
-            final IPage current = mFac.deserializePage(completeBytes);
-            final IPage modified = mFac.deserializePage(modifiedBytes);
-            return new LogValue(current, modified);
+            try {
+                final DataInput data = new DataInputStream(arg0);
+                final IPage current = mFac.deserializePage(data);
+                final IPage modified = mFac.deserializePage(data);
+                arg0.close();
+                return new LogValue(current, modified);
+            } catch (IOException | TTIOException exc) {
+                throw new RuntimeException(exc);
+            }
         }
 
         /**
@@ -168,14 +168,14 @@ public final class LogValue {
          */
         @Override
         public void objectToEntry(final LogValue arg0, final TupleOutput arg1) {
-            final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
-            final byte[] completeData = arg0.getComplete().getByteRepresentation();
-            final byte[] modifiedData = arg0.getModified().getByteRepresentation();
-            pOutput.writeInt(completeData.length);
-            pOutput.writeInt(modifiedData.length);
-            pOutput.write(completeData);
-            pOutput.write(modifiedData);
-            arg1.write(pOutput.toByteArray());
+            try {
+                final DataOutput data = new DataOutputStream(arg1);
+                arg0.getComplete().serialize(data);
+                arg0.getModified().serialize(data);
+                arg1.close();
+            } catch (IOException | TTIOException exc) {
+                throw new RuntimeException(exc);
+            }
         }
     }
 }

@@ -126,9 +126,7 @@ public final class Session implements ISession {
         if (!mClosed) {
             // Forcibly close all open transactions.
             for (final IPageReadTrx rtx : mPageTrxs) {
-                if (!rtx.close()) {
-                    return false;
-                }
+                rtx.close();
             }
 
             // Immediately release all resources.
@@ -147,7 +145,7 @@ public final class Session implements ISession {
      * {@inheritDoc}
      */
     public boolean truncate() throws TTException {
-        checkState(mClosed, "Session must be closed before truncated.");
+        checkState(!mClosed, "Session must be opened to truncate.");
         if (mResourceConfig.mBackend.truncate()) {
             return IOUtils.recursiveDelete(new File(new File(mDatabase.getLocation(),
                 StorageConfiguration.Paths.Data.getFile().getName()), mSessionConfig.getResource()));

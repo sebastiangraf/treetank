@@ -5,10 +5,10 @@ package org.treetank.io.bytepipe;
 
 import static com.google.common.base.Objects.toStringHelper;
 
-import java.io.ByteArrayOutputStream;
-import java.util.zip.DataFormatException;
-import java.util.zip.Deflater;
-import java.util.zip.Inflater;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.InflaterInputStream;
 
 import org.treetank.exception.TTByteHandleException;
 
@@ -20,59 +20,18 @@ import org.treetank.exception.TTByteHandleException;
  */
 public class Zipper implements IByteHandler {
 
-    private static final Deflater COMPRESSOR = new Deflater();
-
-    private static final Inflater DECOMPRESSOR = new Inflater();
-
-    private final byte[] mTmp;
-
-    private final ByteArrayOutputStream mOut;
-
     /**
-     * Constructor.
-     * 
-     * @param pComponent
+     * {@inheritDoc}
      */
-    public Zipper() {
-        mTmp = new byte[32767];
-        mOut = new ByteArrayOutputStream();
+    public OutputStream serialize(final OutputStream pToSerialize) throws TTByteHandleException {
+        return new DeflaterOutputStream(pToSerialize);
     }
 
     /**
      * {@inheritDoc}
      */
-    public byte[] serialize(final byte[] pToSerialize) throws TTByteHandleException {
-        COMPRESSOR.reset();
-        mOut.reset();
-        COMPRESSOR.setInput(pToSerialize);
-        COMPRESSOR.finish();
-        int count;
-        while (!COMPRESSOR.finished()) {
-            count = COMPRESSOR.deflate(mTmp);
-            mOut.write(mTmp, 0, count);
-        }
-        final byte[] result = mOut.toByteArray();
-        return result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public byte[] deserialize(byte[] pToDeserialize) throws TTByteHandleException {
-        DECOMPRESSOR.reset();
-        mOut.reset();
-        DECOMPRESSOR.setInput(pToDeserialize);
-        int count;
-        while (!DECOMPRESSOR.finished()) {
-            try {
-                count = DECOMPRESSOR.inflate(mTmp);
-            } catch (final DataFormatException exc) {
-                throw new TTByteHandleException(exc);
-            }
-            mOut.write(mTmp, 0, count);
-        }
-        final byte[] result = mOut.toByteArray();
-        return result;
+    public InputStream deserialize(final InputStream pToDeserialize) throws TTByteHandleException {
+        return new InflaterInputStream(pToDeserialize);
     }
 
     /**
@@ -80,8 +39,7 @@ public class Zipper implements IByteHandler {
      */
     @Override
     public String toString() {
-        return toStringHelper(this).add("mCompressor", COMPRESSOR).add("mDecompressor", DECOMPRESSOR)
-            .toString();
+        return toStringHelper(this).toString();
     }
 
 }

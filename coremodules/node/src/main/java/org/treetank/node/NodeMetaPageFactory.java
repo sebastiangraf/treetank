@@ -1,13 +1,13 @@
 package org.treetank.node;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
 import java.util.Objects;
 
 import org.treetank.api.IMetaEntry;
 import org.treetank.api.IMetaEntryFactory;
-
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
+import org.treetank.exception.TTIOException;
 
 /**
  * Meta page for node layer mainly representing a hashmap mapping hashes to tagnames.
@@ -21,22 +21,31 @@ public class NodeMetaPageFactory implements IMetaEntryFactory {
     private final static int VALUE = 2;
 
     /**
-     * {@inheritDoc}
+     * Create a meta-entry out of a serialized byte-representation.
+     * 
+     * @param pData
+     *            byte representation.
+     * @return the created metaEntry.
+     * @throws TTIOException
+     *             if anything weird happens
      */
-    @Override
-    public IMetaEntry deserializeEntry(byte[] pData) {
-        final ByteArrayDataInput input = ByteStreams.newDataInput(pData);
-        final int kind = input.readInt();
-        switch (kind) {
-        case KEY:
-            return new MetaKey(input.readInt());
-        case VALUE:
-            final int valSize = input.readInt();
-            final byte[] bytes = new byte[valSize];
-            input.readFully(bytes);
-            return new MetaValue(new String(bytes));
+    public IMetaEntry deserializeEntry(final DataInput pData) throws TTIOException {
+        try {
+            final int kind = pData.readInt();
+            switch (kind) {
+            case KEY:
+                return new MetaKey(pData.readInt());
+            case VALUE:
+                final int valSize = pData.readInt();
+                final byte[] bytes = new byte[valSize];
+                pData.readFully(bytes);
+                return new MetaValue(new String(bytes));
+            default:
+                throw new IllegalStateException("Kind not defined.");
+            }
+        } catch (final IOException exc) {
+            throw new TTIOException(exc);
         }
-        return null;
     }
 
     /**
@@ -63,11 +72,13 @@ public class NodeMetaPageFactory implements IMetaEntryFactory {
          * {@inheritDoc}
          */
         @Override
-        public byte[] getByteRepresentation() {
-            final ByteArrayDataOutput output = ByteStreams.newDataOutput();
-            output.writeInt(KEY);
-            output.writeInt(mKey);
-            return output.toByteArray();
+        public void serialize(final DataOutput pOutput) throws TTIOException {
+            try {
+                pOutput.writeInt(KEY);
+                pOutput.writeInt(mKey);
+            } catch (final IOException exc) {
+                throw new TTIOException(exc);
+            }
         }
 
         /**
@@ -111,13 +122,15 @@ public class NodeMetaPageFactory implements IMetaEntryFactory {
          * {@inheritDoc}
          */
         @Override
-        public byte[] getByteRepresentation() {
-            final ByteArrayDataOutput output = ByteStreams.newDataOutput();
-            output.writeInt(VALUE);
-            final byte[] tmp = getData().getBytes();
-            output.writeInt(tmp.length);
-            output.write(tmp);
-            return output.toByteArray();
+        public void serialize(final DataOutput pOutput) throws TTIOException {
+            try {
+                pOutput.writeInt(VALUE);
+                final byte[] tmp = getData().getBytes();
+                pOutput.writeInt(tmp.length);
+                pOutput.write(tmp);
+            } catch (final IOException exc) {
+                throw new TTIOException(exc);
+            }
         }
 
         /**

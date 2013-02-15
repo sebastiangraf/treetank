@@ -3,6 +3,9 @@
  */
 package org.treetank.api;
 
+import java.io.DataInput;
+
+import org.treetank.exception.TTIOException;
 import org.treetank.page.DumbNodeFactory;
 
 import com.google.inject.ImplementedBy;
@@ -27,6 +30,6 @@ public interface INodeFactory {
      *            byte representation.
      * @return the created node.
      */
-    INode deserializeNode(final byte[] pData);
+    INode deserializeNode(final DataInput pData) throws TTIOException;
 
 }

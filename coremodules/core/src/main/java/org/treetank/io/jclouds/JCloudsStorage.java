@@ -90,10 +90,6 @@ public class JCloudsStorage implements IBackend {
     @Override
     public IBackendReader getReader() throws TTException {
         // setup the container name used by the provider (like bucket in S3)
-        String containerName = mProperties.getProperty(ContructorProps.RESOURCE);
-        if (!mBlobStore.containerExists(containerName)) {
-            mBlobStore.createContainerInLocation(null, containerName);
-        }
         return new JCloudsReader(mBlobStore, mFac, mByteHandler, mProperties
             .getProperty(ContructorProps.RESOURCE));
     }
@@ -121,7 +117,7 @@ public class JCloudsStorage implements IBackend {
             mBlobStore.deleteContainer(mProperties.getProperty(ContructorProps.RESOURCE));
             returnVal = true;
         }
+        mContext.close();
         return returnVal;
     }
-
 }

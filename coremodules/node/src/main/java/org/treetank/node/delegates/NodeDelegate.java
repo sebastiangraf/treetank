@@ -26,15 +26,18 @@
  */
 package org.treetank.node.delegates;
 
+import static com.google.common.base.Objects.toStringHelper;
 import static org.treetank.node.IConstants.NULL_NODE;
 import static org.treetank.node.IConstants.TYPE_KEY;
 
+import java.io.DataOutput;
+import java.io.IOException;
+
+import org.treetank.exception.TTIOException;
 import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.INode;
 
 import com.google.common.hash.Hasher;
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
 
 /**
  * Delegate method for all nodes. That means that all nodes stored in Treetank
@@ -150,17 +153,8 @@ public class NodeDelegate implements INode {
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("NodeDelegate [mNodeKey=");
-        builder.append(mNodeKey);
-        builder.append(", mParentKey=");
-        builder.append(mParentKey);
-        builder.append(", mHash=");
-        builder.append(mHash);
-        builder.append(", mTypeKey=");
-        builder.append(mTypeKey);
-        builder.append("]");
-        return builder.toString();
+        return toStringHelper(this).add("mNodeKey", mNodeKey).add("mNodeKey", mNodeKey).add("mHash", mHash)
+            .add("mTypeKey", mTypeKey).toString();
     }
 
     /**
@@ -188,15 +182,20 @@ public class NodeDelegate implements INode {
     }
 
     /**
-     * {@inheritDoc}
+     * Serializing to given dataput
+     * 
+     * @param pOutput
+     *            to serialize to
+     * @throws TTIOException
      */
-    @Override
-    public byte[] getByteRepresentation() {
-        final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
-        pOutput.writeLong(getNodeKey());
-        pOutput.writeLong(getParentKey());
-        pOutput.writeLong(getHash());
-        return pOutput.toByteArray();
+    public void serialize(final DataOutput pOutput) throws TTIOException {
+        try {
+            pOutput.writeLong(getNodeKey());
+            pOutput.writeLong(getParentKey());
+            pOutput.writeLong(getHash());
+        } catch (final IOException exc) {
+            throw new TTIOException(exc);
+        }
     }
 
 }

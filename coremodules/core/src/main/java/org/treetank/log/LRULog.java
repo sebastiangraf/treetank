@@ -58,7 +58,6 @@ import com.sleepycat.je.OperationStatus;
  */
 public final class LRULog {
 
-
     /**
      * Name for the database.
      */
@@ -103,8 +102,6 @@ public final class LRULog {
 
         final File realPlace =
             new File(pFile, ResourceConfiguration.Paths.TransactionLog.getFile().getName());
-        realPlace.mkdirs();
-
         try {
             final EnvironmentConfig config = new EnvironmentConfig();
             config.setAllowCreate(true);
@@ -153,7 +150,7 @@ public final class LRULog {
             mDatabase.put(null, keyEntry, valueEntry);
 
         } catch (final DatabaseException exc) {
-            throw new RuntimeException(exc);
+            throw new TTIOException(exc);
         }
 
     }

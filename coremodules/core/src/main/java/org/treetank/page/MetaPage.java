@@ -29,15 +29,15 @@ package org.treetank.page;
 
 import static com.google.common.base.Objects.toStringHelper;
 
+import java.io.DataOutput;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 import org.treetank.api.IMetaEntry;
+import org.treetank.exception.TTIOException;
 import org.treetank.page.interfaces.IPage;
-
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
 
 /**
  * <h1>MetaPage</h1>
@@ -66,17 +66,6 @@ public final class MetaPage implements IPage {
     }
 
     /**
-     * Get name belonging to name key.
-     * 
-     * @param pKey
-     *            key identifying value.
-     * @return value of this key
-     */
-    public IMetaEntry getValue(final IMetaEntry pKey) {
-        return mMetaMap.get(pKey);
-    }
-
-    /**
      * Create name key given a name.
      * 
      * @param pKey
@@ -101,20 +90,18 @@ public final class MetaPage implements IPage {
      * {@inheritDoc}
      */
     @Override
-    public byte[] getByteRepresentation() {
-        final ByteArrayDataOutput output = ByteStreams.newDataOutput();
-        output.writeInt(IConstants.METAPAGE);
-        output.writeLong(mPageKey);
-        output.writeInt(mMetaMap.size());
-        for (final IMetaEntry key : mMetaMap.keySet()) {
-            final byte[] keyTmp = key.getByteRepresentation();
-            output.writeInt(keyTmp.length);
-            output.write(keyTmp);
-            final byte[] valTmp = mMetaMap.get(key).getByteRepresentation();
-            output.writeInt(valTmp.length);
-            output.write(valTmp);
+    public void serialize(final DataOutput pOutput) throws TTIOException {
+        try {
+            pOutput.writeInt(IConstants.METAPAGE);
+            pOutput.writeLong(mPageKey);
+            pOutput.writeInt(mMetaMap.size());
+            for (final IMetaEntry key : mMetaMap.keySet()) {
+                key.serialize(pOutput);
+                mMetaMap.get(key).serialize(pOutput);
+            }
+        } catch (final IOException exc) {
+            throw new TTIOException(exc);
         }
-        return output.toByteArray();
     }
 
     /**

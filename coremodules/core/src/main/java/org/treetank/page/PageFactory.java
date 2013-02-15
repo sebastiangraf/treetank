@@ -27,13 +27,18 @@
 
 package org.treetank.page;
 
+import static com.google.common.base.Objects.toStringHelper;
+
+import java.io.DataInput;
+import java.io.IOException;
+
 import org.treetank.api.IMetaEntry;
 import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;
+import org.treetank.exception.TTIOException;
+import org.treetank.page.NodePage.DeletedNode;
 import org.treetank.page.interfaces.IPage;
 
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -68,64 +73,62 @@ public final class PageFactory {
     /**
      * Create page.
      * 
-     * @param paramSource
+     * @param pInput
      *            source to read from
      * @return the created page
+     * @throws TTIOException
      */
-    public IPage deserializePage(final byte[] pSource) {
-        final ByteArrayDataInput input = ByteStreams.newDataInput(pSource);
-        final int kind = input.readInt();
-        switch (kind) {
-        case IConstants.NODEPAGE:
-            NodePage nodePage = new NodePage(input.readLong());
-            for (int offset = 0; offset < IConstants.CONTENT_COUNT; offset++) {
-                int length = input.readInt();
-                if (length != IConstants.NULL_NODE) {
-                    byte[] toread = new byte[length];
-                    input.readFully(toread);
-                    nodePage.getNodes()[offset] = mNodeFac.deserializeNode(toread);
+    public IPage deserializePage(final DataInput pInput) throws TTIOException {
+        try {
+            final int kind = pInput.readInt();
+            switch (kind) {
+            case IConstants.NODEPAGE:
+                NodePage nodePage = new NodePage(pInput.readLong());
+                for (int offset = 0; offset < IConstants.CONTENT_COUNT; offset++) {
+                    int nodeKind = pInput.readInt();
+                    if (nodeKind != IConstants.NULL_NODE) {
+                        if (nodeKind == IConstants.DELETEDNODE) {
+                            nodePage.getNodes()[offset] = new DeletedNode(pInput.readLong());
+                        } else {
+                            nodePage.getNodes()[offset] = mNodeFac.deserializeNode(pInput);
+                        }
+                    }
                 }
+                return nodePage;
+            case IConstants.METAPAGE:
+                MetaPage metaPage = new MetaPage(pInput.readLong());
+                final int mapSize = pInput.readInt();
+                IMetaEntry key;
+                IMetaEntry value;
+                for (int i = 0; i < mapSize; i++) {
+                    key = mEntryFac.deserializeEntry(pInput);
+                    value = mEntryFac.deserializeEntry(pInput);
+                    metaPage.setEntry(key, value);
+                }
+                return metaPage;
+            case IConstants.UBERPAGE:
+                UberPage uberPage = new UberPage(pInput.readLong(), pInput.readLong(), pInput.readLong());
+                uberPage.setReferenceKey(0, pInput.readLong());
+                return uberPage;
+            case IConstants.INDIRCTPAGE:
+                IndirectPage indirectPage = new IndirectPage(pInput.readLong());
+                for (int offset = 0; offset < indirectPage.getReferenceKeys().length; offset++) {
+                    indirectPage.setReferenceKey(offset, pInput.readLong());
+                }
+                return indirectPage;
+            case IConstants.REVISIONROOTPAGE:
+                RevisionRootPage revRootPage =
+                    new RevisionRootPage(pInput.readLong(), pInput.readLong(), pInput.readLong());
+                for (int offset = 0; offset < revRootPage.getReferenceKeys().length; offset++) {
+                    revRootPage.setReferenceKey(offset, pInput.readLong());
+                }
+                return revRootPage;
+            default:
+                throw new IllegalStateException(
+                    "Invalid Kind of Page. Something went wrong in the serialization/deserialization");
             }
-            return nodePage;
-        case IConstants.METAPAGE:
-            MetaPage metaPage = new MetaPage(input.readLong());
-            final int mapSize = input.readInt();
-            int size = -1;
-            byte[] bytes;
-            IMetaEntry key;
-            IMetaEntry value;
-            for (int i = 0; i < mapSize; i++) {
-                size = input.readInt();
-                bytes = new byte[size];
-                input.readFully(bytes);
-                key = mEntryFac.deserializeEntry(bytes);
-                size = input.readInt();
-                bytes = new byte[size];
-                input.readFully(bytes);
-                value = mEntryFac.deserializeEntry(bytes);
-                metaPage.setEntry(key, value);
-            }
-            return metaPage;
-        case IConstants.UBERPAGE:
-            UberPage uberPage = new UberPage(input.readLong(), input.readLong(), input.readLong());
-            uberPage.setReferenceKey(0, input.readLong());
-            return uberPage;
-        case IConstants.INDIRCTPAGE:
-            IndirectPage indirectPage = new IndirectPage(input.readLong());
-            for (int offset = 0; offset < indirectPage.getReferenceKeys().length; offset++) {
-                indirectPage.setReferenceKey(offset, input.readLong());
-            }
-            return indirectPage;
-        case IConstants.REVISIONROOTPAGE:
-            RevisionRootPage revRootPage =
-                new RevisionRootPage(input.readLong(), input.readLong(), input.readLong());
-            for (int offset = 0; offset < revRootPage.getReferenceKeys().length; offset++) {
-                revRootPage.setReferenceKey(offset, input.readLong());
-            }
-            return revRootPage;
-        default:
-            throw new IllegalStateException(
-                "Invalid Kind of Page. Something went wrong in the serialization/deserialization");
+        } catch (final IOException exc) {
+            throw new TTIOException(exc);
         }
     }
 
@@ -133,30 +136,8 @@ public final class PageFactory {
      * {@inheritDoc}
      */
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((mNodeFac == null) ? 0 : mNodeFac.hashCode());
-        return result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(Object obj) {
-        return obj.hashCode() == this.hashCode();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("PageFactory [mNodeFac=");
-        builder.append(mNodeFac);
-        builder.append("]");
-        return builder.toString();
+        return toStringHelper(this).add("mNodeFac", mNodeFac).add("mEntryFac", mEntryFac).toString();
     }
+
 }

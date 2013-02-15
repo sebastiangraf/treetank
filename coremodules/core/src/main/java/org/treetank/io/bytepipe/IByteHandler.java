@@ -1,5 +1,8 @@
 package org.treetank.io.bytepipe;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import org.treetank.exception.TTByteHandleException;
 
 import com.google.inject.ImplementedBy;
@@ -19,22 +22,22 @@ public interface IByteHandler {
      * 
      * @param pToSerialize
      *            byte to be serialized
-     * @return result of the serialization
+     * @return outputstream from the pipeline
      * @throws TTByteHandleException
      *             to be capsulated.
      */
-    byte[] serialize(byte[] pToSerialize) throws TTByteHandleException;
+    OutputStream serialize(OutputStream pToSerialize) throws TTByteHandleException;
 
     /**
      * Method to deserialize any byte-chunk.
      * 
      * @param pToDeserialize
      *            to deserialize
-     * @return result of the deserialization
+     * @return the inputstream from the pipeline
      * @throws TTByteHandleException
      *             to be capsulated.
      */
-    byte[] deserialize(byte[] pToDeserialize) throws TTByteHandleException;
+    InputStream deserialize(InputStream pToDeserialize) throws TTByteHandleException;
 
     /**
      * Concartenating interface for offering dedicated access to {@link ByteHandlerPipeline} for injections.

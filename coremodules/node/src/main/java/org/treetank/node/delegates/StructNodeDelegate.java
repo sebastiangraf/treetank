@@ -26,14 +26,17 @@
  */
 package org.treetank.node.delegates;
 
+import static com.google.common.base.Objects.toStringHelper;
 import static org.treetank.node.IConstants.NULL_NODE;
 
+import java.io.DataOutput;
+import java.io.IOException;
+
+import org.treetank.exception.TTIOException;
 import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.IStructNode;
 
 import com.google.common.hash.Hasher;
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
 
 /**
  * Delegate method for all nodes building up the structure. That means that all
@@ -194,7 +197,6 @@ public class StructNodeDelegate implements IStructNode {
         return mDelegate.getNodeKey();
     }
 
-
     /**
      * Delegate method for getParentKey.
      * 
@@ -292,31 +294,27 @@ public class StructNodeDelegate implements IStructNode {
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("StructNodeDelegate [mFirstChild=");
-        builder.append(mFirstChild);
-        builder.append(", mRightSibling=");
-        builder.append(mRightSibling);
-        builder.append(", mLeftSibling=");
-        builder.append(mLeftSibling);
-        builder.append(", mChildCount=");
-        builder.append(mChildCount);
-        builder.append(", mDelegate=");
-        builder.append(mDelegate);
-        builder.append("]");
-        return builder.toString();
+        return toStringHelper(this).add("mFirstChild", mFirstChild).add("mRightSibling", mRightSibling).add(
+            "mLeftSibling", mLeftSibling).add("mChildCount", mChildCount).add("mDelegate", mDelegate)
+            .toString();
     }
-    
+
     /**
-     * {@inheritDoc}
+     * Serializing to given dataput
+     * 
+     * @param pOutput
+     *            to serialize to
+     * @throws TTIOException
      */
-    @Override
-    public byte[] getByteRepresentation() {
-        final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
-        pOutput.writeLong(getFirstChildKey());
-        pOutput.writeLong(getRightSiblingKey());
-        pOutput.writeLong(getLeftSiblingKey());
-        pOutput.writeLong(getChildCount());
-        return pOutput.toByteArray();
+    public void serialize(final DataOutput pOutput) throws TTIOException {
+        try {
+            pOutput.writeLong(getFirstChildKey());
+            pOutput.writeLong(getRightSiblingKey());
+            pOutput.writeLong(getLeftSiblingKey());
+            pOutput.writeLong(getChildCount());
+        } catch (final IOException exc) {
+            throw new TTIOException(exc);
+        }
     }
+
 }

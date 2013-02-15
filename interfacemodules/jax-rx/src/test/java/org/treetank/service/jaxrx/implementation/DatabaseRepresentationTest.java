@@ -130,10 +130,10 @@ public class DatabaseRepresentationTest {
     @BeforeMethod
     public void setUp() throws TTException {
         CoreTestHelper.deleteEverything();
-        CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile());
+        CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile());
         final InputStream input = DatabaseRepresentationTest.class.getResourceAsStream(XMLFILE);
         treetank =
-            new DatabaseRepresentation(CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile()),
+            new DatabaseRepresentation(CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile()),
                 mStorageFac, mRevisioning);
         treetank.shred(input, RESOURCENAME);
     }
@@ -372,7 +372,7 @@ public class DatabaseRepresentationTest {
     public void getLastRevision() throws TTException {
         assertEquals(ASSEQUALS, 1, treetank.getLastRevision(RESOURCENAME));
         final NodeIdRepresentation rid =
-            new NodeIdRepresentation(CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile()));
+            new NodeIdRepresentation(CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile()));
         rid.deleteResource(RESOURCENAME, 8);
         assertEquals(ASSEQUALS, 2, treetank.getLastRevision(RESOURCENAME));
     }
@@ -391,7 +391,7 @@ public class DatabaseRepresentationTest {
     public void getModificHistory() throws WebApplicationException, TTException, SAXException, IOException,
         ParserConfigurationException {
         final NodeIdRepresentation rid =
-            new NodeIdRepresentation(CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile()));
+            new NodeIdRepresentation(CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile()));
         rid.deleteResource(RESOURCENAME, 8);
         final OutputStream output = new ByteArrayOutputStream();
         treetank.getModificHistory(RESOURCENAME, "1-2", false, output, true);
@@ -416,7 +416,7 @@ public class DatabaseRepresentationTest {
     public void revertToRevision() throws TTException, WebApplicationException, IOException,
         ParserConfigurationException, SAXException, InterruptedException {
         final NodeIdRepresentation rid =
-            new NodeIdRepresentation(CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile()));
+            new NodeIdRepresentation(CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile()));
         rid.deleteResource(RESOURCENAME, 8);
         rid.deleteResource(RESOURCENAME, 11);
         rid.deleteResource(RESOURCENAME, 14);

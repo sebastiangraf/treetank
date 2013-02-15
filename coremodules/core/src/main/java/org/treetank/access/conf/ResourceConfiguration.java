@@ -71,7 +71,7 @@ public final class ResourceConfiguration {
     /**
      * Paths for a {@link Session}. Each resource has the same folder.layout.
      */
-    public enum Paths {
+    public enum Paths implements IConfigurationPath {
 
         /** Folder for storage of data. */
         Data(new File("data"), true),
@@ -117,25 +117,6 @@ public final class ResourceConfiguration {
             return mIsFolder;
         }
 
-        /**
-         * Checking a structure in a folder to be equal with the data in this
-         * enum.
-         * 
-         * @param pFile
-         *            to be checked
-         * @return -1 if less folders are there, 0 if the structure is equal to
-         *         the one expected, 1 if the structure has more folders
-         */
-        public static int compareStructure(final File pFile) {
-            int existing = 0;
-            for (final Paths paths : values()) {
-                final File currentFile = new File(pFile, paths.getFile().getName());
-                if (currentFile.exists()) {
-                    existing++;
-                }
-            }
-            return existing - values().length;
-        }
     }
 
     // MEMBERS FOR FIXED FIELDS
@@ -250,7 +231,7 @@ public final class ResourceConfiguration {
             jsonWriter.endObject();
             jsonWriter.close();
             fileWriter.close();
-        } catch (IOException exc) {
+        } catch (final IOException exc) {
             throw new TTIOException(exc);
         }
     }
@@ -353,7 +334,7 @@ public final class ResourceConfiguration {
      */
     @Override
     public String toString() {
-        return toStringHelper(this).add("mBackend", mBackend.getClass()).add("mRevision", mRevision).add("mProperties",
-            mProperties).add("mNodeFac", mNodeFac).toString();
+        return toStringHelper(this).add("mBackend", mBackend.getClass()).add("mRevision", mRevision).add(
+            "mProperties", mProperties).add("mNodeFac", mNodeFac.getClass().getName()).toString();
     }
 }

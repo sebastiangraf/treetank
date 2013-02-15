@@ -28,14 +28,14 @@ package org.treetank.page;
 
 import static com.google.common.base.Objects.toStringHelper;
 
+import java.io.DataOutput;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Objects;
 
 import org.treetank.api.INode;
+import org.treetank.exception.TTIOException;
 import org.treetank.page.interfaces.IPage;
-
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
 
 /**
  * <h1>NodePage</h1>
@@ -44,7 +44,7 @@ import com.google.common.io.ByteStreams;
  * A node page stores a set of nodes.
  * </p>
  */
-public class NodePage implements IPage {
+public final class NodePage implements IPage {
 
     /** Key of node page. This is the base key of all contained nodes. */
     private final long mPageKey;
@@ -68,37 +68,37 @@ public class NodePage implements IPage {
      * 
      * @return Node page key.
      */
-    public final long getPageKey() {
+    public long getPageKey() {
         return mPageKey;
     }
 
     /**
      * Get node at a given offset.
      * 
-     * @param mOffset
+     * @param pOffset
      *            Offset of node within local node page.
      * @return Node at given offset.
      */
-    public INode getNode(final int mOffset) {
-        return getNodes()[mOffset];
+    public INode getNode(final int pOffset) {
+        return getNodes()[pOffset];
     }
 
     /**
      * Overwrite a single node at a given offset.
      * 
-     * @param mOffset
+     * @param pOffset
      *            Offset of node to overwrite in this node page.
-     * @param mNode
+     * @param pNode
      *            Node to store at given nodeOffset.
      */
-    public void setNode(final int mOffset, final INode mNode) {
-        getNodes()[mOffset] = mNode;
+    public void setNode(final int pOffset, final INode pNode) {
+        getNodes()[pOffset] = pNode;
     }
 
     /**
      * @return the mNodes
      */
-    public final INode[] getNodes() {
+    public INode[] getNodes() {
         return mNodes;
     }
 
@@ -106,20 +106,25 @@ public class NodePage implements IPage {
      * {@inheritDoc}
      */
     @Override
-    public byte[] getByteRepresentation() {
-        final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
-        pOutput.writeInt(IConstants.NODEPAGE);
-        pOutput.writeLong(mPageKey);
-        for (final INode node : getNodes()) {
-            if (node == null) {
-                pOutput.writeInt(IConstants.NULL_NODE);
-            } else {
-                byte[] nodeBytes = node.getByteRepresentation();
-                pOutput.writeInt(nodeBytes.length);
-                pOutput.write(nodeBytes);
+    public void serialize(final DataOutput pOutput) throws TTIOException {
+        try {
+            pOutput.writeInt(IConstants.NODEPAGE);
+            pOutput.writeLong(mPageKey);
+            for (final INode node : getNodes()) {
+                if (node == null) {
+                    pOutput.writeInt(IConstants.NULL_NODE);
+                } else {
+                    if (node instanceof DeletedNode) {
+                        pOutput.writeInt(IConstants.DELETEDNODE);
+                    } else {
+                        pOutput.writeInt(IConstants.INTERFACENODE);
+                    }
+                    node.serialize(pOutput);
+                }
             }
+        } catch (final IOException exc) {
+            throw new TTIOException(exc);
         }
-        return pOutput.toByteArray();
     }
 
     /**
@@ -168,11 +173,9 @@ public class NodePage implements IPage {
         }
 
         /**
-         * Delegate method for getNodeKey.
-         * 
-         * @return
-         * @see org.treetank.node.delegates.NodeDelegate#getNodeKey()
+         * {@inheritDoc}
          */
+        @Override
         public long getNodeKey() {
             return mNodeKey;
         }
@@ -181,19 +184,12 @@ public class NodePage implements IPage {
          * {@inheritDoc}
          */
         @Override
-        public byte[] getByteRepresentation() {
-            final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
-            pOutput.writeInt(IConstants.NULL_NODE);
-            pOutput.writeLong(mNodeKey);
-            return pOutput.toByteArray();
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void setHash(long pHash) {
-            mHash = pHash;
+        public void serialize(final DataOutput pOutput) throws TTIOException {
+            try {
+                pOutput.writeLong(mNodeKey);
+            } catch (final IOException exc) {
+                throw new TTIOException(exc);
+            }
         }
 
         /**
@@ -202,6 +198,14 @@ public class NodePage implements IPage {
         @Override
         public long getHash() {
             return mHash;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String toString() {
+            return toStringHelper(this).add("mNodeKey", mNodeKey).add("mHash", mHash).toString();
         }
 
     }

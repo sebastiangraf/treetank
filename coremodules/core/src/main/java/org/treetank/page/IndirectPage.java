@@ -29,13 +29,13 @@ package org.treetank.page;
 
 import static com.google.common.base.Objects.toStringHelper;
 
+import java.io.DataOutput;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Objects;
 
+import org.treetank.exception.TTIOException;
 import org.treetank.page.interfaces.IReferencePage;
-
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
 
 /**
  * <h1>IndirectPage</h1>
@@ -67,14 +67,16 @@ public final class IndirectPage implements IReferencePage {
      * {@inheritDoc}
      */
     @Override
-    public byte[] getByteRepresentation() {
-        final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
-        pOutput.writeInt(IConstants.INDIRCTPAGE);
-        pOutput.writeLong(mPageKey);
-        for (long key : mReferenceKeys) {
-            pOutput.writeLong(key);
+    public void serialize(final DataOutput pOutput) throws TTIOException {
+        try {
+            pOutput.writeInt(IConstants.INDIRCTPAGE);
+            pOutput.writeLong(mPageKey);
+            for (long key : mReferenceKeys) {
+                pOutput.writeLong(key);
+            }
+        } catch (final IOException exc) {
+            throw new TTIOException(exc);
         }
-        return pOutput.toByteArray();
     }
 
     /**
@@ -85,11 +87,17 @@ public final class IndirectPage implements IReferencePage {
         return mPageKey;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long[] getReferenceKeys() {
         return mReferenceKeys;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setReferenceKey(int pIndex, long pKey) {
         mReferenceKeys[pIndex] = pKey;
@@ -100,8 +108,8 @@ public final class IndirectPage implements IReferencePage {
      */
     @Override
     public String toString() {
-        return toStringHelper(this).add("mPageKey", mPageKey).add("mReferenceKeys", Arrays.toString(mReferenceKeys))
-            .toString();
+        return toStringHelper(this).add("mPageKey", mPageKey).add("mReferenceKeys",
+            Arrays.toString(mReferenceKeys)).toString();
     }
 
     /**

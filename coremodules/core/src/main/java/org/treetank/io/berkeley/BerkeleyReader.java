@@ -39,6 +39,7 @@ import com.sleepycat.je.DatabaseEntry;
 import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
+import com.sleepycat.je.Transaction;
 
 /**
  * This class represents an reading instance of the Treetank-Application
@@ -55,6 +56,9 @@ public final class BerkeleyReader implements IBackendReader {
     /** Link to the {@link Storage}. */
     private final Database mDatabase;
 
+    /** Transaction for this reader */
+    private final Transaction mTxn;
+
     /**
      * Constructor.
      * 
@@ -63,7 +67,9 @@ public final class BerkeleyReader implements IBackendReader {
      * @param pPageBinding
      *            {@link TupleBinding} for de/-serializing pages
      */
-    public BerkeleyReader(Database pDatabase, TupleBinding<IPage> pPageBinding) {
+    public BerkeleyReader(final Transaction pTxn, final Database pDatabase,
+        final TupleBinding<IPage> pPageBinding) {
+        mTxn = pTxn;
         mDatabase = pDatabase;
         mPageBinding = pPageBinding;
     }
@@ -80,7 +86,7 @@ public final class BerkeleyReader implements IBackendReader {
 
         IPage page = null;
         try {
-            final OperationStatus status = mDatabase.get(null, keyEntry, valueEntry, LockMode.DEFAULT);
+            final OperationStatus status = mDatabase.get(mTxn, keyEntry, valueEntry, LockMode.DEFAULT);
             if (status == OperationStatus.SUCCESS) {
                 page = mPageBinding.entryToObject(valueEntry);
             }
@@ -96,6 +102,7 @@ public final class BerkeleyReader implements IBackendReader {
      */
     @Override
     public void close() throws TTIOException {
+        mTxn.commit();
     }
 
     /**
@@ -108,8 +115,7 @@ public final class BerkeleyReader implements IBackendReader {
         TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(-1l, keyEntry);
 
         try {
-            // final OperationStatus status = mBackend.get(mTxn, keyEntry, valueEntry, LockMode.DEFAULT);
-            final OperationStatus status = mDatabase.get(null, keyEntry, valueEntry, LockMode.DEFAULT);
+            final OperationStatus status = mDatabase.get(mTxn, keyEntry, valueEntry, LockMode.DEFAULT);
             long key = 0;
             if (status == OperationStatus.SUCCESS) {
                 key = TupleBinding.getPrimitiveBinding(Long.class).entryToObject(valueEntry);

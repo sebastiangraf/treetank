@@ -1,15 +1,19 @@
 package org.treetank.node;
 
 import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.treetank.CoreTestHelper;
+import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTByteHandleException;
+import org.treetank.exception.TTIOException;
 import org.treetank.node.delegates.NameNodeDelegate;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
@@ -19,6 +23,10 @@ import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.node.interfaces.IValNode;
 import org.treetank.utils.NamePageHash;
+
+import com.google.common.io.ByteArrayDataInput;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 
 /**
  * @author Sebastian Graf, University of Konstanz
@@ -62,20 +70,32 @@ public class INodeTest {
      *            class for node-tester
      * @param pNodeChecker
      *            checker for nodes
+     * @throws TTIOException
      * 
      */
     @Test(dataProvider = "instantiateNode")
     public void testNode(Class<INode> pNodeClass, INode[] pNodes, Class<INodeChecker> pNodeCheckerClass,
-        INodeChecker[] pNodeChecker) {
+        INodeChecker[] pNodeChecker) throws TTIOException {
 
         // be sure you have enough checkers for the revisioning to check
         assertEquals(pNodes.length, pNodeChecker.length);
+        INodeFactory fac = new TreeNodeFactory();
 
         for (int i = 0; i < pNodes.length; i++) {
             pNodeChecker[i].checkNode(pNodes[i]);
-            final byte[] data = pNodes[i].getByteRepresentation();
-            final INode serializedNode = (INode)new TreeNodeFactory().deserializeNode(data);
+            ByteArrayDataOutput output = ByteStreams.newDataOutput();
+            pNodes[i].serialize(output);
+            final byte[] firstSerialized = output.toByteArray();
+
+            ByteArrayDataInput input = ByteStreams.newDataInput(firstSerialized);
+            final INode serializedNode = (INode)fac.deserializeNode(input);
+            output = ByteStreams.newDataOutput();
+            serializedNode.serialize(output);
+            byte[] secondSerialized = output.toByteArray();
+
             pNodeChecker[i].checkNode(serializedNode);
+            assertTrue(new StringBuilder("Check for ").append(pNodeChecker[i].getClass()).append(" failed.")
+                .toString(), Arrays.equals(firstSerialized, secondSerialized));
         }
     }
 

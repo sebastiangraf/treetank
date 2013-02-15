@@ -27,7 +27,6 @@
 
 package org.treetank.node.interfaces;
 
-
 /**
  * <h1>IItem</h1>
  * <p>
@@ -80,5 +79,13 @@ public interface INode extends org.treetank.api.INode {
      *            the type to be set.
      */
     void setTypeKey(int pTypeKey);
+
+    /**
+     * Setting the hash of this node including substructure.
+     * 
+     * @param pHash
+     *            to be set
+     */
+    void setHash(long pHash);
 
 }

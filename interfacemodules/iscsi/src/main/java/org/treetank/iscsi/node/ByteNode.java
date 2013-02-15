@@ -24,10 +24,12 @@
 
 package org.treetank.iscsi.node;
 
-import org.treetank.api.INode;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.util.Objects;
 
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
+import org.treetank.api.INode;
+import org.treetank.exception.TTIOException;
 
 /**
  * This implementation of {@link INode} is used to store byte arrays in nodes.
@@ -81,19 +83,23 @@ public class ByteNode implements INode {
     }
 
     /**
-     * {@inheritDoc}
+     * Serializing to given dataput
+     * 
+     * @param pOutput
+     *            to serialize to
+     * @throws TTIOException
      */
-    @Override
-    public byte[] getByteRepresentation() {
-        ByteArrayDataOutput output = ByteStreams.newDataOutput();
-        output.writeInt(size);
-        output.writeLong(index);
-        output.writeLong(nodeKey);
-        output.writeLong(previousNodeKey);
-        output.writeLong(nextNodeKey);
-        output.write(val);
-
-        return output.toByteArray();
+    public void serialize(final DataOutput output) throws TTIOException {
+        try {
+            output.writeInt(size);
+            output.writeLong(index);
+            output.writeLong(nodeKey);
+            output.writeLong(previousNodeKey);
+            output.writeLong(nextNodeKey);
+            output.write(val);
+        } catch (final IOException exc) {
+            throw new TTIOException(exc);
+        }
     }
 
     @Override
@@ -106,17 +112,8 @@ public class ByteNode implements INode {
      * {@inheritDoc}
      */
     @Override
-    public void setHash(long pHash) {
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public long getHash() {
-
-        return this.nodeKey * previousNodeKey * nextNodeKey * 31;
+        return Objects.hash(nodeKey,nextNodeKey,previousNodeKey,index);
     }
 
     /**

@@ -4,9 +4,6 @@ import static com.google.common.base.Objects.toStringHelper;
 
 import java.util.Objects;
 
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
 import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
@@ -113,8 +110,7 @@ public class LogKey {
          */
         @Override
         public LogKey entryToObject(TupleInput arg0) {
-            final ByteArrayDataInput data = ByteStreams.newDataInput(arg0.getBufferBytes());
-            final LogKey key = new LogKey(data.readBoolean(), data.readLong(), data.readLong());
+            final LogKey key = new LogKey(arg0.readBoolean(), arg0.readLong(), arg0.readLong());
             return key;
         }
 
@@ -123,11 +119,9 @@ public class LogKey {
          */
         @Override
         public void objectToEntry(LogKey arg0, TupleOutput arg1) {
-            final ByteArrayDataOutput output = ByteStreams.newDataOutput();
-            output.writeBoolean(arg0.isRootLevel());
-            output.writeLong(arg0.getLevel());
-            output.writeLong(arg0.getSeq());
-            arg1.write(output.toByteArray());
+            arg1.writeBoolean(arg0.isRootLevel());
+            arg1.writeLong(arg0.getLevel());
+            arg1.writeLong(arg0.getSeq());
         }
 
     }

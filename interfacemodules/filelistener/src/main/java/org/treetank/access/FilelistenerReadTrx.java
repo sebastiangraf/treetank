@@ -1,10 +1,8 @@
 package org.treetank.access;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
 
 import org.treetank.api.IFilelistenerReadTrx;
 import org.treetank.api.IPageReadTrx;
@@ -15,7 +13,6 @@ import org.treetank.filelistener.file.node.FilelistenerMetaPageFactory.MetaKey;
 import org.treetank.filelistener.file.node.FilelistenerMetaPageFactory.MetaValue;
 
 import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 import com.google.common.io.OutputSupplier;
@@ -30,7 +27,7 @@ public class FilelistenerReadTrx implements IFilelistenerReadTrx {
 
     /** A dir used to generate the files in. */
     private final File mTmpDir;
-    
+
     /** A special Key for empty files */
     public static final long emptyFileKey = Long.MIN_VALUE;
 
@@ -54,13 +51,13 @@ public class FilelistenerReadTrx implements IFilelistenerReadTrx {
     @Override
     public String[] getFilePaths() {
         Object[] metaKeys = mPageReadTrx.getMetaPage().getMetaMap().keySet().toArray();
-        
+
         String[] filePaths = new String[metaKeys.length];
-        
+
         for (int i = 0; i < metaKeys.length; i++) {
             filePaths[i] = ((MetaKey)metaKeys[i]).getKey();
         }
-        
+
         return filePaths;
     }
 
@@ -70,12 +67,12 @@ public class FilelistenerReadTrx implements IFilelistenerReadTrx {
     @Override
     public boolean fileExists(String pRelativePath) {
         String paths[] = this.getFilePaths();
-        for(String s : paths){
-            if(s.equals(pRelativePath)){
+        for (String s : paths) {
+            if (s.equals(pRelativePath)) {
                 return true;
             }
         }
-        
+
         return false;
     }
 
@@ -86,7 +83,7 @@ public class FilelistenerReadTrx implements IFilelistenerReadTrx {
      */
     @Override
     public File getFullFile(String pRelativePath) throws TTIOException, IOException {
-        MetaValue value = (MetaValue)mPageReadTrx.getMetaPage().getValue(new MetaKey(pRelativePath));
+        MetaValue value = (MetaValue)mPageReadTrx.getMetaPage().getMetaMap().get(new MetaKey(pRelativePath));
 
         File file =
             new File(new StringBuilder().append(mTmpDir.getAbsolutePath()).append(File.separator).append(
@@ -97,27 +94,26 @@ public class FilelistenerReadTrx implements IFilelistenerReadTrx {
         }
 
         file.createNewFile();
-        
-        if(value.getData() == emptyFileKey){
+
+        if (value.getData() == emptyFileKey) {
             return file;
         }
-        
+
         ByteArrayDataOutput output = ByteStreams.newDataOutput(FileNode.FILENODESIZE);
 
         FileNode node = (FileNode)mPageReadTrx.getNode(value.getData());
-        
+
         OutputSupplier<FileOutputStream> supplier = Files.newOutputStreamSupplier(file, true);
 
         // Iterating as long as we didn't find the end of the file
         // and writing the bytes to a temporary file.
-        do{
+        do {
             supplier.getOutput().write(node.getVal());
             node = (FileNode)mPageReadTrx.getNode(node.getNextNodeKey());
-        }
-        while (!node.isEof());
-        
+        } while (!node.isEof());
+
         supplier.getOutput().close();
-        
+
         return file;
     }
 

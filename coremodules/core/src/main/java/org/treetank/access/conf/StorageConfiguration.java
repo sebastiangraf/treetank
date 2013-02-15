@@ -56,7 +56,7 @@ public final class StorageConfiguration {
      * Paths for a {@link org.treetank.access.Storage}. Each {@link org.treetank.access.Storage} has the
      * same folder.layout.
      */
-    public enum Paths {
+    public enum Paths implements IConfigurationPath{
 
         /** File to store db settings. */
         ConfigBinary(new File("dbsetting.obj"), false),
@@ -98,26 +98,6 @@ public final class StorageConfiguration {
          */
         public boolean isFolder() {
             return mIsFolder;
-        }
-
-        /**
-         * Checking a structure in a folder to be equal with the data in this
-         * enum.
-         * 
-         * @param pFile
-         *            to be checked
-         * @return -1 if less folders are there, 0 if the structure is equal to
-         *         the one expected, 1 if the structure has more folders
-         */
-        public static int compareStructure(final File pFile) {
-            int existing = 0;
-            for (final Paths paths : values()) {
-                final File currentFile = new File(pFile, paths.getFile().getName());
-                if (currentFile.exists()) {
-                    existing++;
-                }
-            }
-            return existing - values().length;
         }
 
     }

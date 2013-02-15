@@ -3,6 +3,7 @@
  */
 package org.treetank.exception;
 
+import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -21,6 +22,17 @@ public class TTByteHandleException extends TTException {
     /** Default serialization id due to inheritance. */
     private static final long serialVersionUID = -7648446801135591946L;
 
+    /**
+     * 
+     * Constructor.
+     * 
+     * @param pExc
+     *            to be encapsulated
+     */
+    public TTByteHandleException(final IOException pExc) {
+        super(pExc);
+    }
+    
     /**
      * 
      * Constructor.

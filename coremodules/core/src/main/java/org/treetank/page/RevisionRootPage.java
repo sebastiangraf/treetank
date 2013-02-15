@@ -29,14 +29,14 @@ package org.treetank.page;
 
 import static com.google.common.base.Objects.toStringHelper;
 
+import java.io.DataOutput;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Objects;
 
+import org.treetank.exception.TTIOException;
 import org.treetank.page.interfaces.IReferencePage;
 import org.treetank.page.interfaces.IRevisionPage;
-
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
 
 /**
  * <h1>RevisionRootPage</h1>
@@ -95,6 +95,9 @@ public final class RevisionRootPage implements IRevisionPage, IReferencePage {
         return mMaxNodeKey++;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long getRevision() {
         return mRevision;
@@ -104,16 +107,18 @@ public final class RevisionRootPage implements IRevisionPage, IReferencePage {
      * {@inheritDoc}
      */
     @Override
-    public byte[] getByteRepresentation() {
-        final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
-        pOutput.writeInt(IConstants.REVISIONROOTPAGE);
-        pOutput.writeLong(mPageKey);
-        pOutput.writeLong(mRevision);
-        pOutput.writeLong(mMaxNodeKey);
-        for (long key : mReferenceKeys) {
-            pOutput.writeLong(key);
+    public void serialize(final DataOutput pOutput) throws TTIOException {
+        try {
+            pOutput.writeInt(IConstants.REVISIONROOTPAGE);
+            pOutput.writeLong(mPageKey);
+            pOutput.writeLong(mRevision);
+            pOutput.writeLong(mMaxNodeKey);
+            for (long key : mReferenceKeys) {
+                pOutput.writeLong(key);
+            }
+        } catch (final IOException exc) {
+            throw new TTIOException(exc);
         }
-        return pOutput.toByteArray();
     }
 
     /**
@@ -124,11 +129,17 @@ public final class RevisionRootPage implements IRevisionPage, IReferencePage {
         return mPageKey;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long[] getReferenceKeys() {
         return mReferenceKeys;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setReferenceKey(int pIndex, long pKey) {
         mReferenceKeys[pIndex] = pKey;

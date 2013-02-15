@@ -85,7 +85,7 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
     public synchronized void addEmptyFile(String pRelativePath) throws TTException, IOException {
         MetaKey key = new MetaKey(pRelativePath);
         MetaValue value = new MetaValue(FilelistenerReadTrx.emptyFileKey);
-        getPageTransaction().createEntry(key, value);
+        getPageTransaction().getMetaPage().getMetaMap().put(key, value);
 
         return;
     }
@@ -108,7 +108,7 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
         if (readingAmount <= 0) {
             MetaKey key = new MetaKey(pRelativePath);
             MetaValue value = new MetaValue(FilelistenerReadTrx.emptyFileKey);
-            getPageTransaction().createEntry(key, value);
+            getPageTransaction().getMetaPage().getMetaMap().put(key, value);
 
             return;
         }
@@ -124,7 +124,7 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
         MetaValue value = new MetaValue(newKey);
 
         // And adding it to the meta map
-        getPageTransaction().createEntry(key, value);
+        getPageTransaction().getMetaPage().getMetaMap().put(key, value);
 
         // Creating and setting the headernode.
         FileNode headerNode = new FileNode(newKey, new byte[FileNode.FILENODESIZE]);
@@ -148,9 +148,9 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
             node.setHeader(false);
             node.setEof(false);
 
-            lastNode = (FileNode)getPageTransaction().prepareNodeForModification(node.getNodeKey() - 1);
+            lastNode = (FileNode)getPageTransaction().getNode(node.getNodeKey() - 1);
             lastNode.setNextNodeKey(node.getNodeKey());
-            getPageTransaction().finishNodeModification(lastNode);
+            getPageTransaction().setNode(lastNode);
             getPageTransaction().setNode(node);
 
             readingAmount += currentReadingAmount;
@@ -164,11 +164,11 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
         node.setHeader(false);
         node.setEof(true);
 
-        lastNode = (FileNode)getPageTransaction().prepareNodeForModification(node.getNodeKey() - 1);
+        lastNode = (FileNode)getPageTransaction().getNode(node.getNodeKey() - 1);
 
         lastNode.setNextNodeKey(node.getNodeKey());
 
-        getPageTransaction().finishNodeModification(lastNode);
+        getPageTransaction().setNode(lastNode);
 
         getPageTransaction().setNode(node);
 

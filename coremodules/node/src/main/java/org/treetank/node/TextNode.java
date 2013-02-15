@@ -27,6 +27,12 @@
 
 package org.treetank.node;
 
+import static com.google.common.base.Objects.toStringHelper;
+
+import java.io.DataOutput;
+import java.io.IOException;
+
+import org.treetank.exception.TTIOException;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
 import org.treetank.node.delegates.ValNodeDelegate;
@@ -35,8 +41,6 @@ import org.treetank.node.interfaces.IStructNode;
 import org.treetank.node.interfaces.IValNode;
 
 import com.google.common.hash.Hasher;
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
 
 /**
  * <h1>TextNode</h1>
@@ -121,7 +125,6 @@ public final class TextNode implements IStructNode, IValNode, INode {
     public long getHash() {
         return mDel.getHash();
     }
-
 
     /**
      * Delegate method for getNodeKey.
@@ -310,22 +313,6 @@ public final class TextNode implements IStructNode, IValNode, INode {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("TextNode [mDel=");
-        builder.append(mDel);
-        builder.append(", mValDel=");
-        builder.append(mValDel);
-        builder.append(", mStrucDel=");
-        builder.append(mStrucDel);
-        builder.append("]");
-        return builder.toString();
-    }
-
-    /**
      * Getting the inlying {@link NodeDelegate}.
      * 
      * @return
@@ -356,13 +343,27 @@ public final class TextNode implements IStructNode, IValNode, INode {
      * {@inheritDoc}
      */
     @Override
-    public byte[] getByteRepresentation() {
-        final ByteArrayDataOutput pOutput = ByteStreams.newDataOutput();
-        pOutput.writeInt(IConstants.TEXT);
-        pOutput.write(mDel.getByteRepresentation());
-        pOutput.write(mStrucDel.getByteRepresentation());
-        pOutput.write(mValDel.getByteRepresentation());
-        return pOutput.toByteArray();
+    public String toString() {
+        return toStringHelper(this).add("mDel", mDel).add("mValDel", mValDel).add("mStrucDel", mStrucDel)
+            .toString();
+    }
+
+    /**
+     * Serializing to given dataput
+     * 
+     * @param pOutput
+     *            to serialize to
+     * @throws TTIOException
+     */
+    public void serialize(final DataOutput pOutput) throws TTIOException {
+        try {
+            pOutput.writeInt(IConstants.TEXT);
+            mDel.serialize(pOutput);
+            mStrucDel.serialize(pOutput);
+            mValDel.serialize(pOutput);
+        } catch (final IOException exc) {
+            throw new TTIOException(exc);
+        }
     }
 
 }

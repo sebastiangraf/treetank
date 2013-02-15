@@ -10,6 +10,7 @@ import java.util.Properties;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.treetank.CoreTestHelper;
+import org.treetank.access.conf.ContructorProps;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.StorageConfiguration;
@@ -20,7 +21,9 @@ import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.berkeley.BerkeleyStorage;
 import org.treetank.io.bytepipe.ByteHandlerPipeline;
+import org.treetank.io.bytepipe.Encryptor;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
+import org.treetank.io.bytepipe.Zipper;
 import org.treetank.io.jclouds.JCloudsStorage;
 import org.treetank.io.ram.RAMStorage;
 import org.treetank.page.DumbMetaEntryFactory;
@@ -36,6 +39,9 @@ import org.treetank.page.interfaces.IPage;
 import com.google.common.io.Files;
 
 public class IBackendTest {
+
+    private ByteHandlerPipeline handler = new ByteHandlerPipeline(new Encryptor(StandardSettings.KEY),
+        new Zipper());
 
     @Test(dataProvider = "instantiateBackend")
     public void testFirstRef(Class<IBackend> clazz, IBackend[] pBackends) throws TTException {
@@ -59,7 +65,7 @@ public class IBackendTest {
             assertEquals(new StringBuilder("Check for ").append(pBackends.getClass()).append(" failed.")
                 .toString(), page1, page3);
             backendReader.close();
-            backend.close();
+
             backend.truncate();
         }
     }
@@ -68,7 +74,7 @@ public class IBackendTest {
     public void testOtherReferences(Class<IBackend> clazz, IBackend[] pBackends) throws TTException {
         // initializing structure
         Map<Long, IPage> pages = new HashMap<Long, IPage>();
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 100; i++) {
             pages.put(new Long(i), generatePage(i));
         }
 
@@ -90,6 +96,19 @@ public class IBackendTest {
                 assertEquals(new StringBuilder("Check for ").append(pBackends.getClass()).append(" failed.")
                     .toString(), pages.get(i), page3);
             }
+            backendReader.close();
+
+            backend.truncate();
+        }
+    }
+
+    @Test(dataProvider = "instantiateBackend")
+    public void testHandler(Class<IBackend> clazz, IBackend[] pBackends) throws TTException {
+        // initializing structure
+
+        // checking for backends
+        for (final IBackend backend : pBackends) {
+            assertEquals(handler.toString(), backend.getByteHandler().toString());
         }
     }
 
@@ -104,7 +123,6 @@ public class IBackendTest {
 
         INodeFactory nodeFac = new DumbNodeFactory();
         IMetaEntryFactory metaFac = new DumbMetaEntryFactory();
-        IByteHandlerPipeline handler = new ByteHandlerPipeline();
 
         Object[][] returnVal =
             {
@@ -112,7 +130,8 @@ public class IBackendTest {
                     IBackend.class,
                     new IBackend[] {
                         createBerkeleyStorage(nodeFac, handler, metaFac),
-                        createJCloudsStorage(nodeFac, handler, metaFac), new RAMStorage(handler)
+                        createLocalJCloudsStorage(nodeFac, handler, metaFac), new RAMStorage(handler)
+//                        createAWSJCloudsStorage(nodeFac, handler, metaFac)
                     }
                 }
             };
@@ -133,7 +152,22 @@ public class IBackendTest {
         return new BerkeleyStorage(props, pNodeFac, pMetaFac, pHandler);
     }
 
-    private static IBackend createJCloudsStorage(INodeFactory pNodeFac, IByteHandlerPipeline pHandler,
+    private static IBackend createAWSJCloudsStorage(INodeFactory pNodeFac, IByteHandlerPipeline pHandler,
+        IMetaEntryFactory pMetaFac) throws TTIOException {
+        File rootFolderToCreate = Files.createTempDir();
+        File fileToCreate =
+            new File(new File(new File(rootFolderToCreate, StorageConfiguration.Paths.Data.getFile()
+                .getName()), CoreTestHelper.RESOURCENAME), ResourceConfiguration.Paths.Data.getFile()
+                .getName());
+        fileToCreate.mkdirs();
+        Properties props =
+            StandardSettings.getStandardProperties(rootFolderToCreate.getAbsolutePath(),
+                CoreTestHelper.RESOURCENAME);
+        props.setProperty(ContructorProps.JCLOUDSTYPE, "aws-s3");
+        return new JCloudsStorage(props, pNodeFac, pMetaFac, pHandler);
+    }
+
+    private static IBackend createLocalJCloudsStorage(INodeFactory pNodeFac, IByteHandlerPipeline pHandler,
         IMetaEntryFactory pMetaFac) throws TTIOException {
         File rootFolderToCreate = Files.createTempDir();
         File fileToCreate =
@@ -159,8 +193,8 @@ public class IBackendTest {
             MetaPage returnVal = new MetaPage(pKey);
             for (int i = 0; i < IConstants.CONTENT_COUNT; i++) {
                 returnVal.getMetaMap().put(
-                    new DumbMetaEntryFactory.MetaKey(CoreTestHelper.random.nextLong()),
-                    new DumbMetaEntryFactory.MetaValue(CoreTestHelper.random.nextLong()));
+                    new DumbMetaEntryFactory.DumbKey(CoreTestHelper.random.nextLong()),
+                    new DumbMetaEntryFactory.DumbValue(CoreTestHelper.random.nextLong()));
             }
             return returnVal;
         } else if (whichPage < 0.6) {

@@ -30,11 +30,11 @@ package org.treetank;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.AssertJUnit.assertEquals;
-
+import static org.testng.AssertJUnit.assertNotNull;
+import static org.testng.AssertJUnit.assertNull;
+import static org.testng.AssertJUnit.assertTrue;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -45,6 +45,7 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.StorageConfiguration;
+import org.treetank.api.IMetaEntry;
 import org.treetank.api.INode;
 import org.treetank.api.IPageReadTrx;
 import org.treetank.api.IPageWriteTrx;
@@ -53,10 +54,14 @@ import org.treetank.api.IStorage;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
+import org.treetank.page.DumbMetaEntryFactory.DumbKey;
+import org.treetank.page.DumbMetaEntryFactory.DumbValue;
 import org.treetank.page.DumbNodeFactory.DumbNode;
 import org.treetank.page.IndirectPage;
 import org.treetank.page.NodePage;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.io.Files;
 
 /**
@@ -106,7 +111,7 @@ public final class CoreTestHelper {
     /** Common random instance for generating common tag names. */
     public final static Random random = new Random(123l);
 
-    private final static Map<File, IStorage> INSTANCES = new Hashtable<File, IStorage>();
+    private final static Map<File, IStorage> INSTANCES = Maps.newHashMap();
 
     /**
      * Getting a database and create one of not existing. This includes the
@@ -117,7 +122,7 @@ public final class CoreTestHelper {
      * @return a database-obj
      * @throws TTException
      */
-    public static final IStorage getDatabase(final File file) throws TTException {
+    public static final IStorage getStorage(final File file) throws TTException {
         if (INSTANCES.containsKey(file)) {
             return INSTANCES.get(file);
         } else {
@@ -132,7 +137,7 @@ public final class CoreTestHelper {
     }
 
     public static final boolean createResource(final ResourceConfiguration resConf) throws TTException {
-        final IStorage storage = CoreTestHelper.getDatabase(CoreTestHelper.PATHS.PATH1.getFile());
+        final IStorage storage = CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile());
         return storage.createResource(resConf);
     }
 
@@ -244,12 +249,39 @@ public final class CoreTestHelper {
      * @return a two-dimensional array of nodes.
      * @throws TTException
      */
-    public static final DumbNode[][] createNodesInTreetank(Holder pHolder) throws TTException {
+    public static final List<List<Map.Entry<DumbKey, DumbValue>>> createTestMeta(Holder pHolder)
+        throws TTException {
+        final int[] pNumbers = new int[10];
+        Arrays.fill(pNumbers, 200);
+        final List<List<Map.Entry<DumbKey, DumbValue>>> returnVal = Lists.newArrayList();
+        // adding null for revision 0
+        final List<Map.Entry<DumbKey, DumbValue>> firstRevList = Lists.newArrayList();
+        returnVal.add(firstRevList);
+        // adding all data for upcoming revisions
+        for (int i = 0; i < pNumbers.length; i++) {
+            IPageWriteTrx wtx = pHolder.getSession().beginPageWriteTransaction();
+            List<Map.Entry<DumbKey, DumbValue>> dataPerVersion =
+                insertMetaWithTransaction(pNumbers[i], wtx, returnVal.get(i));
+            returnVal.add(dataPerVersion);
+            wtx.close();
+        }
+        return returnVal;
+    }
+
+    /**
+     * Create nodes in different versions in Treetank and check directly afterwards the structure.
+     * 
+     * @param pHolder
+     *            for getting the transaction
+     * @return a two-dimensional array of nodes.
+     * @throws TTException
+     */
+    public static final DumbNode[][] createTestData(Holder pHolder) throws TTException {
         IPageWriteTrx wtx = pHolder.getSession().beginPageWriteTransaction();
         int[] nodesPerRevision = new int[10];
         Arrays.fill(nodesPerRevision, 128);
-        DumbNode[][] nodes = CoreTestHelper.createRevisions(nodesPerRevision, wtx);
-        checkStructure(combineNodes(nodes), wtx);
+        DumbNode[][] nodes = CoreTestHelper.insertNodesWithTransaction(nodesPerRevision, wtx);
+        checkStructure(combineNodes(nodes), wtx, 0);
         wtx.close();
         return nodes;
     }
@@ -263,21 +295,85 @@ public final class CoreTestHelper {
      *            to store to.
      * @throws TTException
      */
-    public static final DumbNode[][] createRevisions(final int[] pNodesPerRevision, final IPageWriteTrx pWtx)
-        throws TTException {
+    public static final DumbNode[][] insertNodesWithTransaction(final int[] pNodesPerRevision,
+        final IPageWriteTrx pWtx) throws TTException {
         final DumbNode[][] returnVal = createNodes(pNodesPerRevision);
         for (int i = 0; i < returnVal.length; i++) {
             for (int j = 0; j < returnVal[i].length; j++) {
-                returnVal[i][j].setNodeKey(pWtx.incrementNodeKey());
+                final long nodeKey = pWtx.incrementNodeKey();
+                returnVal[i][j].setNodeKey(nodeKey);
                 pWtx.setNode(returnVal[i][j]);
+                assertEquals(returnVal[i][j], pWtx.getNode(nodeKey));
             }
+            checkStructure(Arrays.asList(returnVal[i]), pWtx, i * returnVal[i].length);
             pWtx.commit();
         }
         return returnVal;
     }
 
     /**
-     * Generating new nodes pased on a given number of nodes within a revision
+     * Utility method to create nodes per revision.
+     * 
+     * @param List
+     *            <Map.Entry<DumbKey, DumbValue>>
+     *            to create
+     * @param pWtx
+     *            to store to.
+     * @throws TTException
+     */
+    public static final List<Map.Entry<DumbKey, DumbValue>> insertMetaWithTransaction(final int pNumbers,
+        final IPageWriteTrx pWtx, List<Map.Entry<DumbKey, DumbValue>> pAlreadyExistingEntries)
+        throws TTException {
+        List<Map.Entry<DumbKey, DumbValue>> returnVal = createMetaEntries(pNumbers);
+        List<Map.Entry<DumbKey, DumbValue>> toCheck = Lists.newArrayList();
+        assertTrue(pAlreadyExistingEntries.isEmpty() != toCheck.addAll(pAlreadyExistingEntries));
+        for (Map.Entry<DumbKey, DumbValue> entry : returnVal) {
+            assertTrue(toCheck.add(entry));
+            assertNull(pWtx.getMetaPage().getMetaMap().put(entry.getKey(), entry.getValue()));
+            checkStructure(toCheck, pWtx, true);
+        }
+        assertTrue(pAlreadyExistingEntries.isEmpty() != returnVal.addAll(pAlreadyExistingEntries));
+        pWtx.commit();
+        return returnVal;
+    }
+
+    /**
+     * Creating a list of meta entries for testing the meta-page stuff
+     * 
+     * @param pNumbers
+     *            of entries
+     * @return a list containing map-entries of dumbvalues and dumbkeys.
+     */
+    public static final List<Map.Entry<DumbKey, DumbValue>> createMetaEntries(final int pNumbers) {
+        final List<Map.Entry<DumbKey, DumbValue>> returnVal = Lists.newArrayList();
+        for (int i = 0; i < pNumbers; i++) {
+            final DumbKey key = new DumbKey(CoreTestHelper.random.nextLong());
+            final DumbValue value = new DumbValue(CoreTestHelper.random.nextLong());
+            returnVal.add(new Map.Entry<DumbKey, DumbValue>() {
+                @Override
+                public DumbKey getKey() {
+                    return key;
+                }
+
+                @Override
+                public DumbValue getValue() {
+                    return value;
+                }
+
+                @Override
+                public DumbValue setValue(DumbValue value) {
+                    throw new UnsupportedOperationException();
+                }
+
+            });
+
+        }
+
+        return returnVal;
+    }
+
+    /**
+     * Generating new nodes passed on a given number of nodes within a revision
      * 
      * @param pNodesPerRevision
      *            denote the number of nodes within all versions
@@ -295,6 +391,34 @@ public final class CoreTestHelper {
     }
 
     /**
+     * Checking the transaction with meta entries written.
+     * 
+     * @param pEntries
+     *            to be compared with
+     * @param pRtx
+     *            to check
+     * @param pWorkOnClone
+     *            parameter if the check should occur on cloned structure
+     * @throws TTIOException
+     */
+    public static final void checkStructure(final List<Map.Entry<DumbKey, DumbValue>> pEntries,
+        final IPageReadTrx pRtx, final boolean pWorkOnClone) throws TTIOException {
+        Map<IMetaEntry, IMetaEntry> map;
+        if (pWorkOnClone) {
+            map = Maps.newHashMap();
+            map.putAll(pRtx.getMetaPage().getMetaMap());
+        } else {
+            map = pRtx.getMetaPage().getMetaMap();
+        }
+        for (Map.Entry<DumbKey, DumbValue> entry : pEntries) {
+            IMetaEntry value = map.remove(entry.getKey());
+            assertNotNull(value);
+            assertEquals(entry.getValue(), value);
+        }
+        assertEquals(0, map.size());
+    }
+
+    /**
      * Checking the transaction with nodes written sequentially.
      * 
      * @param pNodes
@@ -303,9 +427,9 @@ public final class CoreTestHelper {
      *            to check
      * @throws TTIOException
      */
-    public static final void checkStructure(final List<DumbNode> pNodes, final IPageReadTrx pRtx)
-        throws TTIOException {
-        long key = 0;
+    public static final void checkStructure(final List<DumbNode> pNodes, final IPageReadTrx pRtx,
+        final long startKey) throws TTIOException {
+        long key = startKey;
         for (DumbNode node : pNodes) {
             assertEquals(node, pRtx.getNode(key));
             key++;
@@ -320,7 +444,7 @@ public final class CoreTestHelper {
      * @return a list of all data in one list.
      */
     public static final List<DumbNode> combineNodes(final DumbNode[][] pNodes) {
-        List<DumbNode> list = new ArrayList<DumbNode>();
+        List<DumbNode> list = Lists.newArrayList();
         for (int i = 0; i < pNodes.length; i++) {
             list.addAll(Arrays.asList(pNodes[i]));
         }
@@ -338,7 +462,7 @@ public final class CoreTestHelper {
 
         public static Holder generateStorage(ResourceConfiguration pConf) throws TTException {
             Holder holder = new Holder();
-            holder.mStorage = CoreTestHelper.getDatabase(PATHS.PATH1.getFile());
+            holder.mStorage = CoreTestHelper.getStorage(PATHS.PATH1.getFile());
             holder.mStorage.createResource(pConf);
             return holder;
         }
