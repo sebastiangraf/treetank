@@ -110,7 +110,7 @@ public final class TestNodeWrapperXPath {
 
     @AfterMethod
     public void tearDown() throws Exception {
-        CoreTestHelper.closeEverything();
+        holder.getSession().close();
         CoreTestHelper.deleteEverything();
 
     }

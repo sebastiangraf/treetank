@@ -70,8 +70,8 @@ public class XMarkTest {
         CoreTestHelper.deleteEverything();
         CoreTestHelper.Holder holder = CoreTestHelper.Holder.generateStorage();
         Properties props =
-            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
-                .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
+            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
         this.holder = Holder.generateWtx(holder, mResource);
         new XMLShredder(this.holder.getNWtx(), XMLShredder.createFileReader(new File(XML)),
@@ -133,33 +133,5 @@ public class XMarkTest {
             "916.0"
         }); // TODO: why double?
     }
-
-    // @Test
-    // public void testQ8() throws IOException {
-    // // Q8 List the names of persons and the number of items they bought
-    // // (joins person, closed\_auction)
-    // XPathStringChecker.testIAxisConventions(
-    // new XPathAxis(rtx, ""),
-    // new String[] { "" });
-    //
-    // }
-
-    // @Test
-    // public void testQ9() throws IOException {
-    // // // Q9 List the names of persons and the names of the items they bought
-    // in
-    // // // Europe. (joins person, closed_auction, item)
-    // // XPathStringChecker.testIAxisConventions(new XPathAxis(rtx,
-    // // ""),
-    // // new String[] { "" });
-    // }
-
-    //
-    // @Test
-    // public void testPos() throws IOException {
-    // XPathStringChecker.testIAxisConventions(new XPathAxis(rtx,
-    // "/site/regions/*/item[2]/@id"), new String[] {"item1", "item6",
-    // "item26", "item48", "item108", "item208"});
-    // }
 
 }

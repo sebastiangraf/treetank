@@ -27,6 +27,7 @@
 
 package org.treetank.access;
 
+import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkState;
 import static org.treetank.node.IConstants.NULL_NODE;
 
@@ -191,13 +192,8 @@ public class NodeReadTrx implements INodeReadTrx {
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("NodeReadTrx [mPageReadTrx=");
-        builder.append(mPageReadTrx);
-        builder.append(", mCurrentNode=");
-        builder.append(mCurrentNode);
-        builder.append("]");
-        return builder.toString();
+        return toStringHelper(this).add("mCurrentNode", mCurrentNode).add("mCurrentNode", mCurrentNode)
+            .toString();
     }
 
     /**
