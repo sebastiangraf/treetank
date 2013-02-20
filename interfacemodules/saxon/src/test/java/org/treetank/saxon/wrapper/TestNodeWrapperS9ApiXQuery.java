@@ -68,8 +68,8 @@ public final class TestNodeWrapperS9ApiXQuery {
         CoreTestHelper.deleteEverything();
         holder = CoreTestHelper.Holder.generateStorage();
         Properties props =
-            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
-                .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
+            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                CoreTestHelper.RESOURCENAME);
         SaxonHelper.createBookDB(mResourceConfig);
         ResourceConfiguration mResource = mResourceConfig.create(props);
         CoreTestHelper.Holder.generateSession(holder, mResource);
@@ -78,6 +78,8 @@ public final class TestNodeWrapperS9ApiXQuery {
 
     @AfterMethod
     public void afterMethod() throws TTException {
+        holder.getSession().close();
+        holder.getStorage().close();
         CoreTestHelper.deleteEverything();
     }
 

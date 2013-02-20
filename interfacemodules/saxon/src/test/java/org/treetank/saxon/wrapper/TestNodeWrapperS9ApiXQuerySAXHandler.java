@@ -82,6 +82,8 @@ public class TestNodeWrapperS9ApiXQuerySAXHandler {
 
     @AfterMethod
     public void afterMethod() throws TTException {
+        holder.getSession().close();
+        holder.getStorage().close();
         CoreTestHelper.deleteEverything();
     }
 

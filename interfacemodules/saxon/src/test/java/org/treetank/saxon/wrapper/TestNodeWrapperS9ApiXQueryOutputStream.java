@@ -76,6 +76,8 @@ public final class TestNodeWrapperS9ApiXQueryOutputStream {
 
     @AfterMethod
     public void afterMethod() throws TTException {
+        holder.getSession().close();
+        holder.getStorage().close();
         CoreTestHelper.deleteEverything();
     }
 

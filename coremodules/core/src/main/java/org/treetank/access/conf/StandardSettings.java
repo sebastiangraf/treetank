@@ -25,7 +25,6 @@ import org.treetank.io.berkeley.BerkeleyStorage;
 import org.treetank.io.bytepipe.ByteHandlerPipeline;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.io.bytepipe.Zipper;
-import org.treetank.io.jclouds.JCloudsStorage;
 import org.treetank.page.DumbMetaEntryFactory;
 import org.treetank.page.DumbNodeFactory;
 import org.treetank.revisioning.Differential;
@@ -57,7 +56,7 @@ public class StandardSettings extends AbstractModule {
     public void configureNormal() {
         bind(IRevisioning.class).to(Differential.class);
         bind(IByteHandlerPipeline.class).toInstance(new ByteHandlerPipeline(new Zipper()));
-        install(new FactoryModuleBuilder().implement(IBackend.class, JCloudsStorage.class).build(
+        install(new FactoryModuleBuilder().implement(IBackend.class, BerkeleyStorage.class).build(
             IBackendFactory.class));
         install(new FactoryModuleBuilder().build(IResourceConfigurationFactory.class));
         bind(Key.class).toInstance(KEY);
