@@ -58,9 +58,6 @@ public final class BerkeleyWriter implements IBackendWriter {
     /** Current {@link BerkeleyReader} to read with. */
     private final BerkeleyReader mReader;
 
-    /** Transaction for this writer. */
-    private final Transaction mTxn;
-
     /**
      * Simple constructor starting with an {@link Environment} and a {@link Storage}.
      * 
@@ -74,11 +71,10 @@ public final class BerkeleyWriter implements IBackendWriter {
      * @throws TTIOException
      *             if something odd happens
      */
-    public BerkeleyWriter(final Transaction pTxn, final Database pDatabase,
-        final TupleBinding<IPage> pPageBinding) throws TTIOException {
-        mTxn = pTxn;
+    public BerkeleyWriter(final Database pDatabase, final TupleBinding<IPage> pPageBinding)
+        throws TTIOException {
         mDatabase = pDatabase;
-        mReader = new BerkeleyReader(pTxn, mDatabase, pPageBinding);
+        mReader = new BerkeleyReader(mDatabase, pPageBinding);
     }
 
     /**
@@ -94,7 +90,7 @@ public final class BerkeleyWriter implements IBackendWriter {
         TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(page.getPageKey(), keyEntry);
 
         // final OperationStatus status = mBackend.put(mTxn, keyEntry, valueEntry);
-        final OperationStatus status = mDatabase.put(mTxn, keyEntry, valueEntry);
+        final OperationStatus status = mDatabase.put(null, keyEntry, valueEntry);
         if (status != OperationStatus.SUCCESS) {
             throw new TTIOException(new StringBuilder("Write of ").append(page.toString()).append(" failed!")
                 .toString());
@@ -142,7 +138,7 @@ public final class BerkeleyWriter implements IBackendWriter {
         TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(pageKey, valueEntry);
 
         try {
-            mDatabase.put(mTxn, keyEntry, valueEntry);
+            mDatabase.put(null, keyEntry, valueEntry);
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
         }

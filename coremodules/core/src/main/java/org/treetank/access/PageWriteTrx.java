@@ -418,7 +418,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
      */
     @Override
     public String toString() {
-        return toStringHelper(this).add("mPageWriter", mPageWriter).add("mLog", mLog).add("mRootPage",
+        return toStringHelper(this).add("mDelegate", mDelegate).add("mPageWriter", mPageWriter).add("mLog", mLog).add("mRootPage",
             mNewRoot).add("mDelegate", mDelegate).toString();
     }
 

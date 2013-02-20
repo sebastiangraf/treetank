@@ -33,13 +33,14 @@ import org.treetank.io.IBackendReader;
 import org.treetank.page.UberPage;
 import org.treetank.page.interfaces.IPage;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseEntry;
 import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
-import com.sleepycat.je.Transaction;
 
 /**
  * This class represents an reading instance of the Treetank-Application
@@ -56,8 +57,8 @@ public final class BerkeleyReader implements IBackendReader {
     /** Link to the {@link Storage}. */
     private final Database mDatabase;
 
-    /** Transaction for this reader */
-    private final Transaction mTxn;
+    /** Cache for reading data. */
+    protected final Cache<Long, IPage> mCache;
 
     /**
      * Constructor.
@@ -67,11 +68,10 @@ public final class BerkeleyReader implements IBackendReader {
      * @param pPageBinding
      *            {@link TupleBinding} for de/-serializing pages
      */
-    public BerkeleyReader(final Transaction pTxn, final Database pDatabase,
-        final TupleBinding<IPage> pPageBinding) {
-        mTxn = pTxn;
+    public BerkeleyReader(final Database pDatabase, final TupleBinding<IPage> pPageBinding) {
         mDatabase = pDatabase;
         mPageBinding = pPageBinding;
+        mCache = CacheBuilder.newBuilder().maximumSize(10000).build();
     }
 
     /**
@@ -79,22 +79,26 @@ public final class BerkeleyReader implements IBackendReader {
      */
     @Override
     public IPage read(final long pKey) throws TTIOException {
-        final DatabaseEntry valueEntry = new DatabaseEntry();
-        final DatabaseEntry keyEntry = new DatabaseEntry();
+        IPage returnval = mCache.getIfPresent(pKey);
+        if (returnval == null) {
 
-        TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(pKey, keyEntry);
+            final DatabaseEntry valueEntry = new DatabaseEntry();
+            final DatabaseEntry keyEntry = new DatabaseEntry();
 
-        IPage page = null;
-        try {
-            final OperationStatus status = mDatabase.get(mTxn, keyEntry, valueEntry, LockMode.DEFAULT);
-            if (status == OperationStatus.SUCCESS) {
-                page = mPageBinding.entryToObject(valueEntry);
+            TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(pKey, keyEntry);
+
+            try {
+                final OperationStatus status = mDatabase.get(null, keyEntry, valueEntry, LockMode.DEFAULT);
+                if (status == OperationStatus.SUCCESS) {
+                    returnval = mPageBinding.entryToObject(valueEntry);
+                }
+
+            } catch (final DatabaseException exc) {
+                throw new TTIOException(exc);
             }
-            return page;
-        } catch (final DatabaseException exc) {
-            throw new TTIOException(exc);
+            mCache.put(pKey, returnval);
         }
-
+        return returnval;
     }
 
     /**
@@ -102,7 +106,7 @@ public final class BerkeleyReader implements IBackendReader {
      */
     @Override
     public void close() throws TTIOException {
-        mTxn.commit();
+        mCache.invalidateAll();
     }
 
     /**
@@ -115,7 +119,7 @@ public final class BerkeleyReader implements IBackendReader {
         TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(-1l, keyEntry);
 
         try {
-            final OperationStatus status = mDatabase.get(mTxn, keyEntry, valueEntry, LockMode.DEFAULT);
+            final OperationStatus status = mDatabase.get(null, keyEntry, valueEntry, LockMode.DEFAULT);
             long key = 0;
             if (status == OperationStatus.SUCCESS) {
                 key = TupleBinding.getPrimitiveBinding(Long.class).entryToObject(valueEntry);
