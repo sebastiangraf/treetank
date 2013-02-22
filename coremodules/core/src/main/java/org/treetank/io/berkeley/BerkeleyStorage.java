@@ -103,7 +103,7 @@ public final class BerkeleyStorage implements IBackend {
     private final File mFile;
 
     /**
-     * Private constructor.
+     * Simple constructor.
      * 
      * @param pProperties
      *            not only the file associated with the database
@@ -130,6 +130,10 @@ public final class BerkeleyStorage implements IBackend {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void initialize() throws TTIOException {
         try {
             final EnvironmentConfig config = new EnvironmentConfig();
