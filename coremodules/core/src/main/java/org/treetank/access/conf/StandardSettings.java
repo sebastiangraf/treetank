@@ -25,11 +25,14 @@ import org.treetank.io.berkeley.BerkeleyStorage;
 import org.treetank.io.bytepipe.ByteHandlerPipeline;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.io.bytepipe.Zipper;
+import org.treetank.io.combinedCloud.CombinedBackend;
+import org.treetank.io.jclouds.JCloudsStorage;
 import org.treetank.page.DumbMetaEntryFactory;
 import org.treetank.page.DumbNodeFactory;
 import org.treetank.revisioning.Differential;
 import org.treetank.revisioning.IRevisioning;
 
+import com.google.common.io.Files;
 import com.google.inject.AbstractModule;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 
@@ -56,7 +59,7 @@ public class StandardSettings extends AbstractModule {
     public void configureNormal() {
         bind(IRevisioning.class).to(Differential.class);
         bind(IByteHandlerPipeline.class).toInstance(new ByteHandlerPipeline(new Zipper()));
-        install(new FactoryModuleBuilder().implement(IBackend.class, BerkeleyStorage.class).build(
+        install(new FactoryModuleBuilder().implement(IBackend.class, CombinedBackend.class).build(
             IBackendFactory.class));
         install(new FactoryModuleBuilder().build(IResourceConfigurationFactory.class));
         bind(Key.class).toInstance(KEY);
@@ -71,12 +74,9 @@ public class StandardSettings extends AbstractModule {
             StorageConfiguration.Paths.Data.getFile().getName(), resource).toString());
         properties.setProperty(ConstructorProps.NUMBERTORESTORE, Integer.toString(4));
 
-        properties.setProperty(FilesystemConstants.PROPERTY_BASEDIR, FileSystems.getDefault().getPath(
-            properties.getProperty(ConstructorProps.RESOURCEPATH),
-            ResourceConfiguration.Paths.Data.getFile().getName()).toString());
-
         // properties.setProperty(ConstructorProps.JCLOUDSTYPE, "aws-s3");
         properties.setProperty(ConstructorProps.JCLOUDSTYPE, "filesystem");
+        properties.setProperty(FilesystemConstants.PROPERTY_BASEDIR, Files.createTempDir().getAbsolutePath());
 
         String[] awsCredentials = getCredentials();
         if (awsCredentials.length == 0) {

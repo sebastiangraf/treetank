@@ -5,6 +5,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
@@ -124,8 +125,14 @@ public class CombinedWriter implements IBackendWriter {
      */
     @Override
     public void close() throws TTIOException {
+        try {
+            mService.shutdown();
+            mService.awaitTermination(10, TimeUnit.SECONDS);
+        } catch (InterruptedException exc) {
+            throw new TTIOException(exc);
+        }
         mFirstWriter.close();
         mSecondWriter.close();
-    }
 
+    }
 }

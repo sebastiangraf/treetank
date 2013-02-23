@@ -2,18 +2,17 @@ package org.treetank.io;
 
 import static org.testng.AssertJUnit.assertEquals;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.jclouds.filesystem.reference.FilesystemConstants;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.treetank.CoreTestHelper;
 import org.treetank.access.conf.ConstructorProps;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.StandardSettings;
-import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTException;
@@ -23,6 +22,7 @@ import org.treetank.io.bytepipe.ByteHandlerPipeline;
 import org.treetank.io.bytepipe.Encryptor;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.io.bytepipe.Zipper;
+import org.treetank.io.combinedCloud.CombinedBackend;
 import org.treetank.io.jclouds.JCloudsStorage;
 import org.treetank.io.ram.RAMStorage;
 import org.treetank.page.DumbMetaEntryFactory;
@@ -34,8 +34,6 @@ import org.treetank.page.NodePage;
 import org.treetank.page.RevisionRootPage;
 import org.treetank.page.UberPage;
 import org.treetank.page.interfaces.IPage;
-
-import com.google.common.io.Files;
 
 public class IBackendTest {
 
@@ -158,8 +156,12 @@ public class IBackendTest {
                         public IBackend getBackend() {
                             return new RAMStorage(handler);
                         }
-
-                    }
+                    }/*, new IBackendCreator() {
+                        @Override
+                        public IBackend getBackend() throws TTIOException {
+                            return createCombinedStorage(nodeFac, handler, metaFac);
+                        }
+                    }*/
                 /*
                  * , new IBackendCreator() {
                  * 
@@ -175,6 +177,18 @@ public class IBackendTest {
         return returnVal;
     }
 
+    private static IBackend createCombinedStorage(INodeFactory pNodeFac, IByteHandlerPipeline pHandler,
+        IMetaEntryFactory pMetaFac) throws TTIOException {
+        Properties props =
+            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                CoreTestHelper.RESOURCENAME);
+        props.setProperty(ConstructorProps.RESOURCEPATH, CoreTestHelper.PATHS.PATH1.getFile()
+            .getAbsolutePath());
+        props.setProperty(FilesystemConstants.PROPERTY_BASEDIR, CoreTestHelper.PATHS.PATH2.getFile()
+            .getAbsolutePath());
+        return new CombinedBackend(props, pNodeFac, pMetaFac, pHandler);
+    }
+
     private static IBackend createBerkeleyStorage(INodeFactory pNodeFac, IByteHandlerPipeline pHandler,
         IMetaEntryFactory pMetaFac) throws TTIOException {
         Properties props =
@@ -185,14 +199,14 @@ public class IBackendTest {
         return new BerkeleyStorage(props, pNodeFac, pMetaFac, pHandler);
     }
 
-    private static IBackend createAWSJCloudsStorage(INodeFactory pNodeFac, IByteHandlerPipeline pHandler,
-        IMetaEntryFactory pMetaFac) throws TTIOException {
-        Properties props =
-            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
-                CoreTestHelper.RESOURCENAME);
-        props.setProperty(ConstructorProps.JCLOUDSTYPE, "aws-s3");
-        return new JCloudsStorage(props, pNodeFac, pMetaFac, pHandler);
-    }
+    // private static IBackend createAWSJCloudsStorage(INodeFactory pNodeFac, IByteHandlerPipeline pHandler,
+    // IMetaEntryFactory pMetaFac) throws TTIOException {
+    // Properties props =
+    // StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+    // CoreTestHelper.RESOURCENAME);
+    // props.setProperty(ConstructorProps.JCLOUDSTYPE, "aws-s3");
+    // return new JCloudsStorage(props, pNodeFac, pMetaFac, pHandler);
+    // }
 
     private static IBackend createLocalJCloudsStorage(INodeFactory pNodeFac, IByteHandlerPipeline pHandler,
         IMetaEntryFactory pMetaFac) throws TTIOException {
