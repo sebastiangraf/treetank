@@ -24,7 +24,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>pom</artifactId>
-        <groupId>treetank</groupId>
+        <groupId>org.treetank</groupId>
         <version>6.0.0-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
@@ -68,7 +68,7 @@
         </manifest> </archive> </configuration> </plugin> </plugins> </build> -->
     <dependencies>
         <dependency>
-            <groupId>treetank</groupId>
+            <groupId>org.treetank</groupId>
             <artifactId>commons</artifactId>
             <version>6.0.0-SNAPSHOT</version>
         </dependency>
@@ -78,7 +78,7 @@
             <version>5.0.58</version>
         </dependency>
         <dependency>
-            <groupId>treetank</groupId>
+            <groupId>org.treetank</groupId>
             <artifactId>commons</artifactId>
             <version>6.0.0-SNAPSHOT</version>
             <type>test-jar</type>
