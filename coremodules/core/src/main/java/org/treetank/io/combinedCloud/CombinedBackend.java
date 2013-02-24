@@ -3,7 +3,6 @@
  */
 package org.treetank.io.combinedCloud;
 
-import static com.google.common.base.Preconditions.checkState;
 import java.util.Properties;
 
 import org.treetank.api.IMetaEntryFactory;
@@ -52,7 +51,7 @@ public class CombinedBackend implements IBackend {
     public CombinedBackend(@Assisted Properties pProperties, INodeFactory pNodeFac,
         IMetaEntryFactory pMetaFac, IByteHandlerPipeline pByteHandler) throws TTIOException {
         mLocalBackend = new BerkeleyStorage(pProperties, pNodeFac, pMetaFac, pByteHandler);
-        mRemoteBackend = new JCloudsStorage(pProperties, pNodeFac, pMetaFac, pByteHandler);
+        mRemoteBackend = new JCloudsStorage(pProperties, pNodeFac, pMetaFac, pByteHandler.clone());
     }
 
     /**
@@ -89,7 +88,6 @@ public class CombinedBackend implements IBackend {
      */
     @Override
     public IByteHandlerPipeline getByteHandler() {
-        checkState(mRemoteBackend.getByteHandler().equals(mLocalBackend.getByteHandler()));
         return mLocalBackend.getByteHandler();
     }
 

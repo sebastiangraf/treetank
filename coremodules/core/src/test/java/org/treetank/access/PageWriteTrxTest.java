@@ -53,8 +53,8 @@ public class PageWriteTrxTest {
         CoreTestHelper.deleteEverything();
         mHolder = CoreTestHelper.Holder.generateStorage();
         final ResourceConfiguration config =
-            mResourceConfig.create(StandardSettings.getProps(CoreTestHelper.PATHS.PATH1
-                .getFile().getAbsolutePath(), CoreTestHelper.RESOURCENAME));
+            mResourceConfig.create(StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
+                .getAbsolutePath(), CoreTestHelper.RESOURCENAME));
         CoreTestHelper.Holder.generateSession(mHolder, config);
     }
 
@@ -179,7 +179,7 @@ public class PageWriteTrxTest {
         int revisions = 1;
         for (int i = 0; i < revisions; i++) {
             for (int j = 0; j < elementsDeleted; j++) {
-                int nextElementKey = (int)Math.abs(CoreTestHelper.random.nextLong() % list.size());
+                int nextElementKey = (int)Math.abs((CoreTestHelper.random.nextLong() + 1) % list.size());
                 if (list.get(nextElementKey) != null) {
                     wtx.removeNode(list.get(nextElementKey));
                     list.set(nextElementKey, null);

@@ -28,8 +28,14 @@ import com.google.inject.Inject;
  */
 public class Encryptor implements IByteHandler {
 
+    /** Kind of the algorithm. */
+    private static final String ALGORITHM = "AES";
+
     /** Key for de-/encryption. */
     private final Key mKey;
+
+    /** Cipher for encryption and decryption operations. */
+    private final Cipher mCipher;
 
     /**
      * Constructor.
@@ -39,19 +45,12 @@ public class Encryptor implements IByteHandler {
      */
     @Inject
     public Encryptor(final Key pKey) {
-        mKey = pKey;
-    }
-
-    private static final String ALGORITHM = "AES";
-
-    /** Cipher to perform encryption and decryption operations. */
-    private static final Cipher CIPHER;
-    static {
         try {
-            CIPHER = Cipher.getInstance(ALGORITHM);
+            mCipher = Cipher.getInstance(ALGORITHM);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
             throw new RuntimeException(e);
         }
+        mKey = pKey;
     }
 
     /**
@@ -61,8 +60,8 @@ public class Encryptor implements IByteHandler {
      */
     public OutputStream serialize(final OutputStream pToSerialize) throws TTByteHandleException {
         try {
-            CIPHER.init(Cipher.ENCRYPT_MODE, mKey);
-            return new CipherOutputStream(pToSerialize, CIPHER);
+            mCipher.init(Cipher.ENCRYPT_MODE, mKey);
+            return new CipherOutputStream(pToSerialize, mCipher);
         } catch (final InvalidKeyException exc) {
             throw new TTByteHandleException(exc);
         }
@@ -73,12 +72,20 @@ public class Encryptor implements IByteHandler {
      */
     public InputStream deserialize(InputStream pToDeserialize) throws TTByteHandleException {
         try {
-            CIPHER.init(Cipher.DECRYPT_MODE, mKey);
-            return new CipherInputStream(pToDeserialize, CIPHER);
+            mCipher.init(Cipher.DECRYPT_MODE, mKey);
+            return new CipherInputStream(pToDeserialize, mCipher);
         } catch (final InvalidKeyException exc) {
             throw new TTByteHandleException(exc);
         }
 
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Encryptor clone() {
+        return new Encryptor(mKey);
     }
 
     /**
