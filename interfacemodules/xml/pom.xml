@@ -26,14 +26,13 @@
 	<parent>
 		<groupId>treetank</groupId>
 		<artifactId>pom</artifactId>
-		<version>1.0.6-SNAPSHOT</version>
+		<version>6.0.0-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
 	<artifactId>xml</artifactId>
 	<packaging>jar</packaging>
 	<name>Bundle to store XML</name>
-	<version>1.0.1-SNAPSHOT</version>
 	<repositories>
 		<repository>
 			<id>javamaven2</id>
@@ -79,12 +78,12 @@
 		<dependency>
 			<groupId>treetank</groupId>
 			<artifactId>node</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>6.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>treetank</groupId>
 			<artifactId>node</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>6.0.0-SNAPSHOT</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>

@@ -46,6 +46,7 @@ import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackend;
 import org.treetank.io.IBackend.IBackendFactory;
 import org.treetank.io.bytepipe.ByteHandlerPipeline;
+import org.treetank.io.bytepipe.Encryptor;
 import org.treetank.io.bytepipe.IByteHandler;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.revisioning.IRevisioning;
@@ -273,7 +274,12 @@ public final class ResourceConfiguration {
                 while (jsonReader.hasNext()) {
                     Class<?> handlerClazz = Class.forName(jsonReader.nextString());
                     Constructor<?> handlerCons = handlerClazz.getConstructors()[0];
-                    handlerList.add((IByteHandler)handlerCons.newInstance());
+                    if(handlerClazz.getName().equals(Encryptor.class.getName())) {
+                        handlerList.add((IByteHandler)handlerCons.newInstance(StandardSettings.KEY));
+                    } else {
+                        handlerList.add((IByteHandler)handlerCons.newInstance());    
+                    }
+                    
                 }
                 jsonReader.endArray();
             }

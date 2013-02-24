@@ -58,7 +58,7 @@ public class StandardSettings extends AbstractModule {
     public void configureNormal() {
         bind(IRevisioning.class).to(Differential.class);
         bind(IByteHandlerPipeline.class)
-            .toInstance(new ByteHandlerPipeline(new Zipper()));
+            .toInstance(new ByteHandlerPipeline(new Zipper(), new Encryptor(KEY)));
         install(new FactoryModuleBuilder().implement(IBackend.class, BerkeleyStorage.class).build(
             IBackendFactory.class));
         install(new FactoryModuleBuilder().build(IResourceConfigurationFactory.class));
