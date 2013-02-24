@@ -69,6 +69,18 @@ public final class ByteHandlerPipeline implements IByteHandlerPipeline {
      * {@inheritDoc}
      */
     @Override
+    public ByteHandlerPipeline clone() {
+        final List<IByteHandler> handlers = new ArrayList<IByteHandler>();
+        for (IByteHandler origHandler : mParts) {
+            handlers.add(origHandler.clone());
+        }
+        return new ByteHandlerPipeline(handlers.toArray(new IByteHandler[handlers.size()]));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Iterator<IByteHandler> iterator() {
         return mParts.iterator();
     }

@@ -38,6 +38,14 @@ public class Zipper implements IByteHandler {
      * {@inheritDoc}
      */
     @Override
+    public Zipper clone() {
+        return new Zipper();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String toString() {
         return toStringHelper(this).toString();
     }

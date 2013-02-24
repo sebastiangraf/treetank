@@ -15,7 +15,7 @@ import com.google.inject.ImplementedBy;
  * 
  */
 @ImplementedBy(ByteHandlerPipeline.class)
-public interface IByteHandler {
+public interface IByteHandler extends Cloneable {
 
     /**
      * Method to serialize any byte-chunk.
@@ -40,12 +40,27 @@ public interface IByteHandler {
     InputStream deserialize(InputStream pToDeserialize) throws TTByteHandleException;
 
     /**
+     * Defining the cloning operation
+     * 
+     * @return a clone of the current {@link IByteHandler}-instance.
+     */
+    IByteHandler clone();
+
+    /**
      * Concartenating interface for offering dedicated access to {@link ByteHandlerPipeline} for injections.
      * 
      * @author Sebastian Graf, University of Konstanz
      * 
      */
     public interface IByteHandlerPipeline extends IByteHandler, Iterable<IByteHandler> {
+
+        /**
+         * Defining the cloning operation
+         * 
+         * @return a clone of the current {@link IByteHandler}-instance.
+         */
+        IByteHandlerPipeline clone();
+
     }
 
 }
