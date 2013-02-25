@@ -26,7 +26,7 @@
 	<parent>
 		<artifactId>pom</artifactId>
 		<groupId>org.treetank</groupId>
-		<version>6.0.0</version>
+		<version>6.0.1-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
