@@ -45,7 +45,7 @@ public class StorageManagerTest {
         assertEquals(storages.get(0), mStorageName);
     }
     
-    @Test
+    @Test(enabled=false)
     public void testRemoveStorage() throws TTException, StorageNotExistingException{
         StorageManager.removeStorage(mStorageName);
         
