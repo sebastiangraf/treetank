@@ -34,8 +34,8 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.treetank.access.IscsiWriteTrx;
-import org.treetank.access.StandardByteNodeSettings;
 import org.treetank.access.Storage;
+import org.treetank.access.conf.ModuleSetter;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
@@ -114,7 +114,9 @@ public class TreetankStorageModule implements IStorageModule {
         this.sizeInBlocks = sizeInBlocks;
         this.blockSize = blockSize;
 
-        Injector injector = Guice.createInjector(new StandardByteNodeSettings());
+        Injector injector =
+            Guice.createInjector(new ModuleSetter().setNodeFacClass(ByteNodeFactory.class).setMetaFacClass(
+                ISCSIMetaPageFactory.class).createModule());
         IBackendFactory backend = injector.getInstance(IBackendFactory.class);
         IRevisioning revision = injector.getInstance(IRevisioning.class);
 

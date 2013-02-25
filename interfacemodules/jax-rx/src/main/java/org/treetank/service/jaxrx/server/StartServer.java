@@ -31,7 +31,9 @@
 package org.treetank.service.jaxrx.server;
 
 import org.jaxrx.JettyServer;
-import org.treetank.access.StandardNodeSettings;
+import org.treetank.access.conf.ModuleSetter;
+import org.treetank.node.NodeMetaPageFactory;
+import org.treetank.node.TreeNodeFactory;
 
 import com.google.inject.Guice;
 
@@ -59,7 +61,8 @@ public final class StartServer {
      */
     public StartServer(final int sPort) throws Exception {
 
-        Guice.createInjector(new StandardNodeSettings());
+        Guice.createInjector(new ModuleSetter().setNodeFacClass(TreeNodeFactory.class).setMetaFacClass(
+            NodeMetaPageFactory.class).createModule());
         System.setProperty("org.jaxrx.systemPath",
             "org.treetank.service.jaxrx.implementation.TreeTankMediator");
         System.setProperty("org.jaxrx.systemName", "treetank");

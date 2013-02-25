@@ -59,6 +59,7 @@ import javax.xml.stream.events.XMLEvent;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.Storage;
+import org.treetank.access.conf.ModuleSetter;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
@@ -77,7 +78,6 @@ import org.treetank.node.TreeNodeFactory;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
 import org.treetank.revisioning.IRevisioning;
-import org.treetank.service.xml.StandardXMLSettings;
 import org.treetank.utils.TypedValue;
 
 import com.google.inject.Guice;
@@ -350,7 +350,7 @@ public class XMLShredder implements Callable<Void> {
         System.out.print("Shredding '" + paramArgs[0] + "' to '" + paramArgs[1] + "' ... ");
         final long time = System.currentTimeMillis();
 
-        Injector injector = Guice.createInjector(new StandardXMLSettings());
+        Injector injector = Guice.createInjector(new ModuleSetter().setNodeFacClass(TreeNodeFactory.class).setMetaFacClass(NodeMetaPageFactory.class).createModule());
         IBackendFactory storage = injector.getInstance(IBackendFactory.class);
         IRevisioning revision = injector.getInstance(IRevisioning.class);
 

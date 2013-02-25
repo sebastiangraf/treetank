@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.treetank.access.Storage;
-import org.treetank.access.conf.GuiSettings;
+import org.treetank.access.conf.ModuleSetter;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
@@ -83,7 +83,8 @@ public class StorageManager {
                 break;
             }
 
-            Injector injector = Guice.createInjector(new GuiSettings(clazz));
+            Injector injector =
+                Guice.createInjector(new ModuleSetter().setBackendClass(clazz).createModule());
             IBackendFactory backend = injector.getInstance(IBackendFactory.class);
             IRevisioning revision = injector.getInstance(IRevisioning.class);
 
