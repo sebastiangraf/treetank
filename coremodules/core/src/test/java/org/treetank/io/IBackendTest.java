@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.jclouds.filesystem.reference.FilesystemConstants;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.treetank.CoreTestHelper;
@@ -39,6 +40,11 @@ public class IBackendTest {
 
     private ByteHandlerPipeline handler = new ByteHandlerPipeline(new Encryptor(StandardSettings.KEY),
         new Zipper());
+
+    @AfterMethod
+    public void tearDown() {
+        IOUtils.recursiveDelete(CoreTestHelper.PATHS.PATH1.getFile());
+    }
 
     @Test(dataProvider = "instantiateBackend")
     public void testFirstRef(Class<IBackendCreator> clazz, IBackendCreator[] pBackends) throws TTException {
@@ -161,12 +167,14 @@ public class IBackendTest {
                         public IBackend getBackend() throws TTIOException {
                             return createCombinedStorage(nodeFac, handler, metaFac);
                         }
-                    }/*, new IBackendCreator() {
+                    }
+                    /*, new IBackendCreator() {
                         @Override
                         public IBackend getBackend() throws TTIOException {
                             return createAWSJCloudsStorage(nodeFac, handler, metaFac);
                         }
                     }*/
+
                 }
             }
         };
@@ -195,14 +203,14 @@ public class IBackendTest {
         return new BerkeleyStorage(props, pNodeFac, pMetaFac, pHandler);
     }
 
-    // private static IBackend createAWSJCloudsStorage(INodeFactory pNodeFac, IByteHandlerPipeline pHandler,
-    // IMetaEntryFactory pMetaFac) throws TTIOException {
-    // Properties props =
-    // StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
-    // CoreTestHelper.RESOURCENAME);
-    // props.setProperty(ConstructorProps.JCLOUDSTYPE, "aws-s3");
-    // return new JCloudsStorage(props, pNodeFac, pMetaFac, pHandler);
-    // }
+    private static IBackend createAWSJCloudsStorage(INodeFactory pNodeFac, IByteHandlerPipeline pHandler,
+        IMetaEntryFactory pMetaFac) throws TTIOException {
+        Properties props =
+            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                CoreTestHelper.RESOURCENAME);
+        props.setProperty(ConstructorProps.JCLOUDSTYPE, "aws-s3");
+        return new JCloudsStorage(props, pNodeFac, pMetaFac, pHandler);
+    }
 
     private static IBackend createLocalJCloudsStorage(INodeFactory pNodeFac, IByteHandlerPipeline pHandler,
         IMetaEntryFactory pMetaFac) throws TTIOException {

@@ -71,7 +71,7 @@ public class TransactionTest {
         tmpDir = Files.createTempDir();
     }
 
-    @Test
+    @Test(enabled=false)
     public void testTransactions() throws TTException, IOException {
 
         // First file is empty.

@@ -6,8 +6,10 @@ package org.treetank.io.jclouds;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
-import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobBuilder;
 import org.treetank.exception.TTByteHandleException;
@@ -28,7 +30,7 @@ public class JCloudsWriter implements IBackendWriter {
     /** Delegate for reader. */
     private final JCloudsReader mReader;
 
-    public JCloudsWriter(BlobStore pBlobStore, PageFactory pFac, IByteHandlerPipeline pByteHandler,
+    public JCloudsWriter(AsyncBlobStore pBlobStore, PageFactory pFac, IByteHandlerPipeline pByteHandler,
         String pResourceName) throws TTException {
         mReader = new JCloudsReader(pBlobStore, pFac, pByteHandler, pResourceName);
     }
@@ -56,8 +58,9 @@ public class JCloudsWriter implements IBackendWriter {
             Blob blob = blobbuilder.build();
             blob.setPayload(byteOut.toByteArray());
 
-            mReader.mBlobStore.putBlob(mReader.mResourceName, blob);
+            Future<String> process = mReader.mBlobStore.putBlob(mReader.mResourceName, blob);
             mReader.mCache.put(pPage.getPageKey(), pPage);
+            process.get();
         } catch (final Exception exc) {
             throw new TTIOException(exc);
         }
@@ -94,8 +97,8 @@ public class JCloudsWriter implements IBackendWriter {
             dataOut.writeLong(key);
             dataOut.close();
             blob.setPayload(byteOut.toByteArray());
-            mReader.mBlobStore.putBlob(mReader.mResourceName, blob);
-        } catch (final IOException exc) {
+            mReader.mBlobStore.putBlob(mReader.mResourceName, blob).get();
+        } catch (final IOException | ExecutionException | InterruptedException exc) {
             throw new TTIOException(exc);
         }
 
