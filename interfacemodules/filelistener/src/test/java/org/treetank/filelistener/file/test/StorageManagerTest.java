@@ -27,7 +27,7 @@ public class StorageManagerTest {
         StorageManager.createStorage(mStorageName, StorageManager.BACKEND_INDEX_JCLOUDS);
     }
     
-    @Test
+    @Test(enabled=false)
     public void testGetSession() throws StorageNotExistingException, TTException{
         ISession session = StorageManager.getSession(mStorageName);
         assertNotNull(session);
@@ -36,7 +36,7 @@ public class StorageManagerTest {
         assertTrue(session.close());
     }
     
-    @Test
+    @Test(enabled=false)
     public void testGetStorages(){
         List<String> storages = StorageManager.getStorages();
         
