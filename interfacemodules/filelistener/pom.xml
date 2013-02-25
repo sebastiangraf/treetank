@@ -30,8 +30,8 @@
 	</parent>
 	<artifactId>filelistener</artifactId>
 	<name>Filelistener interface for Treetank</name>
-	<description>This module is an interface for scsi devices and allows them to manage their data using treetank. 
-               Therefore data can be directly written into xml files or into the cloud depending on which 
+	<description>This module is an interface for file devices and allows them to manage their data using treetank. 
+               Therefore data can be directly written into the cloud depending on which 
                backend you want to use.</description>
 
 	<repositories>
@@ -57,10 +57,13 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
-
 		<repository>
 			<id>swt-repo</id>
+			<name>SWT Repo hosted on Google Code</name>
 			<url>https://swt-repo.googlecode.com/svn/repo/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
 		</repository>
 	</repositories>
 	<dependencies>
@@ -90,18 +93,43 @@
 		<dependency>
 			<groupId>org.eclipse.ui</groupId>
 			<artifactId>org.eclipse.ui.workbench</artifactId>
-			<version>3.7.1.v20120104-1859</version>
+			<version>3.103.0.v20120530-1824</version>
 		</dependency>
 
 		<!-- SWT -->
 		<dependency>
-			<groupId>${swt.groupId}</groupId>
-			<artifactId>${swt.artifactId}</artifactId>
+			<groupId>org.eclipse.swt</groupId>
+			<artifactId>org.eclipse.swt.gtk.linux.x86</artifactId>
+			<version>${swt.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.swt</groupId>
+			<artifactId>org.eclipse.swt.gtk.linux.x86</artifactId>
+			<version>${swt.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.swt</groupId>
+			<artifactId>org.eclipse.swt.gtk.linux.x86_64</artifactId>
+			<version>${swt.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.swt</groupId>
+			<artifactId>org.eclipse.swt.cocoa.macosx</artifactId>
+			<version>${swt.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.swt</groupId>
+			<artifactId>org.eclipse.swt.cocoa.macosx.x86_64</artifactId>
+			<version>${swt.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.swt</groupId>
+			<artifactId>org.eclipse.swt.win32.win32.x86_64</artifactId>
 			<version>${swt.version}</version>
 		</dependency>
 	</dependencies>
 
-	<build>
+	<!--<build>
 		<plugins>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
@@ -118,8 +146,8 @@
 				</configuration>
 				<executions>
 					<execution>
-						<id>make-assembly</id> <!-- this is used for inheritance merges -->
-						<phase>package</phase> <!-- bind to the packaging phase -->
+						<id>make-assembly</id> 
+						<phase>package</phase> 
 						<goals>
 							<goal>single</goal>
 						</goals>
@@ -127,7 +155,7 @@
 				</executions>
 			</plugin>
 		</plugins>
-	</build>
+	</build>-->
 
 	<profiles>
 		<profile>
@@ -137,11 +165,6 @@
 					<name>linux</name>
 				</os>
 			</activation>
-			<properties>
-				<swt.groupId>org.eclipse.swt</swt.groupId>
-				<swt.artifactId>org.eclipse.swt.gtk.linux.x86</swt.artifactId>
-				<swt.version>4.2.1</swt.version>
-			</properties>
 		</profile>
 		<profile>
 			<id>linux64</id>
@@ -151,11 +174,6 @@
 					<arch>x86_x64</arch>
 				</os>
 			</activation>
-			<properties>
-				<swt.groupId>org.eclipse.swt</swt.groupId>
-				<swt.artifactId>org.eclipse.swt.gtk.linux.x86_64</swt.artifactId>
-				<swt.version>4.2.1</swt.version>
-			</properties>
 		</profile>
 		<profile>
 			<id>mac32</id>
@@ -164,11 +182,6 @@
 					<name>mac os x</name>
 				</os>
 			</activation>
-			<properties>
-				<swt.groupId>org.eclipse.swt</swt.groupId>
-				<swt.artifactId>org.eclipse.swt.cocoa.macosx</swt.artifactId>
-				<swt.version>4.2.1</swt.version>
-			</properties>
 		</profile>
 		<profile>
 			<id>mac64</id>
@@ -177,11 +190,6 @@
 					<name>mac os x</name>
 				</os>
 			</activation>
-			<properties>
-				<swt.groupId>org.eclipse.swt</swt.groupId>
-				<swt.artifactId>org.eclipse.swt.cocoa.macosx.x86_64</swt.artifactId>
-				<swt.version>4.2.1</swt.version>
-			</properties>
 		</profile>
 		<profile>
 			<id>windows32</id>
@@ -190,11 +198,6 @@
 					<family>windows</family>
 				</os>
 			</activation>
-			<properties>
-				<swt.groupId>org.eclipse.swt</swt.groupId>
-				<swt.artifactId>org.eclipse.swt.win32.win32.x86</swt.artifactId>
-				<swt.version>4.2.1</swt.version>
-			</properties>
 		</profile>
 		<profile>
 			<id>windows64</id>
@@ -203,11 +206,9 @@
 					<family>windows</family>
 				</os>
 			</activation>
-			<properties>
-				<swt.groupId>org.eclipse.swt</swt.groupId>
-				<swt.artifactId>org.eclipse.swt.win32.win32.x86_64</swt.artifactId>
-				<swt.version>4.2.1</swt.version>
-			</properties>
 		</profile>
 	</profiles>
+	<properties>
+		<swt.version>4.2.1</swt.version>
+	</properties>
 </project>
