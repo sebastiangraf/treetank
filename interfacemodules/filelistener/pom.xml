@@ -19,13 +19,12 @@
 	OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE 
 	OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
 	ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.treetank</groupId>
 		<artifactId>pom</artifactId>
-		<version>6.0.0-SNAPSHOT</version>
+		<version>6.0.0</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 	<artifactId>filelistener</artifactId>
@@ -67,19 +66,19 @@
 		<dependency>
 			<groupId>org.treetank</groupId>
 			<artifactId>core</artifactId>
-			<version>6.0.0-SNAPSHOT</version>
+			<version>6.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.treetank</groupId>
 			<artifactId>core</artifactId>
-			<version>6.0.0-SNAPSHOT</version>
+			<version>6.0.0</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.treetank</groupId>
 			<artifactId>commons</artifactId>
-			<version>6.0.0-SNAPSHOT</version>
+			<version>6.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.swinglabs</groupId>

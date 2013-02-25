@@ -20,15 +20,14 @@
 	OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
 	ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.treetank</groupId>
 	<artifactId>pom</artifactId>
 	<packaging>pom</packaging>
 	<name>Treetank</name>
-	<version>6.0.0-SNAPSHOT</version>
+	<version>6.0.0</version>
 	<url>http://disy.github.com/treetank/</url>
 	<organization>
 		<name>Distributed Systems Group</name>
@@ -43,9 +42,9 @@
 		<url>http://ci.disy.inf.uni-konstanz.de</url>
 	</ciManagement>
 	<scm>
-		<url>https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank</url>
-		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank</connection>
-		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank</developerConnection>
+		<url>https://svn.uni-konstanz.de/disy/Treetank/tags/pom-6.0.0</url>
+		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/tags/pom-6.0.0</connection>
+		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/tags/pom-6.0.0</developerConnection>
 	</scm>
 	<mailingLists>
 		<mailingList>
