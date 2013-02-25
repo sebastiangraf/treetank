@@ -27,7 +27,7 @@
 	<artifactId>pom</artifactId>
 	<packaging>pom</packaging>
 	<name>Treetank</name>
-	<version>6.0.0</version>
+	<version>6.0.1-SNAPSHOT</version>
 	<url>http://disy.github.com/treetank/</url>
 	<organization>
 		<name>Distributed Systems Group</name>
@@ -42,9 +42,9 @@
 		<url>http://ci.disy.inf.uni-konstanz.de</url>
 	</ciManagement>
 	<scm>
-		<url>https://svn.uni-konstanz.de/disy/Treetank/tags/pom-6.0.0</url>
-		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/tags/pom-6.0.0</connection>
-		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/tags/pom-6.0.0</developerConnection>
+		<url>https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank</url>
+		<connection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank</connection>
+		<developerConnection>scm:svn:https://svn.uni-konstanz.de/disy/Treetank/trunk/treetank</developerConnection>
 	</scm>
 	<mailingLists>
 		<mailingList>
