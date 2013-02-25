@@ -38,13 +38,13 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
-import org.treetank.Holder;
-import org.treetank.NodeTestHelper;
-import org.treetank.NodeModuleFactory;
 import org.treetank.CoreTestHelper;
+import org.treetank.Holder;
+import org.treetank.ModuleFactory;
+import org.treetank.NodeTestHelper;
 import org.treetank.access.conf.ResourceConfiguration;
-import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
+import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.AxisTest;
@@ -71,7 +71,7 @@ import com.google.inject.Inject;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-@Guice(moduleFactory = NodeModuleFactory.class)
+@Guice(moduleFactory = ModuleFactory.class)
 public class FilterTest {
 
     private Holder holder;

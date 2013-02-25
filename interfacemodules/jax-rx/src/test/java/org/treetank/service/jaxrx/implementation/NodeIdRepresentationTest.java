@@ -52,7 +52,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.CoreTestHelper;
-import org.treetank.NodeModuleFactory;
+import org.treetank.ModuleFactory;
 import org.treetank.exception.TTException;
 import org.treetank.io.IBackend.IBackendFactory;
 import org.treetank.revisioning.IRevisioning;
@@ -74,7 +74,7 @@ import com.google.inject.Inject;
  * 
  */
 
-@Guice(moduleFactory = NodeModuleFactory.class)
+@Guice(moduleFactory = ModuleFactory.class)
 public class NodeIdRepresentationTest {
 
     /**
@@ -151,8 +151,7 @@ public class NodeIdRepresentationTest {
     public void setUp() throws Exception {
         CoreTestHelper.deleteEverything();
         CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile());
-        ridWorker =
-            new NodeIdRepresentation(CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile()));
+        ridWorker = new NodeIdRepresentation(CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile()));
         treetank =
             new DatabaseRepresentation(CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile()),
                 mStorageFac, mRevisioning);

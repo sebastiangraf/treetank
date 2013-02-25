@@ -25,7 +25,7 @@
     <parent>
         <artifactId>pom</artifactId>
         <groupId>org.treetank</groupId>
-        <version>6.0.0-SNAPSHOT</version>
+        <version>6.0.1-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <artifactId>core</artifactId>
@@ -70,7 +70,7 @@
         <dependency>
             <groupId>org.treetank</groupId>
             <artifactId>commons</artifactId>
-            <version>6.0.0-SNAPSHOT</version>
+            <version>6.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.sleepycat</groupId>
@@ -80,27 +80,40 @@
         <dependency>
             <groupId>org.treetank</groupId>
             <artifactId>commons</artifactId>
-            <version>6.0.0-SNAPSHOT</version>
+            <version>6.0.1-SNAPSHOT</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jclouds</groupId>
             <artifactId>jclouds-blobstore</artifactId>
-            <version>1.5.4</version>
+            <version>1.6.0-alpha.2</version>
         </dependency>
         <dependency>
             <groupId>org.jclouds.provider</groupId>
             <artifactId>aws-s3</artifactId>
-            <version>1.5.4</version>
+            <version>1.6.0-alpha.2</version>
         </dependency>
         <dependency>
             <groupId>org.jclouds.api</groupId>
             <artifactId>filesystem</artifactId>
-            <version>1.5.4</version>
+            <version>1.6.0-alpha.2</version>
         </dependency>
         <!--<dependency> <groupId>org.jclouds.provider</groupId> <artifactId>imagestore</artifactId> 
             <version>1.6.0-SNAPSHOT</version> </dependency> -->
     </dependencies>
-
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.13</version>
+                <configuration>
+                    <suiteXmlFiles>
+                        <suiteXmlFile>src/test/resources/testng.yaml</suiteXmlFile>
+                    </suiteXmlFiles>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

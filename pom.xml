@@ -20,15 +20,14 @@
 	OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
 	ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.treetank</groupId>
 	<artifactId>pom</artifactId>
 	<packaging>pom</packaging>
 	<name>Treetank</name>
-	<version>6.0.0-SNAPSHOT</version>
+	<version>6.0.1-SNAPSHOT</version>
 	<url>http://disy.github.com/treetank/</url>
 	<organization>
 		<name>Distributed Systems Group</name>
@@ -81,7 +80,7 @@
 		<module>interfacemodules/jax-rx</module>
 		<module>interfacemodules/xml</module>
 		<module>interfacemodules/iscsi</module>
-		<!--<module>interfacemodules/filelistener</module>-->
+		<module>interfacemodules/filelistener</module>
 	</modules>
 
 	<repositories>
@@ -190,7 +189,7 @@
 					<message>Building site for ${project.version}</message>
 				</configuration>
 			</plugin>
-			<plugin>
+<!--			<plugin>
 				<artifactId>maven-gpg-plugin</artifactId>
 				<version>1.4</version>
 				<executions>
@@ -201,7 +200,7 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
+			</plugin>-->
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
@@ -295,7 +294,7 @@
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
-			<version>1.7.1</version>
+			<version>1.7.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -326,7 +325,7 @@
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>14.0-rc1</version>
+			<version>14.0-rc3</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.code.gson</groupId>

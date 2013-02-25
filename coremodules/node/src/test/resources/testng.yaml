@@ -1,0 +1,19 @@
+name: NodeSuite
+threadCount: 4
+parameters: { NodeFactory: org.treetank.node.TreeNodeFactory, MetaFactory: org.treetank.node.NodeMetaPageFactory }
+
+ 
+tests:
+  - name: Node Tests
+    packages:
+      - org.treetank.axis
+      - org.treetank.node
+
+tests:
+  - name: Node Tests, Classes
+    classes:
+      - org.treetank.access.AttributeAndNamespaceTest
+      - org.treetank.access.HashTest
+      - org.treetank.access.OverallTest
+      - org.treetank.access.ReadTransactionTest
+      - org.treetank.access.UpdateTest

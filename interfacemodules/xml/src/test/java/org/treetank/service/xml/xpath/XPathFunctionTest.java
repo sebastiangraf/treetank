@@ -34,12 +34,12 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
-import org.treetank.Holder;
-import org.treetank.NodeModuleFactory;
 import org.treetank.CoreTestHelper;
+import org.treetank.Holder;
+import org.treetank.ModuleFactory;
 import org.treetank.access.conf.ResourceConfiguration;
-import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
+import org.treetank.access.conf.StandardSettings;
 import org.treetank.axis.AxisTest;
 import org.treetank.exception.TTException;
 import org.treetank.service.xml.shredder.EShredderInsert;
@@ -55,7 +55,7 @@ import com.google.inject.Inject;
  * @author Tina Scherer, University of Konstanz
  * @author Sebastian Graf, University of Konstanz
  */
-@Guice(moduleFactory = NodeModuleFactory.class)
+@Guice(moduleFactory = ModuleFactory.class)
 public class XPathFunctionTest {
 
     public static final String XML = "src" + File.separator + "test" + File.separator + "resources"

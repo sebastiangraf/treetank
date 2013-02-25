@@ -1,213 +1,206 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright (c) 2011, University of Konstanz, Distributed Systems Group 
-	All rights reserved. Redistribution and use in source and binary forms, with 
-	or without modification, are permitted provided that the following conditions 
-	are met: * Redistributions of source code must retain the above copyright 
-	notice, this list of conditions and the following disclaimer. * Redistributions 
-	in binary form must reproduce the above copyright notice, this list of conditions 
-	and the following disclaimer in the documentation and/or other materials 
-	provided with the distribution. * Neither the name of the University of Konstanz 
-	nor the names of its contributors may be used to endorse or promote products 
-	derived from this software without specific prior written permission. THIS 
-	SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
-	ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-	WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-	IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY DIRECT, INDIRECT, 
-	INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, 
-	DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY 
-	OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE 
-	OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
-	ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
+    All rights reserved. Redistribution and use in source and binary forms, with 
+    or without modification, are permitted provided that the following conditions 
+    are met: * Redistributions of source code must retain the above copyright 
+    notice, this list of conditions and the following disclaimer. * Redistributions 
+    in binary form must reproduce the above copyright notice, this list of conditions 
+    and the following disclaimer in the documentation and/or other materials 
+    provided with the distribution. * Neither the name of the University of Konstanz 
+    nor the names of its contributors may be used to endorse or promote products 
+    derived from this software without specific prior written permission. THIS 
+    SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
+    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+    IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY DIRECT, INDIRECT, 
+    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
+    NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, 
+    DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY 
+    OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE 
+    OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+    ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.treetank</groupId>
-		<artifactId>pom</artifactId>
-		<version>6.0.0-SNAPSHOT</version>
-		<relativePath>../../pom.xml</relativePath>
-	</parent>
-	<artifactId>filelistener</artifactId>
-	<name>Filelistener interface for Treetank</name>
-	<description>This module is an interface for scsi devices and allows them to manage their data using treetank. 
-               Therefore data can be directly written into xml files or into the cloud depending on which 
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.treetank</groupId>
+        <artifactId>pom</artifactId>
+        <version>6.0.1-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
+    <artifactId>filelistener</artifactId>
+    <name>Filelistener interface for Treetank</name>
+    <description>This module is an interface for file devices and allows them to manage their data using treetank. 
+               Therefore data can be directly written into the cloud depending on which 
                backend you want to use.</description>
 
-	<repositories>
-		<repository>
-			<id>disyInternal</id>
-			<name>Internal Repository for the Distributed System Group</name>
-			<url>http://mavenrepo.disy.inf.uni-konstanz.de/repository/disyInternal/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>disyInternalSnapshot</id>
-			<name>Internal Snapshot Repository for the Distributed System Group</name>
-			<url>http://mavenrepo.disy.inf.uni-konstanz.de/repository/disyInternalSnapshot/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
+    <repositories>
+        <repository>
+            <id>disyInternal</id>
+            <name>Internal Repository for the Distributed System Group</name>
+            <url>http://mavenrepo.disy.inf.uni-konstanz.de/repository/disyInternal/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>disyInternalSnapshot</id>
+            <name>Internal Snapshot Repository for the Distributed System Group</name>
+            <url>http://mavenrepo.disy.inf.uni-konstanz.de/repository/disyInternalSnapshot/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>swt-repo</id>
+            <name>SWT Repo hosted on Google Code</name>
+            <url>https://swt-repo.googlecode.com/svn/repo/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </repositories>
+    <dependencies>
+        <dependency>
+            <groupId>org.treetank</groupId>
+            <artifactId>core</artifactId>
+            <version>6.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.treetank</groupId>
+            <artifactId>core</artifactId>
+            <version>6.0.1-SNAPSHOT</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.treetank</groupId>
+            <artifactId>commons</artifactId>
+            <version>6.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.swinglabs</groupId>
+            <artifactId>swingx</artifactId>
+            <version>1.6.1</version>
+        </dependency>
+        <!-- JFace + Eclipse's JFace extensions -->
+        <dependency>
+            <groupId>org.eclipse.ui</groupId>
+            <artifactId>org.eclipse.ui.workbench</artifactId>
+            <version>3.103.0.v20120530-1824</version>
+        </dependency>
 
-		<repository>
-			<id>swt-repo</id>
-			<url>https://swt-repo.googlecode.com/svn/repo/</url>
-		</repository>
-	</repositories>
-	<dependencies>
-		<dependency>
-			<groupId>org.treetank</groupId>
-			<artifactId>core</artifactId>
-			<version>6.0.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.treetank</groupId>
-			<artifactId>core</artifactId>
-			<version>6.0.0-SNAPSHOT</version>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.treetank</groupId>
-			<artifactId>commons</artifactId>
-			<version>6.0.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.swinglabs</groupId>
-			<artifactId>swingx</artifactId>
-			<version>1.6.1</version>
-		</dependency>
-		<!-- JFace + Eclipse's JFace extensions -->
-		<dependency>
-			<groupId>org.eclipse.ui</groupId>
-			<artifactId>org.eclipse.ui.workbench</artifactId>
-			<version>3.7.1.v20120104-1859</version>
-		</dependency>
+        <!-- SWT -->
+        <dependency>
+            <groupId>org.eclipse.swt</groupId>
+            <artifactId>org.eclipse.swt.gtk.linux.x86</artifactId>
+            <version>${swt.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.swt</groupId>
+            <artifactId>org.eclipse.swt.gtk.linux.x86</artifactId>
+            <version>${swt.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.swt</groupId>
+            <artifactId>org.eclipse.swt.gtk.linux.x86_64</artifactId>
+            <version>${swt.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.swt</groupId>
+            <artifactId>org.eclipse.swt.cocoa.macosx</artifactId>
+            <version>${swt.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.swt</groupId>
+            <artifactId>org.eclipse.swt.cocoa.macosx.x86_64</artifactId>
+            <version>${swt.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.swt</groupId>
+            <artifactId>org.eclipse.swt.win32.win32.x86_64</artifactId>
+            <version>${swt.version}</version>
+        </dependency>
+    </dependencies>
 
-		<!-- SWT -->
-		<dependency>
-			<groupId>${swt.groupId}</groupId>
-			<artifactId>${swt.artifactId}</artifactId>
-			<version>${swt.version}</version>
-		</dependency>
-	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.4</version>
-				<configuration>
-					<archive>
-						<manifest>
-							<mainClass>org.treetank.filelistener.ui.application.FilelistenerApplication</mainClass>
-						</manifest>
-					</archive>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-				</configuration>
-				<executions>
-					<execution>
-						<id>make-assembly</id> <!-- this is used for inheritance merges -->
-						<phase>package</phase> <!-- bind to the packaging phase -->
-						<goals>
-							<goal>single</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
-
-	<profiles>
-		<profile>
-			<id>linux32</id>
-			<activation>
-				<os>
-					<name>linux</name>
-				</os>
-			</activation>
-			<properties>
-				<swt.groupId>org.eclipse.swt</swt.groupId>
-				<swt.artifactId>org.eclipse.swt.gtk.linux.x86</swt.artifactId>
-				<swt.version>4.2.1</swt.version>
-			</properties>
-		</profile>
-		<profile>
-			<id>linux64</id>
-			<activation>
-				<os>
-					<name>linux</name>
-					<arch>x86_x64</arch>
-				</os>
-			</activation>
-			<properties>
-				<swt.groupId>org.eclipse.swt</swt.groupId>
-				<swt.artifactId>org.eclipse.swt.gtk.linux.x86_64</swt.artifactId>
-				<swt.version>4.2.1</swt.version>
-			</properties>
-		</profile>
-		<profile>
-			<id>mac32</id>
-			<activation>
-				<os>
-					<name>mac os x</name>
-				</os>
-			</activation>
-			<properties>
-				<swt.groupId>org.eclipse.swt</swt.groupId>
-				<swt.artifactId>org.eclipse.swt.cocoa.macosx</swt.artifactId>
-				<swt.version>4.2.1</swt.version>
-			</properties>
-		</profile>
-		<profile>
-			<id>mac64</id>
-			<activation>
-				<os>
-					<name>mac os x</name>
-				</os>
-			</activation>
-			<properties>
-				<swt.groupId>org.eclipse.swt</swt.groupId>
-				<swt.artifactId>org.eclipse.swt.cocoa.macosx.x86_64</swt.artifactId>
-				<swt.version>4.2.1</swt.version>
-			</properties>
-		</profile>
-		<profile>
-			<id>windows32</id>
-			<activation>
-				<os>
-					<family>windows</family>
-				</os>
-			</activation>
-			<properties>
-				<swt.groupId>org.eclipse.swt</swt.groupId>
-				<swt.artifactId>org.eclipse.swt.win32.win32.x86</swt.artifactId>
-				<swt.version>4.2.1</swt.version>
-			</properties>
-		</profile>
-		<profile>
-			<id>windows64</id>
-			<activation>
-				<os>
-					<family>windows</family>
-				</os>
-			</activation>
-			<properties>
-				<swt.groupId>org.eclipse.swt</swt.groupId>
-				<swt.artifactId>org.eclipse.swt.win32.win32.x86_64</swt.artifactId>
-				<swt.version>4.2.1</swt.version>
-			</properties>
-		</profile>
-	</profiles>
+    <!--<build> <plugins> <plugin> <artifactId>maven-assembly-plugin</artifactId> 
+        <version>2.4</version> <configuration> <archive> <manifest> <mainClass>org.treetank.filelistener.ui.application.FilelistenerApplication</mainClass> 
+        </manifest> </archive> <descriptorRefs> <descriptorRef>jar-with-dependencies</descriptorRef> 
+        </descriptorRefs> </configuration> <executions> <execution> <id>make-assembly</id> 
+        <phase>package</phase> <goals> <goal>single</goal> </goals> </execution> 
+        </executions> </plugin> </plugins> </build> -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.13</version>
+                <configuration>
+                    <suiteXmlFiles>
+                        <suiteXmlFile>src/test/resources/testng.yaml</suiteXmlFile>
+                    </suiteXmlFiles>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <profiles>
+        <profile>
+            <id>linux32</id>
+            <activation>
+                <os>
+                    <name>linux</name>
+                </os>
+            </activation>
+        </profile>
+        <profile>
+            <id>linux64</id>
+            <activation>
+                <os>
+                    <name>linux</name>
+                    <arch>x86_x64</arch>
+                </os>
+            </activation>
+        </profile>
+        <profile>
+            <id>mac32</id>
+            <activation>
+                <os>
+                    <name>mac os x</name>
+                </os>
+            </activation>
+        </profile>
+        <profile>
+            <id>mac64</id>
+            <activation>
+                <os>
+                    <name>mac os x</name>
+                </os>
+            </activation>
+        </profile>
+        <profile>
+            <id>windows32</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+        </profile>
+        <profile>
+            <id>windows64</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+        </profile>
+    </profiles>
+    <properties>
+        <swt.version>4.2.1</swt.version>
+    </properties>
 </project>

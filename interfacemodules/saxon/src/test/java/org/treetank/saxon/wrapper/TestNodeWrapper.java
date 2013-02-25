@@ -55,7 +55,7 @@ import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.CoreTestHelper;
 import org.treetank.Holder;
-import org.treetank.NodeModuleFactory;
+import org.treetank.ModuleFactory;
 import org.treetank.NodeTestHelper;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
@@ -81,7 +81,7 @@ import com.google.inject.Inject;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-@Guice(moduleFactory = NodeModuleFactory.class)
+@Guice(moduleFactory = ModuleFactory.class)
 public class TestNodeWrapper {
 
     private Holder holder;

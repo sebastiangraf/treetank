@@ -38,7 +38,7 @@ import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.CoreTestHelper;
 import org.treetank.Holder;
-import org.treetank.NodeModuleFactory;
+import org.treetank.ModuleFactory;
 import org.treetank.NodeTestHelper;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
@@ -57,7 +57,7 @@ import com.google.inject.Inject;
  * @author Johannes Lichtenberger, University of Konstanz
  * 
  */
-@Guice(moduleFactory = NodeModuleFactory.class)
+@Guice(moduleFactory = ModuleFactory.class)
 public class SAXSerializerTest {
 
     private Holder holder;
