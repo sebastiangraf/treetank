@@ -39,7 +39,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.CoreTestHelper;
-import org.treetank.NodeModuleFactory;
+import org.treetank.ModuleFactory;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.StandardSettings;
@@ -54,7 +54,7 @@ import com.google.inject.Inject;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-@Guice(moduleFactory = NodeModuleFactory.class)
+@Guice(moduleFactory = ModuleFactory.class)
 public final class TestNodeWrapperS9ApiXQueryOutputStream {
 
     private CoreTestHelper.Holder holder;

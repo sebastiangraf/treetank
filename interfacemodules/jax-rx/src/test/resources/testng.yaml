@@ -1,0 +1,11 @@
+name: JaxRXSuite
+threadCount: 4
+parameters: { NodeFactory: org.treetank.node.TreeNodeFactory, MetaFactory: org.treetank.node.NodeMetaPageFactory }
+
+ 
+tests:
+  - name: Jax RX Tests
+    packages:
+      - org.treetank.service.jaxrx.implementation
+      - org.treetank.service.jaxrx.server
+      - org.treetank.service.jaxrx.util

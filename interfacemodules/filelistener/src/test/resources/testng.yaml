@@ -1,0 +1,10 @@
+name: FileSuite
+threadCount: 4
+parameters: { NodeFactory: org.treetank.filelistener.file.node.FileNodeFactory, MetaFactory: org.treetank.filelistener.file.node.FilelistenerMetaPageFactory }
+
+ 
+tests:
+  - name: File Tests
+    classes:
+      - org.treetank.filelistener.file.test.StorageManagerTest
+      - org.treetank.access.test.TransactionTest

@@ -37,12 +37,12 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
-import org.treetank.Holder;
-import org.treetank.NodeModuleFactory;
 import org.treetank.CoreTestHelper;
+import org.treetank.Holder;
+import org.treetank.ModuleFactory;
 import org.treetank.access.conf.ResourceConfiguration;
-import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
+import org.treetank.access.conf.StandardSettings;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.AxisTest;
 import org.treetank.exception.TTException;
@@ -51,7 +51,7 @@ import org.treetank.service.xml.shredder.XMLShredder;
 
 import com.google.inject.Inject;
 
-@Guice(moduleFactory = NodeModuleFactory.class)
+@Guice(moduleFactory = ModuleFactory.class)
 public class XPathAxisWideTest {
 
     private static final String XML = "src" + File.separator + "test" + File.separator + "resources"

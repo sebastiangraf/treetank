@@ -49,14 +49,14 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
-import org.treetank.Holder;
-import org.treetank.NodeTestHelper;
-import org.treetank.NodeModuleFactory;
 import org.treetank.CoreTestHelper;
+import org.treetank.Holder;
+import org.treetank.ModuleFactory;
+import org.treetank.NodeTestHelper;
 import org.treetank.access.NodeReadTrx;
 import org.treetank.access.conf.ResourceConfiguration;
-import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
+import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.DescendantAxis;
 import org.treetank.exception.TTException;
@@ -69,7 +69,7 @@ import com.google.inject.Inject;
  * 
  * @author Johannes Lichtenberger, University of Konstanz.
  */
-@Guice(moduleFactory = NodeModuleFactory.class)
+@Guice(moduleFactory = ModuleFactory.class)
 public class StAXSerializerTest {
     private Holder holder;
 

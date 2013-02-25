@@ -45,7 +45,7 @@ import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.CoreTestHelper;
 import org.treetank.CoreTestHelper.Holder;
-import org.treetank.NodeModuleFactory;
+import org.treetank.ModuleFactory;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.ResourceConfiguration;
@@ -65,7 +65,7 @@ import com.google.inject.Inject;
  * @author Johannes Lichtenberger, University of Konstanz
  */
 
-@Guice(moduleFactory = NodeModuleFactory.class)
+@Guice(moduleFactory = ModuleFactory.class)
 public final class XMLUpdateShredderTest {
 
     private Holder holder;

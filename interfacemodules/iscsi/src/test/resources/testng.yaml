@@ -1,0 +1,10 @@
+name: iSCSISuite
+threadCount: 4
+parameters: { NodeFactory: org.treetank.iscsi.node.ByteNodeFactory, MetaFactory: org.treetank.iscsi.node.ISCSIMetaPageFactory }
+
+ 
+tests:
+  - name: iSCSI Tests
+    classes:
+      - org.jscsi.target.storage.TreetankStorageModuleTest
+      - org.treetank.access.TransactionTest

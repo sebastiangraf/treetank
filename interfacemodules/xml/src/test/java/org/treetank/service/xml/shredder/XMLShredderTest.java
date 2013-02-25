@@ -46,7 +46,7 @@ import org.testng.annotations.Test;
 import org.treetank.CoreTestHelper;
 import org.treetank.CoreTestHelper.PATHS;
 import org.treetank.Holder;
-import org.treetank.NodeModuleFactory;
+import org.treetank.ModuleFactory;
 import org.treetank.NodeTestHelper;
 import org.treetank.access.NodeReadTrx;
 import org.treetank.access.NodeWriteTrx;
@@ -68,7 +68,7 @@ import org.treetank.service.xml.XMLTestHelper;
 
 import com.google.inject.Inject;
 
-@Guice(moduleFactory = NodeModuleFactory.class)
+@Guice(moduleFactory = ModuleFactory.class)
 public class XMLShredderTest {
 
     public static final String XML = "src" + File.separator + "test" + File.separator + "resources"

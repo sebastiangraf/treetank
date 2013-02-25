@@ -1,0 +1,9 @@
+name: SaxonSuite
+threadCount: 4
+parameters: { NodeFactory: org.treetank.node.TreeNodeFactory, MetaFactory: org.treetank.node.NodeMetaPageFactory }
+
+ 
+tests:
+  - name: Saxon Tests
+    packages:
+      - org.treetank.saxon.wrapper

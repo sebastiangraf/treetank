@@ -1,0 +1,15 @@
+name: CoreSuite
+threadCount: 4
+parameters: { NodeFactory: org.treetank.page.DumbNodeFactory, MetaFactory: org.treetank.page.DumbMetaEntryFactory }
+
+ 
+tests:
+  - name: Core Tests
+    packages:
+      - org.treetank.access
+      - org.treetank.access.conf
+      - org.treetank.io
+      - org.treetank.io.bytepipe
+      - org.treetank.log 
+      - org.treetank.page
+      - org.treetank.revisioning  
