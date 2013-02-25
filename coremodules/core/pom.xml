@@ -19,12 +19,13 @@
     OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE 
     OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
     ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>pom</artifactId>
         <groupId>org.treetank</groupId>
-        <version>6.0.0</version>
+        <version>6.0.0-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <artifactId>core</artifactId>
@@ -69,7 +70,7 @@
         <dependency>
             <groupId>org.treetank</groupId>
             <artifactId>commons</artifactId>
-            <version>6.0.0</version>
+            <version>6.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.sleepycat</groupId>
@@ -79,7 +80,7 @@
         <dependency>
             <groupId>org.treetank</groupId>
             <artifactId>commons</artifactId>
-            <version>6.0.0</version>
+            <version>6.0.0-SNAPSHOT</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
