@@ -6,9 +6,6 @@ package org.treetank.revisioning;
 import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkArgument;
 
-import org.treetank.access.PageReadTrx;
-import org.treetank.exception.TTIOException;
-import org.treetank.io.IBackendReader;
 import org.treetank.log.LogValue;
 import org.treetank.page.NodePage;
 
@@ -88,20 +85,4 @@ public class SlidingSnapshot implements IRevisioning {
         return toStringHelper(this).toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public long[] getRevRootKeys(int pRevToRestore, long pLongStartKey, long pSeqKey, IBackendReader pReader)
-        throws TTIOException {
-        // taking care about first versions where versionNumber < slidingWindow, taking the smaller one.
-        final long[] returnVal = new long[pRevToRestore < pSeqKey + 1 ? pRevToRestore : (int)pSeqKey + 1];
-        long revCounter = pSeqKey;
-        for (int i = 0; i < returnVal.length; i++) {
-            returnVal[i] = (PageReadTrx.dereferenceLeafOfTree(pReader, pLongStartKey, revCounter));
-            revCounter--;
-        }
-
-        return returnVal;
-    }
 }

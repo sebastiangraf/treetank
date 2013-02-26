@@ -6,9 +6,6 @@ package org.treetank.revisioning;
 import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkArgument;
 
-import org.treetank.access.PageReadTrx;
-import org.treetank.exception.TTIOException;
-import org.treetank.io.IBackendReader;
 import org.treetank.log.LogValue;
 import org.treetank.page.NodePage;
 
@@ -89,26 +86,4 @@ public class Differential implements IRevisioning {
         return toStringHelper(this).toString();
     }
 
-    /**
-     * {@inheritDoc}
-     * 
-     */
-    @Override
-    public long[] getRevRootKeys(int pRevToRestore, long pLongStartKey, long pSeqKey, IBackendReader pReader)
-        throws TTIOException {
-
-        final long currentRevKey = PageReadTrx.dereferenceLeafOfTree(pReader, pLongStartKey, pSeqKey);
-        // Revision to retrieve is a full-dump
-        if (pSeqKey % pRevToRestore == 0) {
-            return new long[] {
-                currentRevKey
-            };
-        } else {
-            final long lastFullDumpRev = (long)Math.floor(pSeqKey / pRevToRestore) * pRevToRestore;
-            long lastFullDumpKey = PageReadTrx.dereferenceLeafOfTree(pReader, pLongStartKey, lastFullDumpRev);
-            return new long[] {
-                currentRevKey, lastFullDumpKey
-            };
-        }
-    }
 }

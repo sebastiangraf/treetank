@@ -9,8 +9,10 @@ import org.treetank.api.INodeFactory;
 import org.treetank.io.IBackend;
 import org.treetank.io.IBackend.IBackendFactory;
 import org.treetank.io.bytepipe.ByteHandlerPipeline;
+import org.treetank.io.bytepipe.Encryptor;
 import org.treetank.io.bytepipe.IByteHandler;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
+import org.treetank.io.bytepipe.Zipper;
 import org.treetank.io.combinedCloud.CombinedBackend;
 import org.treetank.revisioning.IRevisioning;
 import org.treetank.revisioning.SlidingSnapshot;
@@ -35,7 +37,8 @@ public class ModuleSetter {
     /** Class for IBackend. */
     private Class<? extends IBackend> mBackend = CombinedBackend.class;
     /** Instance for ByteHandler. */
-    private IByteHandlerPipeline mByteHandler = new ByteHandlerPipeline();
+    private IByteHandlerPipeline mByteHandler = new ByteHandlerPipeline(new Zipper(), new Encryptor(
+        StandardSettings.KEY));
     /** Instance for Key. */
     private Key mKey = StandardSettings.KEY;
 

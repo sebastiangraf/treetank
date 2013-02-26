@@ -58,8 +58,8 @@ public class PageReadTrxTest {
         CoreTestHelper.deleteEverything();
         mHolder = CoreTestHelper.Holder.generateStorage();
         final ResourceConfiguration config =
-            mResourceConfig.create(StandardSettings.getProps(CoreTestHelper.PATHS.PATH1
-                .getFile().getAbsolutePath(), CoreTestHelper.RESOURCENAME));
+            mResourceConfig.create(StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
+                .getAbsolutePath(), CoreTestHelper.RESOURCENAME));
         CoreTestHelper.Holder.generateSession(mHolder, config);
     }
 
@@ -127,6 +127,7 @@ public class PageReadTrxTest {
         int[] offsets = new int[5];
 
         IBackendReader reader = getFakedStructure(offsets);
+
         long key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 0);
         // 6 is base key because of 5 layers plus the 1 as start key
         assertEquals(6, key);

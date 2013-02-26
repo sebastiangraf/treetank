@@ -223,19 +223,19 @@ public class PageReadTrx implements IPageReadTrx {
                 mUberPage.getReferenceKeys()[IReferencePage.GUARANTEED_INDIRECT_OFFSET], mRootPage
                     .getRevision());
         final RevisionRootPage rootPage = (RevisionRootPage)mPageReader.read(currentRevKey);
-        //starting from the current nodepage
+        final int numbersToRestore =
+            Integer.parseInt(mSession.getConfig().mProperties.getProperty(ConstructorProps.NUMBERTORESTORE));
+        // starting from the current nodepage
         long nodePageKey =
             dereferenceLeafOfTree(mPageReader,
                 rootPage.getReferenceKeys()[IReferencePage.GUARANTEED_INDIRECT_OFFSET], pSeqNodePageKey);
         NodePage page;
-        //jumping through the nodepages based on the pointers 
-        do {
+        // jumping through the nodepages based on the pointers
+        while (nodePages.size() < numbersToRestore && nodePageKey > -1) {
             page = (NodePage)mPageReader.read(nodePageKey);
             nodePages.add(page);
             nodePageKey = page.getLastPagePointer();
-        } while (nodePages.size() < Integer.parseInt(mSession.getConfig().mProperties
-            .getProperty(ConstructorProps.NUMBERTORESTORE))
-            && nodePageKey != IConstants.NULL_NODE);
+        }
 
         checkState(nodePages.size() > 0);
         return nodePages.toArray(new NodePage[nodePages.size()]);
@@ -269,7 +269,7 @@ public class PageReadTrx implements IPageReadTrx {
      * @throws TTIOException
      *             if something odd happens within the creation process.
      */
-    public static final long dereferenceLeafOfTree(final IBackendReader pReader, final long pStartKey,
+    protected static final long dereferenceLeafOfTree(final IBackendReader pReader, final long pStartKey,
         final long pSeqPageKey) throws TTIOException {
         // computing the ordernumbers within all level. The ordernumbers are the position in the sequence of
         // all pages within the same level.
