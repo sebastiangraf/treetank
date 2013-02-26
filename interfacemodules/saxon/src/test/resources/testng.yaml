@@ -5,5 +5,6 @@ parameters: { NodeFactory: org.treetank.node.TreeNodeFactory, MetaFactory: org.t
  
 tests:
   - name: Saxon Tests
+    parameters: { Revisioning: org.treetank.revisioning.SlidingSnapshot, Backend: org.treetank.io.berkeley.BerkeleyStorage}
     packages:
       - org.treetank.saxon.wrapper

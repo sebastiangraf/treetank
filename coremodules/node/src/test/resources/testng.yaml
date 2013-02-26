@@ -5,12 +5,14 @@ parameters: { NodeFactory: org.treetank.node.TreeNodeFactory, MetaFactory: org.t
  
 tests:
   - name: Node Tests
+    parameters: { Revisioning: org.treetank.revisioning.SlidingSnapshot, Backend: org.treetank.io.berkeley.BerkeleyStorage}
     packages:
       - org.treetank.axis
       - org.treetank.node
 
 tests:
   - name: Node Tests, Classes
+    parameters: { Revisioning: org.treetank.revisioning.SlidingSnapshot, Backend: org.treetank.io.berkeley.BerkeleyStorage}
     classes:
       - org.treetank.access.AttributeAndNamespaceTest
       - org.treetank.access.HashTest
