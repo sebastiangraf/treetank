@@ -262,15 +262,17 @@ public final class PageWriteTrx implements IPageWriteTrx {
                     % Integer.parseInt(mDelegate.mSession.getConfig().mProperties
                         .getProperty(ConstructorProps.NUMBERTORESTORE)) == 0) {
                     container =
-                        mDelegate.mSession.getConfig().mRevision.combinePagesForModification(newPageKey,
-                            pages, true);
+                        mDelegate.mSession.getConfig().mRevision.combinePagesForModification(Integer
+                            .parseInt(mDelegate.mSession.getConfig().mProperties
+                                .getProperty(ConstructorProps.NUMBERTORESTORE)), newPageKey, pages, true);
                 } else {
                     container =
-                        mDelegate.mSession.getConfig().mRevision.combinePagesForModification(newPageKey,
-                            pages, false);
+                        mDelegate.mSession.getConfig().mRevision.combinePagesForModification(Integer
+                            .parseInt(mDelegate.mSession.getConfig().mProperties
+                                .getProperty(ConstructorProps.NUMBERTORESTORE)), newPageKey, pages, false);
                 }
             } else {
-                NodePage newPage = new NodePage(newPageKey);
+                NodePage newPage = new NodePage(newPageKey, IConstants.NULL_NODE);
                 container = new LogValue(newPage, newPage);
             }
             ((IndirectPage)indirectContainer.getModified()).setReferenceKey(nodeOffset, newPageKey);
@@ -418,8 +420,8 @@ public final class PageWriteTrx implements IPageWriteTrx {
      */
     @Override
     public String toString() {
-        return toStringHelper(this).add("mDelegate", mDelegate).add("mPageWriter", mPageWriter).add("mLog", mLog).add("mRootPage",
-            mNewRoot).add("mDelegate", mDelegate).toString();
+        return toStringHelper(this).add("mDelegate", mDelegate).add("mPageWriter", mPageWriter).add("mLog",
+            mLog).add("mRootPage", mNewRoot).add("mDelegate", mDelegate).toString();
     }
 
 }

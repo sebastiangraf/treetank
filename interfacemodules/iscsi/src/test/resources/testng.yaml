@@ -5,6 +5,7 @@ parameters: { NodeFactory: org.treetank.iscsi.node.ByteNodeFactory, MetaFactory:
  
 tests:
   - name: iSCSI Tests
+    parameters: { Revisioning: org.treetank.revisioning.SlidingSnapshot, Backend: org.treetank.io.berkeley.BerkeleyStorage}  
     classes:
       - org.jscsi.target.storage.TreetankStorageModuleTest
       - org.treetank.access.TransactionTest

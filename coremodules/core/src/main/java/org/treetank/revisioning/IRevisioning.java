@@ -3,8 +3,6 @@
  */
 package org.treetank.revisioning;
 
-import org.treetank.exception.TTIOException;
-import org.treetank.io.IBackendReader;
 import org.treetank.log.LogValue;
 import org.treetank.page.NodePage;
 
@@ -33,6 +31,8 @@ public interface IRevisioning {
      * Method to reconstruct a complete NodePage for reading as well as a
      * NodePage for serializing with the Nodes to write already on there.
      * 
+     * @param pRevisionsToRestore
+     *            number of revisions to restore
      * @param pNewPageKey
      *            page key of the new page
      * @param pPages
@@ -43,24 +43,8 @@ public interface IRevisioning {
      * @return a NodePageContainer holding a complete NodePage for reading a one
      *         for writing
      */
-    LogValue combinePagesForModification(final long pNewPageKey, final NodePage[] pPages,
-        final boolean pFullDump);
+    LogValue combinePagesForModification(final int pRevisionsToRestore, final long pNewPageKey,
+        final NodePage[] pPages, final boolean pFullDump);
 
-    /**
-     * Getting the keys for the relevant revision root-pages to restore underlaying nodepages.
-     * 
-     * @param pRevToRestore
-     *            number of revisions necessary to restore one version
-     * @param pStartKey
-     *            starting key for getting the rest of the pages
-     * @param pSeqKey
-     *            the sequential key namely the version
-     * @param pReader
-     *            the reader for getting the intermediate pages and the link to the revision root pages
-     * @return an array with the keys to the revision root pages from the newest to the oldest
-     * @throws TTIOException
-     */
-    long[] getRevRootKeys(final int pRevToRestore, final long pStartKey, final long pSeqKey,
-        final IBackendReader pReader) throws TTIOException;
 
 }

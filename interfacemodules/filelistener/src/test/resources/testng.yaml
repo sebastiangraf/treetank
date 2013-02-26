@@ -5,6 +5,7 @@ parameters: { NodeFactory: org.treetank.filelistener.file.node.FileNodeFactory, 
  
 tests:
   - name: File Tests
+    parameters: { Revisioning: org.treetank.revisioning.SlidingSnapshot, Backend: org.treetank.io.berkeley.BerkeleyStorage}
     classes:
       - org.treetank.filelistener.file.test.StorageManagerTest
       - org.treetank.access.test.TransactionTest

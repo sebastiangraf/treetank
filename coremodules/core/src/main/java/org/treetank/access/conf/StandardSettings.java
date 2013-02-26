@@ -14,26 +14,9 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.jclouds.Constants;
 import org.jclouds.filesystem.reference.FilesystemConstants;
-import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
-import org.treetank.access.conf.SessionConfiguration.ISessionConfigurationFactory;
-import org.treetank.api.IMetaEntryFactory;
-import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTIOException;
-import org.treetank.io.IBackend;
-import org.treetank.io.IBackend.IBackendFactory;
-import org.treetank.io.bytepipe.ByteHandlerPipeline;
-import org.treetank.io.bytepipe.Encryptor;
-import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
-import org.treetank.io.bytepipe.Zipper;
-import org.treetank.io.combinedCloud.CombinedBackend;
-import org.treetank.page.DumbMetaEntryFactory;
-import org.treetank.page.DumbNodeFactory;
-import org.treetank.revisioning.Differential;
-import org.treetank.revisioning.IRevisioning;
 
 import com.google.common.io.Files;
-import com.google.inject.AbstractModule;
-import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 /**
  * Standard Module defining standard settings.
@@ -41,30 +24,12 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public class StandardSettings extends AbstractModule {
+public class StandardSettings {
 
     private static byte[] keyValue = new byte[] {
         'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k'
     };
     public static final Key KEY = new SecretKeySpec(keyValue, "AES");
-
-    @Override
-    protected void configure() {
-        bind(INodeFactory.class).to(DumbNodeFactory.class);
-        bind(IMetaEntryFactory.class).to(DumbMetaEntryFactory.class);
-        configureNormal();
-    }
-
-    public void configureNormal() {
-        bind(IRevisioning.class).to(Differential.class);
-        bind(IByteHandlerPipeline.class)
-            .toInstance(new ByteHandlerPipeline(new Zipper(), new Encryptor(KEY)));
-        install(new FactoryModuleBuilder().implement(IBackend.class, CombinedBackend.class).build(
-            IBackendFactory.class));
-        install(new FactoryModuleBuilder().build(IResourceConfigurationFactory.class));
-        bind(Key.class).toInstance(KEY);
-        install(new FactoryModuleBuilder().build(ISessionConfigurationFactory.class));
-    }
 
     public static Properties getProps(final String pathToStorage, final String resource) throws TTIOException {
         Properties properties = new Properties();

@@ -3,11 +3,9 @@
  */
 package org.treetank.revisioning;
 
+import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkArgument;
 
-import org.treetank.access.PageReadTrx;
-import org.treetank.exception.TTIOException;
-import org.treetank.io.IBackendReader;
 import org.treetank.log.LogValue;
 import org.treetank.page.NodePage;
 
@@ -26,7 +24,7 @@ public class SlidingSnapshot implements IRevisioning {
     public NodePage combinePages(final NodePage[] pages) {
         checkArgument(pages.length > 0, "At least one Nodepage must be provided");
         // create entire page..
-        final NodePage returnVal = new NodePage(pages[0].getPageKey());
+        final NodePage returnVal = new NodePage(pages[0].getPageKey(), pages[0].getLastPagePointer());
         // ...iterate through the nodes and check if it is stored..
         for (int i = 0; i < pages[0].getNodes().length; i++) {
             boolean pageSkip = false;
@@ -49,13 +47,15 @@ public class SlidingSnapshot implements IRevisioning {
      * {@inheritDoc}
      */
     @Override
-    public LogValue combinePagesForModification(long pNewPageKey, NodePage[] pPages, boolean pFullDump) {
+    public LogValue combinePagesForModification(int pRevisionsToRestore, long pNewPageKey, NodePage[] pPages,
+        boolean pFullDump) {
         checkArgument(pPages.length > 0, "At least one Nodepage must be provided");
-        checkArgument(!pFullDump, "Full Dump not possible within sliding snapshot");
         // create pages for container..
-        final NodePage[] returnVal = {
-            new NodePage(pPages[0].getPageKey()), new NodePage(pNewPageKey)
-        };
+        final NodePage[] returnVal =
+            {
+                new NodePage(pPages[0].getPageKey(), pPages[0].getLastPagePointer()),
+                new NodePage(pNewPageKey, pPages[0].getPageKey())
+            };
         // ...iterate through the nodes and check if it is stored..
         for (int i = 0; i < pPages[0].getNodes().length; i++) {
             // ... form the newest version to the oldest one and..
@@ -67,7 +67,7 @@ public class SlidingSnapshot implements IRevisioning {
                 // ...set it to the read-cache and..
                 returnVal[0].setNode(i, pPages[j].getNode(i));
                 // ..if we receive the oldest version where the node was not set yet, then copy it by hand
-                if (j == pPages.length - 1) {
+                if (pPages.length >= pRevisionsToRestore && j == pPages.length - 1) {
                     returnVal[1].setNode(i, pPages[j].getNode(i));
                 }
 
@@ -81,14 +81,8 @@ public class SlidingSnapshot implements IRevisioning {
      * {@inheritDoc}
      */
     @Override
-    public long[] getRevRootKeys(int pRevToRestore, long pLongStartKey, long pSeqKey, IBackendReader pReader)
-        throws TTIOException {
-        long[] returnVal = new long[pRevToRestore];
-        long revCounter = pSeqKey;
-        for (int i = 0; i < returnVal.length; i++) {
-            returnVal[i] = PageReadTrx.dereferenceLeafOfTree(pReader, pLongStartKey, revCounter);
-            revCounter--;
-        }
-        return returnVal;
+    public String toString() {
+        return toStringHelper(this).toString();
     }
+
 }

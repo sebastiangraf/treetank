@@ -167,8 +167,8 @@ public class IBackendTest {
                         public IBackend getBackend() throws TTIOException {
                             return createCombinedStorage(nodeFac, handler, metaFac);
                         }
-                    }
-                    /*, new IBackendCreator() {
+                    }/*
+                    , new IBackendCreator() {
                         @Override
                         public IBackend getBackend() throws TTIOException {
                             return createAWSJCloudsStorage(nodeFac, handler, metaFac);
@@ -237,7 +237,7 @@ public class IBackendTest {
             }
             return returnVal;
         } else if (whichPage < 0.6) {
-            NodePage returnVal = new NodePage(pKey);
+            NodePage returnVal = new NodePage(pKey, pKey);
             for (int i = 0; i < IConstants.CONTENT_COUNT; i++) {
                 returnVal.setNode(i, new DumbNodeFactory.DumbNode(CoreTestHelper.random.nextLong(),
                     CoreTestHelper.random.nextLong()));

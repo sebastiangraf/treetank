@@ -47,6 +47,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import org.treetank.access.Storage;
 import org.treetank.access.conf.ConstructorProps;
+import org.treetank.access.conf.ModuleSetter;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
@@ -62,7 +63,6 @@ import org.treetank.node.TreeNodeFactory;
 import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.revisioning.IRevisioning;
-import org.treetank.service.xml.StandardXMLSettings;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -448,7 +448,7 @@ public final class XMLSerializer extends AbsSerializer {
         System.out.print("Serializing '" + args[0] + "' to '" + args[1] + "' ... ");
         final long time = System.currentTimeMillis();
 
-        Injector injector = Guice.createInjector(new StandardXMLSettings());
+        Injector injector = Guice.createInjector(new ModuleSetter().setNodeFacClass(TreeNodeFactory.class).setMetaFacClass(NodeMetaPageFactory.class).createModule());
         IBackendFactory storage = injector.getInstance(IBackendFactory.class);
         IRevisioning revision = injector.getInstance(IRevisioning.class);
 

@@ -53,6 +53,7 @@ import javax.xml.stream.events.XMLEvent;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.Storage;
+import org.treetank.access.conf.ModuleSetter;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
@@ -70,7 +71,6 @@ import org.treetank.node.TreeNodeFactory;
 import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.revisioning.IRevisioning;
-import org.treetank.service.xml.StandardXMLSettings;
 import org.treetank.utils.TypedValue;
 
 import com.google.inject.Guice;
@@ -584,7 +584,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Voi
      *             checkDescendants(...)).
      * @throws XMLStreamException
      *             In case any StAX parser problem occurs.
-     * @throws TTIOException 
+     * @throws TTIOException
      */
     private void algorithm(final XMLEvent paramEvent) throws IOException, XMLStreamException, TTIOException {
         assert paramEvent != null;
@@ -1174,7 +1174,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Voi
      * @param mEvent
      *            StartElement event, from the XML file to shredder.
      * @return true if they are equal, false otherwise.
-     * @throws TTIOException 
+     * @throws TTIOException
      */
     private boolean checkElement(final StartElement mEvent) throws TTIOException {
         assert mEvent != null;
@@ -1264,7 +1264,9 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Voi
         final long time = System.currentTimeMillis();
         final File target = new File(args[1]);
 
-        Injector injector = Guice.createInjector(new StandardXMLSettings());
+        Injector injector =
+            Guice.createInjector(new ModuleSetter().setNodeFacClass(TreeNodeFactory.class).setMetaFacClass(
+                NodeMetaPageFactory.class).createModule());
         IBackendFactory storage = injector.getInstance(IBackendFactory.class);
         IRevisioning revision = injector.getInstance(IRevisioning.class);
 
@@ -1273,9 +1275,11 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Voi
             Storage.createStorage(config);
             final IStorage db = Storage.openStorage(target);
             Properties props = new Properties();
-            props.setProperty(org.treetank.access.conf.ConstructorProps.STORAGEPATH, target.getAbsolutePath());
+            props
+                .setProperty(org.treetank.access.conf.ConstructorProps.STORAGEPATH, target.getAbsolutePath());
             props.setProperty(org.treetank.access.conf.ConstructorProps.RESOURCE, "shredded");
-            db.createResource(new ResourceConfiguration(props, storage, revision, new TreeNodeFactory(), new NodeMetaPageFactory()));
+            db.createResource(new ResourceConfiguration(props, storage, revision, new TreeNodeFactory(),
+                new NodeMetaPageFactory()));
             final ISession session =
                 db.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
             final INodeWriteTrx wtx =

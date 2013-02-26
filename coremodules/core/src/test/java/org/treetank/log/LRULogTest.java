@@ -155,13 +155,14 @@ public class LRULogTest {
 
     private void insertData() throws TTIOException {
         mPageSet = new HashSet<NodePage>();
+        long key = 0;
         for (int i = 0; i < mPages.length; i++) {
             for (int j = 0; j < mPages[i].length; j++) {
                 LogKey toStore = new LogKey(true, i, j);
-                mPages[i][j] =
-                    CoreTestHelper.getNodePage(0, IConstants.CONTENT_COUNT, CoreTestHelper.random.nextLong());
+                mPages[i][j] = CoreTestHelper.getNodePage(0, IConstants.CONTENT_COUNT, key, key - 1);
                 mCache.put(toStore, new LogValue(mPages[i][j], mPages[i][j]));
                 mPageSet.add(mPages[i][j]);
+                key++;
             }
         }
         assertEquals(LEVEL * ELEMENTS, mPageSet.size());

@@ -40,6 +40,7 @@ import javax.xml.namespace.QName;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.Storage;
 import org.treetank.access.conf.ConstructorProps;
+import org.treetank.access.conf.ModuleSetter;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
@@ -53,7 +54,6 @@ import org.treetank.node.ElementNode;
 import org.treetank.node.NodeMetaPageFactory;
 import org.treetank.node.TreeNodeFactory;
 import org.treetank.revisioning.IRevisioning;
-import org.treetank.service.xml.StandardXMLSettings;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.DTDHandler;
 import org.xml.sax.EntityResolver;
@@ -238,7 +238,7 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
         Storage.createStorage(config);
         final IStorage storage = Storage.openStorage(new File(args[0]));
 
-        Injector injector = Guice.createInjector(new StandardXMLSettings());
+        Injector injector = Guice.createInjector(new ModuleSetter().setNodeFacClass(TreeNodeFactory.class).setMetaFacClass(NodeMetaPageFactory.class).createModule());
         IBackendFactory backend = injector.getInstance(IBackendFactory.class);
         IRevisioning revision = injector.getInstance(IRevisioning.class);
         Properties props = new Properties();

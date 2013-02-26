@@ -5,6 +5,7 @@ parameters: { NodeFactory: org.treetank.node.TreeNodeFactory, MetaFactory: org.t
  
 tests:
   - name: Jax RX Tests
+    parameters: { Revisioning: org.treetank.revisioning.SlidingSnapshot, Backend: org.treetank.io.berkeley.BerkeleyStorage}
     packages:
       - org.treetank.service.jaxrx.implementation
       - org.treetank.service.jaxrx.server
