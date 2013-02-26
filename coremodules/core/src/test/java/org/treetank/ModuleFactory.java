@@ -1,12 +1,15 @@
 package org.treetank;
 
 import java.io.File;
+import java.util.Map;
 
 import org.testng.IModuleFactory;
 import org.testng.ITestContext;
 import org.treetank.access.conf.ModuleSetter;
 import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;
+import org.treetank.io.IBackend;
+import org.treetank.revisioning.IRevisioning;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
@@ -20,8 +23,10 @@ import com.google.inject.Module;
  */
 public class ModuleFactory implements IModuleFactory {
 
-    private final static String NODEFACTORYPARAMTER = "NodeFactory";
-    private final static String METAFACTORYPARAMTER = "MetaFactory";
+    private final static String NODEFACTORYPARAMETER = "NodeFactory";
+    private final static String METAFACTORYPARAMETER = "MetaFactory";
+    private final static String REVISIONINGPARAMETER = "Revisioning";
+    private final static String BACKENDPARAMETER = "Backend";
 
     /**
      * {@inheritDoc}
@@ -32,14 +37,17 @@ public class ModuleFactory implements IModuleFactory {
         AbstractModule returnVal = null;
         String nodeFacName;
         String metaFacName;
-        //getting the parameters over testng.xml and setting it directly or...
-        if (context.getSuite().getParameter(NODEFACTORYPARAMTER) != null) {
-            nodeFacName = context.getSuite().getParameter(NODEFACTORYPARAMTER);
-            metaFacName = context.getSuite().getParameter(METAFACTORYPARAMTER);
-
-        }//..determining standard factories based on bundle parsed from the testclass and... 
+        String revisioningName = "org.treetank.revisioning.SlidingSnapshot";
+        String backendName = "org.treetank.io.combinedCloud.CombinedBackend";
+        // getting the parameters over testng.xml and setting it directly or...
+        if (context.getSuite().getParameter(NODEFACTORYPARAMETER) != null) {
+            final Map<String, String> params = context.getSuite().getXmlSuite().getAllParameters();
+            nodeFacName = params.get(NODEFACTORYPARAMETER);
+            metaFacName = params.get(METAFACTORYPARAMETER);
+            revisioningName = params.get(REVISIONINGPARAMETER);
+            backendName = params.get(BACKENDPARAMETER);
+        }// ..determining standard factories based on bundle parsed from the testclass and...
         else {
-
             final String[] elements =
                 testClass.getProtectionDomain().getCodeSource().getLocation().toString()
                     .split(File.separator);
@@ -69,14 +77,23 @@ public class ModuleFactory implements IModuleFactory {
             }
 
         }
-//...invoking it over reflection and setting it to the ModuleSetter.
+        // ...invoking it over reflection and setting it to the ModuleSetter.
+        Class<INodeFactory> nodeFac;
+        Class<IMetaEntryFactory> metaFac;
+        Class<IRevisioning> revisioning;
+        Class<IBackend> backend;
         try {
-            final Class<INodeFactory> nodeFac = (Class<INodeFactory>)Class.forName(nodeFacName);
-            final Class<IMetaEntryFactory> metaFac = (Class<IMetaEntryFactory>)Class.forName(metaFacName);
-            returnVal = new ModuleSetter().setNodeFacClass(nodeFac).setMetaFacClass(metaFac).createModule();
+            nodeFac = (Class<INodeFactory>)Class.forName(nodeFacName);
+            metaFac = (Class<IMetaEntryFactory>)Class.forName(metaFacName);
+            revisioning = (Class<IRevisioning>)Class.forName(revisioningName);
+            backend = (Class<IBackend>)Class.forName(backendName);
         } catch (ClassNotFoundException exc) {
             throw new RuntimeException(exc);
         }
+
+        returnVal =
+            new ModuleSetter().setNodeFacClass(nodeFac).setMetaFacClass(metaFac)
+                .setRevisingClass(revisioning).setBackendClass(backend).createModule();
 
         return returnVal;
 

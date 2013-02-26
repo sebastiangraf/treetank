@@ -11,11 +11,11 @@ import org.treetank.io.IBackend.IBackendFactory;
 import org.treetank.io.bytepipe.ByteHandlerPipeline;
 import org.treetank.io.bytepipe.Encryptor;
 import org.treetank.io.bytepipe.IByteHandler;
-import org.treetank.io.bytepipe.Zipper;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
+import org.treetank.io.bytepipe.Zipper;
 import org.treetank.io.combinedCloud.CombinedBackend;
-import org.treetank.revisioning.Differential;
 import org.treetank.revisioning.IRevisioning;
+import org.treetank.revisioning.SlidingSnapshot;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
@@ -33,12 +33,11 @@ public class ModuleSetter {
     /** Class for MetaFactory. */
     private Class<? extends IMetaEntryFactory> mMetaFacClass;
     /** Class for Revision. */
-    private Class<? extends IRevisioning> mRevisioningClass = Differential.class;
+    private Class<? extends IRevisioning> mRevisioningClass = SlidingSnapshot.class;
     /** Class for IBackend. */
     private Class<? extends IBackend> mBackend = CombinedBackend.class;
     /** Instance for ByteHandler. */
-    private IByteHandlerPipeline mByteHandler = new ByteHandlerPipeline(new Zipper(), new Encryptor(
-        StandardSettings.KEY));
+    private IByteHandlerPipeline mByteHandler = new ByteHandlerPipeline();
     /** Instance for Key. */
     private Key mKey = StandardSettings.KEY;
 

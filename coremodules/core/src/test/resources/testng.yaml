@@ -4,7 +4,8 @@ parameters: { NodeFactory: org.treetank.page.DumbNodeFactory, MetaFactory: org.t
 
  
 tests:
-  - name: Core Tests
+  - name: test1
+    parameters: { Revisioning: org.treetank.revisioning.SlidingSnapshot, Backend: org.treetank.io.jclouds.JCloudsStorage}
     packages:
       - org.treetank.access
       - org.treetank.access.conf
