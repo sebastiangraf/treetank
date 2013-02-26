@@ -167,8 +167,8 @@ public class IBackendTest {
                         public IBackend getBackend() throws TTIOException {
                             return createCombinedStorage(nodeFac, handler, metaFac);
                         }
-                    }
-                    /*, new IBackendCreator() {
+                    }/*
+                    , new IBackendCreator() {
                         @Override
                         public IBackend getBackend() throws TTIOException {
                             return createAWSJCloudsStorage(nodeFac, handler, metaFac);

@@ -33,8 +33,6 @@ import static com.google.common.base.Preconditions.checkState;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.treetank.access.conf.ConstructorProps;
 import org.treetank.api.INode;
@@ -219,31 +217,26 @@ public class PageReadTrx implements IPageReadTrx {
         // first.
         final List<NodePage> nodePages = new ArrayList<NodePage>();
 
-        // Since same versions might be referenced starting different versions (if not touched), we have to
-        // check against the keys as well.
-        final Set<Long> nodePageKeys = new TreeSet<Long>();
-
         // Getting the keys for the revRoots
-        long[] revKeys =
-            mSession.getConfig().mRevision.getRevRootKeys(Integer.parseInt(mSession.getConfig().mProperties
-                .getProperty(ConstructorProps.NUMBERTORESTORE)),
+        final long currentRevKey =
+            PageReadTrx.dereferenceLeafOfTree(mPageReader,
                 mUberPage.getReferenceKeys()[IReferencePage.GUARANTEED_INDIRECT_OFFSET], mRootPage
-                    .getRevision(), mPageReader);
-        for (long i : revKeys) {
-            RevisionRootPage rootPage = (RevisionRootPage)mPageReader.read(i);
+                    .getRevision());
+        final RevisionRootPage rootPage = (RevisionRootPage)mPageReader.read(currentRevKey);
+        //starting from the current nodepage
+        long nodePageKey =
+            dereferenceLeafOfTree(mPageReader,
+                rootPage.getReferenceKeys()[IReferencePage.GUARANTEED_INDIRECT_OFFSET], pSeqNodePageKey);
+        NodePage page;
+        //jumping through the nodepages based on the pointers 
+        do {
+            page = (NodePage)mPageReader.read(nodePageKey);
+            nodePages.add(page);
+            nodePageKey = page.getLastPagePointer();
+        } while (nodePages.size() < Integer.parseInt(mSession.getConfig().mProperties
+            .getProperty(ConstructorProps.NUMBERTORESTORE))
+            && nodePageKey != IConstants.NULL_NODE);
 
-            // Searching for the related NodePage within all referenced pages.
-            final long nodePageKey =
-                dereferenceLeafOfTree(mPageReader,
-                    rootPage.getReferenceKeys()[IReferencePage.GUARANTEED_INDIRECT_OFFSET], pSeqNodePageKey);
-            if (nodePageKey > 0 && !nodePageKeys.contains(nodePageKey)) {
-                NodePage page = (NodePage)mPageReader.read(nodePageKey);
-                nodePages.add(page);
-                nodePageKeys.add(nodePageKey);
-            } else {
-                break;
-            }
-        }
         checkState(nodePages.size() > 0);
         return nodePages.toArray(new NodePage[nodePages.size()]);
 
