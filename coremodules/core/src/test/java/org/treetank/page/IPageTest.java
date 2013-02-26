@@ -104,7 +104,7 @@ public class IPageTest {
             new RevisionRootPage(CoreTestHelper.random.nextLong(), CoreTestHelper.random.nextLong(),
                 CoreTestHelper.random.nextLong());
         // NodePage setup
-        NodePage nodePage = new NodePage(CoreTestHelper.random.nextLong());
+        NodePage nodePage = new NodePage(CoreTestHelper.random.nextLong(), CoreTestHelper.random.nextLong());
         for (int i = 0; i < IConstants.CONTENT_COUNT - 1; i++) {
             nodePage.setNode(i, CoreTestHelper.generateOne());
         }

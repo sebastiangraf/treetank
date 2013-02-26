@@ -394,7 +394,7 @@ public final class Storage implements IStorage {
             page = new IndirectPage(newPageKey);
         }
 
-        final NodePage ndp = new NodePage(newPageKey);
+        final NodePage ndp = new NodePage(newPageKey, IConstants.NULL_NODE);
         key = new LogKey(false, IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length, 0);
         log.put(key, new LogValue(ndp, ndp));
 

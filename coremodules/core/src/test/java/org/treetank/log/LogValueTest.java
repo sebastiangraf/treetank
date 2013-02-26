@@ -43,8 +43,8 @@ public class LogValueTest {
         CoreTestHelper.deleteEverything();
         CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile());
         Properties props =
-            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
-                .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
+            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                CoreTestHelper.RESOURCENAME);
         mConf = mResourceConfig.create(props);
     }
 
@@ -59,8 +59,8 @@ public class LogValueTest {
         LogValueBinding binding = new LogValueBinding(mConf.mNodeFac, mConf.mMetaFac);
         for (int i = 0; i < NUMBEROFELEMENTS; i++) {
             LogValue value =
-                new LogValue(CoreTestHelper.getNodePage(0, IConstants.CONTENT_COUNT, 0), CoreTestHelper
-                    .getNodePage(0, IConstants.CONTENT_COUNT, 0));
+                new LogValue(CoreTestHelper.getNodePage(0, IConstants.CONTENT_COUNT, 0, 0), CoreTestHelper
+                    .getNodePage(0, IConstants.CONTENT_COUNT, 0, 0));
             TupleOutput output = new TupleOutput();
             binding.objectToEntry(value, output);
 

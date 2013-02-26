@@ -52,14 +52,18 @@ public final class NodePage implements IPage {
     /** Array of nodes. This can have null nodes that were removed. */
     private final INode[] mNodes;
 
+    /** Pointer to last node page representing the same amount of data. */
+    private final long mLastPageKey;
+
     /**
      * Create node page.
      * 
      * @param pPageKey
      *            Base key assigned to this node page.
      */
-    public NodePage(final long pPageKey) {
+    public NodePage(final long pPageKey, final long pLastPageKey) {
         mPageKey = pPageKey;
+        mLastPageKey = pLastPageKey;
         mNodes = new INode[IConstants.CONTENT_COUNT];
     }
 
@@ -70,6 +74,15 @@ public final class NodePage implements IPage {
      */
     public long getPageKey() {
         return mPageKey;
+    }
+
+    /**
+     * Getting the pointer to the former representation of the same nodepage.
+     * 
+     * @return the pointer to the last page.
+     */
+    public long getLastPagePointer() {
+        return mLastPageKey;
     }
 
     /**
@@ -110,6 +123,7 @@ public final class NodePage implements IPage {
         try {
             pOutput.writeInt(IConstants.NODEPAGE);
             pOutput.writeLong(mPageKey);
+            pOutput.writeLong(mLastPageKey);
             for (final INode node : getNodes()) {
                 if (node == null) {
                     pOutput.writeInt(IConstants.NULL_NODE);

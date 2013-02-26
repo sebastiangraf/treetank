@@ -26,7 +26,7 @@ public class FullDump implements IRevisioning {
     @Override
     public NodePage combinePages(NodePage[] pages) {
         checkArgument(pages.length == 1, "parameter should just consists of one single page");
-        final NodePage returnVal = new NodePage(pages[0].getPageKey());
+        final NodePage returnVal = new NodePage(pages[0].getPageKey(), pages[0].getLastPagePointer());
         for (int i = 0; i < pages[0].getNodes().length; i++) {
             returnVal.setNode(i, pages[0].getNode(i));
         }
@@ -37,12 +37,15 @@ public class FullDump implements IRevisioning {
      * {@inheritDoc}
      */
     @Override
-    public LogValue combinePagesForModification(long pNewPageKey, NodePage[] pages, boolean fullDump) {
+    public LogValue combinePagesForModification(int pRevisionsToRestore, long pNewPageKey, NodePage[] pages,
+        boolean fullDump) {
         checkArgument(pages.length == 1, "parameter should just consists of one single page");
         checkArgument(fullDump, "Because of the nature, fulldump should occur always");
-        final NodePage[] returnVal = {
-            new NodePage(pages[0].getPageKey()), new NodePage(pNewPageKey)
-        };
+        final NodePage[] returnVal =
+            {
+                new NodePage(pages[0].getPageKey(), pages[0].getLastPagePointer()),
+                new NodePage(pNewPageKey, pages[0].getPageKey())
+            };
 
         for (int i = 0; i < pages[0].getNodes().length; i++) {
             returnVal[0].setNode(i, pages[0].getNode(i));

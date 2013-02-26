@@ -33,6 +33,8 @@ public interface IRevisioning {
      * Method to reconstruct a complete NodePage for reading as well as a
      * NodePage for serializing with the Nodes to write already on there.
      * 
+     * @param pRevisionsToRestore
+     *            number of revisions to restore
      * @param pNewPageKey
      *            page key of the new page
      * @param pPages
@@ -43,8 +45,8 @@ public interface IRevisioning {
      * @return a NodePageContainer holding a complete NodePage for reading a one
      *         for writing
      */
-    LogValue combinePagesForModification(final long pNewPageKey, final NodePage[] pPages,
-        final boolean pFullDump);
+    LogValue combinePagesForModification(final int pRevisionsToRestore, final long pNewPageKey,
+        final NodePage[] pPages, final boolean pFullDump);
 
     /**
      * Getting the keys for the relevant revision root-pages to restore underlaying nodepages.

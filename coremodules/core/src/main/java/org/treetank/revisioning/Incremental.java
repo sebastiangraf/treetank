@@ -27,7 +27,7 @@ public class Incremental implements IRevisioning {
     public NodePage combinePages(final NodePage[] pages) {
         checkArgument(pages.length > 0, "At least one Nodepage must be provided");
         // create entire page..
-        final NodePage returnVal = new NodePage(pages[0].getPageKey());
+        final NodePage returnVal = new NodePage(pages[0].getPageKey(), pages[0].getLastPagePointer());
         // ...iterate through the nodes and check if it is stored..
         for (int i = 0; i < pages[0].getNodes().length; i++) {
             boolean pageSkip = false;
@@ -50,11 +50,12 @@ public class Incremental implements IRevisioning {
      * {@inheritDoc}
      */
     @Override
-    public LogValue combinePagesForModification(long pNewPageKey, NodePage[] pages, boolean pFullDump) {
+    public LogValue combinePagesForModification(int pRevisionsToRestore, long pNewPageKey, NodePage[] pages,
+        boolean pFullDump) {
         checkArgument(pages.length > 0, "At least one Nodepage must be provided");
         // create pages for container..
         final NodePage[] returnVal = {
-            new NodePage(pages[0].getPageKey()), new NodePage(pNewPageKey)
+            new NodePage(pages[0].getPageKey(), pages[0].getLastPagePointer()), new NodePage(pNewPageKey, pages[0].getPageKey())
         };
         // ...iterate through the nodes and check if it is stored..
         for (int i = 0; i < pages[0].getNodes().length; i++) {

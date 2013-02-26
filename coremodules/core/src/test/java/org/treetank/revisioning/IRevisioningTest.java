@@ -78,13 +78,14 @@ public class IRevisioningTest {
         // test for full-dumps-including versionings
         // for all revision-approaches...
         for (int i = 0; i < pRevisioning.length; i++) {
-            // ...check if revision is not SlidingSnaptshot (since FullDump must never be used within
-            // SlidingSnapshot) and...
+            // ...check if revision is not SlidingSnapshot (since SlidingSnapshot is not working with entire
+            // full-dump...
             if (!(pRevisioning[i] instanceof SlidingSnapshot)) {
                 // ...get the node pages for not full-dump test and...
                 final NodePage[] pages = pNodeGenerator[i].generateNodePages();
                 // ..recombine them...
-                final LogValue page = pRevisioning[i].combinePagesForModification(0, pages, true);
+                final LogValue page =
+                    pRevisioning[i].combinePagesForModification(pages.length, 0, pages, true);
                 // ...and check them suitable to the versioning approach
                 pRevisionChecker[i].checkCompletePagesForModification(page, pages, true);
             }
@@ -99,7 +100,8 @@ public class IRevisioningTest {
                 // ...get the node pages for full-dump test and...
                 final NodePage[] pages = pNodeGenerator[i].generateNodePages();
                 // ..recombine them...
-                final LogValue page = pRevisioning[i].combinePagesForModification(0, pages, false);
+                final LogValue page =
+                    pRevisioning[i].combinePagesForModification(pages.length - 1, 0, pages, false);
                 // ...and check them suitable to the versioning approach
                 pRevisionChecker[i].checkCompletePagesForModification(page, pages, false);
             }
@@ -424,14 +426,15 @@ public class IRevisioningTest {
                             NodePage complete = (NodePage)pComplete.getComplete();
                             NodePage modified = (NodePage)pComplete.getModified();
                             int j = 0;
-                            // taking first the fragments into account and..
+                            // Taking all fragments in the middle, only checking against
+                            // complete-fragment and..
                             for (int i = 0; i < pFragments.length - 1; i++) {
                                 for (j = i * 2; j < (i * 2) + 2; j++) {
                                     assertEquals("Check for Sliding Snapshot failed.", pFragments[i]
                                         .getNode(j), complete.getNode(j));
                                 }
                             }
-                            // ...fill the test up with the rest
+                            // ..at last, checking the last fragment, against write- and read-fragment
                             for (; j < complete.getNodes().length; j++) {
                                 assertEquals("Check for Sliding Snapshot failed.",
                                     pFragments[pFragments.length - 1].getNode(j), complete.getNode(j));
@@ -448,7 +451,7 @@ public class IRevisioningTest {
                         @Override
                         public NodePage[] generateNodePages() {
                             NodePage[] returnVal = {
-                                getNodePage(0, IConstants.CONTENT_COUNT, 0)
+                                getNodePage(0, IConstants.CONTENT_COUNT, 0, -1)
                             };
                             return returnVal;
                         }
@@ -462,10 +465,10 @@ public class IRevisioningTest {
                             // fill all pages up to number of restores first...
                             for (int j = 0; j < 62; j++) {
                                 // filling nodepages from end to start with 2 elements each slot
-                                pages[j] = getNodePage(j * 2, (j * 2) + 2, pages.length - j - 1);
+                                pages[j] = getNodePage(j * 2, (j * 2) + 2, pages.length - j - 1, pages.length - j - 2);
                             }
                             // set a fulldump as last revision
-                            pages[62] = getNodePage(0, 128, 0);
+                            pages[62] = getNodePage(0, 128, 0, -1);
                             return pages;
                         }
                     },
@@ -476,9 +479,9 @@ public class IRevisioningTest {
                             // initialize all fragments first...
                             final NodePage[] pages = new NodePage[2];
                             // setting one pages to a fragment only...
-                            pages[0] = getNodePage(0, 32, 0);
+                            pages[0] = getNodePage(0, 32, 0, -1);
                             // ..and the other as entire fulldump
-                            pages[1] = getNodePage(0, 128, 0);
+                            pages[1] = getNodePage(0, 128, 1, 0);
                             return pages;
                         }
 
@@ -492,7 +495,7 @@ public class IRevisioningTest {
                             // fill all pages up to number of restores first...
                             for (int j = 0; j < 64; j++) {
                                 // filling nodepages from end to start with 2 elements each slot
-                                pages[j] = getNodePage(j * 2, (j * 2) + 2, pages.length - j - 1);
+                                pages[j] = getNodePage(j * 2, (j * 2) + 2, pages.length - j - 1, pages.length - j - 2);
                             }
                             return pages;
                         }

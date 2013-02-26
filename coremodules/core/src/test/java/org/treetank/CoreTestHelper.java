@@ -188,10 +188,13 @@ public final class CoreTestHelper {
      *            length of the page
      * @param nodePageKey
      *            key of the nodepage
+     * @param lastPageKey
+     *            key of the former page
      * @return a {@link NodePage} filled
      */
-    public static final NodePage getNodePage(final int offset, final int length, final long nodePageKey) {
-        final NodePage page = new NodePage(nodePageKey);
+    public static final NodePage getNodePage(final int offset, final int length, final long nodePageKey,
+        final long lastPageKey) {
+        final NodePage page = new NodePage(nodePageKey, lastPageKey);
         for (int i = offset; i < length; i++) {
             page.setNode(i, generateOne());
         }

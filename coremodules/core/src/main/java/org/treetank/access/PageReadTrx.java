@@ -229,7 +229,6 @@ public class PageReadTrx implements IPageReadTrx {
                 .getProperty(ConstructorProps.NUMBERTORESTORE)),
                 mUberPage.getReferenceKeys()[IReferencePage.GUARANTEED_INDIRECT_OFFSET], mRootPage
                     .getRevision(), mPageReader);
-
         for (long i : revKeys) {
             RevisionRootPage rootPage = (RevisionRootPage)mPageReader.read(i);
 

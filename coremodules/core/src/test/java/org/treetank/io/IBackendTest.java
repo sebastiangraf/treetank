@@ -237,7 +237,7 @@ public class IBackendTest {
             }
             return returnVal;
         } else if (whichPage < 0.6) {
-            NodePage returnVal = new NodePage(pKey);
+            NodePage returnVal = new NodePage(pKey, pKey);
             for (int i = 0; i < IConstants.CONTENT_COUNT; i++) {
                 returnVal.setNode(i, new DumbNodeFactory.DumbNode(CoreTestHelper.random.nextLong(),
                     CoreTestHelper.random.nextLong()));
