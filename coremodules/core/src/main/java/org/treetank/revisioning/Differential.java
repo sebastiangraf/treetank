@@ -24,8 +24,6 @@ public class Differential implements IRevisioning {
     public NodePage combinePages(final NodePage[] pages) {
         // check to have only the newer version and the related fulldump to read on
         checkArgument(pages.length > 0, "At least one Nodepage must be provided");
-        checkArgument(pages.length <= 2,
-            "parameter should just consists of one or two single pages, depending if last page was fulldumped or not");
         // create entire page..
         final NodePage returnVal = new NodePage(pages[0].getPageKey(), pages[0].getLastPagePointer());
         // ...and for all nodes...
@@ -49,8 +47,6 @@ public class Differential implements IRevisioning {
         boolean pFullDump) {
         // check to have only the newer version and the related fulldump to read on
         checkArgument(pages.length > 0, "At least one Nodepage must be provided");
-        checkArgument(pages.length <= 2,
-            "parameter should just consists of one or two single pages, depending if last page was fulldumped or not");
         // create pages for container..
         final NodePage[] returnVal =
             {

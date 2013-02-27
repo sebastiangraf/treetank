@@ -102,17 +102,17 @@ tests:
     packages:
       - org.treetank.axis
       - org.treetank.node
-  - name: Differential Combined
-    parameters: { Revisioning: org.treetank.revisioning.Differential, Backend: org.treetank.io.combined.CombinedStorage }
-    classes:
-      - org.treetank.access.AttributeAndNamespaceTest
-      - org.treetank.access.HashTest
-      - org.treetank.access.OverallTest
-      - org.treetank.access.ReadTransactionTest
-      - org.treetank.access.UpdateTest
-    packages:
-      - org.treetank.axis
-      - org.treetank.node
+  #- name: Differential Combined
+  #  parameters: { Revisioning: org.treetank.revisioning.Differential, Backend: org.treetank.io.combined.CombinedStorage }
+  #  classes:
+  #    - org.treetank.access.AttributeAndNamespaceTest
+  #    - org.treetank.access.HashTest
+  #    - org.treetank.access.OverallTest
+  #    - org.treetank.access.ReadTransactionTest
+  #    - org.treetank.access.UpdateTest
+  #  packages:
+  #    - org.treetank.axis
+  #    - org.treetank.node
   - name: Incremental Combined
     parameters: { Revisioning: org.treetank.revisioning.Incremental, Backend: org.treetank.io.combined.CombinedStorage }
     classes:
