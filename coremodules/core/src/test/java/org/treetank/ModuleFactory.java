@@ -38,7 +38,7 @@ public class ModuleFactory implements IModuleFactory {
         String nodeFacName;
         String metaFacName;
         String revisioningName = "org.treetank.revisioning.SlidingSnapshot";
-        String backendName = "org.treetank.io.berkeley.BerkeleyStorage";
+        String backendName = "org.treetank.io.combined.CombinedStorage";
         // getting the parameters over testng.xml and setting it directly or...
         if (context.getSuite().getParameter(NODEFACTORYPARAMETER) != null) {
             final Map<String, String> params = context.getSuite().getXmlSuite().getAllParameters();
