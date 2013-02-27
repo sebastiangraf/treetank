@@ -23,9 +23,8 @@ import org.treetank.io.bytepipe.ByteHandlerPipeline;
 import org.treetank.io.bytepipe.Encryptor;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.io.bytepipe.Zipper;
-import org.treetank.io.combinedCloud.CombinedBackend;
+import org.treetank.io.combined.CombinedStorage;
 import org.treetank.io.jclouds.JCloudsStorage;
-import org.treetank.io.ram.RAMStorage;
 import org.treetank.page.DumbMetaEntryFactory;
 import org.treetank.page.DumbNodeFactory;
 import org.treetank.page.IConstants;
@@ -159,11 +158,6 @@ public class IBackendTest {
                         }
                     }, new IBackendCreator() {
                         @Override
-                        public IBackend getBackend() {
-                            return new RAMStorage(handler);
-                        }
-                    }, new IBackendCreator() {
-                        @Override
                         public IBackend getBackend() throws TTIOException {
                             return createCombinedStorage(nodeFac, handler, metaFac);
                         }
@@ -190,7 +184,7 @@ public class IBackendTest {
             .getAbsolutePath());
         props.setProperty(FilesystemConstants.PROPERTY_BASEDIR, CoreTestHelper.PATHS.PATH2.getFile()
             .getAbsolutePath());
-        return new CombinedBackend(props, pNodeFac, pMetaFac, pHandler);
+        return new CombinedStorage(props, pNodeFac, pMetaFac, pHandler);
     }
 
     private static IBackend createBerkeleyStorage(INodeFactory pNodeFac, IByteHandlerPipeline pHandler,

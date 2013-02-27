@@ -1,4 +1,4 @@
-package org.treetank.io.combinedCloud;
+package org.treetank.io.combined;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
