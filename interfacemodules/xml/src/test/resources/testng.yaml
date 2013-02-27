@@ -3,19 +3,19 @@ threadCount: 4
 parameters: { NodeFactory: org.treetank.node.TreeNodeFactory, MetaFactory: org.treetank.node.NodeMetaPageFactory }
 
 tests:
-  - name: Sliding Berkeley
-    parameters: { Revisioning: org.treetank.revisioning.SlidingSnapshot, Backend: org.treetank.io.berkeley.BerkeleyStorage }
-    packages:
-      - org.treetank.service.xml.diff
-      - org.treetank.service.xml.serialize
-      - org.treetank.service.xml.shredder
-      - org.treetank.service.xml.xpath
-      - org.treetank.service.xml.xpath.comparators
-      - org.treetank.service.xml.xpath.expr
-      - org.treetank.service.xml.xpath.filter
-      - org.treetank.service.xml.xpath.operators
-      - org.treetank.service.xml.xpath.parser
-      - org.treetank.service.xml.xpath.xmark
+#  - name: Sliding Berkeley
+#    parameters: { Revisioning: org.treetank.revisioning.SlidingSnapshot, Backend: org.treetank.io.berkeley.BerkeleyStorage }
+#    packages:
+#      - org.treetank.service.xml.diff
+#      - org.treetank.service.xml.serialize
+#      - org.treetank.service.xml.shredder
+#      - org.treetank.service.xml.xpath
+#      - org.treetank.service.xml.xpath.comparators
+#      - org.treetank.service.xml.xpath.expr
+#      - org.treetank.service.xml.xpath.filter
+#      - org.treetank.service.xml.xpath.operators
+#      - org.treetank.service.xml.xpath.parser
+#      - org.treetank.service.xml.xpath.xmark
   - name: Differential Berkeley
     parameters: { Revisioning: org.treetank.revisioning.Differential, Backend: org.treetank.io.berkeley.BerkeleyStorage }
     packages:

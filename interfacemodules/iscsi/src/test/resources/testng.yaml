@@ -10,14 +10,9 @@ tests:
       - org.treetank.access.TransactionTest
   - name: Differential Berkeley
     parameters: { Revisioning: org.treetank.revisioning.Differential, Backend: org.treetank.io.berkeley.BerkeleyStorage }
-    packages:
-      - org.treetank.access
-      - org.treetank.access.conf
-      - org.treetank.io
-      - org.treetank.io.bytepipe
-      - org.treetank.log 
-      - org.treetank.page
-      - org.treetank.revisioning
+    classes:
+      - org.jscsi.target.storage.TreetankStorageModuleTest
+      - org.treetank.access.TransactionTest
   - name: Incremental Berkeley
     parameters: { Revisioning: org.treetank.revisioning.Incremental, Backend: org.treetank.io.berkeley.BerkeleyStorage }
     classes:
