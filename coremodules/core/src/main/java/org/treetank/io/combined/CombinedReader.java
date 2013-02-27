@@ -1,4 +1,4 @@
-package org.treetank.io.combinedCloud;
+package org.treetank.io.combined;
 
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;

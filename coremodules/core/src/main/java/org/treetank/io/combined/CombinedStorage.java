@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.treetank.io.combinedCloud;
+package org.treetank.io.combined;
 
 import java.util.Properties;
 
@@ -25,7 +25,7 @@ import com.google.inject.assistedinject.Assisted;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public class CombinedBackend implements IBackend {
+public class CombinedStorage implements IBackend {
 
     /** Local Backend. */
     private final BerkeleyStorage mLocalBackend;
@@ -48,7 +48,7 @@ public class CombinedBackend implements IBackend {
      *             of something odd happens while database-connection
      */
     @Inject
-    public CombinedBackend(@Assisted Properties pProperties, INodeFactory pNodeFac,
+    public CombinedStorage(@Assisted Properties pProperties, INodeFactory pNodeFac,
         IMetaEntryFactory pMetaFac, IByteHandlerPipeline pByteHandler) throws TTIOException {
         mLocalBackend = new BerkeleyStorage(pProperties, pNodeFac, pMetaFac, pByteHandler);
         mRemoteBackend = new JCloudsStorage(pProperties, pNodeFac, pMetaFac, pByteHandler.clone());

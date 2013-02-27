@@ -13,7 +13,7 @@ import org.treetank.io.bytepipe.Encryptor;
 import org.treetank.io.bytepipe.IByteHandler;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.io.bytepipe.Zipper;
-import org.treetank.io.combinedCloud.CombinedBackend;
+import org.treetank.io.combined.CombinedStorage;
 import org.treetank.revisioning.IRevisioning;
 import org.treetank.revisioning.SlidingSnapshot;
 
@@ -35,7 +35,7 @@ public class ModuleSetter {
     /** Class for Revision. */
     private Class<? extends IRevisioning> mRevisioningClass = SlidingSnapshot.class;
     /** Class for IBackend. */
-    private Class<? extends IBackend> mBackend = CombinedBackend.class;
+    private Class<? extends IBackend> mBackend = CombinedStorage.class;
     /** Instance for ByteHandler. */
     private IByteHandlerPipeline mByteHandler = new ByteHandlerPipeline(new Zipper(), new Encryptor(
         StandardSettings.KEY));
