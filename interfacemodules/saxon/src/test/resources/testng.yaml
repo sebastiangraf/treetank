@@ -2,9 +2,52 @@ name: SaxonSuite
 threadCount: 4
 parameters: { NodeFactory: org.treetank.node.TreeNodeFactory, MetaFactory: org.treetank.node.NodeMetaPageFactory }
 
- 
 tests:
-  - name: Saxon Tests
-    parameters: { Revisioning: org.treetank.revisioning.SlidingSnapshot, Backend: org.treetank.io.berkeley.BerkeleyStorage}
+  - name: Sliding Berkeley
+    parameters: { Revisioning: org.treetank.revisioning.SlidingSnapshot, Backend: org.treetank.io.berkeley.BerkeleyStorage }
+    packages:
+      - org.treetank.saxon.wrapper
+  - name: Differential Berkeley
+    parameters: { Revisioning: org.treetank.revisioning.Differential, Backend: org.treetank.io.berkeley.BerkeleyStorage }
+    packages:
+      - org.treetank.saxon.wrapper
+  - name: Incremental Berkeley
+    parameters: { Revisioning: org.treetank.revisioning.Incremental, Backend: org.treetank.io.berkeley.BerkeleyStorage }
+    packages:
+      - org.treetank.saxon.wrapper
+  - name: FullDump Berkeley
+    parameters: { Revisioning: org.treetank.revisioning.FullDump, Backend: org.treetank.io.berkeley.BerkeleyStorage }
+    packages:
+      - org.treetank.saxon.wrapper
+  - name: Sliding JClouds
+    parameters: { Revisioning: org.treetank.revisioning.SlidingSnapshot, Backend: org.treetank.io.jclouds.JCloudsStorage }
+    packages:
+      - org.treetank.saxon.wrapper
+  - name: Differential JClouds
+    parameters: { Revisioning: org.treetank.revisioning.Differential, Backend: org.treetank.io.jclouds.JCloudsStorage }
+    packages:
+      - org.treetank.saxon.wrapper
+  - name: Incremental JClouds
+    parameters: { Revisioning: org.treetank.revisioning.Incremental, Backend: org.treetank.io.jclouds.JCloudsStorage }
+    packages:
+      - org.treetank.saxon.wrapper
+  - name: FullDump JClouds
+    parameters: { Revisioning: org.treetank.revisioning.FullDump, Backend: org.treetank.io.jclouds.JCloudsStorage }
+    packages:
+      - org.treetank.saxon.wrapper
+  - name: Sliding Combined
+    parameters: { Revisioning: org.treetank.revisioning.SlidingSnapshot, Backend: org.treetank.io.combined.CombinedStorage }
+    packages:
+      - org.treetank.saxon.wrapper
+  - name: Differential Combined
+    parameters: { Revisioning: org.treetank.revisioning.Differential, Backend: org.treetank.io.combined.CombinedStorage }
+    packages:
+      - org.treetank.saxon.wrapper
+  - name: Incremental Combined
+    parameters: { Revisioning: org.treetank.revisioning.Incremental, Backend: org.treetank.io.combined.CombinedStorage }
+    packages:
+      - org.treetank.saxon.wrapper
+  - name: FullDump Combined
+    parameters: { Revisioning: org.treetank.revisioning.FullDump, Backend: org.treetank.io.combined.CombinedStorage }
     packages:
       - org.treetank.saxon.wrapper
