@@ -146,15 +146,6 @@ public class IscsiReadTrx implements IIscsiReadTrx {
   }
 
   /**
-   * Make sure that the session is not yet closed when calling this method.
-   */
-  protected final void assertNotClosed() {
-      if (mPageReadTrx.isClosed()) {
-          throw new IllegalStateException("Transaction is already closed.");
-      }
-  }
-
-  /**
    * Replace the state of the transaction.
    * 
    * @param paramTransactionState
