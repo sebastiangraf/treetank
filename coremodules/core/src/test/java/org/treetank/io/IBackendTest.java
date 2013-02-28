@@ -196,15 +196,15 @@ public class IBackendTest {
             .getAbsolutePath());
         return new BerkeleyStorage(props, pNodeFac, pMetaFac, pHandler);
     }
-
-    private static IBackend createAWSJCloudsStorage(INodeFactory pNodeFac, IByteHandlerPipeline pHandler,
-        IMetaEntryFactory pMetaFac) throws TTIOException {
-        Properties props =
-            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
-                CoreTestHelper.RESOURCENAME);
-        props.setProperty(ConstructorProps.JCLOUDSTYPE, "aws-s3");
-        return new JCloudsStorage(props, pNodeFac, pMetaFac, pHandler);
-    }
+//
+//    private static IBackend createAWSJCloudsStorage(INodeFactory pNodeFac, IByteHandlerPipeline pHandler,
+//        IMetaEntryFactory pMetaFac) throws TTIOException {
+//        Properties props =
+//            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+//                CoreTestHelper.RESOURCENAME);
+//        props.setProperty(ConstructorProps.JCLOUDSTYPE, "aws-s3");
+//        return new JCloudsStorage(props, pNodeFac, pMetaFac, pHandler);
+//    }
 
     private static IBackend createLocalJCloudsStorage(INodeFactory pNodeFac, IByteHandlerPipeline pHandler,
         IMetaEntryFactory pMetaFac) throws TTIOException {

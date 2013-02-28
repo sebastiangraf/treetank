@@ -33,7 +33,7 @@ public class IPageTest {
 
     /**
      * Test method for {@link org.treetank.page.interfaces.IPage} and
-     * {@link org.treetank.page.interfaces.IPage#getByteRepresentation()}.
+     * {@link org.treetank.page.interfaces.IPage#serialize(java.io.DataOutput)}.
      * 
      * @param clazz
      *            IPage as class
@@ -63,7 +63,7 @@ public class IPageTest {
 
     /**
      * Test method for {@link org.treetank.page.interfaces.IPage} and
-     * {@link org.treetank.page.interfaces.IPage#getByteRepresentation()}.
+     * {@link org.treetank.page.interfaces.IPage#serialize(java.io.DataOutput)}.
      * 
      * @param clazz
      *            IPage as class

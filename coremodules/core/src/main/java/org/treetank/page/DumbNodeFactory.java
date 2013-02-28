@@ -81,10 +81,13 @@ public class DumbNodeFactory implements INodeFactory {
         }
 
         /**
-         * {@inheritDoc}
+         * Setting a node key to this dumb node.
+         * 
+         * @param pKey
+         *            to be set
          */
-        public void setNodeKey(final long pNodeKey) {
-            mNodeKey = pNodeKey;
+        public void setNodeKey(final long pKey) {
+            mNodeKey = pKey;
         }
 
         /**

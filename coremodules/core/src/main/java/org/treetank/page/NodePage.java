@@ -187,10 +187,8 @@ public final class NodePage implements IPage {
         /**
          * Constructor.
          * 
-         * @param paramNode
+         * @param pNodeKey
          *            nodekey to be replaced with a deletednode
-         * @param paramParent
-         *            parent of this key.
          */
         public DeletedNode(final long pNodeKey) {
             mNodeKey = pNodeKey;

@@ -86,7 +86,6 @@ public interface ISession {
      * Begin exclusive write transaction on the page layer with fixed revisions.
      * 
      * @param pRevToRepresent
-     * @param pRevToStore
      * @return a {@link IPageReadTrx} instance
      * @throws TTException
      */

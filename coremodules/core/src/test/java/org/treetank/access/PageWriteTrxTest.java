@@ -67,17 +67,6 @@ public class PageWriteTrxTest {
     }
 
     /**
-     * Test method for {@link org.treetank.access.PageWriteTrx#prepareNodeForModification(long)}.
-     * 
-     * @throws TTException
-     */
-    @Test
-    public void testPrepareNodeForModification() throws TTException {
-        IPageWriteTrx wtx = mHolder.getSession().beginPageWriteTransaction();
-        wtx.close();
-    }
-
-    /**
      * Test method for {@link org.treetank.access.PageWriteTrx#getRevision()}.
      * 
      * @throws TTException

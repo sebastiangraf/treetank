@@ -106,7 +106,7 @@ public class IRevisioningTest {
 
     /**
      * Test method for
-     * {@link org.treetank.revisioning.IRevisioning#combinePagesForModification(long, NodePage[])}.
+     * {@link org.treetank.revisioning.IRevisioning#combinePagesForModification(int, long, NodePage[], boolean)}.
      * This test just takes two versions and checks if the version-counter is interpreted correctly.
      * 
      * @param pRevisioningClass
