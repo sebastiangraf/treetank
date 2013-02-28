@@ -93,7 +93,7 @@ public class NodeIdRepresentation {
      * 
      * Constructor.
      * 
-     * @param pStoragePath
+     * @param pDatabase
      *            storage to be set
      */
     public NodeIdRepresentation(final IStorage pDatabase) {

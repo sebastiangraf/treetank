@@ -136,7 +136,10 @@ public final class RESTResponseHelper {
      * 
      * @param pDatabase
      *            path to the storage
-     * 
+     * @param pStorageFac
+     *            factory for creating backends
+     * @param pRevision
+     *            revision algorithm utilized
      * @return The streaming output for the HTTP response body.
      */
     public static StreamingOutput buildResponseOfDomLR(final IStorage pDatabase,

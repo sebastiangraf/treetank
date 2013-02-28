@@ -96,7 +96,7 @@ import com.google.inject.Injector;
  */
 public class XMLShredder implements Callable<Void> {
 
-    /** {@link INodeReadTrx}. */
+    /** {@link INodeWriteTrx}-reference */
     protected final transient INodeWriteTrx mWtx;
 
     /** {@link XMLEventReader}. */
