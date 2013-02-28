@@ -44,7 +44,6 @@ import org.jscsi.target.storage.IStorageModule;
 import org.jscsi.target.storage.IStorageModule.STORAGEKIND;
 import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.exception.TTException;
-import org.treetank.jscsi.storage.TreetankStorageModule;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

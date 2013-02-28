@@ -22,7 +22,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.jscsi.storage;
+package org.treetank.jscsi;
 
 import static com.google.common.base.Objects.toStringHelper;
 
@@ -47,9 +47,9 @@ import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
 import org.treetank.exception.TTException;
 import org.treetank.io.IBackend.IBackendFactory;
-import org.treetank.jscsi.node.ByteNode;
-import org.treetank.jscsi.node.ByteNodeFactory;
-import org.treetank.jscsi.node.ISCSIMetaPageFactory;
+import org.treetank.node.ByteNode;
+import org.treetank.node.ByteNodeFactory;
+import org.treetank.node.ISCSIMetaPageFactory;
 import org.treetank.revisioning.IRevisioning;
 
 import com.google.common.io.ByteArrayDataInput;

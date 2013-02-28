@@ -43,7 +43,6 @@ import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFact
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.exception.TTException;
-import org.treetank.jscsi.storage.TreetankStorageModule;
 
 import com.google.inject.Inject;
 
