@@ -77,17 +77,22 @@ public final class FMESVisitor {
         mDescendants = paramDescendants;
     }
 
-    /** {@inheritDoc} 
-     * @throws TTIOException */
-    public void visit(final ElementNode paramNode) throws TTIOException {
-        final long nodeKey = paramNode.getNodeKey();
+    /**
+     * Visiting an {@link ElementNode}
+     * 
+     * @param pNode
+     *            to be visited
+     * @throws TTIOException
+     */
+    public void visit(final ElementNode pNode) throws TTIOException {
+        final long nodeKey = pNode.getNodeKey();
         mRtx.moveTo(nodeKey);
-        for (int i = 0; i < paramNode.getAttributeCount(); i++) {
+        for (int i = 0; i < pNode.getAttributeCount(); i++) {
             mRtx.moveToAttribute(i);
             fillDataStructures();
             mRtx.moveTo(nodeKey);
         }
-        for (int i = 0; i < paramNode.getNamespaceCount(); i++) {
+        for (int i = 0; i < pNode.getNamespaceCount(); i++) {
             mRtx.moveToNamespace(i);
             fillDataStructures();
             mRtx.moveTo(nodeKey);
@@ -106,7 +111,8 @@ public final class FMESVisitor {
 
     /**
      * Count descendants of node (including self).
-     * @throws TTIOException 
+     * 
+     * @throws TTIOException
      */
     private void countDescendants() throws TTIOException {
         long descendants = 1;
@@ -122,10 +128,15 @@ public final class FMESVisitor {
         mDescendants.put(mRtx.getNode(), descendants);
     }
 
-    /** {@inheritDoc} 
-     * @throws TTIOException */
-    public void visit(final TextNode paramNode) throws TTIOException {
-        final long nodeKey = paramNode.getNodeKey();
+    /**
+     * Visiting a {@link TextNode}.
+     * 
+     * @param pNode
+     *            to be visited
+     * @throws TTIOException
+     */
+    public void visit(final TextNode pNode) throws TTIOException {
+        final long nodeKey = pNode.getNodeKey();
         mRtx.moveTo(nodeKey);
         mInOrder.put(mRtx.getNode(), false);
         mDescendants.put(mRtx.getNode(), 1L);

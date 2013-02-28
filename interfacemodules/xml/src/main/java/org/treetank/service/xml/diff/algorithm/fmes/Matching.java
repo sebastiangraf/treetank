@@ -66,17 +66,17 @@ public final class Matching {
     /**
      * Creates a new matching.
      * 
-     * @param paramRtxOld
-     *            {@link IReadTransaction} reference on old revision
-     * @param paramRtxNew
-     *            {@link IReadTransaction} reference on new revision.
+     * @param pRtxOld
+     *            {@link INodeReadTrx} reference on old revision
+     * @param pRtxNew
+     *            {@link INodeReadTrx} reference on new revision.
      */
-    public Matching(final INodeReadTrx paramRtxOld, final INodeReadTrx paramRtxNew) {
+    public Matching(final INodeReadTrx pRtxOld, final INodeReadTrx pRtxNew) {
         mMapping = new IdentityHashMap<INode, INode>();
         mReverseMapping = new IdentityHashMap<INode, INode>();
         mIsInSubtree = new ConnectionMap<INode>();
-        mRtxOld = paramRtxOld;
-        mRtxNew = paramRtxNew;
+        mRtxOld = pRtxOld;
+        mRtxNew = pRtxNew;
     }
 
     /**

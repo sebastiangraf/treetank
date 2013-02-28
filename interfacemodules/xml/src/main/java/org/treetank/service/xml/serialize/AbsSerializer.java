@@ -203,16 +203,16 @@ abstract class AbsSerializer implements Callable<Void> {
     /**
      * Emit start tag.
      * 
-     * @param paramRTX
-     *            Treetank reading transaction {@link IReadTransaction}.
+     * @param pRTX
+     *            Treetank reading transaction {@link INodeReadTrx}.
      */
-    protected abstract void emitStartElement(final INodeReadTrx paramRTX) throws TTIOException;
+    protected abstract void emitStartElement(final INodeReadTrx pRTX) throws TTIOException;
 
     /**
      * Emit end tag.
      * 
      * @param paramRTX
-     *            Treetank reading transaction {@link IReadTransaction}.
+     *            Treetank reading transaction {@link INodeReadTrx}.
      */
     protected abstract void emitEndElement(final INodeReadTrx paramRTX);
 

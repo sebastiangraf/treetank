@@ -57,10 +57,10 @@ public final class DocumentRootNode implements INode, IStructNode {
     /**
      * Constructor.
      * 
-     * @param mLongBuilder
-     *            long array to set
-     * @param mIntBuilder
-     *            int array to set
+     * @param pNodeDel
+     *            delegate for node properties
+     * @param pStrucDel
+     *            delegate for struct properties
      */
     public DocumentRootNode(final NodeDelegate pNodeDel, final StructNodeDelegate pStrucDel) {
         mDel = pNodeDel;
@@ -76,233 +76,179 @@ public final class DocumentRootNode implements INode, IStructNode {
     }
 
     /**
-     * Delegate method for getNodeKey.
-     * 
-     * @return
-     * @see org.treetank.node.delegates.NodeDelegate#getNodeKey()
+     * {@inheritDoc}
      */
+    @Override
     public long getNodeKey() {
         return mDel.getNodeKey();
     }
 
     /**
-     * Delegate method for getParentKey.
-     * 
-     * @return
-     * @see org.treetank.node.delegates.NodeDelegate#getParentKey()
+     * {@inheritDoc}
      */
+    @Override
     public long getParentKey() {
         return mDel.getParentKey();
     }
 
     /**
-     * Delegate method for getHash.
-     * 
-     * @return
-     * @see org.treetank.node.delegates.NodeDelegate#getHash()
+     * {@inheritDoc}
      */
+    @Override
     public long getHash() {
         return mDel.getHash();
     }
 
     /**
-     * Delegate method for setHash.
-     * 
-     * @param pHash
-     * @see org.treetank.node.delegates.NodeDelegate#setHash(long)
+     * {@inheritDoc}
      */
+    @Override
     public void setHash(final long pHash) {
         mDel.setHash(pHash);
     }
 
     /**
-     * Delegate method for hashCode.
-     * 
-     * @return
-     * @see org.treetank.node.delegates.NodeDelegate#hashCode()
+     * {@inheritDoc}
      */
+    @Override
     public int hashCode() {
         return mDel.hashCode();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public boolean equals(Object pObj) {
         return pObj.hashCode() == hashCode();
     }
 
     /**
-     * Delegate method for getTypeKey.
-     * 
-     * @return
-     * @see org.treetank.node.delegates.NodeDelegate#getTypeKey()
+     * {@inheritDoc}
      */
+    @Override
     public int getTypeKey() {
         return mDel.getTypeKey();
     }
 
     /**
-     * Delegate method for hasParent.
-     * 
-     * @return
-     * @see org.treetank.node.delegates.NodeDelegate#hasParent()
+     * {@inheritDoc}
      */
+    @Override
     public boolean hasParent() {
         return mDel.hasParent();
     }
 
     /**
-     * Delegate method for hasFirstChild.
-     * 
-     * @return
-     * @see org.treetank.node.delegates.StructNodeDelegate#hasFirstChild()
+     * {@inheritDoc}
      */
+    @Override
     public boolean hasFirstChild() {
         return mStrucDel.hasFirstChild();
     }
 
     /**
-     * Delegate method for hasLeftSibling.
-     * 
-     * @return
-     * @see org.treetank.node.delegates.StructNodeDelegate#hasLeftSibling()
+     * {@inheritDoc}
      */
+    @Override
     public boolean hasLeftSibling() {
         return mStrucDel.hasLeftSibling();
     }
 
     /**
-     * Delegate method for hasRightSibling.
-     * 
-     * @return
-     * @see org.treetank.node.delegates.StructNodeDelegate#hasRightSibling()
+     * {@inheritDoc}
      */
+    @Override
     public boolean hasRightSibling() {
         return mStrucDel.hasRightSibling();
     }
 
     /**
-     * Delegate method for getChildCount.
-     * 
-     * @return
-     * @see org.treetank.node.delegates.StructNodeDelegate#getChildCount()
+     * {@inheritDoc}
      */
+    @Override
     public long getChildCount() {
         return mStrucDel.getChildCount();
     }
 
     /**
-     * Delegate method for getFirstChildKey.
-     * 
-     * @return
-     * @see org.treetank.node.delegates.StructNodeDelegate#getFirstChildKey()
+     * {@inheritDoc}
      */
+    @Override
     public long getFirstChildKey() {
         return mStrucDel.getFirstChildKey();
     }
 
     /**
-     * Delegate method for getLeftSiblingKey.
-     * 
-     * @return
-     * @see org.treetank.node.delegates.StructNodeDelegate#getLeftSiblingKey()
+     * {@inheritDoc}
      */
+    @Override
     public long getLeftSiblingKey() {
         return mStrucDel.getLeftSiblingKey();
     }
 
     /**
-     * Delegate method for getRightSiblingKey.
-     * 
-     * @return
-     * @see org.treetank.node.delegates.StructNodeDelegate#getRightSiblingKey()
+     * {@inheritDoc}
      */
+    @Override
     public long getRightSiblingKey() {
         return mStrucDel.getRightSiblingKey();
     }
 
     /**
-     * Delegate method for setRightSiblingKey.
-     * 
-     * @param pKey
-     * @see org.treetank.node.delegates.StructNodeDelegate#setRightSiblingKey(long)
+     * {@inheritDoc}
      */
+    @Override
     public void setRightSiblingKey(final long pKey) {
         mStrucDel.setRightSiblingKey(pKey);
     }
 
     /**
-     * Delegate method for setLeftSiblingKey.
-     * 
-     * @param pKey
-     * @see org.treetank.node.delegates.StructNodeDelegate#setLeftSiblingKey(long)
+     * {@inheritDoc}
      */
+    @Override
     public void setLeftSiblingKey(final long pKey) {
         mStrucDel.setLeftSiblingKey(pKey);
     }
 
     /**
-     * Delegate method for setFirstChildKey.
-     * 
-     * @param pKey
-     * @see org.treetank.node.delegates.StructNodeDelegate#setFirstChildKey(long)
+     * {@inheritDoc}
      */
+    @Override
     public void setFirstChildKey(final long pKey) {
         mStrucDel.setFirstChildKey(pKey);
     }
 
     /**
-     * Delegate method for decrementChildCount.
-     * 
-     * @see org.treetank.node.delegates.StructNodeDelegate#decrementChildCount()
+     * {@inheritDoc}
      */
+    @Override
     public void decrementChildCount() {
         mStrucDel.decrementChildCount();
     }
 
     /**
-     * Delegate method for incrementChildCount.
-     * 
-     * @see org.treetank.node.delegates.StructNodeDelegate#incrementChildCount()
+     * {@inheritDoc}
      */
+    @Override
     public void incrementChildCount() {
         mStrucDel.incrementChildCount();
     }
 
     /**
-     * Delegate method for setParentKey.
-     * 
-     * @param pKey
-     * @see org.treetank.node.delegates.StructNodeDelegate#setParentKey(long)
+     * {@inheritDoc}
      */
+    @Override
     public void setParentKey(final long pKey) {
         mStrucDel.setParentKey(pKey);
     }
 
     /**
-     * Delegate method for setTypeKey.
-     * 
-     * @param pTypeKey
-     * @see org.treetank.node.delegates.StructNodeDelegate#setTypeKey(int)
+     * {@inheritDoc}
      */
+    @Override
     public void setTypeKey(final int pTypeKey) {
         mStrucDel.setTypeKey(pTypeKey);
-    }
-
-    /**
-     * Getting the inlying {@link NodeDelegate}.
-     * 
-     * @return
-     */
-    NodeDelegate getNodeDelegate() {
-        return mDel;
-    }
-
-    /**
-     * Getting the inlying {@link StructNodeDelegate}.
-     * 
-     * @return
-     */
-    StructNodeDelegate getStrucNodeDelegate() {
-        return mStrucDel;
     }
 
     /**
@@ -314,12 +260,9 @@ public final class DocumentRootNode implements INode, IStructNode {
     }
 
     /**
-     * Serializing to given dataput
-     * 
-     * @param pOutput
-     *            to serialize to
-     * @throws TTIOException
+     * {@inheritDoc}
      */
+    @Override
     public void serialize(final DataOutput pOutput) throws TTIOException {
         try {
             pOutput.writeInt(IConstants.ROOT);

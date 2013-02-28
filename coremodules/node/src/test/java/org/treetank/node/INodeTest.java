@@ -53,10 +53,9 @@ public class INodeTest {
     }
 
     /**
-     * Test method for {@link org.treetank.api.INode#getHash()},{@link org.treetank.api.INode#setHash(long)},
+     * Test method for {@link org.treetank.api.INode#getHash()},
      * {@link org.treetank.api.INode#getNodeKey()},
      * {@link org.treetank.api.INode#serialize(java.io.DataOutput)},
-     * {@link org.treetank.node.interfaces.INode#getHash()}
      * 
      * @param pNodeClass
      *            class for node to test

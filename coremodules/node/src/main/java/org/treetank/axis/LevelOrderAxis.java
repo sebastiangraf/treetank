@@ -32,10 +32,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.treetank.api.INodeReadTrx;
+import org.treetank.node.AtomicValue;
 import org.treetank.node.interfaces.IStructNode;
 
 /**
- * Iterates over {@link AbsStructuralNode}s in a breath first traversal.
+ * Iterates over {@link AtomicValue}s in a breath first traversal.
  * 
  * @author Johannes Lichtenberger, University of Konstanz
  * 

@@ -222,10 +222,10 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Voi
     private transient boolean mEmptyElement;
 
     /**
-     * Normal constructor to invoke a shredding process on a existing {@link IWriteTransaction}.
+     * Normal constructor to invoke a shredding process on a existing {@link INodeWriteTrx}.
      * 
      * @param paramWtx
-     *            {@link IWriteTransaction} where the new XML Fragment should be
+     *            {@link INodeWriteTrx} where the new XML Fragment should be
      *            placed
      * @param paramReader
      *            {@link XMLEventReader} (StAX parser) of the XML Fragment

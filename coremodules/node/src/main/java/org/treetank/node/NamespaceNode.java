@@ -58,8 +58,9 @@ public final class NamespaceNode implements INode, INameNode {
      * Constructor.
      * 
      * @param pDel
-     * @param mIntBuilder
-     *            building int data
+     *            delegate of node properties
+     * @param pNameDel
+     *            delegate for name properties
      */
     public NamespaceNode(final NodeDelegate pDel, final NameNodeDelegate pNameDel) {
         mDel = pDel;
@@ -107,81 +108,65 @@ public final class NamespaceNode implements INode, INameNode {
     }
 
     /**
-     * Delegate method for setHash.
-     * 
-     * @param pHash
-     * @see org.treetank.node.delegates.NodeDelegate#setHash(long)
+     * {@inheritDoc}
      */
+    @Override
     public void setHash(final long pHash) {
         mDel.setHash(pHash);
     }
 
     /**
-     * Delegate method for getHash.
-     * 
-     * @return
-     * @see org.treetank.node.delegates.NodeDelegate#getHash()
+     * {@inheritDoc}
      */
+    @Override
     public long getHash() {
         return mDel.getHash();
     }
 
     /**
-     * Delegate method for getNodeKey.
-     * 
-     * @return
-     * @see org.treetank.node.delegates.NodeDelegate#getNodeKey()
+     * {@inheritDoc}
      */
+    @Override
     public long getNodeKey() {
         return mDel.getNodeKey();
     }
 
     /**
-     * Delegate method for getParentKey.
-     * 
-     * @return
-     * @see org.treetank.node.delegates.NodeDelegate#getParentKey()
+     * {@inheritDoc}
      */
+    @Override
     public long getParentKey() {
         return mDel.getParentKey();
     }
 
     /**
-     * Delegate method for hasParent.
-     * 
-     * @return
-     * @see org.treetank.node.delegates.NodeDelegate#hasParent()
+     * {@inheritDoc}
      */
+    @Override
     public boolean hasParent() {
         return mDel.hasParent();
     }
 
     /**
-     * Delegate method for getTypeKey.
-     * 
-     * @return
-     * @see org.treetank.node.delegates.NodeDelegate#getTypeKey()
+     * {@inheritDoc}
      */
+    @Override
     public int getTypeKey() {
         return mDel.getTypeKey();
     }
 
     /**
-     * Delegate method for setParentKey.
-     * 
-     * @param pKey
-     * @see org.treetank.node.delegates.NodeDelegate#setParentKey(long)
+     * {@inheritDoc}
      */
+    @Override
     public void setParentKey(final long pKey) {
         mDel.setParentKey(pKey);
     }
 
     /**
-     * Delegate method for setType.
-     * 
-     * @param pTypeKey
-     * @see org.treetank.node.delegates.NodeDelegate#setTypeKey(int)
+     * {@inheritDoc}
      */
+    @Override
     public void setTypeKey(final int pTypeKey) {
         mDel.setTypeKey(pTypeKey);
     }
@@ -206,24 +191,6 @@ public final class NamespaceNode implements INode, INameNode {
     }
 
     /**
-     * Getting the inlying {@link NodeDelegate}.
-     * 
-     * @return
-     */
-    NodeDelegate getNodeDelegate() {
-        return mDel;
-    }
-
-    /**
-     * Getting the inlying {@link NameNodeDelegate}.
-     * 
-     * @return
-     */
-    NameNodeDelegate getNameNodeDelegate() {
-        return mNameDel;
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
@@ -232,12 +199,9 @@ public final class NamespaceNode implements INode, INameNode {
     }
 
     /**
-     * Serializing to given dataput
-     * 
-     * @param pOutput
-     *            to serialize to
-     * @throws TTIOException
+     * {@inheritDoc}
      */
+    @Override
     public void serialize(final DataOutput pOutput) throws TTIOException {
         try {
             pOutput.writeInt(IConstants.NAMESPACE);

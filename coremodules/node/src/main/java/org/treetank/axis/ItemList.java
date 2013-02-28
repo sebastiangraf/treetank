@@ -63,28 +63,34 @@ public final class ItemList {
     }
 
     /**
-     * {@inheritDoc}
+     * Adding to this list.
+     * 
+     * @param pItem
+     *            setting and item to this list
      */
-    public int addItem(final AtomicValue mItem) {
+    public int addItem(final AtomicValue pItem) {
         final int key = mList.size();
-        mItem.setNodeKey(key);
+        pItem.setNodeKey(key);
         // TODO: +2 is necessary, because key -1 is the NULL_NODE
         final int itemKey = (key + 2) * (-1);
-        mItem.setNodeKey(itemKey);
+        pItem.setNodeKey(itemKey);
 
-        mList.add(mItem);
+        mList.add(pItem);
         return itemKey;
     }
 
     /**
-     * {@inheritDoc}
+     * Getting an {@link AtomicValue} from the list.
+     * 
+     * @param pKey
+     *            for the value
+     * @return an {@link AtomicValue}
      */
-    public AtomicValue getItem(final long mKey) {
-        assert mKey <= Integer.MAX_VALUE;
+    public AtomicValue getItem(final long pKey) {
+        assert pKey <= Integer.MAX_VALUE;
 
-        int index = (int)mKey; // cast to integer, because the list only
-                               // accepts
-        // int
+        int index = (int)pKey; // cast to integer, because the list only
+                               // accepts int
 
         if (index < 0) {
             index = index * (-1);

@@ -63,26 +63,26 @@ public class AtomicValue implements INode, IValNode {
     /**
      * Constructor. Initializes the internal state.
      * 
-     * @param mValue
+     * @param pValue
      *            the value of the Item
-     * @param mType
+     * @param pType
      *            the item's type
      */
-    public AtomicValue(final byte[] mValue, final int mType) {
+    public AtomicValue(final byte[] pValue, final int pType) {
 
-        this.mValue = mValue;
-        this.mType = mType;
+        this.mValue = pValue;
+        this.mType = pType;
     }
 
     /**
      * Constructor. Initializes the internal state.
      * 
-     * @param mValue
+     * @param pValue
      *            the value of the Item
      */
-    public AtomicValue(final boolean mValue) {
+    public AtomicValue(final boolean pValue) {
 
-        this.mValue = TypedValue.getBytes(Boolean.toString(mValue));
+        this.mValue = TypedValue.getBytes(Boolean.toString(pValue));
         this.mType = NamePageHash.generateHashForString("xs:boolean");
 
     }
@@ -90,29 +90,29 @@ public class AtomicValue implements INode, IValNode {
     /**
      * Constructor. Initializes the internal state.
      * 
-     * @param mValue
+     * @param pValue
      *            the value of the Item
-     * @param mType
+     * @param pType
      *            the item's type
      */
-    public AtomicValue(final Number mValue, final Type mType) {
+    public AtomicValue(final Number pValue, final Type pType) {
 
-        this.mValue = TypedValue.getBytes(mValue.toString());
-        this.mType = NamePageHash.generateHashForString(mType.getStringRepr());
+        this.mValue = TypedValue.getBytes(pValue.toString());
+        this.mType = NamePageHash.generateHashForString(pType.getStringRepr());
     }
 
     /**
      * Constructor. Initializes the internal state.
      * 
-     * @param mValue
+     * @param pValue
      *            the value of the Item
-     * @param mType
+     * @param pType
      *            the item's type
      */
-    public AtomicValue(final String mValue, final Type mType) {
+    public AtomicValue(final String pValue, final Type pType) {
 
-        this.mValue = TypedValue.getBytes(mValue);
-        this.mType = NamePageHash.generateHashForString(mType.getStringRepr());
+        this.mValue = TypedValue.getBytes(pValue);
+        this.mType = NamePageHash.generateHashForString(pType.getStringRepr());
     }
 
     /**
@@ -120,7 +120,6 @@ public class AtomicValue implements INode, IValNode {
      */
     @Override
     public long getParentKey() {
-
         return NULL_NODE;
     }
 
@@ -141,10 +140,13 @@ public class AtomicValue implements INode, IValNode {
     }
 
     /**
-     * {@inheritDoc}
+     * Setting the node key for an item
+     * 
+     * @param pNodeKey
+     *            to be set
      */
-    public void setNodeKey(long nodeKey) {
-        mItemKey = nodeKey;
+    public void setNodeKey(long pNodeKey) {
+        mItemKey = pNodeKey;
     }
 
     /**
