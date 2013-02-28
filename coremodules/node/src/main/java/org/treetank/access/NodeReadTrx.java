@@ -82,7 +82,7 @@ public class NodeReadTrx implements INodeReadTrx {
      */
     @Override
     public final boolean moveTo(final long pNodeKey) throws TTIOException {
-        assertNotClosed();
+        checkState(!mPageReadTrx.isClosed(), "Transaction is already closed.");
         if (pNodeKey == NULL_NODE) {
             return false;
         } else {
@@ -104,7 +104,7 @@ public class NodeReadTrx implements INodeReadTrx {
      */
     @Override
     public final boolean moveToAttribute(final int mIndex) throws TTIOException {
-        assertNotClosed();
+        checkState(!mPageReadTrx.isClosed(), "Transaction is already closed.");
         if (mCurrentNode.getKind() == IConstants.ELEMENT) {
             return moveTo(((ElementNode)mCurrentNode).getAttributeKey(mIndex));
         } else {
@@ -117,7 +117,7 @@ public class NodeReadTrx implements INodeReadTrx {
      */
     @Override
     public final boolean moveToNamespace(final int mIndex) throws TTIOException {
-        assertNotClosed();
+        checkState(!mPageReadTrx.isClosed(), "Transaction is already closed.");
         if (mCurrentNode.getKind() == IConstants.ELEMENT) {
             return moveTo(((ElementNode)mCurrentNode).getNamespaceKey(mIndex));
         } else {
@@ -131,7 +131,7 @@ public class NodeReadTrx implements INodeReadTrx {
      */
     @Override
     public final String getValueOfCurrentNode() {
-        assertNotClosed();
+        checkState(!mPageReadTrx.isClosed(), "Transaction is already closed.");
         String returnVal;
         if (mCurrentNode instanceof IValNode) {
             returnVal = new String(((IValNode)mCurrentNode).getRawValue());
@@ -146,7 +146,7 @@ public class NodeReadTrx implements INodeReadTrx {
      */
     @Override
     public final QName getQNameOfCurrentNode() {
-        assertNotClosed();
+        checkState(!mPageReadTrx.isClosed(), "Transaction is already closed.");
         String name = "";
         String uri = "";
         if (mCurrentNode instanceof INameNode) {
@@ -161,7 +161,7 @@ public class NodeReadTrx implements INodeReadTrx {
      */
     @Override
     public final String getTypeOfCurrentNode() {
-        assertNotClosed();
+        checkState(!mPageReadTrx.isClosed(), "Transaction is already closed.");
         return nameForKey(mCurrentNode.getTypeKey());
     }
 
@@ -170,7 +170,7 @@ public class NodeReadTrx implements INodeReadTrx {
      */
     @Override
     public final String nameForKey(final int mKey) {
-        assertNotClosed();
+        checkState(!mPageReadTrx.isClosed(), "Transaction is already closed.");
         NodeMetaPageFactory.MetaKey key = new NodeMetaPageFactory.MetaKey(mKey);
         NodeMetaPageFactory.MetaValue value = (MetaValue)mPageReadTrx.getMetaPage().getMetaMap().get(key);
         return value == null ? null : value.getData();
@@ -206,13 +206,6 @@ public class NodeReadTrx implements INodeReadTrx {
     }
 
     /**
-     * Make sure that the session is not yet closed when calling this method.
-     */
-    protected final void assertNotClosed() {
-        checkState(!mPageReadTrx.isClosed(), "Transaction is already closed.");
-    }
-
-    /**
      * Replace the state of the transaction.
      * 
      * @param pPageTrx
@@ -238,7 +231,7 @@ public class NodeReadTrx implements INodeReadTrx {
      *            The current node to set.
      */
     protected final void setCurrentNode(final INode paramCurrentNode) {
-        assertNotClosed();
+        checkState(!mPageReadTrx.isClosed(), "Transaction is already closed.");
         mCurrentNode = paramCurrentNode;
     }
 
@@ -247,7 +240,7 @@ public class NodeReadTrx implements INodeReadTrx {
      */
     @Override
     public final INode getNode() {
-        assertNotClosed();
+        checkState(!mPageReadTrx.isClosed(), "Transaction is already closed.");
         return mCurrentNode;
     }
 

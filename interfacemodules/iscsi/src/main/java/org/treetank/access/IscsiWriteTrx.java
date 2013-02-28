@@ -24,13 +24,15 @@
 
 package org.treetank.access;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import org.treetank.api.IIscsiWriteTrx;
 import org.treetank.api.INode;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.iscsi.node.ByteNode;
+import org.treetank.jscsi.node.ByteNode;
 import org.treetank.page.NodePage;
 
 /**
@@ -111,8 +113,7 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
      */
     @Override
     public void remove() throws TTException {
-
-        checkAccessAndCommit();
+        checkState(!mDelegate.isClosed(), "Transaction is already closed.");
 
         if (((ByteNode)mDelegate.getCurrentNode()).hasPrevious()
             && ((ByteNode)mDelegate.getCurrentNode()).hasNext()) {
@@ -157,8 +158,7 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
      */
     @Override
     public void commit() throws TTException {
-
-        checkAccessAndCommit();
+        checkState(!mDelegate.isClosed(), "Transaction is already closed.");
 
         // Commit uber page.
         getPageTransaction().commit();
@@ -170,8 +170,7 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
      */
     @Override
     public void abort() throws TTException {
-
-        mDelegate.assertNotClosed();
+        checkState(!mDelegate.isClosed(), "Transaction is already closed.");
 
         long revisionToSet = 0;
         revisionToSet = mDelegate.mPageReadTrx.getRevision() - 1;
@@ -181,17 +180,6 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
         // Reset internal transaction state to last committed uber page.
         mDelegate.setPageTransaction(mSession.beginPageWriteTransaction(revisionToSet));
 
-    }
-
-    /**
-     * Checking write access and intermediate commit.
-     * 
-     * @throws TTException
-     *             if anything weird happens
-     */
-    private void checkAccessAndCommit() throws TTException {
-
-        mDelegate.assertNotClosed();
     }
 
     /**

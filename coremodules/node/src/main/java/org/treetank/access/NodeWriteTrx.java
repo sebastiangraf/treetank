@@ -27,6 +27,7 @@
 
 package org.treetank.access;
 
+import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
@@ -128,12 +129,12 @@ public class NodeWriteTrx implements INodeWriteTrx {
      */
     @Override
     public long insertElementAsFirstChild(final QName pQName) throws TTException, NullPointerException {
+        checkState(!mDelegate.isClosed(), "Transaction is already closed.");
         checkNotNull(pQName);
         checkState(mDelegate.getCurrentNode() instanceof ElementNode
             || mDelegate.getCurrentNode() instanceof DocumentRootNode,
             "Insert is not allowed if current node is not an ElementNode, but was %s", mDelegate
                 .getCurrentNode());
-        checkAccessAndCommit();
 
         final long parentKey = mDelegate.getCurrentNode().getNodeKey();
         final long leftSibKey = NULL_NODE;
@@ -152,13 +153,12 @@ public class NodeWriteTrx implements INodeWriteTrx {
      */
     @Override
     public long insertElementAsRightSibling(final QName pQName) throws TTException {
+        checkState(!mDelegate.isClosed(), "Transaction is already closed.");
         checkNotNull(pQName);
         checkState(
             mDelegate.getCurrentNode() instanceof IStructNode,
             "Insert is not allowed if current node is not an StructuralNode (either Text or Element), but was %s",
             mDelegate.getCurrentNode());
-
-        checkAccessAndCommit();
 
         final long parentKey = mDelegate.getCurrentNode().getParentKey();
         final long leftSibKey = mDelegate.getCurrentNode().getNodeKey();
@@ -177,12 +177,12 @@ public class NodeWriteTrx implements INodeWriteTrx {
      */
     @Override
     public long insertTextAsFirstChild(final String pValue) throws TTException {
+        checkState(!mDelegate.isClosed(), "Transaction is already closed.");
         checkNotNull(pValue);
         checkState(mDelegate.getCurrentNode() instanceof ElementNode
             || mDelegate.getCurrentNode() instanceof DocumentRootNode,
             "Insert is not allowed if current node is not an ElementNode, but was %s", mDelegate
                 .getCurrentNode());
-        checkAccessAndCommit();
 
         final byte[] value = TypedValue.getBytes(pValue);
         final long parentKey = mDelegate.getCurrentNode().getNodeKey();
@@ -202,11 +202,11 @@ public class NodeWriteTrx implements INodeWriteTrx {
      */
     @Override
     public long insertTextAsRightSibling(final String pValue) throws TTException {
+        checkState(!mDelegate.isClosed(), "Transaction is already closed.");
         checkNotNull(pValue);
         checkState(mDelegate.getCurrentNode() instanceof ElementNode,
             "Insert is not allowed if current node is not an ElementNode, but was %s", mDelegate
                 .getCurrentNode());
-        checkAccessAndCommit();
 
         final byte[] value = TypedValue.getBytes(pValue);
         final long parentKey = mDelegate.getCurrentNode().getParentKey();
@@ -227,11 +227,10 @@ public class NodeWriteTrx implements INodeWriteTrx {
      */
     @Override
     public long insertAttribute(final QName pQName, final String pValue) throws TTException {
+        checkState(!mDelegate.isClosed(), "Transaction is already closed.");
         checkState(mDelegate.getCurrentNode() instanceof ElementNode,
             "Insert is not allowed if current node is not an ElementNode, but was %s", mDelegate
                 .getCurrentNode());
-
-        checkAccessAndCommit();
 
         final byte[] value = TypedValue.getBytes(pValue);
         final long elementKey = mDelegate.getCurrentNode().getNodeKey();
@@ -262,11 +261,11 @@ public class NodeWriteTrx implements INodeWriteTrx {
      */
     @Override
     public long insertNamespace(final QName pQName) throws TTException {
+        checkState(!mDelegate.isClosed(), "Transaction is already closed.");
         checkNotNull(pQName);
         checkState(mDelegate.getCurrentNode() instanceof ElementNode,
             "Insert is not allowed if current node is not an ElementNode, but was %s", mDelegate
                 .getCurrentNode());
-        checkAccessAndCommit();
 
         final int uriKey = insertName(pQName.getNamespaceURI());
         final int prefixKey = insertName(pQName.getPrefix());
@@ -320,7 +319,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      */
     @Override
     public void remove() throws TTException {
-        checkAccessAndCommit();
+        checkState(!mDelegate.isClosed(), "Transaction is already closed.");
         checkState(mDelegate.getCurrentNode().getKind() != IConstants.ROOT,
             "Document root can not be removed.");
         if (mDelegate.getCurrentNode() instanceof IStructNode) {
@@ -373,14 +372,14 @@ public class NodeWriteTrx implements INodeWriteTrx {
      */
     @Override
     public void setQName(final QName paramName) throws TTException {
+        checkState(!mDelegate.isClosed(), "Transaction is already closed.");
         checkState(mDelegate.getCurrentNode() instanceof INameNode,
             "setQName is not allowed if current node is not an INameNode implementation, but was %s",
             mDelegate.getCurrentNode());
-        mDelegate.assertNotClosed();
+
         final long oldHash = mDelegate.getCurrentNode().hashCode();
 
-        final INameNode node =
-            (INameNode)getPtx().getNode(mDelegate.getCurrentNode().getNodeKey());
+        final INameNode node = (INameNode)getPtx().getNode(mDelegate.getCurrentNode().getNodeKey());
         node.setNameKey(insertName(buildName(paramName)));
         getPtx().setNode(node);
 
@@ -393,14 +392,14 @@ public class NodeWriteTrx implements INodeWriteTrx {
      */
     @Override
     public void setURI(final String paramUri) throws TTException {
+        checkState(!mDelegate.isClosed(), "Transaction is already closed.");
         checkState(mDelegate.getCurrentNode() instanceof INameNode,
             "setURI is not allowed if current node is not an INameNode implementation, but was %s", mDelegate
                 .getCurrentNode());
-        mDelegate.assertNotClosed();
+
         final long oldHash = mDelegate.getCurrentNode().hashCode();
 
-        final INameNode node =
-            (INameNode)getPtx().getNode(mDelegate.getCurrentNode().getNodeKey());
+        final INameNode node = (INameNode)getPtx().getNode(mDelegate.getCurrentNode().getNodeKey());
         node.setURIKey(insertName(paramUri));
         getPtx().setNode(node);
 
@@ -413,14 +412,14 @@ public class NodeWriteTrx implements INodeWriteTrx {
      */
     @Override
     public void setValue(final String pValue) throws TTException {
+        checkState(!mDelegate.isClosed(), "Transaction is already closed.");
         checkState(mDelegate.getCurrentNode() instanceof IValNode,
             "setValue is not allowed if current node is not an IValNode implementation, but was %s",
             mDelegate.getCurrentNode());
-        mDelegate.assertNotClosed();
+
         final long oldHash = mDelegate.getCurrentNode().hashCode();
 
-        final IValNode node =
-            (IValNode)getPtx().getNode(mDelegate.getCurrentNode().getNodeKey());
+        final IValNode node = (IValNode)getPtx().getNode(mDelegate.getCurrentNode().getNodeKey());
         node.setValue(TypedValue.getBytes(pValue));
         getPtx().setNode(node);
 
@@ -438,8 +437,8 @@ public class NodeWriteTrx implements INodeWriteTrx {
      */
     @Override
     public void revertTo(final long pRevision) throws TTException {
+        checkState(!mDelegate.isClosed(), "Transaction is already closed.");
         checkArgument(pRevision >= 0, "Parameter must be >= 0, but was %s", pRevision);
-        mDelegate.assertNotClosed();
         getPtx().close();
         // Reset internal transaction state to new uber page.
         mDelegate.setPageTransaction(mSession.beginPageWriteTransaction(pRevision));
@@ -452,7 +451,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      */
     @Override
     public void commit() throws TTException {
-        mDelegate.assertNotClosed();
+        checkState(!mDelegate.isClosed(), "Transaction is already closed.");
         // Commit uber page.
         getPtx().commit();
     }
@@ -462,9 +461,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      */
     @Override
     public void abort() throws TTException {
-
-        mDelegate.assertNotClosed();
-
+        checkState(!mDelegate.isClosed(), "Transaction is already closed.");
         long revisionToSet = 0;
         revisionToSet = mDelegate.mPageReadTrx.getRevision() - 1;
 
@@ -482,16 +479,6 @@ public class NodeWriteTrx implements INodeWriteTrx {
         if (!isClosed()) {
             mDelegate.close();
         }
-    }
-
-    /**
-     * Checking write access and intermediate commit.
-     * 
-     * @throws TTException
-     *             if anything weird happens
-     */
-    private void checkAccessAndCommit() throws TTException {
-        mDelegate.assertNotClosed();
     }
 
     /**
@@ -529,8 +516,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
 
         if (paramNewNode instanceof IStructNode) {
             final IStructNode strucNode = (IStructNode)paramNewNode;
-            final IStructNode parent =
-                (IStructNode)getPtx().getNode(paramNewNode.getParentKey());
+            final IStructNode parent = (IStructNode)getPtx().getNode(paramNewNode.getParentKey());
             parent.incrementChildCount();
             if (addAsFirstChild) {
                 parent.setFirstChildKey(paramNewNode.getNodeKey());
@@ -574,16 +560,14 @@ public class NodeWriteTrx implements INodeWriteTrx {
 
         // Adapt left sibling node if there is one.
         if (pOldNode.hasLeftSibling()) {
-            final IStructNode leftSibling =
-                (IStructNode)getPtx().getNode(pOldNode.getLeftSiblingKey());
+            final IStructNode leftSibling = (IStructNode)getPtx().getNode(pOldNode.getLeftSiblingKey());
             leftSibling.setRightSiblingKey(pOldNode.getRightSiblingKey());
             getPtx().setNode(leftSibling);
         }
 
         // Adapt right sibling node if there is one.
         if (pOldNode.hasRightSibling()) {
-            final IStructNode rightSibling =
-                (IStructNode)getPtx().getNode(pOldNode.getRightSiblingKey());
+            final IStructNode rightSibling = (IStructNode)getPtx().getNode(pOldNode.getRightSiblingKey());
             rightSibling.setLeftSiblingKey(pOldNode.getLeftSiblingKey());
             getPtx().setNode(rightSibling);
         }
@@ -718,8 +702,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
         IStructNode cursorToRoot;
         do {
             synchronized (mDelegate.getCurrentNode()) {
-                cursorToRoot =
-                    (IStructNode)getPtx().getNode(mDelegate.getCurrentNode().getNodeKey());
+                cursorToRoot = (IStructNode)getPtx().getNode(mDelegate.getCurrentNode().getNodeKey());
                 hashCodeForParent = mDelegate.getCurrentNode().hashCode() + hashCodeForParent * PRIME;
                 // Caring about attributes and namespaces if node is an element.
                 if (cursorToRoot.getKind() == IConstants.ELEMENT) {
@@ -971,14 +954,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("NodeWriteTrx [mSession=");
-        builder.append(mSession);
-        builder.append(", mHashKind=");
-        builder.append(mHashKind);
-        builder.append(", mDelegate=");
-        builder.append(mDelegate);
-        builder.append("]");
-        return builder.toString();
+        return toStringHelper(this).add("mSession", mSession).add("mHashKind", mHashKind).add("mDelegate",
+            mDelegate).toString();
     }
 }

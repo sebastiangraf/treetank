@@ -32,7 +32,7 @@ import org.treetank.api.INode;
 import org.treetank.api.IPageReadTrx;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.iscsi.node.ByteNode;
+import org.treetank.jscsi.node.ByteNode;
 
 
 /**
@@ -143,15 +143,6 @@ public class IscsiReadTrx implements IIscsiReadTrx {
   @Override
   public boolean isClosed() {
     return mPageReadTrx.isClosed();
-  }
-
-  /**
-   * Make sure that the session is not yet closed when calling this method.
-   */
-  protected final void assertNotClosed() {
-      if (mPageReadTrx.isClosed()) {
-          throw new IllegalStateException("Transaction is already closed.");
-      }
   }
 
   /**
