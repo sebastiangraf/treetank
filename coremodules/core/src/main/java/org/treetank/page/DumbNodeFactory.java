@@ -60,12 +60,9 @@ public class DumbNodeFactory implements INodeFactory {
         }
 
         /**
-         * Serializing to given dataput
-         * 
-         * @param pOutput
-         *            to serialize to
-         * @throws TTIOException
+         * {@inheritDoc}
          */
+        @Override
         public void serialize(final DataOutput pOutput) throws TTIOException {
             try {
                 pOutput.writeLong(mNodeKey);

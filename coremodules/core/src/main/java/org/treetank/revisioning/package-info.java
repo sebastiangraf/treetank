@@ -25,39 +25,16 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.page;
-
 /**
- * <h1>ConstructorProps</h1>
  * 
+ * <h1>Revisioning Algorithms for Treetank</h1>
  * <p>
- * Interface to hold all constants of the pagelayer.
+ * Versioning algorithms implemented by Treetank. All versioning-approaches must implement the
+ * <code>IRevisioning</code>-interface providing access to versions through different <code>NodePage</code>s
+ * based on either read-/ or read- and write-access.
  * </p>
  * 
  * @author Sebastian Graf, University of Konstanz
- * @author Marc Kramis, University of Konstanz
  */
-public interface IConstants {
+package org.treetank.revisioning;
 
-    // --- Page Kinds
-    // ----------------------------------------------------------
-    public final static int NODEPAGE = 1;
-    public final static int METAPAGE = 2;
-    public final static int UBERPAGE = 3;
-    public final static int INDIRCTPAGE = 4;
-    public final static int REVISIONROOTPAGE = 5;
-
-    /** ID for not existing nodes. */
-    public final static int NULL_NODE = -22;
-    public final static int DELETEDNODE = -44;
-    public final static int INTERFACENODE = -66;
-
-    /** Count of indirect references in indirect page. */
-    public static final int CONTENT_COUNT = 128;
-
-    /** Exponent of pages per level (root level = 0, leaf level = 5). */
-    public static final int[] INP_LEVEL_PAGE_COUNT_EXPONENT = {
-        4 * 7, 3 * 7, 2 * 7, 1 * 7, 0 * 7
-    };
-
-}

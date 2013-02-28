@@ -43,6 +43,9 @@ import org.treetank.page.interfaces.IReferencePage;
  * <p>
  * Indirect page holds a set of references to build a reference tree.
  * </p>
+ * 
+ * @author Sebastian Graf, University of Konstanz
+ * @author Marc Kramis, University of Konstanz
  */
 public final class IndirectPage implements IReferencePage {
 
