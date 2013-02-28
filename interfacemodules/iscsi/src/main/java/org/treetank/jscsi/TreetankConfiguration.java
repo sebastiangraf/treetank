@@ -22,7 +22,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.jscsi.target;
+package org.treetank.jscsi;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,12 +37,14 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
+import org.jscsi.target.Configuration;
+import org.jscsi.target.Target;
 import org.jscsi.target.settings.TextKeyword;
 import org.jscsi.target.storage.IStorageModule;
 import org.jscsi.target.storage.IStorageModule.STORAGEKIND;
-import org.jscsi.target.storage.TreetankStorageModule;
 import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.exception.TTException;
+import org.treetank.jscsi.storage.TreetankStorageModule;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

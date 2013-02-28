@@ -32,7 +32,7 @@ import org.treetank.api.INode;
 import org.treetank.api.IPageReadTrx;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.iscsi.node.ByteNode;
+import org.treetank.jscsi.node.ByteNode;
 
 
 /**

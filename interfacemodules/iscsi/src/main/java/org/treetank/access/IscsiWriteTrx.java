@@ -30,7 +30,7 @@ import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.iscsi.node.ByteNode;
+import org.treetank.jscsi.node.ByteNode;
 import org.treetank.page.NodePage;
 
 /**

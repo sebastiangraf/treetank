@@ -22,11 +22,12 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.jscsi.target;
+package org.treetank.jscsi;
 
 import java.io.File;
 import java.io.IOException;
 
+import org.jscsi.target.TargetServer;
 import org.treetank.access.conf.StorageConfiguration;
 
 import com.google.common.io.Files;
