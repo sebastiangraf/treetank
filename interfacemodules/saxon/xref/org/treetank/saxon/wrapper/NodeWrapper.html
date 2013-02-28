@@ -143,21 +143,21 @@
 <a class="jxr_linenumber" name="133" href="#133">133</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="134" href="#134">134</a> <em class="jxr_javadoccomment">     * A node in the XML parse tree. Wrap a Treetank node.</em>
 <a class="jxr_linenumber" name="135" href="#135">135</a> <em class="jxr_javadoccomment">     * </em>
-<a class="jxr_linenumber" name="136" href="#136">136</a> <em class="jxr_javadoccomment">     * @param database</em>
-<a class="jxr_linenumber" name="137" href="#137">137</a> <em class="jxr_javadoccomment">     *            Treetank database.</em>
-<a class="jxr_linenumber" name="138" href="#138">138</a> <em class="jxr_javadoccomment">     * @param nodekeyToStart</em>
+<a class="jxr_linenumber" name="136" href="#136">136</a> <em class="jxr_javadoccomment">     * @param pDocWrapper</em>
+<a class="jxr_linenumber" name="137" href="#137">137</a> <em class="jxr_javadoccomment">     *            Document wrapper</em>
+<a class="jxr_linenumber" name="138" href="#138">138</a> <em class="jxr_javadoccomment">     * @param pNodekeyToStart</em>
 <a class="jxr_linenumber" name="139" href="#139">139</a> <em class="jxr_javadoccomment">     *            NodeKey to move to.</em>
 <a class="jxr_linenumber" name="140" href="#140">140</a> <em class="jxr_javadoccomment">     * @throws TTException</em>
 <a class="jxr_linenumber" name="141" href="#141">141</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="142" href="#142">142</a>     <strong class="jxr_keyword">protected</strong> <a href="../../../../org/treetank/saxon/wrapper/NodeWrapper.html">NodeWrapper</a>(<strong class="jxr_keyword">final</strong> <a href="../../../../org/treetank/saxon/wrapper/DocumentWrapper.html">DocumentWrapper</a> paramDocWrapper, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> nodekeyToStart)
+<a class="jxr_linenumber" name="142" href="#142">142</a>     <strong class="jxr_keyword">protected</strong> <a href="../../../../org/treetank/saxon/wrapper/NodeWrapper.html">NodeWrapper</a>(<strong class="jxr_keyword">final</strong> <a href="../../../../org/treetank/saxon/wrapper/DocumentWrapper.html">DocumentWrapper</a> pDocWrapper, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> pNodekeyToStart)
 <a class="jxr_linenumber" name="143" href="#143">143</a>         <strong class="jxr_keyword">throws</strong> TTException {
 <a class="jxr_linenumber" name="144" href="#144">144</a> 
-<a class="jxr_linenumber" name="145" href="#145">145</a>         <strong class="jxr_keyword">this</strong>.mDocWrapper = paramDocWrapper;
+<a class="jxr_linenumber" name="145" href="#145">145</a>         <strong class="jxr_keyword">this</strong>.mDocWrapper = pDocWrapper;
 <a class="jxr_linenumber" name="146" href="#146">146</a> 
 <a class="jxr_linenumber" name="147" href="#147">147</a>         <strong class="jxr_keyword">final</strong> INodeReadTrx rtx =
 <a class="jxr_linenumber" name="148" href="#148">148</a>             <strong class="jxr_keyword">new</strong> NodeReadTrx(mDocWrapper.mSession.beginPageReadTransaction(mDocWrapper.mSession
 <a class="jxr_linenumber" name="149" href="#149">149</a>                 .getMostRecentVersion()));
-<a class="jxr_linenumber" name="150" href="#150">150</a>         rtx.moveTo(nodekeyToStart);
+<a class="jxr_linenumber" name="150" href="#150">150</a>         rtx.moveTo(pNodekeyToStart);
 <a class="jxr_linenumber" name="151" href="#151">151</a>         <strong class="jxr_keyword">this</strong>.nodeKind = rtx.getNode().getKind();
 <a class="jxr_linenumber" name="152" href="#152">152</a>         <strong class="jxr_keyword">this</strong>.mKey = rtx.getNode().getNodeKey();
 <a class="jxr_linenumber" name="153" href="#153">153</a>         <strong class="jxr_keyword">this</strong>.node = rtx.getNode();

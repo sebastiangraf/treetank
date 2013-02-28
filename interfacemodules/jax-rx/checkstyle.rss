@@ -6,10 +6,10 @@
     <link>http://disy.github.com/treetank/interfacemodules/jax-rx/</link>
     <description>Jax-RX interface implementation - Checkstyle report</description>
     <language>en-us</language>
-    <copyright>&#169;2012 Distributed Systems Group</copyright>
+    <copyright>&#169;2013 Distributed Systems Group</copyright>
     <item>
       <title>File: 14,
-             Errors: 489,
+             Errors: 485,
              Warnings: 0,
              Infos: 0
       </title>
@@ -52,7 +52,7 @@
                   0
                 </td>
                 <td>
-                  131
+                  130
                 </td>
               </tr>
                           <tr>
@@ -66,7 +66,7 @@
                   0
                 </td>
                 <td>
-                  134
+                  137
                 </td>
               </tr>
                           <tr>
@@ -94,7 +94,7 @@
                   0
                 </td>
                 <td>
-                  11
+                  12
                 </td>
               </tr>
                           <tr>
@@ -108,7 +108,7 @@
                   0
                 </td>
                 <td>
-                  45
+                  43
                 </td>
               </tr>
                           <tr>
@@ -206,7 +206,7 @@
                   0
                 </td>
                 <td>
-                  31
+                  26
                 </td>
               </tr>
                           <tr>

@@ -2,12 +2,12 @@ org.treetank
 org.treetank.access
 org.treetank.access.conf
 org.treetank.api
-org.treetank.cache
 org.treetank.io
 org.treetank.io.berkeley
 org.treetank.io.bytepipe
-org.treetank.io.file
+org.treetank.io.combined
 org.treetank.io.jclouds
+org.treetank.log
 org.treetank.page
+org.treetank.page.interfaces
 org.treetank.revisioning
-org.treetank.utils

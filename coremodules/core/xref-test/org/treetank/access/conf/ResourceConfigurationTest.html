@@ -23,33 +23,33 @@
 <a class="jxr_linenumber" name="13" href="#13">13</a>  <strong class="jxr_keyword">import</strong> org.testng.annotations.Guice;
 <a class="jxr_linenumber" name="14" href="#14">14</a>  <strong class="jxr_keyword">import</strong> org.testng.annotations.Test;
 <a class="jxr_linenumber" name="15" href="#15">15</a>  <strong class="jxr_keyword">import</strong> org.treetank.ModuleFactory;
-<a class="jxr_linenumber" name="16" href="#16">16</a>  <strong class="jxr_keyword">import</strong> org.treetank.TestHelper;
+<a class="jxr_linenumber" name="16" href="#16">16</a>  <strong class="jxr_keyword">import</strong> org.treetank.CoreTestHelper;
 <a class="jxr_linenumber" name="17" href="#17">17</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 <a class="jxr_linenumber" name="18" href="#18">18</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTException;
-<a class="jxr_linenumber" name="19" href="#19">19</a>  <strong class="jxr_keyword">import</strong> org.treetank.io.IConstants;
-<a class="jxr_linenumber" name="20" href="#20">20</a>  
-<a class="jxr_linenumber" name="21" href="#21">21</a>  <strong class="jxr_keyword">import</strong> com.google.inject.Inject;
-<a class="jxr_linenumber" name="22" href="#22">22</a>  
-<a class="jxr_linenumber" name="23" href="#23">23</a>  <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="24" href="#24">24</a>  <em class="jxr_javadoccomment"> * Test for {@link ResourceConfiguration}.</em>
-<a class="jxr_linenumber" name="25" href="#25">25</a>  <em class="jxr_javadoccomment"> * </em>
-<a class="jxr_linenumber" name="26" href="#26">26</a>  <em class="jxr_javadoccomment"> * @author Sebastian Graf, University of Konstanz</em>
-<a class="jxr_linenumber" name="27" href="#27">27</a>  <em class="jxr_javadoccomment"> * </em>
-<a class="jxr_linenumber" name="28" href="#28">28</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="29" href="#29">29</a>  @Guice(moduleFactory = ModuleFactory.<strong class="jxr_keyword">class</strong>)
-<a class="jxr_linenumber" name="30" href="#30">30</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/treetank/access/conf/ResourceConfigurationTest.html">ResourceConfigurationTest</a> {
-<a class="jxr_linenumber" name="31" href="#31">31</a>  
-<a class="jxr_linenumber" name="32" href="#32">32</a>      @Inject
-<a class="jxr_linenumber" name="33" href="#33">33</a>      <strong class="jxr_keyword">private</strong> IResourceConfigurationFactory mResourceConfig;
-<a class="jxr_linenumber" name="34" href="#34">34</a>  
-<a class="jxr_linenumber" name="35" href="#35">35</a>      @BeforeMethod
-<a class="jxr_linenumber" name="36" href="#36">36</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setUp() <strong class="jxr_keyword">throws</strong> TTException {
-<a class="jxr_linenumber" name="37" href="#37">37</a>          TestHelper.deleteEverything();
+<a class="jxr_linenumber" name="19" href="#19">19</a>  
+<a class="jxr_linenumber" name="20" href="#20">20</a>  <strong class="jxr_keyword">import</strong> com.google.inject.Inject;
+<a class="jxr_linenumber" name="21" href="#21">21</a>  
+<a class="jxr_linenumber" name="22" href="#22">22</a>  <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="23" href="#23">23</a>  <em class="jxr_javadoccomment"> * Test for {@link ResourceConfiguration}.</em>
+<a class="jxr_linenumber" name="24" href="#24">24</a>  <em class="jxr_javadoccomment"> * </em>
+<a class="jxr_linenumber" name="25" href="#25">25</a>  <em class="jxr_javadoccomment"> * @author Sebastian Graf, University of Konstanz</em>
+<a class="jxr_linenumber" name="26" href="#26">26</a>  <em class="jxr_javadoccomment"> * </em>
+<a class="jxr_linenumber" name="27" href="#27">27</a>  <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="28" href="#28">28</a>  @Guice(moduleFactory = ModuleFactory.<strong class="jxr_keyword">class</strong>)
+<a class="jxr_linenumber" name="29" href="#29">29</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/treetank/access/conf/ResourceConfigurationTest.html">ResourceConfigurationTest</a> {
+<a class="jxr_linenumber" name="30" href="#30">30</a>  
+<a class="jxr_linenumber" name="31" href="#31">31</a>      @Inject
+<a class="jxr_linenumber" name="32" href="#32">32</a>      <strong class="jxr_keyword">private</strong> IResourceConfigurationFactory mResourceConfig;
+<a class="jxr_linenumber" name="33" href="#33">33</a>  
+<a class="jxr_linenumber" name="34" href="#34">34</a>      @BeforeMethod
+<a class="jxr_linenumber" name="35" href="#35">35</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setUp() <strong class="jxr_keyword">throws</strong> TTException {
+<a class="jxr_linenumber" name="36" href="#36">36</a>          CoreTestHelper.deleteEverything();
+<a class="jxr_linenumber" name="37" href="#37">37</a>          CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile());
 <a class="jxr_linenumber" name="38" href="#38">38</a>      }
 <a class="jxr_linenumber" name="39" href="#39">39</a>  
 <a class="jxr_linenumber" name="40" href="#40">40</a>      @AfterMethod
 <a class="jxr_linenumber" name="41" href="#41">41</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> tearDown() <strong class="jxr_keyword">throws</strong> TTException {
-<a class="jxr_linenumber" name="42" href="#42">42</a>          TestHelper.deleteEverything();
+<a class="jxr_linenumber" name="42" href="#42">42</a>          CoreTestHelper.deleteEverything();
 <a class="jxr_linenumber" name="43" href="#43">43</a>      }
 <a class="jxr_linenumber" name="44" href="#44">44</a>  
 <a class="jxr_linenumber" name="45" href="#45">45</a>      <em class="jxr_javadoccomment">/**</em>
@@ -59,17 +59,19 @@
 <a class="jxr_linenumber" name="49" href="#49">49</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="50" href="#50">50</a>      @Test
 <a class="jxr_linenumber" name="51" href="#51">51</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testDeSerialize() <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="52" href="#52">52</a>          Properties props = StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(), TestHelper.RESOURCENAME);
-<a class="jxr_linenumber" name="53" href="#53">53</a>          TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
-<a class="jxr_linenumber" name="54" href="#54">54</a>          ResourceConfiguration resConf = mResourceConfig.create(props, 10);
-<a class="jxr_linenumber" name="55" href="#55">55</a>          TestHelper.createResource(resConf);
-<a class="jxr_linenumber" name="56" href="#56">56</a>          ResourceConfiguration serializedConf =
-<a class="jxr_linenumber" name="57" href="#57">57</a>              ResourceConfiguration.deserialize(<strong class="jxr_keyword">new</strong> File(props.getProperty(IConstants.DBFILE)), props
-<a class="jxr_linenumber" name="58" href="#58">58</a>                  .getProperty(IConstants.RESOURCE));
-<a class="jxr_linenumber" name="59" href="#59">59</a>          assertEquals(resConf.toString(), serializedConf.toString());
-<a class="jxr_linenumber" name="60" href="#60">60</a>  
-<a class="jxr_linenumber" name="61" href="#61">61</a>      }
-<a class="jxr_linenumber" name="62" href="#62">62</a>  }
+<a class="jxr_linenumber" name="52" href="#52">52</a>          Properties props =
+<a class="jxr_linenumber" name="53" href="#53">53</a>              StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
+<a class="jxr_linenumber" name="54" href="#54">54</a>                  .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
+<a class="jxr_linenumber" name="55" href="#55">55</a>          CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile());
+<a class="jxr_linenumber" name="56" href="#56">56</a>          ResourceConfiguration resConf = mResourceConfig.create(props);
+<a class="jxr_linenumber" name="57" href="#57">57</a>          CoreTestHelper.createResource(resConf);
+<a class="jxr_linenumber" name="58" href="#58">58</a>          ResourceConfiguration serializedConf =
+<a class="jxr_linenumber" name="59" href="#59">59</a>              ResourceConfiguration.deserialize(<strong class="jxr_keyword">new</strong> File(props.getProperty(ConstructorProps.STORAGEPATH)),
+<a class="jxr_linenumber" name="60" href="#60">60</a>                  props.getProperty(ConstructorProps.RESOURCE));
+<a class="jxr_linenumber" name="61" href="#61">61</a>          assertEquals(resConf.toString(), serializedConf.toString());
+<a class="jxr_linenumber" name="62" href="#62">62</a>  
+<a class="jxr_linenumber" name="63" href="#63">63</a>      }
+<a class="jxr_linenumber" name="64" href="#64">64</a>  }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

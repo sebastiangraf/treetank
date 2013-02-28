@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <pmd-cpd>
-<duplication lines="97" tokens="129">
-<file line="185" path="/Users/sebi/Dropbox/github/treetank/coremodules/node/src/main/java/org/treetank/node/delegates/StructNodeDelegate.java"/>
-<file line="74" path="/Users/sebi/Dropbox/github/treetank/coremodules/node/src/main/java/org/treetank/node/delegates/ValNodeDelegate.java"/>
+<duplication lines="87" tokens="114">
+<file line="188" path="/Users/sebi/Documents/workspace/treetank/coremodules/node/src/main/java/org/treetank/node/delegates/StructNodeDelegate.java"/>
+<file line="76" path="/Users/sebi/Documents/workspace/treetank/coremodules/node/src/main/java/org/treetank/node/delegates/ValNodeDelegate.java"/>
 <codefragment>
 <![CDATA[
     }
@@ -15,16 +15,6 @@
      */
     public long getNodeKey() {
         return mDelegate.getNodeKey();
-    }
-
-    /**
-     * Delegate method for setNodeKey.
-     * 
-     * @param pNodeKey
-     * @see org.treetank.node.delegates.NodeDelegate#setNodeKey(long)
-     */
-    public void setNodeKey(long pNodeKey) {
-        mDelegate.setNodeKey(pNodeKey);
     }
 
     /**
@@ -105,90 +95,138 @@
 ]]>
 </codefragment>
 </duplication>
-<duplication lines="80" tokens="105">
-<file line="102" path="/Users/sebi/Dropbox/github/treetank/coremodules/node/src/main/java/org/treetank/node/NamespaceNode.java"/>
-<file line="102" path="/Users/sebi/Dropbox/github/treetank/coremodules/node/src/main/java/org/treetank/node/TextNode.java"/>
+<duplication lines="64" tokens="113">
+<file line="139" path="/Users/sebi/Documents/workspace/treetank/coremodules/node/src/main/java/org/treetank/node/DocumentRootNode.java"/>
+<file line="269" path="/Users/sebi/Documents/workspace/treetank/coremodules/node/src/main/java/org/treetank/node/ElementNode.java"/>
+<codefragment>
+<![CDATA[
+        return mDel.hasParent();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean hasFirstChild() {
+        return mStrucDel.hasFirstChild();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean hasLeftSibling() {
+        return mStrucDel.hasLeftSibling();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean hasRightSibling() {
+        return mStrucDel.hasRightSibling();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long getChildCount() {
+        return mStrucDel.getChildCount();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long getFirstChildKey() {
+        return mStrucDel.getFirstChildKey();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long getLeftSiblingKey() {
+        return mStrucDel.getLeftSiblingKey();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long getRightSiblingKey() {
+        return mStrucDel.getRightSiblingKey();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setRightSiblingKey(final long pKey) {
+]]>
+</codefragment>
+</duplication>
+<duplication lines="56" tokens="103">
+<file line="107" path="/Users/sebi/Documents/workspace/treetank/coremodules/node/src/main/java/org/treetank/node/NamespaceNode.java"/>
+<file line="106" path="/Users/sebi/Documents/workspace/treetank/coremodules/node/src/main/java/org/treetank/node/TextNode.java"/>
 <codefragment>
 <![CDATA[
         mNameDel.setURIKey(pUriKey);
     }
 
     /**
-     * Delegate method for setHash.
-     * 
-     * @param pHash
-     * @see org.treetank.node.delegates.NodeDelegate#setHash(long)
+     * {@inheritDoc}
      */
+    @Override
     public void setHash(final long pHash) {
         mDel.setHash(pHash);
     }
 
     /**
-     * Delegate method for getHash.
-     * 
-     * @return
-     * @see org.treetank.node.delegates.NodeDelegate#getHash()
+     * {@inheritDoc}
      */
+    @Override
     public long getHash() {
         return mDel.getHash();
     }
 
     /**
-     * Delegate method for setNodeKey.
-     * 
-     * @param pNodeKey
-     * @see org.treetank.node.delegates.NodeDelegate#setNodeKey(long)
+     * {@inheritDoc}
      */
-    public void setNodeKey(final long pNodeKey) {
-        mDel.setNodeKey(pNodeKey);
-    }
-
-    /**
-     * Delegate method for getNodeKey.
-     * 
-     * @return
-     * @see org.treetank.node.delegates.NodeDelegate#getNodeKey()
-     */
+    @Override
     public long getNodeKey() {
         return mDel.getNodeKey();
     }
 
     /**
-     * Delegate method for getParentKey.
-     * 
-     * @return
-     * @see org.treetank.node.delegates.NodeDelegate#getParentKey()
+     * {@inheritDoc}
      */
+    @Override
     public long getParentKey() {
         return mDel.getParentKey();
     }
 
     /**
-     * Delegate method for hasParent.
-     * 
-     * @return
-     * @see org.treetank.node.delegates.NodeDelegate#hasParent()
+     * {@inheritDoc}
      */
+    @Override
     public boolean hasParent() {
         return mDel.hasParent();
     }
 
     /**
-     * Delegate method for getTypeKey.
-     * 
-     * @return
-     * @see org.treetank.node.delegates.NodeDelegate#getTypeKey()
+     * {@inheritDoc}
      */
+    @Override
     public int getTypeKey() {
         return mDel.getTypeKey();
     }
 
     /**
-     * Delegate method for setParentKey.
-     * 
-     * @param pKey
-     * @see org.treetank.node.delegates.NodeDelegate#setParentKey(long)
+     * {@inheritDoc}
      */
+    @Override
     public void setParentKey(final long pKey) {
 ]]>
 </codefragment>

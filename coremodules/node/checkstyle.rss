@@ -6,10 +6,10 @@
     <link>http://disy.github.com/treetank/coremodules/node/</link>
     <description>Node representation - Checkstyle report</description>
     <language>en-us</language>
-    <copyright>&#169;2012 Distributed Systems Group</copyright>
+    <copyright>&#169;2013 Distributed Systems Group</copyright>
     <item>
       <title>File: 57,
-             Errors: 1418,
+             Errors: 1168,
              Warnings: 0,
              Infos: 0
       </title>
@@ -71,6 +71,20 @@
               </tr>
                           <tr>
                 <td>
+                  <a href="http://disy.github.com/treetank/coremodules/node//checkstyle.html#org.treetank.node.NodeMetaPageFactory.java">org/treetank/node/NodeMetaPageFactory.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  23
+                </td>
+              </tr>
+                          <tr>
+                <td>
                   <a href="http://disy.github.com/treetank/coremodules/node//checkstyle.html#org.treetank.axis.ItemList.java">org/treetank/axis/ItemList.java</a>
                 </td>
                 <td>
@@ -80,7 +94,7 @@
                   0
                 </td>
                 <td>
-                  11
+                  14
                 </td>
               </tr>
                           <tr>
@@ -136,7 +150,7 @@
                   0
                 </td>
                 <td>
-                  33
+                  8
                 </td>
               </tr>
                           <tr>
@@ -169,20 +183,6 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://disy.github.com/treetank/coremodules/node//checkstyle.html#org.treetank.utils.TreeTankCommandoLineExplorer.java">org/treetank/utils/TreeTankCommandoLineExplorer.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  84
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://disy.github.com/treetank/coremodules/node//checkstyle.html#org.treetank.axis.filter.PIFilter.java">org/treetank/axis/filter/PIFilter.java</a>
                 </td>
                 <td>
@@ -193,20 +193,6 @@
                 </td>
                 <td>
                   7
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://disy.github.com/treetank/coremodules/node//checkstyle.html#org.treetank.axis.filter.AttributeFilter.java">org/treetank/axis/filter/AttributeFilter.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  5
                 </td>
               </tr>
                           <tr>
@@ -225,6 +211,20 @@
               </tr>
                           <tr>
                 <td>
+                  <a href="http://disy.github.com/treetank/coremodules/node//checkstyle.html#org.treetank.axis.filter.AttributeFilter.java">org/treetank/axis/filter/AttributeFilter.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  5
+                </td>
+              </tr>
+                          <tr>
+                <td>
                   <a href="http://disy.github.com/treetank/coremodules/node//checkstyle.html#org.treetank.node.ElementNode.java">org/treetank/node/ElementNode.java</a>
                 </td>
                 <td>
@@ -234,7 +234,7 @@
                   0
                 </td>
                 <td>
-                  80
+                  25
                 </td>
               </tr>
                           <tr>
@@ -248,7 +248,7 @@
                   0
                 </td>
                 <td>
-                  22
+                  26
                 </td>
               </tr>
                           <tr>
@@ -276,7 +276,7 @@
                   0
                 </td>
                 <td>
-                  41
+                  42
                 </td>
               </tr>
                           <tr>
@@ -332,7 +332,7 @@
                   0
                 </td>
                 <td>
-                  47
+                  48
                 </td>
               </tr>
                           <tr>
@@ -360,7 +360,7 @@
                   0
                 </td>
                 <td>
-                  35
+                  36
                 </td>
               </tr>
                           <tr>
@@ -402,7 +402,7 @@
                   0
                 </td>
                 <td>
-                  32
+                  36
                 </td>
               </tr>
                           <tr>
@@ -472,7 +472,7 @@
                   0
                 </td>
                 <td>
-                  54
+                  8
                 </td>
               </tr>
                           <tr>
@@ -500,7 +500,7 @@
                   0
                 </td>
                 <td>
-                  19
+                  20
                 </td>
               </tr>
                           <tr>
@@ -514,7 +514,7 @@
                   0
                 </td>
                 <td>
-                  18
+                  19
                 </td>
               </tr>
                           <tr>
@@ -542,7 +542,7 @@
                   0
                 </td>
                 <td>
-                  10
+                  11
                 </td>
               </tr>
                           <tr>
@@ -654,7 +654,7 @@
                   0
                 </td>
                 <td>
-                  217
+                  204
                 </td>
               </tr>
                           <tr>
@@ -696,7 +696,7 @@
                   0
                 </td>
                 <td>
-                  57
+                  36
                 </td>
               </tr>
                           <tr>
@@ -743,7 +743,7 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://disy.github.com/treetank/coremodules/node//checkstyle.html#org.treetank.access.StandardNodeSettings.java">org/treetank/access/StandardNodeSettings.java</a>
+                  <a href="http://disy.github.com/treetank/coremodules/node//checkstyle.html#org.treetank.utils.NamePageHash.java">org/treetank/utils/NamePageHash.java</a>
                 </td>
                 <td>
                   0
@@ -752,7 +752,7 @@
                   0
                 </td>
                 <td>
-                  4
+                  11
                 </td>
               </tr>
                           <tr>
@@ -767,20 +767,6 @@
                 </td>
                 <td>
                   4
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://disy.github.com/treetank/coremodules/node//checkstyle.html#org.treetank.node.interfaces.IStructNode.java">org/treetank/node/interfaces/IStructNode.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  14
                 </td>
               </tr>
                           <tr>
@@ -813,6 +799,20 @@
               </tr>
                           <tr>
                 <td>
+                  <a href="http://disy.github.com/treetank/coremodules/node//checkstyle.html#org.treetank.node.interfaces.IStructNode.java">org/treetank/node/interfaces/IStructNode.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  14
+                </td>
+              </tr>
+                          <tr>
+                <td>
                   <a href="http://disy.github.com/treetank/coremodules/node//checkstyle.html#org.treetank.node.DocumentRootNode.java">org/treetank/node/DocumentRootNode.java</a>
                 </td>
                 <td>
@@ -822,7 +822,7 @@
                   0
                 </td>
                 <td>
-                  62
+                  9
                 </td>
               </tr>
                       </tbody>

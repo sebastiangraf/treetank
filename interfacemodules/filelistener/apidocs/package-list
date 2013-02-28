@@ -1,0 +1,10 @@
+org.eclipse.wb.swt
+org.treetank.access
+org.treetank.api
+org.treetank.filelistener.exceptions
+org.treetank.filelistener.file
+org.treetank.filelistener.file.node
+org.treetank.filelistener.ui.api
+org.treetank.filelistener.ui.application
+org.treetank.filelistener.ui.composites
+org.treetank.filelistener.ui.dialogs

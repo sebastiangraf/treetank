@@ -64,20 +64,20 @@
 <a class="jxr_linenumber" name="54" href="#54">54</a>  <strong class="jxr_keyword">import</strong> org.testng.annotations.BeforeMethod;
 <a class="jxr_linenumber" name="55" href="#55">55</a>  <strong class="jxr_keyword">import</strong> org.testng.annotations.Guice;
 <a class="jxr_linenumber" name="56" href="#56">56</a>  <strong class="jxr_keyword">import</strong> org.testng.annotations.Test;
-<a class="jxr_linenumber" name="57" href="#57">57</a>  <strong class="jxr_keyword">import</strong> org.treetank.Holder;
-<a class="jxr_linenumber" name="58" href="#58">58</a>  <strong class="jxr_keyword">import</strong> org.treetank.NodeModuleFactory;
-<a class="jxr_linenumber" name="59" href="#59">59</a>  <strong class="jxr_keyword">import</strong> org.treetank.TestHelper;
-<a class="jxr_linenumber" name="60" href="#60">60</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.Storage;
-<a class="jxr_linenumber" name="61" href="#61">61</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.NodeWriteTrx;
-<a class="jxr_linenumber" name="62" href="#62">62</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.NodeWriteTrx.HashKind;
-<a class="jxr_linenumber" name="63" href="#63">63</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.StorageConfiguration;
-<a class="jxr_linenumber" name="64" href="#64">64</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.ResourceConfiguration;
-<a class="jxr_linenumber" name="65" href="#65">65</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
-<a class="jxr_linenumber" name="66" href="#66">66</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.SessionConfiguration;
-<a class="jxr_linenumber" name="67" href="#67">67</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.StandardSettings;
-<a class="jxr_linenumber" name="68" href="#68">68</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.IStorage;
-<a class="jxr_linenumber" name="69" href="#69">69</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.INodeWriteTrx;
-<a class="jxr_linenumber" name="70" href="#70">70</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.ISession;
+<a class="jxr_linenumber" name="57" href="#57">57</a>  <strong class="jxr_keyword">import</strong> org.treetank.CoreTestHelper;
+<a class="jxr_linenumber" name="58" href="#58">58</a>  <strong class="jxr_keyword">import</strong> org.treetank.ModuleFactory;
+<a class="jxr_linenumber" name="59" href="#59">59</a>  <strong class="jxr_keyword">import</strong> org.treetank.NodeTestHelper;
+<a class="jxr_linenumber" name="60" href="#60">60</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.NodeWriteTrx;
+<a class="jxr_linenumber" name="61" href="#61">61</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.NodeWriteTrx.HashKind;
+<a class="jxr_linenumber" name="62" href="#62">62</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.Storage;
+<a class="jxr_linenumber" name="63" href="#63">63</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.ResourceConfiguration;
+<a class="jxr_linenumber" name="64" href="#64">64</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
+<a class="jxr_linenumber" name="65" href="#65">65</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.SessionConfiguration;
+<a class="jxr_linenumber" name="66" href="#66">66</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.StandardSettings;
+<a class="jxr_linenumber" name="67" href="#67">67</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.StorageConfiguration;
+<a class="jxr_linenumber" name="68" href="#68">68</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.INodeWriteTrx;
+<a class="jxr_linenumber" name="69" href="#69">69</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.ISession;
+<a class="jxr_linenumber" name="70" href="#70">70</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.IStorage;
 <a class="jxr_linenumber" name="71" href="#71">71</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTException;
 <a class="jxr_linenumber" name="72" href="#72">72</a>  <strong class="jxr_keyword">import</strong> org.treetank.saxon.evaluator.XSLTEvaluator;
 <a class="jxr_linenumber" name="73" href="#73">73</a>  <strong class="jxr_keyword">import</strong> org.treetank.service.xml.shredder.EShredderInsert;
@@ -91,7 +91,7 @@
 <a class="jxr_linenumber" name="81" href="#81">81</a>  <em class="jxr_javadoccomment"> * @author Sebastian Graf, University of Konstanz</em>
 <a class="jxr_linenumber" name="82" href="#82">82</a>  <em class="jxr_javadoccomment"> * </em>
 <a class="jxr_linenumber" name="83" href="#83">83</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="84" href="#84">84</a>  @Guice(moduleFactory = NodeModuleFactory.<strong class="jxr_keyword">class</strong>)
+<a class="jxr_linenumber" name="84" href="#84">84</a>  @Guice(moduleFactory = ModuleFactory.<strong class="jxr_keyword">class</strong>)
 <a class="jxr_linenumber" name="85" href="#85">85</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> TestNodeWrapperS9ApiXSLT {
 <a class="jxr_linenumber" name="86" href="#86">86</a>  
 <a class="jxr_linenumber" name="87" href="#87">87</a>      <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> Stylesheet file. */</em>
@@ -102,126 +102,128 @@
 <a class="jxr_linenumber" name="92" href="#92">92</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> File BOOKS = <strong class="jxr_keyword">new</strong> File(<span class="jxr_string">"src"</span> + File.separator + <span class="jxr_string">"test"</span> + File.separator + <span class="jxr_string">"resources"</span>
 <a class="jxr_linenumber" name="93" href="#93">93</a>          + File.separator + <span class="jxr_string">"data"</span> + File.separator + <span class="jxr_string">"books.xml"</span>);
 <a class="jxr_linenumber" name="94" href="#94">94</a>  
-<a class="jxr_linenumber" name="95" href="#95">95</a>      <strong class="jxr_keyword">private</strong> Holder holder;
+<a class="jxr_linenumber" name="95" href="#95">95</a>      <strong class="jxr_keyword">private</strong> CoreTestHelper.Holder holder;
 <a class="jxr_linenumber" name="96" href="#96">96</a>  
 <a class="jxr_linenumber" name="97" href="#97">97</a>      @Inject
 <a class="jxr_linenumber" name="98" href="#98">98</a>      <strong class="jxr_keyword">private</strong> IResourceConfigurationFactory mResourceConfig;
 <a class="jxr_linenumber" name="99" href="#99">99</a>  
 <a class="jxr_linenumber" name="100" href="#100">100</a>     @BeforeMethod
 <a class="jxr_linenumber" name="101" href="#101">101</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setUp() <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="102" href="#102">102</a>         TestHelper.deleteEverything();
-<a class="jxr_linenumber" name="103" href="#103">103</a>         <strong class="jxr_keyword">final</strong> StorageConfiguration dbConfig = <strong class="jxr_keyword">new</strong> StorageConfiguration(TestHelper.PATHS.PATH1.getFile());
-<a class="jxr_linenumber" name="104" href="#104">104</a>         Storage.createStorage(dbConfig);
-<a class="jxr_linenumber" name="105" href="#105">105</a>         <strong class="jxr_keyword">final</strong> IStorage databaseBooks = Storage.openStorage(TestHelper.PATHS.PATH1.getFile());
-<a class="jxr_linenumber" name="106" href="#106">106</a>         Properties props = StandardSettings.getStandardProperties(TestHelper.PATHS.PATH1.getFile().getAbsolutePath(), TestHelper.RESOURCENAME);
-<a class="jxr_linenumber" name="107" href="#107">107</a>         ResourceConfiguration resConfig = mResourceConfig.create(props, 1);
-<a class="jxr_linenumber" name="108" href="#108">108</a>         databaseBooks.createResource(resConfig);
-<a class="jxr_linenumber" name="109" href="#109">109</a>         <strong class="jxr_keyword">final</strong> ISession session =
-<a class="jxr_linenumber" name="110" href="#110">110</a>             databaseBooks.getSession(<strong class="jxr_keyword">new</strong> SessionConfiguration(TestHelper.RESOURCENAME, StandardSettings.KEY));
-<a class="jxr_linenumber" name="111" href="#111">111</a>         <strong class="jxr_keyword">final</strong> INodeWriteTrx wtx =
-<a class="jxr_linenumber" name="112" href="#112">112</a>             <strong class="jxr_keyword">new</strong> NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
-<a class="jxr_linenumber" name="113" href="#113">113</a>         SaxonHelper.createDocumentRootNode(wtx);
-<a class="jxr_linenumber" name="114" href="#114">114</a>         <strong class="jxr_keyword">final</strong> XMLEventReader reader = XMLShredder.createFileReader(BOOKS);
-<a class="jxr_linenumber" name="115" href="#115">115</a>         <strong class="jxr_keyword">final</strong> XMLShredder shredder = <strong class="jxr_keyword">new</strong> XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);
-<a class="jxr_linenumber" name="116" href="#116">116</a>         shredder.call();
-<a class="jxr_linenumber" name="117" href="#117">117</a>         wtx.close();
-<a class="jxr_linenumber" name="118" href="#118">118</a>         session.close();
-<a class="jxr_linenumber" name="119" href="#119">119</a>         databaseBooks.close();
-<a class="jxr_linenumber" name="120" href="#120">120</a>         holder = Holder.generateSession(resConfig);
-<a class="jxr_linenumber" name="121" href="#121">121</a> 
-<a class="jxr_linenumber" name="122" href="#122">122</a>         saxonTransform(BOOKS, STYLESHEET);
-<a class="jxr_linenumber" name="123" href="#123">123</a> 
-<a class="jxr_linenumber" name="124" href="#124">124</a>         XMLUnit.setIgnoreWhitespace(<strong class="jxr_keyword">true</strong>);
-<a class="jxr_linenumber" name="125" href="#125">125</a>     }
-<a class="jxr_linenumber" name="126" href="#126">126</a> 
-<a class="jxr_linenumber" name="127" href="#127">127</a>     @AfterMethod
-<a class="jxr_linenumber" name="128" href="#128">128</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> tearDown() <strong class="jxr_keyword">throws</strong> TTException {
-<a class="jxr_linenumber" name="129" href="#129">129</a>         TestHelper.closeEverything();
-<a class="jxr_linenumber" name="130" href="#130">130</a>         TestHelper.deleteEverything();
-<a class="jxr_linenumber" name="131" href="#131">131</a>     }
-<a class="jxr_linenumber" name="132" href="#132">132</a> 
-<a class="jxr_linenumber" name="133" href="#133">133</a>     @Test
-<a class="jxr_linenumber" name="134" href="#134">134</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testWithoutSerializer() <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="135" href="#135">135</a>         <strong class="jxr_keyword">final</strong> OutputStream out =
-<a class="jxr_linenumber" name="136" href="#136">136</a>             <strong class="jxr_keyword">new</strong> XSLTEvaluator(holder.getSession(), STYLESHEET, <strong class="jxr_keyword">new</strong> ByteArrayOutputStream()).call();
-<a class="jxr_linenumber" name="137" href="#137">137</a> 
-<a class="jxr_linenumber" name="138" href="#138">138</a>         <strong class="jxr_keyword">final</strong> StringBuilder sBuilder = readFile();
-<a class="jxr_linenumber" name="139" href="#139">139</a> 
-<a class="jxr_linenumber" name="140" href="#140">140</a>         <strong class="jxr_keyword">final</strong> Diff diff = <strong class="jxr_keyword">new</strong> Diff(sBuilder.toString(), out.toString());
-<a class="jxr_linenumber" name="141" href="#141">141</a>         diff.overrideElementQualifier(<strong class="jxr_keyword">new</strong> RecursiveElementNameAndTextQualifier());
-<a class="jxr_linenumber" name="142" href="#142">142</a> 
-<a class="jxr_linenumber" name="143" href="#143">143</a>         AssertJUnit.assertTrue(diff.toString(), diff.similar());
-<a class="jxr_linenumber" name="144" href="#144">144</a>     }
-<a class="jxr_linenumber" name="145" href="#145">145</a> 
-<a class="jxr_linenumber" name="146" href="#146">146</a>     @Test
-<a class="jxr_linenumber" name="147" href="#147">147</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testWithSerializer() <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="148" href="#148">148</a>         <strong class="jxr_keyword">final</strong> Serializer serializer = <strong class="jxr_keyword">new</strong> Serializer();
-<a class="jxr_linenumber" name="149" href="#149">149</a>         serializer.setOutputProperty(Serializer.Property.METHOD, <span class="jxr_string">"xml"</span>);
-<a class="jxr_linenumber" name="150" href="#150">150</a>         serializer.setOutputProperty(Serializer.Property.INDENT, <span class="jxr_string">"yes"</span>);
-<a class="jxr_linenumber" name="151" href="#151">151</a> 
-<a class="jxr_linenumber" name="152" href="#152">152</a>         <strong class="jxr_keyword">final</strong> OutputStream out =
-<a class="jxr_linenumber" name="153" href="#153">153</a>             <strong class="jxr_keyword">new</strong> XSLTEvaluator(holder.getSession(), STYLESHEET, <strong class="jxr_keyword">new</strong> ByteArrayOutputStream(), serializer)
-<a class="jxr_linenumber" name="154" href="#154">154</a>                 .call();
+<a class="jxr_linenumber" name="102" href="#102">102</a>         CoreTestHelper.deleteEverything();
+<a class="jxr_linenumber" name="103" href="#103">103</a>         holder = CoreTestHelper.Holder.generateStorage();
+<a class="jxr_linenumber" name="104" href="#104">104</a>         <strong class="jxr_keyword">final</strong> StorageConfiguration dbConfig = <strong class="jxr_keyword">new</strong> StorageConfiguration(CoreTestHelper.PATHS.PATH1.getFile());
+<a class="jxr_linenumber" name="105" href="#105">105</a>         Storage.createStorage(dbConfig);
+<a class="jxr_linenumber" name="106" href="#106">106</a>         <strong class="jxr_keyword">final</strong> IStorage databaseBooks = Storage.openStorage(CoreTestHelper.PATHS.PATH1.getFile());
+<a class="jxr_linenumber" name="107" href="#107">107</a>         Properties props =
+<a class="jxr_linenumber" name="108" href="#108">108</a>             StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
+<a class="jxr_linenumber" name="109" href="#109">109</a>                 .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
+<a class="jxr_linenumber" name="110" href="#110">110</a>         ResourceConfiguration resConfig = mResourceConfig.create(props);
+<a class="jxr_linenumber" name="111" href="#111">111</a>         databaseBooks.createResource(resConfig);
+<a class="jxr_linenumber" name="112" href="#112">112</a>         <strong class="jxr_keyword">final</strong> ISession session =
+<a class="jxr_linenumber" name="113" href="#113">113</a>             databaseBooks.getSession(<strong class="jxr_keyword">new</strong> SessionConfiguration(CoreTestHelper.RESOURCENAME,
+<a class="jxr_linenumber" name="114" href="#114">114</a>                 StandardSettings.KEY));
+<a class="jxr_linenumber" name="115" href="#115">115</a>         <strong class="jxr_keyword">final</strong> INodeWriteTrx wtx =
+<a class="jxr_linenumber" name="116" href="#116">116</a>             <strong class="jxr_keyword">new</strong> NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
+<a class="jxr_linenumber" name="117" href="#117">117</a>         NodeTestHelper.createDocumentRootNode(wtx);
+<a class="jxr_linenumber" name="118" href="#118">118</a>         <strong class="jxr_keyword">final</strong> XMLEventReader reader = XMLShredder.createFileReader(BOOKS);
+<a class="jxr_linenumber" name="119" href="#119">119</a>         <strong class="jxr_keyword">final</strong> XMLShredder shredder = <strong class="jxr_keyword">new</strong> XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);
+<a class="jxr_linenumber" name="120" href="#120">120</a>         shredder.call();
+<a class="jxr_linenumber" name="121" href="#121">121</a>         wtx.close();
+<a class="jxr_linenumber" name="122" href="#122">122</a>         session.close();
+<a class="jxr_linenumber" name="123" href="#123">123</a>         databaseBooks.close();
+<a class="jxr_linenumber" name="124" href="#124">124</a>         CoreTestHelper.Holder.generateSession(holder, resConfig);
+<a class="jxr_linenumber" name="125" href="#125">125</a> 
+<a class="jxr_linenumber" name="126" href="#126">126</a>         saxonTransform(BOOKS, STYLESHEET);
+<a class="jxr_linenumber" name="127" href="#127">127</a> 
+<a class="jxr_linenumber" name="128" href="#128">128</a>         XMLUnit.setIgnoreWhitespace(<strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="129" href="#129">129</a>     }
+<a class="jxr_linenumber" name="130" href="#130">130</a> 
+<a class="jxr_linenumber" name="131" href="#131">131</a>     @AfterMethod
+<a class="jxr_linenumber" name="132" href="#132">132</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> tearDown() <strong class="jxr_keyword">throws</strong> TTException {
+<a class="jxr_linenumber" name="133" href="#133">133</a>         CoreTestHelper.closeEverything();
+<a class="jxr_linenumber" name="134" href="#134">134</a>         CoreTestHelper.deleteEverything();
+<a class="jxr_linenumber" name="135" href="#135">135</a>     }
+<a class="jxr_linenumber" name="136" href="#136">136</a> 
+<a class="jxr_linenumber" name="137" href="#137">137</a>     @Test
+<a class="jxr_linenumber" name="138" href="#138">138</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testWithoutSerializer() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="139" href="#139">139</a>         <strong class="jxr_keyword">final</strong> OutputStream out =
+<a class="jxr_linenumber" name="140" href="#140">140</a>             <strong class="jxr_keyword">new</strong> XSLTEvaluator(holder.getSession(), STYLESHEET, <strong class="jxr_keyword">new</strong> ByteArrayOutputStream()).call();
+<a class="jxr_linenumber" name="141" href="#141">141</a> 
+<a class="jxr_linenumber" name="142" href="#142">142</a>         <strong class="jxr_keyword">final</strong> StringBuilder sBuilder = readFile();
+<a class="jxr_linenumber" name="143" href="#143">143</a> 
+<a class="jxr_linenumber" name="144" href="#144">144</a>         <strong class="jxr_keyword">final</strong> Diff diff = <strong class="jxr_keyword">new</strong> Diff(sBuilder.toString(), out.toString());
+<a class="jxr_linenumber" name="145" href="#145">145</a>         diff.overrideElementQualifier(<strong class="jxr_keyword">new</strong> RecursiveElementNameAndTextQualifier());
+<a class="jxr_linenumber" name="146" href="#146">146</a> 
+<a class="jxr_linenumber" name="147" href="#147">147</a>         AssertJUnit.assertTrue(diff.toString(), diff.similar());
+<a class="jxr_linenumber" name="148" href="#148">148</a>     }
+<a class="jxr_linenumber" name="149" href="#149">149</a> 
+<a class="jxr_linenumber" name="150" href="#150">150</a>     @Test
+<a class="jxr_linenumber" name="151" href="#151">151</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testWithSerializer() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="152" href="#152">152</a>         <strong class="jxr_keyword">final</strong> Serializer serializer = <strong class="jxr_keyword">new</strong> Serializer();
+<a class="jxr_linenumber" name="153" href="#153">153</a>         serializer.setOutputProperty(Serializer.Property.METHOD, <span class="jxr_string">"xml"</span>);
+<a class="jxr_linenumber" name="154" href="#154">154</a>         serializer.setOutputProperty(Serializer.Property.INDENT, <span class="jxr_string">"yes"</span>);
 <a class="jxr_linenumber" name="155" href="#155">155</a> 
-<a class="jxr_linenumber" name="156" href="#156">156</a>         <strong class="jxr_keyword">final</strong> StringBuilder sBuilder = readFile();
-<a class="jxr_linenumber" name="157" href="#157">157</a> 
-<a class="jxr_linenumber" name="158" href="#158">158</a>         <strong class="jxr_keyword">final</strong> Diff diff = <strong class="jxr_keyword">new</strong> Diff(sBuilder.toString(), out.toString());
-<a class="jxr_linenumber" name="159" href="#159">159</a>         diff.overrideElementQualifier(<strong class="jxr_keyword">new</strong> RecursiveElementNameAndTextQualifier());
-<a class="jxr_linenumber" name="160" href="#160">160</a> 
-<a class="jxr_linenumber" name="161" href="#161">161</a>         AssertJUnit.assertTrue(diff.toString(), diff.similar());
-<a class="jxr_linenumber" name="162" href="#162">162</a>     }
-<a class="jxr_linenumber" name="163" href="#163">163</a> 
-<a class="jxr_linenumber" name="164" href="#164">164</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="165" href="#165">165</a> <em class="jxr_javadoccomment">     * Transform source document with the given stylesheet.</em>
-<a class="jxr_linenumber" name="166" href="#166">166</a> <em class="jxr_javadoccomment">     * </em>
-<a class="jxr_linenumber" name="167" href="#167">167</a> <em class="jxr_javadoccomment">     * @param xml</em>
-<a class="jxr_linenumber" name="168" href="#168">168</a> <em class="jxr_javadoccomment">     *            Source xml file.</em>
-<a class="jxr_linenumber" name="169" href="#169">169</a> <em class="jxr_javadoccomment">     * @param stylesheet</em>
-<a class="jxr_linenumber" name="170" href="#170">170</a> <em class="jxr_javadoccomment">     *            Stylesheet to transform source xml file.</em>
-<a class="jxr_linenumber" name="171" href="#171">171</a> <em class="jxr_javadoccomment">     * @throws SaxonApiException</em>
-<a class="jxr_linenumber" name="172" href="#172">172</a> <em class="jxr_javadoccomment">     *             Exception from Saxon in case anything goes wrong.</em>
-<a class="jxr_linenumber" name="173" href="#173">173</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="174" href="#174">174</a>     @Test(enabled = false)
-<a class="jxr_linenumber" name="175" href="#175">175</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> saxonTransform(<strong class="jxr_keyword">final</strong> File xml, <strong class="jxr_keyword">final</strong> File stylesheet) <strong class="jxr_keyword">throws</strong> SaxonApiException {
-<a class="jxr_linenumber" name="176" href="#176">176</a>         <strong class="jxr_keyword">final</strong> Processor proc = <strong class="jxr_keyword">new</strong> Processor(false);
-<a class="jxr_linenumber" name="177" href="#177">177</a>         <strong class="jxr_keyword">final</strong> XsltCompiler comp = proc.newXsltCompiler();
-<a class="jxr_linenumber" name="178" href="#178">178</a>         <strong class="jxr_keyword">final</strong> XsltExecutable exp = comp.compile(<strong class="jxr_keyword">new</strong> StreamSource(stylesheet));
-<a class="jxr_linenumber" name="179" href="#179">179</a>         <strong class="jxr_keyword">final</strong> XdmNode source = proc.newDocumentBuilder().build(<strong class="jxr_keyword">new</strong> StreamSource(xml));
-<a class="jxr_linenumber" name="180" href="#180">180</a>         <strong class="jxr_keyword">final</strong> Serializer out = <strong class="jxr_keyword">new</strong> Serializer();
-<a class="jxr_linenumber" name="181" href="#181">181</a>         out.setOutputProperty(Serializer.Property.METHOD, <span class="jxr_string">"xml"</span>);
-<a class="jxr_linenumber" name="182" href="#182">182</a>         out.setOutputProperty(Serializer.Property.INDENT, <span class="jxr_string">"yes"</span>);
-<a class="jxr_linenumber" name="183" href="#183">183</a>         out.setOutputFile(<strong class="jxr_keyword">new</strong> File(TestHelper.PATHS.PATH1.getFile(), <span class="jxr_string">"books1.html"</span>));
-<a class="jxr_linenumber" name="184" href="#184">184</a>         <strong class="jxr_keyword">final</strong> XsltTransformer trans = exp.load();
-<a class="jxr_linenumber" name="185" href="#185">185</a>         trans.setInitialContextNode(source);
-<a class="jxr_linenumber" name="186" href="#186">186</a>         trans.setDestination(out);
-<a class="jxr_linenumber" name="187" href="#187">187</a>         trans.transform();
-<a class="jxr_linenumber" name="188" href="#188">188</a>     }
-<a class="jxr_linenumber" name="189" href="#189">189</a> 
-<a class="jxr_linenumber" name="190" href="#190">190</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="191" href="#191">191</a> <em class="jxr_javadoccomment">     * Read file, which has been generated by "pure" Saxon.</em>
-<a class="jxr_linenumber" name="192" href="#192">192</a> <em class="jxr_javadoccomment">     * </em>
-<a class="jxr_linenumber" name="193" href="#193">193</a> <em class="jxr_javadoccomment">     * @return StringBuilder instance, which has the string representation of</em>
-<a class="jxr_linenumber" name="194" href="#194">194</a> <em class="jxr_javadoccomment">     *         the document.</em>
-<a class="jxr_linenumber" name="195" href="#195">195</a> <em class="jxr_javadoccomment">     * @throws IOException</em>
-<a class="jxr_linenumber" name="196" href="#196">196</a> <em class="jxr_javadoccomment">     *             throws an IOException if any I/O operation fails.</em>
-<a class="jxr_linenumber" name="197" href="#197">197</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="198" href="#198">198</a>     @Test(enabled = false)
-<a class="jxr_linenumber" name="199" href="#199">199</a>     <strong class="jxr_keyword">public</strong> StringBuilder readFile() <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="200" href="#200">200</a>         <strong class="jxr_keyword">final</strong> BufferedReader in =
-<a class="jxr_linenumber" name="201" href="#201">201</a>             <strong class="jxr_keyword">new</strong> BufferedReader(<strong class="jxr_keyword">new</strong> FileReader(<strong class="jxr_keyword">new</strong> File(TestHelper.PATHS.PATH1.getFile(), <span class="jxr_string">"books1.html"</span>)));
-<a class="jxr_linenumber" name="202" href="#202">202</a>         <strong class="jxr_keyword">final</strong> StringBuilder sBuilder = <strong class="jxr_keyword">new</strong> StringBuilder();
-<a class="jxr_linenumber" name="203" href="#203">203</a>         <strong class="jxr_keyword">for</strong> (String line = in.readLine(); line != <strong class="jxr_keyword">null</strong>; line = in.readLine()) {
-<a class="jxr_linenumber" name="204" href="#204">204</a>             sBuilder.append(line + <span class="jxr_string">"\n"</span>);
-<a class="jxr_linenumber" name="205" href="#205">205</a>         }
-<a class="jxr_linenumber" name="206" href="#206">206</a> 
-<a class="jxr_linenumber" name="207" href="#207">207</a>         <em class="jxr_comment">// Remove last newline.</em>
-<a class="jxr_linenumber" name="208" href="#208">208</a>         sBuilder.replace(sBuilder.length() - 1, sBuilder.length(), <span class="jxr_string">""</span>);
-<a class="jxr_linenumber" name="209" href="#209">209</a>         in.close();
-<a class="jxr_linenumber" name="210" href="#210">210</a> 
-<a class="jxr_linenumber" name="211" href="#211">211</a>         <strong class="jxr_keyword">return</strong> sBuilder;
-<a class="jxr_linenumber" name="212" href="#212">212</a>     }
-<a class="jxr_linenumber" name="213" href="#213">213</a> 
-<a class="jxr_linenumber" name="214" href="#214">214</a> }
+<a class="jxr_linenumber" name="156" href="#156">156</a>         <strong class="jxr_keyword">final</strong> OutputStream out =
+<a class="jxr_linenumber" name="157" href="#157">157</a>             <strong class="jxr_keyword">new</strong> XSLTEvaluator(holder.getSession(), STYLESHEET, <strong class="jxr_keyword">new</strong> ByteArrayOutputStream(), serializer)
+<a class="jxr_linenumber" name="158" href="#158">158</a>                 .call();
+<a class="jxr_linenumber" name="159" href="#159">159</a> 
+<a class="jxr_linenumber" name="160" href="#160">160</a>         <strong class="jxr_keyword">final</strong> StringBuilder sBuilder = readFile();
+<a class="jxr_linenumber" name="161" href="#161">161</a> 
+<a class="jxr_linenumber" name="162" href="#162">162</a>         <strong class="jxr_keyword">final</strong> Diff diff = <strong class="jxr_keyword">new</strong> Diff(sBuilder.toString(), out.toString());
+<a class="jxr_linenumber" name="163" href="#163">163</a>         diff.overrideElementQualifier(<strong class="jxr_keyword">new</strong> RecursiveElementNameAndTextQualifier());
+<a class="jxr_linenumber" name="164" href="#164">164</a> 
+<a class="jxr_linenumber" name="165" href="#165">165</a>         AssertJUnit.assertTrue(diff.toString(), diff.similar());
+<a class="jxr_linenumber" name="166" href="#166">166</a>     }
+<a class="jxr_linenumber" name="167" href="#167">167</a> 
+<a class="jxr_linenumber" name="168" href="#168">168</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="169" href="#169">169</a> <em class="jxr_javadoccomment">     * Transform source document with the given stylesheet.</em>
+<a class="jxr_linenumber" name="170" href="#170">170</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="171" href="#171">171</a> <em class="jxr_javadoccomment">     * @param xml</em>
+<a class="jxr_linenumber" name="172" href="#172">172</a> <em class="jxr_javadoccomment">     *            Source xml file.</em>
+<a class="jxr_linenumber" name="173" href="#173">173</a> <em class="jxr_javadoccomment">     * @param stylesheet</em>
+<a class="jxr_linenumber" name="174" href="#174">174</a> <em class="jxr_javadoccomment">     *            Stylesheet to transform source xml file.</em>
+<a class="jxr_linenumber" name="175" href="#175">175</a> <em class="jxr_javadoccomment">     * @throws SaxonApiException</em>
+<a class="jxr_linenumber" name="176" href="#176">176</a> <em class="jxr_javadoccomment">     *             Exception from Saxon in case anything goes wrong.</em>
+<a class="jxr_linenumber" name="177" href="#177">177</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="178" href="#178">178</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> saxonTransform(<strong class="jxr_keyword">final</strong> File xml, <strong class="jxr_keyword">final</strong> File stylesheet) <strong class="jxr_keyword">throws</strong> SaxonApiException {
+<a class="jxr_linenumber" name="179" href="#179">179</a>         <strong class="jxr_keyword">final</strong> Processor proc = <strong class="jxr_keyword">new</strong> Processor(false);
+<a class="jxr_linenumber" name="180" href="#180">180</a>         <strong class="jxr_keyword">final</strong> XsltCompiler comp = proc.newXsltCompiler();
+<a class="jxr_linenumber" name="181" href="#181">181</a>         <strong class="jxr_keyword">final</strong> XsltExecutable exp = comp.compile(<strong class="jxr_keyword">new</strong> StreamSource(stylesheet));
+<a class="jxr_linenumber" name="182" href="#182">182</a>         <strong class="jxr_keyword">final</strong> XdmNode source = proc.newDocumentBuilder().build(<strong class="jxr_keyword">new</strong> StreamSource(xml));
+<a class="jxr_linenumber" name="183" href="#183">183</a>         <strong class="jxr_keyword">final</strong> Serializer out = <strong class="jxr_keyword">new</strong> Serializer();
+<a class="jxr_linenumber" name="184" href="#184">184</a>         out.setOutputProperty(Serializer.Property.METHOD, <span class="jxr_string">"xml"</span>);
+<a class="jxr_linenumber" name="185" href="#185">185</a>         out.setOutputProperty(Serializer.Property.INDENT, <span class="jxr_string">"yes"</span>);
+<a class="jxr_linenumber" name="186" href="#186">186</a>         out.setOutputFile(<strong class="jxr_keyword">new</strong> File(CoreTestHelper.PATHS.PATH1.getFile(), <span class="jxr_string">"books1.html"</span>));
+<a class="jxr_linenumber" name="187" href="#187">187</a>         <strong class="jxr_keyword">final</strong> XsltTransformer trans = exp.load();
+<a class="jxr_linenumber" name="188" href="#188">188</a>         trans.setInitialContextNode(source);
+<a class="jxr_linenumber" name="189" href="#189">189</a>         trans.setDestination(out);
+<a class="jxr_linenumber" name="190" href="#190">190</a>         trans.transform();
+<a class="jxr_linenumber" name="191" href="#191">191</a>     }
+<a class="jxr_linenumber" name="192" href="#192">192</a> 
+<a class="jxr_linenumber" name="193" href="#193">193</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="194" href="#194">194</a> <em class="jxr_javadoccomment">     * Read file, which has been generated by "pure" Saxon.</em>
+<a class="jxr_linenumber" name="195" href="#195">195</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="196" href="#196">196</a> <em class="jxr_javadoccomment">     * @return StringBuilder instance, which has the string representation of</em>
+<a class="jxr_linenumber" name="197" href="#197">197</a> <em class="jxr_javadoccomment">     *         the document.</em>
+<a class="jxr_linenumber" name="198" href="#198">198</a> <em class="jxr_javadoccomment">     * @throws IOException</em>
+<a class="jxr_linenumber" name="199" href="#199">199</a> <em class="jxr_javadoccomment">     *             throws an IOException if any I/O operation fails.</em>
+<a class="jxr_linenumber" name="200" href="#200">200</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="201" href="#201">201</a>     <strong class="jxr_keyword">private</strong> StringBuilder readFile() <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="202" href="#202">202</a>         <strong class="jxr_keyword">final</strong> BufferedReader in =
+<a class="jxr_linenumber" name="203" href="#203">203</a>             <strong class="jxr_keyword">new</strong> BufferedReader(<strong class="jxr_keyword">new</strong> FileReader(<strong class="jxr_keyword">new</strong> File(CoreTestHelper.PATHS.PATH1.getFile(), <span class="jxr_string">"books1.html"</span>)));
+<a class="jxr_linenumber" name="204" href="#204">204</a>         <strong class="jxr_keyword">final</strong> StringBuilder sBuilder = <strong class="jxr_keyword">new</strong> StringBuilder();
+<a class="jxr_linenumber" name="205" href="#205">205</a>         <strong class="jxr_keyword">for</strong> (String line = in.readLine(); line != <strong class="jxr_keyword">null</strong>; line = in.readLine()) {
+<a class="jxr_linenumber" name="206" href="#206">206</a>             sBuilder.append(line + <span class="jxr_string">"\n"</span>);
+<a class="jxr_linenumber" name="207" href="#207">207</a>         }
+<a class="jxr_linenumber" name="208" href="#208">208</a> 
+<a class="jxr_linenumber" name="209" href="#209">209</a>         <em class="jxr_comment">// Remove last newline.</em>
+<a class="jxr_linenumber" name="210" href="#210">210</a>         sBuilder.replace(sBuilder.length() - 1, sBuilder.length(), <span class="jxr_string">""</span>);
+<a class="jxr_linenumber" name="211" href="#211">211</a>         in.close();
+<a class="jxr_linenumber" name="212" href="#212">212</a> 
+<a class="jxr_linenumber" name="213" href="#213">213</a>         <strong class="jxr_keyword">return</strong> sBuilder;
+<a class="jxr_linenumber" name="214" href="#214">214</a>     }
+<a class="jxr_linenumber" name="215" href="#215">215</a> 
+<a class="jxr_linenumber" name="216" href="#216">216</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

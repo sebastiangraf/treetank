@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd version="4.3" timestamp="2013-02-28T15:12:33.092">
+<file name="/Users/sebi/Documents/workspace/treetank/interfacemodules/filelistener/src/main/java/org/treetank/access/FilelistenerReadTrx.java">
+<violation beginline="102" endline="102" begincolumn="29" endcolumn="34" rule="UnusedLocalVariable" ruleset="Unused Code Rules" package="org.treetank.access" class="FilelistenerReadTrx" method="getFullFile" variable="output" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedLocalVariable" priority="3">
+Avoid unused local variables such as 'output'.
+</violation>
+</file>
+<file name="/Users/sebi/Documents/workspace/treetank/interfacemodules/filelistener/src/main/java/org/treetank/access/FilelistenerWriteTrx.java">
+<violation beginline="90" endline="90" begincolumn="9" endcolumn="15" rule="UnnecessaryReturn" ruleset="Basic Rules" package="org.treetank.access" class="FilelistenerWriteTrx" method="addEmptyFile" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#UnnecessaryReturn" priority="3">
+Avoid unnecessary return statements
+</violation>
+</file>
+<file name="/Users/sebi/Documents/workspace/treetank/interfacemodules/filelistener/src/main/java/org/treetank/api/IFilelistenerWriteTrx.java">
+<violation beginline="7" endline="7" begincolumn="1" endcolumn="44" rule="UnusedImports" ruleset="Import Statement Rules" package="org.treetank.api" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#UnusedImports" priority="4">
+Avoid unused imports such as 'org.treetank.exception.TTIOException'
+</violation>
+</file>
+<file name="/Users/sebi/Documents/workspace/treetank/interfacemodules/filelistener/src/main/java/org/treetank/filelistener/file/Filelistener.java">
+<violation beginline="282" endline="282" begincolumn="59" endcolumn="59" rule="EmptyWhileStmt" ruleset="Basic Rules" package="org.treetank.filelistener.file" class="Filelistener" method="process" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyWhileStmt" priority="3">
+Avoid empty while statements
+</violation>
+</file>
+<file name="/Users/sebi/Documents/workspace/treetank/interfacemodules/filelistener/src/main/java/org/treetank/filelistener/file/node/FileNode.java">
+<violation beginline="8" endline="8" begincolumn="1" endcolumn="77" rule="UnusedImports" ruleset="Import Statement Rules" package="org.treetank.filelistener.file.node" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#UnusedImports" priority="4">
+Avoid unused imports such as 'org.treetank.filelistener.exceptions.WrongFilenodeDataLengthException'
+</violation>
+</file>
+<file name="/Users/sebi/Documents/workspace/treetank/interfacemodules/filelistener/src/main/java/org/treetank/filelistener/ui/application/FilelistenerApplication.java">
+<violation beginline="16" endline="16" begincolumn="1" endcolumn="58" rule="UnusedImports" ruleset="Import Statement Rules" package="org.treetank.filelistener.ui.application" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#UnusedImports" priority="4">
+Avoid unused imports such as 'org.treetank.filelistener.ui.dialogs.RestoreDialog'
+</violation>
+</file>
+<file name="/Users/sebi/Documents/workspace/treetank/interfacemodules/filelistener/src/main/java/org/treetank/filelistener/ui/dialogs/RestoreDialog.java">
+<violation beginline="163" endline="165" begincolumn="26" endcolumn="9" rule="EmptyIfStmt" ruleset="Basic Rules" package="org.treetank.filelistener.ui.dialogs" class="RestoreDialog" method="do_mBtnSubmit_widgetSelected" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyIfStmt" priority="3">
+Avoid empty if statements
+</violation>
+<violation beginline="188" endline="190" begincolumn="16" endcolumn="9" rule="EmptyIfStmt" ruleset="Basic Rules" package="org.treetank.filelistener.ui.dialogs" class="RestoreDialog" method="do_mBtnSubmit_widgetSelected" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyIfStmt" priority="3">
+Avoid empty if statements
+</violation>
+</file>
+</pmd>

@@ -1,125 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <pmd-cpd>
-<duplication lines="63" tokens="119">
-<file line="79" path="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/access/conf/ResourceConfiguration.java"/>
-<file line="62" path="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/access/conf/StorageConfiguration.java"/>
+<duplication lines="33" tokens="150">
+<file line="18" path="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/revisioning/Incremental.java"/>
+<file line="18" path="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/revisioning/SlidingSnapshot.java"/>
 <codefragment>
 <![CDATA[
-        ConfigBinary(new File("ressetting.obj"), false);
+public class Incremental implements IRevisioning {
 
-        /** Location of the file. */
-        private final File mFile;
-
-        /** Is the location a folder or no? */
-        private final boolean mIsFolder;
-
-        /**
-         * Constructor.
-         * 
-         * @param pFile
-         *            to be set
-         * @param pIsFolder
-         *            to be set.
-         */
-        private Paths(final File pFile, final boolean pIsFolder) {
-            this.mFile = pFile;
-            this.mIsFolder = pIsFolder;
-        }
-
-        /**
-         * Getting the file for the kind.
-         * 
-         * @return the file to the kind
-         */
-        public File getFile() {
-            return mFile;
-        }
-
-        /**
-         * Check if file is denoted as folder or not.
-         * 
-         * @return boolean if file is folder
-         */
-        public boolean isFolder() {
-            return mIsFolder;
-        }
-
-        /**
-         * Checking a structure in a folder to be equal with the data in this
-         * enum.
-         * 
-         * @param pFile
-         *            to be checked
-         * @return -1 if less folders are there, 0 if the structure is equal to
-         *         the one expected, 1 if the structure has more folders
-         */
-        public static int compareStructure(final File pFile) {
-            int existing = 0;
-            for (final Paths paths : values()) {
-                final File currentFile = new File(pFile, paths.getFile().getName());
-                if (currentFile.exists()) {
-                    existing++;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public NodePage combinePages(final NodePage[] pages) {
+        checkArgument(pages.length > 0, "At least one Nodepage must be provided");
+        // create entire page..
+        final NodePage returnVal = new NodePage(pages[0].getPageKey(), pages[0].getLastPagePointer());
+        // ...iterate through the nodes and check if it is stored..
+        for (int i = 0; i < pages[0].getNodes().length; i++) {
+            boolean pageSkip = false;
+            // ... form the newest version to the oldest one..
+            for (int j = 0; !pageSkip && j < pages.length; j++) {
+                // if the node is not set yet but existing in the current version..
+                if (pages[j].getNode(i) != null) {
+                    // ...break out the loop the next time and..
+                    pageSkip = true;
+                    // ...set it
+                    returnVal.setNode(i, pages[j].getNode(i));
                 }
-            }
-            return existing - values().length;
-        }
-    }
 
-    // MEMBERS FOR FIXED FIELDS
-    /** Type of Storage (File, Berkeley). */
-    public final IBackend mStorage;
-]]>
-</codefragment>
-</duplication>
-<duplication lines="44" tokens="106">
-<file line="96" path="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/revisioning/Differential.java"/>
-<file line="79" path="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/revisioning/Incremental.java"/>
-<codefragment>
-<![CDATA[
-                        returnVal[1].setNode(j, fullDump.getNode(j));
-                    }
-                }
             }
         }
-
-        final NodePageContainer cont = new NodePageContainer(returnVal[0], returnVal[1]);
-        return cont;
+        return returnVal;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public int getRevisionsToRestore() {
-        return mRevToRestore;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + mRevToRestore;
-        return result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(Object obj) {
-        return obj.hashCode() == this.hashCode();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Differential [mRevToRestore=");
+    public LogValue combinePagesForModification(int pRevisionsToRestore, long pNewPageKey, NodePage[] pages,
 ]]>
 </codefragment>
 </duplication>

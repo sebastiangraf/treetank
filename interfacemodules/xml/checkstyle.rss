@@ -6,10 +6,10 @@
     <link>http://disy.github.com/treetank/interfacemodules/xml/</link>
     <description>Bundle to store XML - Checkstyle report</description>
     <language>en-us</language>
-    <copyright>&#169;2012 Distributed Systems Group</copyright>
+    <copyright>&#169;2013 Distributed Systems Group</copyright>
     <item>
-      <title>File: 108,
-             Errors: 2560,
+      <title>File: 107,
+             Errors: 2592,
              Warnings: 0,
              Infos: 0
       </title>
@@ -38,7 +38,7 @@
                   0
                 </td>
                 <td>
-                  69
+                  65
                 </td>
               </tr>
                           <tr>
@@ -80,7 +80,7 @@
                   0
                 </td>
                 <td>
-                  138
+                  136
                 </td>
               </tr>
                           <tr>
@@ -164,7 +164,7 @@
                   0
                 </td>
                 <td>
-                  9
+                  14
                 </td>
               </tr>
                           <tr>
@@ -337,20 +337,6 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://disy.github.com/treetank/interfacemodules/xml//checkstyle.html#org.treetank.service.xml.xpath.axis.IntersectAxis.java">org/treetank/service/xml/xpath/axis/IntersectAxis.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  8
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://disy.github.com/treetank/interfacemodules/xml//checkstyle.html#org.treetank.service.xml.xpath.axis.SequenceAxis.java">org/treetank/service/xml/xpath/axis/SequenceAxis.java</a>
                 </td>
                 <td>
@@ -361,6 +347,20 @@
                 </td>
                 <td>
                   12
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://disy.github.com/treetank/interfacemodules/xml//checkstyle.html#org.treetank.service.xml.xpath.axis.IntersectAxis.java">org/treetank/service/xml/xpath/axis/IntersectAxis.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  8
                 </td>
               </tr>
                           <tr>
@@ -444,7 +444,7 @@
                   0
                 </td>
                 <td>
-                  7
+                  6
                 </td>
               </tr>
                           <tr>
@@ -458,7 +458,7 @@
                   0
                 </td>
                 <td>
-                  13
+                  20
                 </td>
               </tr>
                           <tr>
@@ -514,7 +514,7 @@
                   0
                 </td>
                 <td>
-                  27
+                  35
                 </td>
               </tr>
                           <tr>
@@ -626,7 +626,7 @@
                   0
                 </td>
                 <td>
-                  48
+                  54
                 </td>
               </tr>
                           <tr>
@@ -673,20 +673,6 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://disy.github.com/treetank/interfacemodules/xml//checkstyle.html#org.treetank.service.xml.StandardXMLSettings.java">org/treetank/service/xml/StandardXMLSettings.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  11
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://disy.github.com/treetank/interfacemodules/xml//checkstyle.html#org.treetank.service.xml.xpath.expr.AndExpr.java">org/treetank/service/xml/xpath/expr/AndExpr.java</a>
                 </td>
                 <td>
@@ -724,7 +710,7 @@
                   0
                 </td>
                 <td>
-                  19
+                  20
                 </td>
               </tr>
                           <tr>
@@ -962,7 +948,7 @@
                   0
                 </td>
                 <td>
-                  7
+                  8
                 </td>
               </tr>
                           <tr>
@@ -1004,7 +990,7 @@
                   0
                 </td>
                 <td>
-                  80
+                  88
                 </td>
               </tr>
                           <tr>
@@ -1074,7 +1060,7 @@
                   0
                 </td>
                 <td>
-                  30
+                  31
                 </td>
               </tr>
                           <tr>
@@ -1088,7 +1074,7 @@
                   0
                 </td>
                 <td>
-                  21
+                  24
                 </td>
               </tr>
                           <tr>
@@ -1130,7 +1116,7 @@
                   0
                 </td>
                 <td>
-                  63
+                  65
                 </td>
               </tr>
                           <tr>
@@ -1172,7 +1158,7 @@
                   0
                 </td>
                 <td>
-                  28
+                  29
                 </td>
               </tr>
                           <tr>
@@ -1214,7 +1200,7 @@
                   0
                 </td>
                 <td>
-                  74
+                  79
                 </td>
               </tr>
                           <tr>
@@ -1312,7 +1298,7 @@
                   0
                 </td>
                 <td>
-                  13
+                  11
                 </td>
               </tr>
                           <tr>
@@ -1396,7 +1382,7 @@
                   0
                 </td>
                 <td>
-                  34
+                  38
                 </td>
               </tr>
                           <tr>

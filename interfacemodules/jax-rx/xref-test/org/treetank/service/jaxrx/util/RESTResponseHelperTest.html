@@ -59,11 +59,11 @@
 <a class="jxr_linenumber" name="49" href="#49">49</a>  <strong class="jxr_keyword">import</strong> org.testng.annotations.BeforeMethod;
 <a class="jxr_linenumber" name="50" href="#50">50</a>  <strong class="jxr_keyword">import</strong> org.testng.annotations.Guice;
 <a class="jxr_linenumber" name="51" href="#51">51</a>  <strong class="jxr_keyword">import</strong> org.testng.annotations.Test;
-<a class="jxr_linenumber" name="52" href="#52">52</a>  <strong class="jxr_keyword">import</strong> org.treetank.NodeModuleFactory;
-<a class="jxr_linenumber" name="53" href="#53">53</a>  <strong class="jxr_keyword">import</strong> org.treetank.TestHelper;
+<a class="jxr_linenumber" name="52" href="#52">52</a>  <strong class="jxr_keyword">import</strong> org.treetank.CoreTestHelper;
+<a class="jxr_linenumber" name="53" href="#53">53</a>  <strong class="jxr_keyword">import</strong> org.treetank.ModuleFactory;
 <a class="jxr_linenumber" name="54" href="#54">54</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTException;
 <a class="jxr_linenumber" name="55" href="#55">55</a>  <strong class="jxr_keyword">import</strong> org.treetank.io.IBackend.IBackendFactory;
-<a class="jxr_linenumber" name="56" href="#56">56</a>  <strong class="jxr_keyword">import</strong> org.treetank.revisioning.IRevisioning.IRevisioningFactory;
+<a class="jxr_linenumber" name="56" href="#56">56</a>  <strong class="jxr_keyword">import</strong> org.treetank.revisioning.IRevisioning;
 <a class="jxr_linenumber" name="57" href="#57">57</a>  <strong class="jxr_keyword">import</strong> org.treetank.service.jaxrx.implementation.DatabaseRepresentation;
 <a class="jxr_linenumber" name="58" href="#58">58</a>  <strong class="jxr_keyword">import</strong> org.treetank.service.jaxrx.implementation.NodeIdRepresentationTest;
 <a class="jxr_linenumber" name="59" href="#59">59</a>  <strong class="jxr_keyword">import</strong> org.w3c.dom.Document;
@@ -79,7 +79,7 @@
 <a class="jxr_linenumber" name="69" href="#69">69</a>  <em class="jxr_javadoccomment"> * </em>
 <a class="jxr_linenumber" name="70" href="#70">70</a>  <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="71" href="#71">71</a>  
-<a class="jxr_linenumber" name="72" href="#72">72</a>  @Guice(moduleFactory = NodeModuleFactory.<strong class="jxr_keyword">class</strong>)
+<a class="jxr_linenumber" name="72" href="#72">72</a>  @Guice(moduleFactory = ModuleFactory.<strong class="jxr_keyword">class</strong>)
 <a class="jxr_linenumber" name="73" href="#73">73</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../org/treetank/service/jaxrx/util/RESTResponseHelperTest.html">RESTResponseHelperTest</a> {
 <a class="jxr_linenumber" name="74" href="#74">74</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="75" href="#75">75</a>  <em class="jxr_javadoccomment">     * name constant.</em>
@@ -111,91 +111,92 @@
 <a class="jxr_linenumber" name="101" href="#101">101</a>     <strong class="jxr_keyword">public</strong> IBackendFactory mStorageFac;
 <a class="jxr_linenumber" name="102" href="#102">102</a> 
 <a class="jxr_linenumber" name="103" href="#103">103</a>     @Inject
-<a class="jxr_linenumber" name="104" href="#104">104</a>     <strong class="jxr_keyword">public</strong> IRevisioningFactory mRevisioningFac;
+<a class="jxr_linenumber" name="104" href="#104">104</a>     <strong class="jxr_keyword">public</strong> IRevisioning mRevisioning;
 <a class="jxr_linenumber" name="105" href="#105">105</a> 
 <a class="jxr_linenumber" name="106" href="#106">106</a>     @BeforeMethod
 <a class="jxr_linenumber" name="107" href="#107">107</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> before() <strong class="jxr_keyword">throws</strong> TTException {
-<a class="jxr_linenumber" name="108" href="#108">108</a>         TestHelper.deleteEverything();
-<a class="jxr_linenumber" name="109" href="#109">109</a>         TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile());
+<a class="jxr_linenumber" name="108" href="#108">108</a>         CoreTestHelper.deleteEverything();
+<a class="jxr_linenumber" name="109" href="#109">109</a>         CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile());
 <a class="jxr_linenumber" name="110" href="#110">110</a>     }
 <a class="jxr_linenumber" name="111" href="#111">111</a> 
 <a class="jxr_linenumber" name="112" href="#112">112</a>     @AfterMethod
 <a class="jxr_linenumber" name="113" href="#113">113</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> after() <strong class="jxr_keyword">throws</strong> TTException {
-<a class="jxr_linenumber" name="114" href="#114">114</a>         TestHelper.deleteEverything();
+<a class="jxr_linenumber" name="114" href="#114">114</a>         CoreTestHelper.deleteEverything();
 <a class="jxr_linenumber" name="115" href="#115">115</a>     }
 <a class="jxr_linenumber" name="116" href="#116">116</a> 
 <a class="jxr_linenumber" name="117" href="#117">117</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="118" href="#118">118</a> <em class="jxr_javadoccomment">     * Test method for</em>
-<a class="jxr_linenumber" name="119" href="#119">119</a> <em class="jxr_javadoccomment">     * {@link org.treetank.service.jaxrx.util.RESTResponseHelper#buildResponseOfDomLR(org.treetank.api.IStorage, IBackendFactory, IRevisioningFactory)}.</em>
-<a class="jxr_linenumber" name="120" href="#120">120</a> <em class="jxr_javadoccomment">     * </em>
-<a class="jxr_linenumber" name="121" href="#121">121</a> <em class="jxr_javadoccomment">     * @throws IOException</em>
-<a class="jxr_linenumber" name="122" href="#122">122</a> <em class="jxr_javadoccomment">     * @throws WebApplicationException</em>
-<a class="jxr_linenumber" name="123" href="#123">123</a> <em class="jxr_javadoccomment">     * @throws SAXException</em>
-<a class="jxr_linenumber" name="124" href="#124">124</a> <em class="jxr_javadoccomment">     * @throws ParserConfigurationException</em>
-<a class="jxr_linenumber" name="125" href="#125">125</a> <em class="jxr_javadoccomment">     * @throws TTException</em>
-<a class="jxr_linenumber" name="126" href="#126">126</a> <em class="jxr_javadoccomment">     * @throws InterruptedException</em>
-<a class="jxr_linenumber" name="127" href="#127">127</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="128" href="#128">128</a>     @Test
-<a class="jxr_linenumber" name="129" href="#129">129</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> testBuildResponseOfDomLR() <strong class="jxr_keyword">throws</strong> WebApplicationException, IOException,
-<a class="jxr_linenumber" name="130" href="#130">130</a>         ParserConfigurationException, SAXException, TTException, InterruptedException {
-<a class="jxr_linenumber" name="131" href="#131">131</a> 
-<a class="jxr_linenumber" name="132" href="#132">132</a>         <strong class="jxr_keyword">final</strong> List&lt;String&gt; availResources = <strong class="jxr_keyword">new</strong> ArrayList&lt;String&gt;();
-<a class="jxr_linenumber" name="133" href="#133">133</a>         availResources.add(FACT);
-<a class="jxr_linenumber" name="134" href="#134">134</a>         availResources.add(EBAY);
-<a class="jxr_linenumber" name="135" href="#135">135</a>         availResources.add(BOOK);
-<a class="jxr_linenumber" name="136" href="#136">136</a>         availResources.add(SHAKE);
-<a class="jxr_linenumber" name="137" href="#137">137</a> 
-<a class="jxr_linenumber" name="138" href="#138">138</a>         <strong class="jxr_keyword">final</strong> DatabaseRepresentation treetank =
-<a class="jxr_linenumber" name="139" href="#139">139</a>             <strong class="jxr_keyword">new</strong> DatabaseRepresentation(TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile()), mStorageFac,
-<a class="jxr_linenumber" name="140" href="#140">140</a>                 mRevisioningFac);
-<a class="jxr_linenumber" name="141" href="#141">141</a>         InputStream input = NodeIdRepresentationTest.<strong class="jxr_keyword">class</strong>.getClass().getResourceAsStream(RESPATH);
-<a class="jxr_linenumber" name="142" href="#142">142</a>         treetank.shred(input, FACT);
-<a class="jxr_linenumber" name="143" href="#143">143</a>         input.close();
-<a class="jxr_linenumber" name="144" href="#144">144</a> 
-<a class="jxr_linenumber" name="145" href="#145">145</a>         input = NodeIdRepresentationTest.<strong class="jxr_keyword">class</strong>.getClass().getResourceAsStream(RESPATH);
-<a class="jxr_linenumber" name="146" href="#146">146</a>         treetank.shred(input, EBAY);
-<a class="jxr_linenumber" name="147" href="#147">147</a>         input.close();
-<a class="jxr_linenumber" name="148" href="#148">148</a> 
-<a class="jxr_linenumber" name="149" href="#149">149</a>         input.close();
-<a class="jxr_linenumber" name="150" href="#150">150</a>         input = NodeIdRepresentationTest.<strong class="jxr_keyword">class</strong>.getClass().getResourceAsStream(RESPATH);
-<a class="jxr_linenumber" name="151" href="#151">151</a>         treetank.add(input, BOOK);
-<a class="jxr_linenumber" name="152" href="#152">152</a> 
-<a class="jxr_linenumber" name="153" href="#153">153</a>         input = NodeIdRepresentationTest.<strong class="jxr_keyword">class</strong>.getClass().getResourceAsStream(RESPATH);
-<a class="jxr_linenumber" name="154" href="#154">154</a>         treetank.shred(input, SHAKE);
-<a class="jxr_linenumber" name="155" href="#155">155</a>         input.close();
-<a class="jxr_linenumber" name="156" href="#156">156</a> 
-<a class="jxr_linenumber" name="157" href="#157">157</a>         <strong class="jxr_keyword">final</strong> StreamingOutput result =
-<a class="jxr_linenumber" name="158" href="#158">158</a>             RESTResponseHelper.buildResponseOfDomLR(TestHelper.getDatabase(TestHelper.PATHS.PATH1.getFile()),
-<a class="jxr_linenumber" name="159" href="#159">159</a>                 mStorageFac, mRevisioningFac);
-<a class="jxr_linenumber" name="160" href="#160">160</a>         <strong class="jxr_keyword">final</strong> ByteArrayOutputStream outputStream = <strong class="jxr_keyword">new</strong> ByteArrayOutputStream();
-<a class="jxr_linenumber" name="161" href="#161">161</a>         result.write(outputStream);
-<a class="jxr_linenumber" name="162" href="#162">162</a>         <strong class="jxr_keyword">final</strong> Document doc = DOMHelper.buildDocument(outputStream);
-<a class="jxr_linenumber" name="163" href="#163">163</a>         <strong class="jxr_keyword">final</strong> NodeList listRes = doc.getElementsByTagName(<span class="jxr_string">"resource"</span>);
-<a class="jxr_linenumber" name="164" href="#164">164</a>         assertEquals(<span class="jxr_string">"Test for the length of resource"</span>, 4, listRes.getLength());
-<a class="jxr_linenumber" name="165" href="#165">165</a> 
-<a class="jxr_linenumber" name="166" href="#166">166</a>         Set&lt;String&gt; names = <strong class="jxr_keyword">new</strong> HashSet&lt;String&gt;();
-<a class="jxr_linenumber" name="167" href="#167">167</a> 
-<a class="jxr_linenumber" name="168" href="#168">168</a>         names.add(listRes.item(0).getAttributes().getNamedItem(NAME).getTextContent());
-<a class="jxr_linenumber" name="169" href="#169">169</a>         names.add(listRes.item(1).getAttributes().getNamedItem(NAME).getTextContent());
-<a class="jxr_linenumber" name="170" href="#170">170</a>         names.add(listRes.item(2).getAttributes().getNamedItem(NAME).getTextContent());
-<a class="jxr_linenumber" name="171" href="#171">171</a>         names.add(listRes.item(3).getAttributes().getNamedItem(NAME).getTextContent());
-<a class="jxr_linenumber" name="172" href="#172">172</a> 
-<a class="jxr_linenumber" name="173" href="#173">173</a>         assertTrue(names.remove(FACT));
-<a class="jxr_linenumber" name="174" href="#174">174</a>         assertTrue(names.remove(EBAY));
-<a class="jxr_linenumber" name="175" href="#175">175</a>         assertTrue(names.remove(BOOK));
-<a class="jxr_linenumber" name="176" href="#176">176</a>         assertTrue(names.remove(SHAKE));
-<a class="jxr_linenumber" name="177" href="#177">177</a> 
-<a class="jxr_linenumber" name="178" href="#178">178</a>         assertEquals(<span class="jxr_string">"Size of test-structure must be 0"</span>, 0, names.size());
-<a class="jxr_linenumber" name="179" href="#179">179</a> 
-<a class="jxr_linenumber" name="180" href="#180">180</a>         outputStream.close();
-<a class="jxr_linenumber" name="181" href="#181">181</a> 
-<a class="jxr_linenumber" name="182" href="#182">182</a>         treetank.deleteResource(EBAY);
-<a class="jxr_linenumber" name="183" href="#183">183</a>         treetank.deleteResource(FACT);
-<a class="jxr_linenumber" name="184" href="#184">184</a>         treetank.deleteResource(BOOK);
-<a class="jxr_linenumber" name="185" href="#185">185</a>         treetank.deleteResource(SHAKE);
-<a class="jxr_linenumber" name="186" href="#186">186</a> 
-<a class="jxr_linenumber" name="187" href="#187">187</a>     }
-<a class="jxr_linenumber" name="188" href="#188">188</a> }
+<a class="jxr_linenumber" name="119" href="#119">119</a> <em class="jxr_javadoccomment">     * {@link org.treetank.service.jaxrx.util.RESTResponseHelper#buildResponseOfDomLR(org.treetank.api.IStorage, IBackendFactory, IRevisioning)}</em>
+<a class="jxr_linenumber" name="120" href="#120">120</a> <em class="jxr_javadoccomment">     * .</em>
+<a class="jxr_linenumber" name="121" href="#121">121</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="122" href="#122">122</a> <em class="jxr_javadoccomment">     * @throws IOException</em>
+<a class="jxr_linenumber" name="123" href="#123">123</a> <em class="jxr_javadoccomment">     * @throws WebApplicationException</em>
+<a class="jxr_linenumber" name="124" href="#124">124</a> <em class="jxr_javadoccomment">     * @throws SAXException</em>
+<a class="jxr_linenumber" name="125" href="#125">125</a> <em class="jxr_javadoccomment">     * @throws ParserConfigurationException</em>
+<a class="jxr_linenumber" name="126" href="#126">126</a> <em class="jxr_javadoccomment">     * @throws TTException</em>
+<a class="jxr_linenumber" name="127" href="#127">127</a> <em class="jxr_javadoccomment">     * @throws InterruptedException</em>
+<a class="jxr_linenumber" name="128" href="#128">128</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="129" href="#129">129</a>     @Test
+<a class="jxr_linenumber" name="130" href="#130">130</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> testBuildResponseOfDomLR() <strong class="jxr_keyword">throws</strong> WebApplicationException, IOException,
+<a class="jxr_linenumber" name="131" href="#131">131</a>         ParserConfigurationException, SAXException, TTException, InterruptedException {
+<a class="jxr_linenumber" name="132" href="#132">132</a> 
+<a class="jxr_linenumber" name="133" href="#133">133</a>         <strong class="jxr_keyword">final</strong> List&lt;String&gt; availResources = <strong class="jxr_keyword">new</strong> ArrayList&lt;String&gt;();
+<a class="jxr_linenumber" name="134" href="#134">134</a>         availResources.add(FACT);
+<a class="jxr_linenumber" name="135" href="#135">135</a>         availResources.add(EBAY);
+<a class="jxr_linenumber" name="136" href="#136">136</a>         availResources.add(BOOK);
+<a class="jxr_linenumber" name="137" href="#137">137</a>         availResources.add(SHAKE);
+<a class="jxr_linenumber" name="138" href="#138">138</a> 
+<a class="jxr_linenumber" name="139" href="#139">139</a>         <strong class="jxr_keyword">final</strong> DatabaseRepresentation treetank =
+<a class="jxr_linenumber" name="140" href="#140">140</a>             <strong class="jxr_keyword">new</strong> DatabaseRepresentation(CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile()),
+<a class="jxr_linenumber" name="141" href="#141">141</a>                 mStorageFac, mRevisioning);
+<a class="jxr_linenumber" name="142" href="#142">142</a>         InputStream input = NodeIdRepresentationTest.<strong class="jxr_keyword">class</strong>.getClass().getResourceAsStream(RESPATH);
+<a class="jxr_linenumber" name="143" href="#143">143</a>         treetank.shred(input, FACT);
+<a class="jxr_linenumber" name="144" href="#144">144</a>         input.close();
+<a class="jxr_linenumber" name="145" href="#145">145</a> 
+<a class="jxr_linenumber" name="146" href="#146">146</a>         input = NodeIdRepresentationTest.<strong class="jxr_keyword">class</strong>.getClass().getResourceAsStream(RESPATH);
+<a class="jxr_linenumber" name="147" href="#147">147</a>         treetank.shred(input, EBAY);
+<a class="jxr_linenumber" name="148" href="#148">148</a>         input.close();
+<a class="jxr_linenumber" name="149" href="#149">149</a> 
+<a class="jxr_linenumber" name="150" href="#150">150</a>         input.close();
+<a class="jxr_linenumber" name="151" href="#151">151</a>         input = NodeIdRepresentationTest.<strong class="jxr_keyword">class</strong>.getClass().getResourceAsStream(RESPATH);
+<a class="jxr_linenumber" name="152" href="#152">152</a>         treetank.add(input, BOOK);
+<a class="jxr_linenumber" name="153" href="#153">153</a> 
+<a class="jxr_linenumber" name="154" href="#154">154</a>         input = NodeIdRepresentationTest.<strong class="jxr_keyword">class</strong>.getClass().getResourceAsStream(RESPATH);
+<a class="jxr_linenumber" name="155" href="#155">155</a>         treetank.shred(input, SHAKE);
+<a class="jxr_linenumber" name="156" href="#156">156</a>         input.close();
+<a class="jxr_linenumber" name="157" href="#157">157</a> 
+<a class="jxr_linenumber" name="158" href="#158">158</a>         <strong class="jxr_keyword">final</strong> StreamingOutput result =
+<a class="jxr_linenumber" name="159" href="#159">159</a>             RESTResponseHelper.buildResponseOfDomLR(CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1
+<a class="jxr_linenumber" name="160" href="#160">160</a>                 .getFile()), mStorageFac, mRevisioning);
+<a class="jxr_linenumber" name="161" href="#161">161</a>         <strong class="jxr_keyword">final</strong> ByteArrayOutputStream outputStream = <strong class="jxr_keyword">new</strong> ByteArrayOutputStream();
+<a class="jxr_linenumber" name="162" href="#162">162</a>         result.write(outputStream);
+<a class="jxr_linenumber" name="163" href="#163">163</a>         <strong class="jxr_keyword">final</strong> Document doc = DOMHelper.buildDocument(outputStream);
+<a class="jxr_linenumber" name="164" href="#164">164</a>         <strong class="jxr_keyword">final</strong> NodeList listRes = doc.getElementsByTagName(<span class="jxr_string">"resource"</span>);
+<a class="jxr_linenumber" name="165" href="#165">165</a>         assertEquals(<span class="jxr_string">"Test for the length of resource"</span>, 4, listRes.getLength());
+<a class="jxr_linenumber" name="166" href="#166">166</a> 
+<a class="jxr_linenumber" name="167" href="#167">167</a>         Set&lt;String&gt; names = <strong class="jxr_keyword">new</strong> HashSet&lt;String&gt;();
+<a class="jxr_linenumber" name="168" href="#168">168</a> 
+<a class="jxr_linenumber" name="169" href="#169">169</a>         names.add(listRes.item(0).getAttributes().getNamedItem(NAME).getTextContent());
+<a class="jxr_linenumber" name="170" href="#170">170</a>         names.add(listRes.item(1).getAttributes().getNamedItem(NAME).getTextContent());
+<a class="jxr_linenumber" name="171" href="#171">171</a>         names.add(listRes.item(2).getAttributes().getNamedItem(NAME).getTextContent());
+<a class="jxr_linenumber" name="172" href="#172">172</a>         names.add(listRes.item(3).getAttributes().getNamedItem(NAME).getTextContent());
+<a class="jxr_linenumber" name="173" href="#173">173</a> 
+<a class="jxr_linenumber" name="174" href="#174">174</a>         assertTrue(names.remove(FACT));
+<a class="jxr_linenumber" name="175" href="#175">175</a>         assertTrue(names.remove(EBAY));
+<a class="jxr_linenumber" name="176" href="#176">176</a>         assertTrue(names.remove(BOOK));
+<a class="jxr_linenumber" name="177" href="#177">177</a>         assertTrue(names.remove(SHAKE));
+<a class="jxr_linenumber" name="178" href="#178">178</a> 
+<a class="jxr_linenumber" name="179" href="#179">179</a>         assertEquals(<span class="jxr_string">"Size of test-structure must be 0"</span>, 0, names.size());
+<a class="jxr_linenumber" name="180" href="#180">180</a> 
+<a class="jxr_linenumber" name="181" href="#181">181</a>         outputStream.close();
+<a class="jxr_linenumber" name="182" href="#182">182</a> 
+<a class="jxr_linenumber" name="183" href="#183">183</a>         treetank.deleteResource(EBAY);
+<a class="jxr_linenumber" name="184" href="#184">184</a>         treetank.deleteResource(FACT);
+<a class="jxr_linenumber" name="185" href="#185">185</a>         treetank.deleteResource(BOOK);
+<a class="jxr_linenumber" name="186" href="#186">186</a>         treetank.deleteResource(SHAKE);
+<a class="jxr_linenumber" name="187" href="#187">187</a> 
+<a class="jxr_linenumber" name="188" href="#188">188</a>     }
+<a class="jxr_linenumber" name="189" href="#189">189</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

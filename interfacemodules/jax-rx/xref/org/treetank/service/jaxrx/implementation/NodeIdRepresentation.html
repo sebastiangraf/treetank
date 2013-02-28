@@ -103,7 +103,7 @@
 <a class="jxr_linenumber" name="93" href="#93">93</a>  <em class="jxr_javadoccomment">     * </em>
 <a class="jxr_linenumber" name="94" href="#94">94</a>  <em class="jxr_javadoccomment">     * Constructor.</em>
 <a class="jxr_linenumber" name="95" href="#95">95</a>  <em class="jxr_javadoccomment">     * </em>
-<a class="jxr_linenumber" name="96" href="#96">96</a>  <em class="jxr_javadoccomment">     * @param pStoragePath</em>
+<a class="jxr_linenumber" name="96" href="#96">96</a>  <em class="jxr_javadoccomment">     * @param pDatabase</em>
 <a class="jxr_linenumber" name="97" href="#97">97</a>  <em class="jxr_javadoccomment">     *            storage to be set</em>
 <a class="jxr_linenumber" name="98" href="#98">98</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="99" href="#99">99</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../org/treetank/service/jaxrx/implementation/NodeIdRepresentation.html">NodeIdRepresentation</a>(<strong class="jxr_keyword">final</strong> IStorage pDatabase) {
@@ -381,219 +381,215 @@
 <a class="jxr_linenumber" name="371" href="#371">371</a>                     } <strong class="jxr_keyword">else</strong> {
 <a class="jxr_linenumber" name="372" href="#372">372</a>                         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> JaxRxException(404, NOTFOUND);
 <a class="jxr_linenumber" name="373" href="#373">373</a>                     }
-<a class="jxr_linenumber" name="374" href="#374">374</a>                 } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> JaxRxException exce) { <em class="jxr_comment">// NOPMD due</em>
-<a class="jxr_linenumber" name="375" href="#375">375</a>                     <em class="jxr_comment">// to</em>
-<a class="jxr_linenumber" name="376" href="#376">376</a>                     <em class="jxr_comment">// different</em>
-<a class="jxr_linenumber" name="377" href="#377">377</a>                     <em class="jxr_comment">// exception</em>
-<a class="jxr_linenumber" name="378" href="#378">378</a>                     <em class="jxr_comment">// types</em>
-<a class="jxr_linenumber" name="379" href="#379">379</a>                     abort = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="380" href="#380">380</a>                     <strong class="jxr_keyword">throw</strong> exce;
-<a class="jxr_linenumber" name="381" href="#381">381</a>                 } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception exce) {
-<a class="jxr_linenumber" name="382" href="#382">382</a>                     abort = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="383" href="#383">383</a>                     <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> JaxRxException(exce);
-<a class="jxr_linenumber" name="384" href="#384">384</a>                 } <strong class="jxr_keyword">finally</strong> {
-<a class="jxr_linenumber" name="385" href="#385">385</a>                     <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="386" href="#386">386</a>                         WorkerHelper.closeWTX(abort, wtx, session);
-<a class="jxr_linenumber" name="387" href="#387">387</a>                     } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> TTException exce) {
-<a class="jxr_linenumber" name="388" href="#388">388</a>                         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> JaxRxException(exce);
-<a class="jxr_linenumber" name="389" href="#389">389</a>                     }
-<a class="jxr_linenumber" name="390" href="#390">390</a>                 }
-<a class="jxr_linenumber" name="391" href="#391">391</a>             }
-<a class="jxr_linenumber" name="392" href="#392">392</a>         }
-<a class="jxr_linenumber" name="393" href="#393">393</a>     }
-<a class="jxr_linenumber" name="394" href="#394">394</a> 
-<a class="jxr_linenumber" name="395" href="#395">395</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="396" href="#396">396</a> <em class="jxr_javadoccomment">     * This method serializes requested resource</em>
-<a class="jxr_linenumber" name="397" href="#397">397</a> <em class="jxr_javadoccomment">     * </em>
-<a class="jxr_linenumber" name="398" href="#398">398</a> <em class="jxr_javadoccomment">     * @param resource</em>
-<a class="jxr_linenumber" name="399" href="#399">399</a> <em class="jxr_javadoccomment">     *            The requested resource</em>
-<a class="jxr_linenumber" name="400" href="#400">400</a> <em class="jxr_javadoccomment">     * @param nodeId</em>
-<a class="jxr_linenumber" name="401" href="#401">401</a> <em class="jxr_javadoccomment">     *            The node id of the requested resource.</em>
-<a class="jxr_linenumber" name="402" href="#402">402</a> <em class="jxr_javadoccomment">     * @param revision</em>
-<a class="jxr_linenumber" name="403" href="#403">403</a> <em class="jxr_javadoccomment">     *            The revision of the requested resource.</em>
-<a class="jxr_linenumber" name="404" href="#404">404</a> <em class="jxr_javadoccomment">     * @param doNodeId</em>
-<a class="jxr_linenumber" name="405" href="#405">405</a> <em class="jxr_javadoccomment">     *            Specifies whether the node id's have to be shown in the</em>
-<a class="jxr_linenumber" name="406" href="#406">406</a> <em class="jxr_javadoccomment">     *            result.</em>
-<a class="jxr_linenumber" name="407" href="#407">407</a> <em class="jxr_javadoccomment">     * @param output</em>
-<a class="jxr_linenumber" name="408" href="#408">408</a> <em class="jxr_javadoccomment">     *            The output stream to be written.</em>
-<a class="jxr_linenumber" name="409" href="#409">409</a> <em class="jxr_javadoccomment">     * @param wrapResult</em>
-<a class="jxr_linenumber" name="410" href="#410">410</a> <em class="jxr_javadoccomment">     *            Specifies whether the result has to be wrapped with a result</em>
-<a class="jxr_linenumber" name="411" href="#411">411</a> <em class="jxr_javadoccomment">     *            element.</em>
-<a class="jxr_linenumber" name="412" href="#412">412</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="413" href="#413">413</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> serialize(<strong class="jxr_keyword">final</strong> String resource, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> nodeId, <strong class="jxr_keyword">final</strong> Long revision,
-<a class="jxr_linenumber" name="414" href="#414">414</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> doNodeId, <strong class="jxr_keyword">final</strong> OutputStream output, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> wrapResult) {
-<a class="jxr_linenumber" name="415" href="#415">415</a>         <strong class="jxr_keyword">if</strong> (mDatabase.existsResource(resource)) {
-<a class="jxr_linenumber" name="416" href="#416">416</a>             ISession session = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="417" href="#417">417</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="418" href="#418">418</a>                 session = mDatabase.getSession(<strong class="jxr_keyword">new</strong> SessionConfiguration(resource, StandardSettings.KEY));
-<a class="jxr_linenumber" name="419" href="#419">419</a>                 <strong class="jxr_keyword">if</strong> (wrapResult) {
-<a class="jxr_linenumber" name="420" href="#420">420</a>                     output.write(BEGINRESULT);
-<a class="jxr_linenumber" name="421" href="#421">421</a>                     <strong class="jxr_keyword">final</strong> XMLSerializerProperties props = <strong class="jxr_keyword">new</strong> XMLSerializerProperties();
-<a class="jxr_linenumber" name="422" href="#422">422</a>                     <strong class="jxr_keyword">final</strong> XMLSerializerBuilder builder =
-<a class="jxr_linenumber" name="423" href="#423">423</a>                         <strong class="jxr_keyword">new</strong> XMLSerializerBuilder(session, nodeId, output, props);
-<a class="jxr_linenumber" name="424" href="#424">424</a>                     builder.setREST(doNodeId);
-<a class="jxr_linenumber" name="425" href="#425">425</a>                     builder.setID(doNodeId);
-<a class="jxr_linenumber" name="426" href="#426">426</a>                     builder.setDeclaration(false);
-<a class="jxr_linenumber" name="427" href="#427">427</a>                     <strong class="jxr_keyword">final</strong> XMLSerializer serializer = builder.build();
-<a class="jxr_linenumber" name="428" href="#428">428</a>                     serializer.call();
-<a class="jxr_linenumber" name="429" href="#429">429</a>                     output.write(ENDRESULT);
-<a class="jxr_linenumber" name="430" href="#430">430</a>                 } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="431" href="#431">431</a>                     <strong class="jxr_keyword">final</strong> XMLSerializerProperties props = <strong class="jxr_keyword">new</strong> XMLSerializerProperties();
-<a class="jxr_linenumber" name="432" href="#432">432</a>                     <strong class="jxr_keyword">final</strong> XMLSerializerBuilder builder =
-<a class="jxr_linenumber" name="433" href="#433">433</a>                         <strong class="jxr_keyword">new</strong> XMLSerializerBuilder(session, nodeId, output, props);
-<a class="jxr_linenumber" name="434" href="#434">434</a>                     builder.setREST(doNodeId);
-<a class="jxr_linenumber" name="435" href="#435">435</a>                     builder.setID(doNodeId);
-<a class="jxr_linenumber" name="436" href="#436">436</a>                     builder.setDeclaration(false);
-<a class="jxr_linenumber" name="437" href="#437">437</a>                     <strong class="jxr_keyword">final</strong> XMLSerializer serializer = builder.build();
-<a class="jxr_linenumber" name="438" href="#438">438</a>                     serializer.call();
-<a class="jxr_linenumber" name="439" href="#439">439</a> 
-<a class="jxr_linenumber" name="440" href="#440">440</a>                 }
-<a class="jxr_linenumber" name="441" href="#441">441</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> TTException ttExcep) {
-<a class="jxr_linenumber" name="442" href="#442">442</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> JaxRxException(ttExcep);
-<a class="jxr_linenumber" name="443" href="#443">443</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> IOException ioExcep) {
-<a class="jxr_linenumber" name="444" href="#444">444</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> JaxRxException(ioExcep);
-<a class="jxr_linenumber" name="445" href="#445">445</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception globExcep) {
-<a class="jxr_linenumber" name="446" href="#446">446</a>                 <strong class="jxr_keyword">if</strong> (globExcep instanceof JaxRxException) { <em class="jxr_comment">// NOPMD due</em>
-<a class="jxr_linenumber" name="447" href="#447">447</a>                     <em class="jxr_comment">// to</em>
-<a class="jxr_linenumber" name="448" href="#448">448</a>                     <em class="jxr_comment">// different</em>
-<a class="jxr_linenumber" name="449" href="#449">449</a>                     <em class="jxr_comment">// exception</em>
-<a class="jxr_linenumber" name="450" href="#450">450</a>                     <em class="jxr_comment">// types</em>
-<a class="jxr_linenumber" name="451" href="#451">451</a>                     <strong class="jxr_keyword">throw</strong> (JaxRxException)globExcep;
-<a class="jxr_linenumber" name="452" href="#452">452</a>                 } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="453" href="#453">453</a>                     <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> JaxRxException(globExcep);
-<a class="jxr_linenumber" name="454" href="#454">454</a>                 }
-<a class="jxr_linenumber" name="455" href="#455">455</a>             } <strong class="jxr_keyword">finally</strong> {
-<a class="jxr_linenumber" name="456" href="#456">456</a>                 <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="457" href="#457">457</a>                     WorkerHelper.closeRTX(<strong class="jxr_keyword">null</strong>, session);
-<a class="jxr_linenumber" name="458" href="#458">458</a>                 } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> TTException exce) {
-<a class="jxr_linenumber" name="459" href="#459">459</a>                     <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> JaxRxException(exce);
-<a class="jxr_linenumber" name="460" href="#460">460</a>                 }
-<a class="jxr_linenumber" name="461" href="#461">461</a>             }
+<a class="jxr_linenumber" name="374" href="#374">374</a>                 } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> JaxRxException exce) { 
+<a class="jxr_linenumber" name="375" href="#375">375</a>                     abort = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="376" href="#376">376</a>                     <strong class="jxr_keyword">throw</strong> exce;
+<a class="jxr_linenumber" name="377" href="#377">377</a>                 } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception exce) {
+<a class="jxr_linenumber" name="378" href="#378">378</a>                     abort = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="379" href="#379">379</a>                     <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> JaxRxException(exce);
+<a class="jxr_linenumber" name="380" href="#380">380</a>                 } <strong class="jxr_keyword">finally</strong> {
+<a class="jxr_linenumber" name="381" href="#381">381</a>                     <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="382" href="#382">382</a>                         WorkerHelper.closeWTX(abort, wtx, session);
+<a class="jxr_linenumber" name="383" href="#383">383</a>                     } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> TTException exce) {
+<a class="jxr_linenumber" name="384" href="#384">384</a>                         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> JaxRxException(exce);
+<a class="jxr_linenumber" name="385" href="#385">385</a>                     }
+<a class="jxr_linenumber" name="386" href="#386">386</a>                 }
+<a class="jxr_linenumber" name="387" href="#387">387</a>             }
+<a class="jxr_linenumber" name="388" href="#388">388</a>         }
+<a class="jxr_linenumber" name="389" href="#389">389</a>     }
+<a class="jxr_linenumber" name="390" href="#390">390</a> 
+<a class="jxr_linenumber" name="391" href="#391">391</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="392" href="#392">392</a> <em class="jxr_javadoccomment">     * This method serializes requested resource</em>
+<a class="jxr_linenumber" name="393" href="#393">393</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="394" href="#394">394</a> <em class="jxr_javadoccomment">     * @param resource</em>
+<a class="jxr_linenumber" name="395" href="#395">395</a> <em class="jxr_javadoccomment">     *            The requested resource</em>
+<a class="jxr_linenumber" name="396" href="#396">396</a> <em class="jxr_javadoccomment">     * @param nodeId</em>
+<a class="jxr_linenumber" name="397" href="#397">397</a> <em class="jxr_javadoccomment">     *            The node id of the requested resource.</em>
+<a class="jxr_linenumber" name="398" href="#398">398</a> <em class="jxr_javadoccomment">     * @param revision</em>
+<a class="jxr_linenumber" name="399" href="#399">399</a> <em class="jxr_javadoccomment">     *            The revision of the requested resource.</em>
+<a class="jxr_linenumber" name="400" href="#400">400</a> <em class="jxr_javadoccomment">     * @param doNodeId</em>
+<a class="jxr_linenumber" name="401" href="#401">401</a> <em class="jxr_javadoccomment">     *            Specifies whether the node id's have to be shown in the</em>
+<a class="jxr_linenumber" name="402" href="#402">402</a> <em class="jxr_javadoccomment">     *            result.</em>
+<a class="jxr_linenumber" name="403" href="#403">403</a> <em class="jxr_javadoccomment">     * @param output</em>
+<a class="jxr_linenumber" name="404" href="#404">404</a> <em class="jxr_javadoccomment">     *            The output stream to be written.</em>
+<a class="jxr_linenumber" name="405" href="#405">405</a> <em class="jxr_javadoccomment">     * @param wrapResult</em>
+<a class="jxr_linenumber" name="406" href="#406">406</a> <em class="jxr_javadoccomment">     *            Specifies whether the result has to be wrapped with a result</em>
+<a class="jxr_linenumber" name="407" href="#407">407</a> <em class="jxr_javadoccomment">     *            element.</em>
+<a class="jxr_linenumber" name="408" href="#408">408</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="409" href="#409">409</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> serialize(<strong class="jxr_keyword">final</strong> String resource, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> nodeId, <strong class="jxr_keyword">final</strong> Long revision,
+<a class="jxr_linenumber" name="410" href="#410">410</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> doNodeId, <strong class="jxr_keyword">final</strong> OutputStream output, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> wrapResult) {
+<a class="jxr_linenumber" name="411" href="#411">411</a>         <strong class="jxr_keyword">if</strong> (mDatabase.existsResource(resource)) {
+<a class="jxr_linenumber" name="412" href="#412">412</a>             ISession session = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="413" href="#413">413</a>             <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="414" href="#414">414</a>                 session = mDatabase.getSession(<strong class="jxr_keyword">new</strong> SessionConfiguration(resource, StandardSettings.KEY));
+<a class="jxr_linenumber" name="415" href="#415">415</a>                 <strong class="jxr_keyword">if</strong> (wrapResult) {
+<a class="jxr_linenumber" name="416" href="#416">416</a>                     output.write(BEGINRESULT);
+<a class="jxr_linenumber" name="417" href="#417">417</a>                     <strong class="jxr_keyword">final</strong> XMLSerializerProperties props = <strong class="jxr_keyword">new</strong> XMLSerializerProperties();
+<a class="jxr_linenumber" name="418" href="#418">418</a>                     <strong class="jxr_keyword">final</strong> XMLSerializerBuilder builder =
+<a class="jxr_linenumber" name="419" href="#419">419</a>                         <strong class="jxr_keyword">new</strong> XMLSerializerBuilder(session, nodeId, output, props);
+<a class="jxr_linenumber" name="420" href="#420">420</a>                     builder.setREST(doNodeId);
+<a class="jxr_linenumber" name="421" href="#421">421</a>                     builder.setID(doNodeId);
+<a class="jxr_linenumber" name="422" href="#422">422</a>                     builder.setDeclaration(false);
+<a class="jxr_linenumber" name="423" href="#423">423</a>                     <strong class="jxr_keyword">final</strong> XMLSerializer serializer = builder.build();
+<a class="jxr_linenumber" name="424" href="#424">424</a>                     serializer.call();
+<a class="jxr_linenumber" name="425" href="#425">425</a>                     output.write(ENDRESULT);
+<a class="jxr_linenumber" name="426" href="#426">426</a>                 } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="427" href="#427">427</a>                     <strong class="jxr_keyword">final</strong> XMLSerializerProperties props = <strong class="jxr_keyword">new</strong> XMLSerializerProperties();
+<a class="jxr_linenumber" name="428" href="#428">428</a>                     <strong class="jxr_keyword">final</strong> XMLSerializerBuilder builder =
+<a class="jxr_linenumber" name="429" href="#429">429</a>                         <strong class="jxr_keyword">new</strong> XMLSerializerBuilder(session, nodeId, output, props);
+<a class="jxr_linenumber" name="430" href="#430">430</a>                     builder.setREST(doNodeId);
+<a class="jxr_linenumber" name="431" href="#431">431</a>                     builder.setID(doNodeId);
+<a class="jxr_linenumber" name="432" href="#432">432</a>                     builder.setDeclaration(false);
+<a class="jxr_linenumber" name="433" href="#433">433</a>                     <strong class="jxr_keyword">final</strong> XMLSerializer serializer = builder.build();
+<a class="jxr_linenumber" name="434" href="#434">434</a>                     serializer.call();
+<a class="jxr_linenumber" name="435" href="#435">435</a> 
+<a class="jxr_linenumber" name="436" href="#436">436</a>                 }
+<a class="jxr_linenumber" name="437" href="#437">437</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> TTException ttExcep) {
+<a class="jxr_linenumber" name="438" href="#438">438</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> JaxRxException(ttExcep);
+<a class="jxr_linenumber" name="439" href="#439">439</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> IOException ioExcep) {
+<a class="jxr_linenumber" name="440" href="#440">440</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> JaxRxException(ioExcep);
+<a class="jxr_linenumber" name="441" href="#441">441</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception globExcep) {
+<a class="jxr_linenumber" name="442" href="#442">442</a>                 <strong class="jxr_keyword">if</strong> (globExcep instanceof JaxRxException) { <em class="jxr_comment">// NOPMD due</em>
+<a class="jxr_linenumber" name="443" href="#443">443</a>                     <em class="jxr_comment">// to</em>
+<a class="jxr_linenumber" name="444" href="#444">444</a>                     <em class="jxr_comment">// different</em>
+<a class="jxr_linenumber" name="445" href="#445">445</a>                     <em class="jxr_comment">// exception</em>
+<a class="jxr_linenumber" name="446" href="#446">446</a>                     <em class="jxr_comment">// types</em>
+<a class="jxr_linenumber" name="447" href="#447">447</a>                     <strong class="jxr_keyword">throw</strong> (JaxRxException)globExcep;
+<a class="jxr_linenumber" name="448" href="#448">448</a>                 } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="449" href="#449">449</a>                     <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> JaxRxException(globExcep);
+<a class="jxr_linenumber" name="450" href="#450">450</a>                 }
+<a class="jxr_linenumber" name="451" href="#451">451</a>             } <strong class="jxr_keyword">finally</strong> {
+<a class="jxr_linenumber" name="452" href="#452">452</a>                 <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="453" href="#453">453</a>                     WorkerHelper.closeRTX(<strong class="jxr_keyword">null</strong>, session);
+<a class="jxr_linenumber" name="454" href="#454">454</a>                 } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> TTException exce) {
+<a class="jxr_linenumber" name="455" href="#455">455</a>                     <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> JaxRxException(exce);
+<a class="jxr_linenumber" name="456" href="#456">456</a>                 }
+<a class="jxr_linenumber" name="457" href="#457">457</a>             }
+<a class="jxr_linenumber" name="458" href="#458">458</a> 
+<a class="jxr_linenumber" name="459" href="#459">459</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="460" href="#460">460</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> JaxRxException(404, <span class="jxr_string">"Resource does not exist"</span>);
+<a class="jxr_linenumber" name="461" href="#461">461</a>         }
 <a class="jxr_linenumber" name="462" href="#462">462</a> 
-<a class="jxr_linenumber" name="463" href="#463">463</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="464" href="#464">464</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> JaxRxException(404, <span class="jxr_string">"Resource does not exist"</span>);
-<a class="jxr_linenumber" name="465" href="#465">465</a>         }
-<a class="jxr_linenumber" name="466" href="#466">466</a> 
-<a class="jxr_linenumber" name="467" href="#467">467</a>     }
-<a class="jxr_linenumber" name="468" href="#468">468</a> 
-<a class="jxr_linenumber" name="469" href="#469">469</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="470" href="#470">470</a> <em class="jxr_javadoccomment">     * This method serializes requested resource with an access type.</em>
-<a class="jxr_linenumber" name="471" href="#471">471</a> <em class="jxr_javadoccomment">     * </em>
-<a class="jxr_linenumber" name="472" href="#472">472</a> <em class="jxr_javadoccomment">     * @param resource</em>
-<a class="jxr_linenumber" name="473" href="#473">473</a> <em class="jxr_javadoccomment">     *            The requested resource</em>
-<a class="jxr_linenumber" name="474" href="#474">474</a> <em class="jxr_javadoccomment">     * @param nodeId</em>
-<a class="jxr_linenumber" name="475" href="#475">475</a> <em class="jxr_javadoccomment">     *            The node id of the requested resource.</em>
-<a class="jxr_linenumber" name="476" href="#476">476</a> <em class="jxr_javadoccomment">     * @param revision</em>
-<a class="jxr_linenumber" name="477" href="#477">477</a> <em class="jxr_javadoccomment">     *            The revision of the requested resource.</em>
-<a class="jxr_linenumber" name="478" href="#478">478</a> <em class="jxr_javadoccomment">     * @param doNodeId</em>
-<a class="jxr_linenumber" name="479" href="#479">479</a> <em class="jxr_javadoccomment">     *            Specifies whether the node id's have to be shown in the</em>
-<a class="jxr_linenumber" name="480" href="#480">480</a> <em class="jxr_javadoccomment">     *            result.</em>
-<a class="jxr_linenumber" name="481" href="#481">481</a> <em class="jxr_javadoccomment">     * @param output</em>
-<a class="jxr_linenumber" name="482" href="#482">482</a> <em class="jxr_javadoccomment">     *            The output stream to be written.</em>
-<a class="jxr_linenumber" name="483" href="#483">483</a> <em class="jxr_javadoccomment">     * @param wrapResult</em>
-<a class="jxr_linenumber" name="484" href="#484">484</a> <em class="jxr_javadoccomment">     *            Specifies whether the result has to be wrapped with a result</em>
-<a class="jxr_linenumber" name="485" href="#485">485</a> <em class="jxr_javadoccomment">     *            element.</em>
-<a class="jxr_linenumber" name="486" href="#486">486</a> <em class="jxr_javadoccomment">     * @param accessType</em>
-<a class="jxr_linenumber" name="487" href="#487">487</a> <em class="jxr_javadoccomment">     *            The {@link EIdAccessType} which indicates the access to a</em>
-<a class="jxr_linenumber" name="488" href="#488">488</a> <em class="jxr_javadoccomment">     *            special node.</em>
-<a class="jxr_linenumber" name="489" href="#489">489</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="490" href="#490">490</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> serializeAT(<strong class="jxr_keyword">final</strong> String resource, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> nodeId, <strong class="jxr_keyword">final</strong> Long revision,
-<a class="jxr_linenumber" name="491" href="#491">491</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> doNodeId, <strong class="jxr_keyword">final</strong> OutputStream output, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> wrapResult,
-<a class="jxr_linenumber" name="492" href="#492">492</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../org/treetank/service/jaxrx/enums/EIdAccessType.html">EIdAccessType</a> accessType) {
-<a class="jxr_linenumber" name="493" href="#493">493</a>         <strong class="jxr_keyword">if</strong> (mDatabase.existsResource(resource)) {
-<a class="jxr_linenumber" name="494" href="#494">494</a>             ISession session = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="495" href="#495">495</a>             INodeReadTrx rtx = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="496" href="#496">496</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="497" href="#497">497</a>                 session = mDatabase.getSession(<strong class="jxr_keyword">new</strong> SessionConfiguration(resource, StandardSettings.KEY));
-<a class="jxr_linenumber" name="498" href="#498">498</a>                 <strong class="jxr_keyword">if</strong> (revision == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="499" href="#499">499</a>                     rtx = <strong class="jxr_keyword">new</strong> NodeReadTrx(session.beginPageReadTransaction(session.getMostRecentVersion()));
-<a class="jxr_linenumber" name="500" href="#500">500</a>                 } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="501" href="#501">501</a>                     rtx = <strong class="jxr_keyword">new</strong> NodeReadTrx(session.beginPageReadTransaction(revision));
-<a class="jxr_linenumber" name="502" href="#502">502</a>                 }
-<a class="jxr_linenumber" name="503" href="#503">503</a> 
-<a class="jxr_linenumber" name="504" href="#504">504</a>                 <strong class="jxr_keyword">if</strong> (rtx.moveTo(nodeId)) {
-<a class="jxr_linenumber" name="505" href="#505">505</a> 
-<a class="jxr_linenumber" name="506" href="#506">506</a>                     <strong class="jxr_keyword">switch</strong> (accessType) {
-<a class="jxr_linenumber" name="507" href="#507">507</a>                     <strong class="jxr_keyword">case</strong> FIRSTCHILD:
-<a class="jxr_linenumber" name="508" href="#508">508</a>                         <strong class="jxr_keyword">if</strong> (!rtx.moveTo(((IStructNode)rtx.getNode()).getFirstChildKey()))
-<a class="jxr_linenumber" name="509" href="#509">509</a>                             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> JaxRxException(404, NOTFOUND);
-<a class="jxr_linenumber" name="510" href="#510">510</a>                         <strong class="jxr_keyword">break</strong>;
-<a class="jxr_linenumber" name="511" href="#511">511</a>                     <strong class="jxr_keyword">case</strong> LASTCHILD:
-<a class="jxr_linenumber" name="512" href="#512">512</a>                         <strong class="jxr_keyword">if</strong> (rtx.moveTo(((IStructNode)rtx.getNode()).getFirstChildKey())) {
-<a class="jxr_linenumber" name="513" href="#513">513</a>                             <strong class="jxr_keyword">long</strong> last = rtx.getNode().getNodeKey();
-<a class="jxr_linenumber" name="514" href="#514">514</a>                             <strong class="jxr_keyword">while</strong> (rtx.moveTo(((IStructNode)rtx.getNode()).getRightSiblingKey())) {
-<a class="jxr_linenumber" name="515" href="#515">515</a>                                 last = rtx.getNode().getNodeKey();
-<a class="jxr_linenumber" name="516" href="#516">516</a>                             }
-<a class="jxr_linenumber" name="517" href="#517">517</a>                             rtx.moveTo(last);
-<a class="jxr_linenumber" name="518" href="#518">518</a>                         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="519" href="#519">519</a>                             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> JaxRxException(404, NOTFOUND);
-<a class="jxr_linenumber" name="520" href="#520">520</a>                         }
+<a class="jxr_linenumber" name="463" href="#463">463</a>     }
+<a class="jxr_linenumber" name="464" href="#464">464</a> 
+<a class="jxr_linenumber" name="465" href="#465">465</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="466" href="#466">466</a> <em class="jxr_javadoccomment">     * This method serializes requested resource with an access type.</em>
+<a class="jxr_linenumber" name="467" href="#467">467</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="468" href="#468">468</a> <em class="jxr_javadoccomment">     * @param resource</em>
+<a class="jxr_linenumber" name="469" href="#469">469</a> <em class="jxr_javadoccomment">     *            The requested resource</em>
+<a class="jxr_linenumber" name="470" href="#470">470</a> <em class="jxr_javadoccomment">     * @param nodeId</em>
+<a class="jxr_linenumber" name="471" href="#471">471</a> <em class="jxr_javadoccomment">     *            The node id of the requested resource.</em>
+<a class="jxr_linenumber" name="472" href="#472">472</a> <em class="jxr_javadoccomment">     * @param revision</em>
+<a class="jxr_linenumber" name="473" href="#473">473</a> <em class="jxr_javadoccomment">     *            The revision of the requested resource.</em>
+<a class="jxr_linenumber" name="474" href="#474">474</a> <em class="jxr_javadoccomment">     * @param doNodeId</em>
+<a class="jxr_linenumber" name="475" href="#475">475</a> <em class="jxr_javadoccomment">     *            Specifies whether the node id's have to be shown in the</em>
+<a class="jxr_linenumber" name="476" href="#476">476</a> <em class="jxr_javadoccomment">     *            result.</em>
+<a class="jxr_linenumber" name="477" href="#477">477</a> <em class="jxr_javadoccomment">     * @param output</em>
+<a class="jxr_linenumber" name="478" href="#478">478</a> <em class="jxr_javadoccomment">     *            The output stream to be written.</em>
+<a class="jxr_linenumber" name="479" href="#479">479</a> <em class="jxr_javadoccomment">     * @param wrapResult</em>
+<a class="jxr_linenumber" name="480" href="#480">480</a> <em class="jxr_javadoccomment">     *            Specifies whether the result has to be wrapped with a result</em>
+<a class="jxr_linenumber" name="481" href="#481">481</a> <em class="jxr_javadoccomment">     *            element.</em>
+<a class="jxr_linenumber" name="482" href="#482">482</a> <em class="jxr_javadoccomment">     * @param accessType</em>
+<a class="jxr_linenumber" name="483" href="#483">483</a> <em class="jxr_javadoccomment">     *            The {@link EIdAccessType} which indicates the access to a</em>
+<a class="jxr_linenumber" name="484" href="#484">484</a> <em class="jxr_javadoccomment">     *            special node.</em>
+<a class="jxr_linenumber" name="485" href="#485">485</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="486" href="#486">486</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> serializeAT(<strong class="jxr_keyword">final</strong> String resource, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> nodeId, <strong class="jxr_keyword">final</strong> Long revision,
+<a class="jxr_linenumber" name="487" href="#487">487</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> doNodeId, <strong class="jxr_keyword">final</strong> OutputStream output, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> wrapResult,
+<a class="jxr_linenumber" name="488" href="#488">488</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../org/treetank/service/jaxrx/enums/EIdAccessType.html">EIdAccessType</a> accessType) {
+<a class="jxr_linenumber" name="489" href="#489">489</a>         <strong class="jxr_keyword">if</strong> (mDatabase.existsResource(resource)) {
+<a class="jxr_linenumber" name="490" href="#490">490</a>             ISession session = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="491" href="#491">491</a>             INodeReadTrx rtx = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="492" href="#492">492</a>             <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="493" href="#493">493</a>                 session = mDatabase.getSession(<strong class="jxr_keyword">new</strong> SessionConfiguration(resource, StandardSettings.KEY));
+<a class="jxr_linenumber" name="494" href="#494">494</a>                 <strong class="jxr_keyword">if</strong> (revision == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="495" href="#495">495</a>                     rtx = <strong class="jxr_keyword">new</strong> NodeReadTrx(session.beginPageReadTransaction(session.getMostRecentVersion()));
+<a class="jxr_linenumber" name="496" href="#496">496</a>                 } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="497" href="#497">497</a>                     rtx = <strong class="jxr_keyword">new</strong> NodeReadTrx(session.beginPageReadTransaction(revision));
+<a class="jxr_linenumber" name="498" href="#498">498</a>                 }
+<a class="jxr_linenumber" name="499" href="#499">499</a> 
+<a class="jxr_linenumber" name="500" href="#500">500</a>                 <strong class="jxr_keyword">if</strong> (rtx.moveTo(nodeId)) {
+<a class="jxr_linenumber" name="501" href="#501">501</a> 
+<a class="jxr_linenumber" name="502" href="#502">502</a>                     <strong class="jxr_keyword">switch</strong> (accessType) {
+<a class="jxr_linenumber" name="503" href="#503">503</a>                     <strong class="jxr_keyword">case</strong> FIRSTCHILD:
+<a class="jxr_linenumber" name="504" href="#504">504</a>                         <strong class="jxr_keyword">if</strong> (!rtx.moveTo(((IStructNode)rtx.getNode()).getFirstChildKey()))
+<a class="jxr_linenumber" name="505" href="#505">505</a>                             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> JaxRxException(404, NOTFOUND);
+<a class="jxr_linenumber" name="506" href="#506">506</a>                         <strong class="jxr_keyword">break</strong>;
+<a class="jxr_linenumber" name="507" href="#507">507</a>                     <strong class="jxr_keyword">case</strong> LASTCHILD:
+<a class="jxr_linenumber" name="508" href="#508">508</a>                         <strong class="jxr_keyword">if</strong> (rtx.moveTo(((IStructNode)rtx.getNode()).getFirstChildKey())) {
+<a class="jxr_linenumber" name="509" href="#509">509</a>                             <strong class="jxr_keyword">long</strong> last = rtx.getNode().getNodeKey();
+<a class="jxr_linenumber" name="510" href="#510">510</a>                             <strong class="jxr_keyword">while</strong> (rtx.moveTo(((IStructNode)rtx.getNode()).getRightSiblingKey())) {
+<a class="jxr_linenumber" name="511" href="#511">511</a>                                 last = rtx.getNode().getNodeKey();
+<a class="jxr_linenumber" name="512" href="#512">512</a>                             }
+<a class="jxr_linenumber" name="513" href="#513">513</a>                             rtx.moveTo(last);
+<a class="jxr_linenumber" name="514" href="#514">514</a>                         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="515" href="#515">515</a>                             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> JaxRxException(404, NOTFOUND);
+<a class="jxr_linenumber" name="516" href="#516">516</a>                         }
+<a class="jxr_linenumber" name="517" href="#517">517</a>                         <strong class="jxr_keyword">break</strong>;
+<a class="jxr_linenumber" name="518" href="#518">518</a>                     <strong class="jxr_keyword">case</strong> RIGHTSIBLING:
+<a class="jxr_linenumber" name="519" href="#519">519</a>                         <strong class="jxr_keyword">if</strong> (!rtx.moveTo(((IStructNode)rtx.getNode()).getRightSiblingKey()))
+<a class="jxr_linenumber" name="520" href="#520">520</a>                             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> JaxRxException(404, NOTFOUND);
 <a class="jxr_linenumber" name="521" href="#521">521</a>                         <strong class="jxr_keyword">break</strong>;
-<a class="jxr_linenumber" name="522" href="#522">522</a>                     <strong class="jxr_keyword">case</strong> RIGHTSIBLING:
-<a class="jxr_linenumber" name="523" href="#523">523</a>                         <strong class="jxr_keyword">if</strong> (!rtx.moveTo(((IStructNode)rtx.getNode()).getRightSiblingKey()))
+<a class="jxr_linenumber" name="522" href="#522">522</a>                     <strong class="jxr_keyword">case</strong> LEFTSIBLING:
+<a class="jxr_linenumber" name="523" href="#523">523</a>                         <strong class="jxr_keyword">if</strong> (!rtx.moveTo(((IStructNode)rtx.getNode()).getLeftSiblingKey()))
 <a class="jxr_linenumber" name="524" href="#524">524</a>                             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> JaxRxException(404, NOTFOUND);
 <a class="jxr_linenumber" name="525" href="#525">525</a>                         <strong class="jxr_keyword">break</strong>;
-<a class="jxr_linenumber" name="526" href="#526">526</a>                     <strong class="jxr_keyword">case</strong> LEFTSIBLING:
-<a class="jxr_linenumber" name="527" href="#527">527</a>                         <strong class="jxr_keyword">if</strong> (!rtx.moveTo(((IStructNode)rtx.getNode()).getLeftSiblingKey()))
-<a class="jxr_linenumber" name="528" href="#528">528</a>                             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> JaxRxException(404, NOTFOUND);
-<a class="jxr_linenumber" name="529" href="#529">529</a>                         <strong class="jxr_keyword">break</strong>;
-<a class="jxr_linenumber" name="530" href="#530">530</a>                     <strong class="jxr_keyword">default</strong>: <em class="jxr_comment">// nothing to do;</em>
-<a class="jxr_linenumber" name="531" href="#531">531</a>                     }
-<a class="jxr_linenumber" name="532" href="#532">532</a>                     <strong class="jxr_keyword">if</strong> (wrapResult) {
-<a class="jxr_linenumber" name="533" href="#533">533</a>                         output.write(BEGINRESULT);
-<a class="jxr_linenumber" name="534" href="#534">534</a>                         <strong class="jxr_keyword">final</strong> XMLSerializerProperties props = <strong class="jxr_keyword">new</strong> XMLSerializerProperties();
-<a class="jxr_linenumber" name="535" href="#535">535</a>                         <strong class="jxr_keyword">final</strong> XMLSerializerBuilder builder =
-<a class="jxr_linenumber" name="536" href="#536">536</a>                             <strong class="jxr_keyword">new</strong> XMLSerializerBuilder(session, rtx.getNode().getNodeKey(), output, props);
-<a class="jxr_linenumber" name="537" href="#537">537</a>                         builder.setREST(doNodeId);
-<a class="jxr_linenumber" name="538" href="#538">538</a>                         builder.setID(doNodeId);
-<a class="jxr_linenumber" name="539" href="#539">539</a>                         builder.setDeclaration(false);
-<a class="jxr_linenumber" name="540" href="#540">540</a>                         builder.setIndend(false);
-<a class="jxr_linenumber" name="541" href="#541">541</a>                         <strong class="jxr_keyword">final</strong> XMLSerializer serializer = builder.build();
-<a class="jxr_linenumber" name="542" href="#542">542</a>                         serializer.call();
-<a class="jxr_linenumber" name="543" href="#543">543</a> 
-<a class="jxr_linenumber" name="544" href="#544">544</a>                         output.write(ENDRESULT);
-<a class="jxr_linenumber" name="545" href="#545">545</a>                     } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="546" href="#546">546</a>                         <strong class="jxr_keyword">final</strong> XMLSerializerProperties props = <strong class="jxr_keyword">new</strong> XMLSerializerProperties();
-<a class="jxr_linenumber" name="547" href="#547">547</a>                         <strong class="jxr_keyword">final</strong> XMLSerializerBuilder builder =
-<a class="jxr_linenumber" name="548" href="#548">548</a>                             <strong class="jxr_keyword">new</strong> XMLSerializerBuilder(session, rtx.getNode().getNodeKey(), output, props);
-<a class="jxr_linenumber" name="549" href="#549">549</a>                         builder.setREST(doNodeId);
-<a class="jxr_linenumber" name="550" href="#550">550</a>                         builder.setID(doNodeId);
-<a class="jxr_linenumber" name="551" href="#551">551</a>                         builder.setDeclaration(false);
-<a class="jxr_linenumber" name="552" href="#552">552</a>                         builder.setIndend(false);
-<a class="jxr_linenumber" name="553" href="#553">553</a>                         <strong class="jxr_keyword">final</strong> XMLSerializer serializer = builder.build();
-<a class="jxr_linenumber" name="554" href="#554">554</a>                         serializer.call();
-<a class="jxr_linenumber" name="555" href="#555">555</a>                     }
-<a class="jxr_linenumber" name="556" href="#556">556</a>                 } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="557" href="#557">557</a>                     <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> JaxRxException(404, NOTFOUND);
-<a class="jxr_linenumber" name="558" href="#558">558</a>                 }
-<a class="jxr_linenumber" name="559" href="#559">559</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> TTException ttExcep) {
-<a class="jxr_linenumber" name="560" href="#560">560</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> JaxRxException(ttExcep);
-<a class="jxr_linenumber" name="561" href="#561">561</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> IOException ioExcep) {
-<a class="jxr_linenumber" name="562" href="#562">562</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> JaxRxException(ioExcep);
-<a class="jxr_linenumber" name="563" href="#563">563</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception globExcep) {
-<a class="jxr_linenumber" name="564" href="#564">564</a>                 <strong class="jxr_keyword">if</strong> (globExcep instanceof JaxRxException) { <em class="jxr_comment">// NOPMD due</em>
-<a class="jxr_linenumber" name="565" href="#565">565</a>                     <em class="jxr_comment">// to</em>
-<a class="jxr_linenumber" name="566" href="#566">566</a>                     <em class="jxr_comment">// different</em>
-<a class="jxr_linenumber" name="567" href="#567">567</a>                     <em class="jxr_comment">// exception</em>
-<a class="jxr_linenumber" name="568" href="#568">568</a>                     <em class="jxr_comment">// types</em>
-<a class="jxr_linenumber" name="569" href="#569">569</a>                     <strong class="jxr_keyword">throw</strong> (JaxRxException)globExcep;
-<a class="jxr_linenumber" name="570" href="#570">570</a>                 } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="571" href="#571">571</a>                     <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> JaxRxException(globExcep);
-<a class="jxr_linenumber" name="572" href="#572">572</a>                 }
-<a class="jxr_linenumber" name="573" href="#573">573</a>             } <strong class="jxr_keyword">finally</strong> {
-<a class="jxr_linenumber" name="574" href="#574">574</a>                 <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="575" href="#575">575</a>                     WorkerHelper.closeRTX(rtx, session);
-<a class="jxr_linenumber" name="576" href="#576">576</a>                 } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> TTException exce) {
-<a class="jxr_linenumber" name="577" href="#577">577</a>                     <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> JaxRxException(exce);
-<a class="jxr_linenumber" name="578" href="#578">578</a>                 }
-<a class="jxr_linenumber" name="579" href="#579">579</a>             }
+<a class="jxr_linenumber" name="526" href="#526">526</a>                     <strong class="jxr_keyword">default</strong>: <em class="jxr_comment">// nothing to do;</em>
+<a class="jxr_linenumber" name="527" href="#527">527</a>                     }
+<a class="jxr_linenumber" name="528" href="#528">528</a>                     <strong class="jxr_keyword">if</strong> (wrapResult) {
+<a class="jxr_linenumber" name="529" href="#529">529</a>                         output.write(BEGINRESULT);
+<a class="jxr_linenumber" name="530" href="#530">530</a>                         <strong class="jxr_keyword">final</strong> XMLSerializerProperties props = <strong class="jxr_keyword">new</strong> XMLSerializerProperties();
+<a class="jxr_linenumber" name="531" href="#531">531</a>                         <strong class="jxr_keyword">final</strong> XMLSerializerBuilder builder =
+<a class="jxr_linenumber" name="532" href="#532">532</a>                             <strong class="jxr_keyword">new</strong> XMLSerializerBuilder(session, rtx.getNode().getNodeKey(), output, props);
+<a class="jxr_linenumber" name="533" href="#533">533</a>                         builder.setREST(doNodeId);
+<a class="jxr_linenumber" name="534" href="#534">534</a>                         builder.setID(doNodeId);
+<a class="jxr_linenumber" name="535" href="#535">535</a>                         builder.setDeclaration(false);
+<a class="jxr_linenumber" name="536" href="#536">536</a>                         builder.setIndend(false);
+<a class="jxr_linenumber" name="537" href="#537">537</a>                         <strong class="jxr_keyword">final</strong> XMLSerializer serializer = builder.build();
+<a class="jxr_linenumber" name="538" href="#538">538</a>                         serializer.call();
+<a class="jxr_linenumber" name="539" href="#539">539</a> 
+<a class="jxr_linenumber" name="540" href="#540">540</a>                         output.write(ENDRESULT);
+<a class="jxr_linenumber" name="541" href="#541">541</a>                     } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="542" href="#542">542</a>                         <strong class="jxr_keyword">final</strong> XMLSerializerProperties props = <strong class="jxr_keyword">new</strong> XMLSerializerProperties();
+<a class="jxr_linenumber" name="543" href="#543">543</a>                         <strong class="jxr_keyword">final</strong> XMLSerializerBuilder builder =
+<a class="jxr_linenumber" name="544" href="#544">544</a>                             <strong class="jxr_keyword">new</strong> XMLSerializerBuilder(session, rtx.getNode().getNodeKey(), output, props);
+<a class="jxr_linenumber" name="545" href="#545">545</a>                         builder.setREST(doNodeId);
+<a class="jxr_linenumber" name="546" href="#546">546</a>                         builder.setID(doNodeId);
+<a class="jxr_linenumber" name="547" href="#547">547</a>                         builder.setDeclaration(false);
+<a class="jxr_linenumber" name="548" href="#548">548</a>                         builder.setIndend(false);
+<a class="jxr_linenumber" name="549" href="#549">549</a>                         <strong class="jxr_keyword">final</strong> XMLSerializer serializer = builder.build();
+<a class="jxr_linenumber" name="550" href="#550">550</a>                         serializer.call();
+<a class="jxr_linenumber" name="551" href="#551">551</a>                     }
+<a class="jxr_linenumber" name="552" href="#552">552</a>                 } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="553" href="#553">553</a>                     <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> JaxRxException(404, NOTFOUND);
+<a class="jxr_linenumber" name="554" href="#554">554</a>                 }
+<a class="jxr_linenumber" name="555" href="#555">555</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> TTException ttExcep) {
+<a class="jxr_linenumber" name="556" href="#556">556</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> JaxRxException(ttExcep);
+<a class="jxr_linenumber" name="557" href="#557">557</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> IOException ioExcep) {
+<a class="jxr_linenumber" name="558" href="#558">558</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> JaxRxException(ioExcep);
+<a class="jxr_linenumber" name="559" href="#559">559</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception globExcep) {
+<a class="jxr_linenumber" name="560" href="#560">560</a>                 <strong class="jxr_keyword">if</strong> (globExcep instanceof JaxRxException) { <em class="jxr_comment">// NOPMD due</em>
+<a class="jxr_linenumber" name="561" href="#561">561</a>                     <em class="jxr_comment">// to</em>
+<a class="jxr_linenumber" name="562" href="#562">562</a>                     <em class="jxr_comment">// different</em>
+<a class="jxr_linenumber" name="563" href="#563">563</a>                     <em class="jxr_comment">// exception</em>
+<a class="jxr_linenumber" name="564" href="#564">564</a>                     <em class="jxr_comment">// types</em>
+<a class="jxr_linenumber" name="565" href="#565">565</a>                     <strong class="jxr_keyword">throw</strong> (JaxRxException)globExcep;
+<a class="jxr_linenumber" name="566" href="#566">566</a>                 } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="567" href="#567">567</a>                     <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> JaxRxException(globExcep);
+<a class="jxr_linenumber" name="568" href="#568">568</a>                 }
+<a class="jxr_linenumber" name="569" href="#569">569</a>             } <strong class="jxr_keyword">finally</strong> {
+<a class="jxr_linenumber" name="570" href="#570">570</a>                 <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="571" href="#571">571</a>                     WorkerHelper.closeRTX(rtx, session);
+<a class="jxr_linenumber" name="572" href="#572">572</a>                 } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> TTException exce) {
+<a class="jxr_linenumber" name="573" href="#573">573</a>                     <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> JaxRxException(exce);
+<a class="jxr_linenumber" name="574" href="#574">574</a>                 }
+<a class="jxr_linenumber" name="575" href="#575">575</a>             }
+<a class="jxr_linenumber" name="576" href="#576">576</a> 
+<a class="jxr_linenumber" name="577" href="#577">577</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="578" href="#578">578</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> JaxRxException(404, <span class="jxr_string">"Resource does not exist"</span>);
+<a class="jxr_linenumber" name="579" href="#579">579</a>         }
 <a class="jxr_linenumber" name="580" href="#580">580</a> 
-<a class="jxr_linenumber" name="581" href="#581">581</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="582" href="#582">582</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> JaxRxException(404, <span class="jxr_string">"Resource does not exist"</span>);
-<a class="jxr_linenumber" name="583" href="#583">583</a>         }
-<a class="jxr_linenumber" name="584" href="#584">584</a> 
-<a class="jxr_linenumber" name="585" href="#585">585</a>     }
-<a class="jxr_linenumber" name="586" href="#586">586</a> }
+<a class="jxr_linenumber" name="581" href="#581">581</a>     }
+<a class="jxr_linenumber" name="582" href="#582">582</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

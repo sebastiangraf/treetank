@@ -44,7 +44,7 @@
 <a class="jxr_linenumber" name="34" href="#34">34</a>  <strong class="jxr_keyword">import</strong> org.testng.Assert;
 <a class="jxr_linenumber" name="35" href="#35">35</a>  <strong class="jxr_keyword">import</strong> org.testng.annotations.AfterMethod;
 <a class="jxr_linenumber" name="36" href="#36">36</a>  <strong class="jxr_keyword">import</strong> org.testng.annotations.BeforeMethod;
-<a class="jxr_linenumber" name="37" href="#37">37</a>  <strong class="jxr_keyword">import</strong> org.treetank.TestHelper;
+<a class="jxr_linenumber" name="37" href="#37">37</a>  <strong class="jxr_keyword">import</strong> org.treetank.CoreTestHelper;
 <a class="jxr_linenumber" name="38" href="#38">38</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.INodeReadTrx;
 <a class="jxr_linenumber" name="39" href="#39">39</a>  <strong class="jxr_keyword">import</strong> org.treetank.axis.AbsAxis;
 <a class="jxr_linenumber" name="40" href="#40">40</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTException;
@@ -54,12 +54,12 @@
 <a class="jxr_linenumber" name="44" href="#44">44</a>  
 <a class="jxr_linenumber" name="45" href="#45">45</a>      @BeforeMethod
 <a class="jxr_linenumber" name="46" href="#46">46</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setUp() <strong class="jxr_keyword">throws</strong> TTException {
-<a class="jxr_linenumber" name="47" href="#47">47</a>          TestHelper.deleteEverything();
+<a class="jxr_linenumber" name="47" href="#47">47</a>          CoreTestHelper.deleteEverything();
 <a class="jxr_linenumber" name="48" href="#48">48</a>      }
 <a class="jxr_linenumber" name="49" href="#49">49</a>  
 <a class="jxr_linenumber" name="50" href="#50">50</a>      @AfterMethod
 <a class="jxr_linenumber" name="51" href="#51">51</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> tearDown() <strong class="jxr_keyword">throws</strong> TTException {
-<a class="jxr_linenumber" name="52" href="#52">52</a>          TestHelper.closeEverything();
+<a class="jxr_linenumber" name="52" href="#52">52</a>          CoreTestHelper.closeEverything();
 <a class="jxr_linenumber" name="53" href="#53">53</a>      }
 <a class="jxr_linenumber" name="54" href="#54">54</a>  
 <a class="jxr_linenumber" name="55" href="#55">55</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> testIAxisConventions(<strong class="jxr_keyword">final</strong> INodeReadTrx rtx, <strong class="jxr_keyword">final</strong> AbsAxis axis,
