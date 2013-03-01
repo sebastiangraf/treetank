@@ -36,6 +36,7 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTIOException;
+import org.treetank.io.IOUtils;
 import org.treetank.log.LogKey.LogKeyBinding;
 import org.treetank.log.LogValue.LogValueBinding;
 
@@ -83,6 +84,9 @@ public final class LRULog {
      */
     private final transient Database mDatabase;
 
+    /** Location to the BDB. */
+    private final transient File mLocation;
+
     /**
      * Creates a new LRU cache.
      * 
@@ -100,14 +104,13 @@ public final class LRULog {
         mKeyBinding = new LogKeyBinding();
         mValueBinding = new LogValueBinding(pNodeFac, pMetaFac);
 
-        final File realPlace =
-            new File(pFile, ResourceConfiguration.Paths.TransactionLog.getFile().getName());
+        mLocation = new File(pFile, ResourceConfiguration.Paths.TransactionLog.getFile().getName());
         try {
             final EnvironmentConfig config = new EnvironmentConfig();
             config.setAllowCreate(true);
             config.setLocking(false);
             config.setCacheSize(1024 * 1024);
-            mEnv = new Environment(realPlace, config);
+            mEnv = new Environment(mLocation, config);
             final DatabaseConfig dbConfig = new DatabaseConfig();
             dbConfig.setAllowCreate(true);
             dbConfig.setExclusiveCreate(true);
@@ -176,6 +179,8 @@ public final class LRULog {
             mDatabase.close();
             mEnv.removeDatabase(null, NAME);
             mEnv.close();
+            IOUtils.recursiveDelete(mLocation);
+            mLocation.mkdir();
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
         }

@@ -45,6 +45,7 @@ public class InsertBench {
         Injector inj =
             Guice.createInjector(new ModuleSetter().setNodeFacClass(DumbNodeFactory.class).setMetaFacClass(
                 DumbMetaEntryFactory.class).createModule());
+
         mConfig =
             inj.getInstance(IResourceConfigurationFactory.class).create(
                 StandardSettings.getProps(storageFile.getAbsolutePath(), RESOURCENAME));
@@ -69,37 +70,41 @@ public class InsertBench {
     @Bench
     public void bench16384() throws TTException {
         insert(16384);
+        mTrx.commit();
+        insert(16384);
+        mTrx.commit();
     }
 
-    @Bench
-    public void bench32768() throws TTException {
-        insert(32768);
-    }
-
-    @Bench
-    public void bench65536() throws TTException {
-        insert(65536);
-    }
-
-    @Bench
-    public void bench131072() throws TTException {
-        insert(131072);
-    }
-
-    @Bench
-    public void bench262144() throws TTException {
-        insert(262144);
-    }
-
-    @Bench
-    public void bench524288() throws TTException {
-        insert(524288);
-    }
-
-    @Bench
-    public void bench1048576() throws TTException {
-        insert(1048576);
-    }
+    //
+    // @Bench
+    // public void bench32768() throws TTException {
+    // insert(32768);
+    // }
+    //
+    // @Bench
+    // public void bench65536() throws TTException {
+    // insert(65536);
+    // }
+    //
+    // @Bench
+    // public void bench131072() throws TTException {
+    // insert(131072);
+    // }
+    //
+    // @Bench
+    // public void bench262144() throws TTException {
+    // insert(262144);
+    // }
+    //
+    // @Bench
+    // public void bench524288() throws TTException {
+    // insert(524288);
+    // }
+    //
+    // @Bench
+    // public void bench1048576() throws TTException {
+    // insert(1048576);
+    // }
 
     private void insert(int numbersToInsert) throws TTException {
         for (int i = 0; i < numbersToInsert; i++) {

@@ -29,7 +29,7 @@ public class BucketCleaner {
         }
 
         String[] containerName = {
-            "grave928134589762"
+            "jscsi-target"
         };
 
         BlobStoreContext context =
