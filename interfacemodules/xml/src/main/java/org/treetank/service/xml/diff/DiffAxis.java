@@ -39,13 +39,13 @@ public class DiffAxis extends AbsAxis {
     /**
      * Constructor.
      * 
-     * @param paramNewRtx
-     *            {@link IReadTransaction} on new revision
-     * @param paramOldRtx
-     *            {@link IReadTransaction} on old revision
+     * @param pNewRtx
+     *            {@link INodeReadTrx} on new revision
+     * @param pOldRtx
+     *            {@link INodeReadTrx} on old revision
      */
-    public DiffAxis(final INodeReadTrx paramNewRtx, final INodeReadTrx paramOldRtx) {
-        super(paramNewRtx);
+    public DiffAxis(final INodeReadTrx pNewRtx, final INodeReadTrx pOldRtx) {
+        super(pNewRtx);
     }
 
     /** {@inheritDoc} */

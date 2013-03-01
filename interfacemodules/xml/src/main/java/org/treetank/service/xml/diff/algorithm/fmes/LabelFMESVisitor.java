@@ -71,34 +71,44 @@ public final class LabelFMESVisitor {
         mLeafLabels = new HashMap<Integer, List<INode>>();
     }
 
-    /** {@inheritDoc} 
-     * @throws TTIOException */
-    public void visit(final ElementNode paramNode) throws TTIOException {
-        final long nodeKey = paramNode.getNodeKey();
+    /**
+     * Visiting an {@link ElementNode}.
+     * 
+     * @param pNode
+     *            to be visited
+     * @throws TTIOException
+     */
+    public void visit(final ElementNode pNode) throws TTIOException {
+        final long nodeKey = pNode.getNodeKey();
         mRtx.moveTo(nodeKey);
-        for (int i = 0; i < paramNode.getAttributeCount(); i++) {
+        for (int i = 0; i < pNode.getAttributeCount(); i++) {
             mRtx.moveToAttribute(i);
             addLeafLabel();
             mRtx.moveTo(nodeKey);
         }
-        for (int i = 0; i < paramNode.getNamespaceCount(); i++) {
+        for (int i = 0; i < pNode.getNamespaceCount(); i++) {
             mRtx.moveToNamespace(i);
             addLeafLabel();
             mRtx.moveTo(nodeKey);
         }
-        if (paramNode.hasFirstChild() || paramNode.getAttributeCount() > 0
-            || paramNode.getNamespaceCount() > 0) {
-            if (!mLabels.containsKey(paramNode.getKind())) {
-                mLabels.put(paramNode.getKind(), new ArrayList<INode>());
+        if (pNode.hasFirstChild() || pNode.getAttributeCount() > 0
+            || pNode.getNamespaceCount() > 0) {
+            if (!mLabels.containsKey(pNode.getKind())) {
+                mLabels.put(pNode.getKind(), new ArrayList<INode>());
             }
-            mLabels.get(paramNode.getKind()).add(paramNode);
+            mLabels.get(pNode.getKind()).add(pNode);
         }
     }
 
-    /** {@inheritDoc} 
-     * @throws TTIOException */
-    public void visit(final TextNode paramNode) throws TTIOException {
-        mRtx.moveTo(paramNode.getNodeKey());
+    /**
+     * Visiting a {@link TextNode}
+     * 
+     * @param pNode
+     *            to be visited
+     * @throws TTIOException
+     */
+    public void visit(final TextNode pNode) throws TTIOException {
+        mRtx.moveTo(pNode.getNodeKey());
         addLeafLabel();
     }
 

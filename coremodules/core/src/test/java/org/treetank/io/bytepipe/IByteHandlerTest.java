@@ -32,8 +32,8 @@ import com.google.common.io.ByteStreams;
 public class IByteHandlerTest {
 
     /**
-     * Test method for {@link org.treetank.io.bytepipe.IByteHandler#deserialize(byte[])} and for
-     * {@link org.treetank.io.bytepipe.IByteHandler#serialize(byte[])}.
+     * Test method for {@link org.treetank.io.bytepipe.IByteHandler#deserialize(InputStream)} and for
+     * {@link org.treetank.io.bytepipe.IByteHandler#serialize(OutputStream)}.
      * 
      * @throws TTByteHandleException
      * @throws IOException

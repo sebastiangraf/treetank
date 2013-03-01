@@ -15,7 +15,7 @@ import com.google.inject.ImplementedBy;
  * nodes for the {@link INode} interface.
  * 
  * The interface is the counterpart to the serialization-method
- * {@link org.treetank.api.INode#getByteRepresentation()}.
+ * {@link org.treetank.api.INode#serialize(java.io.DataOutput)}.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 

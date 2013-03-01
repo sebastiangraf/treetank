@@ -28,12 +28,21 @@
 /**
  * <h1>Page Layer for Treetank</h1>
  * <p>
- * Contains all page kinds and page utils.
+ * Contains all page kinds and page utils. 
  * </p>
- * 
- * 
- * @author Marc Kramis, University of Konstanz
+ * <p>
+ * The pages are namely
+ * <ul>
+ * <li>UberPage: Representing the main-entrance point in the page-structure of the structure.</li>
+ * <li>IndirectPage: Pointing to other pages to multiply the fanout within the tree-structure within the entire structure as well as within the sub-structures under each revision namely the RevisionRootPages.</li>
+ * <li>RevisionRootPage: Representing a single version within the structure. Offers to the ability to point to any Indirect-/NodePage (even if they were created in former versions.)</li>
+ * <li>MetaPage: Storing application-specific metadata in a map-structure. The entries must be provided by the application.</li>
+ * <li>NodePage: Storing application-specific nodes in any structure. The node must be provided by the application.</li>
+ * </ul>
+ * </p>
  * @author Sebastian Graf, University of Konstanz
+ * @author Marc Kramis, University of Konstanz
+ * 
  */
 package org.treetank.page;
 

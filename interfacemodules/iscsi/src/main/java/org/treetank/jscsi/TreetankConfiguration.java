@@ -41,10 +41,8 @@ import org.jscsi.target.Configuration;
 import org.jscsi.target.Target;
 import org.jscsi.target.settings.TextKeyword;
 import org.jscsi.target.storage.IStorageModule;
-import org.jscsi.target.storage.IStorageModule.STORAGEKIND;
 import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.exception.TTException;
-import org.treetank.jscsi.storage.TreetankStorageModule;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -148,20 +146,20 @@ public class TreetankConfiguration extends Configuration {
       nextNode = chopWhiteSpaces(nextNode.getNextSibling());
     }
 
-    // Finding out the concrete storage
-    IStorageModule.STORAGEKIND kind = null;
-    if (nextNode.getLocalName().equals(ELEMENT_SYNCFILESTORAGE)) {
-      kind = STORAGEKIND.SyncFile;
-    } else {
-      // assert nextNode.getLocalName().equals(ELEMENT_ASYNCFILESTORAGE);
-      kind = STORAGEKIND.AsyncFile;
-    }
+//    // Finding out the concrete storage
+//    IStorageModule.STORAGEKIND kind = null;
+//    if (nextNode.getLocalName().equals(ELEMENT_SYNCFILESTORAGE)) {
+//      kind = STORAGEKIND.SyncFile;
+//    } else {
+//      // assert nextNode.getLocalName().equals(ELEMENT_ASYNCFILESTORAGE);
+//      kind = STORAGEKIND.AsyncFile;
+//    }
 
     // Getting storagepath
     nextNode = nextNode.getFirstChild();
     nextNode = chopWhiteSpaces(nextNode);
     // assert nextNode.getLocalName().equals(ELEMENT_PATH);
-    String storageFilePath = nextNode.getTextContent();
+//    String storageFilePath = nextNode.getTextContent();
 
     // CreateNode with size
     nextNode = chopWhiteSpaces(nextNode.getNextSibling());

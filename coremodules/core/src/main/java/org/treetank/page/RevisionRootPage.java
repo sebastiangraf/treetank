@@ -44,6 +44,9 @@ import org.treetank.page.interfaces.IRevisionPage;
  * <p>
  * Revision root page holds a reference to the name page as well as the static node page tree.
  * </p>
+ * 
+ * @author Sebastian Graf, University of Konstanz
+ * @author Marc Kramis, University of Konstanz
  */
 public final class RevisionRootPage implements IRevisionPage, IReferencePage {
 

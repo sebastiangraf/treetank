@@ -16,19 +16,17 @@ import org.treetank.page.NodePage;
 public interface IRevisioning {
 
     /**
-     * Method to reconstruct a complete NodePage with the help of party filled
+     * Method to reconstruct a complete {@link NodePage} with the help of party filled
      * pages plus a revision-delta which determines the necessary steps back.
      * 
      * @param pages
-     *            the base of the complete Nodepage
-     * @param revToRestore
-     *            the revision needed to build up the complete milestone.
-     * @return the complete NodePage
+     *            the base of the complete {@link NodePage}
+     * @return the complete {@link NodePage}
      */
     NodePage combinePages(final NodePage[] pages);
 
     /**
-     * Method to reconstruct a complete NodePage for reading as well as a
+     * Method to reconstruct a complete {@link NodePage} for reading as well as a
      * NodePage for serializing with the Nodes to write already on there.
      * 
      * @param pRevisionsToRestore
@@ -40,11 +38,10 @@ public interface IRevisioning {
      * @param pFullDump
      *            boolean if entire page should be written. Must be triggered from extern seind it is based on
      *            the revisionToRestore-Param
-     * @return a NodePageContainer holding a complete NodePage for reading a one
+     * @return a {@link LogValue} holding a complete {@link NodePage} for reading a one
      *         for writing
      */
     LogValue combinePagesForModification(final int pRevisionsToRestore, final long pNewPageKey,
         final NodePage[] pPages, final boolean pFullDump);
-
 
 }

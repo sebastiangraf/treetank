@@ -40,7 +40,6 @@ import com.sleepycat.je.DatabaseEntry;
 import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.Environment;
 import com.sleepycat.je.OperationStatus;
-import com.sleepycat.je.Transaction;
 
 /**
  * This class represents an reading instance of the Treetank-Application
@@ -61,8 +60,6 @@ public final class BerkeleyWriter implements IBackendWriter {
     /**
      * Simple constructor starting with an {@link Environment} and a {@link Storage}.
      * 
-     * @param pTxn
-     *            {@link Transaction} transaction for the write and read
      * @param pDatabase
      *            {@link Storage} reference where the data should be written to
      * @param pPageBinding

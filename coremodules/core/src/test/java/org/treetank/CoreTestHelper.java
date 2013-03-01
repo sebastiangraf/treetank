@@ -33,6 +33,7 @@ import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertNotNull;
 import static org.testng.AssertJUnit.assertNull;
 import static org.testng.AssertJUnit.assertTrue;
+
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
@@ -317,11 +318,13 @@ public final class CoreTestHelper {
     /**
      * Utility method to create nodes per revision.
      * 
-     * @param List
-     *            <Map.Entry<DumbKey, DumbValue>>
-     *            to create
+     * @param pNumbers
+     *            number to create
      * @param pWtx
      *            to store to.
+     * @param pAlreadyExistingEntries
+     *            already existing entries
+     * @return List<Map.Entry<DumbKey, DumbValue>> returning the inserted data
      * @throws TTException
      */
     public static final List<Map.Entry<DumbKey, DumbValue>> insertMetaWithTransaction(final int pNumbers,

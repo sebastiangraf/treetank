@@ -9,14 +9,6 @@ import org.treetank.exception.TTException;
  * Write-Transaction of a page ensuring read- and write access to any pages.
  * The transaction is bound on the very last revision and bases on a session.
  * 
- * <code>
- *      //Ensure, storage and resources are created
- *      final IStorage storage = Storage.openStorage(FILE);
- *      final ISession session =
- *           storage.getSession(new SessionConfiguration(RESOURCENAME, KEY));
- *      final IPageReadTrx pRtx = session.beginWriteReadTransaction();
- * </code>
- * 
  * Each {@link IPageWriteTrx} can afterwards get nodes from the page-layer and the underlaying backend as well
  * as store new {@link INode}s in the backend.
  * 
@@ -36,12 +28,12 @@ public interface IPageWriteTrx extends IPageReadTrx {
     /**
      * Setting a node and storing the node in the page-layer.
      * 
-     * @param pnode
+     * @param pNode
      *            the node to be stored.
      * @throws TTException
      *             if anything weird happens.
      */
-    long setNode(INode pnode) throws TTException;
+    long setNode(INode pNode) throws TTException;
 
     /**
      * Removing the node from the storage.
@@ -55,11 +47,9 @@ public interface IPageWriteTrx extends IPageReadTrx {
     /**
      * Simple commit of this page transaction to store the newest version.
      * 
-     * @return true of successful, false otherwise
      * @throws if
      *             anything weird happens
      */
     void commit() throws TTException;
-
 
 }

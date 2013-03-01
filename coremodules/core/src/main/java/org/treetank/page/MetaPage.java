@@ -45,6 +45,9 @@ import org.treetank.page.interfaces.IPage;
  * <p>
  * This page stored variable key -> value mappings, whereas elements must implement the {@link IMetaEntry}s.
  * </p>
+ * 
+ * @author Sebastian Graf, University of Konstanz
+ * @author Marc Kramis, University of Konstanz
  */
 public final class MetaPage implements IPage {
 

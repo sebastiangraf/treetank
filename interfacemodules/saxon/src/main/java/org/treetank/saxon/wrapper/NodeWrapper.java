@@ -133,21 +133,21 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
     /**
      * A node in the XML parse tree. Wrap a Treetank node.
      * 
-     * @param database
-     *            Treetank database.
-     * @param nodekeyToStart
+     * @param pDocWrapper
+     *            Document wrapper
+     * @param pNodekeyToStart
      *            NodeKey to move to.
      * @throws TTException
      */
-    protected NodeWrapper(final DocumentWrapper paramDocWrapper, final long nodekeyToStart)
+    protected NodeWrapper(final DocumentWrapper pDocWrapper, final long pNodekeyToStart)
         throws TTException {
 
-        this.mDocWrapper = paramDocWrapper;
+        this.mDocWrapper = pDocWrapper;
 
         final INodeReadTrx rtx =
             new NodeReadTrx(mDocWrapper.mSession.beginPageReadTransaction(mDocWrapper.mSession
                 .getMostRecentVersion()));
-        rtx.moveTo(nodekeyToStart);
+        rtx.moveTo(pNodekeyToStart);
         this.nodeKind = rtx.getNode().getKind();
         this.mKey = rtx.getNode().getNodeKey();
         this.node = rtx.getNode();

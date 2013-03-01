@@ -93,16 +93,16 @@ public final class DocumentWrapper implements DocumentInfo {
     /**
      * Wrap a Treetank document.
      * 
-     * @param paramDatabase
+     * @param pSession
      *            Treetank database.
-     * @param paramConfig
+     * @param pConfig
      *            Configuration used.
      * @throws TTException
      */
-    public DocumentWrapper(final ISession paramSession, final Configuration paramConfig) throws TTException {
-        this.mSession = paramSession;
-        mBaseURI = paramSession.toString();
-        setConfiguration(paramConfig);
+    public DocumentWrapper(final ISession pSession, final Configuration pConfig) throws TTException {
+        this.mSession = pSession;
+        mBaseURI = pSession.toString();
+        setConfiguration(pConfig);
         mNodeWrapper = new NodeWrapper(this, 0);
     }
 

@@ -11,11 +11,23 @@ import org.treetank.api.IMetaEntry;
 import org.treetank.api.IMetaEntryFactory;
 import org.treetank.exception.TTIOException;
 
+/**
+ * 
+ * Dumb MetaEntryFactory mainly for testing the core.
+ * 
+ * @author Sebastian Graf, University of Konstanz
+ * 
+ */
 public class DumbMetaEntryFactory implements IMetaEntryFactory {
 
+    /** Constant for the KEY. */
     private final static int KEY = 1;
+    /** Constant for the VALUE. */
     private final static int VALUE = 2;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IMetaEntry deserializeEntry(DataInput pData) throws TTIOException {
         try {
@@ -28,16 +40,28 @@ public class DumbMetaEntryFactory implements IMetaEntryFactory {
             default:
                 throw new IllegalStateException("Kind not defined.");
             }
-
         } catch (final IOException exc) {
             throw new TTIOException(exc);
         }
     }
 
+    /**
+     * Simple class for a simple key, just holding a long.
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
     public static class DumbKey implements IMetaEntry {
 
+        /** The data itself. */
         private final long mData;
 
+        /**
+         * Constructor.
+         * 
+         * @param pData
+         *            setting the data
+         */
         public DumbKey(final long pData) {
             mData = pData;
         }
@@ -80,10 +104,23 @@ public class DumbMetaEntryFactory implements IMetaEntryFactory {
         }
     }
 
+    /**
+     * Simple class for a simple key, just holding a long.
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
     public static class DumbValue implements IMetaEntry {
 
+        /** The data itself. */
         private final long mData;
 
+        /**
+         * Constructor.
+         * 
+         * @param pData
+         *            setting the data
+         */
         public DumbValue(final long pData) {
             mData = pData;
         }

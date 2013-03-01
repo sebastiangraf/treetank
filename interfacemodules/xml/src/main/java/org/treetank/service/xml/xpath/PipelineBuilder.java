@@ -477,9 +477,9 @@ public final class PipelineBuilder {
     /**
      * Adds a literal expression to the pipeline.
      * 
-     * @param mTransaction
+     * @param pTrans
      *            Transaction to operate with.
-     * @param mItemKey
+     * @param pVal
      *            key of the literal expression.
      */
     public void addLiteral(final INodeReadTrx pTrans, final AtomicValue pVal) {
@@ -592,8 +592,7 @@ public final class PipelineBuilder {
      * @param mVarNum
      *            number of binding variables
      */
-    public void addQuantifierExpr(final INodeReadTrx mTransaction, final boolean mIsSome,
-        final int mVarNum) {
+    public void addQuantifierExpr(final INodeReadTrx mTransaction, final boolean mIsSome, final int mVarNum) {
 
         assert getPipeStack().size() >= (mVarNum + 1);
 

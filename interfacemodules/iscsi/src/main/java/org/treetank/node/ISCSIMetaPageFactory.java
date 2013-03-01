@@ -1,4 +1,4 @@
-package org.treetank.jscsi.node;
+package org.treetank.node;
 
 import java.io.DataInput;
 import java.io.DataOutput;

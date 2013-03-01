@@ -43,6 +43,9 @@ import org.treetank.page.interfaces.IPage;
  * <p>
  * A node page stores a set of nodes.
  * </p>
+ * 
+ * @author Sebastian Graf, University of Konstanz
+ * @author Marc Kramis, University of Konstanz
  */
 public final class NodePage implements IPage {
 
@@ -68,10 +71,9 @@ public final class NodePage implements IPage {
     }
 
     /**
-     * Get key of node page.
-     * 
-     * @return Node page key.
+     * {@inheritDoc}
      */
+    @Override
     public long getPageKey() {
         return mPageKey;
     }
@@ -109,6 +111,8 @@ public final class NodePage implements IPage {
     }
 
     /**
+     * Getter for nodes
+     * 
      * @return the mNodes
      */
     public INode[] getNodes() {
@@ -165,6 +169,12 @@ public final class NodePage implements IPage {
         return this.hashCode() == obj.hashCode();
     }
 
+    /**
+     * Static class to mark deleted entries within the page.
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
     public static class DeletedNode implements INode {
         /** Hash for this node. */
         private long mHash;
@@ -177,10 +187,8 @@ public final class NodePage implements IPage {
         /**
          * Constructor.
          * 
-         * @param paramNode
+         * @param pNodeKey
          *            nodekey to be replaced with a deletednode
-         * @param paramParent
-         *            parent of this key.
          */
         public DeletedNode(final long pNodeKey) {
             mNodeKey = pNodeKey;

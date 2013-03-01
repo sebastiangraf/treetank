@@ -70,8 +70,6 @@ public class JCloudsReader implements IBackendReader {
 
     /**
      * {@inheritDoc}
-     * 
-     * @throws
      */
     @Override
     public IPage read(long pKey) throws TTIOException {

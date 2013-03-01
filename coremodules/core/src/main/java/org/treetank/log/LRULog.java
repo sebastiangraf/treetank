@@ -119,7 +119,12 @@ public final class LRULog {
     }
 
     /**
-     * {@inheritDoc}
+     * Getting a {@link LogValue} for a given key
+     * 
+     * @param pKey
+     *            the key
+     * @return a suitable {@link LogValue} if present, false otherwise
+     * @throws TTIOException
      */
     public LogValue get(final LogKey pKey) throws TTIOException {
         final DatabaseEntry valueEntry = new DatabaseEntry();
@@ -138,7 +143,13 @@ public final class LRULog {
     }
 
     /**
-     * {@inheritDoc}
+     * Putting a new entry to the log, overriding already existing entries.
+     * 
+     * @param pKey
+     *            to be set
+     * @param pValue
+     *            to be set
+     * @throws TTIOException
      */
     public void put(final LogKey pKey, final LogValue pValue) throws TTIOException {
         final DatabaseEntry valueEntry = new DatabaseEntry();
@@ -156,7 +167,9 @@ public final class LRULog {
     }
 
     /**
-     * {@inheritDoc}
+     * Closing the log.
+     * 
+     * @throws TTIOException
      */
     public void close() throws TTIOException {
         try {

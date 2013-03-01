@@ -95,8 +95,6 @@ public final class PageWriteTrx implements IPageWriteTrx {
      *            writer where this transaction should write to
      * @param pRepresentRev
      *            revision represent
-     * @param pStoreRev
-     *            revision store
      * @throws TTIOException
      *             if IO Error
      */

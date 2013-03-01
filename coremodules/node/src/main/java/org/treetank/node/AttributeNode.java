@@ -66,7 +66,7 @@ public final class AttributeNode implements INode, IValNode, INameNode {
      * 
      * @param pDel
      *            {@link NodeDelegate} to be set
-     * @param pDel
+     * @param pNameDel
      *            {@link StructNodeDelegate} to be set
      * @param pValDel
      *            {@link ValNodeDelegate} to be set

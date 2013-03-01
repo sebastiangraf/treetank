@@ -43,6 +43,9 @@ import org.treetank.page.interfaces.IReferencePage;
  * <p>
  * Uber page holds a reference to the static revision root page tree.
  * </p>
+ * 
+ * @author Sebastian Graf, University of Konstanz
+ * @author Marc Kramis, University of Konstanz
  */
 public final class UberPage implements IReferencePage {
 
@@ -65,8 +68,8 @@ public final class UberPage implements IReferencePage {
      *            key of this page
      * @param pRevisionCount
      *            count of all revisions in this storage
-     * @param pReference
-     *            Reference for the indirect page
+     * @param pPageCounter
+     *            Counter for all pages
      */
     public UberPage(final long pPageKey, final long pRevisionCount, final long pPageCounter) {
         mRevisionCount = pRevisionCount;

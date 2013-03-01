@@ -39,14 +39,14 @@ public interface IImportDiff {
     /**
      * Do the diff.
      * 
-     * @param paramWtx
-     *            {@link IWriteTransaction} implementation reference on old
+     * @param pWtx
+     *            {@link INodeWriteTrx} implementation reference on old
      *            revision
-     * @param paramRtx
-     *            {@link IReadTransaction} implementation reference on new
+     * @param pRtx
+     *            {@link INodeWriteTrx} implementation reference on new
      *            revision
      */
-    void diff(final INodeWriteTrx paramWtx, final INodeReadTrx paramRtx);
+    void diff(final INodeWriteTrx pWtx, final INodeReadTrx pRtx);
 
     /**
      * Name of algorithm.

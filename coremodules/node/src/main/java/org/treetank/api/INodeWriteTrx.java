@@ -44,72 +44,6 @@ import org.treetank.exception.TTIOException;
  * cursor-like fashion.
  * </p>
  * 
- * <p>
- * Each commit at least adds <code>10kB</code> to the TreeTank file. It is thus recommended to work with the
- * auto commit mode only committing after a given amount of node modifications or elapsed time. For very
- * update-intensive data, a value of one million modifications and ten seconds is recommended. Note that this
- * might require to increment to available heap.
- * </p>
- * 
- * <h2>Convention</h2>
- * 
- * <p>
- * <ol>
- * <li>Only a single thread accesses the single INodeWriteTrx instance.</li>
- * <li><strong>Precondition</strong> before moving cursor: <code>INodeWriteTrx.getNodeKey() == n</code>.</li>
- * <li><strong>Postcondition</strong> after modifying the cursor: <code>(INodeWriteTrx.insertX() == m &&
- *       INodeWriteTrx.getNodeKey() == m)</code>.</li>
- * </ol>
- * </p>
- * 
- * <h2>User Example</h2>
- * 
- * <p>
- * 
- * <pre>
- * // Without auto commit.
- * final INodeWriteTrx wtx = session.beginWriteTransaction();
- * wtx.insertElementAsFirstChild(&quot;foo&quot;);
- * // Explicit forced commit.
- * wtx.commit();
- * wtx.close();
- * 
- * // With auto commit after every 10th modification.
- * final INodeWriteTrx wtx = session.beginWriteTransaction(10, 0);
- * wtx.insertElementAsFirstChild(new QName(&quot;foo&quot;));
- * // Implicit commit.
- * wtx.close();
- * 
- * // With auto commit after every second.
- * final INodeWriteTrx wtx = session.beginWriteTransaction(0, 1);
- * wtx.insertElementAsFirstChild(new QName(&quot;foo&quot;));
- * // Implicit commit.
- * wtx.close();
- * 
- * // With auto commit after every 10th modification and every second.
- * final INodeWriteTrx wtx = session.beginWriteTransaction(10, 1);
- * wtx.insertElementAsFirstChild(new QName(&quot;foo&quot;));
- * // Implicit commit.
- * wtx.close();
- * </pre>
- * 
- * </p>
- * 
- * <h2>Developer Example</h2>
- * 
- * <p>
- * 
- * <pre>
- *   public final void someIWriteTransactionMethod() {
- *     // This must be called to make sure the transaction is not closed.
- *     assertNotClosed();
- *     // This must be called to track the modifications.
- *     mModificationCount++;
- *     ...
- *   }
- * </pre>
- * 
- * </p>
  */
 public interface INodeWriteTrx extends INodeReadTrx {
 
@@ -171,7 +105,7 @@ public interface INodeWriteTrx extends INodeReadTrx {
      * 
      * @param pName
      *            {@link QName} reference
-     * @param paramValue
+     * @param pValue
      *            value of inserted node
      * @throws TTException
      *             if attribute couldn't be inserted.
@@ -256,7 +190,7 @@ public interface INodeWriteTrx extends INodeReadTrx {
 
     /**
      * Reverting all changes to the revision defined. This command has to be
-     * finalized with a commit. A revert is always bound to a {@link INodeReadTrx#moveToDocumentRoot()}.
+     * finalized with a commit.
      * 
      * @param pRev
      *            revert to the revision

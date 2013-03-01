@@ -84,7 +84,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 /**
- * This class appends a given {@link XMLStreamReader} to a {@link IWriteTransaction}. The content of the
+ * This class appends a given {@link XMLStreamReader} to a {@link INodeWriteTrx}. The content of the
  * stream is added as a subtree.
  * Based on an enum which identifies the point of insertion, the subtree is
  * either added as first child or as right sibling.
@@ -96,7 +96,7 @@ import com.google.inject.Injector;
  */
 public class XMLShredder implements Callable<Void> {
 
-    /** {@link IWriteTransaction}. */
+    /** {@link INodeWriteTrx}-reference */
     protected final transient INodeWriteTrx mWtx;
 
     /** {@link XMLEventReader}. */
@@ -115,7 +115,7 @@ public class XMLShredder implements Callable<Void> {
     private transient CountDownLatch mLatch;
 
     /**
-     * Normal constructor to invoke a shredding process on a existing {@link WriteTransaction}.
+     * Normal constructor to invoke a shredding process on a existing {@link INodeWriteTrx}.
      * 
      * @param paramWtx
      *            where the new XML Fragment should be placed
@@ -134,10 +134,10 @@ public class XMLShredder implements Callable<Void> {
     }
 
     /**
-     * Normal constructor to invoke a shredding process on a existing {@link WriteTransaction}.
+     * Normal constructor to invoke a shredding process on a existing {@link INodeWriteTrx}.
      * 
      * @param paramWtx
-     *            {@link IWriteTransaction} where the new XML Fragment should be
+     *            {@link INodeWriteTrx} where the new XML Fragment should be
      *            placed
      * @param paramReader
      *            {@link XMLEventReader} to parse the xml fragment, which should
@@ -350,7 +350,9 @@ public class XMLShredder implements Callable<Void> {
         System.out.print("Shredding '" + paramArgs[0] + "' to '" + paramArgs[1] + "' ... ");
         final long time = System.currentTimeMillis();
 
-        Injector injector = Guice.createInjector(new ModuleSetter().setNodeFacClass(TreeNodeFactory.class).setMetaFacClass(NodeMetaPageFactory.class).createModule());
+        Injector injector =
+            Guice.createInjector(new ModuleSetter().setNodeFacClass(TreeNodeFactory.class).setMetaFacClass(
+                NodeMetaPageFactory.class).createModule());
         IBackendFactory storage = injector.getInstance(IBackendFactory.class);
         IRevisioning revision = injector.getInstance(IRevisioning.class);
 

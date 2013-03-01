@@ -60,11 +60,14 @@ public class VarRefExpr extends AbsExpression {
     }
 
     /**
-     * {@inheritDoc}
+     * Updating an expression with a key
+     * 
+     * @param pVarKey
+     *            as update
      */
-    public void update(final long mVarKey) {
+    public void update(final long pVarKey) {
 
-        this.mVarKey = mVarKey;
+        this.mVarKey = pVarKey;
         reset(this.mVarKey);
 
     }
