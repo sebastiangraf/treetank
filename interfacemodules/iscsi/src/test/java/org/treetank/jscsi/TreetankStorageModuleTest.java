@@ -51,7 +51,7 @@ public class TreetankStorageModuleTest {
 
     private TreetankStorageModule storageModule;
 
-    private int TEST_FILE_SIZE = 512 * 512;
+    private int TEST_FILE_SIZE = 1000 * 1024 * 64 * 32;
 
     private StorageConfiguration configuration;
 
@@ -75,50 +75,50 @@ public class TreetankStorageModuleTest {
         file = CoreTestHelper.PATHS.PATH1.getFile();
         configuration = CoreTestHelper.PATHS.PATH1.getConfig();
 
-        storageModule = new TreetankStorageModule(512, 512, configuration, file);
+        storageModule = new TreetankStorageModule(2048, 1024, 64, configuration, file);
     }
 
     @Test(groups = "Initial read write")
     public void testReadAndWrite() throws TTException, IOException {
 
-        final byte[] writeArray = new byte[TEST_FILE_SIZE];
-        for (int i = 0; i < TEST_FILE_SIZE; ++i)
+        final byte[] writeArray = new byte[64*1024*5];
+        for (int i = 0; i < 64*1024*5; ++i)
             writeArray[i] = (byte)(CoreTestHelper.random.nextDouble() * 256);
-        final byte[] readArray = new byte[TEST_FILE_SIZE];
+        final byte[] readArray = new byte[64*1024*5];
 
-        System.arraycopy(writeArray, 0, readArray, 0, TEST_FILE_SIZE);
+        System.arraycopy(writeArray, 0, readArray, 0, 64*1024*5);
 
         // write
         storageModule.write(writeArray,// bytes (source)
             0,// bytesOffset
-            TEST_FILE_SIZE - 50,// length
+            64*1024*5 - 50,// length
             0);
 
         // read
         storageModule.read(readArray,// bytes (destination)
             0,// bytesOffset
-            TEST_FILE_SIZE - 50,// length
+            64*1024*5 - 50,// length
             0);
 
         // check for errors
         assertTrue(Arrays.equals(writeArray, readArray));
 
-        byte[][] splitBytes = new byte[16][8192];
-
-        ByteArrayInputStream writeArrayInputStream = new ByteArrayInputStream(writeArray);
-
-        for (int i = 0; i < splitBytes.length; i++) {
-            splitBytes[i] = new byte[8192];
-            storageModule.read(splitBytes[i],// bytes (destination)
-                0,// bytesOffset
-                8192,// length
-                i * 16 * 512);
-            byte[] b = new byte[8192];
-            System.out.println(i);
-            writeArrayInputStream.read(b, 0, 8192);
-
-            assertTrue(Arrays.equals(splitBytes[i], b));
-        }
+//        byte[][] splitBytes = new byte[16][8192];
+//
+//        ByteArrayInputStream writeArrayInputStream = new ByteArrayInputStream(writeArray);
+//
+//        for (int i = 0; i < splitBytes.length; i++) {
+//            splitBytes[i] = new byte[8192];
+//            storageModule.read(splitBytes[i],// bytes (destination)
+//                0,// bytesOffset
+//                8192,// length
+//                i * 16 * 512);
+//            byte[] b = new byte[8192];
+//            System.out.println(i);
+//            writeArrayInputStream.read(b, 0, 8192);
+//
+//            assertTrue(Arrays.equals(splitBytes[i], b));
+//        }
 
     }
 

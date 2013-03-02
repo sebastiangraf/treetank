@@ -41,22 +41,22 @@ public class ByteNode implements INode {
     /**
      * The nodes key value, which is equal with it's position in the list.
      */
-    long nodeKey = 0;
+    private long nodeKey = 0;
 
     /**
      * The following nodes key
      */
-    long nextNodeKey = 0;
+    private long nextNodeKey = 0;
 
     /**
      * The previous nodes key
      */
-    long previousNodeKey = -1;
+    private long previousNodeKey = -1;
 
     /**
      * The real index of this byte.
      */
-    long index = 0;
+    private long index = 0;
 
     /**
      * The size of the byte array in the node. The maximum size of a byte array in
@@ -72,14 +72,13 @@ public class ByteNode implements INode {
 
     /**
      * Creates a ByteNode with given bytes
-     * 
+     * @param nodeKey
      * @param content
-     *            , as byte array
      */
-    public ByteNode(long nodeKey, byte[] content) {
-        this.nodeKey = nodeKey;
-        size = content.length;
-        val = content;
+    public ByteNode(long pNodeKey, byte[] pContent) {
+        nodeKey = pNodeKey;
+        size = pContent.length;
+        val = pContent;
     }
 
     /**
@@ -130,9 +129,9 @@ public class ByteNode implements INode {
      * 
      * @param val
      */
-    public void setVal(byte[] val) {
+    public void setVal(byte[] pVal) {
 
-        this.val = val;
+        val = pVal;
     }
 
     /**

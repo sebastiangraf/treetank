@@ -2,6 +2,7 @@ package org.treetank;
 
 import java.io.File;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.testng.IModuleFactory;
 import org.testng.ITestContext;
@@ -50,7 +51,7 @@ public class ModuleFactory implements IModuleFactory {
         else {
             final String[] elements =
                 testClass.getProtectionDomain().getCodeSource().getLocation().toString()
-                    .split(File.separator);
+                    .split(Pattern.quote("/"));
             String module = elements[elements.length - 3];
             switch (module) {
             case "core":
