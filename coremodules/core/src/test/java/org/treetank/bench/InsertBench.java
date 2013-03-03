@@ -62,7 +62,7 @@ public class InsertBench {
         mStorage.createResource(mConfig);
         mSession = mStorage.getSession(new SessionConfiguration(RESOURCENAME, StandardSettings.KEY));
         mNodesToInsert = CoreTestHelper.createNodes(new int[] {
-            1048576
+            16384
         })[0];
         mTrx = mSession.beginPageWriteTransaction();
     }
@@ -75,36 +75,12 @@ public class InsertBench {
         mTrx.commit();
     }
 
-    //
-    // @Bench
-    // public void bench32768() throws TTException {
-    // insert(32768);
-    // }
-    //
-    // @Bench
-    // public void bench65536() throws TTException {
-    // insert(65536);
-    // }
-    //
-    // @Bench
-    // public void bench131072() throws TTException {
-    // insert(131072);
-    // }
-    //
-    // @Bench
-    // public void bench262144() throws TTException {
-    // insert(262144);
-    // }
-    //
-    // @Bench
-    // public void bench524288() throws TTException {
-    // insert(524288);
-    // }
-    //
-    // @Bench
-    // public void bench1048576() throws TTException {
-    // insert(1048576);
-    // }
+    @Bench
+    public void bench16384Direct() throws TTException {
+        insert(16384);
+        insert(16384);
+        mTrx.commit();
+    }
 
     private void insert(int numbersToInsert) throws TTException {
         for (int i = 0; i < numbersToInsert; i++) {

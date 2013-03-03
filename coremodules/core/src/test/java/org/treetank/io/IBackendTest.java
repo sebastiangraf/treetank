@@ -161,13 +161,16 @@ public class IBackendTest {
                         public IBackend getBackend() throws TTIOException {
                             return createCombinedStorage(nodeFac, handler, metaFac);
                         }
-                    }/*
-                    , new IBackendCreator() {
-                        @Override
-                        public IBackend getBackend() throws TTIOException {
-                            return createAWSJCloudsStorage(nodeFac, handler, metaFac);
-                        }
-                    }*/
+                    }
+                /*
+                 * , new IBackendCreator() {
+                 * 
+                 * @Override
+                 * public IBackend getBackend() throws TTIOException {
+                 * return createAWSJCloudsStorage(nodeFac, handler, metaFac);
+                 * }
+                 * }
+                 */
 
                 }
             }
@@ -196,15 +199,16 @@ public class IBackendTest {
             .getAbsolutePath());
         return new BerkeleyStorage(props, pNodeFac, pMetaFac, pHandler);
     }
-//
-//    private static IBackend createAWSJCloudsStorage(INodeFactory pNodeFac, IByteHandlerPipeline pHandler,
-//        IMetaEntryFactory pMetaFac) throws TTIOException {
-//        Properties props =
-//            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
-//                CoreTestHelper.RESOURCENAME);
-//        props.setProperty(ConstructorProps.JCLOUDSTYPE, "aws-s3");
-//        return new JCloudsStorage(props, pNodeFac, pMetaFac, pHandler);
-//    }
+
+    //
+    // private static IBackend createAWSJCloudsStorage(INodeFactory pNodeFac, IByteHandlerPipeline pHandler,
+    // IMetaEntryFactory pMetaFac) throws TTIOException {
+    // Properties props =
+    // StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+    // CoreTestHelper.RESOURCENAME);
+    // props.setProperty(ConstructorProps.JCLOUDSTYPE, "aws-s3");
+    // return new JCloudsStorage(props, pNodeFac, pMetaFac, pHandler);
+    // }
 
     private static IBackend createLocalJCloudsStorage(INodeFactory pNodeFac, IByteHandlerPipeline pHandler,
         IMetaEntryFactory pMetaFac) throws TTIOException {
@@ -233,8 +237,7 @@ public class IBackendTest {
         } else if (whichPage < 0.6) {
             NodePage returnVal = new NodePage(pKey, pKey);
             for (int i = 0; i < IConstants.CONTENT_COUNT; i++) {
-                returnVal.setNode(i, new DumbNodeFactory.DumbNode(CoreTestHelper.random.nextLong(),
-                    CoreTestHelper.random.nextLong()));
+                returnVal.setNode(i, CoreTestHelper.generateOne());
             }
             return returnVal;
         } else if (whichPage < 0.8) {

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
+ * c * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -47,7 +47,6 @@ import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.api.IMetaEntry;
-import org.treetank.api.INode;
 import org.treetank.api.IPageReadTrx;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
@@ -207,8 +206,10 @@ public final class CoreTestHelper {
      * 
      * @return one {@link DumbNode} with random values.
      */
-    public static final INode generateOne() {
-        return new DumbNode(CoreTestHelper.random.nextLong(), CoreTestHelper.random.nextLong());
+    public static final DumbNode generateOne() {
+        byte[] data = new byte[0];
+        CoreTestHelper.random.nextBytes(data);
+        return new DumbNode(CoreTestHelper.random.nextLong(), CoreTestHelper.random.nextLong(), data);
     }
 
     /**
@@ -390,7 +391,7 @@ public final class CoreTestHelper {
         for (int i = 0; i < pNodesPerRevision.length; i++) {
             returnVal[i] = new DumbNode[pNodesPerRevision[i]];
             for (int j = 0; j < pNodesPerRevision[i]; j++) {
-                returnVal[i][j] = new DumbNode(0, CoreTestHelper.random.nextLong());
+                returnVal[i][j] = generateOne();
             }
         }
         return returnVal;
