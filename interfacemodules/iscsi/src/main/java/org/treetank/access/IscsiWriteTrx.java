@@ -59,20 +59,20 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
      * {@inheritDoc}
      */
     @Override
-    public void bootstrap(byte[] bytes) throws TTException {
+    public void bootstrap(byte[] bytes, boolean hasNextNode) throws TTException {
+        ByteNode node = new ByteNode(getPageTransaction().incrementNodeKey(), bytes);
+        if(hasNextNode){
+            node.setNextNodeKey(node.getNodeKey()+1);
+        }
+        
         if (mDelegate.getCurrentNode() != null) {
-            ByteNode node = new ByteNode(getPageTransaction().incrementNodeKey(), bytes);
             System.out.println("Creating node " + node.getNodeKey());
             node.setIndex(node.getNodeKey());
-            ByteNode lastNode = (ByteNode)getPageTransaction().getNode(node.getNodeKey() - 1);
-            node.setPreviousNodeKey(lastNode.getNodeKey());
-            lastNode.setNextNodeKey(node.getNodeKey());
-            getPageTransaction().setNode(lastNode);
+            node.setPreviousNodeKey(node.getNodeKey()-1);
             getPageTransaction().setNode(node);
             
             mDelegate.moveTo(node.getNodeKey());
         } else {
-            ByteNode node = new ByteNode(getPageTransaction().incrementNodeKey(), bytes);
             node.setIndex(0);
             getPageTransaction().setNode(node);
             mDelegate.moveTo(node.getNodeKey());

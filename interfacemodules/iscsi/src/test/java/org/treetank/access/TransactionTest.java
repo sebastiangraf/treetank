@@ -76,13 +76,13 @@ public final class TransactionTest {
         ByteArrayDataOutput output = ByteStreams.newDataOutput(512);
         output.write(1);
 
-        holder.getIWtx().bootstrap(output.toByteArray());
+        holder.getIWtx().bootstrap(output.toByteArray(), true);
         output.write(2);
-        holder.getIWtx().bootstrap(output.toByteArray());
+        holder.getIWtx().bootstrap(output.toByteArray(), true);
         output.write(3);
-        holder.getIWtx().bootstrap(output.toByteArray());
+        holder.getIWtx().bootstrap(output.toByteArray(), true);
         output.write(4);
-        holder.getIWtx().bootstrap(output.toByteArray());
+        holder.getIWtx().bootstrap(output.toByteArray(), false);
         output.write(5);
         holder.getIWtx().insertAfter(output.toByteArray());
 

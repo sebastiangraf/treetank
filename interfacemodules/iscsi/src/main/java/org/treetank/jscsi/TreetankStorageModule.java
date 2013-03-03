@@ -24,8 +24,6 @@
 
 package org.treetank.jscsi;
 
-import static com.google.common.base.Objects.toStringHelper;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -171,10 +169,17 @@ public class TreetankStorageModule implements IStorageModule {
 
             if (node != null)
                 return;
+            
+            boolean hasNextNode = true;
+            
             for (int i = 0; i < sizeInClusters; i++) {
+                if(i == sizeInClusters-1){
+                    hasNextNode = false;
+                }
+                
                 try {
-                	// Bootstrapping nodes containing clusterSize -many blocks/sectors.
-                    this.mRtx.bootstrap(new byte[(int)(blockSize*clusterSize)]);
+                    // Bootstrapping nodes containing clusterSize -many blocks/sectors.
+                    this.mRtx.bootstrap(new byte[(int)(blockSize*clusterSize)], hasNextNode);
                 } catch (TTException e) {
                     throw new IOException("The creation of a new node was started and somehow didn't finish.");
                 }
