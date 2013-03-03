@@ -173,7 +173,7 @@ public class TreetankConfiguration extends Configuration {
     }
 
     final IStorageModule module = new TreetankStorageModule(storageLength
-        / (128 * conf.getBlockSize()), 128,  conf.getBlockSize(), conf.getConf(), conf.file);
+        / (128 * conf.getBlockSize()), conf.getBlockSize(),  128, conf.getConf(), conf.file);
 
     return new Target(targetName, targetAlias, module);
 

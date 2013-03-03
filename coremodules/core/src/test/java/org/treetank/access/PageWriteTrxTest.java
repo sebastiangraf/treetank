@@ -124,7 +124,9 @@ public class PageWriteTrxTest {
         List<DumbNode> nodes = new ArrayList<DumbNode>();
         for (int i = 0; i < elementsToSet; i++) {
             long nodeKey = wtx.incrementNodeKey();
-            nodes.add(new DumbNode(nodeKey, CoreTestHelper.random.nextLong()));
+            DumbNode node = CoreTestHelper.generateOne();
+            node.setNodeKey(nodeKey);
+            nodes.add(node);
             if (i == 0) {
                 assertNull(wtx.getNode(nodeKey));
             } else {
@@ -141,7 +143,9 @@ public class PageWriteTrxTest {
 
         for (int i = 0; i < elementsToSet; i++) {
             assertEquals(nodes.get(i), wtx.getNode(i));
-            nodes.set(i, new DumbNode(i, CoreTestHelper.random.nextLong()));
+            DumbNode node = CoreTestHelper.generateOne();
+            node.setNodeKey(i);
+            nodes.set(i, node);
             wtx.setNode(nodes.get(i));
             assertEquals(nodes.get(i), wtx.getNode(i));
         }

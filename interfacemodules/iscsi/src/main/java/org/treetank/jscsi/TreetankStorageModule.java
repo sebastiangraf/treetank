@@ -24,12 +24,12 @@
 
 package org.treetank.jscsi;
 
-import static com.google.common.base.Objects.toStringHelper;
-
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.jscsi.target.storage.IStorageModule;
 import org.slf4j.Logger;
@@ -47,6 +47,8 @@ import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
 import org.treetank.exception.TTException;
 import org.treetank.io.IBackend.IBackendFactory;
+import org.treetank.jscsi.buffering.BufferedTaskWorker;
+import org.treetank.jscsi.buffering.Collision;
 import org.treetank.node.ByteNode;
 import org.treetank.node.ByteNodeFactory;
 import org.treetank.node.ISCSIMetaPageFactory;
@@ -102,6 +104,10 @@ public class TreetankStorageModule implements IStorageModule {
      * 
      */
     private final IIscsiWriteTrx mRtx;
+    
+    private final ExecutorService mWriterService;
+    
+    private final BufferedTaskWorker mWorker;
 
     /**
      * Creates a storage module that is used by the target to handle I/O.
@@ -120,7 +126,7 @@ public class TreetankStorageModule implements IStorageModule {
      */
     public TreetankStorageModule(final long pSizeInClusters, final int pBlockSize, final int pClusterSize,
         final StorageConfiguration conf, final File file) throws TTException {
-
+        
         clusterSize = pClusterSize;
         sizeInClusters = pSizeInClusters;
         blockSize = pBlockSize;
@@ -158,6 +164,14 @@ public class TreetankStorageModule implements IStorageModule {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+
+        /*
+         * Creating the writer service and adding the worker to the pool.
+         */
+        mWriterService = Executors.newCachedThreadPool();
+        mWorker = new BufferedTaskWorker(mRtx, pClusterSize, pBlockSize);
+        
+        mWriterService.submit(mWorker);
     }
 
     private void createStorage() throws IOException {
@@ -171,10 +185,18 @@ public class TreetankStorageModule implements IStorageModule {
 
             if (node != null)
                 return;
+            
+            boolean hasNextNode = true;
+            
             for (int i = 0; i < sizeInClusters; i++) {
+                if(i == sizeInClusters-1){
+                    hasNextNode = false;
+                }
+                
                 try {
-                	// Bootstrapping nodes containing clusterSize -many blocks/sectors.
-                    this.mRtx.bootstrap(new byte[(int)(blockSize*clusterSize)]);
+                    // Bootstrapping nodes containing clusterSize -many blocks/sectors.
+                    LOGGER.info("Bootstraping node " + i + "\tof " + (sizeInClusters-1));
+                    this.mRtx.bootstrap(new byte[(int)(blockSize*clusterSize)], hasNextNode);
                 } catch (TTException e) {
                     throw new IOException("The creation of a new node was started and somehow didn't finish.");
                 }
@@ -259,6 +281,26 @@ public class TreetankStorageModule implements IStorageModule {
         }
 
         System.arraycopy(output.toByteArray(), 0, bytes, bytesOffset, length);
+        
+        //Overwriting segments in the byte array using the writer tasks that are still in progress.
+        readConcurrent(bytes, bytesOffset, length, storageIndex);
+    }
+    
+    private void readConcurrent(byte[] bytes, int bytesOffset, int length, long storageIndex) throws IOException {
+        List<Collision> collisions = mWorker.checkForCollisions(length, storageIndex);
+        
+        for(Collision collision : collisions){
+            overwriteCollision(bytes, bytesOffset, length, storageIndex, collision);
+        }
+    }
+
+    private void overwriteCollision(byte[] bytes, int bytesOffset, int length, long storageIndex, Collision collision) {
+        if(collision.getStart() != storageIndex){
+            System.arraycopy(collision.getBytes(), 0, bytes, (int)(bytesOffset + (collision.getStart() - storageIndex)), collision.getBytes().length);
+        }
+        else{
+            System.arraycopy(collision.getBytes(), 0, bytes, bytesOffset, collision.getBytes().length);
+        }
     }
 
     /**
@@ -266,74 +308,10 @@ public class TreetankStorageModule implements IStorageModule {
      */
     public void write(byte[] bytes, int bytesOffset, int length, long storageIndex) throws IOException {
 
-        LOGGER.info("Starting to write with param: \nbytes = " + Arrays.toString(bytes).substring(0, 100)
-            + "\nbytesOffset = " + bytesOffset + "\nlength = " + length + "\nstorageIndex = " + storageIndex);
-        try {
-            // Using the most recent revision
-            if (bytesOffset + length > bytes.length) {
-                throw new IOException();
-            }
-            int startIndex = (int)(storageIndex / (clusterSize*blockSize));
-            int startIndexOffset = (int) (storageIndex % (clusterSize*blockSize));
-            
-            int endIndex = (int) ((storageIndex + length) / (clusterSize*blockSize));
-            int endIndexMax = (int) ((storageIndex + length) % (clusterSize*blockSize));
-
-            for(int i = startIndex; i <= endIndex; i++){
-                setCursorToIndex(i);
-
-                INode node = mRtx.getCurrentNode();
-                byte[] val = ((ByteNode)node).getVal();
-                
-                if(i == startIndex && i == endIndex){
-                	System.arraycopy(bytes, bytesOffset, val, startIndexOffset, endIndexMax);
-                }
-                else if(i == startIndex){
-                	System.arraycopy(bytes, bytesOffset, val, startIndexOffset, (clusterSize*blockSize) - startIndexOffset);
-                }
-                else if(i == endIndex){
-                	System.arraycopy(bytes, bytesOffset + ((clusterSize*blockSize) * (i - startIndex)), val, 0, endIndexMax);
-                }
-                else{
-                	System.arraycopy(bytes, bytesOffset + ((clusterSize*blockSize) * (i - startIndex)), val, 0, (clusterSize*blockSize));
-                }
-                
-            	mRtx.setValue(val);
-            }
-            
-//            ByteArrayDataOutput output = ByteStreams.newDataOutput(length);
-//            
-//            output.write(bytes, bytesOffset, length);
-//
-//            ByteArrayDataInput input = ByteStreams.newDataInput(output.toByteArray());
-//
-//            LOGGER.info("Writing from node " + startIndex + " to node "
-//                + endIndex);
-//
-//            for (long i = startIndex; i < endIndex; i++) {
-//                setCursorToIndex(i);
-//                byte[] val = new byte[blockSize];
-//
-//                input.readFully(val);
-//                
-//                this.mRtx.setValue(val);
-//            }
-//
-//            if (length % blockSize != 0) {
-//                setCursorToIndex((int)((length + storageIndex) / blockSize));
-//                INode node = this.mRtx.getCurrentNode();
-//
-//                byte[] val = ((ByteNode)node).getVal();
-//
-//                input.readFully(val, 0, (length % blockSize));
-//
-//                this.mRtx.setValue(val);
-//            }
-
-            this.mRtx.commit();
-        } catch (TTException e) {
-            throw new IOException(e.getMessage());
-        }
+        // The write method won't block and will be performed in the background
+        // so the initiator gets a faster response.
+        mWorker.newTask(bytes, bytesOffset, length, storageIndex);
+        
     }
 
     private void setCursorToIndex(long pIndex) throws IOException {

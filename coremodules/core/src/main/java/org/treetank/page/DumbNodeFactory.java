@@ -29,7 +29,11 @@ public class DumbNodeFactory implements INodeFactory {
     @Override
     public INode deserializeNode(DataInput pSource) throws TTIOException {
         try {
-            return new DumbNode(pSource.readLong(), pSource.readLong());
+            final long key = pSource.readLong();
+            final long hash = pSource.readLong();
+            byte[] data = new byte[pSource.readInt()];
+            pSource.readFully(data);
+            return new DumbNode(key, hash, data);
         } catch (final IOException exc) {
             throw new TTIOException(exc);
         }
@@ -45,6 +49,7 @@ public class DumbNodeFactory implements INodeFactory {
 
         long mNodeKey;
         long mHash;
+        byte[] mValue;
 
         /**
          * Simple constructor.
@@ -54,9 +59,10 @@ public class DumbNodeFactory implements INodeFactory {
          * @param pHash
          *            to be set
          */
-        public DumbNode(long pNodeKey, long pHash) {
+        public DumbNode(long pNodeKey, long pHash, byte[] pValue) {
             mNodeKey = pNodeKey;
             mHash = pHash;
+            mValue = pValue;
         }
 
         /**
@@ -67,6 +73,8 @@ public class DumbNodeFactory implements INodeFactory {
             try {
                 pOutput.writeLong(mNodeKey);
                 pOutput.writeLong(mHash);
+                pOutput.writeInt(mValue.length);
+                pOutput.write(mValue);
             } catch (final IOException exc) {
                 throw new TTIOException(exc);
             }
