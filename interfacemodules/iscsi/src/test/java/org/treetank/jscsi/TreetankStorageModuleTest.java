@@ -51,8 +51,6 @@ public class TreetankStorageModuleTest {
 
     private TreetankStorageModule storageModule;
 
-    private int TEST_FILE_SIZE = 1000 * 1024 * 64 * 32;
-
     private StorageConfiguration configuration;
 
     private File file;
@@ -90,15 +88,15 @@ public class TreetankStorageModuleTest {
 
         // write
         storageModule.write(writeArray,// bytes (source)
-            0,// bytesOffset
+            50,// bytesOffset
             64*1024*5 - 50,// length
-            0);
+            80);
 
         // read
         storageModule.read(readArray,// bytes (destination)
-            0,// bytesOffset
+            50,// bytesOffset
             64*1024*5 - 50,// length
-            0);
+            80);
 
         // check for errors
         assertTrue(Arrays.equals(writeArray, readArray));

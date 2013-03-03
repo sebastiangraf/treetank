@@ -66,7 +66,6 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
         }
         
         if (mDelegate.getCurrentNode() != null) {
-            System.out.println("Creating node " + node.getNodeKey());
             node.setIndex(node.getNodeKey());
             node.setPreviousNodeKey(node.getNodeKey()-1);
             getPageTransaction().setNode(node);
