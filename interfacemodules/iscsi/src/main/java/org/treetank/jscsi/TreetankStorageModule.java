@@ -199,7 +199,7 @@ public class TreetankStorageModule implements IStorageModule {
                     LOGGER.info("Bootstraping node " + i + "\tof " + (sizeInClusters - 1));
                     this.mRtx.bootstrap(new byte[(int)(blockSize * clusterSize)], hasNextNode);
                 } catch (TTException e) {
-                    throw new IOException("The creation of a new node was started and somehow didn't finish.");
+                    throw new IOException(e);
                 }
 
                 if (i % 50 == 0) {
