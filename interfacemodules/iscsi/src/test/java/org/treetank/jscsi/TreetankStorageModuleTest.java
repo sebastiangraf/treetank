@@ -73,7 +73,7 @@ public class TreetankStorageModuleTest {
         file = CoreTestHelper.PATHS.PATH1.getFile();
         configuration = CoreTestHelper.PATHS.PATH1.getConfig();
 
-        storageModule = new TreetankStorageModule(64, 1024*64, 32, configuration, file);
+        storageModule = new TreetankStorageModule(64, 1024*64, 4, configuration, file);
     }
 
     @Test(groups = "Initial read write")
