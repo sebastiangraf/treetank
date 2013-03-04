@@ -61,7 +61,7 @@ public class TreetankTargetServer {
             target =
                 new TargetServer(TreetankConfiguration.create(
                     TreetankConfiguration.CONFIGURATION_SCHEMA_FILE,
-                    TreetankConfiguration.CONFIGURATION_CONFIG_FILE, file, configuration));
+                    TreetankConfiguration.CONFIGURATION_CONFIG_FILE, configuration));
             break;
         case 1:
             file = new File(args[0]);
@@ -69,7 +69,7 @@ public class TreetankTargetServer {
             target =
                 new TargetServer(TreetankConfiguration.create(
                     TreetankConfiguration.CONFIGURATION_SCHEMA_FILE,
-                    TreetankConfiguration.CONFIGURATION_CONFIG_FILE, file, configuration));
+                    TreetankConfiguration.CONFIGURATION_CONFIG_FILE, configuration));
 
             break;
         case 2:
@@ -77,7 +77,7 @@ public class TreetankTargetServer {
             configuration = new StorageConfiguration(file);
             target =
                 new TargetServer(TreetankConfiguration.create(
-                    TreetankConfiguration.CONFIGURATION_SCHEMA_FILE, new File(args[1]), file, configuration));
+                    TreetankConfiguration.CONFIGURATION_SCHEMA_FILE, new File(args[1]), configuration));
             break;
         default:
             throw new IllegalArgumentException(

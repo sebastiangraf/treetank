@@ -27,7 +27,6 @@ package org.treetank.jscsi;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Properties;
@@ -52,8 +51,6 @@ public class TreetankStorageModuleTest {
 
     private StorageConfiguration configuration;
 
-    private File file;
-
     @Inject
     private IResourceConfigurationFactory mResourceConfig;
 
@@ -69,10 +66,9 @@ public class TreetankStorageModuleTest {
         mResource = mResourceConfig.create(props);
         CoreTestHelper.createResource(mResource);
 
-        file = CoreTestHelper.PATHS.PATH1.getFile();
         configuration = CoreTestHelper.PATHS.PATH1.getConfig();
 
-        storageModule = new TreetankStorageModule(128, configuration, file);
+        storageModule = new TreetankStorageModule(128, configuration);
     }
 
     @Test(groups = "Initial read write")

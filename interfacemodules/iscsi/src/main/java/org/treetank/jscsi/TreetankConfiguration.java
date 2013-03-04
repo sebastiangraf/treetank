@@ -53,8 +53,6 @@ public class TreetankConfiguration extends Configuration {
 
     private StorageConfiguration conf;
 
-    private File file;
-
     /**
      * {@inheritDoc}
      * 
@@ -65,8 +63,8 @@ public class TreetankConfiguration extends Configuration {
     }
 
     public static TreetankConfiguration create(final File schemaLocation, final File configFile,
-        File storageFile, StorageConfiguration conf) throws SAXException, ParserConfigurationException,
-        IOException, TTException {
+        StorageConfiguration conf) throws SAXException, ParserConfigurationException, IOException,
+        TTException {
 
         final SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         final Schema schema = schemaFactory.newSchema(schemaLocation);
@@ -88,7 +86,6 @@ public class TreetankConfiguration extends Configuration {
         // TargetName
         TreetankConfiguration returnConfiguration = new TreetankConfiguration();
         returnConfiguration.setConf(conf);
-        returnConfiguration.setFile(storageFile);
 
         Element targetListNode = (Element)root.getElementsByTagName(ELEMENT_TARGET_LIST).item(0);
         NodeList targetList = targetListNode.getElementsByTagName(ELEMENT_TARGET);
@@ -165,7 +162,7 @@ public class TreetankConfiguration extends Configuration {
 
         final IStorageModule module =
             new TreetankStorageModule(storageLength / (128 * IStorageModule.VIRTUAL_BLOCK_SIZE), conf
-                .getConf(), conf.file);
+                .getConf());
 
         return new Target(targetName, targetAlias, module);
 
@@ -179,16 +176,6 @@ public class TreetankConfiguration extends Configuration {
     public void setConf(StorageConfiguration conf) {
 
         this.conf = conf;
-    }
-
-    public File getFile() {
-
-        return file;
-    }
-
-    public void setFile(File file) {
-
-        this.file = file;
     }
 
 }

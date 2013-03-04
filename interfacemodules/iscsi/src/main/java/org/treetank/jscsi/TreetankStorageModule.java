@@ -24,7 +24,6 @@
 
 package org.treetank.jscsi;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
@@ -117,7 +116,7 @@ public class TreetankStorageModule implements IStorageModule {
      * @throws TTException
      *             will be thrown if there are problems creating this storage.
      */
-    public TreetankStorageModule(final long pSizeInClusters, final StorageConfiguration conf, final File file)
+    public TreetankStorageModule(final long pSizeInClusters, final StorageConfiguration conf)
         throws TTException {
 
         sizeInClusters = pSizeInClusters;
@@ -133,14 +132,14 @@ public class TreetankStorageModule implements IStorageModule {
 
         // Creating and opening the storage.
         // Making it ready for usage.
-        if (!file.exists()) {
+        if (Storage.existsStorage(conf.mFile)) {
             Storage.truncateStorage(conf);
             Storage.createStorage(conf);
         }
 
-        storage = Storage.openStorage(file);
+        storage = Storage.openStorage(conf.mFile);
 
-        Properties props = StandardSettings.getProps(file.getAbsolutePath(), "jscsi-target");
+        Properties props = StandardSettings.getProps(conf.mFile.getAbsolutePath(), "jscsi-target");
         ResourceConfiguration mResourceConfig =
             new ResourceConfiguration(props, backend, revision, new ByteNodeFactory(),
                 new ISCSIMetaPageFactory());
