@@ -70,6 +70,9 @@ import com.google.inject.Injector;
  */
 public class TreetankStorageModule implements IStorageModule {
 
+    /** Number of Blocks in one Cluster. */
+    private static final int BLOCKSINCLUSTER = 512;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(TreetankStorageModule.class);
 
     /**
@@ -78,13 +81,6 @@ public class TreetankStorageModule implements IStorageModule {
      * @see #VIRTUAL_BLOCK_SIZE
      */
     private final long sizeInClusters;
-
-    /**
-     * This variable is used to determine,
-     * how many sectors of the size 'blockSize'
-     * one node holds.
-     */
-    private final int clusterSize;
 
     /**
      * Treetank storage the target uses as a storage device.
@@ -121,10 +117,9 @@ public class TreetankStorageModule implements IStorageModule {
      * @throws TTException
      *             will be thrown if there are problems creating this storage.
      */
-    public TreetankStorageModule(final long pSizeInClusters, final int pBlocksInCluster,
-        final StorageConfiguration conf, final File file) throws TTException {
+    public TreetankStorageModule(final long pSizeInClusters, final StorageConfiguration conf, final File file)
+        throws TTException {
 
-        clusterSize = pBlocksInCluster;
         sizeInClusters = pSizeInClusters;
 
         LOGGER.info("Initializing storagemodule with: sizeInBlocks=" + sizeInClusters + ", blockSize="
@@ -164,14 +159,14 @@ public class TreetankStorageModule implements IStorageModule {
          * Creating the writer service and adding the worker to the pool.
          */
         mWriterService = Executors.newCachedThreadPool();
-        mWorker = new BufferedTaskWorker(mRtx, pBlocksInCluster * IStorageModule.VIRTUAL_BLOCK_SIZE);
+        mWorker = new BufferedTaskWorker(mRtx, BLOCKSINCLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE);
 
         mWriterService.submit(mWorker);
     }
 
     private void createStorage() throws IOException {
 
-        LOGGER.info("Creating storage with " + sizeInClusters + " clusters containing " + clusterSize
+        LOGGER.info("Creating storage with " + sizeInClusters + " clusters containing " + BLOCKSINCLUSTER
             + " sectors with " + IStorageModule.VIRTUAL_BLOCK_SIZE + " bytes each.");
 
         try {
@@ -191,7 +186,7 @@ public class TreetankStorageModule implements IStorageModule {
                 try {
                     // Bootstrapping nodes containing clusterSize -many blocks/sectors.
                     LOGGER.info("Bootstraping node " + i + "\tof " + (sizeInClusters - 1));
-                    this.mRtx.bootstrap(new byte[(int)(IStorageModule.VIRTUAL_BLOCK_SIZE * clusterSize)],
+                    this.mRtx.bootstrap(new byte[(int)(IStorageModule.VIRTUAL_BLOCK_SIZE * BLOCKSINCLUSTER)],
                         hasNextNode);
                 } catch (TTException e) {
                     throw new IOException(e);
@@ -230,7 +225,7 @@ public class TreetankStorageModule implements IStorageModule {
      * {@inheritDoc}
      */
     public long getSizeInBlocks() {
-        return sizeInClusters * clusterSize;
+        return sizeInClusters * BLOCKSINCLUSTER;
     }
 
     /**
@@ -244,11 +239,12 @@ public class TreetankStorageModule implements IStorageModule {
         if (bytesOffset + length > bytes.length) {
             throw new IOException();
         }
-        int startIndex = (int)(storageIndex / (clusterSize * IStorageModule.VIRTUAL_BLOCK_SIZE));
-        int startIndexOffset = (int)(storageIndex % (clusterSize * IStorageModule.VIRTUAL_BLOCK_SIZE));
+        int startIndex = (int)(storageIndex / (BLOCKSINCLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE));
+        int startIndexOffset = (int)(storageIndex % (BLOCKSINCLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE));
 
-        int endIndex = (int)((storageIndex + length) / (clusterSize * IStorageModule.VIRTUAL_BLOCK_SIZE));
-        int endIndexMax = (int)((storageIndex + length) % (clusterSize * IStorageModule.VIRTUAL_BLOCK_SIZE));
+        int endIndex = (int)((storageIndex + length) / (BLOCKSINCLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE));
+        int endIndexMax =
+            (int)((storageIndex + length) % (BLOCKSINCLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE));
 
         LOGGER.info("Starting to read from node " + startIndex + " to node " + endIndex);
 
@@ -263,7 +259,7 @@ public class TreetankStorageModule implements IStorageModule {
             if (i == startIndex && i == endIndex) {
                 output.write(val, startIndexOffset, length);
             } else if (i == startIndex) {
-                output.write(val, startIndexOffset, (clusterSize * IStorageModule.VIRTUAL_BLOCK_SIZE)
+                output.write(val, startIndexOffset, (BLOCKSINCLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE)
                     - startIndexOffset);
             } else if (i == endIndex) {
                 output.write(val, 0, endIndexMax);
