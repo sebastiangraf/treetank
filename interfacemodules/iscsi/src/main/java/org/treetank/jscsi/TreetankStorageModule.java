@@ -158,17 +158,19 @@ public class TreetankStorageModule implements IStorageModule {
         /*
          * Creating the writer service and adding the worker to the pool.
          */
-        mWriterService = Executors.newCachedThreadPool();
+        mWriterService = Executors.newSingleThreadExecutor();
         mWorker = new BufferedTaskWorker(mRtx, BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE);
 
         mWriterService.submit(mWorker);
+        mWriterService.shutdown();
     }
 
     /**
      * Bootstrap a new device as a treetank storage using
      * nodes to abstract the device.
+     * 
      * @throws IOException
-     *          is thrown if a node couldn't be created due to errors in the backend.
+     *             is thrown if a node couldn't be created due to errors in the backend.
      */
     private void createStorage() throws IOException {
 
@@ -184,8 +186,8 @@ public class TreetankStorageModule implements IStorageModule {
             }
             boolean hasNextNode = true;
 
-            for (int i = 0; i < BLOCK_IN_CLUSTER; i++) {
-                if (i == BLOCK_IN_CLUSTER - 1) {
+            for (int i = 0; i < mNumberOfClusters; i++) {
+                if (i == mNumberOfClusters - 1) {
                     hasNextNode = false;
                 }
 
@@ -287,14 +289,15 @@ public class TreetankStorageModule implements IStorageModule {
     /**
      * Read the newest version w.r.t the pending
      * write tasks.
+     * 
      * @param bytes
-     *          bytes to read into
+     *            bytes to read into
      * @param bytesOffset
-     *          offset to start reading into
+     *            offset to start reading into
      * @param length
-     *          how many bytes have to be read
+     *            how many bytes have to be read
      * @param storageIndex
-     *          where to start reading in terms of storage device
+     *            where to start reading in terms of storage device
      * @throws IOException
      */
     private void readConcurrent(byte[] bytes, int bytesOffset, int length, long storageIndex)
@@ -328,6 +331,7 @@ public class TreetankStorageModule implements IStorageModule {
     public void close() throws IOException {
 
         try {
+            mWorker.dispose();
             mRtx.close();
             session.close();
             storage.close();

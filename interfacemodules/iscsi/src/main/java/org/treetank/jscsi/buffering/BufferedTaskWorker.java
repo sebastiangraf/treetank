@@ -19,7 +19,7 @@ import org.treetank.node.ByteNode;
  * using the BufferedWriteTasks first-in-first-out.
  * 
  * @author Andreas Rain
- *
+ * 
  */
 public class BufferedTaskWorker implements Callable<Void> {
 
@@ -47,8 +47,9 @@ public class BufferedTaskWorker implements Callable<Void> {
 
     /**
      * Create a new worker.
-     * @param pRtx 
-     * @param pBytesInCluster 
+     * 
+     * @param pRtx
+     * @param pBytesInCluster
      */
     public BufferedTaskWorker(IIscsiWriteTrx pRtx, int pBytesInCluster) {
         mRtx = pRtx;
@@ -89,6 +90,7 @@ public class BufferedTaskWorker implements Callable<Void> {
     /**
      * This method gets called periodically, as long
      * as there are tasks left in the queue.
+     * 
      * @throws IOException
      */
     private void performTask() throws IOException {
@@ -197,7 +199,7 @@ public class BufferedTaskWorker implements Callable<Void> {
      * @param srcStorageIndex
      * @param destLength
      * @param destStorageIndex
-     * @return
+     * @return true if indizes overlap, false otherwise
      */
     private boolean overlappingIndizes(int srcLength, long srcStorageIndex, int destLength,
         long destStorageIndex) {
