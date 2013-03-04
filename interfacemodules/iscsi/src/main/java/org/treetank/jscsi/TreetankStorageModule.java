@@ -46,6 +46,7 @@ import org.treetank.api.INode;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
 import org.treetank.exception.TTException;
+import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackend.IBackendFactory;
 import org.treetank.jscsi.buffering.BufferedTaskWorker;
 import org.treetank.jscsi.buffering.Collision;
@@ -77,11 +78,6 @@ public class TreetankStorageModule implements IStorageModule {
      * @see #VIRTUAL_BLOCK_SIZE
      */
     private final long sizeInClusters;
-
-    /**
-     * The size of each block.
-     */
-    private final int blockSize;
 
     /**
      * This variable is used to determine,
@@ -116,7 +112,7 @@ public class TreetankStorageModule implements IStorageModule {
      *            Define how many clusters the storage holds.
      * @param pBlockSize
      *            Define the bytes in a sector.
-     * @param pClusterSize
+     * @param pBlocksInCluster
      *            Define the amount of sectors one cluster contains.
      * @param conf
      *            Pass the storage configuration to use for this storage module.
@@ -125,15 +121,14 @@ public class TreetankStorageModule implements IStorageModule {
      * @throws TTException
      *             will be thrown if there are problems creating this storage.
      */
-    public TreetankStorageModule(final long pSizeInClusters, final int pBlockSize, final int pClusterSize,
+    public TreetankStorageModule(final long pSizeInClusters, final int pBlocksInCluster,
         final StorageConfiguration conf, final File file) throws TTException {
 
-        clusterSize = pClusterSize;
+        clusterSize = pBlocksInCluster;
         sizeInClusters = pSizeInClusters;
-        blockSize = pBlockSize;
 
         LOGGER.info("Initializing storagemodule with: sizeInBlocks=" + sizeInClusters + ", blockSize="
-            + blockSize);
+            + IStorageModule.VIRTUAL_BLOCK_SIZE);
 
         Injector injector =
             Guice.createInjector(new ModuleSetter().setNodeFacClass(ByteNodeFactory.class).setMetaFacClass(
@@ -161,16 +156,15 @@ public class TreetankStorageModule implements IStorageModule {
 
         try {
             createStorage();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        } catch (IOException exc) {
+            throw new TTIOException(exc);
         }
 
         /*
          * Creating the writer service and adding the worker to the pool.
          */
         mWriterService = Executors.newCachedThreadPool();
-        mWorker = new BufferedTaskWorker(mRtx, pClusterSize, pBlockSize);
+        mWorker = new BufferedTaskWorker(mRtx, pBlocksInCluster * IStorageModule.VIRTUAL_BLOCK_SIZE);
 
         mWriterService.submit(mWorker);
     }
@@ -178,7 +172,7 @@ public class TreetankStorageModule implements IStorageModule {
     private void createStorage() throws IOException {
 
         LOGGER.info("Creating storage with " + sizeInClusters + " clusters containing " + clusterSize
-            + " sectors with " + blockSize + " bytes each.");
+            + " sectors with " + IStorageModule.VIRTUAL_BLOCK_SIZE + " bytes each.");
 
         try {
 
@@ -197,7 +191,8 @@ public class TreetankStorageModule implements IStorageModule {
                 try {
                     // Bootstrapping nodes containing clusterSize -many blocks/sectors.
                     LOGGER.info("Bootstraping node " + i + "\tof " + (sizeInClusters - 1));
-                    this.mRtx.bootstrap(new byte[(int)(blockSize * clusterSize)], hasNextNode);
+                    this.mRtx.bootstrap(new byte[(int)(IStorageModule.VIRTUAL_BLOCK_SIZE * clusterSize)],
+                        hasNextNode);
                 } catch (TTException e) {
                     throw new IOException(e);
                 }
@@ -235,7 +230,6 @@ public class TreetankStorageModule implements IStorageModule {
      * {@inheritDoc}
      */
     public long getSizeInBlocks() {
-
         return sizeInClusters * clusterSize;
     }
 
@@ -250,11 +244,11 @@ public class TreetankStorageModule implements IStorageModule {
         if (bytesOffset + length > bytes.length) {
             throw new IOException();
         }
-        int startIndex = (int)(storageIndex / (clusterSize * blockSize));
-        int startIndexOffset = (int)(storageIndex % (clusterSize * blockSize));
+        int startIndex = (int)(storageIndex / (clusterSize * IStorageModule.VIRTUAL_BLOCK_SIZE));
+        int startIndexOffset = (int)(storageIndex % (clusterSize * IStorageModule.VIRTUAL_BLOCK_SIZE));
 
-        int endIndex = (int)((storageIndex + length) / (clusterSize * blockSize));
-        int endIndexMax = (int)((storageIndex + length) % (clusterSize * blockSize));
+        int endIndex = (int)((storageIndex + length) / (clusterSize * IStorageModule.VIRTUAL_BLOCK_SIZE));
+        int endIndexMax = (int)((storageIndex + length) % (clusterSize * IStorageModule.VIRTUAL_BLOCK_SIZE));
 
         LOGGER.info("Starting to read from node " + startIndex + " to node " + endIndex);
 
@@ -269,7 +263,8 @@ public class TreetankStorageModule implements IStorageModule {
             if (i == startIndex && i == endIndex) {
                 output.write(val, startIndexOffset, length);
             } else if (i == startIndex) {
-                output.write(val, startIndexOffset, (clusterSize * blockSize) - startIndexOffset);
+                output.write(val, startIndexOffset, (clusterSize * IStorageModule.VIRTUAL_BLOCK_SIZE)
+                    - startIndexOffset);
             } else if (i == endIndex) {
                 output.write(val, 0, endIndexMax);
             } else {

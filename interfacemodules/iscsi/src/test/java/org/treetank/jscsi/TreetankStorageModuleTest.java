@@ -27,7 +27,6 @@ package org.treetank.jscsi;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -65,58 +64,58 @@ public class TreetankStorageModuleTest {
         CoreTestHelper.deleteEverything();
         CoreTestHelper.Holder.generateStorage();
         Properties props =
-            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
-                .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
+            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
         CoreTestHelper.createResource(mResource);
 
         file = CoreTestHelper.PATHS.PATH1.getFile();
         configuration = CoreTestHelper.PATHS.PATH1.getConfig();
 
-        storageModule = new TreetankStorageModule(64, 1024*64, 4, configuration, file);
+        storageModule = new TreetankStorageModule(256, 128, configuration, file);
     }
 
     @Test(groups = "Initial read write")
     public void testReadAndWrite() throws TTException, IOException {
 
-        final byte[] writeArray = new byte[64*1024*5];
-        for (int i = 0; i < 64*1024*5; ++i)
+        final byte[] writeArray = new byte[64 * 1024 * 5];
+        for (int i = 0; i < 64 * 1024 * 5; ++i)
             writeArray[i] = (byte)(CoreTestHelper.random.nextDouble() * 256);
-        final byte[] readArray = new byte[64*1024*5];
+        final byte[] readArray = new byte[64 * 1024 * 5];
 
-        System.arraycopy(writeArray, 0, readArray, 0, 64*1024*5);
+        System.arraycopy(writeArray, 0, readArray, 0, 64 * 1024 * 5);
 
         // write
         storageModule.write(writeArray,// bytes (source)
             50,// bytesOffset
-            64*1024*5 - 50,// length
+            64 * 1024 * 5 - 50,// length
             80);
 
         // read
         storageModule.read(readArray,// bytes (destination)
             50,// bytesOffset
-            64*1024*5 - 50,// length
+            64 * 1024 * 5 - 50,// length
             80);
 
         // check for errors
         assertTrue(Arrays.equals(writeArray, readArray));
 
-//        byte[][] splitBytes = new byte[16][8192];
-//
-//        ByteArrayInputStream writeArrayInputStream = new ByteArrayInputStream(writeArray);
-//
-//        for (int i = 0; i < splitBytes.length; i++) {
-//            splitBytes[i] = new byte[8192];
-//            storageModule.read(splitBytes[i],// bytes (destination)
-//                0,// bytesOffset
-//                8192,// length
-//                i * 16 * 512);
-//            byte[] b = new byte[8192];
-//            System.out.println(i);
-//            writeArrayInputStream.read(b, 0, 8192);
-//
-//            assertTrue(Arrays.equals(splitBytes[i], b));
-//        }
+        // byte[][] splitBytes = new byte[16][8192];
+        //
+        // ByteArrayInputStream writeArrayInputStream = new ByteArrayInputStream(writeArray);
+        //
+        // for (int i = 0; i < splitBytes.length; i++) {
+        // splitBytes[i] = new byte[8192];
+        // storageModule.read(splitBytes[i],// bytes (destination)
+        // 0,// bytesOffset
+        // 8192,// length
+        // i * 16 * 512);
+        // byte[] b = new byte[8192];
+        // System.out.println(i);
+        // writeArrayInputStream.read(b, 0, 8192);
+        //
+        // assertTrue(Arrays.equals(splitBytes[i], b));
+        // }
 
     }
 

@@ -51,162 +51,144 @@ import org.xml.sax.SAXException;
 
 public class TreetankConfiguration extends Configuration {
 
-  private int blockSize = 512;
+    private StorageConfiguration conf;
 
-  private StorageConfiguration conf;
+    private File file;
 
-  private File file;
+    /**
+     * {@inheritDoc}
+     * 
+     * @throws IOException
+     */
+    public TreetankConfiguration() throws IOException {
+        super();
+    }
 
-  /**
-   * {@inheritDoc}
-   * 
-   * @throws IOException
-   */
-  public TreetankConfiguration() throws IOException {
+    public static TreetankConfiguration create(final File schemaLocation, final File configFile,
+        File storageFile, StorageConfiguration conf) throws SAXException, ParserConfigurationException,
+        IOException, TTException {
 
-    super();
-  }
+        final SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        final Schema schema = schemaFactory.newSchema(schemaLocation);
 
-  public static TreetankConfiguration create(final File schemaLocation,
-      final File configFile, File storageFile, StorageConfiguration conf,
-      int blockSize) throws SAXException, ParserConfigurationException,
-      IOException, TTException {
+        // create a validator for the document
+        final Validator validator = schema.newValidator();
 
-    final SchemaFactory schemaFactory = SchemaFactory
-        .newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-    final Schema schema = schemaFactory.newSchema(schemaLocation);
+        final DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+        domFactory.setNamespaceAware(true); // never forget this
+        final DocumentBuilder builder = domFactory.newDocumentBuilder();
+        final Document doc = builder.parse(configFile);
 
-    // create a validator for the document
-    final Validator validator = schema.newValidator();
+        final DOMSource source = new DOMSource(doc);
+        final DOMResult result = new DOMResult();
 
-    final DocumentBuilderFactory domFactory = DocumentBuilderFactory
-        .newInstance();
-    domFactory.setNamespaceAware(true); // never forget this
-    final DocumentBuilder builder = domFactory.newDocumentBuilder();
-    final Document doc = builder.parse(configFile);
+        validator.validate(source, result);
+        Document root = (Document)result.getNode();
 
-    final DOMSource source = new DOMSource(doc);
-    final DOMResult result = new DOMResult();
+        // TargetName
+        TreetankConfiguration returnConfiguration = new TreetankConfiguration();
+        returnConfiguration.setConf(conf);
+        returnConfiguration.setFile(storageFile);
 
-    validator.validate(source, result);
-    Document root = (Document) result.getNode();
+        Element targetListNode = (Element)root.getElementsByTagName(ELEMENT_TARGET_LIST).item(0);
+        NodeList targetList = targetListNode.getElementsByTagName(ELEMENT_TARGET);
+        for (int curTargetNum = 0; curTargetNum < targetList.getLength(); curTargetNum++) {
+            Target curTargetInfo =
+                parseTargetElement((Element)targetList.item(curTargetNum), returnConfiguration);
+            synchronized (returnConfiguration.getTargets()) {
+                returnConfiguration.getTargets().add(curTargetInfo);
+            }
 
-    // TargetName
-    TreetankConfiguration returnConfiguration = new TreetankConfiguration();
-    returnConfiguration.setBlockSize(blockSize);
-    returnConfiguration.setConf(conf);
-    returnConfiguration.setFile(storageFile);
+        }
 
-    Element targetListNode = (Element) root.getElementsByTagName(
-        ELEMENT_TARGET_LIST).item(0);
-    NodeList targetList = targetListNode.getElementsByTagName(ELEMENT_TARGET);
-    for (int curTargetNum = 0; curTargetNum < targetList.getLength(); curTargetNum++) {
-      Target curTargetInfo = parseTargetElement(
-          (Element) targetList.item(curTargetNum), returnConfiguration);
-      synchronized (returnConfiguration.getTargets()) {
-        returnConfiguration.getTargets().add(curTargetInfo);
-      }
+        // port
+        if (root.getElementsByTagName(ELEMENT_PORT).getLength() > 0)
+            returnConfiguration.port =
+                Integer.parseInt(root.getElementsByTagName(ELEMENT_PORT).item(0).getTextContent());
+        else
+            returnConfiguration.port = 3260;
+
+        // support sloppy text parameter negotiation (i.e. the jSCSI Initiator)?
+        final Node allowSloppyNegotiationNode =
+            root.getElementsByTagName(ELEMENT_ALLOWSLOPPYNEGOTIATION).item(0);
+        if (allowSloppyNegotiationNode == null)
+            returnConfiguration.allowSloppyNegotiation = false;
+        else
+            returnConfiguration.allowSloppyNegotiation =
+                Boolean.parseBoolean(allowSloppyNegotiationNode.getTextContent());
+
+        return returnConfiguration;
+    }
+
+    private static final Target parseTargetElement(Element targetElement, TreetankConfiguration conf)
+        throws IOException, TTException {
+
+        // TargetName
+        // TargetName
+        Node nextNode = chopWhiteSpaces(targetElement.getFirstChild());
+        // assert
+        // nextNode.getLocalName().equals(OperationalTextKey.TARGET_NAME);
+        String targetName = nextNode.getTextContent();
+
+        // TargetAlias (optional)
+        nextNode = chopWhiteSpaces(nextNode.getNextSibling());
+        String targetAlias = "";
+        if (nextNode.getLocalName().equals(TextKeyword.TARGET_ALIAS)) {
+            targetAlias = nextNode.getTextContent();
+            nextNode = chopWhiteSpaces(nextNode.getNextSibling());
+        }
+
+        // // Finding out the concrete storage
+        // IStorageModule.STORAGEKIND kind = null;
+        // if (nextNode.getLocalName().equals(ELEMENT_SYNCFILESTORAGE)) {
+        // kind = STORAGEKIND.SyncFile;
+        // } else {
+        // // assert nextNode.getLocalName().equals(ELEMENT_ASYNCFILESTORAGE);
+        // kind = STORAGEKIND.AsyncFile;
+        // }
+
+        // Getting storagepath
+        nextNode = nextNode.getFirstChild();
+        nextNode = chopWhiteSpaces(nextNode);
+        // assert nextNode.getLocalName().equals(ELEMENT_PATH);
+        // String storageFilePath = nextNode.getTextContent();
+
+        // CreateNode with size
+        nextNode = chopWhiteSpaces(nextNode.getNextSibling());
+        long storageLength = -1;
+
+        if (nextNode.getLocalName().equals(ELEMENT_CREATE)) {
+            Node sizeAttribute = nextNode.getAttributes().getNamedItem(ATTRIBUTE_SIZE);
+            storageLength =
+                Math.round(((Double.valueOf(sizeAttribute.getTextContent())) * Math.pow(1024, 3)));
+        }
+
+        final IStorageModule module =
+            new TreetankStorageModule(storageLength / (128 * IStorageModule.VIRTUAL_BLOCK_SIZE), 128, conf
+                .getConf(), conf.file);
+
+        return new Target(targetName, targetAlias, module);
 
     }
 
-    // port
-    if (root.getElementsByTagName(ELEMENT_PORT).getLength() > 0)
-      returnConfiguration.port = Integer.parseInt(root
-          .getElementsByTagName(ELEMENT_PORT).item(0).getTextContent());
-    else
-      returnConfiguration.port = 3260;
+    public StorageConfiguration getConf() {
 
-    // support sloppy text parameter negotiation (i.e. the jSCSI Initiator)?
-    final Node allowSloppyNegotiationNode = root.getElementsByTagName(
-        ELEMENT_ALLOWSLOPPYNEGOTIATION).item(0);
-    if (allowSloppyNegotiationNode == null)
-      returnConfiguration.allowSloppyNegotiation = false;
-    else
-      returnConfiguration.allowSloppyNegotiation = Boolean
-          .parseBoolean(allowSloppyNegotiationNode.getTextContent());
-
-    return returnConfiguration;
-  }
-
-  private static final Target parseTargetElement(Element targetElement,
-      TreetankConfiguration conf) throws IOException, TTException {
-
-    // TargetName
-    // TargetName
-    Node nextNode = chopWhiteSpaces(targetElement.getFirstChild());
-    // assert
-    // nextNode.getLocalName().equals(OperationalTextKey.TARGET_NAME);
-    String targetName = nextNode.getTextContent();
-
-    // TargetAlias (optional)
-    nextNode = chopWhiteSpaces(nextNode.getNextSibling());
-    String targetAlias = "";
-    if (nextNode.getLocalName().equals(TextKeyword.TARGET_ALIAS)) {
-      targetAlias = nextNode.getTextContent();
-      nextNode = chopWhiteSpaces(nextNode.getNextSibling());
+        return conf;
     }
 
-//    // Finding out the concrete storage
-//    IStorageModule.STORAGEKIND kind = null;
-//    if (nextNode.getLocalName().equals(ELEMENT_SYNCFILESTORAGE)) {
-//      kind = STORAGEKIND.SyncFile;
-//    } else {
-//      // assert nextNode.getLocalName().equals(ELEMENT_ASYNCFILESTORAGE);
-//      kind = STORAGEKIND.AsyncFile;
-//    }
+    public void setConf(StorageConfiguration conf) {
 
-    // Getting storagepath
-    nextNode = nextNode.getFirstChild();
-    nextNode = chopWhiteSpaces(nextNode);
-    // assert nextNode.getLocalName().equals(ELEMENT_PATH);
-//    String storageFilePath = nextNode.getTextContent();
-
-    // CreateNode with size
-    nextNode = chopWhiteSpaces(nextNode.getNextSibling());
-    long storageLength = -1;
-
-    if (nextNode.getLocalName().equals(ELEMENT_CREATE)) {
-      Node sizeAttribute = nextNode.getAttributes()
-          .getNamedItem(ATTRIBUTE_SIZE);
-      storageLength = Math.round(((Double.valueOf(sizeAttribute
-          .getTextContent())) * Math.pow(1024, 3)));
+        this.conf = conf;
     }
 
-    final IStorageModule module = new TreetankStorageModule(storageLength
-        / (128 * conf.getBlockSize()), conf.getBlockSize(),  128, conf.getConf(), conf.file);
+    public File getFile() {
 
-    return new Target(targetName, targetAlias, module);
+        return file;
+    }
 
-  }
+    public void setFile(File file) {
 
-  public int getBlockSize() {
-
-    return blockSize;
-  }
-
-  public void setBlockSize(int blockSize) {
-
-    this.blockSize = blockSize;
-  }
-
-  public StorageConfiguration getConf() {
-
-    return conf;
-  }
-
-  public void setConf(StorageConfiguration conf) {
-
-    this.conf = conf;
-  }
-
-  public File getFile() {
-
-    return file;
-  }
-
-  public void setFile(File file) {
-
-    this.file = file;
-  }
+        this.file = file;
+    }
 
 }

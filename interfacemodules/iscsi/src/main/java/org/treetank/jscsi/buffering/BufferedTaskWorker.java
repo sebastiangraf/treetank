@@ -30,20 +30,17 @@ public class BufferedTaskWorker implements Callable<Void> {
      */
     private final IIscsiWriteTrx mRtx;
 
-    private final int mClusterSize;
-
-    private final int mBlockSize;
+    private final int mBytesInCluster;
 
     /**
      * Create a new worker.
      */
-    public BufferedTaskWorker(IIscsiWriteTrx pRtx, int pClusterSize, int pBlockSize) {
+    public BufferedTaskWorker(IIscsiWriteTrx pRtx, int pBytesInCluster) {
         mRtx = pRtx;
         mTasks = new ConcurrentLinkedQueue<>();
         mDisposed = false;
 
-        mClusterSize = pClusterSize;
-        mBlockSize = pBlockSize;
+        mBytesInCluster = pBytesInCluster;
     }
 
     /**
@@ -89,11 +86,11 @@ public class BufferedTaskWorker implements Callable<Void> {
             if (bytesOffset + length > bytes.length) {
                 throw new IOException();
             }
-            int startIndex = (int)(storageIndex / (mClusterSize * mBlockSize));
-            int startIndexOffset = (int)(storageIndex % (mClusterSize * mBlockSize));
+            int startIndex = (int)(storageIndex / mBytesInCluster);
+            int startIndexOffset = (int)(storageIndex % mBytesInCluster);
 
-            int endIndex = (int)((storageIndex + length) / (mClusterSize * mBlockSize));
-            int endIndexMax = (int)((storageIndex + length) % (mClusterSize * mBlockSize));
+            int endIndex = (int)((storageIndex + length) / mBytesInCluster);
+            int endIndexMax = (int)((storageIndex + length) % mBytesInCluster);
 
             for (int i = startIndex; i <= endIndex; i++) {
                 mRtx.moveTo(i);
@@ -104,14 +101,14 @@ public class BufferedTaskWorker implements Callable<Void> {
                 if (i == startIndex && i == endIndex) {
                     System.arraycopy(bytes, bytesOffset, val, startIndexOffset, endIndexMax);
                 } else if (i == startIndex) {
-                    System.arraycopy(bytes, bytesOffset, val, startIndexOffset, (mClusterSize * mBlockSize)
+                    System.arraycopy(bytes, bytesOffset, val, startIndexOffset, mBytesInCluster
                         - startIndexOffset);
                 } else if (i == endIndex) {
-                    System.arraycopy(bytes, bytesOffset + ((mClusterSize * mBlockSize) * (i - startIndex)),
-                        val, 0, endIndexMax);
+                    System.arraycopy(bytes, bytesOffset + (mBytesInCluster * (i - startIndex)), val, 0,
+                        endIndexMax);
                 } else {
-                    System.arraycopy(bytes, bytesOffset + ((mClusterSize * mBlockSize) * (i - startIndex)),
-                        val, 0, (mClusterSize * mBlockSize));
+                    System.arraycopy(bytes, bytesOffset + (mBytesInCluster * (i - startIndex)), val, 0,
+                        mBytesInCluster);
                 }
 
                 mRtx.setValue(val);
