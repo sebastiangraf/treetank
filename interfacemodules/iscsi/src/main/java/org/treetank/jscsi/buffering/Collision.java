@@ -7,13 +7,13 @@ package org.treetank.jscsi.buffering;
  * send back.
  * 
  * @author Andreas Rain
- *
+ * 
  */
-public class Collision{
+public class Collision {
     private final int mStart;
     private final int mEnd;
     private final byte[] mBytes;
-    
+
     public Collision(int pStart, int pEnd, byte[] pBytes) {
         super();
         this.mStart = pStart;
@@ -21,16 +21,31 @@ public class Collision{
         this.mBytes = pBytes;
     }
 
+    /**
+     * Retrieve the start index for this collision.
+     * 
+     * @return int - start index
+     */
     public int getStart() {
         return mStart;
     }
 
+    /**
+     * Retrieve the end index of this collision.
+     * 
+     * @return int - end index
+     */
     public int getEnd() {
         return mEnd;
     }
 
+    /**
+     * The values for the colliding indizes.
+     * 
+     * @return byte[] - value
+     */
     public byte[] getBytes() {
         return mBytes;
     }
-    
+
 }

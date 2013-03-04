@@ -8,25 +8,25 @@ import org.treetank.jscsi.TreetankStorageModule;
  * for later storaging in TreeTank.
  * 
  * @author Andreas Rain
- *
+ * 
  */
 public class BufferedWriteTask {
 
     /**
      * The bytes to buffer.
      */
-    private final byte [] mBytes;
-    
+    private final byte[] mBytes;
+
     /**
      * The offset of the bytes.
      */
     private final int mOffset;
-    
+
     /**
      * How many bytes to write.
      */
     private final int mLength;
-    
+
     /**
      * Where to start writing in the storage.
      */
@@ -80,5 +80,5 @@ public class BufferedWriteTask {
     public long getStorageIndex() {
         return mStorageIndex;
     }
-    
+
 }
