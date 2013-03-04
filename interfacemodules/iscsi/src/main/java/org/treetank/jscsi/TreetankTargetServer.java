@@ -25,13 +25,18 @@
 package org.treetank.jscsi;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.jscsi.target.TargetServer;
 import org.treetank.access.conf.StorageConfiguration;
 
 import com.google.common.io.Files;
 
+/**
+ * Start a target server that uses a treetank storage as storage device.
+ * 
+ * @author Andreas Rain
+ *
+ */
 public class TreetankTargetServer {
 
     /**
@@ -45,7 +50,7 @@ public class TreetankTargetServer {
      * @param args
      *            Argument 1 = the storage path
      *            Argument 2 = path to a customized target configuration xml file
-     * @throws IOException
+     * @throws Exception 
      */
     public static void main(String[] args) throws Exception {
 

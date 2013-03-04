@@ -47,7 +47,13 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
     private final IscsiReadTrx mDelegate;
 
     /**
-     * {@inheritDoc}
+     * Create a new IscsiWriteTrx
+     * 
+     * @param pPageTrx
+     *          delegation page transaction
+     * @param pSession 
+     *          session from treetank
+     * @throws TTException 
      */
     public IscsiWriteTrx(IPageWriteTrx pPageTrx, ISession pSession) throws TTException {
 

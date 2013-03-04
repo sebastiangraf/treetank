@@ -28,14 +28,19 @@
 package org.treetank.api;
 
 import org.treetank.exception.TTException;
-import org.treetank.exception.TTIOException;
 
+/**
+ * This interface defines the funcationalities of an IscsiWriteTransaction
+ * 
+ * @author Andreas Rain
+ *
+ */
 public interface IIscsiWriteTrx extends IIscsiReadTrx {
 
     /**
      * This method inserts the given node into the database.
      * 
-     * @param node
+     * @param vals 
      * @param hasNextNode
      *            true if a node is following to this one.
      * @throws TTException
@@ -46,8 +51,7 @@ public interface IIscsiWriteTrx extends IIscsiReadTrx {
      * This method inserts the given node, after
      * the currently selected node and increments all
      * following indizes.
-     * 
-     * @param node
+     * @param vals 
      * @throws TTException
      */
     public void insertAfter(byte[] vals) throws TTException;
@@ -65,7 +69,7 @@ public interface IIscsiWriteTrx extends IIscsiReadTrx {
      * 
      * @param pValue
      *            new value of node
-     * @throws TTIOException
+     * @throws TTException 
      *             if value couldn't be set
      */
     public void setValue(final byte[] pValue) throws TTException;
@@ -81,8 +85,7 @@ public interface IIscsiWriteTrx extends IIscsiReadTrx {
 
     /**
      * Abort all modifications of the exclusive write transaction.
-     * 
-     * @throws TTIOException
+     * @throws TTException 
      *             if this revision couldn't be aborted
      */
     public void abort() throws TTException;

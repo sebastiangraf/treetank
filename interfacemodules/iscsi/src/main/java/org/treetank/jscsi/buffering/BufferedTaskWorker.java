@@ -7,13 +7,22 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import org.jscsi.target.storage.IStorageModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.treetank.api.IIscsiWriteTrx;
 import org.treetank.api.INode;
 import org.treetank.exception.TTException;
+import org.treetank.jscsi.TreetankStorageModule;
 import org.treetank.node.ByteNode;
 
+/**
+ * This worker periodically writes into treetank
+ * using the BufferedWriteTasks first-in-first-out.
+ * 
+ * @author Andreas Rain
+ * 
+ */
 public class BufferedTaskWorker implements Callable<Void> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BufferedTaskWorker.class);
@@ -23,24 +32,27 @@ public class BufferedTaskWorker implements Callable<Void> {
      */
     private ConcurrentLinkedQueue<BufferedWriteTask> mTasks;
 
+    /**
+     * Whether or not this worker has been disposed.
+     */
     private boolean mDisposed;
 
     /**
-     * 
+     * The transaction to write into treetank.
      */
     private final IIscsiWriteTrx mRtx;
 
-    private final int mBytesInCluster;
-
     /**
      * Create a new worker.
+     * 
+     * @param pRtx
+     * @param pBytesInCluster
      */
-    public BufferedTaskWorker(IIscsiWriteTrx pRtx, int pBytesInCluster) {
+    public BufferedTaskWorker(IIscsiWriteTrx pRtx) {
         mRtx = pRtx;
-        mTasks = new ConcurrentLinkedQueue<>();
+        mTasks = new ConcurrentLinkedQueue<BufferedWriteTask>();
         mDisposed = false;
 
-        mBytesInCluster = pBytesInCluster;
     }
 
     /**
@@ -71,6 +83,12 @@ public class BufferedTaskWorker implements Callable<Void> {
         return null;
     }
 
+    /**
+     * This method gets called periodically, as long
+     * as there are tasks left in the queue.
+     * 
+     * @throws IOException
+     */
     private void performTask() throws IOException {
 
         BufferedWriteTask currentTask = mTasks.poll();
@@ -86,11 +104,15 @@ public class BufferedTaskWorker implements Callable<Void> {
             if (bytesOffset + length > bytes.length) {
                 throw new IOException();
             }
-            int startIndex = (int)(storageIndex / mBytesInCluster);
-            int startIndexOffset = (int)(storageIndex % mBytesInCluster);
+            int startIndex =
+                (int)(storageIndex / (TreetankStorageModule.BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE));
+            int startIndexOffset =
+                (int)(storageIndex % (TreetankStorageModule.BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE));
 
-            int endIndex = (int)((storageIndex + length) / mBytesInCluster);
-            int endIndexMax = (int)((storageIndex + length) % mBytesInCluster);
+            int endIndex =
+                (int)((storageIndex + length) / (TreetankStorageModule.BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE));
+            int endIndexMax =
+                (int)((storageIndex + length) % (TreetankStorageModule.BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE));
 
             for (int i = startIndex; i <= endIndex; i++) {
                 mRtx.moveTo(i);
@@ -101,14 +123,24 @@ public class BufferedTaskWorker implements Callable<Void> {
                 if (i == startIndex && i == endIndex) {
                     System.arraycopy(bytes, bytesOffset, val, startIndexOffset, endIndexMax);
                 } else if (i == startIndex) {
-                    System.arraycopy(bytes, bytesOffset, val, startIndexOffset, mBytesInCluster
-                        - startIndexOffset);
+                    System.arraycopy(bytes, bytesOffset, val, startIndexOffset,
+                        (TreetankStorageModule.BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE)
+                            - startIndexOffset);
                 } else if (i == endIndex) {
-                    System.arraycopy(bytes, bytesOffset + (mBytesInCluster * (i - startIndex)), val, 0,
-                        endIndexMax);
+                    System
+                        .arraycopy(
+                            bytes,
+                            bytesOffset
+                                + ((TreetankStorageModule.BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE) * (i - startIndex)),
+                            val, 0, endIndexMax);
                 } else {
-                    System.arraycopy(bytes, bytesOffset + (mBytesInCluster * (i - startIndex)), val, 0,
-                        mBytesInCluster);
+                    System
+                        .arraycopy(
+                            bytes,
+                            bytesOffset
+                                + ((TreetankStorageModule.BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE) * (i - startIndex)),
+                            val, 0,
+                            (TreetankStorageModule.BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE));
                 }
 
                 mRtx.setValue(val);
@@ -123,6 +155,8 @@ public class BufferedTaskWorker implements Callable<Void> {
     /**
      * The returned collisions are ordered chronologically.
      * 
+     * @param pLength
+     * @param pStorageIndex
      * @return List<Collision> - returns a list of collisions
      */
 
@@ -168,6 +202,15 @@ public class BufferedTaskWorker implements Callable<Void> {
         return collisions;
     }
 
+    /**
+     * Determine if indizes overlap.
+     * 
+     * @param srcLength
+     * @param srcStorageIndex
+     * @param destLength
+     * @param destStorageIndex
+     * @return true if indizes overlap, false otherwise
+     */
     private boolean overlappingIndizes(int srcLength, long srcStorageIndex, int destLength,
         long destStorageIndex) {
         if (destLength + destStorageIndex < srcStorageIndex || destStorageIndex > srcStorageIndex + srcLength) {

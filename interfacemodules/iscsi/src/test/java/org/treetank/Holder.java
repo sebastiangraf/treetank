@@ -47,6 +47,12 @@ public class Holder {
 
     private IIscsiReadTrx mIRtx;
 
+    /**
+     * @param pHolder
+     * @param pConf
+     * @return {@link org.treetank.CoreTestHelper.Holder} - the holder for the generated wtx.
+     * @throws TTException
+     */
     public static Holder generateWtx(CoreTestHelper.Holder pHolder, ResourceConfiguration pConf)
         throws TTException {
         final Holder holder = new Holder();
@@ -55,6 +61,9 @@ public class Holder {
         return holder;
     }
 
+    /**
+     * @throws TTException
+     */
     public void close() throws TTException {
         if (mIRtx != null && !mIRtx.isClosed()) {
             mIRtx.close();
@@ -62,14 +71,23 @@ public class Holder {
         mHolder.close();
     }
 
+    /**
+     * @return {@link IPageWriteTrx} - the pwtx
+     */
     public IPageWriteTrx getPWtx() {
         return mHolder.mPageWTrx;
     }
 
+    /**
+     * @return {@link IIscsiReadTrx} - the irtx
+     */
     public IIscsiReadTrx getIRtx() {
         return mIRtx;
     }
 
+    /**
+     * @return {@link IIscsiWriteTrx} - the iwtx
+     */
     public IIscsiWriteTrx getIWtx() {
         if (mIRtx instanceof IIscsiWriteTrx) {
             return (IIscsiWriteTrx)mIRtx;

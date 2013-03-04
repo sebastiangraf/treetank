@@ -48,6 +48,12 @@ import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
 
+/**
+ * This class tests the transactions {@link IscsiWriteTrx} and {@link IscsiReadTrx} directly.
+ * 
+ * @author Andreas Rain
+ * 
+ */
 @Guice(moduleFactory = ModuleFactory.class)
 public final class TransactionTest {
 
@@ -60,17 +66,27 @@ public final class TransactionTest {
 
     private ResourceConfiguration mResource;
 
+    /**
+     * @throws TTException
+     */
     @BeforeMethod
     public void setUp() throws TTException {
         CoreTestHelper.deleteEverything();
         CoreTestHelper.Holder holder = CoreTestHelper.Holder.generateStorage();
         Properties props =
-            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
-                .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
+            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
+        CoreTestHelper.Holder.generateWtx(holder, mResource);
         this.holder = Holder.generateWtx(holder, mResource);
     }
 
+    /**
+     * Tests functionality in a sequence of writes and reads on the
+     * transactions.
+     * 
+     * @throws TTException
+     */
     @Test(enabled = false)
     public void testJustEverything() throws TTException {
         ByteArrayDataOutput output = ByteStreams.newDataOutput(512);
@@ -127,6 +143,11 @@ public final class TransactionTest {
 
     }
 
+    /**
+     * Clean up after the test finishes.
+     * 
+     * @throws TTException
+     */
     @AfterMethod
     public void tearDown() throws TTException {
         holder.close();

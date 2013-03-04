@@ -49,13 +49,22 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+/**
+ * This configuration class extends {@link Configuration}
+ * so that it can be used within the self defined target
+ * server-
+ * 
+ * @author Andreas Rain
+ *
+ */
 public class TreetankConfiguration extends Configuration {
 
     private final StorageConfiguration mConf;
 
     /**
-     * {@inheritDoc}
-     * 
+     * Create a new {@link TreetankConfiguration}
+     * @param pConf
+     *          you have to pass a valid {@link StorageConfiguration}
      * @throws IOException
      */
     public TreetankConfiguration(final StorageConfiguration pConf) throws IOException {
@@ -63,6 +72,18 @@ public class TreetankConfiguration extends Configuration {
         this.mConf = pConf;
     }
 
+    /**
+     * Static method to create a new {@link TreetankConfiguration}
+     * 
+     * @param schemaLocation
+     * @param configFile
+     * @param conf
+     * @return {@link TreetankConfiguration}
+     * @throws SAXException
+     * @throws ParserConfigurationException
+     * @throws IOException
+     * @throws TTException
+     */
     public static TreetankConfiguration create(final File schemaLocation, final File configFile,
         StorageConfiguration conf) throws SAXException, ParserConfigurationException, IOException,
         TTException {

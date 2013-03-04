@@ -72,8 +72,8 @@ public class ByteNode implements INode {
 
     /**
      * Creates a ByteNode with given bytes
-     * @param nodeKey
-     * @param content
+     * @param pNodeKey 
+     * @param pContent 
      */
     public ByteNode(long pNodeKey, byte[] pContent) {
         nodeKey = pNodeKey;
@@ -84,7 +84,7 @@ public class ByteNode implements INode {
     /**
      * Serializing to given dataput
      * 
-     * @param pOutput
+     * @param output
      *            to serialize to
      * @throws TTIOException
      */
@@ -126,8 +126,7 @@ public class ByteNode implements INode {
 
     /**
      * Replace the existing byte array with another byte array.
-     * 
-     * @param val
+     * @param pVal 
      */
     public void setVal(byte[] pVal) {
 

@@ -8,7 +8,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
- * Tests functionallity of a buffered task worker.
+ * Tests functionality of a buffered task worker.
  * 
  * @author Andreas Rain
  * 
@@ -17,13 +17,16 @@ public class BufferedTaskWorkerTest {
 
     private BufferedTaskWorker worker;
 
+    /**
+     * Setup method for this test.
+     */
     @BeforeClass
     public void setUp() {
         byte[] testBytes = new byte[4096];
 
         Random rand = new Random(42);
 
-        worker = new BufferedTaskWorker(null, 0);
+        worker = new BufferedTaskWorker(null);
 
         // Create some dummy tasks
         rand.nextBytes(testBytes);
@@ -40,7 +43,7 @@ public class BufferedTaskWorkerTest {
     }
 
     /**
-     * Test functionallity of collision detection.
+     * Test functionality of collision detection.
      */
     @Test
     public void testCheckForCollisons() {

@@ -44,6 +44,12 @@ import org.treetank.exception.TTException;
 
 import com.google.inject.Inject;
 
+/**
+ * This test checks functionalities of {@link TreetankStorageModule}
+ * 
+ * @author Andreas Rain
+ *
+ */
 @Guice(moduleFactory = ModuleFactory.class)
 public class TreetankStorageModuleTest {
 
@@ -56,6 +62,11 @@ public class TreetankStorageModuleTest {
 
     private ResourceConfiguration mResource;
 
+    /**
+     * Setup method for this test.
+     * 
+     * @throws TTException
+     */
     @BeforeClass
     public void setUp() throws TTException {
         CoreTestHelper.deleteEverything();
@@ -71,6 +82,12 @@ public class TreetankStorageModuleTest {
         storageModule = new TreetankStorageModule(128, configuration);
     }
 
+    /**
+     * Test functionality of read and write transactions.
+     * 
+     * @throws TTException
+     * @throws IOException
+     */
     @Test(groups = "Initial read write")
     public void testReadAndWrite() throws TTException, IOException {
 
@@ -115,6 +132,9 @@ public class TreetankStorageModuleTest {
 
     }
 
+    /**
+     * Check the logic of the checkBounds method.
+     */
     @Test(dependsOnGroups = "Initial read write")
     public void testCheckBounds1() {
 
@@ -127,6 +147,9 @@ public class TreetankStorageModuleTest {
         assertEquals(0, result);
     }
 
+    /**
+     * Test whether the storageModule cold be opened.
+     */
     @Test
     public void testOpen() {
 
