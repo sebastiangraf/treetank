@@ -70,7 +70,7 @@ import com.google.inject.Injector;
 public class TreetankStorageModule implements IStorageModule {
 
     /** Number of Blocks in one Cluster. */
-    protected static final int BLOCK_IN_CLUSTER = 512;
+    public static final int BLOCK_IN_CLUSTER = 512;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TreetankStorageModule.class);
 
@@ -159,7 +159,7 @@ public class TreetankStorageModule implements IStorageModule {
          * Creating the writer service and adding the worker to the pool.
          */
         mWriterService = Executors.newSingleThreadExecutor();
-        mWorker = new BufferedTaskWorker(mRtx, BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE);
+        mWorker = new BufferedTaskWorker(mRtx);
 
         mWriterService.submit(mWorker);
         mWriterService.shutdown();

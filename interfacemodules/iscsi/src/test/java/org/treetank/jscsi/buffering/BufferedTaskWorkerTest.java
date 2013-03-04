@@ -26,7 +26,7 @@ public class BufferedTaskWorkerTest {
 
         Random rand = new Random(42);
 
-        worker = new BufferedTaskWorker(null, 0);
+        worker = new BufferedTaskWorker(null);
 
         // Create some dummy tasks
         rand.nextBytes(testBytes);
