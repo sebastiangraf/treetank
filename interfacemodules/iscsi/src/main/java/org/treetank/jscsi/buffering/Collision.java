@@ -14,6 +14,13 @@ public class Collision {
     private final int mEnd;
     private final byte[] mBytes;
 
+    /**
+     * 
+     * 
+     * @param pStart
+     * @param pEnd
+     * @param pBytes
+     */
     public Collision(int pStart, int pEnd, byte[] pBytes) {
         super();
         this.mStart = pStart;

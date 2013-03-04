@@ -14,6 +14,13 @@ import org.treetank.api.INode;
 import org.treetank.exception.TTException;
 import org.treetank.node.ByteNode;
 
+/**
+ * This worker periodically writes into treetank
+ * using the BufferedWriteTasks first-in-first-out.
+ * 
+ * @author Andreas Rain
+ *
+ */
 public class BufferedTaskWorker implements Callable<Void> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BufferedTaskWorker.class);
@@ -23,17 +30,25 @@ public class BufferedTaskWorker implements Callable<Void> {
      */
     private ConcurrentLinkedQueue<BufferedWriteTask> mTasks;
 
+    /**
+     * Whether or not this worker has been disposed.
+     */
     private boolean mDisposed;
 
     /**
-     * 
+     * The transaction to write into treetank.
      */
     private final IIscsiWriteTrx mRtx;
 
+    /**
+     * How many bytes a cluster has.
+     */
     private final int mBytesInCluster;
 
     /**
      * Create a new worker.
+     * @param pRtx 
+     * @param pBytesInCluster 
      */
     public BufferedTaskWorker(IIscsiWriteTrx pRtx, int pBytesInCluster) {
         mRtx = pRtx;
@@ -71,6 +86,11 @@ public class BufferedTaskWorker implements Callable<Void> {
         return null;
     }
 
+    /**
+     * This method gets called periodically, as long
+     * as there are tasks left in the queue.
+     * @throws IOException
+     */
     private void performTask() throws IOException {
 
         BufferedWriteTask currentTask = mTasks.poll();
@@ -123,6 +143,8 @@ public class BufferedTaskWorker implements Callable<Void> {
     /**
      * The returned collisions are ordered chronologically.
      * 
+     * @param pLength
+     * @param pStorageIndex
      * @return List<Collision> - returns a list of collisions
      */
 
@@ -168,6 +190,15 @@ public class BufferedTaskWorker implements Callable<Void> {
         return collisions;
     }
 
+    /**
+     * Determine if indizes overlap.
+     * 
+     * @param srcLength
+     * @param srcStorageIndex
+     * @param destLength
+     * @param destStorageIndex
+     * @return
+     */
     private boolean overlappingIndizes(int srcLength, long srcStorageIndex, int destLength,
         long destStorageIndex) {
         if (destLength + destStorageIndex < srcStorageIndex || destStorageIndex > srcStorageIndex + srcLength) {

@@ -65,7 +65,7 @@ import com.google.inject.Injector;
  * This implementation is used to store data into treetank via an iscsi target.
  * </p>
  * 
- * @author Andreas Rain, University of Konstanz
+ * @author Andreas Rain
  */
 public class TreetankStorageModule implements IStorageModule {
 
@@ -93,12 +93,18 @@ public class TreetankStorageModule implements IStorageModule {
     private final ISession session;
 
     /**
-     * 
+     * {@link IIscsiWriteTrx} that is used to write/read from treetank.
      */
     private final IIscsiWriteTrx mRtx;
 
+    /**
+     * The service that holds the BufferedTaskWorker
+     */
     private final ExecutorService mWriterService;
 
+    /**
+     * The worker to process write tasks
+     */
     private final BufferedTaskWorker mWorker;
 
     /**
@@ -106,14 +112,8 @@ public class TreetankStorageModule implements IStorageModule {
      * 
      * @param pSizeInClusters
      *            Define how many clusters the storage holds.
-     * @param pBlockSize
-     *            Define the bytes in a sector.
-     * @param pBlocksInCluster
-     *            Define the amount of sectors one cluster contains.
      * @param conf
      *            Pass the storage configuration to use for this storage module.
-     * @param file
-     *            The file path to the storage on the harddisk.
      * @throws TTException
      *             will be thrown if there are problems creating this storage.
      */
@@ -164,6 +164,12 @@ public class TreetankStorageModule implements IStorageModule {
         mWriterService.submit(mWorker);
     }
 
+    /**
+     * Bootstrap a new device as a treetank storage using
+     * nodes to abstract the device.
+     * @throws IOException
+     *          is thrown if a node couldn't be created due to errors in the backend.
+     */
     private void createStorage() throws IOException {
 
         LOGGER.info("Creating storage with " + mNumberOfClusters + " clusters containing " + BLOCK_IN_CLUSTER
@@ -178,8 +184,8 @@ public class TreetankStorageModule implements IStorageModule {
             }
             boolean hasNextNode = true;
 
-            for (int i = 0; i < mNumberOfClusters; i++) {
-                if (i == mNumberOfClusters - 1) {
+            for (int i = 0; i < BLOCK_IN_CLUSTER; i++) {
+                if (i == BLOCK_IN_CLUSTER - 1) {
                     hasNextNode = false;
                 }
 
@@ -275,6 +281,24 @@ public class TreetankStorageModule implements IStorageModule {
         System.arraycopy(output.toByteArray(), 0, bytes, bytesOffset, length);
 
         // Overwriting segments in the byte array using the writer tasks that are still in progress.
+        readConcurrent(bytes, bytesOffset, length, storageIndex);
+    }
+
+    /**
+     * Read the newest version w.r.t the pending
+     * write tasks.
+     * @param bytes
+     *          bytes to read into
+     * @param bytesOffset
+     *          offset to start reading into
+     * @param length
+     *          how many bytes have to be read
+     * @param storageIndex
+     *          where to start reading in terms of storage device
+     * @throws IOException
+     */
+    private void readConcurrent(byte[] bytes, int bytesOffset, int length, long storageIndex)
+        throws IOException {
         List<Collision> collisions = mWorker.checkForCollisions(length, storageIndex);
 
         for (Collision collision : collisions) {
@@ -285,9 +309,7 @@ public class TreetankStorageModule implements IStorageModule {
                 System.arraycopy(collision.getBytes(), 0, bytes, bytesOffset, collision.getBytes().length);
             }
         }
-
     }
-
 
     /**
      * {@inheritDoc}
@@ -299,7 +321,6 @@ public class TreetankStorageModule implements IStorageModule {
         mWorker.newTask(bytes, bytesOffset, length, storageIndex);
 
     }
-
 
     /**
      * {@inheritDoc}
