@@ -51,15 +51,16 @@ import org.xml.sax.SAXException;
 
 public class TreetankConfiguration extends Configuration {
 
-    private StorageConfiguration conf;
+    private final StorageConfiguration mConf;
 
     /**
      * {@inheritDoc}
      * 
      * @throws IOException
      */
-    public TreetankConfiguration() throws IOException {
+    public TreetankConfiguration(final StorageConfiguration pConf) throws IOException {
         super();
+        this.mConf = pConf;
     }
 
     public static TreetankConfiguration create(final File schemaLocation, final File configFile,
@@ -84,8 +85,7 @@ public class TreetankConfiguration extends Configuration {
         Document root = (Document)result.getNode();
 
         // TargetName
-        TreetankConfiguration returnConfiguration = new TreetankConfiguration();
-        returnConfiguration.setConf(conf);
+        TreetankConfiguration returnConfiguration = new TreetankConfiguration(conf);
 
         Element targetListNode = (Element)root.getElementsByTagName(ELEMENT_TARGET_LIST).item(0);
         NodeList targetList = targetListNode.getElementsByTagName(ELEMENT_TARGET);
@@ -161,21 +161,11 @@ public class TreetankConfiguration extends Configuration {
         }
 
         final IStorageModule module =
-            new TreetankStorageModule(storageLength / (128 * IStorageModule.VIRTUAL_BLOCK_SIZE), conf
-                .getConf());
+            new TreetankStorageModule(storageLength
+                / (TreetankStorageModule.BLOCKSINCLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE), conf.mConf);
 
         return new Target(targetName, targetAlias, module);
 
-    }
-
-    public StorageConfiguration getConf() {
-
-        return conf;
-    }
-
-    public void setConf(StorageConfiguration conf) {
-
-        this.conf = conf;
     }
 
 }

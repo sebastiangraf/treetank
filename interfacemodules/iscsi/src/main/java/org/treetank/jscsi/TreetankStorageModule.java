@@ -70,7 +70,7 @@ import com.google.inject.Injector;
 public class TreetankStorageModule implements IStorageModule {
 
     /** Number of Blocks in one Cluster. */
-    private static final int BLOCKSINCLUSTER = 512;
+    protected static final int BLOCKSINCLUSTER = 512;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TreetankStorageModule.class);
 
@@ -172,9 +172,9 @@ public class TreetankStorageModule implements IStorageModule {
 
             INode node = this.mRtx.getCurrentNode();
 
-            if (node != null)
+            if (node != null) {
                 return;
-
+            }
             boolean hasNextNode = true;
 
             for (int i = 0; i < sizeInClusters; i++) {
@@ -198,9 +198,8 @@ public class TreetankStorageModule implements IStorageModule {
 
             this.mRtx.commit();
 
-        } catch (TTException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        } catch (TTException exc) {
+            throw new IOException(exc);
         }
 
     }
@@ -210,19 +209,22 @@ public class TreetankStorageModule implements IStorageModule {
      */
     public int checkBounds(long logicalBlockAddress, int transferLengthInBlocks) {
         // Checking if the logical block address is out of bounds
-        if (logicalBlockAddress < 0 || logicalBlockAddress >= getSizeInBlocks())
+        if (logicalBlockAddress < 0 || logicalBlockAddress >= getSizeInBlocks()) {
             return 1;
-
+        } else
         // if the logical block address is in bounds but the transferlength either exceeds
         // the device size or is faulty return 2
-        if (transferLengthInBlocks < 0 || logicalBlockAddress + transferLengthInBlocks > getSizeInBlocks())
+        if (transferLengthInBlocks < 0 || logicalBlockAddress + transferLengthInBlocks > getSizeInBlocks()) {
             return 2;
-        return 0;
+        } else {
+            return 0;
+        }
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public long getSizeInBlocks() {
         return sizeInClusters * BLOCKSINCLUSTER;
     }
@@ -322,11 +324,8 @@ public class TreetankStorageModule implements IStorageModule {
             session.close();
             storage.close();
 
-            // A small hack, so the {@link IStorageModule} doesn't have to be altered
-            // to
-            // throw Exceptions in general.
-        } catch (TTException e) {
-            throw new IOException(e.getMessage());
+        } catch (TTException exc) {
+            throw new IOException(exc);
         }
     }
 
