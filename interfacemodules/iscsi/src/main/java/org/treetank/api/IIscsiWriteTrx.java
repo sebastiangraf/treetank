@@ -37,6 +37,7 @@ public interface IIscsiWriteTrx extends IIscsiReadTrx {
      * 
      * @param node
      * @param hasNextNode
+     *            true if a node is following to this one.
      * @throws TTException
      */
     public void bootstrap(byte[] vals, boolean hasNextNode) throws TTException;

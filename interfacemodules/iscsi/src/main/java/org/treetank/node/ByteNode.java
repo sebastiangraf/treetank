@@ -41,7 +41,7 @@ public class ByteNode implements INode {
     /**
      * The nodes key value, which is equal with it's position in the list.
      */
-    private long nodeKey = 0;
+    private final long nodeKey;
 
     /**
      * The following nodes key

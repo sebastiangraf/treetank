@@ -33,57 +33,57 @@ import org.treetank.access.conf.StorageConfiguration;
 import com.google.common.io.Files;
 
 public class TreetankTargetServer {
-  
-  /**
-   * Starts the jSCSI target.
-   * 
-   * Argument one has to be an empty (or already created) storage folder!
-   * Argument to can be additionally added if you don't want the default target configuration.
-   * It has to be conform with the default target configuration schema file, which you can find
-   * in the resources of the target.
-   * @param args
-   *          Argument 1 = the storage path
-   *          Argument 2 = path to a customized target configuration xml file
-   * @throws IOException
-   */
-  public static void main(String[] args) throws Exception {
 
-    TargetServer target;
-    File file;
-    StorageConfiguration configuration;
-    switch (args.length) {
-      case 0:
-        file = new File(new StringBuilder(Files.createTempDir()
-            .getAbsolutePath()).append(File.separator).append("tnk")
-            .append(File.separator).append("path1").toString());
-        configuration = new StorageConfiguration(file);
-        target = new TargetServer(TreetankConfiguration.create(
-            TreetankConfiguration.CONFIGURATION_SCHEMA_FILE,
-            TreetankConfiguration.CONFIGURATION_CONFIG_FILE, file,
-            configuration, 512));
-        break;
-      case 1:
-        file = new File(args[0]);
-        configuration = new StorageConfiguration(file);
-        target = new TargetServer(TreetankConfiguration.create(
-            TreetankConfiguration.CONFIGURATION_SCHEMA_FILE,
-            TreetankConfiguration.CONFIGURATION_CONFIG_FILE, file,
-            configuration, 512));
+    /**
+     * Starts the jSCSI target.
+     * 
+     * Argument one has to be an empty (or already created) storage folder!
+     * Argument to can be additionally added if you don't want the default target configuration.
+     * It has to be conform with the default target configuration schema file, which you can find
+     * in the resources of the target.
+     * 
+     * @param args
+     *            Argument 1 = the storage path
+     *            Argument 2 = path to a customized target configuration xml file
+     * @throws IOException
+     */
+    public static void main(String[] args) throws Exception {
 
-        break;
-      case 2:
-        file = new File(args[0]);
-        configuration = new StorageConfiguration(file);
-        target = new TargetServer(TreetankConfiguration.create(
-            TreetankConfiguration.CONFIGURATION_SCHEMA_FILE,
-            new File(args[1]), file,
-            configuration, 512));
-        break;
-      default:
-        throw new IllegalArgumentException(
-            "Only zero or one Parameter (Path to Configuration-File) allowed!");
+        TargetServer target;
+        File file;
+        StorageConfiguration configuration;
+        switch (args.length) {
+        case 0:
+            file =
+                new File(new StringBuilder(Files.createTempDir().getAbsolutePath()).append(File.separator)
+                    .append("tnk").append(File.separator).append("path1").toString());
+            configuration = new StorageConfiguration(file);
+            target =
+                new TargetServer(TreetankConfiguration.create(
+                    TreetankConfiguration.CONFIGURATION_SCHEMA_FILE,
+                    TreetankConfiguration.CONFIGURATION_CONFIG_FILE, configuration));
+            break;
+        case 1:
+            file = new File(args[0]);
+            configuration = new StorageConfiguration(file);
+            target =
+                new TargetServer(TreetankConfiguration.create(
+                    TreetankConfiguration.CONFIGURATION_SCHEMA_FILE,
+                    TreetankConfiguration.CONFIGURATION_CONFIG_FILE, configuration));
+
+            break;
+        case 2:
+            file = new File(args[0]);
+            configuration = new StorageConfiguration(file);
+            target =
+                new TargetServer(TreetankConfiguration.create(
+                    TreetankConfiguration.CONFIGURATION_SCHEMA_FILE, new File(args[1]), configuration));
+            break;
+        default:
+            throw new IllegalArgumentException(
+                "Only zero or one Parameter (Path to Configuration-File) allowed!");
+        }
+
+        target.call();
     }
-    
-    target.call();
-  }
 }

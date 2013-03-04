@@ -51,162 +51,121 @@ import org.xml.sax.SAXException;
 
 public class TreetankConfiguration extends Configuration {
 
-  private int blockSize = 512;
+    private final StorageConfiguration mConf;
 
-  private StorageConfiguration conf;
-
-  private File file;
-
-  /**
-   * {@inheritDoc}
-   * 
-   * @throws IOException
-   */
-  public TreetankConfiguration() throws IOException {
-
-    super();
-  }
-
-  public static TreetankConfiguration create(final File schemaLocation,
-      final File configFile, File storageFile, StorageConfiguration conf,
-      int blockSize) throws SAXException, ParserConfigurationException,
-      IOException, TTException {
-
-    final SchemaFactory schemaFactory = SchemaFactory
-        .newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-    final Schema schema = schemaFactory.newSchema(schemaLocation);
-
-    // create a validator for the document
-    final Validator validator = schema.newValidator();
-
-    final DocumentBuilderFactory domFactory = DocumentBuilderFactory
-        .newInstance();
-    domFactory.setNamespaceAware(true); // never forget this
-    final DocumentBuilder builder = domFactory.newDocumentBuilder();
-    final Document doc = builder.parse(configFile);
-
-    final DOMSource source = new DOMSource(doc);
-    final DOMResult result = new DOMResult();
-
-    validator.validate(source, result);
-    Document root = (Document) result.getNode();
-
-    // TargetName
-    TreetankConfiguration returnConfiguration = new TreetankConfiguration();
-    returnConfiguration.setBlockSize(blockSize);
-    returnConfiguration.setConf(conf);
-    returnConfiguration.setFile(storageFile);
-
-    Element targetListNode = (Element) root.getElementsByTagName(
-        ELEMENT_TARGET_LIST).item(0);
-    NodeList targetList = targetListNode.getElementsByTagName(ELEMENT_TARGET);
-    for (int curTargetNum = 0; curTargetNum < targetList.getLength(); curTargetNum++) {
-      Target curTargetInfo = parseTargetElement(
-          (Element) targetList.item(curTargetNum), returnConfiguration);
-      synchronized (returnConfiguration.getTargets()) {
-        returnConfiguration.getTargets().add(curTargetInfo);
-      }
-
+    /**
+     * {@inheritDoc}
+     * 
+     * @throws IOException
+     */
+    public TreetankConfiguration(final StorageConfiguration pConf) throws IOException {
+        super();
+        this.mConf = pConf;
     }
 
-    // port
-    if (root.getElementsByTagName(ELEMENT_PORT).getLength() > 0)
-      returnConfiguration.port = Integer.parseInt(root
-          .getElementsByTagName(ELEMENT_PORT).item(0).getTextContent());
-    else
-      returnConfiguration.port = 3260;
+    public static TreetankConfiguration create(final File schemaLocation, final File configFile,
+        StorageConfiguration conf) throws SAXException, ParserConfigurationException, IOException,
+        TTException {
 
-    // support sloppy text parameter negotiation (i.e. the jSCSI Initiator)?
-    final Node allowSloppyNegotiationNode = root.getElementsByTagName(
-        ELEMENT_ALLOWSLOPPYNEGOTIATION).item(0);
-    if (allowSloppyNegotiationNode == null)
-      returnConfiguration.allowSloppyNegotiation = false;
-    else
-      returnConfiguration.allowSloppyNegotiation = Boolean
-          .parseBoolean(allowSloppyNegotiationNode.getTextContent());
+        final SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        final Schema schema = schemaFactory.newSchema(schemaLocation);
 
-    return returnConfiguration;
-  }
+        // create a validator for the document
+        final Validator validator = schema.newValidator();
 
-  private static final Target parseTargetElement(Element targetElement,
-      TreetankConfiguration conf) throws IOException, TTException {
+        final DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+        domFactory.setNamespaceAware(true); // never forget this
+        final DocumentBuilder builder = domFactory.newDocumentBuilder();
+        final Document doc = builder.parse(configFile);
 
-    // TargetName
-    // TargetName
-    Node nextNode = chopWhiteSpaces(targetElement.getFirstChild());
-    // assert
-    // nextNode.getLocalName().equals(OperationalTextKey.TARGET_NAME);
-    String targetName = nextNode.getTextContent();
+        final DOMSource source = new DOMSource(doc);
+        final DOMResult result = new DOMResult();
 
-    // TargetAlias (optional)
-    nextNode = chopWhiteSpaces(nextNode.getNextSibling());
-    String targetAlias = "";
-    if (nextNode.getLocalName().equals(TextKeyword.TARGET_ALIAS)) {
-      targetAlias = nextNode.getTextContent();
-      nextNode = chopWhiteSpaces(nextNode.getNextSibling());
+        validator.validate(source, result);
+        Document root = (Document)result.getNode();
+
+        // TargetName
+        TreetankConfiguration returnConfiguration = new TreetankConfiguration(conf);
+
+        Element targetListNode = (Element)root.getElementsByTagName(ELEMENT_TARGET_LIST).item(0);
+        NodeList targetList = targetListNode.getElementsByTagName(ELEMENT_TARGET);
+        for (int curTargetNum = 0; curTargetNum < targetList.getLength(); curTargetNum++) {
+            Target curTargetInfo =
+                parseTargetElement((Element)targetList.item(curTargetNum), returnConfiguration);
+            synchronized (returnConfiguration.getTargets()) {
+                returnConfiguration.getTargets().add(curTargetInfo);
+            }
+
+        }
+
+        // port
+        if (root.getElementsByTagName(ELEMENT_PORT).getLength() > 0)
+            returnConfiguration.port =
+                Integer.parseInt(root.getElementsByTagName(ELEMENT_PORT).item(0).getTextContent());
+        else
+            returnConfiguration.port = 3260;
+
+        // support sloppy text parameter negotiation (i.e. the jSCSI Initiator)?
+        final Node allowSloppyNegotiationNode =
+            root.getElementsByTagName(ELEMENT_ALLOWSLOPPYNEGOTIATION).item(0);
+        if (allowSloppyNegotiationNode == null)
+            returnConfiguration.allowSloppyNegotiation = false;
+        else
+            returnConfiguration.allowSloppyNegotiation =
+                Boolean.parseBoolean(allowSloppyNegotiationNode.getTextContent());
+
+        return returnConfiguration;
     }
 
-//    // Finding out the concrete storage
-//    IStorageModule.STORAGEKIND kind = null;
-//    if (nextNode.getLocalName().equals(ELEMENT_SYNCFILESTORAGE)) {
-//      kind = STORAGEKIND.SyncFile;
-//    } else {
-//      // assert nextNode.getLocalName().equals(ELEMENT_ASYNCFILESTORAGE);
-//      kind = STORAGEKIND.AsyncFile;
-//    }
+    private static final Target parseTargetElement(Element targetElement, TreetankConfiguration conf)
+        throws IOException, TTException {
 
-    // Getting storagepath
-    nextNode = nextNode.getFirstChild();
-    nextNode = chopWhiteSpaces(nextNode);
-    // assert nextNode.getLocalName().equals(ELEMENT_PATH);
-//    String storageFilePath = nextNode.getTextContent();
+        // TargetName
+        // TargetName
+        Node nextNode = chopWhiteSpaces(targetElement.getFirstChild());
+        // assert
+        // nextNode.getLocalName().equals(OperationalTextKey.TARGET_NAME);
+        String targetName = nextNode.getTextContent();
 
-    // CreateNode with size
-    nextNode = chopWhiteSpaces(nextNode.getNextSibling());
-    long storageLength = -1;
+        // TargetAlias (optional)
+        nextNode = chopWhiteSpaces(nextNode.getNextSibling());
+        String targetAlias = "";
+        if (nextNode.getLocalName().equals(TextKeyword.TARGET_ALIAS)) {
+            targetAlias = nextNode.getTextContent();
+            nextNode = chopWhiteSpaces(nextNode.getNextSibling());
+        }
 
-    if (nextNode.getLocalName().equals(ELEMENT_CREATE)) {
-      Node sizeAttribute = nextNode.getAttributes()
-          .getNamedItem(ATTRIBUTE_SIZE);
-      storageLength = Math.round(((Double.valueOf(sizeAttribute
-          .getTextContent())) * Math.pow(1024, 3)));
+        // // Finding out the concrete storage
+        // IStorageModule.STORAGEKIND kind = null;
+        // if (nextNode.getLocalName().equals(ELEMENT_SYNCFILESTORAGE)) {
+        // kind = STORAGEKIND.SyncFile;
+        // } else {
+        // // assert nextNode.getLocalName().equals(ELEMENT_ASYNCFILESTORAGE);
+        // kind = STORAGEKIND.AsyncFile;
+        // }
+
+        // Getting storagepath
+        nextNode = nextNode.getFirstChild();
+        nextNode = chopWhiteSpaces(nextNode);
+        // assert nextNode.getLocalName().equals(ELEMENT_PATH);
+        // String storageFilePath = nextNode.getTextContent();
+
+        // CreateNode with size
+        nextNode = chopWhiteSpaces(nextNode.getNextSibling());
+        long storageLength = -1;
+
+        if (nextNode.getLocalName().equals(ELEMENT_CREATE)) {
+            Node sizeAttribute = nextNode.getAttributes().getNamedItem(ATTRIBUTE_SIZE);
+            storageLength =
+                Math.round(((Double.valueOf(sizeAttribute.getTextContent())) * Math.pow(1024, 3)));
+        }
+
+        final IStorageModule module =
+            new TreetankStorageModule(storageLength
+                / (TreetankStorageModule.BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE), conf.mConf);
+
+        return new Target(targetName, targetAlias, module);
+
     }
-
-    final IStorageModule module = new TreetankStorageModule(storageLength
-        / (128 * conf.getBlockSize()), conf.getBlockSize(),  128, conf.getConf(), conf.file);
-
-    return new Target(targetName, targetAlias, module);
-
-  }
-
-  public int getBlockSize() {
-
-    return blockSize;
-  }
-
-  public void setBlockSize(int blockSize) {
-
-    this.blockSize = blockSize;
-  }
-
-  public StorageConfiguration getConf() {
-
-    return conf;
-  }
-
-  public void setConf(StorageConfiguration conf) {
-
-    this.conf = conf;
-  }
-
-  public File getFile() {
-
-    return file;
-  }
-
-  public void setFile(File file) {
-
-    this.file = file;
-  }
 
 }
