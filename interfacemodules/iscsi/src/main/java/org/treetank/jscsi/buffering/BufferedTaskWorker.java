@@ -53,7 +53,7 @@ public class BufferedTaskWorker implements Callable<Void> {
      */
     public BufferedTaskWorker(IIscsiWriteTrx pRtx, int pBytesInCluster) {
         mRtx = pRtx;
-        mTasks = new ConcurrentLinkedQueue<>();
+        mTasks = new ConcurrentLinkedQueue<BufferedWriteTask>();
         mDisposed = false;
 
         mBytesInCluster = pBytesInCluster;
