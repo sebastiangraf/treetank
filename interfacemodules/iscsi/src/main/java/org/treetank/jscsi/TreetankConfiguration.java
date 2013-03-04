@@ -162,7 +162,7 @@ public class TreetankConfiguration extends Configuration {
 
         final IStorageModule module =
             new TreetankStorageModule(storageLength
-                / (TreetankStorageModule.BLOCKSINCLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE), conf.mConf);
+                / (TreetankStorageModule.BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE), conf.mConf);
 
         return new Target(targetName, targetAlias, module);
 

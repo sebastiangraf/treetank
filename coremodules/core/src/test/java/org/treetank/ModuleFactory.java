@@ -1,6 +1,5 @@
 package org.treetank;
 
-import java.io.File;
 import java.util.Map;
 import java.util.regex.Pattern;
 
