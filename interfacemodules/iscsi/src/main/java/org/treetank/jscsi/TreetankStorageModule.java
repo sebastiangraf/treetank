@@ -25,10 +25,12 @@
 package org.treetank.jscsi;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.jscsi.target.storage.IStorageModule;
 import org.slf4j.Logger;
@@ -47,7 +49,7 @@ import org.treetank.api.IStorage;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackend.IBackendFactory;
-import org.treetank.jscsi.buffering.BufferedTaskWorker;
+import org.treetank.jscsi.buffering.BufferedWriteTask;
 import org.treetank.jscsi.buffering.Collision;
 import org.treetank.node.ByteNode;
 import org.treetank.node.ByteNodeFactory;
@@ -103,9 +105,9 @@ public class TreetankStorageModule implements IStorageModule {
     private final ExecutorService mWriterService;
 
     /**
-     * The worker to process write tasks
+     * Mirroring all tasks that are pending.
      */
-    private final BufferedTaskWorker mWorker;
+    private LinkedBlockingQueue<BufferedWriteTask> mTasks;
 
     /**
      * Creates a storage module that is used by the target to handle I/O.
@@ -159,10 +161,8 @@ public class TreetankStorageModule implements IStorageModule {
          * Creating the writer service and adding the worker to the pool.
          */
         mWriterService = Executors.newSingleThreadExecutor();
-        mWorker = new BufferedTaskWorker(mRtx);
-
-        mWriterService.submit(mWorker);
-        mWriterService.shutdown();
+        
+        mTasks = new LinkedBlockingQueue<BufferedWriteTask>();
     }
 
     /**
@@ -200,7 +200,7 @@ public class TreetankStorageModule implements IStorageModule {
                     throw new IOException(e);
                 }
 
-                if (i % 50 == 0) {
+                if (i % 10 == 0) {
                     this.mRtx.commit();
                 }
             }
@@ -241,25 +241,22 @@ public class TreetankStorageModule implements IStorageModule {
     /**
      * {@inheritDoc}
      */
-    public void read(byte[] bytes, int bytesOffset, int length, long storageIndex) throws IOException {
+    public void read(byte[] bytes, long storageIndex) throws IOException {
 
-        LOGGER.info("Starting to read with param: \nbytesOffset = " + bytesOffset + "\nlength = " + length
-            + "\nstorageIndex = " + storageIndex);
+        LOGGER.info("Starting to read with param: " + "\nstorageIndex = " + storageIndex);
         // Using the most recent revision
-        if (bytesOffset + length > bytes.length) {
-            throw new IOException();
-        }
+        
         int startIndex = (int)(storageIndex / (BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE));
         int startIndexOffset = (int)(storageIndex % (BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE));
 
         int endIndex =
-            (int)((storageIndex + length) / (BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE));
+            (int)((storageIndex + bytes.length) / (BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE));
         int endIndexMax =
-            (int)((storageIndex + length) % (BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE));
+            (int)((storageIndex + bytes.length) % (BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE));
 
         LOGGER.info("Starting to read from node " + startIndex + " to node " + endIndex);
 
-        ByteArrayDataOutput output = ByteStreams.newDataOutput(length);
+        ByteArrayDataOutput output = ByteStreams.newDataOutput(bytes.length);
 
         for (long i = startIndex; i <= endIndex; i++) {
             this.mRtx.moveTo(i);
@@ -268,7 +265,7 @@ public class TreetankStorageModule implements IStorageModule {
             byte[] val = ((ByteNode)node).getVal();
 
             if (i == startIndex && i == endIndex) {
-                output.write(val, startIndexOffset, length);
+                output.write(val, startIndexOffset, bytes.length);
             } else if (i == startIndex) {
                 output.write(val, startIndexOffset, (BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE)
                     - startIndexOffset);
@@ -280,10 +277,10 @@ public class TreetankStorageModule implements IStorageModule {
 
         }
 
-        System.arraycopy(output.toByteArray(), 0, bytes, bytesOffset, length);
+        System.arraycopy(output.toByteArray(), 0, bytes, 0, bytes.length);
 
         // Overwriting segments in the byte array using the writer tasks that are still in progress.
-        readConcurrent(bytes, bytesOffset, length, storageIndex);
+        readConcurrent(bytes, storageIndex);
     }
 
     /**
@@ -300,29 +297,95 @@ public class TreetankStorageModule implements IStorageModule {
      *            where to start reading in terms of storage device
      * @throws IOException
      */
-    private void readConcurrent(byte[] bytes, int bytesOffset, int length, long storageIndex)
+    private void readConcurrent(byte[] bytes, long storageIndex)
         throws IOException {
-        List<Collision> collisions = mWorker.checkForCollisions(length, storageIndex);
+        List<Collision> collisions = checkForCollisions(bytes.length, storageIndex);
 
         for (Collision collision : collisions) {
             if (collision.getStart() != storageIndex) {
                 System.arraycopy(collision.getBytes(), 0, bytes,
-                    (int)(bytesOffset + (collision.getStart() - storageIndex)), collision.getBytes().length);
+                    (int)((collision.getStart() - storageIndex)), collision.getBytes().length);
             } else {
-                System.arraycopy(collision.getBytes(), 0, bytes, bytesOffset, collision.getBytes().length);
+                System.arraycopy(collision.getBytes(), 0, bytes, 0, collision.getBytes().length);
             }
         }
     }
 
     /**
+     * The returned collisions are ordered chronologically.
+     * 
+     * @param pLength
+     * @param pStorageIndex
+     * @return List<Collision> - returns a list of collisions
+     */
+
+    public List<Collision> checkForCollisions(int pLength, long pStorageIndex) {
+        List<Collision> collisions = new ArrayList<Collision>();
+        //TODO rewrite
+        for (BufferedWriteTask task : mTasks) {
+            if (overlappingIndizes(pLength, pStorageIndex, task.getBytes().length, task.getStorageIndex())) {
+                // Determining where the two tasks collide
+                int start = 0;
+                int end = 0;
+                byte[] bytes = null;
+
+                // Determining the start point
+                if (task.getStorageIndex() < pStorageIndex) {
+                    start = (int)pStorageIndex;
+                } else {
+                    start = (int)task.getStorageIndex();
+                }
+
+                // Determining the end point
+                if (task.getStorageIndex() + task.getBytes().length > pStorageIndex + pLength) {
+                    end = (int)(pStorageIndex + pLength);
+                } else {
+                    end = (int)(task.getStorageIndex() + task.getBytes().length);
+                }
+
+                bytes = new byte[end - start];
+
+                if (start == pStorageIndex) {
+                    System.arraycopy(task.getBytes(), (int)((pStorageIndex - task
+                        .getStorageIndex())), bytes, 0, end - start);
+                } else {
+                    System.arraycopy(task.getBytes(), 0, bytes, 0, end - start);
+                }
+
+                collisions.add(new Collision(start, end, bytes));
+
+                LOGGER.info("Found collision from " + start + " to " + end);
+            }
+        }
+
+        return collisions;
+    }
+
+    /**
+     * Determine if indizes overlap.
+     * 
+     * @param srcLength
+     * @param srcStorageIndex
+     * @param destLength
+     * @param destStorageIndex
+     * @return true if indizes overlap, false otherwise
+     */
+    private boolean overlappingIndizes(int srcLength, long srcStorageIndex, int destLength,
+        long destStorageIndex) {
+        if (destLength + destStorageIndex < srcStorageIndex || destStorageIndex > srcStorageIndex + srcLength) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * {@inheritDoc}
      */
-    public void write(byte[] bytes, int bytesOffset, int length, long storageIndex) throws IOException {
-
-        // The write method won't block and will be performed in the background
-        // so the initiator gets a faster response.
-        mWorker.newTask(bytes, bytesOffset, length, storageIndex);
-
+    public void write(byte[] bytes, long storageIndex) throws IOException {
+        BufferedWriteTask task = new BufferedWriteTask(bytes, storageIndex, mRtx);
+        mTasks.offer(task);
+        mWriterService.submit(task);
     }
 
     /**
@@ -331,7 +394,17 @@ public class TreetankStorageModule implements IStorageModule {
     public void close() throws IOException {
 
         try {
-            mWorker.dispose();
+            mWriterService.shutdown();
+            
+            while(!mWriterService.isTerminated()){
+                // Do nothing and wait
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    LOGGER.error(e.getStackTrace().toString());
+                }
+            }
+            
             mRtx.close();
             session.close();
             storage.close();
