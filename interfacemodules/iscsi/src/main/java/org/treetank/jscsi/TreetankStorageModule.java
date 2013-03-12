@@ -244,6 +244,14 @@ public class TreetankStorageModule implements IStorageModule {
     public void read(byte[] bytes, long storageIndex) throws IOException {
 
         LOGGER.info("Starting to read with param: " + "\nstorageIndex = " + storageIndex);
+        
+        // CLean up tasks
+        while(mTasks.peek().isFinished()){
+            //This task is finished and already in the treetank backend
+            //we can remove it from the list.
+            mTasks.poll();
+        }
+        
         // Using the most recent revision
         
         int startIndex = (int)(storageIndex / (BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE));
@@ -278,7 +286,7 @@ public class TreetankStorageModule implements IStorageModule {
         }
 
         System.arraycopy(output.toByteArray(), 0, bytes, 0, bytes.length);
-
+        
         // Overwriting segments in the byte array using the writer tasks that are still in progress.
         readConcurrent(bytes, storageIndex);
     }
@@ -319,7 +327,7 @@ public class TreetankStorageModule implements IStorageModule {
      * @return List<Collision> - returns a list of collisions
      */
 
-    public List<Collision> checkForCollisions(int pLength, long pStorageIndex) {
+    private List<Collision> checkForCollisions(int pLength, long pStorageIndex) {
         List<Collision> collisions = new ArrayList<Collision>();
         //TODO rewrite
         for (BufferedWriteTask task : mTasks) {

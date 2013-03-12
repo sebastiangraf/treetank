@@ -109,7 +109,7 @@ public class BufferedWriteTask implements Callable<Void>{
                 byte[] val = ((ByteNode)node).getVal();
 
                 if (i == startIndex && i == endIndex) {
-                    System.arraycopy(mBytes, 0, val, startIndexOffset, endIndexMax);
+                    System.arraycopy(mBytes, 0, val, startIndexOffset, (endIndexMax-startIndexOffset));
                 } else if (i == startIndex) {
                     System.arraycopy(mBytes, 0, val, startIndexOffset,
                         (TreetankStorageModule.BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE)
@@ -117,16 +117,12 @@ public class BufferedWriteTask implements Callable<Void>{
                 } else if (i == endIndex) {
                     System
                         .arraycopy(
-                            mBytes,
-                            0
-                                + ((TreetankStorageModule.BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE) * (i - startIndex)),
+                            mBytes, (TreetankStorageModule.BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE) * (i - startIndex) - startIndexOffset,
                             val, 0, endIndexMax);
                 } else {
                     System
                         .arraycopy(
-                            mBytes,
-                            0
-                                + ((TreetankStorageModule.BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE) * (i - startIndex)),
+                            mBytes, (TreetankStorageModule.BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE) * (i - startIndex) - startIndexOffset,
                             val, 0,
                             (TreetankStorageModule.BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE));
                 }

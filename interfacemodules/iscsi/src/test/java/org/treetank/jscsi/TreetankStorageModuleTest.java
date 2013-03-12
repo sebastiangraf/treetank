@@ -80,8 +80,30 @@ public class TreetankStorageModuleTest {
         CoreTestHelper.createResource(mResource);
 
         configuration = CoreTestHelper.PATHS.PATH1.getConfig();
-
+    }
+    
+    /**
+     * Test if the storage can be created.
+     * @throws TTException
+     */
+    @Test(groups = {"createStorage"})
+    public void testCreateStorage() throws TTException{
         storageModule = new TreetankStorageModule(128, configuration);
+    }
+
+    /**
+     * Check the logic of the checkBounds method.
+     */
+    @Test(groups = {"boundaryCheck"}, dependsOnGroups = {"createStorage"})
+    public void testBoundaries() {
+
+        // wrong logical block address
+        int result = storageModule.checkBounds(-1,// logicalBlockAddress
+            1);// transferLengthInBlocks
+        assertEquals(1, result);
+        result = storageModule.checkBounds(2,// logicalBlockAddress
+            1);// transferLengthInBlocks
+        assertEquals(0, result);
     }
 
     /**
@@ -90,7 +112,7 @@ public class TreetankStorageModuleTest {
      * @throws TTException
      * @throws IOException
      */
-    @Test(groups = "Initial read write")
+    @Test(dependsOnGroups = {"boundaryCheck"})
     public void testReadAndWrite() throws TTException, IOException {
 
         final byte[] writeArray = new byte[64 * TreetankStorageModule.BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE];
@@ -115,22 +137,7 @@ public class TreetankStorageModuleTest {
         storageModule.close();
 
     }
-
-    /**
-     * Check the logic of the checkBounds method.
-     */
-    @Test(dependsOnGroups = "Initial read write")
-    public void testCheckBounds1() {
-
-        // wrong logical block address
-        int result = storageModule.checkBounds(-1,// logicalBlockAddress
-            1);// transferLengthInBlocks
-        assertEquals(1, result);
-        result = storageModule.checkBounds(2,// logicalBlockAddress
-            1);// transferLengthInBlocks
-        assertEquals(0, result);
-    }
-
+    
     /**
      * Test whether the storageModule cold be opened.
      */
