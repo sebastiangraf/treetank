@@ -1,6 +1,6 @@
 name: iSCSISuite
 threadCount: 4
-parameters: { NodeFactory: org.treetank.jscsi.node.ByteNodeFactory, MetaFactory: org.treetank.jscsi.node.ISCSIMetaPageFactory }
+parameters: { NodeFactory: org.treetank.node.ByteNodeFactory, MetaFactory: org.treetank.node.ISCSIMetaPageFactory }
 
 tests:
   - name: Unit Tests
