@@ -6,7 +6,7 @@ tests:
   - name: Unit Tests
     classes:
       - org.treetank.jscsi.buffering.BufferedWriteTask
-      - org.treetank.jscsi.node.ByteNodeTest
+      - org.treetank.node.ByteNodeTest
   - name: Sliding Berkeley
     parameters: { Revisioning: org.treetank.revisioning.SlidingSnapshot, Backend: org.treetank.io.berkeley.BerkeleyStorage }
     classes:
