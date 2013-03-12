@@ -33,7 +33,6 @@ import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.node.ByteNode;
-import org.treetank.page.NodePage;
 
 /**
  * @author Andreas Rain
@@ -81,70 +80,6 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
             node.setIndex(0);
             getPageTransaction().setNode(node);
             mDelegate.moveTo(node.getNodeKey());
-        }
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void insertAfter(byte[] vals) throws TTException {
-
-        ByteNode node = new ByteNode(getPageTransaction().incrementNodeKey(), new byte[512]);
-        if (((ByteNode)mDelegate.getCurrentNode()).hasNext()) {
-            // Linking the new node.
-            ByteNode nextNode =
-                (ByteNode)getPageTransaction().getNode(
-                    ((ByteNode)mDelegate.getCurrentNode()).getNextNodeKey());
-            nextNode.setPreviousNodeKey(node.getNodeKey());
-            getPageTransaction().setNode(nextNode);
-
-            incrementAllFollowingIndizes(mDelegate.getCurrentNode());
-        }
-
-        node.setNextNodeKey(((ByteNode)mDelegate.getCurrentNode()).getNextNodeKey());
-        node.setPreviousNodeKey(((ByteNode)mDelegate.getCurrentNode()).getNodeKey());
-        node.setIndex(((ByteNode)mDelegate.getCurrentNode()).getIndex() + 1);
-        getPageTransaction().setNode(node);
-
-        ByteNode currNode = (ByteNode)getPageTransaction().getNode(mDelegate.getCurrentNode().getNodeKey());
-
-        currNode.setNextNodeKey(node.getNodeKey());
-        getPageTransaction().setNode(currNode);
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void remove() throws TTException {
-        checkState(!mDelegate.isClosed(), "Transaction is already closed.");
-
-        if (((ByteNode)mDelegate.getCurrentNode()).hasPrevious()
-            && ((ByteNode)mDelegate.getCurrentNode()).hasNext()) {
-            ByteNode previousNode =
-                (ByteNode)getPageTransaction().getNode(
-                    ((ByteNode)mDelegate.getCurrentNode()).getPreviousNodeKey());
-
-            previousNode.setNextNodeKey(((ByteNode)mDelegate.getCurrentNode()).getNextNodeKey());
-
-            getPageTransaction().setNode(previousNode);
-
-            ByteNode nextNode =
-                (ByteNode)getPageTransaction().getNode(
-                    ((ByteNode)mDelegate.getCurrentNode()).getNextNodeKey());
-
-            nextNode.setPreviousNodeKey(previousNode.getNodeKey());
-
-            getPageTransaction().setNode(nextNode);
-
-            long nodeKey = mDelegate.getCurrentNode().getNodeKey();
-            INode deleteNode = new NodePage.DeletedNode(nodeKey);
-            getPageTransaction().setNode(deleteNode);
-
-            decrementAllFollowingIndizes(previousNode);
         }
 
     }
@@ -252,75 +187,6 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
     private PageWriteTrx getPageTransaction() {
 
         return (PageWriteTrx)mDelegate.mPageReadTrx;
-    }
-
-    // /**
-    // * A help method to increment the index of the given node.
-    // *
-    // * @param node
-    // * @return true if successful, false otherwise
-    // * @throws TTException
-    // */
-    // private boolean incrementIndex(INode node) throws TTException {
-    //
-    // if (node instanceof ByteNode) {
-    // INode alter = getPageTransaction().prepareNodeForModification(node.getNodeKey());
-    // ((ByteNode)alter).incIndex();
-    // getPageTransaction().finishNodeModification(alter);
-    // return true;
-    // }
-    //
-    // return false;
-    // }
-
-    /**
-     * A help method to increment the indizes following to this node
-     * without altering the index of the given node itself.
-     * 
-     * This is useful when inserting inbetween two nodes
-     * because following indizes have to be altered aswell.
-     * 
-     * @param node
-     * @return true if successful, false otherwise
-     * @throws TTException
-     */
-    private boolean incrementAllFollowingIndizes(INode node) throws TTException {
-
-        ByteNode nextNode = (ByteNode)node;
-
-        do {
-            nextNode = (ByteNode)getPageTransaction().getNode(nextNode.getNextNodeKey());
-            nextNode.incIndex();
-            getPageTransaction().setNode(nextNode);
-
-        } while (nextNode.hasNext());
-
-        return true;
-    }
-
-    /**
-     * A help method to decrement the indizes following to this node
-     * without altering the index of the given node itself.
-     * 
-     * This is useful when removing in the middle of the list and the
-     * indizes have to be cut down.
-     * 
-     * @param node
-     * @return true if successful, false otherwise
-     * @throws TTException
-     */
-    private boolean decrementAllFollowingIndizes(INode node) throws TTException {
-
-        ByteNode nextNode = (ByteNode)node;
-
-        do {
-            nextNode = (ByteNode)getPageTransaction().getNode(nextNode.getNextNodeKey());
-            nextNode.decIndex();
-            getPageTransaction().setNode(nextNode);
-
-        } while (nextNode.hasNext());
-
-        return true;
     }
 
     @Override

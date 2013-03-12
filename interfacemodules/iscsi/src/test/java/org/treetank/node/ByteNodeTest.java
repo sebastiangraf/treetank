@@ -31,19 +31,15 @@ import static org.testng.Assert.*;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.RandomAccessFile;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Random;
 
 import org.jscsi.target.storage.IStorageModule;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.treetank.api.INode;
 import org.treetank.exception.TTIOException;
 import org.treetank.jscsi.TreetankStorageModule;
 
+import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
 /**
@@ -67,17 +63,13 @@ public class ByteNodeTest {
         
         ByteNode byteNode = new ByteNode(0, bytes);
         
-        Path tmp = Files.createTempFile("testByteNode-6347538726375632875", "txt");
-        RandomAccessFile out = new RandomAccessFile(tmp.toFile(), "rw");
+        ByteArrayDataOutput out = ByteStreams.newDataOutput();
         
         byteNode.setIndex(5);
         byteNode.setNextNodeKey(1);
         byteNode.setPreviousNodeKey(-1);
         
         byteNode.serialize((DataOutput) out);
-        
-        out.close(); 
-        out = new RandomAccessFile(tmp.toFile(), "rw");
         
         ByteNodeFactory factory = new ByteNodeFactory();
         INode node = factory.deserializeNode((DataInput) out);
@@ -88,8 +80,6 @@ public class ByteNodeTest {
         assertEquals(((ByteNode) node).getNextNodeKey(), byteNode.getNextNodeKey());
         assertEquals(((ByteNode) node).getIndex(), byteNode.getIndex());
         assertEquals(((ByteNode) node).getVal(), byteNode.getVal());
-        
-        tmp.toFile().delete();
         
     }
 

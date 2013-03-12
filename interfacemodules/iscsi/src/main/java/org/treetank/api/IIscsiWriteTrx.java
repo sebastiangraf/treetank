@@ -48,23 +48,6 @@ public interface IIscsiWriteTrx extends IIscsiReadTrx {
     public void bootstrap(byte[] vals, boolean hasNextNode) throws TTException;
 
     /**
-     * This method inserts the given node, after
-     * the currently selected node and increments all
-     * following indizes.
-     * @param vals 
-     * @throws TTException
-     */
-    public void insertAfter(byte[] vals) throws TTException;
-
-    /**
-     * Remove currently selected node.
-     * 
-     * @throws TTException
-     *             if node couldn't be removed
-     */
-    public void remove() throws TTException;
-
-    /**
      * Set value of node.
      * 
      * @param pValue
