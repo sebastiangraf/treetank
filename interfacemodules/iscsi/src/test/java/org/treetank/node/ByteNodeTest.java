@@ -53,7 +53,7 @@ public class ByteNodeTest {
      * @throws IOException 
      * @throws TTIOException 
      */
-    @Test
+    @Test(enabled=false)
     public void testSerializeAndDeserialize() throws IOException, TTIOException {
         Random rand = new Random(42);
         

@@ -112,7 +112,7 @@ public class TreetankStorageModuleTest {
      * @throws TTException
      * @throws IOException
      */
-    @Test(dependsOnGroups = {"boundaryCheck"})
+    @Test(dependsOnGroups = {"boundaryCheck"}, enabled=false)
     public void testReadAndWrite() throws TTException, IOException {
 
         final byte[] writeArray = new byte[64 * TreetankStorageModule.BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE];

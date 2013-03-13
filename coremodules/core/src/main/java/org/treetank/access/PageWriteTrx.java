@@ -370,7 +370,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
 
     private void setUpTransaction(final UberPage pUberPage, final ISession pSession,
         final long pRepresentRev, final IBackendWriter pWriter) throws TTException {
-
+//TODO need to be fixed over here
         mLog =
             new LRULog(new File(pSession.getConfig().mProperties
                 .getProperty(org.treetank.access.conf.ConstructorProps.RESOURCEPATH)),

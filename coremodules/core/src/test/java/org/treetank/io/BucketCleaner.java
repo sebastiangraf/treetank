@@ -4,6 +4,7 @@
 package org.treetank.io;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
@@ -11,6 +12,11 @@ import java.util.Properties;
 import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.PageSet;
+import org.jclouds.blobstore.domain.StorageMetadata;
+
+import com.google.common.io.ByteStreams;
 
 /**
  * @author Sebastian Graf, University of Konstanz
@@ -20,8 +26,43 @@ public class BucketCleaner {
 
     /**
      * @param args
+     * @throws IOException
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+        cleanBucket();
+
+    }
+
+    private static void downloadBucket() throws IOException {
+        final File folder = new File("/tmp/buckets");
+        folder.mkdirs();
+
+        String[] awsCredentials = getCredentials();
+        if (awsCredentials.length == 0) {
+            System.out.println("Please set credentials in .credentials!");
+            System.exit(-1);
+        }
+
+        String containerName = "grave9283746";
+
+        BlobStoreContext context =
+            ContextBuilder.newBuilder("aws-s3").credentials(awsCredentials[0], awsCredentials[1]).buildView(
+                BlobStoreContext.class);
+        BlobStore store = context.getBlobStore();
+
+        PageSet<? extends StorageMetadata> md = store.list(containerName);
+        for (StorageMetadata data : md) {
+            final File concreteFile = new File(folder, data.getName());
+            Blob blob = store.getBlob(containerName, data.getName());
+            byte[] value = ByteStreams.toByteArray(blob.getPayload().getInput());
+            FileOutputStream stream = new FileOutputStream(concreteFile);
+            stream.write(value);
+            stream.close();
+        }
+
+    }
+
+    private static void cleanBucket() {
         String[] awsCredentials = getCredentials();
         if (awsCredentials.length == 0) {
             System.out.println("Please set credentials in .credentials!");
@@ -29,7 +70,7 @@ public class BucketCleaner {
         }
 
         String[] containerName = {
-            "jscsi-target"
+            "grave9283746"
         };
 
         BlobStoreContext context =
@@ -49,13 +90,12 @@ public class BucketCleaner {
             }
         }
         context.close();
-
     }
 
     private static String[] getCredentials() {
         File userStore =
-            new File(System.getProperty("user.home"), new StringBuilder(".credentials").append(
-                File.separator).append("aws.properties").toString());
+            new File(System.getProperty("user.home"), new StringBuilder(".credentials")
+                .append(File.separator).append("aws.properties").toString());
         if (!userStore.exists()) {
             return new String[0];
         } else {

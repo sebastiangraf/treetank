@@ -69,7 +69,7 @@ public class BufferedWriteTaskTest {
         Random rand = new Random(42);
         
         // testing full writes
-        byte[] bytes = new byte[127 * TreetankStorageModule.BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE];
+        byte[] bytes = new byte[32 * TreetankStorageModule.BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE];
         
         rand.nextBytes(bytes);
         

@@ -61,7 +61,7 @@ public class SessionTest {
         CoreTestHelper.deleteEverything();
     }
     
-    @Test(enabled = false)
+    @Test
     public void testParallelSessions() throws TTException{
         ResourceConfiguration config =
         mResourceConfig.create(StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
