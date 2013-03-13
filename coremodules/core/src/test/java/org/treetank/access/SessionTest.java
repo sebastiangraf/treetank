@@ -60,6 +60,21 @@ public class SessionTest {
     public void tearDown() throws Exception {
         CoreTestHelper.deleteEverything();
     }
+    
+    @Test(enabled = false)
+    public void testParallelSessions() throws TTException{
+        ResourceConfiguration config =
+        mResourceConfig.create(StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
+            .getAbsolutePath(), CoreTestHelper.RESOURCENAME+"2"));
+        CoreTestHelper.Holder.generateSession(mHolder, config);
+        CoreTestHelper.Holder.generateWtx(mHolder, config);
+        
+        config =
+        mResourceConfig.create(StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
+            .getAbsolutePath(), CoreTestHelper.RESOURCENAME+"3"));
+        CoreTestHelper.Holder.generateSession(mHolder, config);
+        CoreTestHelper.Holder.generateWtx(mHolder, config);
+    }
 
     @Test
     public void testBeginPageReadTransaction() throws TTException {
