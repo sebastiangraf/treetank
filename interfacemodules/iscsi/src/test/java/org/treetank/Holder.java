@@ -57,7 +57,8 @@ public class Holder {
         throws TTException {
         final Holder holder = new Holder();
         holder.mHolder = pHolder;
-        holder.mIRtx = new IscsiWriteTrx(holder.mHolder.mPageWTrx, holder.mHolder.mSession);
+        IPageWriteTrx wtx = pHolder.getSession().beginPageWriteTransaction();
+        holder.mIRtx = new IscsiWriteTrx(wtx, holder.mHolder.getSession());
         return holder;
     }
 
@@ -69,13 +70,6 @@ public class Holder {
             mIRtx.close();
         }
         mHolder.close();
-    }
-
-    /**
-     * @return {@link IPageWriteTrx} - the pwtx
-     */
-    public IPageWriteTrx getPWtx() {
-        return mHolder.mPageWTrx;
     }
 
     /**

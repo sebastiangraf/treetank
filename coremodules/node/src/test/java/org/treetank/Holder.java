@@ -36,6 +36,7 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.IPageReadTrx;
+import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
 
@@ -49,15 +50,16 @@ import org.treetank.exception.TTException;
 public class Holder {
 
     private CoreTestHelper.Holder mHolder;
-
+    
     private INodeReadTrx mNRtx;
 
     public static Holder generateWtx(CoreTestHelper.Holder pHolder, ResourceConfiguration pConf)
         throws TTException {
         Holder holder = new Holder();
         holder.mHolder = pHolder;
-        CoreTestHelper.Holder.generateWtx(pHolder, pConf);
-        holder.mNRtx = new NodeWriteTrx(holder.mHolder.mSession, holder.mHolder.mPageWTrx, HashKind.None);
+        CoreTestHelper.Holder.generateSession(pHolder, pConf);
+        IPageWriteTrx wtx = pHolder.getSession().beginPageWriteTransaction();
+        holder.mNRtx = new NodeWriteTrx(holder.mHolder.getSession(), wtx, HashKind.None);
         return holder;
     }
 
@@ -65,8 +67,10 @@ public class Holder {
         throws TTException {
         Holder holder = new Holder();
         holder.mHolder = pHolder;
-        CoreTestHelper.Holder.generateRtx(pHolder, pConf);
-        holder.mNRtx = new NodeReadTrx(holder.mHolder.mPageRTrx);
+        CoreTestHelper.Holder.generateSession(pHolder, pConf);
+        IPageReadTrx rtx =
+            pHolder.getSession().beginPageReadTransaction(pHolder.getSession().getMostRecentVersion());
+        holder.mNRtx = new NodeReadTrx(rtx);
         return holder;
     }
 
@@ -78,11 +82,7 @@ public class Holder {
     }
 
     public ISession getSession() {
-        return mHolder.mSession;
-    }
-
-    public IPageReadTrx getPRtx() {
-        return mHolder.mPageRTrx;
+        return mHolder.getSession();
     }
 
     public INodeReadTrx getNRtx() {

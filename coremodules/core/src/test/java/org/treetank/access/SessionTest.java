@@ -60,20 +60,61 @@ public class SessionTest {
     public void tearDown() throws Exception {
         CoreTestHelper.deleteEverything();
     }
-    
-    @Test(enabled=false)
-    public void testParallelSessions() throws TTException{
+
+    @Test
+    public void testParallelSessions() throws TTException {
+        final String resource1 = CoreTestHelper.RESOURCENAME + "1";
+        final String resource2 = CoreTestHelper.RESOURCENAME + "2";
+
+        final ResourceConfiguration config1 =
+            mResourceConfig.create(StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
+                .getAbsolutePath(), resource1));
+        final ResourceConfiguration config2 =
+            mResourceConfig.create(StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
+                .getAbsolutePath(), resource2));
+
+        assertTrue(mHolder.getStorage().createResource(config1));
+        assertTrue(mHolder.getStorage().createResource(config2));
+
+        final ISession session1 =
+            mHolder.getStorage().getSession(new SessionConfiguration(resource1, StandardSettings.KEY));
+        final ISession session2 =
+            mHolder.getStorage().getSession(new SessionConfiguration(resource2, StandardSettings.KEY));
+
+        IPageWriteTrx wtx1 = session1.beginPageWriteTransaction();
+        IPageWriteTrx wtx2 = session2.beginPageWriteTransaction();
+
+        try {
+            session1.beginPageWriteTransaction();
+            fail();
+        } catch (IllegalStateException exc) {
+
+        }
+
+        wtx1.close();
+        wtx2.close();
+
+        wtx1 = session1.beginPageWriteTransaction();
+        wtx2 = session2.beginPageWriteTransaction();
+
+    }
+
+    @Test
+    public void testParallelSessionsOld() throws TTException {
         ResourceConfiguration config =
-        mResourceConfig.create(StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
-            .getAbsolutePath(), CoreTestHelper.RESOURCENAME+"2"));
+            mResourceConfig.create(StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
+                .getAbsolutePath(), CoreTestHelper.RESOURCENAME + "2"));
         CoreTestHelper.Holder.generateSession(mHolder, config);
-        CoreTestHelper.Holder.generateWtx(mHolder, config);
-        
+        // Take a look at CoreTestHelper#generateWtx, always creating pageTrx under standard ResourceName
+        // CoreTestHelper.Holder.generateWtx(mHolder, config);
+
         config =
-        mResourceConfig.create(StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
-            .getAbsolutePath(), CoreTestHelper.RESOURCENAME+"3"));
+            mResourceConfig.create(StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
+                .getAbsolutePath(), CoreTestHelper.RESOURCENAME + "3"));
         CoreTestHelper.Holder.generateSession(mHolder, config);
-        CoreTestHelper.Holder.generateWtx(mHolder, config);
+        // Creating second transaction on same resource, conflict is not ResourceName+"2" but ResourceName
+        // indirect invoked over CoreTestHelper.generateWtx.
+        // CoreTestHelper.Holder.generateWtx(mHolder, config);
     }
 
     @Test

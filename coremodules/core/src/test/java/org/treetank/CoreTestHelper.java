@@ -460,12 +460,9 @@ public final class CoreTestHelper {
 
     public static class Holder {
 
-        IStorage mStorage;
+        private IStorage mStorage;
 
-        ISession mSession;
-
-        IPageReadTrx mPageRTrx;
-        IPageWriteTrx mPageWTrx;
+        private ISession mSession;
 
         public static Holder generateStorage() throws TTException {
             Holder holder = new Holder();
@@ -480,17 +477,6 @@ public final class CoreTestHelper {
                     StandardSettings.KEY));
         }
 
-        public static void generateWtx(Holder pHolder, ResourceConfiguration pConf) throws TTException {
-            generateSession(pHolder, pConf);
-            pHolder.mPageWTrx = pHolder.mSession.beginPageWriteTransaction();
-            pHolder.mPageRTrx = pHolder.mPageWTrx;
-        }
-
-        public static void generateRtx(Holder pHolder, ResourceConfiguration pConf) throws TTException {
-            generateSession(pHolder, pConf);
-            pHolder.mPageRTrx =
-                pHolder.mSession.beginPageReadTransaction(pHolder.mSession.getMostRecentVersion());
-        }
 
         public IStorage getStorage() {
             return mStorage;
@@ -501,12 +487,6 @@ public final class CoreTestHelper {
         }
 
         public void close() throws TTException {
-            if (mPageRTrx != null && !mPageRTrx.isClosed()) {
-                mPageRTrx.close();
-            }
-            if (mPageWTrx != null && !mPageWTrx.isClosed()) {
-                mPageWTrx.close();
-            }
             mSession.close();
             mStorage.close();
         }

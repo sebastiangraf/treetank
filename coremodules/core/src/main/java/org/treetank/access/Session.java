@@ -34,6 +34,7 @@ import static com.google.common.base.Preconditions.checkState;
 import java.io.File;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
@@ -73,6 +74,9 @@ public final class Session implements ISession {
     /** Determines if session was closed. */
     private transient boolean mClosed;
 
+    /** Check if already a Wtx is used. */
+    private AtomicBoolean mWriteTransactionUsed;
+
     /**
      * 
      * Hidden constructor, only visible for the Storage-Class for instantiation.
@@ -95,6 +99,7 @@ public final class Session implements ISession {
         mPageTrxs = new CopyOnWriteArraySet<IPageReadTrx>();
         mClosed = false;
         mLastCommittedUberPage = pPage;
+        mWriteTransactionUsed = new AtomicBoolean(false);
     }
 
     public IPageReadTrx beginPageReadTransaction(final long pRevKey) throws TTException {
@@ -111,12 +116,13 @@ public final class Session implements ISession {
     }
 
     public IPageWriteTrx beginPageWriteTransaction(final long mRepresentRevision) throws TTException {
+        checkState(mWriteTransactionUsed.compareAndSet(false, true),
+            "Only one WriteTransaction per Session is allowed");
         assertAccess(mRepresentRevision);
         final IBackendWriter backendWriter = mResourceConfig.mBackend.getWriter();
         final IPageWriteTrx trx =
             new PageWriteTrx(this, mLastCommittedUberPage, backendWriter, mRepresentRevision);
         mPageTrxs.add(trx);
-
         return trx;
     }
 
@@ -201,6 +207,9 @@ public final class Session implements ISession {
      */
     @Override
     public boolean deregisterPageTrx(IPageReadTrx pTrx) {
+        if (pTrx instanceof IPageWriteTrx) {
+            mWriteTransactionUsed.set(false);
+        }
         return mPageTrxs.remove(pTrx);
     }
 
