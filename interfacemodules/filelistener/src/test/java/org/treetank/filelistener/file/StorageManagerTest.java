@@ -1,4 +1,4 @@
-package org.treetank.filelistener.file.test;
+package org.treetank.filelistener.file;
 
 import static org.testng.Assert.*;
 
@@ -24,10 +24,10 @@ public class StorageManagerTest {
     
     @BeforeClass
     public void setUp() throws StorageAlreadyExistsException, TTException{
-        StorageManager.createStorage(mStorageName, StorageManager.BACKEND_INDEX_JCLOUDS);
+        StorageManager.createResource(mStorageName, StorageManager.BACKEND_INDEX_JCLOUDS);
     }
     
-    @Test(enabled=false)
+    @Test(enabled=true)
     public void testGetSession() throws StorageNotExistingException, TTException{
         ISession session = StorageManager.getSession(mStorageName);
         assertNotNull(session);
@@ -36,24 +36,23 @@ public class StorageManagerTest {
         assertTrue(session.close());
     }
     
-    @Test(enabled=false)
+    @Test(enabled=true)
     public void testGetStorages(){
-        List<String> storages = StorageManager.getStorages();
+        List<String> storages = StorageManager.getResources();
         
         assertNotNull(storages);
         assertEquals(storages.size(), 1);
         assertEquals(storages.get(0), mStorageName);
     }
     
-    @Test(enabled=false)
+    @Test(enabled=true)
     public void testRemoveStorage() throws TTException, StorageNotExistingException{
         StorageManager.removeStorage(mStorageName);
         
-        List<String> storages = StorageManager.getStorages();
+        List<String> storages = StorageManager.getResources();
         
         assertNotNull(storages);
         assertEquals(storages.size(), 0);
-        assertNull(storages.get(0));
     }
     
 }

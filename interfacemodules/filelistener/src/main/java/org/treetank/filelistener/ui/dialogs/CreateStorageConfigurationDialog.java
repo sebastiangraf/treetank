@@ -116,7 +116,7 @@ public class CreateStorageConfigurationDialog extends Dialog {
 
     protected void do_btnSubmit_widgetSelected(final SelectionEvent e) {
         try {
-            StorageManager.createStorage(this.name, this.backend);
+            StorageManager.createResource(this.name, this.backend);
         } catch (StorageAlreadyExistsException e1) {
             lblTheStorageAlready.setVisible(true);
             return;

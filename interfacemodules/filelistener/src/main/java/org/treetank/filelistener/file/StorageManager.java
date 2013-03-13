@@ -39,13 +39,13 @@ public class StorageManager {
      * The rootpath of where the filelistener saves application dependent data.
      */
     public static final String ROOT_PATH = new StringBuilder().append(System.getProperty("user.home"))
-        .append(File.separator).append("TreetankFilelistenerService").append(File.separator).toString();
+        .append(File.separator).append(".treetank").append(File.separator).toString();
 
     /**
      * The path where the storage configurations are to find.
      */
-    public static final String STORAGE_CONFIGURATION_PATH = new StringBuilder().append(ROOT_PATH).append(
-        "storageconfigurations").append(File.separator).toString();
+    public static final String STORAGE_PATH = new StringBuilder().append(ROOT_PATH).append(
+        "storage").append(File.separator).toString();
 
     /**
      * Create a new storage with the given name and backend.
@@ -56,19 +56,17 @@ public class StorageManager {
      * @throws StorageAlreadyExistsException
      * @throws TTException
      */
-    public static boolean createStorage(String name, int backendIndex) throws StorageAlreadyExistsException,
+    public static boolean createResource(String name, int backendIndex) throws StorageAlreadyExistsException,
         TTException {
         File file = new File(ROOT_PATH);
-
+        File storageFile = new File(STORAGE_PATH);
         if (!file.exists()) {
             file.mkdirs();
-
-            new File(STORAGE_CONFIGURATION_PATH).mkdir();
         }
+        
+        File resourceFile = new File(STORAGE_PATH + File.separator + "resources" + File.separator + name);
 
-        File storageFile = new File(STORAGE_CONFIGURATION_PATH + File.separator + name);
-
-        if (storageFile.exists()) {
+        if (resourceFile.exists()) {
             throw new StorageAlreadyExistsException();
         } else {
             StorageConfiguration configuration = new StorageConfiguration(storageFile);
@@ -84,7 +82,8 @@ public class StorageManager {
             }
 
             Injector injector =
-                Guice.createInjector(new ModuleSetter().setBackendClass(clazz).createModule());
+                Guice.createInjector(new ModuleSetter().setBackendClass(clazz).setNodeFacClass(FileNodeFactory.class).setMetaFacClass(
+                    FilelistenerMetaPageFactory.class).createModule());
             IBackendFactory backend = injector.getInstance(IBackendFactory.class);
             IRevisioning revision = injector.getInstance(IRevisioning.class);
 
@@ -111,12 +110,12 @@ public class StorageManager {
      * 
      * @return a list of all storage names
      */
-    public static List<String> getStorages() {
-        File storageConfigurations = new File(STORAGE_CONFIGURATION_PATH);
-        File[] children = storageConfigurations.listFiles();
+    public static List<String> getResources() {
+        File resources = new File(STORAGE_PATH + File.separator + "/resources");
+        File[] children = resources.listFiles();
 
         if (children == null) {
-            return null;
+            return new ArrayList<String>();
         }
 
         List<String> storages = new ArrayList<String>();
@@ -132,13 +131,13 @@ public class StorageManager {
     /**
      * Retrieve a session from the system for the given Storagename
      * 
-     * @param storageName
+     * @param resourceName
      * @return
      * @throws StorageNotExistingException
      * @throws TTException
      */
-    public static ISession getSession(String storageName) throws StorageNotExistingException, TTException {
-        File storageFile = new File(STORAGE_CONFIGURATION_PATH + File.separator + storageName);
+    public static ISession getSession(String resourceName) throws StorageNotExistingException, TTException {
+        File storageFile = new File(STORAGE_PATH);
 
         ISession session = null;
 
@@ -149,7 +148,7 @@ public class StorageManager {
 
             IStorage storage = Storage.openStorage(storageFile);
 
-            session = storage.getSession(new SessionConfiguration(storageName, null));
+            session = storage.getSession(new SessionConfiguration(resourceName, null));
 
         }
 
@@ -168,8 +167,7 @@ public class StorageManager {
      */
     public static void removeStorage(String pStorageName) throws TTException, StorageNotExistingException {
         File storageConfiguration =
-            new File(new StringBuilder().append(STORAGE_CONFIGURATION_PATH).append(File.separator).append(
-                pStorageName).toString());
+            new File(new StringBuilder().append(STORAGE_PATH).toString());
 
         IOUtils.recursiveDelete(storageConfiguration);
 

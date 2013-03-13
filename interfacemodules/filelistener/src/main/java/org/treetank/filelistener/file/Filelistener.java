@@ -24,6 +24,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.treetank.access.FilelistenerWriteTrx;
 import org.treetank.api.IFilelistenerWriteTrx;
 import org.treetank.api.ISession;
@@ -39,6 +41,8 @@ import com.google.common.io.ByteStreams;
  */
 public class Filelistener {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(Filelistener.class);
+    
     /** The watchservice from java to watch the different paths. */
     private final WatchService mWatcher;
     /** A map consisting of the paths that are being watched. */
@@ -55,10 +59,9 @@ public class Filelistener {
     private Map<String, IFilelistenerWriteTrx> mTrx;
     /** This map holds all subdirectories and the registration with the watchservice */
     private Map<String, List<String>> mSubDirectories;
-    /** A map consisting of all the workers that work on the different folders */
-    private Map<String, FilesystemNotificationQueueWorker> mWorkers;
-    /** ExecutorService for the queue workers */
-    private ExecutorService mExecutor;
+    
+    /** A map consisting of the services that handle tasks for different resources parallel */
+    private Map<String, ExecutorService> mExecutorMap;
 
     /**
      * This thread is used, so the program does not get blocked by the
@@ -69,8 +72,7 @@ public class Filelistener {
     public Filelistener() throws IOException {
         this.mWatcher = FileSystems.getDefault().newWatchService();
         mSubDirectories = new HashMap<String, List<String>>();
-        mWorkers = new HashMap<String, FilesystemNotificationQueueWorker>();
-        mExecutor = Executors.newCachedThreadPool();
+        mExecutorMap = new HashMap<String, ExecutorService>();
     }
 
     public void watchDir(File dir) throws IOException {
@@ -129,7 +131,7 @@ public class Filelistener {
             mTrx.put(e.getKey(), new FilelistenerWriteTrx(mSessions.get(e.getKey())
                 .beginPageWriteTransaction(), mSessions.get(e.getKey())));
             mSubDirectories.put(e.getValue(), new ArrayList<String>());
-            mWorkers.put(e.getValue(), new FilesystemNotificationQueueWorker(this));
+            mExecutorMap.put(e.getValue(), Executors.newSingleThreadExecutor());
 
             List<String> subDirs = mSubDirectories.get(e.getValue());
 
@@ -142,10 +144,6 @@ public class Filelistener {
 
                 watchParents(p, e.getValue());
             }
-        }
-
-        for (FilesystemNotificationQueueWorker worker : mWorkers.values()) {
-            mExecutor.submit(worker);
         }
     }
 
@@ -196,7 +194,18 @@ public class Filelistener {
      * @throws IOException 
      */
     public void shutDownListener() throws TTException, IOException {
-        mExecutor.shutdown();
+        for(ExecutorService s : mExecutorMap.values()){
+            s.shutdown();
+            
+            while(!s.isTerminated()){
+                // Do nothing.
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    LOGGER.error(e.getStackTrace().toString());
+                }
+            }
+        }
 
         Thread thr = mProcessingThread;
         if (thr != null) {
@@ -247,7 +256,7 @@ public class Filelistener {
      */
     private void process(Path dir, Path file, WatchEvent.Kind<?> evtType) throws TTException, IOException,
         InterruptedException {
-
+        LOGGER.info("Processing " + file.getFileName());
         IFilelistenerWriteTrx trx = null;
 
         String relativePath = file.toFile().getAbsolutePath();
@@ -271,18 +280,13 @@ public class Filelistener {
                 }
             }
         } else {
-            FilesystemNotificationQueueWorker worker = mWorkers.get(getListenerRootPath(dir));
-            if (worker != null) {
-                synchronized (worker) {
+            ExecutorService s = mExecutorMap.get(getListenerRootPath(dir));
+            if (s != null) {
                     FilesystemNotification n =
                         new FilesystemNotification(file.toFile(), relativePath, getListenerRootPath(dir),
-                            evtType);
-                    worker.getQueue().offer(n);
-
-                    while (!worker.getQueue().contains(n));
+                            evtType, trx);
                     
-                    worker.notify();
-                }
+                    s.submit(n);
             }
         }
 
@@ -297,8 +301,9 @@ public class Filelistener {
      * than 1.
      * @param root
      * @param filePath
+     * @throws IOException 
      */
-    private void addSubDirectory(Path root, Path filePath) {
+    private void addSubDirectory(Path root, Path filePath) throws IOException {
         String listener = getListenerRootPath(root);
 
         List<String> listeners = mSubDirectories.get(listener);
@@ -313,8 +318,7 @@ public class Filelistener {
             try {
                 watchDir(filePath.toFile());
             } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                throw new IOException("Could not watch the subdirectories.", e);
             }
         }
     }
@@ -344,7 +348,7 @@ public class Filelistener {
      * A utility method to get all filelisteners that are already defined and stored.
      * 
      * @return returns a map of relative paths to the folders as the keyset and
-     *         the storagenames that point to the configurations in the valueset.
+     *         the resourcenames that point to the configurations in the valueset.
      * @throws FileNotFoundException
      * @throws IOException
      * @throws ClassNotFoundException
@@ -362,34 +366,16 @@ public class Filelistener {
     }
 
     /**
-     * Determine whether or not the system still operates on the directory.
-     * 
-     * @param dir
-     * @return
-     */
-    public boolean isWorking(Path dir) {
-        if(mWorkers.get(getListenerRootPath(dir)) != null){
-            synchronized (mWorkers.get(getListenerRootPath(dir))) {
-                if (mWorkers.get(getListenerRootPath(dir)).isWorking()) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    /**
      * Add a new filelistener to the system.
      * 
-     * @param pStorageName
+     * @param pResourcename
      * @param pListenerPath
      * @return return true if there has been a success.
      * @throws FileNotFoundException
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    public static boolean addFilelistener(String pStorageName, String pListenerPath)
+    public static boolean addFilelistener(String pResourcename, String pListenerPath)
         throws FileNotFoundException, IOException, ClassNotFoundException {
         mFilelistenerToPaths = new HashMap<String, String>();
 
@@ -397,7 +383,7 @@ public class Filelistener {
 
         getFileListenersFromSystem(listenerFilePaths);
 
-        mFilelistenerToPaths.put(pStorageName, pListenerPath);
+        mFilelistenerToPaths.put(pResourcename, pListenerPath);
 
         ByteArrayDataOutput output = ByteStreams.newDataOutput();
         for (Entry<String, String> e : mFilelistenerToPaths.entrySet()) {
@@ -416,22 +402,22 @@ public class Filelistener {
      * it's Storagename.
      * 
      * The listeners have to be shutdown to do this task.
-     * @param pStorageName
+     * @param pResourcename
      * @return
      * @throws IOException
      * @throws TTException 
      * @throws StorageNotExistingException 
      */
-    public boolean removeFilelistener(String pStorageName) throws IOException, TTException, StorageNotExistingException{
+    public boolean removeFilelistener(String pResourcename) throws IOException, TTException, StorageNotExistingException{
         mFilelistenerToPaths = new HashMap<String, String>();
 
         File listenerFilePaths = new File(StorageManager.ROOT_PATH + File.separator + "mapping.data");
 
         getFileListenersFromSystem(listenerFilePaths);
 
-        mFilelistenerToPaths.remove(pStorageName);
+        mFilelistenerToPaths.remove(pResourcename);
         
-        StorageManager.removeStorage(pStorageName);
+        StorageManager.removeStorage(pResourcename);
 
         ByteArrayDataOutput output = ByteStreams.newDataOutput();
         for (Entry<String, String> e : mFilelistenerToPaths.entrySet()) {
