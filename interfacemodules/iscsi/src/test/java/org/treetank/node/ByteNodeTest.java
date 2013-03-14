@@ -39,6 +39,7 @@ import org.treetank.api.INode;
 import org.treetank.exception.TTIOException;
 import org.treetank.jscsi.TreetankStorageModule;
 
+import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
@@ -72,7 +73,8 @@ public class ByteNodeTest {
         byteNode.serialize((DataOutput) out);
         
         ByteNodeFactory factory = new ByteNodeFactory();
-        INode node = factory.deserializeNode((DataInput) out);
+        ByteArrayDataInput in = ByteStreams.newDataInput(out.toByteArray());
+        INode node = factory.deserializeNode((DataInput) in);
         
         assertTrue(node instanceof ByteNode);
         assertEquals(node.getNodeKey(), byteNode.getNodeKey());
