@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Properties;
 
 import org.treetank.access.Storage;
-import org.treetank.access.conf.ModuleSetter;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
@@ -18,15 +17,18 @@ import org.treetank.filelistener.exceptions.StorageAlreadyExistsException;
 import org.treetank.filelistener.exceptions.StorageNotExistingException;
 import org.treetank.filelistener.file.node.FileNodeFactory;
 import org.treetank.filelistener.file.node.FilelistenerMetaPageFactory;
-import org.treetank.io.IBackend;
 import org.treetank.io.IBackend.IBackendFactory;
 import org.treetank.io.IOUtils;
-import org.treetank.io.jclouds.JCloudsStorage;
 import org.treetank.revisioning.IRevisioning;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
+/**
+ * @author Andreas Rain
+ *
+ */
 public class StorageManager {
 
     /**
@@ -51,12 +53,12 @@ public class StorageManager {
      * Create a new storage with the given name and backend.
      * 
      * @param name
-     * @param backend
-     * @return
+     * @param module
+     * @return true if successful
      * @throws StorageAlreadyExistsException
      * @throws TTException
      */
-    public static boolean createResource(String name, int backendIndex) throws StorageAlreadyExistsException,
+    public static boolean createResource(String name, AbstractModule module) throws StorageAlreadyExistsException,
         TTException {
         File file = new File(ROOT_PATH);
         File storageFile = new File(STORAGE_PATH);
@@ -69,21 +71,10 @@ public class StorageManager {
         if (resourceFile.exists()) {
             throw new StorageAlreadyExistsException();
         } else {
-            StorageConfiguration configuration = new StorageConfiguration(storageFile);
-
-            Class<? extends IBackend> clazz = null;
-
-            switch (backendIndex) {
-            case BACKEND_INDEX_JCLOUDS:
-                clazz = JCloudsStorage.class;
-                break;
-            default:
-                break;
-            }
+            StorageConfiguration configuration = new StorageConfiguration(storageFile);                                                                      
 
             Injector injector =
-                Guice.createInjector(new ModuleSetter().setBackendClass(clazz).setNodeFacClass(FileNodeFactory.class).setMetaFacClass(
-                    FilelistenerMetaPageFactory.class).createModule());
+                Guice.createInjector(module);
             IBackendFactory backend = injector.getInstance(IBackendFactory.class);
             IRevisioning revision = injector.getInstance(IRevisioning.class);
 
@@ -132,7 +123,7 @@ public class StorageManager {
      * Retrieve a session from the system for the given Storagename
      * 
      * @param resourceName
-     * @return
+     * @return a new {@link ISession} for the resource
      * @throws StorageNotExistingException
      * @throws TTException
      */

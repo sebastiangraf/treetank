@@ -93,8 +93,8 @@ public class ModuleFactory implements IModuleFactory {
 
         returnVal =
             new ModuleSetter().setNodeFacClass(nodeFac).setMetaFacClass(metaFac)
-                .setRevisingClass(revisioning).setBackendClass(backend).createModule();
-
+                .setRevisioningClass(revisioning).setBackendClass(backend).createModule();
+        
         return returnVal;
 
     }

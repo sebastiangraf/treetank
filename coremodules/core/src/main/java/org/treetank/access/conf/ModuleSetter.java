@@ -73,7 +73,7 @@ public class ModuleSetter {
      *            to be set
      * @return the current ModuleSetter
      */
-    public ModuleSetter setRevisingClass(final Class<? extends IRevisioning> pRevision) {
+    public ModuleSetter setRevisioningClass(final Class<? extends IRevisioning> pRevision) {
         this.mRevisioningClass = pRevision;
         return this;
     }

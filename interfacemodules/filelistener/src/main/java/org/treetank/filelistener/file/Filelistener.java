@@ -69,12 +69,19 @@ public class Filelistener {
      */
     private volatile Thread mProcessingThread;
 
+    /**
+     * @throws IOException
+     */
     public Filelistener() throws IOException {
         this.mWatcher = FileSystems.getDefault().newWatchService();
         mSubDirectories = new HashMap<String, List<String>>();
         mExecutorMap = new HashMap<String, ExecutorService>();
     }
 
+    /**
+     * @param dir
+     * @throws IOException
+     */
     public void watchDir(File dir) throws IOException {
         Path p = dir.toPath();
         WatchKey key = p.register(mWatcher, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
@@ -97,7 +104,6 @@ public class Filelistener {
                 try {
                     processFileNotifications();
                 } catch (InterruptedException | TTException | IOException e) {
-                    e.printStackTrace();
                 }
             }
         };
@@ -167,7 +173,7 @@ public class Filelistener {
      * 
      * @throws TTException
      */
-    public void releaseSessions() throws TTException {
+    private void releaseSessions() throws TTException {
         if (mSessions == null) {
             return;
         }
@@ -191,6 +197,7 @@ public class Filelistener {
     /**
      * Shutdown listening to the defined folders and release all
      * bonds to Treetank.
+     * @throws TTException 
      * @throws IOException 
      */
     public void shutDownListener() throws TTException, IOException {
@@ -403,7 +410,7 @@ public class Filelistener {
      * 
      * The listeners have to be shutdown to do this task.
      * @param pResourcename
-     * @return
+     * @return true if resource could be removed
      * @throws IOException
      * @throws TTException 
      * @throws StorageNotExistingException 
@@ -460,7 +467,7 @@ public class Filelistener {
      * operate.
      * 
      * @param key
-     * @return
+     * @return the transaction for the given resource key
      */
     public synchronized IFilelistenerWriteTrx getTrx(String key) {
         return mTrx.get(key);

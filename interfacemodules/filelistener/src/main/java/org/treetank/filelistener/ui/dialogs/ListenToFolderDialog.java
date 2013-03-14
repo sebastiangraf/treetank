@@ -15,6 +15,10 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.treetank.filelistener.file.Filelistener;
 
+/**
+ * @author Andreas Rain
+ *
+ */
 public class ListenToFolderDialog extends Dialog {
 
     protected Object result;
