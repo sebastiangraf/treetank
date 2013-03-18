@@ -24,7 +24,10 @@ import com.google.common.io.ByteStreams;
  */
 public class BucketCleaner {
 
+    private static final String CONTAINER = "grave9283748";
+
     /**
+     * 
      * @param args
      * @throws IOException
      */
@@ -43,17 +46,15 @@ public class BucketCleaner {
             System.exit(-1);
         }
 
-        String containerName = "grave9283746";
-
         BlobStoreContext context =
             ContextBuilder.newBuilder("aws-s3").credentials(awsCredentials[0], awsCredentials[1]).buildView(
                 BlobStoreContext.class);
         BlobStore store = context.getBlobStore();
 
-        PageSet<? extends StorageMetadata> md = store.list(containerName);
+        PageSet<? extends StorageMetadata> md = store.list(CONTAINER);
         for (StorageMetadata data : md) {
             final File concreteFile = new File(folder, data.getName());
-            Blob blob = store.getBlob(containerName, data.getName());
+            Blob blob = store.getBlob(CONTAINER, data.getName());
             byte[] value = ByteStreams.toByteArray(blob.getPayload().getInput());
             FileOutputStream stream = new FileOutputStream(concreteFile);
             stream.write(value);
@@ -70,7 +71,7 @@ public class BucketCleaner {
         }
 
         String[] containerName = {
-            "grave9283746"
+            CONTAINER
         };
 
         BlobStoreContext context =

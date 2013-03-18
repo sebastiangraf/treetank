@@ -4,10 +4,9 @@
 package org.treetank.io.jclouds;
 
 import java.util.Properties;
-import java.util.concurrent.ExecutionException;
 
 import org.jclouds.ContextBuilder;
-import org.jclouds.blobstore.AsyncBlobStore;
+import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.treetank.access.conf.ConstructorProps;
 import org.treetank.api.IMetaEntryFactory;
@@ -43,7 +42,7 @@ public class JCloudsStorage implements IBackend {
     private final BlobStoreContext mContext;
 
     /** BlobStore for Cloud Binding. */
-    private final AsyncBlobStore mBlobStore;
+    private final BlobStore mBlobStore;
 
     /**
      * Constructor.
@@ -68,7 +67,7 @@ public class JCloudsStorage implements IBackend {
         mContext =
             ContextBuilder.newBuilder(mProperties.getProperty(ConstructorProps.JCLOUDSTYPE)).overrides(
                 mProperties).buildView(BlobStoreContext.class);
-        mBlobStore = mContext.getAsyncBlobStore();
+        mBlobStore = mContext.getBlobStore();
 
     }
 
@@ -77,16 +76,13 @@ public class JCloudsStorage implements IBackend {
      */
     @Override
     public IBackendWriter getWriter() throws TTException {
-        try {// setup the container name used by the provider (like bucket in S3)
-            String containerName = mProperties.getProperty(ConstructorProps.RESOURCE);
-            if (!mBlobStore.containerExists(containerName).get()) {
-                mBlobStore.createContainerInLocation(null, containerName).get();
-            }
-            return new JCloudsWriter(mBlobStore, mFac, mByteHandler, mProperties
-                .getProperty(ConstructorProps.RESOURCE));
-        } catch (final ExecutionException | InterruptedException exc) {
-            throw new TTIOException(exc);
+        // setup the container name used by the provider (like bucket in S3)
+        String containerName = mProperties.getProperty(ConstructorProps.RESOURCE);
+        if (!mBlobStore.containerExists(containerName)) {
+            mBlobStore.createContainerInLocation(null, containerName);
         }
+        return new JCloudsWriter(mBlobStore, mFac, mByteHandler, mProperties
+            .getProperty(ConstructorProps.RESOURCE));
     }
 
     /**
@@ -117,17 +113,13 @@ public class JCloudsStorage implements IBackend {
 
     @Override
     public boolean truncate() throws TTException {
-        try {
-            boolean returnVal = false;
-            if (mBlobStore.containerExists(mProperties.getProperty(ConstructorProps.RESOURCE)).get()) {
-                mBlobStore.deleteContainer(mProperties.getProperty(ConstructorProps.RESOURCE)).get();
-                returnVal = true;
-            }
-            mContext.close();
-            return returnVal;
-        } catch (final ExecutionException | InterruptedException exc) {
-            throw new TTIOException(exc);
+        boolean returnVal = false;
+        if (mBlobStore.containerExists(mProperties.getProperty(ConstructorProps.RESOURCE))) {
+            mBlobStore.deleteContainer(mProperties.getProperty(ConstructorProps.RESOURCE));
+            returnVal = true;
         }
+        mContext.close();
+        return returnVal;
     }
 
     @Override

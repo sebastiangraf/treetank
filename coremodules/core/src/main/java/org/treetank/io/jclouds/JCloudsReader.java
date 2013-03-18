@@ -5,9 +5,9 @@ package org.treetank.io.jclouds;
 
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Callable;
 
-import org.jclouds.blobstore.AsyncBlobStore;
+import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.exception.TTException;
@@ -28,7 +28,7 @@ import com.google.common.cache.CacheBuilder;
 public class JCloudsReader implements IBackendReader {
 
     /** Blob Store for Reading the data. */
-    protected final AsyncBlobStore mBlobStore;
+    protected final BlobStore mBlobStore;
 
     /** Factory for building Pages. */
     private final PageFactory mFac;
@@ -42,13 +42,13 @@ public class JCloudsReader implements IBackendReader {
     /** Cache for reading data. */
     protected final Cache<Long, IPage> mCache;
 
-    public JCloudsReader(AsyncBlobStore pBlobStore, PageFactory pFac, IByteHandlerPipeline pByteHandler,
+    public JCloudsReader(BlobStore pBlobStore, PageFactory pFac, IByteHandlerPipeline pByteHandler,
         String pResourceName) throws TTException {
         mBlobStore = pBlobStore;
         mByteHandler = pByteHandler;
         mFac = pFac;
         mResourceName = pResourceName;
-        mCache = CacheBuilder.newBuilder().maximumSize(10000).build();
+        mCache = CacheBuilder.newBuilder().maximumSize(1000).build();
     }
 
     /**
@@ -57,13 +57,13 @@ public class JCloudsReader implements IBackendReader {
     @Override
     public UberPage readUber() throws TTIOException {
         try {
-            Blob blobRetrieved = mBlobStore.getBlob(mResourceName, Long.toString(-1l)).get();
+            Blob blobRetrieved = mBlobStore.getBlob(mResourceName, Long.toString(-1l));
             DataInputStream datain = new DataInputStream(blobRetrieved.getPayload().getInput());
             long uberpagekey = datain.readLong();
             final UberPage page = (UberPage)read(uberpagekey);
             datain.close();
             return page;
-        } catch (final IOException | ExecutionException | InterruptedException exc) {
+        } catch (final IOException exc) {
             throw new TTIOException(exc);
         }
     }
@@ -76,13 +76,13 @@ public class JCloudsReader implements IBackendReader {
         IPage returnval = mCache.getIfPresent(pKey);
         if (returnval == null) {
             try {
-                Blob blobRetrieved = mBlobStore.getBlob(mResourceName, Long.toString(pKey)).get();
+                Blob blobRetrieved = mBlobStore.getBlob(mResourceName, Long.toString(pKey));
                 DataInputStream datain =
                     new DataInputStream(mByteHandler.deserialize(blobRetrieved.getPayload().getInput()));
                 returnval = mFac.deserializePage(datain);
                 datain.close();
                 mCache.put(pKey, returnval);
-            } catch (IOException | TTByteHandleException | ExecutionException | InterruptedException exc) {
+            } catch (IOException | TTByteHandleException exc) {
                 throw new TTIOException(exc);
             }
         }
@@ -97,4 +97,39 @@ public class JCloudsReader implements IBackendReader {
     public void close() throws TTIOException {
         mCache.invalidateAll();
     }
+
+    /**
+     * Single task to write data to the cloud.
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
+    class ReadTask implements Callable<Void> {
+
+        /**
+         * Bucket ID to be read.
+         */
+        final long mBucketId;
+
+        ReadTask(final long pBucketId) {
+            this.mBucketId = pBucketId;
+        }
+
+        @Override
+        public Void call() throws Exception {
+            IPage page = mCache.getIfPresent(mBucketId);
+            if (page == null) {
+                Blob blob = mBlobStore.getBlob(mResourceName, Long.toString(mBucketId));
+                if (blob != null) {
+                    DataInputStream datain =
+                        new DataInputStream(mByteHandler.deserialize(blob.getPayload().getInput()));
+                    page = mFac.deserializePage(datain);
+                    datain.close();
+                }
+                mCache.put(mBucketId, page);
+            }
+            return null;
+        }
+    }
+
 }
