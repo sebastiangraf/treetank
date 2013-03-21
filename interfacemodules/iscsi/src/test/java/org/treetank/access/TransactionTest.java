@@ -27,12 +27,11 @@
 
 package org.treetank.access;
 
-import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
+import java.util.Arrays;
 import java.util.Properties;
-import java.util.Random;
 
-import org.jscsi.target.storage.IStorageModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterMethod;
@@ -47,13 +46,14 @@ import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFact
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.exception.TTException;
 import org.treetank.jscsi.TreetankStorageModule;
+import org.treetank.page.IConstants;
 
 import com.google.inject.Inject;
 
 /**
  * This class tests the transactions {@link IscsiWriteTrx} and {@link IscsiReadTrx} directly.
  * 
- * @author Andreas Rain
+ * @author Andreas Rain, University of Konstanz
  * 
  */
 @Guice(moduleFactory = ModuleFactory.class)
@@ -77,7 +77,6 @@ public final class TransactionTest {
     public void setUp() throws TTException {
         CoreTestHelper.deleteEverything();
         CoreTestHelper.Holder holder = CoreTestHelper.Holder.generateStorage();
-
         Properties props =
             StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
                 CoreTestHelper.RESOURCENAME);
@@ -85,30 +84,18 @@ public final class TransactionTest {
         CoreTestHelper.Holder.generateSession(holder, mResource);
         this.holder = Holder.generateWtx(holder, mResource);
 
-        testBytes =
-            new byte[TreetankStorageModule.BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE * 256];
-        Random rand = new Random(42);
-        rand.nextBytes(testBytes);
-    }
+        testBytes = new byte[TreetankStorageModule.BYTES_IN_NODE * 256];
+        CoreTestHelper.random.nextBytes(testBytes);
 
-    /**
-     * Tests bootstrapping of nodes.
-     * 
-     * @throws TTException
-     */
-    @Test(groups = "storageSetup")
-    public void testBootstrap() throws TTException {
-        for (int i = 0; i < 63; i++) {
+        for (int i = 0; i < IConstants.CONTENT_COUNT; i++) {
             LOGGER.info("Bootstrapping node " + i);
-            holder.getIWtx().bootstrap(
-                new byte[TreetankStorageModule.BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE], true);
-            holder.getIWtx().commit();
+            this.holder.getIWtx().bootstrap(new byte[TreetankStorageModule.BYTES_IN_NODE], true);
+            this.holder.getIWtx().commit();
         }
 
-        LOGGER.info("Bootstrapping node " + 63);
-        holder.getIWtx().bootstrap(
-            new byte[TreetankStorageModule.BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE], false);
-        holder.getIWtx().commit();
+        LOGGER.info("Bootstrapping node " + IConstants.CONTENT_COUNT + 1);
+        this.holder.getIWtx().bootstrap(new byte[TreetankStorageModule.BYTES_IN_NODE], false);
+        this.holder.getIWtx().commit();
     }
 
     /**
@@ -116,36 +103,19 @@ public final class TransactionTest {
      * 
      * @throws TTException
      */
-    @Test(enabled = false, groups = "write", dependsOnGroups = "storageSetup")
-    public void testWrite() throws TTException {
-        byte[] subByte = new byte[TreetankStorageModule.BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE];
-        System.arraycopy(testBytes, 0, subByte, 0, TreetankStorageModule.BLOCK_IN_CLUSTER
-            * IStorageModule.VIRTUAL_BLOCK_SIZE);
+    @Test
+    public void testReadWrite() throws TTException {
+        byte[] subByte = new byte[TreetankStorageModule.BYTES_IN_NODE];
+        System.arraycopy(testBytes, 0, subByte, 0, TreetankStorageModule.BYTES_IN_NODE);
 
-        // TODO : SEBI -> NULLPOINTEREXCEPTION
+        holder.getIWtx().moveTo(0);
         holder.getIWtx().setValue(subByte);
+
+        assertTrue(Arrays.equals(subByte, holder.getIWtx().getValueOfCurrentNode()));
+
         holder.getIWtx().commit();
-    }
+        assertTrue(Arrays.equals(subByte, holder.getIWtx().getValueOfCurrentNode()));
 
-    /**
-     * Testing to write on every node.
-     * 
-     * @throws TTException
-     */
-    @Test(enabled = false, groups = "read", dependsOnGroups = "write")
-    public void testRead() throws TTException {
-        for (int i = 0; i < 64; i++) {
-            holder.getIRtx().moveTo(i);
-            LOGGER.info("Reading node " + i);
-
-            byte[] subByte =
-                new byte[TreetankStorageModule.BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE];
-            System.arraycopy(testBytes, i * TreetankStorageModule.BLOCK_IN_CLUSTER
-                * IStorageModule.VIRTUAL_BLOCK_SIZE, subByte, 0, TreetankStorageModule.BLOCK_IN_CLUSTER
-                * IStorageModule.VIRTUAL_BLOCK_SIZE);
-
-            assertEquals(subByte, holder.getIRtx().getValueOfCurrentNode());
-        }
     }
 
     /**

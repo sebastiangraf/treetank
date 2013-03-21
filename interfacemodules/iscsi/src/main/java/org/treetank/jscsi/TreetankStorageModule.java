@@ -24,42 +24,19 @@
 
 package org.treetank.jscsi;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import org.jscsi.target.storage.IStorageModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.treetank.access.IscsiWriteTrx;
-import org.treetank.access.Storage;
-import org.treetank.access.conf.ModuleSetter;
-import org.treetank.access.conf.ResourceConfiguration;
-import org.treetank.access.conf.SessionConfiguration;
-import org.treetank.access.conf.StandardSettings;
-import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.api.IIscsiWriteTrx;
 import org.treetank.api.INode;
 import org.treetank.api.ISession;
-import org.treetank.api.IStorage;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.io.IBackend.IBackendFactory;
-import org.treetank.jscsi.buffering.BufferedWriteTask;
-import org.treetank.jscsi.buffering.Collision;
-import org.treetank.node.ByteNode;
-import org.treetank.node.ByteNodeFactory;
-import org.treetank.node.ISCSIMetaPageFactory;
-import org.treetank.revisioning.IRevisioning;
-
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 
 /**
  * <h1>TreetankStorageModule</h1>
@@ -72,27 +49,25 @@ import com.google.inject.Injector;
 public class TreetankStorageModule implements IStorageModule {
 
     /** Number of Blocks in one Cluster. */
-    public static final int BLOCK_IN_CLUSTER = 512;
+    public static final int BLOCKS_IN_NODE = 8;
+
+    /** Number of Bytes in Bucket. */
+    public final static int BYTES_IN_NODE = BLOCKS_IN_NODE * VIRTUAL_BLOCK_SIZE;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TreetankStorageModule.class);
 
     /**
-     * The number of clusters in the storage resulting in mNumberOfClusters * BLOCKSINCLUSTER *
+     * The number of nodes in the storage resulting in mNodeNumbers * BLOCKS_IN_NODE *
      * VIRTUAL_BLOCK_SIZE bytes
      * 
      * @see #VIRTUAL_BLOCK_SIZE
      */
-    private final long mNumberOfClusters;
+    private final long mNodeNumbers;
 
     /**
-     * Treetank storage the target uses as a storage device.
+     * The mSession this storage module uses to access the storage device.
      */
-    private final IStorage storage;
-
-    /**
-     * The session this storage module uses to access the storage device.
-     */
-    private final ISession session;
+    private final ISession mSession;
 
     /**
      * {@link IIscsiWriteTrx} that is used to write/read from treetank.
@@ -100,56 +75,24 @@ public class TreetankStorageModule implements IStorageModule {
     private final IIscsiWriteTrx mRtx;
 
     /**
-     * The service that holds the BufferedTaskWorker
-     */
-    private final ExecutorService mWriterService;
-
-    /**
-     * Mirroring all tasks that are pending.
-     */
-    private LinkedBlockingQueue<BufferedWriteTask> mTasks;
-
-    /**
      * Creates a storage module that is used by the target to handle I/O.
      * 
-     * @param pSizeInClusters
-     *            Define how many clusters the storage holds.
-     * @param conf
-     *            Pass the storage configuration to use for this storage module.
+     * @param pNodeNumber
+     *            Define how many nodes the storage holds.
+     * @param pSession
+     *            Pass the sessiona associated to the location to this class.
      * @throws TTException
      *             will be thrown if there are problems creating this storage.
      */
-    public TreetankStorageModule(final long pSizeInClusters, final StorageConfiguration conf)
-        throws TTException {
+    public TreetankStorageModule(final long pNodeNumber, final ISession pSession) throws TTException {
 
-        mNumberOfClusters = pSizeInClusters;
+        mNodeNumbers = pNodeNumber;
 
-        LOGGER.info("Initializing storagemodule with: sizeInBlocks=" + mNumberOfClusters + ", blockSize="
+        LOGGER.info("Initializing storagemodule with: number of nodes=" + mNodeNumbers + ", blockSize="
             + IStorageModule.VIRTUAL_BLOCK_SIZE);
 
-        Injector injector =
-            Guice.createInjector(new ModuleSetter().setNodeFacClass(ByteNodeFactory.class).setMetaFacClass(
-                ISCSIMetaPageFactory.class).createModule());
-        IBackendFactory backend = injector.getInstance(IBackendFactory.class);
-        IRevisioning revision = injector.getInstance(IRevisioning.class);
-
-        // Creating and opening the storage.
-        // Making it ready for usage.
-        if (Storage.existsStorage(conf.mFile)) {
-            Storage.truncateStorage(conf);
-            Storage.createStorage(conf);
-        }
-
-        storage = Storage.openStorage(conf.mFile);
-
-        Properties props = StandardSettings.getProps(conf.mFile.getAbsolutePath(), "jscsi-target");
-        ResourceConfiguration mResourceConfig =
-            new ResourceConfiguration(props, backend, revision, new ByteNodeFactory(),
-                new ISCSIMetaPageFactory());
-        storage.createResource(mResourceConfig);
-
-        session = storage.getSession(new SessionConfiguration("jscsi-target", null));
-        mRtx = new IscsiWriteTrx(session.beginPageWriteTransaction(), session);
+        mSession = pSession;
+        mRtx = new IscsiWriteTrx(mSession.beginPageWriteTransaction(), mSession);
 
         try {
             createStorage();
@@ -157,12 +100,6 @@ public class TreetankStorageModule implements IStorageModule {
             throw new TTIOException(exc);
         }
 
-        /*
-         * Creating the writer service and adding the worker to the pool.
-         */
-        mWriterService = Executors.newSingleThreadExecutor();
-        
-        mTasks = new LinkedBlockingQueue<BufferedWriteTask>();
     }
 
     /**
@@ -174,8 +111,8 @@ public class TreetankStorageModule implements IStorageModule {
      */
     private void createStorage() throws IOException {
 
-        LOGGER.info("Creating storage with " + mNumberOfClusters + " clusters containing " + BLOCK_IN_CLUSTER
-            + " sectors with " + IStorageModule.VIRTUAL_BLOCK_SIZE + " bytes each.");
+        LOGGER.info("Creating storage with " + mNodeNumbers + " nodes containing " + BLOCKS_IN_NODE
+            + " blocks with " + IStorageModule.VIRTUAL_BLOCK_SIZE + " bytes each.");
 
         try {
 
@@ -186,16 +123,15 @@ public class TreetankStorageModule implements IStorageModule {
             }
             boolean hasNextNode = true;
 
-            for (int i = 0; i < mNumberOfClusters; i++) {
-                if (i == mNumberOfClusters - 1) {
+            for (int i = 0; i < mNodeNumbers; i++) {
+                if (i == mNodeNumbers - 1) {
                     hasNextNode = false;
                 }
 
                 try {
                     // Bootstrapping nodes containing clusterSize -many blocks/sectors.
-                    LOGGER.info("Bootstraping node " + i + "\tof " + (mNumberOfClusters - 1));
-                    this.mRtx.bootstrap(
-                        new byte[(int)(IStorageModule.VIRTUAL_BLOCK_SIZE * BLOCK_IN_CLUSTER)], hasNextNode);
+                    LOGGER.info("Bootstraping node " + i + "\tof " + (mNodeNumbers - 1));
+                    this.mRtx.bootstrap(new byte[TreetankStorageModule.BYTES_IN_NODE], hasNextNode);
                 } catch (TTException e) {
                     throw new IOException(e);
                 }
@@ -235,7 +171,7 @@ public class TreetankStorageModule implements IStorageModule {
      */
     @Override
     public long getSizeInBlocks() {
-        return mNumberOfClusters * BLOCK_IN_CLUSTER;
+        return mNodeNumbers * BLOCKS_IN_NODE;
     }
 
     /**
@@ -244,156 +180,75 @@ public class TreetankStorageModule implements IStorageModule {
     public void read(byte[] bytes, long storageIndex) throws IOException {
 
         LOGGER.info("Starting to read with param: " + "\nstorageIndex = " + storageIndex);
-        
-        // CLean up tasks
-        while(mTasks.peek().isFinished()){
-            //This task is finished and already in the treetank backend
-            //we can remove it from the list.
-            mTasks.poll();
-        }
-        
-        // Using the most recent revision
-        
-        int startIndex = (int)(storageIndex / (BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE));
-        int startIndexOffset = (int)(storageIndex % (BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE));
 
-        int endIndex =
-            (int)((storageIndex + bytes.length) / (BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE));
-        int endIndexMax =
-            (int)((storageIndex + bytes.length) % (BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE));
+        long startIndex = storageIndex / BYTES_IN_NODE;
+        int startIndexOffset = (int)(storageIndex % BYTES_IN_NODE);
 
-        LOGGER.info("Starting to read from node " + startIndex + " to node " + endIndex);
+        long endIndex = (storageIndex + bytes.length) / BYTES_IN_NODE;
+        int endIndexMax = (int)((storageIndex + bytes.length) % BYTES_IN_NODE);
 
-        ByteArrayDataOutput output = ByteStreams.newDataOutput(bytes.length);
+        int bytesRead =
+            bytes.length + startIndexOffset > BYTES_IN_NODE ? BYTES_IN_NODE - startIndexOffset : bytes.length;
 
-        for (long i = startIndex; i <= endIndex; i++) {
-            this.mRtx.moveTo(i);
+        checkState(mRtx.moveTo(startIndex));
+        byte[] data = mRtx.getValueOfCurrentNode();
+        System.arraycopy(data, startIndexOffset, bytes, 0, bytesRead);
 
-            INode node = this.mRtx.getCurrentNode();
-            byte[] val = ((ByteNode)node).getVal();
-
-            if (i == startIndex && i == endIndex) {
-                output.write(val, startIndexOffset, bytes.length);
-            } else if (i == startIndex) {
-                output.write(val, startIndexOffset, (BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE)
-                    - startIndexOffset);
-            } else if (i == endIndex) {
-                output.write(val, 0, endIndexMax);
-            } else {
-                output.write(val);
-            }
+        for (long i = startIndex + 1; i < endIndex; i++) {
+            checkState(mRtx.moveTo(i));
+            data = mRtx.getValueOfCurrentNode();
+            System.arraycopy(data, 0, bytes, bytesRead, data.length);
+            bytesRead = bytesRead + data.length;
 
         }
 
-        System.arraycopy(output.toByteArray(), 0, bytes, 0, bytes.length);
-        
-        // Overwriting segments in the byte array using the writer tasks that are still in progress.
-        readConcurrent(bytes, storageIndex);
-    }
+        if (startIndex != endIndex) {
+            checkState(mRtx.moveTo(endIndex));
+            data = mRtx.getValueOfCurrentNode();
+            System.arraycopy(data, 0, bytes, bytesRead, endIndexMax);
 
-    /**
-     * Read the newest version w.r.t the pending
-     * write tasks.
-     * 
-     * @param bytes
-     *            bytes to read into
-     * @param bytesOffset
-     *            offset to start reading into
-     * @param length
-     *            how many bytes have to be read
-     * @param storageIndex
-     *            where to start reading in terms of storage device
-     * @throws IOException
-     */
-    private void readConcurrent(byte[] bytes, long storageIndex)
-        throws IOException {
-        List<Collision> collisions = checkForCollisions(bytes.length, storageIndex);
-
-        for (Collision collision : collisions) {
-            if (collision.getStart() != storageIndex) {
-                System.arraycopy(collision.getBytes(), 0, bytes,
-                    (int)((collision.getStart() - storageIndex)), collision.getBytes().length);
-            } else {
-                System.arraycopy(collision.getBytes(), 0, bytes, 0, collision.getBytes().length);
-            }
         }
-    }
-
-    /**
-     * The returned collisions are ordered chronologically.
-     * 
-     * @param pLength
-     * @param pStorageIndex
-     * @return List<Collision> - returns a list of collisions
-     */
-
-    private List<Collision> checkForCollisions(int pLength, long pStorageIndex) {
-        List<Collision> collisions = new ArrayList<Collision>();
-        //TODO rewrite
-        for (BufferedWriteTask task : mTasks) {
-            if (overlappingIndizes(pLength, pStorageIndex, task.getBytes().length, task.getStorageIndex())) {
-                // Determining where the two tasks collide
-                int start = 0;
-                int end = 0;
-                byte[] bytes = null;
-
-                // Determining the start point
-                if (task.getStorageIndex() < pStorageIndex) {
-                    start = (int)pStorageIndex;
-                } else {
-                    start = (int)task.getStorageIndex();
-                }
-
-                // Determining the end point
-                if (task.getStorageIndex() + task.getBytes().length > pStorageIndex + pLength) {
-                    end = (int)(pStorageIndex + pLength);
-                } else {
-                    end = (int)(task.getStorageIndex() + task.getBytes().length);
-                }
-
-                bytes = new byte[end - start];
-
-                if (start == pStorageIndex) {
-                    System.arraycopy(task.getBytes(), (int)((pStorageIndex - task
-                        .getStorageIndex())), bytes, 0, end - start);
-                } else {
-                    System.arraycopy(task.getBytes(), 0, bytes, 0, end - start);
-                }
-
-                collisions.add(new Collision(start, end, bytes));
-
-                LOGGER.info("Found collision from " + start + " to " + end);
-            }
-        }
-
-        return collisions;
-    }
-
-    /**
-     * Determine if indizes overlap.
-     * 
-     * @param srcLength
-     * @param srcStorageIndex
-     * @param destLength
-     * @param destStorageIndex
-     * @return true if indizes overlap, false otherwise
-     */
-    private boolean overlappingIndizes(int srcLength, long srcStorageIndex, int destLength,
-        long destStorageIndex) {
-        if (destLength + destStorageIndex < srcStorageIndex || destStorageIndex > srcStorageIndex + srcLength) {
-            return false;
-        }
-
-        return true;
+        checkState(bytesRead + endIndexMax == bytes.length);
     }
 
     /**
      * {@inheritDoc}
      */
     public void write(byte[] bytes, long storageIndex) throws IOException {
-        BufferedWriteTask task = new BufferedWriteTask(bytes, storageIndex, mRtx);
-        mTasks.offer(task);
-        mWriterService.submit(task);
+        long startIndex = storageIndex / BYTES_IN_NODE;
+        int startIndexOffset = (int)(storageIndex % BYTES_IN_NODE);
+
+        long endIndex = (storageIndex + bytes.length) / BYTES_IN_NODE;
+        int endIndexMax = (int)((storageIndex + bytes.length) % BYTES_IN_NODE);
+
+        int bytesWritten =
+            bytes.length + startIndexOffset > BYTES_IN_NODE ? BYTES_IN_NODE - startIndexOffset : bytes.length;
+
+        try {
+            checkState(mRtx.moveTo(startIndex));
+            byte[] data = mRtx.getValueOfCurrentNode();
+            System.arraycopy(bytes, 0, data, startIndexOffset, bytesWritten);
+            mRtx.setValue(data);
+
+            for (long i = startIndex + 1; i < endIndex; i++) {
+                checkState(mRtx.moveTo(i));
+                data = mRtx.getValueOfCurrentNode();
+                System.arraycopy(bytes, bytesWritten, data, 0, data.length);
+                mRtx.setValue(data);
+                bytesWritten = bytesWritten + data.length;
+
+            }
+
+            if (startIndex != endIndex) {
+                checkState(mRtx.moveTo(endIndex));
+                data = mRtx.getValueOfCurrentNode();
+                System.arraycopy(bytes, bytesWritten, data, 0, endIndexMax);
+                mRtx.setValue(data);
+            }
+            checkState(bytesWritten + endIndexMax == bytes.length);
+        } catch (Exception exc) {
+            throw new IOException(exc);
+        }
     }
 
     /**
@@ -402,20 +257,7 @@ public class TreetankStorageModule implements IStorageModule {
     public void close() throws IOException {
 
         try {
-            mWriterService.shutdown();
-            
-            while(!mWriterService.isTerminated()){
-                // Do nothing and wait
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    LOGGER.error(e.getStackTrace().toString());
-                }
-            }
-            
             mRtx.close();
-            session.close();
-            storage.close();
 
         } catch (TTException exc) {
             throw new IOException(exc);

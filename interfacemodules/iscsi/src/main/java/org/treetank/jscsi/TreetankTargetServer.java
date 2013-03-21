@@ -25,17 +25,30 @@
 package org.treetank.jscsi;
 
 import java.io.File;
+import java.util.Properties;
 
 import org.jscsi.target.TargetServer;
+import org.treetank.access.Storage;
+import org.treetank.access.conf.ModuleSetter;
+import org.treetank.access.conf.ResourceConfiguration;
+import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
+import org.treetank.access.conf.SessionConfiguration;
+import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.StorageConfiguration;
+import org.treetank.api.ISession;
+import org.treetank.api.IStorage;
+import org.treetank.node.ByteNodeFactory;
+import org.treetank.node.ISCSIMetaPageFactory;
 
 import com.google.common.io.Files;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 /**
  * Start a target server that uses a treetank storage as storage device.
  * 
  * @author Andreas Rain
- *
+ * 
  */
 public class TreetankTargetServer {
 
@@ -50,44 +63,52 @@ public class TreetankTargetServer {
      * @param args
      *            Argument 1 = the storage path
      *            Argument 2 = path to a customized target configuration xml file
-     * @throws Exception 
+     * @throws Exception
      */
     public static void main(String[] args) throws Exception {
 
-        TargetServer target;
-        File file;
-        StorageConfiguration configuration;
+        StorageConfiguration config;
+        File configFile;
+
         switch (args.length) {
         case 0:
-            file =
-                new File(new StringBuilder(Files.createTempDir().getAbsolutePath()).append(File.separator)
-                    .append("tnk").append(File.separator).append("path1").toString());
-            configuration = new StorageConfiguration(file);
-            target =
-                new TargetServer(TreetankConfiguration.create(
-                    TreetankConfiguration.CONFIGURATION_SCHEMA_FILE,
-                    TreetankConfiguration.CONFIGURATION_CONFIG_FILE, configuration));
+            config =
+                new StorageConfiguration(new File(new StringBuilder(Files.createTempDir().getAbsolutePath())
+                    .append(File.separator).append("tnk").append(File.separator).append("path1").toString()));
+            configFile = TreetankConfiguration.CONFIGURATION_CONFIG_FILE;
             break;
         case 1:
-            file = new File(args[0]);
-            configuration = new StorageConfiguration(file);
-            target =
-                new TargetServer(TreetankConfiguration.create(
-                    TreetankConfiguration.CONFIGURATION_SCHEMA_FILE,
-                    TreetankConfiguration.CONFIGURATION_CONFIG_FILE, configuration));
-
+            config = new StorageConfiguration(new File(args[0]));
+            configFile = TreetankConfiguration.CONFIGURATION_CONFIG_FILE;
             break;
         case 2:
-            file = new File(args[0]);
-            configuration = new StorageConfiguration(file);
-            target =
-                new TargetServer(TreetankConfiguration.create(
-                    TreetankConfiguration.CONFIGURATION_SCHEMA_FILE, new File(args[1]), configuration));
+            config = new StorageConfiguration(new File(args[0]));
+            configFile = new File(args[1]);
             break;
         default:
             throw new IllegalArgumentException(
                 "Only zero or one Parameter (Path to Configuration-File) allowed!");
         }
+
+        Storage.truncateStorage(config);
+        Storage.createStorage(config);
+
+        // Guice Stuff for building the module
+        final Injector injector =
+            Guice.createInjector(new ModuleSetter().setNodeFacClass(ByteNodeFactory.class).setMetaFacClass(
+                ISCSIMetaPageFactory.class).createModule());
+        final IResourceConfigurationFactory resFac =
+            injector.getInstance(IResourceConfigurationFactory.class);
+        final Properties props = StandardSettings.getProps(config.mFile.getAbsolutePath(), "iscsi");
+        final ResourceConfiguration resConf = resFac.create(props);
+
+        final IStorage db = Storage.openStorage(config.mFile);
+        db.createResource(resConf);
+        final ISession session = db.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
+
+        TargetServer target =
+            new TargetServer(TreetankConfiguration.create(TreetankConfiguration.CONFIGURATION_SCHEMA_FILE,
+                configFile, session));
 
         target.call();
     }

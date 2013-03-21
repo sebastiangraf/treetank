@@ -30,10 +30,10 @@ import static org.testng.Assert.assertTrue;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Properties;
-import java.util.Random;
 
 import org.jscsi.target.storage.IStorageModule;
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.CoreTestHelper;
@@ -41,7 +41,6 @@ import org.treetank.ModuleFactory;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.StandardSettings;
-import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.exception.TTException;
 
 import com.google.inject.Inject;
@@ -49,15 +48,15 @@ import com.google.inject.Inject;
 /**
  * This test checks functionalities of {@link TreetankStorageModule}
  * 
- * @author Andreas Rain
- *
+ * @author Andreas Rain, University of Konstanz
+ * 
  */
 @Guice(moduleFactory = ModuleFactory.class)
 public class TreetankStorageModuleTest {
 
-    private TreetankStorageModule storageModule;
+    private final static int NODENUMBER = 128;
 
-    private StorageConfiguration configuration;
+    private TreetankStorageModule storageModule;
 
     @Inject
     private IResourceConfigurationFactory mResourceConfig;
@@ -69,7 +68,7 @@ public class TreetankStorageModuleTest {
      * 
      * @throws TTException
      */
-    @BeforeClass
+    @BeforeMethod
     public void setUp() throws TTException {
         CoreTestHelper.deleteEverything();
         CoreTestHelper.Holder.generateStorage();
@@ -77,33 +76,31 @@ public class TreetankStorageModuleTest {
             StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
                 CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
-        CoreTestHelper.createResource(mResource);
-
-        configuration = CoreTestHelper.PATHS.PATH1.getConfig();
+        CoreTestHelper.Holder holder = CoreTestHelper.Holder.generateStorage();
+        CoreTestHelper.Holder.generateSession(holder, mResource);
+        storageModule = new TreetankStorageModule(NODENUMBER, holder.getSession());
     }
-    
-    /**
-     * Test if the storage can be created.
-     * @throws TTException
-     */
-    @Test(groups = {"createStorage"})
-    public void testCreateStorage() throws TTException{
-        storageModule = new TreetankStorageModule(128, configuration);
+
+    @AfterMethod
+    public void tearDown() throws TTException {
+        CoreTestHelper.deleteEverything();
     }
 
     /**
      * Check the logic of the checkBounds method.
      */
-    @Test(groups = {"boundaryCheck"}, dependsOnGroups = {"createStorage"})
+    @Test
     public void testBoundaries() {
-
-        // wrong logical block address
-        int result = storageModule.checkBounds(-1,// logicalBlockAddress
-            1);// transferLengthInBlocks
-        assertEquals(1, result);
-        result = storageModule.checkBounds(2,// logicalBlockAddress
-            1);// transferLengthInBlocks
-        assertEquals(0, result);
+        // invalid logical block address
+        assertEquals(1, storageModule.checkBounds(-1, 1));
+        // block addess out of range
+        assertEquals(1, storageModule.checkBounds(NODENUMBER * TreetankStorageModule.BLOCKS_IN_NODE, 1));
+        // length invalid
+        assertEquals(2, storageModule.checkBounds(NODENUMBER * TreetankStorageModule.BLOCKS_IN_NODE - 1, -1));
+        // length out of range
+        assertEquals(2, storageModule.checkBounds(NODENUMBER * TreetankStorageModule.BLOCKS_IN_NODE - 1, 2));
+        // correct check
+        assertEquals(0, storageModule.checkBounds(NODENUMBER * TreetankStorageModule.BLOCKS_IN_NODE - 1, 1));
     }
 
     /**
@@ -112,39 +109,19 @@ public class TreetankStorageModuleTest {
      * @throws TTException
      * @throws IOException
      */
-    @Test(dependsOnGroups = {"boundaryCheck"}, enabled=false)
+    @Test
     public void testReadAndWrite() throws TTException, IOException {
 
-        final byte[] writeArray = new byte[64 * TreetankStorageModule.BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE];
-        Random rand = new Random(42);
-        rand.nextBytes(writeArray);
-        
-        final byte[] readArray = new byte[64 * TreetankStorageModule.BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE];
+        final byte[] writeArray = new byte[2 * TreetankStorageModule.BYTES_IN_NODE];
+        CoreTestHelper.random.nextBytes(writeArray);
 
-        System.arraycopy(writeArray, 0, readArray, 0, 64 * TreetankStorageModule.BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE);
-
+        final byte[] readArray = new byte[writeArray.length];
         // write
-        storageModule.write(writeArray,
-            512);
-
+        storageModule.write(writeArray, 1 * IStorageModule.VIRTUAL_BLOCK_SIZE);
         // read
-        storageModule.read(readArray,
-            512);
-
+        storageModule.read(readArray, 1 * IStorageModule.VIRTUAL_BLOCK_SIZE);
         // check for errors
         assertTrue(Arrays.equals(writeArray, readArray));
-        
-        storageModule.close();
 
-    }
-    
-    /**
-     * Test whether the storageModule cold be opened.
-     */
-    @Test
-    public void testOpen() {
-
-        // behavior to test is performed in setUpBeforeClass()
-        assertTrue(storageModule != null);
     }
 }

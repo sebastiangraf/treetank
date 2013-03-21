@@ -3,13 +3,23 @@
  */
 package org.treetank.io.jclouds;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
-import org.treetank.exception.TTByteHandleException;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
@@ -22,10 +32,16 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
 /**
+ * Accessing the Cloud storage for reading in a multithreaded manner.
+ * 
  * @author Sebastian Graf, University of Konstanz
  * 
  */
 public class JCloudsReader implements IBackendReader {
+
+    private final static long POISONNUMBER = -15;
+
+    private final static int BUCKETS_TO_PREFETCH = 3;
 
     /** Blob Store for Reading the data. */
     protected final BlobStore mBlobStore;
@@ -42,6 +58,15 @@ public class JCloudsReader implements IBackendReader {
     /** Cache for reading data. */
     protected final Cache<Long, IPage> mCache;
 
+    /** Executing read requests. */
+    private final ExecutorService mReaderService;
+
+    /** CompletionService for getting aware of concluded tasks. */
+    private final CompletionService<Long> mReaderCompletion;
+
+    /** Blocking already performing tasks. */
+    private final ConcurrentHashMap<Long, Future<Long>> mTasks;
+
     public JCloudsReader(BlobStore pBlobStore, PageFactory pFac, IByteHandlerPipeline pByteHandler,
         String pResourceName) throws TTException {
         mBlobStore = pBlobStore;
@@ -49,6 +74,16 @@ public class JCloudsReader implements IBackendReader {
         mFac = pFac;
         mResourceName = pResourceName;
         mCache = CacheBuilder.newBuilder().maximumSize(1000).build();
+
+        mTasks = new ConcurrentHashMap<Long, Future<Long>>();
+        mReaderService = Executors.newCachedThreadPool();
+
+        mReaderCompletion = new ExecutorCompletionService<Long>(mReaderService);
+        final FutureCleaner cleaner = new FutureCleaner();
+
+        final ExecutorService cleanerService = Executors.newSingleThreadExecutor();
+        cleanerService.submit(cleaner);
+        cleanerService.shutdown();
     }
 
     /**
@@ -57,9 +92,9 @@ public class JCloudsReader implements IBackendReader {
     @Override
     public UberPage readUber() throws TTIOException {
         try {
-            Blob blobRetrieved = mBlobStore.getBlob(mResourceName, Long.toString(-1l));
-            DataInputStream datain = new DataInputStream(blobRetrieved.getPayload().getInput());
-            long uberpagekey = datain.readLong();
+            final Blob blobRetrieved = mBlobStore.getBlob(mResourceName, Long.toString(-1l));
+            final DataInputStream datain = new DataInputStream(blobRetrieved.getPayload().getInput());
+            final long uberpagekey = datain.readLong();
             final UberPage page = (UberPage)read(uberpagekey);
             datain.close();
             return page;
@@ -76,17 +111,33 @@ public class JCloudsReader implements IBackendReader {
         IPage returnval = mCache.getIfPresent(pKey);
         if (returnval == null) {
             try {
-                Blob blobRetrieved = mBlobStore.getBlob(mResourceName, Long.toString(pKey));
-                DataInputStream datain =
-                    new DataInputStream(mByteHandler.deserialize(blobRetrieved.getPayload().getInput()));
-                returnval = mFac.deserializePage(datain);
-                datain.close();
-                mCache.put(pKey, returnval);
-            } catch (IOException | TTByteHandleException exc) {
+                prefetchBuckets(pKey);
+                returnval = mCache.getIfPresent(pKey);
+                checkNotNull(returnval);
+            } catch (InterruptedException | ExecutionException exc) {
                 throw new TTIOException(exc);
             }
         }
         return returnval;
+
+    }
+
+    private final void prefetchBuckets(final long pId) throws InterruptedException, ExecutionException {
+        for (long i = pId; i < pId + BUCKETS_TO_PREFETCH; i++) {
+            IPage page = mCache.getIfPresent(i);
+            if (page == null) {
+                if (!mTasks.containsKey(i)) {
+                    Future<Long> task = mReaderCompletion.submit(new ReadTask(i));
+                    mTasks.put(i, task);
+                }
+            } else {
+                mCache.put(i, page);
+            }
+        }
+        Future<Long> requestedBucket = mTasks.remove(pId);
+        if (requestedBucket != null) {
+            requestedBucket.get();
+        }
 
     }
 
@@ -95,7 +146,38 @@ public class JCloudsReader implements IBackendReader {
      */
     @Override
     public void close() throws TTIOException {
+        mReaderCompletion.submit(new PoisonTask());
         mCache.invalidateAll();
+        mReaderService.shutdown();
+        try {
+            mReaderService.awaitTermination(100, TimeUnit.SECONDS);
+        } catch (final InterruptedException exc) {
+            throw new TTIOException(exc);
+        }
+        checkState(mReaderService.isTerminated());
+    }
+
+    /**
+     * Cleaning up the Running-Tasks Hashmap in the background.
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
+    class FutureCleaner implements Callable<Long> {
+
+        public Long call() throws Exception {
+            boolean run = true;
+            while (run) {
+                Future<Long> element = mReaderCompletion.take();
+                long number = element.get();
+                if (number == POISONNUMBER) {
+                    run = false;
+                } else {
+                    mTasks.remove(element.get());
+                }
+            }
+            return POISONNUMBER;
+        }
     }
 
     /**
@@ -104,7 +186,7 @@ public class JCloudsReader implements IBackendReader {
      * @author Sebastian Graf, University of Konstanz
      * 
      */
-    class ReadTask implements Callable<Void> {
+    class ReadTask implements Callable<Long> {
 
         /**
          * Bucket ID to be read.
@@ -116,7 +198,8 @@ public class JCloudsReader implements IBackendReader {
         }
 
         @Override
-        public Void call() throws Exception {
+        public Long call() throws Exception {
+
             IPage page = mCache.getIfPresent(mBucketId);
             if (page == null) {
                 Blob blob = mBlobStore.getBlob(mResourceName, Long.toString(mBucketId));
@@ -128,8 +211,27 @@ public class JCloudsReader implements IBackendReader {
                 }
                 mCache.put(mBucketId, page);
             }
-            return null;
+
+            return mBucketId;
         }
+    }
+
+    /**
+     * Tasks for ending the cleaner .
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
+    class PoisonTask implements Callable<Long> {
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Long call() throws Exception {
+            return POISONNUMBER;
+        }
+
     }
 
 }

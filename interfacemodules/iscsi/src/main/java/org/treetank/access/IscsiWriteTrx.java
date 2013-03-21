@@ -27,7 +27,6 @@ package org.treetank.access;
 import static com.google.common.base.Preconditions.checkState;
 
 import org.treetank.api.IIscsiWriteTrx;
-import org.treetank.api.INode;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
@@ -49,10 +48,10 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
      * Create a new IscsiWriteTrx
      * 
      * @param pPageTrx
-     *          delegation page transaction
-     * @param pSession 
-     *          session from treetank
-     * @throws TTException 
+     *            delegation page transaction
+     * @param pSession
+     *            session from treetank
+     * @throws TTException
      */
     public IscsiWriteTrx(IPageWriteTrx pPageTrx, ISession pSession) throws TTException {
 
@@ -155,8 +154,7 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
      * {@inheritDoc}
      */
     @Override
-    public INode getCurrentNode() {
-
+    public ByteNode getCurrentNode() {
         return mDelegate.getCurrentNode();
     }
 

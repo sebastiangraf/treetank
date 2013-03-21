@@ -34,7 +34,7 @@ import org.treetank.exception.TTIOException;
 /**
  * This factory is used to deserialize {@link ByteNode}
  * 
- * @author Andreas Rain
+ * @author Andreas Rain, University of Konstanz
  */
 public class ByteNodeFactory implements INodeFactory {
 

@@ -27,8 +27,8 @@
 
 package org.treetank.api;
 
-import org.treetank.api.INode;
 import org.treetank.exception.TTIOException;
+import org.treetank.node.ByteNode;
 
 /**
  * 
@@ -71,7 +71,7 @@ public interface IIscsiReadTrx {
      * 
      * @return the current node
      */
-    public INode getCurrentNode();
+    public ByteNode getCurrentNode();
 
     /**
      * Close this transaction
