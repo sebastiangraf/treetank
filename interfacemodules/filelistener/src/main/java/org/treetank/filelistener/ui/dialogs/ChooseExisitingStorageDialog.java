@@ -67,10 +67,10 @@ public class ChooseExisitingStorageDialog extends Dialog {
         });
         combo.setBounds(10, 10, 272, 29);
 
-        List<String> storages = StorageManager.getStorages();
+        List<String> storages = StorageManager.getResources();
         
         if(storages != null){
-            for (String s : StorageManager.getStorages()) {
+            for (String s : StorageManager.getResources()) {
                 combo.add(s);
             }
         }

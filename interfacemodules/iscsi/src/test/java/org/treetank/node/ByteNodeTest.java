@@ -26,61 +26,64 @@
  */
 package org.treetank.node;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.io.DataInput;
-import java.io.DataOutput;
 import java.io.IOException;
-import java.util.Random;
 
-import org.jscsi.target.storage.IStorageModule;
 import org.testng.annotations.Test;
+import org.treetank.CoreTestHelper;
 import org.treetank.api.INode;
 import org.treetank.exception.TTIOException;
 import org.treetank.jscsi.TreetankStorageModule;
 
+import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
 /**
- * @author Andreas Rain
- *
+ * Test case for Byte Nodes
+ * 
+ * @author Andreas Rain, University of Konstanz
+ * @author Sebastian Graf, University of Konstanz
  */
 public class ByteNodeTest {
 
     /**
      * Test method for {@link org.treetank.node.ByteNode#serialize(java.io.DataOutput)}.
-     * @throws IOException 
-     * @throws TTIOException 
+     * 
+     * @throws IOException
+     * @throws TTIOException
      */
     @Test
     public void testSerializeAndDeserialize() throws IOException, TTIOException {
-        Random rand = new Random(42);
-        
+
         // testing full writes
-        byte[] bytes = new byte[TreetankStorageModule.BLOCK_IN_CLUSTER * IStorageModule.VIRTUAL_BLOCK_SIZE];
-        rand.nextBytes(bytes);
-        
-        ByteNode byteNode = new ByteNode(0, bytes);
-        
-        ByteArrayDataOutput out = ByteStreams.newDataOutput();
-        
-        byteNode.setIndex(5);
-        byteNode.setNextNodeKey(1);
-        byteNode.setPreviousNodeKey(-1);
-        
-        byteNode.serialize((DataOutput) out);
-        
-        ByteNodeFactory factory = new ByteNodeFactory();
-        INode node = factory.deserializeNode((DataInput) out);
-        
+        byte[] bytes = new byte[TreetankStorageModule.BYTES_IN_NODE];
+        CoreTestHelper.random.nextBytes(bytes);
+
+        final ByteNode byteNode = new ByteNode(CoreTestHelper.random.nextLong(), bytes);
+        byteNode.setIndex(CoreTestHelper.random.nextLong());
+        byteNode.setNextNodeKey(CoreTestHelper.random.nextLong());
+        byteNode.setPreviousNodeKey(CoreTestHelper.random.nextLong());
+
+        final ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        byteNode.serialize(out);
+
+        final ByteNodeFactory factory = new ByteNodeFactory();
+        final ByteArrayDataInput in = ByteStreams.newDataInput(out.toByteArray());
+        final INode node = factory.deserializeNode((DataInput)in);
         assertTrue(node instanceof ByteNode);
-        assertEquals(node.getNodeKey(), byteNode.getNodeKey());
-        assertEquals(((ByteNode) node).getPreviousNodeKey(), byteNode.getPreviousNodeKey());
-        assertEquals(((ByteNode) node).getNextNodeKey(), byteNode.getNextNodeKey());
-        assertEquals(((ByteNode) node).getIndex(), byteNode.getIndex());
-        assertEquals(((ByteNode) node).getVal(), byteNode.getVal());
-        
+
+        final ByteNode newNode = (ByteNode)node;
+
+        assertEquals(newNode.getNodeKey(), byteNode.getNodeKey());
+        assertEquals(newNode.getPreviousNodeKey(), byteNode.getPreviousNodeKey());
+        assertEquals(newNode.getNextNodeKey(), byteNode.getNextNodeKey());
+        assertEquals(newNode.getIndex(), byteNode.getIndex());
+        assertEquals(newNode.getVal(), byteNode.getVal());
+
     }
 
 }

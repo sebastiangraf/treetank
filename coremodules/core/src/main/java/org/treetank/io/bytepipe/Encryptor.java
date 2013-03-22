@@ -34,9 +34,6 @@ public class Encryptor implements IByteHandler {
     /** Key for de-/encryption. */
     private final Key mKey;
 
-    /** Cipher for encryption and decryption operations. */
-    private final Cipher mCipher;
-
     /**
      * Constructor.
      * 
@@ -45,11 +42,6 @@ public class Encryptor implements IByteHandler {
      */
     @Inject
     public Encryptor(final Key pKey) {
-        try {
-            mCipher = Cipher.getInstance(ALGORITHM);
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
-            throw new RuntimeException(e);
-        }
         mKey = pKey;
     }
 
@@ -60,9 +52,10 @@ public class Encryptor implements IByteHandler {
      */
     public OutputStream serialize(final OutputStream pToSerialize) throws TTByteHandleException {
         try {
-            mCipher.init(Cipher.ENCRYPT_MODE, mKey);
-            return new CipherOutputStream(pToSerialize, mCipher);
-        } catch (final InvalidKeyException exc) {
+            final Cipher cipher = Cipher.getInstance(ALGORITHM);
+            cipher.init(Cipher.ENCRYPT_MODE, mKey);
+            return new CipherOutputStream(pToSerialize, cipher);
+        } catch (final InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException exc) {
             throw new TTByteHandleException(exc);
         }
     }
@@ -72,9 +65,10 @@ public class Encryptor implements IByteHandler {
      */
     public InputStream deserialize(InputStream pToDeserialize) throws TTByteHandleException {
         try {
-            mCipher.init(Cipher.DECRYPT_MODE, mKey);
-            return new CipherInputStream(pToDeserialize, mCipher);
-        } catch (final InvalidKeyException exc) {
+            final Cipher cipher = Cipher.getInstance(ALGORITHM);
+            cipher.init(Cipher.DECRYPT_MODE, mKey);
+            return new CipherInputStream(pToDeserialize, cipher);
+        } catch (final InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException exc) {
             throw new TTByteHandleException(exc);
         }
 

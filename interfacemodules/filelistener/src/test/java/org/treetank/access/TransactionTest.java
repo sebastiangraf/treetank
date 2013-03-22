@@ -1,4 +1,4 @@
-package org.treetank.access.test;
+package org.treetank.access;
 
 import static org.testng.Assert.assertEquals;
 
@@ -72,7 +72,7 @@ public class TransactionTest {
         tmpDir = Files.createTempDir();
     }
 
-    @Test(enabled=false)
+    @Test(enabled=true)
     public void testTransactions() throws TTException, IOException {
 
         // First file is empty.

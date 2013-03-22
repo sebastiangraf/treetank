@@ -28,7 +28,6 @@
 package org.treetank.access;
 
 import org.treetank.api.IIscsiReadTrx;
-import org.treetank.api.INode;
 import org.treetank.api.IPageReadTrx;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
@@ -44,7 +43,7 @@ public class IscsiReadTrx implements IIscsiReadTrx {
     protected IPageReadTrx mPageReadTrx;
 
     /** Strong reference to currently selected node. */
-    private INode mCurrentNode;
+    private ByteNode mCurrentNode;
 
     /**
      * Constructor.
@@ -57,7 +56,7 @@ public class IscsiReadTrx implements IIscsiReadTrx {
      */
     public IscsiReadTrx(final IPageReadTrx pPageTrx) throws TTException {
         mPageReadTrx = pPageTrx;
-        mCurrentNode = (INode)mPageReadTrx.getNode(0);
+        mCurrentNode = (ByteNode)mPageReadTrx.getNode(0);
     }
 
     /**
@@ -66,7 +65,7 @@ public class IscsiReadTrx implements IIscsiReadTrx {
     @Override
     public boolean moveTo(long pKey) {
         try {
-            this.mCurrentNode = mPageReadTrx.getNode(pKey);
+            this.mCurrentNode = (ByteNode)mPageReadTrx.getNode(pKey);
             return true;
         } catch (TTException e) {
             return false;
@@ -80,7 +79,7 @@ public class IscsiReadTrx implements IIscsiReadTrx {
     public boolean nextNode() {
         try {
             if (mCurrentNode != null) {
-                this.mCurrentNode = mPageReadTrx.getNode(((ByteNode)mCurrentNode).getNextNodeKey());
+                this.mCurrentNode = (ByteNode)mPageReadTrx.getNode((mCurrentNode).getNextNodeKey());
             } else {
                 return false;
             }
@@ -97,7 +96,7 @@ public class IscsiReadTrx implements IIscsiReadTrx {
     public boolean previousNode() {
         try {
             if (mCurrentNode != null) {
-                this.mCurrentNode = mPageReadTrx.getNode(((ByteNode)mCurrentNode).getPreviousNodeKey());
+                this.mCurrentNode = (ByteNode)mPageReadTrx.getNode((mCurrentNode).getPreviousNodeKey());
             } else {
                 return false;
             }
@@ -122,7 +121,7 @@ public class IscsiReadTrx implements IIscsiReadTrx {
      * {@inheritDoc}
      */
     @Override
-    public INode getCurrentNode() {
+    public ByteNode getCurrentNode() {
         return mCurrentNode;
     }
 

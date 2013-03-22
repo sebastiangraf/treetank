@@ -12,8 +12,6 @@ import org.treetank.filelistener.file.node.FileNode;
 import org.treetank.filelistener.file.node.FilelistenerMetaPageFactory.MetaKey;
 import org.treetank.filelistener.file.node.FilelistenerMetaPageFactory.MetaValue;
 
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 import com.google.common.io.OutputSupplier;
 
@@ -98,8 +96,6 @@ public class FilelistenerReadTrx implements IFilelistenerReadTrx {
         if (value.getData() == emptyFileKey) {
             return file;
         }
-
-        ByteArrayDataOutput output = ByteStreams.newDataOutput(FileNode.FILENODESIZE);
 
         FileNode node = (FileNode)mPageReadTrx.getNode(value.getData());
 

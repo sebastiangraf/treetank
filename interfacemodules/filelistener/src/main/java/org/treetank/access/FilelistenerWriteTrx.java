@@ -3,8 +3,14 @@ package org.treetank.access;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
+import java.nio.channels.OverlappingFileLockException;
 import java.util.Arrays;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.treetank.api.IFilelistenerWriteTrx;
 import org.treetank.api.IPageWriteTrx;
 import org.treetank.api.ISession;
@@ -23,6 +29,8 @@ import com.google.common.io.Files;
  * @author Andreas Rain
  */
 public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(FilelistenerWriteTrx.class);
 
     /** Session for abort/commit. */
     private final ISession mSession;
@@ -98,10 +106,36 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
      */
     @Override
     public synchronized void addFile(File pFile, String pRelativePath) throws TTException, IOException {
+        LOGGER.info("Adding file " + pFile.getName());
+        
         int readingAmount = 0;
 
+        @SuppressWarnings("resource")
+        FileChannel ch = new RandomAccessFile(pFile, "rw").getChannel();
+        FileLock lock = null;
+        
+        while(lock == null){
+            try {
+                lock = ch.tryLock();
+            } catch (OverlappingFileLockException e) {
+                // File is already locked in this thread or virtual machine
+            }
+            
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        
+        lock.release();
+        ch.close();
+        
         BufferedInputStream stream = Files.asByteSource(pFile).openBufferedStream();
-
+        LOGGER.info("Successfully initialized byte source.");
+        
+        while(stream == null);
         byte[] fileBytes = new byte[FileNode.FILENODESIZE];
         readingAmount += stream.read(fileBytes);
 
@@ -124,6 +158,7 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
         MetaValue value = new MetaValue(newKey);
 
         // And adding it to the meta map
+        LOGGER.info("Metakeypair setup");
         getPageTransaction().getMetaPage().getMetaMap().put(key, value);
 
         // Creating and setting the headernode.
@@ -141,7 +176,7 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
 
         int currentReadingAmount = 0;
         while ((currentReadingAmount = stream.read(fileBytes = new byte[FileNode.FILENODESIZE])) > 0) {
-            System.out.println(currentReadingAmount);
+            LOGGER.info("" + currentReadingAmount);
             byte[] slice = Arrays.copyOf(fileBytes, currentReadingAmount);
 
             node = new FileNode(getPageTransaction().incrementNodeKey(), slice);
@@ -155,6 +190,8 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
 
             readingAmount += currentReadingAmount;
         }
+        
+        stream.close();
 
         ByteArrayDataOutput size = ByteStreams.newDataOutput();
         size.writeInt(readingAmount);
@@ -173,7 +210,7 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
         getPageTransaction().setNode(node);
 
         Preconditions.checkArgument(getPageTransaction().getNode(newKey) != null);
-
+        
         System.out.println("Done writing.");
     }
 

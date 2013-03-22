@@ -81,7 +81,7 @@ public class RestoreDialog extends Dialog {
         mCombo.setBounds(10, 133, 430, 29);
 
         try {
-            for (String s : mListener.getFilelisteners().keySet()) {
+            for (String s : Filelistener.getFilelisteners().keySet()) {
                 mCombo.add(s);
             }
         } catch (FileNotFoundException e1) {

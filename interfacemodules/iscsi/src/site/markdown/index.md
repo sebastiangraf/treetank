@@ -17,6 +17,7 @@ Following figure presents a small overview of how the data is mapped on to nodes
 ## Features currently implemented
 
 * For faster response times, requests are being cached for later submition into the storage.
+
 * Usage of different configurations for treetank, such as
     * Using different backends
     * Compression and encryption of the data

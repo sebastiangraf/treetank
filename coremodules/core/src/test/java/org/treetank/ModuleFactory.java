@@ -9,7 +9,10 @@ import org.treetank.access.conf.ModuleSetter;
 import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;
 import org.treetank.io.IBackend;
+import org.treetank.io.combined.CombinedStorage;
+import org.treetank.io.jclouds.JCloudsStorage;
 import org.treetank.revisioning.IRevisioning;
+import org.treetank.revisioning.SlidingSnapshot;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
@@ -28,6 +31,10 @@ public class ModuleFactory implements IModuleFactory {
     private final static String REVISIONINGPARAMETER = "Revisioning";
     private final static String BACKENDPARAMETER = "Backend";
 
+    // Standard Implementations
+    private final static String REVISIONING = SlidingSnapshot.class.getName();
+    private final static String BACKEND = JCloudsStorage.class.getName();
+
     /**
      * {@inheritDoc}
      */
@@ -37,8 +44,8 @@ public class ModuleFactory implements IModuleFactory {
         AbstractModule returnVal = null;
         String nodeFacName;
         String metaFacName;
-        String revisioningName = "org.treetank.revisioning.SlidingSnapshot";
-        String backendName = "org.treetank.io.combined.CombinedStorage";
+        String revisioningName = REVISIONING;
+        String backendName = BACKEND;
         // getting the parameters over testng.xml and setting it directly or...
         if (context.getSuite().getParameter(NODEFACTORYPARAMETER) != null) {
             final Map<String, String> params = context.getSuite().getXmlSuite().getAllParameters();
@@ -49,8 +56,8 @@ public class ModuleFactory implements IModuleFactory {
         }// ..determining standard factories based on bundle parsed from the testclass and...
         else {
             final String[] elements =
-                testClass.getProtectionDomain().getCodeSource().getLocation().toString()
-                    .split(Pattern.quote("/"));
+                testClass.getProtectionDomain().getCodeSource().getLocation().toString().split(
+                    Pattern.quote("/"));
             String module = elements[elements.length - 3];
             switch (module) {
             case "core":
@@ -93,8 +100,8 @@ public class ModuleFactory implements IModuleFactory {
 
         returnVal =
             new ModuleSetter().setNodeFacClass(nodeFac).setMetaFacClass(metaFac)
-                .setRevisingClass(revisioning).setBackendClass(backend).createModule();
-
+                .setRevisioningClass(revisioning).setBackendClass(backend).createModule();
+        
         return returnVal;
 
     }

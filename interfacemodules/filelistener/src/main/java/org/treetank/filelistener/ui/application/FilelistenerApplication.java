@@ -13,7 +13,6 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.treetank.filelistener.ui.composites.MainComposite;
 import org.treetank.filelistener.ui.dialogs.ListenToFolderDialog;
-import org.treetank.filelistener.ui.dialogs.RestoreDialog;
 
 public class FilelistenerApplication {
 
