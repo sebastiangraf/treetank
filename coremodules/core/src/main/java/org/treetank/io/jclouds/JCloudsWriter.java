@@ -6,6 +6,13 @@ package org.treetank.io.jclouds;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
@@ -25,12 +32,27 @@ import org.treetank.page.interfaces.IPage;
  */
 public class JCloudsWriter implements IBackendWriter {
 
+    private final static long POISONNUMBER = -15;
+
     /** Delegate for reader. */
     private final JCloudsReader mReader;
+
+    private final ConcurrentHashMap<Long, Future<Long>> mRunningWriteTasks;
+    private final CompletionService<Long> mWriterService;
 
     public JCloudsWriter(BlobStore pBlobStore, PageFactory pFac, IByteHandlerPipeline pByteHandler,
         String pResourceName) throws TTException {
         mReader = new JCloudsReader(pBlobStore, pFac, pByteHandler, pResourceName);
+
+        final ExecutorService writerService = Executors.newFixedThreadPool(20);
+        mRunningWriteTasks = new ConcurrentHashMap<Long, Future<Long>>();
+        mWriterService = new ExecutorCompletionService<Long>(writerService);
+
+        final WriteFutureCleaner cleaner = new WriteFutureCleaner();
+        final ExecutorService cleanerService = Executors.newSingleThreadExecutor();
+        cleanerService.submit(cleaner);
+        cleanerService.shutdown();
+
     }
 
     /**
@@ -47,16 +69,7 @@ public class JCloudsWriter implements IBackendWriter {
     @Override
     public void write(final IPage pPage) throws TTIOException, TTByteHandleException {
         try {
-            ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
-            DataOutputStream dataOut = new DataOutputStream(mReader.mByteHandler.serialize(byteOut));
-            pPage.serialize(dataOut);
-            dataOut.close();
-
-            BlobBuilder blobbuilder = mReader.mBlobStore.blobBuilder(Long.toString(pPage.getPageKey()));
-            Blob blob = blobbuilder.build();
-            blob.setPayload(byteOut.toByteArray());
-
-            mReader.mBlobStore.putBlob(mReader.mResourceName, blob);
+            new WriteTask(pPage).call();
             mReader.mCache.put(pPage.getPageKey(), pPage);
         } catch (final Exception exc) {
             throw new TTIOException(exc);
@@ -99,6 +112,68 @@ public class JCloudsWriter implements IBackendWriter {
             throw new TTIOException(exc);
         }
 
+    }
+
+    /**
+     * Single task to write data to the cloud.
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
+    class WriteTask implements Callable<Long> {
+        /**
+         * The bytes to buffer.
+         */
+        final IPage mPage;
+
+        WriteTask(IPage pPage) {
+            this.mPage = pPage;
+        }
+
+        @Override
+        public Long call() throws Exception {
+            boolean finished = false;
+
+            while (!finished) {
+                ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+                DataOutputStream dataOut = new DataOutputStream(mReader.mByteHandler.serialize(byteOut));
+                mPage.serialize(dataOut);
+                dataOut.close();
+
+                BlobBuilder blobbuilder = mReader.mBlobStore.blobBuilder(Long.toString(mPage.getPageKey()));
+                Blob blob = blobbuilder.build();
+                blob.setPayload(byteOut.toByteArray());
+
+                mReader.mBlobStore.putBlob(mReader.mResourceName, blob);
+                finished = true;
+            }
+
+            return mPage.getPageKey();
+        }
+    }
+
+    class WriteFutureCleaner implements Callable<Long> {
+
+        public Long call() throws Exception {
+            boolean run = true;
+            while (run) {
+                try {
+                    Future<Long> element = mWriterService.take();
+                    if (!element.isCancelled()) {
+                        long id = element.get();
+                        if (id == POISONNUMBER) {
+                            run = false;
+                        } else {
+                            mRunningWriteTasks.remove(element.get());
+                        }
+
+                    }
+                } catch (Exception exc) {
+                    throw new RuntimeException(exc);
+                }
+            }
+            return POISONNUMBER;
+        }
     }
 
 }
