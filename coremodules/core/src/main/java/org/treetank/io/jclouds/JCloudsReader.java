@@ -3,6 +3,7 @@
  */
 package org.treetank.io.jclouds;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.io.DataInputStream;
@@ -73,10 +74,10 @@ public class JCloudsReader implements IBackendReader {
         mByteHandler = pByteHandler;
         mFac = pFac;
         mResourceName = pResourceName;
-        mCache = CacheBuilder.newBuilder().maximumSize(1000).build();
+        mCache = CacheBuilder.newBuilder().maximumSize(100).build();
 
         mTasks = new ConcurrentHashMap<Long, Future<Map.Entry<Long, IPage>>>();
-        mReaderService = Executors.newCachedThreadPool();
+        mReaderService = Executors.newFixedThreadPool(20);
 
         mReaderCompletion = new ExecutorCompletionService<Map.Entry<Long, IPage>>(mReaderService);
         final FutureCleaner cleaner = new FutureCleaner();
@@ -84,6 +85,7 @@ public class JCloudsReader implements IBackendReader {
         cleanerService.submit(cleaner);
         cleanerService.shutdown();
     }
+    
 
     /**
      * {@inheritDoc}
@@ -198,12 +200,11 @@ public class JCloudsReader implements IBackendReader {
             IPage page = mCache.getIfPresent(mBucketId);
             if (page == null) {
                 Blob blob = mBlobStore.getBlob(mResourceName, Long.toString(mBucketId));
-                if (blob != null) {
-                    DataInputStream datain =
-                        new DataInputStream(mByteHandler.deserialize(blob.getPayload().getInput()));
-                    page = mFac.deserializePage(datain);
-                    datain.close();
-                }
+                checkNotNull(blob);
+                DataInputStream datain =
+                    new DataInputStream(mByteHandler.deserialize(blob.getPayload().getInput()));
+                page = mFac.deserializePage(datain);
+                datain.close();
                 mCache.put(mBucketId, page);
             }
 
