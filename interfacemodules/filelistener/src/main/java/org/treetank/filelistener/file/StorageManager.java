@@ -69,8 +69,6 @@ public class StorageManager {
         File resourceFile = new File(STORAGE_PATH + File.separator + "resources" + File.separator + name);
 
         if (resourceFile.exists()) {
-            System.out.println(resourceFile.toString());
-            System.exit(-1);
             throw new StorageAlreadyExistsException();
         } else {
             StorageConfiguration configuration = new StorageConfiguration(storageFile);
