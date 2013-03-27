@@ -149,7 +149,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
         final LogValue container =
             mLog.get(new LogKey(false, IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length, nodePageKey));
         // Page was not modified yet, delegate to read or..
-        if (container == null) {
+        if (container.getModified() == null) {
             return mDelegate.getNode(pNodeKey);
         }// ...page was modified, but not this node, take the complete part, or...
         else if (((NodePage)container.getModified()).getNode(nodePageOffset) == null) {
@@ -245,7 +245,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
         // See if on nodePageLevel, there are any pages...
         LogValue container = mLog.get(key);
         // ... and start dereferencing of not.
-        if (container == null) {
+        if (container.getModified() == null) {
             LogKey indirectKey = preparePathToLeaf(false, mNewRoot, pNodeKey);
 
             LogValue indirectContainer = mLog.get(indirectKey);
@@ -329,7 +329,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
             key = new LogKey(pIsRootLevel, level, orderNumber[level]);
             LogValue container = mLog.get(key);
             // if the page is not existing,..
-            if (container == null) {
+            if (container.getModified() == null) {
                 // ..create a new page
                 final long newKey = mNewUber.incrementPageCounter();
                 page = new IndirectPage(newKey);
@@ -370,7 +370,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
 
     private void setUpTransaction(final UberPage pUberPage, final ISession pSession,
         final long pRepresentRev, final IBackendWriter pWriter) throws TTException {
-//TODO need to be fixed over here
+        // TODO need to be fixed over here
         mLog =
             new LRULog(new File(pSession.getConfig().mProperties
                 .getProperty(org.treetank.access.conf.ConstructorProps.RESOURCEPATH)),

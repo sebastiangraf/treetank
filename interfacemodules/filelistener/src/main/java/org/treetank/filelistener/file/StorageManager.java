@@ -27,7 +27,7 @@ import com.google.inject.Injector;
 
 /**
  * @author Andreas Rain
- *
+ * 
  */
 public class StorageManager {
 
@@ -46,8 +46,8 @@ public class StorageManager {
     /**
      * The path where the storage configurations are to find.
      */
-    public static final String STORAGE_PATH = new StringBuilder().append(ROOT_PATH).append(
-        "storage").append(File.separator).toString();
+    public static final String STORAGE_PATH = new StringBuilder().append(ROOT_PATH).append("storage").append(
+        File.separator).toString();
 
     /**
      * Create a new storage with the given name and backend.
@@ -58,23 +58,22 @@ public class StorageManager {
      * @throws StorageAlreadyExistsException
      * @throws TTException
      */
-    public static boolean createResource(String name, AbstractModule module) throws StorageAlreadyExistsException,
-        TTException {
+    public static boolean createResource(String name, AbstractModule module)
+        throws StorageAlreadyExistsException, TTException {
         File file = new File(ROOT_PATH);
         File storageFile = new File(STORAGE_PATH);
         if (!file.exists()) {
             file.mkdirs();
         }
-        
+
         File resourceFile = new File(STORAGE_PATH + File.separator + "resources" + File.separator + name);
 
         if (resourceFile.exists()) {
             throw new StorageAlreadyExistsException();
         } else {
-            StorageConfiguration configuration = new StorageConfiguration(storageFile);                                                                      
+            StorageConfiguration configuration = new StorageConfiguration(storageFile);
 
-            Injector injector =
-                Guice.createInjector(module);
+            Injector injector = Guice.createInjector(module);
             IBackendFactory backend = injector.getInstance(IBackendFactory.class);
             IRevisioning revision = injector.getInstance(IRevisioning.class);
 
@@ -157,8 +156,7 @@ public class StorageManager {
      * @throws StorageNotExistingException
      */
     public static void removeStorage(String pStorageName) throws TTException, StorageNotExistingException {
-        File storageConfiguration =
-            new File(new StringBuilder().append(STORAGE_PATH).toString());
+        File storageConfiguration = new File(new StringBuilder().append(STORAGE_PATH).toString());
 
         IOUtils.recursiveDelete(storageConfiguration);
 

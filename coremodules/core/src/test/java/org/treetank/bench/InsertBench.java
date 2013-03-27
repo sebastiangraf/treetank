@@ -36,7 +36,9 @@ public class InsertBench {
     private final IStorage mStorage;
     private final ResourceConfiguration mConfig;
     private ISession mSession;
-    private DumbNode[] mNodesToInsert;
+    private DumbNode[] mNodesToInsert = CoreTestHelper.createNodes(new int[] {
+        262144
+    })[0];
     private IPageWriteTrx mTrx;
 
     public InsertBench() throws TTException {
@@ -61,9 +63,6 @@ public class InsertBench {
     public void setUp() throws TTException {
         mStorage.createResource(mConfig);
         mSession = mStorage.getSession(new SessionConfiguration(RESOURCENAME, StandardSettings.KEY));
-        mNodesToInsert = CoreTestHelper.createNodes(new int[] {
-            16384
-        })[0];
         mTrx = mSession.beginPageWriteTransaction();
     }
 
@@ -79,6 +78,36 @@ public class InsertBench {
     public void bench16384Direct() throws TTException {
         insert(16384);
         insert(16384);
+        mTrx.commit();
+    }
+
+    @Bench
+    public void bench32768() throws TTException {
+        insert(32768);
+        mTrx.commit();
+        insert(32768);
+        mTrx.commit();
+    }
+
+    @Bench
+    public void bench32768Direct() throws TTException {
+        insert(32768);
+        insert(32768);
+        mTrx.commit();
+    }
+
+    @Bench
+    public void bench65536() throws TTException {
+        insert(65536);
+        mTrx.commit();
+        insert(65536);
+        mTrx.commit();
+    }
+
+    @Bench
+    public void bench65536Direct() throws TTException {
+        insert(65536);
+        insert(65536);
         mTrx.commit();
     }
 

@@ -2,8 +2,6 @@ package org.treetank.log;
 
 import static com.google.common.base.Objects.toStringHelper;
 
-import java.util.Objects;
-
 import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
@@ -77,7 +75,12 @@ public class LogKey {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(mLevel, mRootLevel, mSeq);
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (int)(mLevel ^ (mLevel >>> 32));
+        result = prime * result + (mRootLevel ? 1231 : 1237);
+        result = prime * result + (int)(mSeq ^ (mSeq >>> 32));
+        return result;
     }
 
     /**
@@ -85,7 +88,20 @@ public class LogKey {
      */
     @Override
     public boolean equals(Object obj) {
-        return this.hashCode() == obj.hashCode();
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        LogKey other = (LogKey)obj;
+        if (mLevel != other.mLevel)
+            return false;
+        if (mRootLevel != other.mRootLevel)
+            return false;
+        if (mSeq != other.mSeq)
+            return false;
+        return true;
     }
 
     /**
