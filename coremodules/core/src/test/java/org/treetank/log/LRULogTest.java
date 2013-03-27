@@ -107,7 +107,7 @@ public class LRULogTest {
     public void testClearAndNull() throws TTIOException {
         // testing for null
         LogValue nullValue = mCache.get(new LogKey(true, -1, -1));
-        assertNull(nullValue);
+        assertNull(nullValue.getModified());
         LogValue value = mCache.get(new LogKey(true, 0, 0));
         assertNotNull(value);
         mCache.close();
@@ -148,7 +148,7 @@ public class LRULogTest {
             for (int j = 0; j < ELEMENTS; j++) {
                 LogKey toRetrieve = new LogKey(true, i, j);
                 final LogValue cont = mCache.get(toRetrieve);
-                assertNull(cont);
+                assertNull(cont.getModified());
             }
         }
     }

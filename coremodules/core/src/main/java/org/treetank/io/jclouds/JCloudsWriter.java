@@ -3,20 +3,12 @@
  */
 package org.treetank.io.jclouds;
 
-import static com.google.common.base.Preconditions.checkState;
-
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.concurrent.Callable;
-import java.util.concurrent.CompletionService;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorCompletionService;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
@@ -36,28 +28,44 @@ import org.treetank.page.interfaces.IPage;
  */
 public class JCloudsWriter implements IBackendWriter {
 
+    // START DEBUG CODE
+    private final static File writeFile = new File("/Users/sebi/Desktop/runtimeResults/writeaccess.txt");
+    private final static File uploadFile = new File("/Users/sebi/Desktop/runtimeResults/uploadaccess.txt");
+
+    static final FileWriter writer;
+    static final FileWriter upload;
+
+    static {
+        try {
+            writer = new FileWriter(writeFile);
+            upload = new FileWriter(uploadFile);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private final static long POISONNUMBER = -15;
 
     /** Delegate for reader. */
     private final JCloudsReader mReader;
 
-    private final ConcurrentHashMap<Long, Future<Long>> mRunningWriteTasks;
-    private final CompletionService<Long> mWriterCompletion;
-    /** Executing read requests. */
-    private final ExecutorService mWriterService;
+    // private final ConcurrentHashMap<Long, Future<Long>> mRunningWriteTasks;
+    // private final CompletionService<Long> mWriterCompletion;
+    // /** Executing read requests. */
+    // private final ExecutorService mWriterService;
 
     public JCloudsWriter(BlobStore pBlobStore, PageFactory pFac, IByteHandlerPipeline pByteHandler,
         String pResourceName) throws TTException {
         mReader = new JCloudsReader(pBlobStore, pFac, pByteHandler, pResourceName);
 
-        mWriterService = Executors.newFixedThreadPool(20);
-        mRunningWriteTasks = new ConcurrentHashMap<Long, Future<Long>>();
-        mWriterCompletion = new ExecutorCompletionService<Long>(mWriterService);
+        // mWriterService = Executors.newFixedThreadPool(20);
+        // mRunningWriteTasks = new ConcurrentHashMap<Long, Future<Long>>();
+        // mWriterCompletion = new ExecutorCompletionService<Long>(mWriterService);
 
-        final WriteFutureCleaner cleaner = new WriteFutureCleaner();
-        final ExecutorService cleanerService = Executors.newSingleThreadExecutor();
-        cleanerService.submit(cleaner);
-        cleanerService.shutdown();
+        // final WriteFutureCleaner cleaner = new WriteFutureCleaner();
+        // final ExecutorService cleanerService = Executors.newSingleThreadExecutor();
+        // cleanerService.submit(cleaner);
+        // cleanerService.shutdown();
 
     }
 
@@ -66,14 +74,14 @@ public class JCloudsWriter implements IBackendWriter {
      */
     @Override
     public IPage read(long pKey) throws TTIOException {
-        Future<Long> task = mRunningWriteTasks.get(pKey);
-        if (task != null) {
-            try {
-                task.get();
-            } catch (InterruptedException | ExecutionException exc) {
-                throw new TTIOException(exc);
-            }
-        }
+        // Future<Long> task = mRunningWriteTasks.get(pKey);
+        // if (task != null) {
+        // try {
+        // task.get();
+        // } catch (InterruptedException | ExecutionException exc) {
+        // throw new TTIOException(exc);
+        // }
+        // }
         return mReader.read(pKey);
     }
 
@@ -83,9 +91,13 @@ public class JCloudsWriter implements IBackendWriter {
     @Override
     public void write(final IPage pPage) throws TTIOException, TTByteHandleException {
         try {
-            Future<Long> task = mWriterCompletion.submit(new WriteTask(pPage));
-            mRunningWriteTasks.put(pPage.getPageKey(), task);
-            mReader.mCache.put(pPage.getPageKey(), pPage);
+            writer.write(pPage.getPageKey() + "," + pPage.getClass().getName() + "\n");
+            writer.flush();
+
+            new WriteTask(pPage).call();
+            // Future<Long> task = mWriterCompletion.submit(new WriteTask(pPage));
+            // mRunningWriteTasks.put(pPage.getPageKey(), task);
+            // mReader.mCache.put(pPage.getPageKey(), pPage);
         } catch (final Exception exc) {
             throw new TTIOException(exc);
         }
@@ -96,14 +108,14 @@ public class JCloudsWriter implements IBackendWriter {
      */
     @Override
     public void close() throws TTIOException {
-        mWriterCompletion.submit(new PoisonTask());
-        mWriterService.shutdown();
-        try {
-            mWriterService.awaitTermination(100, TimeUnit.SECONDS);
-        } catch (final InterruptedException exc) {
-            throw new TTIOException(exc);
-        }
-        checkState(mWriterService.isTerminated());
+        // mWriterCompletion.submit(new PoisonTask());
+        // mWriterService.shutdown();
+        // try {
+        // mWriterService.awaitTermination(100, TimeUnit.SECONDS);
+        // } catch (final InterruptedException exc) {
+        // throw new TTIOException(exc);
+        // }
+        // checkState(mWriterService.isTerminated());
         mReader.close();
     }
 
@@ -169,46 +181,49 @@ public class JCloudsWriter implements IBackendWriter {
 
                 mReader.mBlobStore.putBlob(mReader.mResourceName, blob);
                 finished = true;
+
+                upload.write(mPage.getPageKey() + "," + mPage.getClass().getName() + "\n");
+                upload.flush();
             }
 
             return mPage.getPageKey();
         }
     }
-
-    class WriteFutureCleaner implements Callable<Long> {
-
-        public Long call() throws Exception {
-            boolean run = true;
-            while (run) {
-                Future<Long> element = mWriterCompletion.take();
-                if (!element.isCancelled()) {
-                    long id = element.get();
-                    if (id == POISONNUMBER) {
-                        run = false;
-                    } else {
-                        mRunningWriteTasks.remove(element.get());
-                    }
-                }
-            }
-            return POISONNUMBER;
-        }
-    }
-
-    /**
-     * Tasks for ending the cleaner .
-     * 
-     * @author Sebastian Graf, University of Konstanz
-     * 
-     */
-    class PoisonTask implements Callable<Long> {
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Long call() throws Exception {
-            return POISONNUMBER;
-        }
-    }
+    //
+    // class WriteFutureCleaner implements Callable<Long> {
+    //
+    // public Long call() throws Exception {
+    // boolean run = true;
+    // while (run) {
+    // Future<Long> element = mWriterCompletion.take();
+    // if (!element.isCancelled()) {
+    // long id = element.get();
+    // if (id == POISONNUMBER) {
+    // run = false;
+    // } else {
+    // mRunningWriteTasks.remove(element.get());
+    // }
+    // }
+    // }
+    // return POISONNUMBER;
+    // }
+    // }
+    //
+    // /**
+    // * Tasks for ending the cleaner .
+    // *
+    // * @author Sebastian Graf, University of Konstanz
+    // *
+    // */
+    // class PoisonTask implements Callable<Long> {
+    //
+    // /**
+    // * {@inheritDoc}
+    // */
+    // @Override
+    // public Long call() throws Exception {
+    // return POISONNUMBER;
+    // }
+    // }
 
 }

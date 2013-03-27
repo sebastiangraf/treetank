@@ -30,7 +30,11 @@ package org.treetank.log;
 import static com.google.common.base.Objects.toStringHelper;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.api.IMetaEntryFactory;
@@ -40,6 +44,11 @@ import org.treetank.io.IOUtils;
 import org.treetank.log.LogKey.LogKeyBinding;
 import org.treetank.log.LogValue.LogValueBinding;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.RemovalCause;
+import com.google.common.cache.RemovalListener;
+import com.google.common.cache.RemovalNotification;
 import com.sleepycat.je.Cursor;
 import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseConfig;
@@ -58,6 +67,22 @@ import com.sleepycat.je.OperationStatus;
  * @author Sebastian Graf, University of Konstanz
  */
 public final class LRULog {
+
+    // START DEBUG CODE
+    private final static File insertFile = new File("/Users/sebi/Desktop/runtimeResults/insert.txt");
+    private final static File getFile = new File("/Users/sebi/Desktop/runtimeResults/get.txt");
+
+    static final FileWriter insert;
+    static final FileWriter get;
+
+    static {
+        try {
+            insert = new FileWriter(insertFile);
+            get = new FileWriter(getFile);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     /**
      * Name for the database.
@@ -86,6 +111,8 @@ public final class LRULog {
 
     /** Location to the BDB. */
     private final transient File mLocation;
+
+    private final Cache<LogKey, LogValue> mCache;
 
     /**
      * Creates a new LRU cache.
@@ -119,6 +146,18 @@ public final class LRULog {
             throw new TTIOException(exc);
         }
 
+        mCache =
+            CacheBuilder.newBuilder().maximumSize(100).removalListener(
+                new RemovalListener<LogKey, LogValue>() {
+                    @Override
+                    public void onRemoval(RemovalNotification<LogKey, LogValue> notification) {
+                        if (notification.getCause() != RemovalCause.REPLACED) {
+                            insertIntoBDB(notification.getKey(), notification.getValue());
+                        }
+
+                    }
+                }).build();
+
     }
 
     /**
@@ -130,19 +169,27 @@ public final class LRULog {
      * @throws TTIOException
      */
     public LogValue get(final LogKey pKey) throws TTIOException {
-        final DatabaseEntry valueEntry = new DatabaseEntry();
-        final DatabaseEntry keyEntry = new DatabaseEntry();
-        mKeyBinding.objectToEntry(pKey, keyEntry);
-        try {
-            final OperationStatus status = mDatabase.get(null, keyEntry, valueEntry, LockMode.DEFAULT);
-            LogValue val = null;
-            if (status == OperationStatus.SUCCESS) {
-                val = mValueBinding.entryToObject(valueEntry);
+        LogValue val = mCache.getIfPresent(pKey);
+        if (val == null) {
+            final DatabaseEntry valueEntry = new DatabaseEntry();
+            final DatabaseEntry keyEntry = new DatabaseEntry();
+            mKeyBinding.objectToEntry(pKey, keyEntry);
+            try {
+                final OperationStatus status = mDatabase.get(null, keyEntry, valueEntry, LockMode.DEFAULT);
+                if (status == OperationStatus.SUCCESS) {
+                    val = mValueBinding.entryToObject(valueEntry);
+                } else {
+                    val = new LogValue(null, null);
+                }
+                mCache.put(pKey, val);
+                get.write(pKey.getLevel() + "," + pKey.getSeq() + "\n");
+                get.flush();
+
+            } catch (final IOException | DatabaseException exc) {
+                throw new TTIOException(exc);
             }
-            return val;
-        } catch (final DatabaseException exc) {
-            throw new TTIOException(exc);
         }
+        return val;
     }
 
     /**
@@ -155,18 +202,7 @@ public final class LRULog {
      * @throws TTIOException
      */
     public void put(final LogKey pKey, final LogValue pValue) throws TTIOException {
-        final DatabaseEntry valueEntry = new DatabaseEntry();
-        final DatabaseEntry keyEntry = new DatabaseEntry();
-
-        mKeyBinding.objectToEntry(pKey, keyEntry);
-        mValueBinding.objectToEntry(pValue, valueEntry);
-        try {
-            mDatabase.put(null, keyEntry, valueEntry);
-
-        } catch (final DatabaseException exc) {
-            throw new TTIOException(exc);
-        }
-
+        mCache.put(pKey, pValue);
     }
 
     /**
@@ -200,7 +236,30 @@ public final class LRULog {
      * @return new LogIterator-instance
      */
     public LogIterator getIterator() {
+        Set<Entry<LogKey, LogValue>> entries = mCache.asMap().entrySet();
+        for (Entry<LogKey, LogValue> entry : entries) {
+            insertIntoBDB(entry.getKey(), entry.getValue());
+        }
+
         return new LogIterator();
+    }
+
+    private void insertIntoBDB(LogKey pKey, LogValue pVal) {
+        if (pVal.getModified() != null) {
+            final DatabaseEntry valueEntry = new DatabaseEntry();
+            final DatabaseEntry keyEntry = new DatabaseEntry();
+            mKeyBinding.objectToEntry(pKey, keyEntry);
+            mValueBinding.objectToEntry(pVal, valueEntry);
+            try {
+                mDatabase.put(null, keyEntry, valueEntry);
+
+                insert.write(pKey.getLevel() + "," + pKey.getSeq() + "\n");
+                insert.flush();
+
+            } catch (final IOException | DatabaseException exc) {
+                throw new RuntimeException(exc);
+            }
+        }
     }
 
     class LogIterator implements Iterator<LogValue>, Iterable<LogValue> {
