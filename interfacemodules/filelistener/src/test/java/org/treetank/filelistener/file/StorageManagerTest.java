@@ -51,7 +51,6 @@ public class StorageManagerTest {
         ISession session = StorageManager.getSession(mStorageName);
         assertNotNull(session);
         assertNotNull(session.beginPageWriteTransaction());
-
         assertTrue(session.close());
     }
 
@@ -61,7 +60,6 @@ public class StorageManagerTest {
     @Test
     public void testGetStorages() {
         List<String> storages = StorageManager.getResources();
-
         assertNotNull(storages);
         assertEquals(storages.size(), 1);
         assertEquals(storages.get(0), mStorageName);

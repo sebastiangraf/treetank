@@ -53,7 +53,8 @@ public class FilelistenerTest {
      */
     @AfterMethod
     public void tearDown() throws Exception {
-        StorageManager.removeStorage("bla");
+        StorageManager.removeStorage(RESOURCE_1);
+        StorageManager.removeStorage(RESOURCE_2);
         TMPDIR_1.delete();
         TMPDIR_2.delete();
     }
