@@ -67,22 +67,22 @@ import com.sleepycat.je.OperationStatus;
  * @author Sebastian Graf, University of Konstanz
  */
 public final class LRULog {
-
-    // START DEBUG CODE
-    private final static File insertFile = new File("/Users/sebi/Desktop/runtimeResults/insert.txt");
-    private final static File getFile = new File("/Users/sebi/Desktop/runtimeResults/get.txt");
-
-    static final FileWriter insert;
-    static final FileWriter get;
-
-    static {
-        try {
-            insert = new FileWriter(insertFile);
-            get = new FileWriter(getFile);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    //
+    // // START DEBUG CODE
+    // private final static File insertFile = new File("/Users/sebi/Desktop/runtimeResults/insert.txt");
+    // private final static File getFile = new File("/Users/sebi/Desktop/runtimeResults/get.txt");
+    //
+    // static final FileWriter insert;
+    // static final FileWriter get;
+    //
+    // static {
+    // try {
+    // insert = new FileWriter(insertFile);
+    // get = new FileWriter(getFile);
+    // } catch (IOException e) {
+    // throw new RuntimeException(e);
+    // }
+    // }
 
     /**
      * Name for the database.
@@ -182,10 +182,10 @@ public final class LRULog {
                     val = new LogValue(null, null);
                 }
                 mCache.put(pKey, val);
-                get.write(pKey.getLevel() + "," + pKey.getSeq() + "\n");
-                get.flush();
+                // get.write(pKey.getLevel() + "," + pKey.getSeq() + "\n");
+                // get.flush();
 
-            } catch (final IOException | DatabaseException exc) {
+            } catch (DatabaseException exc) {
                 throw new TTIOException(exc);
             }
         }
@@ -252,11 +252,11 @@ public final class LRULog {
             mValueBinding.objectToEntry(pVal, valueEntry);
             try {
                 mDatabase.put(null, keyEntry, valueEntry);
+                //
+                // insert.write(pKey.getLevel() + "," + pKey.getSeq() + "\n");
+                // insert.flush();
 
-                insert.write(pKey.getLevel() + "," + pKey.getSeq() + "\n");
-                insert.flush();
-
-            } catch (final IOException | DatabaseException exc) {
+            } catch (DatabaseException exc) {
                 throw new RuntimeException(exc);
             }
         }

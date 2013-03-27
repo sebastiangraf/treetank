@@ -45,21 +45,21 @@ import com.google.common.cache.CacheBuilder;
  */
 public class JCloudsReader implements IBackendReader {
 
-    private final static File readFile = new File("/Users/sebi/Desktop/runtimeResults/readaccess.txt");
-    private final static File downloadFile =
-        new File("/Users/sebi/Desktop/runtimeResults/downloadaccess.txt");
-
-    static final FileWriter reader;
-    static final FileWriter download;
-
-    static {
-        try {
-            reader = new FileWriter(readFile);
-            download = new FileWriter(downloadFile);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+//    private final static File readFile = new File("/Users/sebi/Desktop/runtimeResults/readaccess.txt");
+//    private final static File downloadFile =
+//        new File("/Users/sebi/Desktop/runtimeResults/downloadaccess.txt");
+//
+//    static final FileWriter reader;
+//    static final FileWriter download;
+//
+//    static {
+//        try {
+//            reader = new FileWriter(readFile);
+//            download = new FileWriter(downloadFile);
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 
     private final static long POISONNUMBER = -15;
 
@@ -134,8 +134,8 @@ public class JCloudsReader implements IBackendReader {
         if (returnval == null) {
             try {
                 returnval = getAndprefetchBuckets(pKey);
-                reader.write(returnval.getPageKey() + "," + returnval.getClass().getName() + "\n");
-                reader.flush();
+//                reader.write(returnval.getPageKey() + "," + returnval.getClass().getName() + "\n");
+//                reader.flush();
             } catch (Exception exc) {
                 throw new TTIOException(exc);
             }
@@ -238,8 +238,8 @@ public class JCloudsReader implements IBackendReader {
             // mCache.put(mBucketId, page);
             // }
 
-            download.write(page.getPageKey() + "," + page.getClass().getName() + "\n");
-            download.flush();
+            // download.write(page.getPageKey() + "," + page.getClass().getName() + "\n");
+            // download.flush();
 
             final IPage returnVal = page;
 

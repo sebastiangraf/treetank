@@ -28,21 +28,21 @@ import org.treetank.page.interfaces.IPage;
  */
 public class JCloudsWriter implements IBackendWriter {
 
-    // START DEBUG CODE
-    private final static File writeFile = new File("/Users/sebi/Desktop/runtimeResults/writeaccess.txt");
-    private final static File uploadFile = new File("/Users/sebi/Desktop/runtimeResults/uploadaccess.txt");
-
-    static final FileWriter writer;
-    static final FileWriter upload;
-
-    static {
-        try {
-            writer = new FileWriter(writeFile);
-            upload = new FileWriter(uploadFile);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+//    // START DEBUG CODE
+//    private final static File writeFile = new File("/Users/sebi/Desktop/runtimeResults/writeaccess.txt");
+//    private final static File uploadFile = new File("/Users/sebi/Desktop/runtimeResults/uploadaccess.txt");
+//
+//    static final FileWriter writer;
+//    static final FileWriter upload;
+//
+//    static {
+//        try {
+//            writer = new FileWriter(writeFile);
+//            upload = new FileWriter(uploadFile);
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 
     private final static long POISONNUMBER = -15;
 
@@ -91,8 +91,8 @@ public class JCloudsWriter implements IBackendWriter {
     @Override
     public void write(final IPage pPage) throws TTIOException, TTByteHandleException {
         try {
-            writer.write(pPage.getPageKey() + "," + pPage.getClass().getName() + "\n");
-            writer.flush();
+//            writer.write(pPage.getPageKey() + "," + pPage.getClass().getName() + "\n");
+//            writer.flush();
 
             new WriteTask(pPage).call();
             // Future<Long> task = mWriterCompletion.submit(new WriteTask(pPage));
@@ -182,8 +182,8 @@ public class JCloudsWriter implements IBackendWriter {
                 mReader.mBlobStore.putBlob(mReader.mResourceName, blob);
                 finished = true;
 
-                upload.write(mPage.getPageKey() + "," + mPage.getClass().getName() + "\n");
-                upload.flush();
+                // upload.write(mPage.getPageKey() + "," + mPage.getClass().getName() + "\n");
+                // upload.flush();
             }
 
             return mPage.getPageKey();
