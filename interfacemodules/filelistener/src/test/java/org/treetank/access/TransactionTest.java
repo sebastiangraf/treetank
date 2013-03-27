@@ -7,12 +7,12 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.Random;
 
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.CoreTestHelper;
 import org.treetank.ModuleFactory;
-import org.treetank.access.FilelistenerWriteTrx;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.StandardSettings;
@@ -54,25 +54,29 @@ public class TransactionTest {
     private final String file2RelativePath = "2.txt";
 
     // Setting up the storage we want to operate on.
-    @BeforeClass
+    @BeforeMethod
     public void setUp() throws TTException {
         CoreTestHelper.deleteEverything();
         mHolder = CoreTestHelper.Holder.generateStorage();
         Properties props =
-            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
-                .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
+            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
-
         CoreTestHelper.Holder.generateSession(mHolder, mResource);
-
         mSession = mHolder.getSession();
-
         mTrx = new FilelistenerWriteTrx(mSession.beginPageWriteTransaction(), mSession);
-
         tmpDir = Files.createTempDir();
     }
 
-    @Test(enabled=true)
+    @AfterMethod
+    public void tearDown() throws TTException {
+        mTrx.commit();
+        mTrx.close();
+        mSession.close();
+        CoreTestHelper.deleteEverything();
+    }
+
+    @Test
     public void testTransactions() throws TTException, IOException {
 
         // First file is empty.
