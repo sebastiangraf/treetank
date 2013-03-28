@@ -13,7 +13,7 @@ import org.treetank.access.conf.ModuleSetter;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
 import org.treetank.filelistener.exceptions.StorageAlreadyExistsException;
-import org.treetank.filelistener.exceptions.StorageNotExistingException;
+import org.treetank.filelistener.exceptions.ResourceNotExistingException;
 import org.treetank.filelistener.file.node.FileNodeFactory;
 import org.treetank.filelistener.file.node.FilelistenerMetaPageFactory;
 
@@ -38,16 +38,16 @@ public class StorageManagerTest {
     }
 
     @AfterMethod
-    public void tearDown() throws TTException, StorageNotExistingException {
-        StorageManager.removeStorage(mStorageName);
+    public void tearDown() throws TTException, ResourceNotExistingException {
+        StorageManager.removeResource(mStorageName);
     }
 
     /**
-     * @throws StorageNotExistingException
+     * @throws ResourceNotExistingException
      * @throws TTException
      */
     @Test
-    public void testGetSession() throws StorageNotExistingException, TTException {
+    public void testGetSession() throws ResourceNotExistingException, TTException {
         ISession session = StorageManager.getSession(mStorageName);
         assertNotNull(session);
         assertNotNull(session.beginPageWriteTransaction());
@@ -67,11 +67,11 @@ public class StorageManagerTest {
 
     /**
      * @throws TTException
-     * @throws StorageNotExistingException
+     * @throws ResourceNotExistingException
      */
-    @Test
-    public void testRemoveStorage() throws TTException, StorageNotExistingException {
-        StorageManager.removeStorage(mStorageName);
+    @Test(enabled = false) // Not enabled because used in tear down already.
+    public void testRemoveResource() throws TTException, ResourceNotExistingException {
+        StorageManager.removeResource(mStorageName);
 
         List<String> storages = StorageManager.getResources();
 

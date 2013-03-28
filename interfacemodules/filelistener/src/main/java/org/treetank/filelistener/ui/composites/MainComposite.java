@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.treetank.exception.TTException;
-import org.treetank.filelistener.exceptions.StorageNotExistingException;
+import org.treetank.filelistener.exceptions.ResourceNotExistingException;
 import org.treetank.filelistener.file.Filelistener;
 import org.treetank.filelistener.ui.dialogs.RestoreDialog;
 
@@ -70,7 +70,7 @@ public class MainComposite extends Composite{
         
         try {
             mListener = new Filelistener();
-            
+
             try {
                 for(Entry<String, String> e : Filelistener.getFilelisteners().entrySet()){
                     mList.add(e.getValue() + " : " + e.getKey());
@@ -78,12 +78,12 @@ public class MainComposite extends Composite{
                     mListener.watchDir(new File(e.getValue()));
                     
                     mStyledText.setText(mStyledText.getText() + "\n" + "\tWatching dir: " + e.getValue());
-                    
-                    try {
-                        mListener.startListening();
-                    } catch (StorageNotExistingException | TTException e1) {
-                        e1.printStackTrace();
-                    }
+                }
+                
+                try {
+                    mListener.startListening();
+                } catch (ResourceNotExistingException | TTException e1) {
+                    e1.printStackTrace();
                 }
             } catch (ClassNotFoundException | IOException e) {
                 e.printStackTrace();
@@ -136,14 +136,14 @@ public class MainComposite extends Composite{
                     mListener.watchDir(new File(e.getValue()));
                     
                     mStyledText.setText(mStyledText.getText() + "\n" + "\tWatching dir: " + e.getValue());
-                    
-                    try {
-                        mListener.startListening();
-                    } catch (StorageNotExistingException e1) {
-                        e1.printStackTrace();
-                    } catch (TTException e1) {
-                        e1.printStackTrace();
-                    }
+                }
+                
+                try {
+                    mListener.startListening();
+                } catch (ResourceNotExistingException e1) {
+                    e1.printStackTrace();
+                } catch (TTException e1) {
+                    e1.printStackTrace();
                 }
             } catch (ClassNotFoundException | IOException e) {
                 e.printStackTrace();

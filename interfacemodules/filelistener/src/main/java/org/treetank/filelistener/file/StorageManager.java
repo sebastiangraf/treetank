@@ -13,12 +13,11 @@ import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
 import org.treetank.exception.TTException;
+import org.treetank.filelistener.exceptions.ResourceNotExistingException;
 import org.treetank.filelistener.exceptions.StorageAlreadyExistsException;
-import org.treetank.filelistener.exceptions.StorageNotExistingException;
 import org.treetank.filelistener.file.node.FileNodeFactory;
 import org.treetank.filelistener.file.node.FilelistenerMetaPageFactory;
 import org.treetank.io.IBackend.IBackendFactory;
-import org.treetank.io.IOUtils;
 import org.treetank.revisioning.IRevisioning;
 
 import com.google.inject.AbstractModule;
@@ -123,16 +122,16 @@ public class StorageManager {
      * 
      * @param resourceName
      * @return a new {@link ISession} for the resource
-     * @throws StorageNotExistingException
+     * @throws ResourceNotExistingException
      * @throws TTException
      */
-    public static ISession getSession(String resourceName) throws StorageNotExistingException, TTException {
+    public static ISession getSession(String resourceName) throws ResourceNotExistingException, TTException {
         File storageFile = new File(STORAGE_PATH);
 
         ISession session = null;
 
         if (!storageFile.exists()) {
-            throw new StorageNotExistingException();
+            throw new ResourceNotExistingException();
         } else {
             new StorageConfiguration(storageFile);
 
@@ -151,15 +150,13 @@ public class StorageManager {
      * 
      * It will delete the whole folder of the configuration.
      * 
-     * @param pStorageName
+     * @param pResourceName
      * @throws TTException
-     * @throws StorageNotExistingException
+     * @throws ResourceNotExistingException
      */
-    public static void removeStorage(String pStorageName) throws TTException, StorageNotExistingException {
-        File storageConfiguration = new File(new StringBuilder().append(STORAGE_PATH).toString());
-
-        IOUtils.recursiveDelete(storageConfiguration);
-
+    public static void removeResource(String pResourceName) throws TTException, ResourceNotExistingException {
+        ISession session = getSession(pResourceName);
+        session.truncate();
     }
 
 }
