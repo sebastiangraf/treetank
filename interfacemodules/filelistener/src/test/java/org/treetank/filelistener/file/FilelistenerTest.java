@@ -16,7 +16,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.treetank.access.conf.ModuleSetter;
 import org.treetank.exception.TTException;
-import org.treetank.filelistener.exceptions.StorageNotExistingException;
+import org.treetank.filelistener.exceptions.ResourceNotExistingException;
 import org.treetank.filelistener.file.node.FileNodeFactory;
 import org.treetank.filelistener.file.node.FilelistenerMetaPageFactory;
 
@@ -53,8 +53,11 @@ public class FilelistenerTest {
      */
     @AfterMethod
     public void tearDown() throws Exception {
-        StorageManager.removeStorage(RESOURCE_1);
-        StorageManager.removeStorage(RESOURCE_2);
+//        StorageManager.removeResource(RESOURCE_1); Not necessary since Filelistener.removeFileListener(String resourceName) already deletes the resource.
+//        StorageManager.removeResource(RESOURCE_2); Not necessary since Filelistener.removeFileListener(String resourceName) already deletes the resource.
+
+        filelistener.removeFilelistener(RESOURCE_1);
+        filelistener.removeFilelistener(RESOURCE_2);
         TMPDIR_1.delete();
         TMPDIR_2.delete();
     }
@@ -66,11 +69,11 @@ public class FilelistenerTest {
      * @throws ClassNotFoundException
      * @throws FileNotFoundException
      * @throws TTException
-     * @throws StorageNotExistingException
+     * @throws ResourceNotExistingException
      */
     @Test
     public void testFilelistener() throws FileNotFoundException, ClassNotFoundException, IOException,
-        StorageNotExistingException, TTException {
+        ResourceNotExistingException, TTException {
         // Testing adding of Filelisteners
         Filelistener.addFilelistener(RESOURCE_1, TMPDIR_1.getAbsolutePath());
         Filelistener.addFilelistener(RESOURCE_2, TMPDIR_2.getAbsolutePath());
@@ -98,9 +101,6 @@ public class FilelistenerTest {
         Files.write(bytesToWrite, new File(TMPDIR_2 + File.separator + "file2.txt"));
 
         filelistener.shutDownListener();
-
-        filelistener.removeFilelistener(RESOURCE_1);
-        filelistener.removeFilelistener(RESOURCE_2);
 
     }
 

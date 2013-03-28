@@ -30,7 +30,7 @@ import org.treetank.access.FilelistenerWriteTrx;
 import org.treetank.api.IFilelistenerWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
-import org.treetank.filelistener.exceptions.StorageNotExistingException;
+import org.treetank.filelistener.exceptions.ResourceNotExistingException;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
@@ -94,11 +94,11 @@ public class Filelistener {
      * @throws FileNotFoundException
      * @throws ClassNotFoundException
      * @throws IOException
-     * @throws StorageNotExistingException
+     * @throws ResourceNotExistingException
      * @throws TTException
      */
     public void startListening() throws FileNotFoundException, ClassNotFoundException, IOException,
-        StorageNotExistingException, TTException {
+        ResourceNotExistingException, TTException {
         mProcessingThread = new Thread() {
             public void run() {
                 try {
@@ -119,11 +119,11 @@ public class Filelistener {
      * @throws FileNotFoundException
      * @throws ClassNotFoundException
      * @throws IOException
-     * @throws StorageNotExistingException
+     * @throws ResourceNotExistingException
      * @throws TTException
      */
     private void initSessions() throws FileNotFoundException, ClassNotFoundException, IOException,
-        StorageNotExistingException, TTException {
+        ResourceNotExistingException, TTException {
         Map<String, String> filelisteners = getFilelisteners();
         mSessions = new HashMap<String, ISession>();
         mTrx = new HashMap<String, IFilelistenerWriteTrx>();
@@ -131,7 +131,7 @@ public class Filelistener {
         if (filelisteners.isEmpty()) {
             return;
         }
-
+        
         for (Entry<String, String> e : filelisteners.entrySet()) {
             mSessions.put(e.getKey(), StorageManager.getSession(e.getKey()));
             mTrx.put(e.getKey(), new FilelistenerWriteTrx(mSessions.get(e.getKey())
@@ -413,9 +413,9 @@ public class Filelistener {
      * @return true if resource could be removed
      * @throws IOException
      * @throws TTException 
-     * @throws StorageNotExistingException 
+     * @throws ResourceNotExistingException 
      */
-    public boolean removeFilelistener(String pResourcename) throws IOException, TTException, StorageNotExistingException{
+    public boolean removeFilelistener(String pResourcename) throws IOException, TTException, ResourceNotExistingException{
         mFilelistenerToPaths = new HashMap<String, String>();
 
         File listenerFilePaths = new File(StorageManager.ROOT_PATH + File.separator + "mapping.data");
@@ -424,7 +424,7 @@ public class Filelistener {
 
         mFilelistenerToPaths.remove(pResourcename);
         
-        StorageManager.removeStorage(pResourcename);
+        StorageManager.removeResource(pResourcename);
 
         ByteArrayDataOutput output = ByteStreams.newDataOutput();
         for (Entry<String, String> e : mFilelistenerToPaths.entrySet()) {
