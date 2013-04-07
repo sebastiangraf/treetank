@@ -58,19 +58,20 @@ public class SlidingSnapshot implements IRevisioning {
             };
         // ...iterate through the nodes and check if it is stored..
         for (int i = 0; i < pPages[0].getNodes().length; i++) {
-            // ... form the newest version to the oldest one and..
-            for (int j = 0; j < pPages.length; j++) {
-                // if the node is set, just continue with the next node, otherwise..
-                if (returnVal[0].getNode(i) != null) {
-                    continue;
+            boolean continueVal = true;
+            // ... form the newest version to the oldest one..
+            for (int j = 0; j < pPages.length && continueVal; j++) {
+                // check if the node is not set..
+                if (returnVal[0].getNode(i) == null && pPages[j].getNode(i) != null) {
+                    // ...set it to the read-cache and..
+                    returnVal[0].setNode(i, pPages[j].getNode(i));
+                    // ..if we receive the oldest version where the node was not set yet, then copy it by hand
+                    if (pPages.length >= pRevisionsToRestore && j == pPages.length - 1) {
+                        returnVal[1].setNode(i, pPages[j].getNode(i));
+                    }
+                    // escape this loop since val was set
+                    continueVal = false;
                 }
-                // ...set it to the read-cache and..
-                returnVal[0].setNode(i, pPages[j].getNode(i));
-                // ..if we receive the oldest version where the node was not set yet, then copy it by hand
-                if (pPages.length >= pRevisionsToRestore && j == pPages.length - 1) {
-                    returnVal[1].setNode(i, pPages[j].getNode(i));
-                }
-
             }
         }
         // return the container
