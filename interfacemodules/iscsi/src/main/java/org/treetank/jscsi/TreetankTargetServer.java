@@ -104,7 +104,7 @@ public class TreetankTargetServer {
 
         final IStorage db = Storage.openStorage(config.mFile);
         db.createResource(resConf);
-        final ISession session = db.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
+        final ISession session = db.getSession(new SessionConfiguration("iscsi", StandardSettings.KEY));
 
         TargetServer target =
             new TargetServer(TreetankConfiguration.create(TreetankConfiguration.CONFIGURATION_SCHEMA_FILE,
