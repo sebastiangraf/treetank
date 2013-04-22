@@ -27,6 +27,9 @@ package org.treetank.jscsi;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.io.IOException;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.jscsi.target.storage.IStorageModule;
 import org.slf4j.Logger;
@@ -36,7 +39,6 @@ import org.treetank.api.IIscsiWriteTrx;
 import org.treetank.api.INode;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
-import org.treetank.exception.TTIOException;
 
 /**
  * <h1>TreetankStorageModule</h1>
@@ -73,6 +75,11 @@ public class TreetankStorageModule implements IStorageModule {
      * {@link IIscsiWriteTrx} that is used to write/read from treetank.
      */
     private final IIscsiWriteTrx mRtx;
+    
+    /**
+     * Determine whether or not the device has been bootstraped and is readable.
+     */
+    private boolean mDeviceReady = true;
 
     /**
      * Creates a storage module that is used by the target to handle I/O.
@@ -85,19 +92,38 @@ public class TreetankStorageModule implements IStorageModule {
      *             will be thrown if there are problems creating this storage.
      */
     public TreetankStorageModule(final long pNodeNumber, final ISession pSession) throws TTException {
-
+        
+        mDeviceReady = false;
+        
         mNodeNumbers = pNodeNumber;
-
+        
         LOGGER.info("Initializing storagemodule with: number of nodes=" + mNodeNumbers + ", blockSize="
             + IStorageModule.VIRTUAL_BLOCK_SIZE);
-
+        
         mSession = pSession;
         mRtx = new IscsiWriteTrx(mSession.beginPageWriteTransaction(), mSession);
+        
+        ExecutorService service = Executors.newSingleThreadExecutor();
+        
+        service.submit(new CreateStorageCallable());
 
-        try {
+    }
+
+    /**
+     * A callable to bootstrap the storage device in the background
+     * so the target is available for discovery immdiately.
+     * 
+     * @author Andreas Rain
+     * 
+     */
+    class CreateStorageCallable implements Callable<Void> {
+
+        @Override
+        public Void call() throws Exception {
             createStorage();
-        } catch (IOException exc) {
-            throw new TTIOException(exc);
+            LOGGER.info("Device is ready");
+            mDeviceReady = true;
+            return null;
         }
 
     }
@@ -130,15 +156,15 @@ public class TreetankStorageModule implements IStorageModule {
 
                 try {
                     // Bootstrapping nodes containing clusterSize -many blocks/sectors.
-                    LOGGER.info("Bootstraping node " + i + "\tof " + (mNodeNumbers - 1));
+                    LOGGER.debug("Bootstraping node " + i + "\tof " + (mNodeNumbers - 1));
                     this.mRtx.bootstrap(new byte[TreetankStorageModule.BYTES_IN_NODE], hasNextNode);
                 } catch (TTException e) {
                     throw new IOException(e);
                 }
 
-                if (i % 10 == 0) {
-                    this.mRtx.commit();
-                }
+//                if (i % 10000 == 0) {
+//                    this.mRtx.commit();
+//                }
             }
 
             this.mRtx.commit();
@@ -179,13 +205,19 @@ public class TreetankStorageModule implements IStorageModule {
      */
     public void read(byte[] bytes, long storageIndex) throws IOException {
 
-        LOGGER.info("Starting to read with param: " + "\nstorageIndex = " + storageIndex);
+        LOGGER.info("Starting to read with param: " + "\nstorageIndex = " + storageIndex + "\nbytes.length = " + bytes.length);
 
         long startIndex = storageIndex / BYTES_IN_NODE;
         int startIndexOffset = (int)(storageIndex % BYTES_IN_NODE);
 
         long endIndex = (storageIndex + bytes.length) / BYTES_IN_NODE;
+
         int endIndexMax = (int)((storageIndex + bytes.length) % BYTES_IN_NODE);
+
+        LOGGER.debug("startIndex: " + startIndex);
+        LOGGER.debug("startIndexOffset: " + startIndexOffset);
+        LOGGER.debug("endIndex: " + endIndex);
+        LOGGER.debug("endIndexMax: " + endIndexMax);
 
         int bytesRead =
             bytes.length + startIndexOffset > BYTES_IN_NODE ? BYTES_IN_NODE - startIndexOffset : bytes.length;
@@ -202,19 +234,24 @@ public class TreetankStorageModule implements IStorageModule {
 
         }
 
-        if (startIndex != endIndex) {
+        if (startIndex != endIndex && endIndex < mNodeNumbers) {
             checkState(mRtx.moveTo(endIndex));
             data = mRtx.getValueOfCurrentNode();
             System.arraycopy(data, 0, bytes, bytesRead, endIndexMax);
 
+            bytesRead += endIndexMax;
         }
-        checkState(bytesRead + endIndexMax == bytes.length);
+
+        // Bytes read is the actual number of bytes that have been read.
+        // The two lengths have to match, otherwise not enough bytes have been read (or too much?).
+        checkState(bytesRead == bytes.length);
     }
 
     /**
      * {@inheritDoc}
      */
     public void write(byte[] bytes, long storageIndex) throws IOException {
+
         long startIndex = storageIndex / BYTES_IN_NODE;
         int startIndexOffset = (int)(storageIndex % BYTES_IN_NODE);
 
@@ -239,16 +276,29 @@ public class TreetankStorageModule implements IStorageModule {
 
             }
 
-            if (startIndex != endIndex) {
+            if (startIndex != endIndex && endIndex < mNodeNumbers) {
                 checkState(mRtx.moveTo(endIndex));
                 data = mRtx.getValueOfCurrentNode();
                 System.arraycopy(bytes, bytesWritten, data, 0, endIndexMax);
                 mRtx.setValue(data);
+
+                bytesWritten += endIndexMax;
             }
-            checkState(bytesWritten + endIndexMax == bytes.length);
+
+            // Bytes written is the actual number of bytes that have been written.
+            // The two lengths have to match, otherwise not enough bytes have been written (or too much?).
+            checkState(bytesWritten == bytes.length);
         } catch (Exception exc) {
             throw new IOException(exc);
         }
+    }
+    
+    /**
+     * @return  true, if device is bootstraped
+     *          false, if bootstraping is still in process
+     */
+    public boolean isReady(){
+        return mDeviceReady;
     }
 
     /**

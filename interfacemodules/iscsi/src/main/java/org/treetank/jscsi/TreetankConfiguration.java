@@ -41,7 +41,6 @@ import org.jscsi.target.Configuration;
 import org.jscsi.target.Target;
 import org.jscsi.target.settings.TextKeyword;
 import org.jscsi.target.storage.IStorageModule;
-import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
 import org.w3c.dom.Document;
@@ -64,13 +63,15 @@ public class TreetankConfiguration extends Configuration {
 
     /**
      * Create a new {@link TreetankConfiguration}
-     * 
-     * @param pConf
-     *            you have to pass a valid {@link StorageConfiguration}
+     * @param pSession 
+     *            a vaid session for the treetank storage has to be intitalized
+     *            and passed here.
+     * @param pTargetAddress
+     *            pass the targets address to the backend to make sure the right network interface is used.
      * @throws IOException
      */
-    public TreetankConfiguration(final ISession pSession) throws IOException {
-        super();
+    public TreetankConfiguration(final ISession pSession, final String pTargetAddress) throws IOException {
+        super(pTargetAddress);
         this.mSession = pSession;
     }
 
@@ -80,6 +81,8 @@ public class TreetankConfiguration extends Configuration {
      * @param schemaLocation
      * @param configFile
      * @param session
+     * @param pTargetAddress
+     *            pass the targets address to the backend to make sure the right network interface is used.
      * @return {@link TreetankConfiguration}
      * @throws SAXException
      * @throws ParserConfigurationException
@@ -87,7 +90,7 @@ public class TreetankConfiguration extends Configuration {
      * @throws TTException
      */
     public static TreetankConfiguration create(final File schemaLocation, final File configFile,
-        ISession session) throws SAXException, ParserConfigurationException, IOException, TTException {
+        ISession session, final String pTargetAddress) throws SAXException, ParserConfigurationException, IOException, TTException {
 
         final SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         final Schema schema = schemaFactory.newSchema(schemaLocation);
@@ -107,7 +110,7 @@ public class TreetankConfiguration extends Configuration {
         Document root = (Document)result.getNode();
 
         // TargetName
-        TreetankConfiguration returnConfiguration = new TreetankConfiguration(session);
+        TreetankConfiguration returnConfiguration = new TreetankConfiguration(session, pTargetAddress);
 
         Element targetListNode = (Element)root.getElementsByTagName(ELEMENT_TARGET_LIST).item(0);
         NodeList targetList = targetListNode.getElementsByTagName(ELEMENT_TARGET);

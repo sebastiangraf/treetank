@@ -24,7 +24,14 @@
 
 package org.treetank.jscsi;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
 import java.util.Properties;
 
 import org.jscsi.target.TargetServer;
@@ -70,6 +77,48 @@ public class TreetankTargetServer {
         StorageConfiguration config;
         File configFile;
 
+        System.out.println("This system provides more than one IP Address to advertise.\n");
+        
+        Enumeration<NetworkInterface> interfaceEnum = NetworkInterface.getNetworkInterfaces();
+        NetworkInterface i;
+        int addressCounter = 0;
+        List<InetAddress> addresses = new ArrayList<InetAddress>();
+        while(interfaceEnum.hasMoreElements()){
+                i = interfaceEnum.nextElement();
+                Enumeration<InetAddress> addressEnum = i.getInetAddresses();
+                InetAddress address;
+                
+                while(addressEnum.hasMoreElements()){
+                        address = addressEnum.nextElement();
+                        System.out.println("[" + addressCounter + "] " + address.getHostAddress());
+                        addresses.add(address);
+                        addressCounter++;
+                }
+        }
+        
+        
+        /*
+         * Getting the desired address from the command line.
+         * You can't automatically make sure to always use the correct
+         * host address.
+         */
+        System.out.print("\nWhich one should be used?\nType in the number: ");
+        Integer chosenIndex = null;
+        
+        while(chosenIndex == null){
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+            String line = br.readLine();
+            try{
+                chosenIndex = Integer.parseInt(line);
+            }
+            catch(NumberFormatException nfe){
+                chosenIndex = null;
+            }
+        }
+        
+        String targetAddress = addresses.get(chosenIndex).getHostAddress();
+        System.out.println("Using ip address " + addresses.get(chosenIndex).getHostAddress());
+
         switch (args.length) {
         case 0:
             config =
@@ -90,7 +139,7 @@ public class TreetankTargetServer {
                 "Only zero or one Parameter (Path to Configuration-File) allowed!");
         }
 
-        Storage.truncateStorage(config);
+//        Storage.truncateStorage(config);
         Storage.createStorage(config);
 
         // Guice Stuff for building the module
@@ -101,14 +150,14 @@ public class TreetankTargetServer {
             injector.getInstance(IResourceConfigurationFactory.class);
         final Properties props = StandardSettings.getProps(config.mFile.getAbsolutePath(), "iscsi");
         final ResourceConfiguration resConf = resFac.create(props);
-
+        
         final IStorage db = Storage.openStorage(config.mFile);
         db.createResource(resConf);
         final ISession session = db.getSession(new SessionConfiguration("iscsi", StandardSettings.KEY));
 
         TargetServer target =
             new TargetServer(TreetankConfiguration.create(TreetankConfiguration.CONFIGURATION_SCHEMA_FILE,
-                configFile, session));
+                configFile, session, targetAddress));
 
         target.call();
     }

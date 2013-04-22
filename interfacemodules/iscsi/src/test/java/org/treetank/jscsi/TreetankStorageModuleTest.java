@@ -67,9 +67,10 @@ public class TreetankStorageModuleTest {
      * Setup method for this test.
      * 
      * @throws TTException
+     * @throws InterruptedException 
      */
     @BeforeMethod
-    public void setUp() throws TTException {
+    public void setUp() throws TTException, InterruptedException {
         CoreTestHelper.deleteEverything();
         CoreTestHelper.Holder.generateStorage();
         Properties props =
@@ -79,8 +80,17 @@ public class TreetankStorageModuleTest {
         CoreTestHelper.Holder holder = CoreTestHelper.Holder.generateStorage();
         CoreTestHelper.Holder.generateSession(holder, mResource);
         storageModule = new TreetankStorageModule(NODENUMBER, holder.getSession());
+        
+        while(!storageModule.isReady()){
+            Thread.sleep(500);
+        }
     }
 
+    /**
+     * Method to clear data that has been written during tests.
+     * 
+     * @throws TTException
+     */
     @AfterMethod
     public void tearDown() throws TTException {
         CoreTestHelper.deleteEverything();
