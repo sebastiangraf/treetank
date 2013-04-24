@@ -49,6 +49,10 @@ import org.treetank.exception.TTException;
  * @author Andreas Rain
  */
 public class TreetankStorageModule implements IStorageModule {
+    
+    /** Bytewriter counter
+     *  - If a certain amount of bytes have been written, a commit is made to treetank. */
+    private static int BYTE_WRITER_COUNTER = 0;
 
     /** Number of Blocks in one Cluster. */
     public static final int BLOCKS_IN_NODE = 8;
@@ -252,6 +256,8 @@ public class TreetankStorageModule implements IStorageModule {
      */
     public void write(byte[] bytes, long storageIndex) throws IOException {
 
+        LOGGER.info("Starting to write with param: " + "\nstorageIndex = " + storageIndex + "\nbytes.length = " + bytes.length);
+        
         long startIndex = storageIndex / BYTES_IN_NODE;
         int startIndexOffset = (int)(storageIndex % BYTES_IN_NODE);
 
@@ -288,6 +294,17 @@ public class TreetankStorageModule implements IStorageModule {
             // Bytes written is the actual number of bytes that have been written.
             // The two lengths have to match, otherwise not enough bytes have been written (or too much?).
             checkState(bytesWritten == bytes.length);
+            
+            // Incrementing bytewriter counter
+            BYTE_WRITER_COUNTER += bytesWritten;
+            
+            //If 256 MB written, a commit is made..
+            if(BYTE_WRITER_COUNTER >= 268435456){
+                this.mRtx.commit();
+
+                LOGGER.info("Commited changes to treetank.");
+                BYTE_WRITER_COUNTER = 0;
+            }
         } catch (Exception exc) {
             throw new IOException(exc);
         }
