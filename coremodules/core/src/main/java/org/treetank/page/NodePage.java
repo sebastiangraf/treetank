@@ -31,7 +31,6 @@ import static com.google.common.base.Objects.toStringHelper;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Objects;
 
 import org.treetank.api.INode;
 import org.treetank.exception.TTIOException;
@@ -153,21 +152,6 @@ public final class NodePage implements IPage {
         return toStringHelper(this).add("mPageKey", mPageKey).add("mNodes", mNodes).toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        return Objects.hash(mPageKey, Arrays.hashCode(mNodes));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(Object obj) {
-        return this.hashCode() == obj.hashCode();
-    }
 
     /**
      * Static class to mark deleted entries within the page.
@@ -230,5 +214,40 @@ public final class NodePage implements IPage {
             return toStringHelper(this).add("mNodeKey", mNodeKey).add("mHash", mHash).toString();
         }
 
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (int)(mLastPageKey ^ (mLastPageKey >>> 32));
+        result = prime * result + Arrays.hashCode(mNodes);
+        result = prime * result + (int)(mPageKey ^ (mPageKey >>> 32));
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        NodePage other = (NodePage)obj;
+        if (mLastPageKey != other.mLastPageKey)
+            return false;
+        if (!Arrays.equals(mNodes, other.mNodes))
+            return false;
+        if (mPageKey != other.mPageKey)
+            return false;
+        return true;
     }
 }

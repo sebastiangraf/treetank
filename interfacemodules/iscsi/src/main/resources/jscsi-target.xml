@@ -38,7 +38,7 @@
             <TargetAlias>jSCSI Target</TargetAlias>
             <SyncFileStorage>
                 <Path>/tmp/storage1.dat</Path>
-                <Create size="1.0"/>
+                <Create size="0.51"/>
             </SyncFileStorage>
         </Target>
     </TargetList>

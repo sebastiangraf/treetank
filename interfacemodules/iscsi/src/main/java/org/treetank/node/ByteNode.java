@@ -26,6 +26,7 @@ package org.treetank.node;
 
 import java.io.DataOutput;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Objects;
 
 import org.treetank.api.INode;
@@ -231,6 +232,46 @@ public class ByteNode implements INode {
     public long decIndex() {
         this.index--;
         return this.index;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 36919;
+        int result = 1;
+        result = prime * result + (int)(index ^ (index >>> 32));
+        result = prime * result + (int)(nextNodeKey ^ (nextNodeKey >>> 32));
+        result = prime * result + (int)(nodeKey ^ (nodeKey >>> 32));
+        result = prime * result + (int)(previousNodeKey ^ (previousNodeKey >>> 32));
+        result = prime * result + size;
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ByteNode other = (ByteNode)obj;
+        if (index != other.index)
+            return false;
+        if (nextNodeKey != other.nextNodeKey)
+            return false;
+        if (nodeKey != other.nodeKey)
+            return false;
+        if (previousNodeKey != other.previousNodeKey)
+            return false;
+        if (size != other.size)
+            return false;
+        return true;
     }
 
 }

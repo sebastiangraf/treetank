@@ -30,8 +30,6 @@ package org.treetank.log;
 import static com.google.common.base.Objects.toStringHelper;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -136,7 +134,7 @@ public final class LRULog {
             final EnvironmentConfig config = new EnvironmentConfig();
             config.setAllowCreate(true);
             config.setLocking(false);
-            config.setCacheSize(1024 * 1024);
+            config.setCacheSize(96 * 1024);
             mEnv = new Environment(mLocation, config);
             final DatabaseConfig dbConfig = new DatabaseConfig();
             dbConfig.setAllowCreate(true);
@@ -251,8 +249,22 @@ public final class LRULog {
             mKeyBinding.objectToEntry(pKey, keyEntry);
             mValueBinding.objectToEntry(pVal, valueEntry);
             try {
-                mDatabase.put(null, keyEntry, valueEntry);
-                //
+                
+//                ////TODO DEBUGCODE///////
+//                final DatabaseEntry valueOld = new DatabaseEntry();
+//                OperationStatus status2 = mDatabase.get(null, keyEntry, valueOld, LockMode.DEFAULT);
+//                if (status2 == OperationStatus.SUCCESS) {
+//                    System.out.println(mDatabase.count());
+//                    status2 = mDatabase.delete(null, keyEntry);
+//                    System.out.println(mDatabase.count());
+//                    status2 = mDatabase.get(null, keyEntry, valueOld, LockMode.DEFAULT);
+//                    System.out.println(mDatabase.count());
+//                    mDatabase.sync();
+//                    System.out.println(mDatabase.count());
+//                }
+
+                OperationStatus status = mDatabase.put(null, keyEntry, valueEntry);
+                
                 // insert.write(pKey.getLevel() + "," + pKey.getSeq() + "\n");
                 // insert.flush();
 

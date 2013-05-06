@@ -119,9 +119,11 @@ public class TreetankTargetServer {
 
         switch (args.length) {
         case 0:
+            String file = Files.createTempDir().getAbsolutePath();
+            System.out.println("Using path " + file);
             config =
-                new StorageConfiguration(new File(new StringBuilder(Files.createTempDir().getAbsolutePath())
-                    .append(File.separator).append("tnk").append(File.separator).append("path1").toString()));
+                new StorageConfiguration(new File(new StringBuilder(file).append(File.separator)
+                    .append("tnk").append(File.separator).append("path1").toString()));
             configFile = TreetankConfiguration.CONFIGURATION_CONFIG_FILE;
             break;
         case 1:

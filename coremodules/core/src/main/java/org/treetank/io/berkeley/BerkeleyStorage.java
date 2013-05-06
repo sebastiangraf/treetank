@@ -138,7 +138,7 @@ public final class BerkeleyStorage implements IBackend {
         try {
             final EnvironmentConfig config = new EnvironmentConfig();
             config.setTransactional(true);
-            config.setCacheSize(1024 * 1024);
+            config.setCacheSize(96 * 1024);
             config.setAllowCreate(true);
             mEnv = new Environment(mFile, config);
 
