@@ -8,13 +8,16 @@ import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;
 import org.treetank.io.IBackend;
 import org.treetank.io.IBackend.IBackendFactory;
+import org.treetank.io.berkeley.BerkeleyStorage;
 import org.treetank.io.bytepipe.ByteHandlerPipeline;
 import org.treetank.io.bytepipe.Encryptor;
 import org.treetank.io.bytepipe.IByteHandler;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.io.bytepipe.Zipper;
 import org.treetank.io.combined.CombinedStorage;
+import org.treetank.io.jclouds.JCloudsStorage;
 import org.treetank.revisioning.IRevisioning;
+import org.treetank.revisioning.Incremental;
 import org.treetank.revisioning.SlidingSnapshot;
 
 import com.google.inject.AbstractModule;
@@ -33,12 +36,11 @@ public class ModuleSetter {
     /** Class for MetaFactory. */
     private Class<? extends IMetaEntryFactory> mMetaFacClass;
     /** Class for Revision. */
-    private Class<? extends IRevisioning> mRevisioningClass = SlidingSnapshot.class;
+    private Class<? extends IRevisioning> mRevisioningClass = Incremental.class;
     /** Class for IBackend. */
-    private Class<? extends IBackend> mBackend = CombinedStorage.class;
+    private Class<? extends IBackend> mBackend = JCloudsStorage.class;
     /** Instance for ByteHandler. */
-    private IByteHandlerPipeline mByteHandler = new ByteHandlerPipeline(new Zipper(), new Encryptor(
-        StandardSettings.KEY));
+    private IByteHandlerPipeline mByteHandler = new ByteHandlerPipeline();
     /** Instance for Key. */
     private Key mKey = StandardSettings.KEY;
 

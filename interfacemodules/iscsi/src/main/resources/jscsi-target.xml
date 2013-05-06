@@ -37,8 +37,8 @@
             <TargetName>iqn.2010-04.local-test:disk-1</TargetName>
             <TargetAlias>jSCSI Target</TargetAlias>
             <SyncFileStorage>
-                <Path>D:/Disy-Work/jSCSI/bundles/target/tmp/storage1.dat</Path>
-                <Create size="0.05"/>
+                <Path>/tmp/storage1.dat</Path>
+                <Create size="1.0"/>
             </SyncFileStorage>
         </Target>
     </TargetList>
