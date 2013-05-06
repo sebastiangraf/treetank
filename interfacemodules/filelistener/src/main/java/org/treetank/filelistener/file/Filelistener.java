@@ -288,7 +288,7 @@ public class Filelistener {
             }
         } else {
             ExecutorService s = mExecutorMap.get(getListenerRootPath(dir));
-            if (s != null) {
+            if (s != null && !s.isShutdown()) {
                     FilesystemNotification n =
                         new FilesystemNotification(file.toFile(), relativePath, getListenerRootPath(dir),
                             evtType, trx);

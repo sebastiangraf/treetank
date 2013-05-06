@@ -52,7 +52,7 @@ public class TreetankStorageModule implements IStorageModule {
     
     /** Bytewriter counter
      *  - If a certain amount of bytes have been written, a commit is made to treetank. */
-    private static int BYTE_WRITER_COUNTER = 0;
+    private static long BYTE_WRITER_COUNTER = 0;
 
     /** Number of Blocks in one Cluster. */
     public static final int BLOCKS_IN_NODE = 8;
@@ -101,7 +101,7 @@ public class TreetankStorageModule implements IStorageModule {
         
         mNodeNumbers = pNodeNumber;
         
-        LOGGER.info("Initializing storagemodule with: number of nodes=" + mNodeNumbers + ", blockSize="
+        LOGGER.debug("Initializing storagemodule with: number of nodes=" + mNodeNumbers + ", blockSize="
             + IStorageModule.VIRTUAL_BLOCK_SIZE);
         
         mSession = pSession;
@@ -141,7 +141,7 @@ public class TreetankStorageModule implements IStorageModule {
      */
     private void createStorage() throws IOException {
 
-        LOGGER.info("Creating storage with " + mNodeNumbers + " nodes containing " + BLOCKS_IN_NODE
+        LOGGER.debug("Creating storage with " + mNodeNumbers + " nodes containing " + BLOCKS_IN_NODE
             + " blocks with " + IStorageModule.VIRTUAL_BLOCK_SIZE + " bytes each.");
 
         try {
@@ -209,7 +209,7 @@ public class TreetankStorageModule implements IStorageModule {
      */
     public void read(byte[] bytes, long storageIndex) throws IOException {
 
-        LOGGER.info("Starting to read with param: " + "\nstorageIndex = " + storageIndex + "\nbytes.length = " + bytes.length);
+        LOGGER.debug("Starting to read with param: " + "\nstorageIndex = " + storageIndex + "\nbytes.length = " + bytes.length);
 
         long startIndex = storageIndex / BYTES_IN_NODE;
         int startIndexOffset = (int)(storageIndex % BYTES_IN_NODE);
@@ -256,7 +256,7 @@ public class TreetankStorageModule implements IStorageModule {
      */
     public void write(byte[] bytes, long storageIndex) throws IOException {
 
-        LOGGER.info("Starting to write with param: " + "\nstorageIndex = " + storageIndex + "\nbytes.length = " + bytes.length);
+        LOGGER.debug("Starting to write with param: " + "\nstorageIndex = " + storageIndex + "\nbytes.length = " + bytes.length);
         
         long startIndex = storageIndex / BYTES_IN_NODE;
         int startIndexOffset = (int)(storageIndex % BYTES_IN_NODE);
@@ -298,11 +298,11 @@ public class TreetankStorageModule implements IStorageModule {
             // Incrementing bytewriter counter
             BYTE_WRITER_COUNTER += bytesWritten;
             
-            //If 256 MB written, a commit is made..
+            //If 1024 nodes have been fully written.
             if(BYTE_WRITER_COUNTER >= 268435456){
                 this.mRtx.commit();
 
-                LOGGER.info("Commited changes to treetank.");
+                LOGGER.debug("Commited changes to treetank.");
                 BYTE_WRITER_COUNTER = 0;
             }
         } catch (Exception exc) {
