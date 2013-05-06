@@ -137,6 +137,7 @@ public final class BerkeleyStorage implements IBackend {
     public void initialize() throws TTIOException {
         try {
             final EnvironmentConfig config = new EnvironmentConfig();
+//            config.setSharedCache(true);
             config.setTransactional(true);
             config.setCacheSize(96 * 1024);
             config.setAllowCreate(true);

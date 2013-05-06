@@ -295,16 +295,16 @@ public class TreetankStorageModule implements IStorageModule {
             // The two lengths have to match, otherwise not enough bytes have been written (or too much?).
             checkState(bytesWritten == bytes.length);
             
-//            // Incrementing bytewriter counter
-//            BYTE_WRITER_COUNTER += bytesWritten;
-//            
-//            //If 256 MB written, a commit is made..
-//            if(BYTE_WRITER_COUNTER >= 268435456){
-//                this.mRtx.commit();
-//
-//                LOGGER.info("Commited changes to treetank.");
-//                BYTE_WRITER_COUNTER = 0;
-//            }
+            // Incrementing bytewriter counter
+            BYTE_WRITER_COUNTER += bytesWritten;
+            
+            //If 256 MB written, a commit is made..
+            if(BYTE_WRITER_COUNTER >= 268435456){
+                this.mRtx.commit();
+
+                LOGGER.info("Commited changes to treetank.");
+                BYTE_WRITER_COUNTER = 0;
+            }
         } catch (Exception exc) {
             throw new IOException(exc);
         }

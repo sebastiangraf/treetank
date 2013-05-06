@@ -135,11 +135,14 @@ public final class LRULog {
             config.setAllowCreate(true);
             config.setLocking(false);
             config.setCacheSize(96 * 1024);
+//            config.setSharedCache(true);
             mEnv = new Environment(mLocation, config);
             final DatabaseConfig dbConfig = new DatabaseConfig();
             dbConfig.setAllowCreate(true);
             dbConfig.setExclusiveCreate(true);
             mDatabase = mEnv.openDatabase(null, NAME, dbConfig);
+            
+            
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
         }
