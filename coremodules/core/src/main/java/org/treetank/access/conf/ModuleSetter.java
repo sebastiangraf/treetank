@@ -38,7 +38,7 @@ public class ModuleSetter {
     /** Class for Revision. */
     private Class<? extends IRevisioning> mRevisioningClass = Incremental.class;
     /** Class for IBackend. */
-    private Class<? extends IBackend> mBackend = BerkeleyStorage.class;
+    private Class<? extends IBackend> mBackend = CombinedStorage.class;
     /** Instance for ByteHandler. */
     private IByteHandlerPipeline mByteHandler = new ByteHandlerPipeline();
     /** Instance for Key. */

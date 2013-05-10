@@ -56,9 +56,13 @@ public final class BerkeleyWriter implements IBackendWriter {
 
     /** Current {@link BerkeleyReader} to read with. */
     private final BerkeleyReader mReader;
+    
+    /** Environment for synchronization */
+    private final Environment mEnv;
 
     /**
      * Simple constructor starting with an {@link Environment} and a {@link Storage}.
+     * @param pEnv 
      * 
      * @param pDatabase
      *            {@link Storage} reference where the data should be written to
@@ -68,10 +72,11 @@ public final class BerkeleyWriter implements IBackendWriter {
      * @throws TTIOException
      *             if something odd happens
      */
-    public BerkeleyWriter(final Database pDatabase, final TupleBinding<IPage> pPageBinding)
+    public BerkeleyWriter(Environment pEnv, final Database pDatabase, final TupleBinding<IPage> pPageBinding)
         throws TTIOException {
         mDatabase = pDatabase;
-        mReader = new BerkeleyReader(mDatabase, pPageBinding);
+        mReader = new BerkeleyReader(pEnv, mDatabase, pPageBinding);
+        mEnv = pEnv;
     }
 
     /**
@@ -92,7 +97,6 @@ public final class BerkeleyWriter implements IBackendWriter {
             throw new TTIOException(new StringBuilder("Write of ").append(page.toString()).append(" failed!")
                 .toString());
         }
-
     }
 
     /**

@@ -1,7 +1,5 @@
 package org.treetank.jscsi;
 
-import static org.testng.Assert.assertEquals;
-
 import java.io.IOException;
 import java.util.Properties;
 
@@ -27,7 +25,7 @@ import com.google.inject.Inject;
 @Guice(moduleFactory = ModuleFactory.class)
 public class StorageModuleBenchmark {
 
-    private final static int NODENUMBER = 524288; // 2GB Storage
+    private final static int NODENUMBER = 65536; // 2GB Storage
 
     private TreetankStorageModule storageModule;
 
@@ -69,23 +67,6 @@ public class StorageModuleBenchmark {
     }
 
     /**
-     * Check the logic of the checkBounds method.
-     */
-    @Test
-    public void testBoundaries() {
-        // invalid logical block address
-        assertEquals(1, storageModule.checkBounds(-1, 1));
-        // block addess out of range
-        assertEquals(1, storageModule.checkBounds(NODENUMBER * TreetankStorageModule.BLOCKS_IN_NODE, 1));
-        // length invalid
-        assertEquals(2, storageModule.checkBounds(NODENUMBER * TreetankStorageModule.BLOCKS_IN_NODE - 1, - 1));
-        // length out of range
-        assertEquals(2, storageModule.checkBounds(NODENUMBER * TreetankStorageModule.BLOCKS_IN_NODE - 1, 2));
-        // correct check
-        assertEquals(0, storageModule.checkBounds(NODENUMBER * TreetankStorageModule.BLOCKS_IN_NODE - 1, 1));
-    }
-
-    /**
      * Test functionality of read and write transactions.
      * 
      * @throws TTException
@@ -93,15 +74,81 @@ public class StorageModuleBenchmark {
      */
     @Test
     public void benchStorage() throws TTException, IOException {
+        long startTime;
+        
+        // Write simple.
         final byte[] writeArray = new byte[2 * TreetankStorageModule.BYTES_IN_NODE];
         CoreTestHelper.random.nextBytes(writeArray);
-        for (int j = 0; j < 10; j++) {
+        System.out.println("Writing simply.");
+        for (int j = 0; j < 2; j++) {
+            startTime = System.currentTimeMillis();
             System.out.println("Starting run " + j);
             for(long i = 0; i < NODENUMBER/2; i++){
                 // write
-                System.out.println("StorageIndex: " + (i * 2 * TreetankStorageModule.BYTES_IN_NODE));
                 storageModule.write(writeArray, i * 2 * TreetankStorageModule.BYTES_IN_NODE);
             }
+            printRunTimeTaken(j, System.currentTimeMillis() - startTime);
         }
+        System.out.println("Finished.");
+        
+        //Write distributed.
+        System.out.println("Writing distributed.");
+        for (int j = 0; j < 2; j++) {
+            startTime = System.currentTimeMillis();
+            System.out.println("Starting run " + j);
+            for(long i = 0; i < NODENUMBER/2; i = i+10){
+                // write
+                storageModule.write(writeArray, i * 2 * TreetankStorageModule.BYTES_IN_NODE);
+            }
+            printRunTimeTaken(j, System.currentTimeMillis() - startTime);
+        }
+        System.out.println("Finished.");
+        
+        //Write bigger Junks.
+        System.out.println("Writing bigger Junks.");
+        final byte[] writeArray2 = new byte[32 * TreetankStorageModule.BYTES_IN_NODE];
+        CoreTestHelper.random.nextBytes(writeArray2);
+        for (int j = 0; j < 10; j++) {
+            startTime = System.currentTimeMillis();
+            System.out.println("Starting run " + j);
+            for(long i = 0; i < NODENUMBER/64; i = i+10){
+                // write
+                storageModule.write(writeArray2, i * 2 * TreetankStorageModule.BYTES_IN_NODE);
+            }
+            printRunTimeTaken(j, System.currentTimeMillis() - startTime);
+        }
+        System.out.println("Finished.");
+        
+        //Reading again.
+        System.out.println("Reading.");
+        for (int j = 0; j < 10; j++) {
+            startTime = System.currentTimeMillis();
+            System.out.println("Starting run " + j);
+            for(long i = 0; i < NODENUMBER/2; i++){
+                // write
+                storageModule.read(writeArray, i * 2 * TreetankStorageModule.BYTES_IN_NODE);
+            }
+            printRunTimeTaken(j, System.currentTimeMillis() - startTime);
+        }
+        System.out.println("Finished.");
+        
+        //Reading bigger Junks.
+        System.out.println("Reading bigger Junks.");
+        for (int j = 0; j < 2; j++) {
+            startTime = System.currentTimeMillis();
+            System.out.println("Starting run " + j);
+            for(long i = 0; i < NODENUMBER/64; i = i+10){
+                // write
+                storageModule.read(writeArray2, i * 2 * TreetankStorageModule.BYTES_IN_NODE);
+            }
+            printRunTimeTaken(j, System.currentTimeMillis() - startTime);
+        }
+        System.out.println("Finished.");
+        
     }
+    
+    private void printRunTimeTaken(int pRunNumber, long pTime){
+        System.out.println("Run " + pRunNumber+ " took " + (System.currentTimeMillis() - pTime));
+    }
+    
 }

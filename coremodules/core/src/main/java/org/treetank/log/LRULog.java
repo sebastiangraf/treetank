@@ -47,6 +47,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalCause;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
+import com.sleepycat.je.CacheMode;
 import com.sleepycat.je.Cursor;
 import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseConfig;
@@ -131,15 +132,16 @@ public final class LRULog {
 
         mLocation = new File(pFile, ResourceConfiguration.Paths.TransactionLog.getFile().getName());
         try {
-            final EnvironmentConfig config = new EnvironmentConfig();
+            EnvironmentConfig config = new EnvironmentConfig();
             config.setAllowCreate(true);
+            config = config.setSharedCache(true);
             config.setLocking(false);
-            config.setCacheSize(96 * 1024);
-//            config.setSharedCache(true);
+            config.setCachePercent(40);
             mEnv = new Environment(mLocation, config);
             final DatabaseConfig dbConfig = new DatabaseConfig();
             dbConfig.setAllowCreate(true);
             dbConfig.setExclusiveCreate(true);
+            dbConfig.setDeferredWrite(true);
             mDatabase = mEnv.openDatabase(null, NAME, dbConfig);
             
             

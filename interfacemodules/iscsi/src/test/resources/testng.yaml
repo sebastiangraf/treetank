@@ -5,8 +5,11 @@ parameters: { NodeFactory: org.treetank.node.ByteNodeFactory, MetaFactory: org.t
 tests:
   - name: Unit Tests
     classes:
-      - org.treetank.jscsi.buffering.BufferedWriteTask
       - org.treetank.node.ByteNodeTest
+  - name: Storage Benchmark Berkley
+    parameters: { Revisioning: org.treetank.revisioning.SlidingSnapshot, Backend: org.treetank.io.berkeley.BerkeleyStorage }
+    classes:
+      - org.treetank.jscsi.StorageModuleBenchmark
   - name: Sliding Berkeley
     parameters: { Revisioning: org.treetank.revisioning.SlidingSnapshot, Backend: org.treetank.io.berkeley.BerkeleyStorage }
     classes:
