@@ -23,6 +23,9 @@ public class FilesystemNotification implements Callable<Void>{
 
     /** The file that has been changed */
     private final File mFile;
+    
+    /** Determine whether or not this fsn has finished. */
+    private boolean mFinished;
 
     /** The relative path as a String */
     private final String mRelativePath;
@@ -31,7 +34,7 @@ public class FilesystemNotification implements Callable<Void>{
     private final String mRootPath;
 
     /** The event for this notification */
-    private final WatchEvent.Kind<?> mEvtType;
+    private WatchEvent.Kind<?> mEvtType;
     
     /** Transaction to use */
     private final IFilelistenerWriteTrx mWtx;
@@ -52,6 +55,7 @@ public class FilesystemNotification implements Callable<Void>{
         mRootPath = pRootPath;
         mEvtType = pEvtType;
         mWtx = pWtx;
+        mFinished = false;
     }
 
     public File getFile() {
@@ -65,9 +69,17 @@ public class FilesystemNotification implements Callable<Void>{
     public String getRootPath() {
         return mRootPath;
     }
-
+    
+    public void setEvtType(WatchEvent.Kind<?> pEvtType) {
+        mEvtType = pEvtType;
+    }
+    
     public WatchEvent.Kind<?> getEvtType() {
         return mEvtType;
+    }
+    
+    public boolean isFinished(){
+        return mFinished;
     }
 
     @Override
@@ -94,6 +106,7 @@ public class FilesystemNotification implements Callable<Void>{
         }
         mWtx.commit();
         System.out.println("Commited.");
+        mFinished = true;
         return null;
     }
 

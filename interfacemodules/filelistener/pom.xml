@@ -104,27 +104,27 @@
    </dependencies>
 
    <profiles>
-      <profile>
-         <id>linux32</id>
-         <activation>
-            <os>
-               <name>linux</name>
-            </os>
-         </activation>
-         <dependencies>
-            <dependency>
-               <groupId>org.eclipse.swt</groupId>
-               <artifactId>org.eclipse.swt.gtk.linux.x86</artifactId>
-               <version>${swt.version}</version>
-            </dependency>
-         </dependencies>
-      </profile>
+<!--       <profile> -->
+<!--          <id>linux32</id> -->
+<!--          <activation> -->
+<!--             <os> -->
+<!--                <name>linux</name> -->
+<!--             </os> -->
+<!--          </activation> -->
+<!--          <dependencies> -->
+<!--             <dependency> -->
+<!--                <groupId>org.eclipse.swt</groupId> -->
+<!--                <artifactId>org.eclipse.swt.gtk.linux.x86</artifactId> -->
+<!--                <version>${swt.version}</version> -->
+<!--             </dependency> -->
+<!--          </dependencies> -->
+<!--       </profile> -->
       <profile>
          <id>linux64</id>
          <activation>
             <os>
                <name>linux</name>
-               <arch>x86_x64</arch>
+<!--                <arch>x64</arch> -->
             </os>
          </activation>
          <dependencies>
