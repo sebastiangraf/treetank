@@ -47,14 +47,14 @@ public class StorageModuleBenchmarkSpecificBackend {
      * @throws TTException
      * @throws InterruptedException
      */
-    //Activate to run this before class. Bootstrap does not work and leads to the bug.
-    //@BeforeClass
+    // Activate to run this before class. Bootstrap does not work and leads to the bug.
+    @BeforeClass
     public void setUp() throws TTException, InterruptedException {
         CoreTestHelper.deleteEverything();
-        
+
         final Injector injector =
-        com.google.inject.Guice.createInjector(new ModuleSetter().setNodeFacClass(ByteNodeFactory.class).setMetaFacClass(
-                ISCSIMetaPageFactory.class).createModule());
+            com.google.inject.Guice.createInjector(new ModuleSetter().setNodeFacClass(ByteNodeFactory.class)
+                .setMetaFacClass(ISCSIMetaPageFactory.class).createModule());
         final IResourceConfigurationFactory resFac =
             injector.getInstance(IResourceConfigurationFactory.class);
 
@@ -88,8 +88,8 @@ public class StorageModuleBenchmarkSpecificBackend {
      * @throws TTException
      * @throws IOException
      */
-    
-    @Test(enabled=false)
+
+    @Test
     public void benchStorage() throws TTException, IOException {
         long startTime;
 
