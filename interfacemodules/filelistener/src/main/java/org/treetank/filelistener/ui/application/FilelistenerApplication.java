@@ -14,6 +14,10 @@ import org.eclipse.swt.widgets.Shell;
 import org.treetank.filelistener.ui.composites.MainComposite;
 import org.treetank.filelistener.ui.dialogs.ListenToFolderDialog;
 
+/**
+ * @author Andreas Rain
+ *
+ */
 public class FilelistenerApplication {
 
     protected Shell shell;

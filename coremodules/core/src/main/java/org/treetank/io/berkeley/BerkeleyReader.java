@@ -39,6 +39,7 @@ import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseEntry;
 import com.sleepycat.je.DatabaseException;
+import com.sleepycat.je.Environment;
 import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
 
@@ -59,19 +60,23 @@ public final class BerkeleyReader implements IBackendReader {
 
     /** Cache for reading data. */
     protected final Cache<Long, IPage> mCache;
+    
+    protected final Environment mEnv;
 
     /**
      * Constructor.
+     * @param pEnv 
      * 
      * @param pDatabase
      *            {@link Storage} reference to be connected to
      * @param pPageBinding
      *            {@link TupleBinding} for de/-serializing pages
      */
-    public BerkeleyReader(final Database pDatabase, final TupleBinding<IPage> pPageBinding) {
+    public BerkeleyReader(Environment pEnv, final Database pDatabase, final TupleBinding<IPage> pPageBinding) {
         mDatabase = pDatabase;
         mPageBinding = pPageBinding;
-        mCache = CacheBuilder.newBuilder().maximumSize(10000).build();
+        mCache = CacheBuilder.newBuilder().maximumSize(100).build();
+        mEnv = pEnv;
     }
 
     /**
@@ -97,6 +102,7 @@ public final class BerkeleyReader implements IBackendReader {
                 throw new TTIOException(exc);
             }
             mCache.put(pKey, returnval);
+
         }
         return returnval;
     }

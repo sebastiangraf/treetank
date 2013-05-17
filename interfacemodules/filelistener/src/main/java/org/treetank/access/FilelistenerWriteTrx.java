@@ -29,7 +29,7 @@ import com.google.common.io.Files;
  * @author Andreas Rain
  */
 public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
-
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(FilelistenerWriteTrx.class);
 
     /** Session for abort/commit. */
@@ -129,9 +129,6 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
             }
         }
         
-        lock.release();
-        ch.close();
-        
         BufferedInputStream stream = Files.asByteSource(pFile).openBufferedStream();
         LOGGER.info("Successfully initialized byte source.");
         
@@ -210,6 +207,9 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
         getPageTransaction().setNode(node);
 
         Preconditions.checkArgument(getPageTransaction().getNode(newKey) != null);
+        
+        lock.release();
+        ch.close();
         
         System.out.println("Done writing.");
     }

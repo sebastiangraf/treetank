@@ -25,7 +25,7 @@ import com.google.common.io.ByteStreams;
  */
 public class BucketCleaner {
 
-    private static final String CONTAINER = "grave9283710";
+    private static final String CONTAINER = "grave9283712";
 
     /**
      * 

@@ -34,7 +34,6 @@ import java.io.DataInputStream;
 import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.Objects;
 
 import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;
@@ -101,22 +100,7 @@ public final class LogValue {
         return mModified;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        return Objects.hash(mComplete, mModified);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(Object obj) {
-        return this.hashCode() == obj.hashCode();
-    }
-
+ 
     /**
      * {@inheritDoc}
      */
@@ -177,5 +161,42 @@ public final class LogValue {
                 throw new RuntimeException(exc);
             }
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 80309;
+        int result = 1;
+        result = prime * result + ((mComplete == null) ? 0 : mComplete.hashCode());
+        result = prime * result + ((mModified == null) ? 0 : mModified.hashCode());
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        LogValue other = (LogValue)obj;
+        if (mComplete == null) {
+            if (other.mComplete != null)
+                return false;
+        } else if (!mComplete.equals(other.mComplete))
+            return false;
+        if (mModified == null) {
+            if (other.mModified != null)
+                return false;
+        } else if (!mModified.equals(other.mModified))
+            return false;
+        return true;
     }
 }

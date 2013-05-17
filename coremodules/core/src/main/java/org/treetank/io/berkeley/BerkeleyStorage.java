@@ -84,9 +84,6 @@ public final class BerkeleyStorage implements IBackend {
     /** Berkeley Environment for the database. */
     private Environment mEnv;
 
-    /** Transaction for DB-Operations. */
-    private Transaction mTxn;
-
     /** Storage instance per session. */
     private Database mDatabase;
 
@@ -136,19 +133,17 @@ public final class BerkeleyStorage implements IBackend {
     @Override
     public void initialize() throws TTIOException {
         try {
-            final EnvironmentConfig config = new EnvironmentConfig();
-            config.setTransactional(true);
-            config.setCacheSize(1024 * 1024);
+            EnvironmentConfig config = new EnvironmentConfig();
+            config = config.setSharedCache(true);
             config.setAllowCreate(true);
+            config.setCachePercent(20);
             mEnv = new Environment(mFile, config);
 
             final DatabaseConfig conf = new DatabaseConfig();
-            conf.setTransactional(true);
             conf.setAllowCreate(true);
+            conf.setDeferredWrite(true);
 
-            mTxn = mEnv.beginTransaction(null, null);
-
-            mDatabase = mEnv.openDatabase(mTxn, NAME, conf);
+            mDatabase = mEnv.openDatabase(null, NAME, conf);
 
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
@@ -161,7 +156,7 @@ public final class BerkeleyStorage implements IBackend {
     @Override
     public synchronized IBackendReader getReader() throws TTIOException {
         try {
-            return new BerkeleyReader(mDatabase, mPageBinding);
+            return new BerkeleyReader(mEnv, mDatabase, mPageBinding);
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
         }
@@ -172,7 +167,7 @@ public final class BerkeleyStorage implements IBackend {
      */
     @Override
     public synchronized IBackendWriter getWriter() throws TTIOException {
-        return new BerkeleyWriter(mDatabase, mPageBinding);
+        return new BerkeleyWriter(mEnv, mDatabase, mPageBinding);
     }
 
     /**
@@ -182,7 +177,6 @@ public final class BerkeleyStorage implements IBackend {
     public synchronized void close() throws TTIOException {
         try {
             mEnv.sync();
-            mTxn.commit();
             mDatabase.close();
             mEnv.close();
         } catch (final DatabaseException exc) {
@@ -200,7 +194,6 @@ public final class BerkeleyStorage implements IBackend {
      */
     @Override
     public synchronized boolean truncate() throws TTException {
-        mTxn.abort();
         mDatabase.close();
         if (mEnv.getDatabaseNames().contains(NAME)) {
             mEnv.removeDatabase(null, NAME);
@@ -253,6 +246,7 @@ public final class BerkeleyStorage implements IBackend {
                 final DataOutput output = new DataOutputStream(handledStream);
                 arg0.serialize(output);
                 handledStream.close();
+                
                 arg1.close();
             } catch (IOException | TTException exc) {
                 throw new RuntimeException(exc);
