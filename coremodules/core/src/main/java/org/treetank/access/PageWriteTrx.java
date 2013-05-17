@@ -346,12 +346,15 @@ public final class PageWriteTrx implements IPageWriteTrx {
                         page.setReferenceKey(i, oldPage.getReferenceKeys()[i]);
                     }
                 }
-                // Set the newKey on the computed offset
+                // Set the newKey on the computed offset...
                 parentPage.setReferenceKey(offset, newKey);
-                // .. and put the parent-reference to the log as well as the reference of the..
+                // .. and put the parent-reference to the log...
                 container = new LogValue(parentPage, parentPage);
-                mLog.put(parentKey, container);
-                // ...current page.
+                //..if the parent is not referenced as UberPage or RevisionRootPage within the Wtx itself...
+                if (level > 0) {
+                    mLog.put(parentKey, container);
+                }
+                // ..but set the reference of the current page in every case.
                 container = new LogValue(page, page);
                 mLog.put(key, container);
 
