@@ -25,7 +25,7 @@ import com.google.inject.Inject;
 @Guice(moduleFactory = ModuleFactory.class)
 public class StorageModuleBenchmark {
 
-    private final static int NODENUMBER = 65536; // 2GB Storage
+    private final static int NODENUMBER = 2048; // 2GB Storage
 
     private TreetankStorageModule storageModule;
 

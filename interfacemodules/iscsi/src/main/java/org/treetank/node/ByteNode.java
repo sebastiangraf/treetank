@@ -26,7 +26,6 @@ package org.treetank.node;
 
 import java.io.DataOutput;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Objects;
 
 import org.treetank.api.INode;

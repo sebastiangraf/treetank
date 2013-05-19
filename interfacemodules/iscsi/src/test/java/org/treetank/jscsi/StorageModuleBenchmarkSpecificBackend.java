@@ -3,7 +3,6 @@ package org.treetank.jscsi;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.junit.Ignore;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Guice;
@@ -15,7 +14,6 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.exception.TTException;
-import org.treetank.io.berkeley.BerkeleyStorage;
 import org.treetank.node.ByteNodeFactory;
 import org.treetank.node.ISCSIMetaPageFactory;
 
@@ -38,8 +36,6 @@ public class StorageModuleBenchmarkSpecificBackend {
 
     @Inject
     private IResourceConfigurationFactory mResourceConfig;
-
-    private ResourceConfiguration mResource;
 
     /**
      * Setup method for this test.
