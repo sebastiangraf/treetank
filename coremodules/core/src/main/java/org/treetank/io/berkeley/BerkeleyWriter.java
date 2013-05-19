@@ -101,16 +101,16 @@ public final class BerkeleyWriter implements IBackendWriter {
         TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(page.getPageKey(), keyEntry);
 
         // DEBUG-CODE: Find out if keyEntry has been written already.
-        if (page.getPageKey() >= 0) {
-            if (mKeySet.contains(keyEntry)) {
-
-                throw new IllegalStateException("KeyEntry " + keyEntry.toString() + " has been used twice.\n");
-            } else {
-
-                mKeySet.add(keyEntry);
-
-            }
-        }
+//        if (page.getPageKey() >= 0) {
+//            if (mKeySet.contains(keyEntry)) {
+//
+//                throw new IllegalStateException("KeyEntry " + keyEntry.toString() + " has been used twice.\n");
+//            } else {
+//
+//                mKeySet.add(keyEntry);
+//
+//            }
+//        }
 
         // final OperationStatus status = mBackend.put(mTxn, keyEntry, valueEntry);
         final OperationStatus status = mDatabase.put(null, keyEntry, valueEntry);
