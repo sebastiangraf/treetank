@@ -136,12 +136,13 @@ public final class BerkeleyStorage implements IBackend {
             EnvironmentConfig config = new EnvironmentConfig();
             config = config.setSharedCache(true);
             config.setAllowCreate(true);
+            config.setTransactional(true);
             config.setCachePercent(20);
             mEnv = new Environment(mFile, config);
 
             final DatabaseConfig conf = new DatabaseConfig();
             conf.setAllowCreate(true);
-            conf.setDeferredWrite(true);
+            conf.setTransactional(true);
 
             mDatabase = mEnv.openDatabase(null, NAME, conf);
 

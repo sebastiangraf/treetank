@@ -46,7 +46,9 @@ public class StorageModuleBenchmark {
         Properties props =
             StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
                 CoreTestHelper.RESOURCENAME);
+        
         mResource = mResourceConfig.create(props);
+        
         CoreTestHelper.Holder holder = CoreTestHelper.Holder.generateStorage();
         CoreTestHelper.Holder.generateSession(holder, mResource);
         storageModule = new TreetankStorageModule(NODENUMBER, holder.getSession());
@@ -80,7 +82,7 @@ public class StorageModuleBenchmark {
         final byte[] writeArray = new byte[2 * TreetankStorageModule.BYTES_IN_NODE];
         CoreTestHelper.random.nextBytes(writeArray);
         System.out.println("Writing simply.");
-        for (int j = 0; j < 2; j++) {
+        for (int j = 0; j < 10; j++) {
             startTime = System.currentTimeMillis();
             System.out.println("Starting run " + j);
             for(long i = 0; i < NODENUMBER/2; i++){
@@ -93,10 +95,10 @@ public class StorageModuleBenchmark {
         
         //Write distributed.
         System.out.println("Writing distributed.");
-        for (int j = 0; j < 2; j++) {
+        for (int j = 0; j < 10; j++) {
             startTime = System.currentTimeMillis();
             System.out.println("Starting run " + j);
-            for(long i = 0; i < NODENUMBER/2; i = i+10){
+            for(long i = 0; i < NODENUMBER/2; i++){
                 // write
                 storageModule.write(writeArray, i * 2 * TreetankStorageModule.BYTES_IN_NODE);
             }
@@ -134,7 +136,7 @@ public class StorageModuleBenchmark {
         
         //Reading bigger Junks.
         System.out.println("Reading bigger Junks.");
-        for (int j = 0; j < 2; j++) {
+        for (int j = 0; j < 10; j++) {
             startTime = System.currentTimeMillis();
             System.out.println("Starting run " + j);
             for(long i = 0; i < NODENUMBER/64; i = i+10){

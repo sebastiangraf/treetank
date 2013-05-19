@@ -27,10 +27,14 @@
 
 package org.treetank.io.berkeley;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.treetank.access.Storage;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendWriter;
+import org.treetank.page.RevisionRootPage;
 import org.treetank.page.UberPage;
 import org.treetank.page.interfaces.IPage;
 
@@ -39,6 +43,7 @@ import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseEntry;
 import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.Environment;
+import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
 
 /**
@@ -51,18 +56,22 @@ import com.sleepycat.je.OperationStatus;
  */
 public final class BerkeleyWriter implements IBackendWriter {
 
+    // DEBUG-CODE: Set to find out whether a pagekey is used twice or not
+    private static Set<DatabaseEntry> mKeySet = new HashSet<>();
+
     /** Current {@link Storage} to write to. */
     private final Database mDatabase;
 
     /** Current {@link BerkeleyReader} to read with. */
     private final BerkeleyReader mReader;
-    
+
     /** Environment for synchronization */
     private final Environment mEnv;
 
     /**
      * Simple constructor starting with an {@link Environment} and a {@link Storage}.
-     * @param pEnv 
+     * 
+     * @param pEnv
      * 
      * @param pDatabase
      *            {@link Storage} reference where the data should be written to
@@ -90,6 +99,18 @@ public final class BerkeleyWriter implements IBackendWriter {
 
         mReader.mPageBinding.objectToEntry(page, valueEntry);
         TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(page.getPageKey(), keyEntry);
+
+        // DEBUG-CODE: Find out if keyEntry has been written already.
+        if (page.getPageKey() >= 0) {
+            if (mKeySet.contains(keyEntry)) {
+
+                throw new IllegalStateException("KeyEntry " + keyEntry.toString() + " has been used twice.\n");
+            } else {
+
+                mKeySet.add(keyEntry);
+
+            }
+        }
 
         // final OperationStatus status = mBackend.put(mTxn, keyEntry, valueEntry);
         final OperationStatus status = mDatabase.put(null, keyEntry, valueEntry);

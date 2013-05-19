@@ -305,7 +305,7 @@ public class TreetankStorageModule implements IStorageModule {
                 LOGGER.debug("Commited changes to treetank.");
                 BYTE_WRITER_COUNTER = 0;
             }
-        } catch (Exception exc) {
+        } catch (TTException exc) {
             throw new IOException(exc);
         }
     }

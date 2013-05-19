@@ -3,13 +3,13 @@ threadCount: 4
 parameters: { NodeFactory: org.treetank.node.ByteNodeFactory, MetaFactory: org.treetank.node.ISCSIMetaPageFactory }
 
 tests:
-  - name: Unit Tests
-    classes:
-      - org.treetank.node.ByteNodeTest
   - name: Storage Benchmark Berkley
     parameters: { Revisioning: org.treetank.revisioning.SlidingSnapshot, Backend: org.treetank.io.berkeley.BerkeleyStorage }
     classes:
       - org.treetank.jscsi.StorageModuleBenchmark
+  - name: Unit Tests
+    classes:
+      - org.treetank.node.ByteNodeTest
   - name: Sliding Berkeley
     parameters: { Revisioning: org.treetank.revisioning.SlidingSnapshot, Backend: org.treetank.io.berkeley.BerkeleyStorage }
     classes:
