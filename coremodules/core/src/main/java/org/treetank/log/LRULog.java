@@ -135,7 +135,7 @@ public final class LRULog {
             config.setAllowCreate(true);
             config = config.setSharedCache(true);
             config.setLocking(false);
-            config.setCachePercent(40);
+            config.setCachePercent(20);
             mEnv = new Environment(mLocation, config);
             final DatabaseConfig dbConfig = new DatabaseConfig();
             dbConfig.setAllowCreate(true);

@@ -170,7 +170,7 @@ public class TreetankTargetServer {
         }
 
         if(argsMap.get("revisioningImplementation") != null){
-            revisioningClass = (Class<? extends IRevisioning>)Class.forName(argsMap.get("backendImplementation"));
+            revisioningClass = (Class<? extends IRevisioning>)Class.forName(argsMap.get("revisioningImplementation"));
         }
         else{
             revisioningClass = SlidingSnapshot.class;
