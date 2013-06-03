@@ -242,7 +242,7 @@ public final class LRULog {
         for (Entry<LogKey, LogValue> entry : entries) {
             insertIntoBDB(entry.getKey(), entry.getValue());
         }
-
+        
         return new LogIterator();
     }
 
@@ -328,6 +328,10 @@ public final class LRULog {
          */
         @Override
         public LogValue next() {
+            LogValue val;
+            if((val = mCache.getIfPresent(keyEntry)) != null){
+                return val;
+            }
             return mValueBinding.entryToObject(valueEntry);
         }
 

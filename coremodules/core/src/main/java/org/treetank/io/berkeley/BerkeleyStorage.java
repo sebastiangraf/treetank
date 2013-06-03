@@ -218,7 +218,7 @@ public final class BerkeleyStorage implements IBackend {
      * @author Sebastian Graf, University of Konstanz
      * 
      */
-    class PageBinding extends TupleBinding<IPage> {
+    class PageBinding extends TupleBinding<IPage>{
 
         /**
          * {@inheritDoc}

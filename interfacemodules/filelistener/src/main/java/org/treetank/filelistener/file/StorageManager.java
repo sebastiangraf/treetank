@@ -61,27 +61,30 @@ public class StorageManager {
         throws StorageAlreadyExistsException, TTException {
         File file = new File(ROOT_PATH);
         File storageFile = new File(STORAGE_PATH);
+        
         if (!file.exists()) {
-            file.mkdirs();
-        }
+            file.mkdirs();   
 
-        File resourceFile = new File(STORAGE_PATH + File.separator + "resources" + File.separator + name);
-
-        if (resourceFile.exists()) {
-            throw new StorageAlreadyExistsException();
-        } else {
             StorageConfiguration configuration = new StorageConfiguration(storageFile);
-
-            Injector injector = Guice.createInjector(module);
-            IBackendFactory backend = injector.getInstance(IBackendFactory.class);
-            IRevisioning revision = injector.getInstance(IRevisioning.class);
 
             // Creating and opening the storage.
             // Making it ready for usage.
             Storage.truncateStorage(configuration);
             Storage.createStorage(configuration);
 
-            IStorage storage = Storage.openStorage(storageFile);
+        }
+        
+        IStorage storage = Storage.openStorage(storageFile);
+        
+        File resourceFile = new File(STORAGE_PATH + File.separator + "resources" + File.separator + name);
+
+        if (resourceFile.exists()) {
+            throw new StorageAlreadyExistsException();
+        } else {
+
+            Injector injector = Guice.createInjector(module);
+            IBackendFactory backend = injector.getInstance(IBackendFactory.class);
+            IRevisioning revision = injector.getInstance(IRevisioning.class);
 
             Properties props = StandardSettings.getProps(storageFile.getAbsolutePath(), name);
             ResourceConfiguration mResourceConfig =

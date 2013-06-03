@@ -37,9 +37,9 @@ public class ModuleSetter {
     /** Class for MetaFactory. */
     private Class<? extends IMetaEntryFactory> mMetaFacClass;
     /** Class for Revision. */
-    private Class<? extends IRevisioning> mRevisioningClass = FullDump.class;
+    private Class<? extends IRevisioning> mRevisioningClass = SlidingSnapshot.class;
     /** Class for IBackend. */
-    private Class<? extends IBackend> mBackend = CombinedStorage.class;
+    private Class<? extends IBackend> mBackend = JCloudsStorage.class;
     /** Instance for ByteHandler. */
     private IByteHandlerPipeline mByteHandler = new ByteHandlerPipeline();
     /** Instance for Key. */

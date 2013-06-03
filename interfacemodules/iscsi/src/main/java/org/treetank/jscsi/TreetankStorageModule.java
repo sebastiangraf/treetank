@@ -55,17 +55,17 @@ public class TreetankStorageModule implements IStorageModule {
     private static long BYTE_WRITER_COUNTER = 0;
 
     /** Number of Blocks in one Cluster.
-     *  8 equals 32KB nodes
-     * 16 equals 64KB nodes
+     *  8 equals 4KB nodes
+     * 16 equals 8KB nodes
      * ...
      * 
      * When using berkeley db as a backend consider that if you increase the size of the blocks in node
-     * up to 128000 nodes can be held in ram.
+     * up to 12800 nodes can be held in ram.
      * If you have a 1gb storage maximally 1gb heap is needed. However if the storage is bigger and
      * the blocks per node is considerably high (e.g. 256kb per node) you might have to increase
      * the ram for the jvm.
      */
-    public static final int BLOCKS_IN_NODE = 128;
+    public static final int BLOCKS_IN_NODE = 64;
 
     /** Number of Bytes in Bucket. */
     public final static int BYTES_IN_NODE = BLOCKS_IN_NODE * VIRTUAL_BLOCK_SIZE;

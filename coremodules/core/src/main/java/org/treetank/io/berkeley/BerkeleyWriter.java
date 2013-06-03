@@ -56,9 +56,6 @@ import com.sleepycat.je.OperationStatus;
  */
 public final class BerkeleyWriter implements IBackendWriter {
 
-    // DEBUG-CODE: Set to find out whether a pagekey is used twice or not
-    private static Set<DatabaseEntry> mKeySet = new HashSet<>();
-
     /** Current {@link Storage} to write to. */
     private final Database mDatabase;
 
@@ -114,6 +111,7 @@ public final class BerkeleyWriter implements IBackendWriter {
 
         // final OperationStatus status = mBackend.put(mTxn, keyEntry, valueEntry);
         final OperationStatus status = mDatabase.put(null, keyEntry, valueEntry);
+        
         if (status != OperationStatus.SUCCESS) {
             throw new TTIOException(new StringBuilder("Write of ").append(page.toString()).append(" failed!")
                 .toString());
