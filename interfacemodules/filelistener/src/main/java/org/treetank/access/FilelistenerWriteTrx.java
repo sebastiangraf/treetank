@@ -231,7 +231,7 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
     public void commit() throws TTException {
         checkAccessAndCommit();
 
-        // Commit uber page.
+        // CommitStrategy uber page.
         getPageTransaction().commit();
     }
 

@@ -101,7 +101,7 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
     public void commit() throws TTException {
         checkState(!mDelegate.isClosed(), "Transaction is already closed.");
 
-        // Commit uber page.
+        // CommitStrategy uber page.
         getPageTransaction().commit();
 
     }

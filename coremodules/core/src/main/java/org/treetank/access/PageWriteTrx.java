@@ -171,14 +171,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
     @Override
     public void commit() throws TTException {
         checkState(!mDelegate.isClosed(), "Transaction already closed");
-        Iterator<LogValue> entries = mLog.getIterator();
-        while (entries.hasNext()) {
-            LogValue next = entries.next();
-            mPageWriter.write(next.getModified());
-        }
-        mPageWriter.write(mNewMeta);
-        mPageWriter.write(mNewRoot);
-        mPageWriter.writeUberPage(mNewUber);
+        new CommitStrategy.BlockingCommit(mLog, mPageWriter, mNewRoot, mNewMeta, mNewUber).execute();
 
         mLog.close();
 
@@ -350,7 +343,7 @@ public final class PageWriteTrx implements IPageWriteTrx {
                 parentPage.setReferenceKey(offset, newKey);
                 // .. and put the parent-reference to the log...
                 container = new LogValue(parentPage, parentPage);
-                //..if the parent is not referenced as UberPage or RevisionRootPage within the Wtx itself...
+                // ..if the parent is not referenced as UberPage or RevisionRootPage within the Wtx itself...
                 if (level > 0) {
                     mLog.put(parentKey, container);
                 }

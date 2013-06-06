@@ -452,7 +452,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
     @Override
     public void commit() throws TTException {
         checkState(!mDelegate.isClosed(), "Transaction is already closed.");
-        // Commit uber page.
+        // CommitStrategy uber page.
         getPtx().commit();
     }
 

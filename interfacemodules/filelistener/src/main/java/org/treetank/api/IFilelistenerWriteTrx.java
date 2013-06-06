@@ -30,7 +30,7 @@ public interface IFilelistenerWriteTrx extends IFilelistenerReadTrx {
     public void removeFile(String pRelativePath) throws TTException;
 
     /**
-     * Commit all modifications of the exclusive write transaction. Even commit
+     * CommitStrategy all modifications of the exclusive write transaction. Even commit
      * if there are no modification at all.
      * 
      * @throws TTException
