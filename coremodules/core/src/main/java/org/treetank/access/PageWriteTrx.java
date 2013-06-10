@@ -33,9 +33,11 @@ import static com.google.common.base.Preconditions.checkState;
 import static org.treetank.access.PageReadTrx.nodePageOffset;
 
 import java.io.File;
-import java.util.Iterator;
 import java.util.Map;
 
+import org.treetank.access.CommitStrategy.BlockingCommit;
+import org.treetank.access.commit.CommitStrategyModule;
+import org.treetank.access.commit.NonBlockingCommitStrategy;
 import org.treetank.access.conf.ConstructorProps;
 import org.treetank.api.IMetaEntry;
 import org.treetank.api.INode;
@@ -55,6 +57,8 @@ import org.treetank.page.NodePage.DeletedNode;
 import org.treetank.page.RevisionRootPage;
 import org.treetank.page.UberPage;
 import org.treetank.page.interfaces.IReferencePage;
+
+import com.google.inject.Injector;
 
 /**
  * <h1>PageWriteTrx</h1>
@@ -83,6 +87,12 @@ public final class PageWriteTrx implements IPageWriteTrx {
     /** Delegate for read access. */
     private PageReadTrx mDelegate;
 
+    /** Commit strategy implementation to be used */
+    private final Class<? extends CommitStrategy> mCommitStrategy;
+
+    /** Currently (or just previously) running commitstrategy */
+    private CommitStrategy mCommitInProgress;
+
     /**
      * Standard constructor.
      * 
@@ -102,6 +112,8 @@ public final class PageWriteTrx implements IPageWriteTrx {
         final long pRepresentRev) throws TTException {
 
         mPageWriter = pWriter;
+        // TODO: Change to NonBlockingCommitStrategy
+        mCommitStrategy = BlockingCommit.class;
         setUpTransaction(pUberPage, pSession, pRepresentRev, pWriter);
     }
 
@@ -146,11 +158,21 @@ public final class PageWriteTrx implements IPageWriteTrx {
         final long nodePageKey = pNodeKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3];
         final int nodePageOffset = nodePageOffset(pNodeKey);
 
-        final LogValue container =
-            mLog.get(new LogKey(false, IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length, nodePageKey));
+        final LogKey key = new LogKey(false, IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length, nodePageKey);
+        final LogValue container = mLog.get(key);
         // Page was not modified yet, delegate to read or..
         if (container.getModified() == null) {
-            return mDelegate.getNode(pNodeKey);
+            NodePage fromCommitLog;
+
+            // True if the any commit has been done before
+            // and the last commit is still in progress
+            // and the page is available in the log from the commit.
+            if (mCommitInProgress != null && mCommitInProgress.isInProgress()
+                && (fromCommitLog = mCommitInProgress.valueInProgress(key)) != null) {
+                return fromCommitLog.getNode(nodePageOffset);
+            } else {
+                return mDelegate.getNode(pNodeKey);
+            }
         }// ...page was modified, but not this node, take the complete part, or...
         else if (((NodePage)container.getModified()).getNode(nodePageOffset) == null) {
             final INode item = ((NodePage)container.getComplete()).getNode(nodePageOffset);
@@ -171,13 +193,36 @@ public final class PageWriteTrx implements IPageWriteTrx {
     @Override
     public void commit() throws TTException {
         checkState(!mDelegate.isClosed(), "Transaction already closed");
-        new CommitStrategy.BlockingCommit(mLog, mPageWriter, mNewRoot, mNewMeta, mNewUber).execute();
 
-        mLog.close();
+        // Check if the commit object has been initialized before..
+        if (mCommitInProgress != null) {
+            try {
+                // .. if so, is a commit still in progress ..
+                if (mCommitInProgress.isInProgress()) {
+                    // .. assuming it is, wait for notification to further proceeding
+                    // and block this state, until the commit can be executed.
+                    mCommitInProgress.wait();
+                }
+            } catch (InterruptedException e) {
+                throw new TTIOException("A commit has been interrupted due to " + e.getMessage());
+            }
+        }
 
+        final Injector injector =
+            com.google.inject.Guice.createInjector(new CommitStrategyModule()
+                .setmLog(mLog).setmMeta(mNewMeta).setmRev(mNewRoot).setmUber(mNewUber)
+                .setmWriter(mPageWriter));
+        mCommitInProgress = injector.getInstance(mCommitStrategy);
+
+        mCommitInProgress.execute();
+        
         ((Session)mDelegate.mSession).setLastCommittedUberPage(mNewUber);
         setUpTransaction(mNewUber, mDelegate.mSession, mNewUber.getRevisionNumber(), mPageWriter);
 
+    }
+    
+    public void clearLog() throws TTIOException{
+        mLog.close();
     }
 
     /**
@@ -185,9 +230,25 @@ public final class PageWriteTrx implements IPageWriteTrx {
      */
     @Override
     public boolean close() throws TTIOException {
+        if(mCommitInProgress!= null && mCommitInProgress.isInProgress()){
+            try {
+                mCommitInProgress.wait();
+            } catch (InterruptedException e) {
+                throw new TTIOException(e);
+            }
+        }
+        
         if (!mDelegate.isClosed()) {
             mDelegate.close();
-            mLog.close();
+
+            try {
+                //Try to close the log.
+                //It may already be closed if a commit
+                //was the last operation.
+                mLog.close();
+            } catch (IllegalStateException e) {
+                //Do nothing
+            }
             mDelegate.mSession.deregisterPageTrx(this);
             return true;
         } else {

@@ -112,6 +112,8 @@ public final class LRULog {
 
     private final Cache<LogKey, LogValue> mCache;
 
+    private int mSelected_db;
+    
     /**
      * Creates a new LRU cache.
      * 
@@ -128,21 +130,28 @@ public final class LRULog {
         throws TTIOException {
         mKeyBinding = new LogKeyBinding();
         mValueBinding = new LogValueBinding(pNodeFac, pMetaFac);
-
-        mLocation = new File(pFile, ResourceConfiguration.Paths.TransactionLog.getFile().getName());
+        mSelected_db = 1;
+        
+        if(new File(pFile, ResourceConfiguration.Paths.TransactionLog.getFile().getName()).list().length > 0){
+            mLocation = new File(pFile, "_"+ResourceConfiguration.Paths.TransactionLog.getFile().getName());
+            mSelected_db = 2;
+        }
+        else{
+            mLocation = new File(pFile, ResourceConfiguration.Paths.TransactionLog.getFile().getName());
+        }
+        
         try {
             EnvironmentConfig config = new EnvironmentConfig();
             config.setAllowCreate(true);
-            config = config.setSharedCache(true);
+            config = config.setSharedCache(false);
             config.setLocking(false);
             config.setCachePercent(20);
             mEnv = new Environment(mLocation, config);
+            mEnv.cleanLog();
             final DatabaseConfig dbConfig = new DatabaseConfig();
             dbConfig.setAllowCreate(true);
             dbConfig.setExclusiveCreate(true);
-            dbConfig.setDeferredWrite(true);
-            mDatabase = mEnv.openDatabase(null, NAME, dbConfig);
-            
+            mDatabase = mEnv.openDatabase(null, NAME+mSelected_db, dbConfig);
             
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
@@ -215,7 +224,7 @@ public final class LRULog {
     public void close() throws TTIOException {
         try {
             mDatabase.close();
-            mEnv.removeDatabase(null, NAME);
+            mEnv.removeDatabase(null, NAME+mSelected_db);
             mEnv.close();
             IOUtils.recursiveDelete(mLocation);
             mLocation.mkdir();

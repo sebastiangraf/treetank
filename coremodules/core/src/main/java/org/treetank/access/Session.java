@@ -133,6 +133,10 @@ public final class Session implements ISession {
         if (!mClosed) {
             // Forcibly close all open transactions.
             for (final IPageReadTrx rtx : mPageTrxs) {
+                // If the transaction is a WriteTrx, clear log aswell..
+                if(rtx instanceof PageWriteTrx){
+                    ((PageWriteTrx)rtx).clearLog();
+                }
                 rtx.close();
             }
 

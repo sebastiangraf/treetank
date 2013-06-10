@@ -25,11 +25,13 @@ public class LogKey {
 
     /** Sequence Key. */
     private final long mSeq;
-
+    
     /**
      * Constructor.
      * 
      * @param pRootLevel
+     * 
+     * 
      *            is key part of the revision-part or the node-part
      * @param pLevel
      *            to be set.
