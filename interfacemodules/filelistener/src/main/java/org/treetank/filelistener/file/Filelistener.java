@@ -142,7 +142,7 @@ public class Filelistener {
         for (Entry<String, String> e : filelisteners.entrySet()) {
             mSessions.put(e.getKey(), StorageManager.getSession(e.getKey()));
             mTrx.put(e.getKey(), new FilelistenerWriteTrx(mSessions.get(e.getKey())
-                .beginPageWriteTransaction(), mSessions.get(e.getKey())));
+                .beginBucketWtx(), mSessions.get(e.getKey())));
             mSubDirectories.put(e.getValue(), new ArrayList<String>());
             mExecutorMap.put(e.getValue(), Executors.newSingleThreadExecutor());
 

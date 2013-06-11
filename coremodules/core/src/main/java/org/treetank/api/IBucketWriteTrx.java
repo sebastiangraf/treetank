@@ -6,17 +6,17 @@ package org.treetank.api;
 import org.treetank.exception.TTException;
 
 /**
- * Write-Transaction of a page ensuring read- and write access to any pages.
+ * Write-Transaction of a bucket ensuring read- and write access to any buckets.
  * The transaction is bound on the very last revision and bases on a session.
  * 
- * Each {@link IPageWriteTrx} can afterwards get nodes from the page-layer and the underlaying backend as well
+ * Each {@link IBucketWriteTrx} can afterwards get nodes from the bucket-layer and the underlaying backend as well
  * as store new {@link INode}s in the backend.
  * 
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public interface IPageWriteTrx extends IPageReadTrx {
+public interface IBucketWriteTrx extends IBucketReadTrx {
 
     /**
      * Getting most recent node key and incrementing it.
@@ -26,7 +26,7 @@ public interface IPageWriteTrx extends IPageReadTrx {
     long incrementNodeKey();
 
     /**
-     * Setting a node and storing the node in the page-layer.
+     * Setting a node and storing the node in the bucket-layer.
      * 
      * @param pNode
      *            the node to be stored.
@@ -45,7 +45,7 @@ public interface IPageWriteTrx extends IPageReadTrx {
     void removeNode(final INode pNode) throws TTException;
 
     /**
-     * Simple commit of this page transaction to store the newest version.
+     * Simple commit of this bucket transaction to store the newest version.
      * 
      * @throws if
      *             anything weird happens

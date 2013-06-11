@@ -30,7 +30,7 @@
  * <h1>Revisioning Algorithms for Treetank</h1>
  * <p>
  * Versioning algorithms implemented by Treetank. All versioning-approaches must implement the
- * <code>IRevisioning</code>-interface providing access to versions through different <code>NodePage</code>s
+ * <code>IRevisioning</code>-interface providing access to versions through different <code>NodeBucket</code>s
  * based on either read-/ or read- and write-access.
  * </p>
  * 

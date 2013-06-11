@@ -72,7 +72,7 @@ public final class FMESVisitor {
         assert paramSession != null;
         assert paramInOrder != null;
         assert paramDescendants != null;
-        mRtx = new NodeReadTrx(paramSession.beginPageReadTransaction(paramSession.getMostRecentVersion()));
+        mRtx = new NodeReadTrx(paramSession.beginBucketRtx(paramSession.getMostRecentVersion()));
         mInOrder = paramInOrder;
         mDescendants = paramDescendants;
     }

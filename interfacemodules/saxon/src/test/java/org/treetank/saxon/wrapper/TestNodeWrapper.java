@@ -180,7 +180,7 @@ public class TestNodeWrapper {
         final ISession session =
             storage.getSession(new SessionConfiguration(CoreTestHelper.RESOURCENAME, StandardSettings.KEY));
         final INodeWriteTrx wtx =
-            new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
+            new NodeWriteTrx(session, session.beginBucketWtx(), HashKind.Rolling);
         NodeTestHelper.createDocumentRootNode(wtx);
         final XMLEventReader reader = XMLShredder.createFileReader(source);
         final XMLShredder shredder = new XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);

@@ -64,7 +64,7 @@ public class TransactionTest {
         mResource = mResourceConfig.create(props);
         CoreTestHelper.Holder.generateSession(mHolder, mResource);
         mSession = mHolder.getSession();
-        mTrx = new FilelistenerWriteTrx(mSession.beginPageWriteTransaction(), mSession);
+        mTrx = new FilelistenerWriteTrx(mSession.beginBucketWtx(), mSession);
         tmpDir = Files.createTempDir();
     }
 

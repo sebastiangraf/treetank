@@ -227,7 +227,7 @@ public final class XMLUpdateShredderTest {
             if (file.getName().endsWith(".xml")) {
 
                 final INodeWriteTrx wtx =
-                    new NodeWriteTrx(holder.getSession(), holder.getSession().beginPageWriteTransaction(),
+                    new NodeWriteTrx(holder.getSession(), holder.getSession().beginBucketWtx(),
                         HashKind.Rolling);
                 if (first) {
                     final XMLShredder shredder =

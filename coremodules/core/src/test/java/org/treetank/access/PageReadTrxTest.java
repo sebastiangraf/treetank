@@ -23,21 +23,21 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
-import org.treetank.api.IPageReadTrx;
+import org.treetank.api.IBucketReadTrx;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
+import org.treetank.bucket.DumbMetaEntryFactory.DumbKey;
+import org.treetank.bucket.DumbMetaEntryFactory.DumbValue;
+import org.treetank.bucket.DumbNodeFactory.DumbNode;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
-import org.treetank.page.DumbMetaEntryFactory.DumbKey;
-import org.treetank.page.DumbMetaEntryFactory.DumbValue;
-import org.treetank.page.DumbNodeFactory.DumbNode;
 
 import com.google.inject.Inject;
 
 /**
  * 
- * Test-case for PageReadTrx.
+ * Test-case for BucketReadTrx.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
@@ -72,7 +72,7 @@ public class PageReadTrxTest {
     }
 
     /**
-     * Test method for {@link org.treetank.access.PageReadTrx#getNode(long)}.
+     * Test method for {@link org.treetank.access.BucketReadTrx#getNode(long)}.
      * 
      * @throws TTException
      */
@@ -83,20 +83,20 @@ public class PageReadTrxTest {
     }
 
     /**
-     * Test method for {@link org.treetank.access.PageReadTrx#close()} and
-     * {@link org.treetank.access.PageReadTrx#isClosed()}.
+     * Test method for {@link org.treetank.access.BucketReadTrx#close()} and
+     * {@link org.treetank.access.BucketReadTrx#isClosed()}.
      * 
      * @throws TTException
      */
     @Test
     public void testCloseAndIsClosed() throws TTException {
-        IPageReadTrx rtx =
-            mHolder.getSession().beginPageReadTransaction(mHolder.getSession().getMostRecentVersion());
+        IBucketReadTrx rtx =
+            mHolder.getSession().beginBucketRtx(mHolder.getSession().getMostRecentVersion());
         testClose(mHolder.getStorage(), mHolder.getSession(), rtx);
     }
 
     /**
-     * Test method for {@link org.treetank.access.PageReadTrx#getRevision()}.
+     * Test method for {@link org.treetank.access.BucketReadTrx#getRevision()}.
      * 
      * @throws TTException
      */
@@ -107,7 +107,7 @@ public class PageReadTrxTest {
     }
 
     /**
-     * Test method for {@link org.treetank.access.PageReadTrx#getMetaPage()}.
+     * Test method for {@link org.treetank.access.BucketReadTrx#getMetaBucket()}.
      * 
      * @throws TTException
      */
@@ -119,7 +119,7 @@ public class PageReadTrxTest {
 
     /**
      * Test method for
-     * {@link org.treetank.access.PageReadTrx#dereferenceLeafOfTree(org.treetank.io.IBackendReader, long, long)}
+     * {@link org.treetank.access.BucketReadTrx#dereferenceLeafOfTree(org.treetank.io.IBackendReader, long, long)}
      * .
      */
     @Test
@@ -128,27 +128,27 @@ public class PageReadTrxTest {
 
         IBackendReader reader = getFakedStructure(offsets);
 
-        long key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 0);
+        long key = BucketReadTrx.dereferenceLeafOfTree(reader, 1, 0);
         // 6 is base key because of 5 layers plus the 1 as start key
         assertEquals(6, key);
 
         offsets[4] = 127;
         reader = getFakedStructure(offsets);
-        key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 127);
+        key = BucketReadTrx.dereferenceLeafOfTree(reader, 1, 127);
         // 6 as base plus 127 as offset on last page
         assertEquals(133, key);
 
         offsets[3] = 1;
         offsets[4] = 0;
         reader = getFakedStructure(offsets);
-        key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 128);
+        key = BucketReadTrx.dereferenceLeafOfTree(reader, 1, 128);
         // 6 as base plus one additional offset on one level above
         assertEquals(7, key);
 
         offsets[3] = 127;
         offsets[4] = 127;
         reader = getFakedStructure(offsets);
-        key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 16383);
+        key = BucketReadTrx.dereferenceLeafOfTree(reader, 1, 16383);
         // 6 as base plus two times 127 as offsets on level above
         assertEquals(260, key);
 
@@ -156,7 +156,7 @@ public class PageReadTrxTest {
         offsets[3] = 0;
         offsets[4] = 0;
         reader = getFakedStructure(offsets);
-        key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 16384);
+        key = BucketReadTrx.dereferenceLeafOfTree(reader, 1, 16384);
         // 6 as base plus one additional offset on two levels above
         assertEquals(7, key);
 
@@ -164,7 +164,7 @@ public class PageReadTrxTest {
         offsets[3] = 127;
         offsets[4] = 127;
         reader = getFakedStructure(offsets);
-        key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 2097151);
+        key = BucketReadTrx.dereferenceLeafOfTree(reader, 1, 2097151);
         // 6 as base plus three times 127 as offsets on levels above
         assertEquals(387, key);
 
@@ -173,7 +173,7 @@ public class PageReadTrxTest {
         offsets[3] = 0;
         offsets[4] = 0;
         reader = getFakedStructure(offsets);
-        key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 2097152);
+        key = BucketReadTrx.dereferenceLeafOfTree(reader, 1, 2097152);
         // 6 as base plus one additional offset on three levels above
         assertEquals(7, key);
 
@@ -182,7 +182,7 @@ public class PageReadTrxTest {
         offsets[3] = 127;
         offsets[4] = 127;
         reader = getFakedStructure(offsets);
-        key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 268435455);
+        key = BucketReadTrx.dereferenceLeafOfTree(reader, 1, 268435455);
         // 6 as base plus four times 127 as offsets on levels above
         assertEquals(514, key);
 
@@ -192,7 +192,7 @@ public class PageReadTrxTest {
         offsets[3] = 0;
         offsets[4] = 0;
         reader = getFakedStructure(offsets);
-        key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 268435456);
+        key = BucketReadTrx.dereferenceLeafOfTree(reader, 1, 268435456);
         // 6 as base plus one additional offset on three levels above
         assertEquals(7, key);
 
@@ -202,36 +202,36 @@ public class PageReadTrxTest {
         offsets[3] = 127;
         offsets[4] = 127;
         reader = getFakedStructure(offsets);
-        key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 34359738367l);
+        key = BucketReadTrx.dereferenceLeafOfTree(reader, 1, 34359738367l);
         // 6 as base plus five times 127 as offsets on levels above
         assertEquals(641, key);
 
         // false offset, not existing
         offsets[0] = 0;
         reader = getFakedStructure(offsets);
-        key = PageReadTrx.dereferenceLeafOfTree(reader, 1, 34359738367l);
+        key = BucketReadTrx.dereferenceLeafOfTree(reader, 1, 34359738367l);
         assertEquals(-1, key);
     }
 
     /**
-     * Test method for {@link org.treetank.access.PageReadTrx#nodePageOffset(long)}.
+     * Test method for {@link org.treetank.access.BucketReadTrx#nodeBucketOffset(long)}.
      */
     @Test
     public void testNodePageOffset() {
-        assertEquals(0, PageReadTrx.nodePageOffset(0));
-        assertEquals(127, PageReadTrx.nodePageOffset(127));
-        assertEquals(0, PageReadTrx.nodePageOffset(128));
-        assertEquals(127, PageReadTrx.nodePageOffset(16383));
-        assertEquals(0, PageReadTrx.nodePageOffset(16384));
-        assertEquals(127, PageReadTrx.nodePageOffset(2097151));
-        assertEquals(0, PageReadTrx.nodePageOffset(2097152));
+        assertEquals(0, BucketReadTrx.nodeBucketOffset(0));
+        assertEquals(127, BucketReadTrx.nodeBucketOffset(127));
+        assertEquals(0, BucketReadTrx.nodeBucketOffset(128));
+        assertEquals(127, BucketReadTrx.nodeBucketOffset(16383));
+        assertEquals(0, BucketReadTrx.nodeBucketOffset(16384));
+        assertEquals(127, BucketReadTrx.nodeBucketOffset(2097151));
+        assertEquals(0, BucketReadTrx.nodeBucketOffset(2097152));
     }
 
     protected static void testMeta(final ISession pSession,
         final List<List<Map.Entry<DumbKey, DumbValue>>> pEntries) throws TTException {
         long i = 0;
         for (List<Map.Entry<DumbKey, DumbValue>> entriesPerRev : pEntries) {
-            final IPageReadTrx rtx = pSession.beginPageReadTransaction(i);
+            final IBucketReadTrx rtx = pSession.beginBucketRtx(i);
             CoreTestHelper.checkStructure(entriesPerRev, rtx, true);
             i++;
         }
@@ -239,7 +239,7 @@ public class PageReadTrxTest {
 
     protected static void testGet(final ISession pSession, final DumbNode[][] pNodes) throws TTException {
         // check against invalid nodekey
-        IPageReadTrx rtx = pSession.beginPageReadTransaction(0);
+        IBucketReadTrx rtx = pSession.beginBucketRtx(0);
         try {
             rtx.getNode(-1);
             fail();
@@ -250,7 +250,7 @@ public class PageReadTrxTest {
         // check against stored structure
         long nodeKey = 0;
         for (int i = 0; i < pNodes.length; i++) {
-            rtx = pSession.beginPageReadTransaction(i + 1);
+            rtx = pSession.beginBucketRtx(i + 1);
             for (DumbNode node : pNodes[i]) {
                 assertEquals(node, rtx.getNode(nodeKey));
                 nodeKey++;
@@ -261,24 +261,24 @@ public class PageReadTrxTest {
 
     protected static void testRevision(final ISession pSession) throws TTException {
         for (long i = 0; i <= pSession.getMostRecentVersion(); i++) {
-            final IPageReadTrx rtx = pSession.beginPageReadTransaction(i);
+            final IBucketReadTrx rtx = pSession.beginBucketRtx(i);
             assertEquals(i, rtx.getRevision());
             rtx.close();
         }
     }
 
     protected static void
-        testClose(final IStorage pStorage, final ISession pSession, final IPageReadTrx pRtx)
+        testClose(final IStorage pStorage, final ISession pSession, final IBucketReadTrx pRtx)
             throws TTException {
 
-        IPageReadTrx rtx = pRtx;
+        IBucketReadTrx rtx = pRtx;
 
         // explicit closing of one transaction
-        rtx.getMetaPage();
+        rtx.getMetaBucket();
         assertFalse(rtx.isClosed());
         assertTrue(rtx.close());
         try {
-            rtx.getMetaPage();
+            rtx.getMetaBucket();
             fail();
         } catch (IllegalStateException exc) {
             // must be thrown
@@ -300,7 +300,7 @@ public class PageReadTrxTest {
         assertTrue(rtx.isClosed());
 
         // implicit closing over session
-        rtx = pSession.beginPageReadTransaction(pSession.getMostRecentVersion());
+        rtx = pSession.beginBucketRtx(pSession.getMostRecentVersion());
         assertFalse(rtx.isClosed());
         assertTrue(pSession.close());
         assertFalse(rtx.close());
@@ -308,7 +308,7 @@ public class PageReadTrxTest {
 
         // implicit closing over storage
         ISession session = pStorage.getSession(new SessionConfiguration(CoreTestHelper.RESOURCENAME, null));
-        rtx = session.beginPageReadTransaction(session.getMostRecentVersion());
+        rtx = session.beginBucketRtx(session.getMostRecentVersion());
         assertFalse(rtx.isClosed());
         assertTrue(pStorage.close());
         assertFalse(rtx.close());

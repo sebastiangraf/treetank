@@ -44,9 +44,9 @@ import org.treetank.ModuleFactory;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.StandardSettings;
+import org.treetank.bucket.IConstants;
 import org.treetank.exception.TTException;
 import org.treetank.jscsi.TreetankStorageModule;
-import org.treetank.page.IConstants;
 
 import com.google.inject.Inject;
 

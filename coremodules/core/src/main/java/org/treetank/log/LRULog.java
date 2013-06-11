@@ -88,12 +88,12 @@ public final class LRULog {
     private static final String NAME = "berkeleyCache";
 
     /**
-     * Binding for the key, which is the nodepage.
+     * Binding for the key, which is the nodebucket.
      */
     private final transient LogKeyBinding mKeyBinding;
 
     /**
-     * Binding for the value which is a page with related Nodes.
+     * Binding for the value which is a bucket with related Nodes.
      */
     private final transient LogValueBinding mValueBinding;
 

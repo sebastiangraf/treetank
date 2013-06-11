@@ -115,7 +115,7 @@ public class TreetankStorageModule implements IStorageModule {
             + IStorageModule.VIRTUAL_BLOCK_SIZE);
         
         mSession = pSession;
-        mRtx = new IscsiWriteTrx(mSession.beginPageWriteTransaction(), mSession);
+        mRtx = new IscsiWriteTrx(mSession.beginBucketWtx(), mSession);
         
         ExecutorService service = Executors.newSingleThreadExecutor();
         

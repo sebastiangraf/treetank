@@ -6,16 +6,16 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.treetank.access.CommitStrategy;
+import org.treetank.bucket.MetaBucket;
+import org.treetank.bucket.NodeBucket;
+import org.treetank.bucket.RevisionRootBucket;
+import org.treetank.bucket.UberBucket;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendWriter;
 import org.treetank.log.LRULog;
 import org.treetank.log.LogKey;
 import org.treetank.log.LogValue;
-import org.treetank.page.MetaPage;
-import org.treetank.page.NodePage;
-import org.treetank.page.RevisionRootPage;
-import org.treetank.page.UberPage;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -31,11 +31,11 @@ public class NonBlockingCommitStrategy implements CommitStrategy {
 
     private final IBackendWriter mWriter;
 
-    private final UberPage mUber;
+    private final UberBucket mUber;
 
-    private final MetaPage mMeta;
+    private final MetaBucket mMeta;
 
-    private final RevisionRootPage mRev;
+    private final RevisionRootBucket mRev;
 
     private boolean mInProgress;
     
@@ -43,8 +43,8 @@ public class NonBlockingCommitStrategy implements CommitStrategy {
 
     @Inject
     public NonBlockingCommitStrategy(@Named("pLog") LRULog pLog,
-        @Named("pWriter") final IBackendWriter pWriter, @Named("pRoot") final RevisionRootPage pRoot,
-        @Named("pMeta") final MetaPage pMeta, @Named("pUber") final UberPage pUber) {
+        @Named("pWriter") final IBackendWriter pWriter, @Named("pRoot") final RevisionRootBucket pRoot,
+        @Named("pMeta") final MetaBucket pMeta, @Named("pUber") final UberBucket pUber) {
         mWriter = pWriter;
         mUber = pUber;
         mRev = pRoot;
@@ -74,7 +74,7 @@ public class NonBlockingCommitStrategy implements CommitStrategy {
                 
                 mWriter.write(mMeta);
                 mWriter.write(mRev);
-                mWriter.writeUberPage(mUber);
+                mWriter.writeUberBucket(mUber);
                 
                 // Set in progress false, since the commit is finished
                 mInProgress = false;
@@ -93,8 +93,8 @@ public class NonBlockingCommitStrategy implements CommitStrategy {
     }
 
     @Override
-    public NodePage valueInProgress(LogKey pKey) throws TTIOException {
-        return (NodePage)mLog.get(pKey).getComplete();
+    public NodeBucket valueInProgress(LogKey pKey) throws TTIOException {
+        return (NodeBucket)mLog.get(pKey).getComplete();
     }
 
     @Override

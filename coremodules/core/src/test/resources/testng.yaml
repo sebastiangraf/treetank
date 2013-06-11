@@ -1,6 +1,6 @@
 name: CoreSuite
 threadCount: 4
-parameters: { NodeFactory: org.treetank.page.DumbNodeFactory, MetaFactory: org.treetank.page.DumbMetaEntryFactory }
+parameters: { NodeFactory: org.treetank.bucket.DumbNodeFactory, MetaFactory: org.treetank.bucket.DumbMetaEntryFactory }
 
 tests:
   - name: Sliding Berkeley
@@ -11,7 +11,7 @@ tests:
       - org.treetank.io
       - org.treetank.io.bytepipe
       - org.treetank.log 
-      - org.treetank.page
+      - org.treetank.bucket
       - org.treetank.revisioning
   - name: Differential Berkeley
     parameters: { Revisioning: org.treetank.revisioning.Differential, Backend: org.treetank.io.berkeley.BerkeleyStorage }
@@ -21,7 +21,7 @@ tests:
       - org.treetank.io
       - org.treetank.io.bytepipe
       - org.treetank.log 
-      - org.treetank.page
+      - org.treetank.bucket
       - org.treetank.revisioning
   - name: Incremental Berkeley
     parameters: { Revisioning: org.treetank.revisioning.Incremental, Backend: org.treetank.io.berkeley.BerkeleyStorage }
@@ -31,7 +31,7 @@ tests:
       - org.treetank.io
       - org.treetank.io.bytepipe
       - org.treetank.log 
-      - org.treetank.page
+      - org.treetank.bucket
       - org.treetank.revisioning
   - name: FullDump Berkeley
     parameters: { Revisioning: org.treetank.revisioning.FullDump, Backend: org.treetank.io.berkeley.BerkeleyStorage }
@@ -41,7 +41,7 @@ tests:
       - org.treetank.io
       - org.treetank.io.bytepipe
       - org.treetank.log 
-      - org.treetank.page
+      - org.treetank.bucket
       - org.treetank.revisioning
   - name: Sliding JClouds
     parameters: { Revisioning: org.treetank.revisioning.SlidingSnapshot, Backend: org.treetank.io.jclouds.JCloudsStorage }
@@ -51,7 +51,7 @@ tests:
       - org.treetank.io
       - org.treetank.io.bytepipe
       - org.treetank.log 
-      - org.treetank.page
+      - org.treetank.bucket
       - org.treetank.revisioning
   - name: Differential JClouds
     parameters: { Revisioning: org.treetank.revisioning.Differential, Backend: org.treetank.io.jclouds.JCloudsStorage }
@@ -61,7 +61,7 @@ tests:
       - org.treetank.io
       - org.treetank.io.bytepipe
       - org.treetank.log 
-      - org.treetank.page
+      - org.treetank.bucket
       - org.treetank.revisioning
   - name: Incremental JClouds
     parameters: { Revisioning: org.treetank.revisioning.Incremental, Backend: org.treetank.io.jclouds.JCloudsStorage }
@@ -71,7 +71,7 @@ tests:
       - org.treetank.io
       - org.treetank.io.bytepipe
       - org.treetank.log 
-      - org.treetank.page
+      - org.treetank.bucket
       - org.treetank.revisioning
   - name: FullDump JClouds
     parameters: { Revisioning: org.treetank.revisioning.FullDump, Backend: org.treetank.io.jclouds.JCloudsStorage }
@@ -81,7 +81,7 @@ tests:
       - org.treetank.io
       - org.treetank.io.bytepipe
       - org.treetank.log 
-      - org.treetank.page
+      - org.treetank.bucket
       - org.treetank.revisioning
   - name: Sliding Combined
     parameters: { Revisioning: org.treetank.revisioning.SlidingSnapshot, Backend: org.treetank.io.combined.CombinedStorage }
@@ -91,7 +91,7 @@ tests:
       - org.treetank.io
       - org.treetank.io.bytepipe
       - org.treetank.log 
-      - org.treetank.page
+      - org.treetank.bucket
       - org.treetank.revisioning
   - name: Differential Combined
     parameters: { Revisioning: org.treetank.revisioning.Differential, Backend: org.treetank.io.combined.CombinedStorage }
@@ -101,7 +101,7 @@ tests:
       - org.treetank.io
       - org.treetank.io.bytepipe
       - org.treetank.log 
-      - org.treetank.page
+      - org.treetank.bucket
       - org.treetank.revisioning
   - name: Incremental Combined
     parameters: { Revisioning: org.treetank.revisioning.Incremental, Backend: org.treetank.io.combined.CombinedStorage }
@@ -111,7 +111,7 @@ tests:
       - org.treetank.io
       - org.treetank.io.bytepipe
       - org.treetank.log 
-      - org.treetank.page
+      - org.treetank.bucket
       - org.treetank.revisioning
   - name: FullDump Combined
     parameters: { Revisioning: org.treetank.revisioning.FullDump, Backend: org.treetank.io.combined.CombinedStorage }
@@ -121,5 +121,5 @@ tests:
       - org.treetank.io
       - org.treetank.io.bytepipe
       - org.treetank.log 
-      - org.treetank.page
+      - org.treetank.bucket
       - org.treetank.revisioning

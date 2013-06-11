@@ -5,7 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.treetank.api.IFilelistenerReadTrx;
-import org.treetank.api.IPageReadTrx;
+import org.treetank.api.IBucketReadTrx;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.filelistener.file.node.FileNode;
@@ -21,7 +21,7 @@ import com.google.common.io.OutputSupplier;
 public class FilelistenerReadTrx implements IFilelistenerReadTrx {
 
     /** State of transaction including all cached stuff. */
-    protected IPageReadTrx mPageReadTrx;
+    protected IBucketReadTrx mPageReadTrx;
 
     /** A dir used to generate the files in. */
     private final File mTmpDir;
@@ -38,7 +38,7 @@ public class FilelistenerReadTrx implements IFilelistenerReadTrx {
      * @throws TTIOException
      *             if something odd happens within the creation process.
      */
-    public FilelistenerReadTrx(final IPageReadTrx pPageTrx) throws TTException {
+    public FilelistenerReadTrx(final IBucketReadTrx pPageTrx) throws TTException {
         mPageReadTrx = pPageTrx;
         mTmpDir = Files.createTempDir();
     }
@@ -48,7 +48,7 @@ public class FilelistenerReadTrx implements IFilelistenerReadTrx {
      */
     @Override
     public String[] getFilePaths() {
-        Object[] metaKeys = mPageReadTrx.getMetaPage().getMetaMap().keySet().toArray();
+        Object[] metaKeys = mPageReadTrx.getMetaBucket().getMetaMap().keySet().toArray();
 
         String[] filePaths = new String[metaKeys.length];
 
@@ -81,7 +81,7 @@ public class FilelistenerReadTrx implements IFilelistenerReadTrx {
      */
     @Override
     public File getFullFile(String pRelativePath) throws TTIOException, IOException {
-        MetaValue value = (MetaValue)mPageReadTrx.getMetaPage().getMetaMap().get(new MetaKey(pRelativePath));
+        MetaValue value = (MetaValue)mPageReadTrx.getMetaBucket().getMetaMap().get(new MetaKey(pRelativePath));
 
         File file =
             new File(new StringBuilder().append(mTmpDir.getAbsolutePath()).append(File.separator).append(
@@ -145,7 +145,7 @@ public class FilelistenerReadTrx implements IFilelistenerReadTrx {
      * @param paramTransactionState
      *            State of transaction.
      */
-    protected final void setPageTransaction(final IPageReadTrx paramTransactionState) {
+    protected final void setPageTransaction(final IBucketReadTrx paramTransactionState) {
         mPageReadTrx = paramTransactionState;
     }
 

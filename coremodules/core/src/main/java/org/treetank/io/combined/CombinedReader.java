@@ -1,9 +1,9 @@
 package org.treetank.io.combined;
 
+import org.treetank.bucket.UberBucket;
+import org.treetank.bucket.interfaces.IBucket;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
-import org.treetank.page.UberPage;
-import org.treetank.page.interfaces.IPage;
 
 /**
  * 
@@ -37,8 +37,8 @@ public class CombinedReader implements IBackendReader {
      * {@inheritDoc}
      */
     @Override
-    public IPage read(long pKey) throws TTIOException {
-        IPage returnVal = mFirstReader.read(pKey);
+    public IBucket read(long pKey) throws TTIOException {
+        IBucket returnVal = mFirstReader.read(pKey);
         if (returnVal == null) {
             returnVal = mSecondReader.read(pKey);
         }
@@ -49,8 +49,8 @@ public class CombinedReader implements IBackendReader {
      * {@inheritDoc}
      */
     @Override
-    public UberPage readUber() throws TTIOException {
-        UberPage returnVal = mFirstReader.readUber();
+    public UberBucket readUber() throws TTIOException {
+        UberBucket returnVal = mFirstReader.readUber();
         if (returnVal == null) {
             returnVal = mSecondReader.readUber();
         }

@@ -366,7 +366,7 @@ public class XMLShredder implements Callable<Void> {
             new NodeMetaPageFactory()));
         final ISession session = db.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
         final INodeWriteTrx wtx =
-            new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
+            new NodeWriteTrx(session, session.beginBucketWtx(), HashKind.Rolling);
         // generating root node
         final NodeDelegate nodeDel = new NodeDelegate(wtx.getPageWtx().incrementNodeKey(), NULL_NODE, 0);
         DocumentRootNode node =

@@ -25,7 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.page;
+package org.treetank.bucket;
 
 import static com.google.common.base.Objects.toStringHelper;
 
@@ -34,76 +34,57 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Objects;
 
+import org.treetank.bucket.interfaces.IReferenceBucket;
 import org.treetank.exception.TTIOException;
-import org.treetank.page.interfaces.IReferencePage;
-import org.treetank.page.interfaces.IRevisionPage;
 
 /**
- * <h1>RevisionRootPage</h1>
+ * <h1>UberBucket</h1>
  * 
  * <p>
- * Revision root page holds a reference to the name page as well as the static node page tree.
+ * Uber bucket holds a reference to the static revision root bucket tree.
  * </p>
  * 
  * @author Sebastian Graf, University of Konstanz
  * @author Marc Kramis, University of Konstanz
  */
-public final class RevisionRootPage implements IRevisionPage, IReferencePage {
+public final class UberBucket implements IReferenceBucket {
 
-    /** Offset of name page reference. */
-    public static final int NAME_REFERENCE_OFFSET = 1;
+    /** Number of revisions. */
+    private final long mRevisionCount;
 
-    /** Last allocated node key. */
-    private long mMaxNodeKey;
+    /** Reference key for first indirect bucket. */
+    private final long mReferenceKeys[];
 
-    /** Revision of this page. */
-    private final long mRevision;
+    /** Key of this UberBucket. */
+    private final long mBucketKey;
 
-    /** Reference keys. */
-    private final long[] mReferenceKeys;
-
-    /** Page Key of this page. */
-    private final long mPageKey;
+    /** Counter for new buckets. */
+    private long mBucketCounter;
 
     /**
-     * Constructor of RevisionRootPages.
+     * New uber bucket
      * 
-     * @param pPageKey
-     *            Key of this page
-     * @param pRevision
-     *            to be created
-     * @param pMaxNodeKey
-     *            maximal node key given
+     * @param pBucketKey
+     *            key of this bucket
+     * @param pRevisionCount
+     *            count of all revisions in this storage
+     * @param pBucketCounter
+     *            Counter for all buckets
      */
-    public RevisionRootPage(final long pPageKey, final long pRevision, final long pMaxNodeKey) {
-        mRevision = pRevision;
-        mReferenceKeys = new long[2];
-        mMaxNodeKey = pMaxNodeKey;
-        mPageKey = pPageKey;
+    public UberBucket(final long pBucketKey, final long pRevisionCount, final long pBucketCounter) {
+        mRevisionCount = pRevisionCount;
+        mReferenceKeys = new long[1];
+        mBucketKey = pBucketKey;
+        mBucketCounter = pBucketCounter;
     }
 
     /**
-     * Get last allocated node key.
+     * Get revision key of current in-memory state.
      * 
-     * @return Last allocated node key.
+     * @return Revision key.
      */
-    public long getMaxNodeKey() {
-        return mMaxNodeKey;
-    }
-
-    /**
-     * Increment number of nodes by one while allocating another key.
-     */
-    public long incrementMaxNodeKey() {
-        return mMaxNodeKey++;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public long getRevision() {
-        return mRevision;
+    public long getRevisionNumber() {
+        return mRevisionCount;
     }
 
     /**
@@ -112,13 +93,11 @@ public final class RevisionRootPage implements IRevisionPage, IReferencePage {
     @Override
     public void serialize(final DataOutput pOutput) throws TTIOException {
         try {
-            pOutput.writeInt(IConstants.REVISIONROOTPAGE);
-            pOutput.writeLong(mPageKey);
-            pOutput.writeLong(mRevision);
-            pOutput.writeLong(mMaxNodeKey);
-            for (long key : mReferenceKeys) {
-                pOutput.writeLong(key);
-            }
+            pOutput.writeInt(IConstants.UBERBUCKET);
+            pOutput.writeLong(mBucketKey);
+            pOutput.writeLong(mRevisionCount);
+            pOutput.writeLong(mBucketCounter);
+            pOutput.writeLong(mReferenceKeys[0]);
         } catch (final IOException exc) {
             throw new TTIOException(exc);
         }
@@ -128,8 +107,26 @@ public final class RevisionRootPage implements IRevisionPage, IReferencePage {
      * {@inheritDoc}
      */
     @Override
-    public long getPageKey() {
-        return mPageKey;
+    public long getBucketKey() {
+        return mBucketKey;
+    }
+
+    /**
+     * Incrementing the counter.
+     * 
+     * @return the incremented counter
+     */
+    public long incrementBucketCounter() {
+        return mBucketCounter++;
+    }
+
+    /**
+     * Getter for mBucketCounter.
+     * 
+     * @return the mBucketCounter
+     */
+    public long getBucketCounter() {
+        return mBucketCounter;
     }
 
     /**
@@ -153,8 +150,8 @@ public final class RevisionRootPage implements IRevisionPage, IReferencePage {
      */
     @Override
     public String toString() {
-        return toStringHelper(this).add("mPageKey", mPageKey).add("mRevision", mRevision).add(
-            "mReferenceKeys", mReferenceKeys).add("mMaxNodeKey", mMaxNodeKey).toString();
+        return toStringHelper(this).add("mBucketKey", mBucketKey).add("mBucketCounter", mBucketCounter).add(
+            "mReferenceKeys", mReferenceKeys).toString();
     }
 
     /**
@@ -162,7 +159,7 @@ public final class RevisionRootPage implements IRevisionPage, IReferencePage {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(mPageKey, mRevision, Arrays.hashCode(mReferenceKeys), mMaxNodeKey);
+        return Objects.hash(mBucketKey, mBucketCounter, Arrays.hashCode(mReferenceKeys));
     }
 
     /**

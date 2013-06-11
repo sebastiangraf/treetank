@@ -25,7 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.page;
+package org.treetank.bucket;
 
 import static com.google.common.base.Objects.toStringHelper;
 
@@ -34,35 +34,35 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Objects;
 
+import org.treetank.bucket.interfaces.IReferenceBucket;
 import org.treetank.exception.TTIOException;
-import org.treetank.page.interfaces.IReferencePage;
 
 /**
- * <h1>IndirectPage</h1>
+ * <h1>IndirectBucket</h1>
  * 
  * <p>
- * Indirect page holds a set of references to build a reference tree.
+ * Indirect bucket holds a set of references to build a reference tree.
  * </p>
  * 
  * @author Sebastian Graf, University of Konstanz
  * @author Marc Kramis, University of Konstanz
  */
-public final class IndirectPage implements IReferencePage {
+public final class IndirectBucket implements IReferenceBucket {
 
     /** Reference keys. */
     private final long[] mReferenceKeys;
 
-    /** Key of this page. */
-    private final long mPageKey;
+    /** Key of this bucket. */
+    private final long mBucketKey;
 
     /**
-     * Create indirect page.
+     * Create indirect bucket.
      * 
-     * @param pPageKey
-     *            Key of the page
+     * @param pBucketKey
+     *            Key of the bucket
      */
-    public IndirectPage(final long pPageKey) {
-        mPageKey = pPageKey;
+    public IndirectBucket(final long pBucketKey) {
+        mBucketKey = pBucketKey;
         mReferenceKeys = new long[IConstants.CONTENT_COUNT];
     }
 
@@ -72,8 +72,8 @@ public final class IndirectPage implements IReferencePage {
     @Override
     public void serialize(final DataOutput pOutput) throws TTIOException {
         try {
-            pOutput.writeInt(IConstants.INDIRCTPAGE);
-            pOutput.writeLong(mPageKey);
+            pOutput.writeInt(IConstants.INDIRCTBUCKET);
+            pOutput.writeLong(mBucketKey);
             for (long key : mReferenceKeys) {
                 pOutput.writeLong(key);
             }
@@ -86,8 +86,8 @@ public final class IndirectPage implements IReferencePage {
      * {@inheritDoc}
      */
     @Override
-    public long getPageKey() {
-        return mPageKey;
+    public long getBucketKey() {
+        return mBucketKey;
     }
 
     /**
@@ -111,7 +111,7 @@ public final class IndirectPage implements IReferencePage {
      */
     @Override
     public String toString() {
-        return toStringHelper(this).add("mPageKey", mPageKey).add("mReferenceKeys",
+        return toStringHelper(this).add("mBucketKey", mBucketKey).add("mReferenceKeys",
             Arrays.toString(mReferenceKeys)).toString();
     }
 
@@ -120,7 +120,7 @@ public final class IndirectPage implements IReferencePage {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(mPageKey, Arrays.hashCode(mReferenceKeys));
+        return Objects.hash(mBucketKey, Arrays.hashCode(mReferenceKeys));
     }
 
     /**

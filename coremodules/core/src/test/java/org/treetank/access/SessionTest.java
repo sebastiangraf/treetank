@@ -22,8 +22,8 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
-import org.treetank.api.IPageReadTrx;
-import org.treetank.api.IPageWriteTrx;
+import org.treetank.api.IBucketReadTrx;
+import org.treetank.api.IBucketWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
 
@@ -81,11 +81,11 @@ public class SessionTest {
         final ISession session2 =
             mHolder.getStorage().getSession(new SessionConfiguration(resource2, StandardSettings.KEY));
 
-        IPageWriteTrx wtx1 = session1.beginPageWriteTransaction();
-        IPageWriteTrx wtx2 = session2.beginPageWriteTransaction();
+        IBucketWriteTrx wtx1 = session1.beginBucketWtx();
+        IBucketWriteTrx wtx2 = session2.beginBucketWtx();
 
         try {
-            session1.beginPageWriteTransaction();
+            session1.beginBucketWtx();
             fail();
         } catch (IllegalStateException exc) {
 
@@ -94,8 +94,8 @@ public class SessionTest {
         wtx1.close();
         wtx2.close();
 
-        wtx1 = session1.beginPageWriteTransaction();
-        wtx2 = session2.beginPageWriteTransaction();
+        wtx1 = session1.beginBucketWtx();
+        wtx2 = session2.beginBucketWtx();
 
     }
 
@@ -120,16 +120,16 @@ public class SessionTest {
     @Test
     public void testBeginPageReadTransaction() throws TTException {
         // generate first valid read transaction
-        final IPageReadTrx pRtx1 = mHolder.getSession().beginPageReadTransaction(0);
+        final IBucketReadTrx pRtx1 = mHolder.getSession().beginBucketRtx(0);
         assertNotNull(pRtx1);
         // generate second valid read transaction
-        final IPageReadTrx pRtx2 = mHolder.getSession().beginPageReadTransaction(0);
+        final IBucketReadTrx pRtx2 = mHolder.getSession().beginBucketRtx(0);
         assertNotNull(pRtx2);
         // asserting they are different
         assertNotSame(pRtx1, pRtx2);
         // beginning transaction with invalid revision number
         try {
-            mHolder.getSession().beginPageReadTransaction(1);
+            mHolder.getSession().beginBucketRtx(1);
             fail();
         } catch (IllegalArgumentException exc) {
             // must be thrown
@@ -139,18 +139,18 @@ public class SessionTest {
     @Test
     public void testBeginPageWriteTransaction() throws TTException {
         // generate first valid write transaction
-        final IPageWriteTrx pWtx1 = mHolder.getSession().beginPageWriteTransaction();
+        final IBucketWriteTrx pWtx1 = mHolder.getSession().beginBucketWtx();
         assertNotNull(pWtx1);
         pWtx1.close();
         // generate second valid write transaction
-        final IPageWriteTrx pWtx2 = mHolder.getSession().beginPageWriteTransaction(0);
+        final IBucketWriteTrx pWtx2 = mHolder.getSession().beginBucketWtx(0);
         assertNotNull(pWtx2);
         pWtx2.close();
         // asserting they are different
         assertNotSame(pWtx1, pWtx2);
         // beginning transaction with invalid revision number
         try {
-            mHolder.getSession().beginPageWriteTransaction(1);
+            mHolder.getSession().beginBucketWtx(1);
             fail();
         } catch (IllegalArgumentException exc) {
             // must be thrown
@@ -161,7 +161,7 @@ public class SessionTest {
     @Test
     public void testClose() throws TTException {
         // generate inlaying write transaction
-        final IPageWriteTrx pWtx1 = mHolder.getSession().beginPageWriteTransaction();
+        final IBucketWriteTrx pWtx1 = mHolder.getSession().beginBucketWtx();
         // close the session
         assertTrue(mHolder.getSession().close());
         assertFalse(mHolder.getSession().close());
@@ -169,7 +169,7 @@ public class SessionTest {
         // beginning transaction with valid revision number on closed session
         try {
             // try to truncate the resource
-            mHolder.getSession().beginPageWriteTransaction(0);
+            mHolder.getSession().beginBucketWtx(0);
             fail();
         } catch (IllegalStateException exc) {
             // must be thrown

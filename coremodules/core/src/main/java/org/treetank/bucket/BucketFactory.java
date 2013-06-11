@@ -25,7 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.page;
+package org.treetank.bucket;
 
 import static com.google.common.base.Objects.toStringHelper;
 
@@ -35,22 +35,22 @@ import java.io.IOException;
 import org.treetank.api.IMetaEntry;
 import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;
+import org.treetank.bucket.NodeBucket.DeletedNode;
+import org.treetank.bucket.interfaces.IBucket;
 import org.treetank.exception.TTIOException;
-import org.treetank.page.NodePage.DeletedNode;
-import org.treetank.page.interfaces.IPage;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 /**
- * Factory to deserialize pages out of a chunk of bytes.
+ * Factory to deserialize buckets out of a chunk of bytes.
  * This factory needs a {@link INodeFactory}-reference to perform inlying node-serializations as well.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
  */
 @Singleton
-public final class PageFactory {
+public final class BucketFactory {
 
     /** Node Factory to be initialized. */
     private final INodeFactory mNodeFac;
@@ -65,67 +65,67 @@ public final class PageFactory {
      *            to be set
      */
     @Inject
-    public PageFactory(final INodeFactory pNodeFac, final IMetaEntryFactory pMetaFac) {
+    public BucketFactory(final INodeFactory pNodeFac, final IMetaEntryFactory pMetaFac) {
         mNodeFac = pNodeFac;
         mEntryFac = pMetaFac;
     }
 
     /**
-     * Create page.
+     * Create bucket.
      * 
      * @param pInput
      *            source to read from
-     * @return the created page
+     * @return the created bucket
      * @throws TTIOException
      */
-    public IPage deserializePage(final DataInput pInput) throws TTIOException {
+    public IBucket deserializeBucket(final DataInput pInput) throws TTIOException {
         try {
             final int kind = pInput.readInt();
             switch (kind) {
-            case IConstants.NODEPAGE:
-                NodePage nodePage = new NodePage(pInput.readLong(), pInput.readLong());
+            case IConstants.NODEBUCKET:
+                NodeBucket nodeBucket = new NodeBucket(pInput.readLong(), pInput.readLong());
                 for (int offset = 0; offset < IConstants.CONTENT_COUNT; offset++) {
                     int nodeKind = pInput.readInt();
                     if (nodeKind != IConstants.NULL_NODE) {
                         if (nodeKind == IConstants.DELETEDNODE) {
-                            nodePage.getNodes()[offset] = new DeletedNode(pInput.readLong());
+                            nodeBucket.getNodes()[offset] = new DeletedNode(pInput.readLong());
                         } else {
-                            nodePage.getNodes()[offset] = mNodeFac.deserializeNode(pInput);
+                            nodeBucket.getNodes()[offset] = mNodeFac.deserializeNode(pInput);
                         }
                     }
                 }
-                return nodePage;
-            case IConstants.METAPAGE:
-                MetaPage metaPage = new MetaPage(pInput.readLong());
+                return nodeBucket;
+            case IConstants.METABUCKET:
+                MetaBucket metaBucket = new MetaBucket(pInput.readLong());
                 final int mapSize = pInput.readInt();
                 IMetaEntry key;
                 IMetaEntry value;
                 for (int i = 0; i < mapSize; i++) {
                     key = mEntryFac.deserializeEntry(pInput);
                     value = mEntryFac.deserializeEntry(pInput);
-                    metaPage.setEntry(key, value);
+                    metaBucket.setEntry(key, value);
                 }
-                return metaPage;
-            case IConstants.UBERPAGE:
-                UberPage uberPage = new UberPage(pInput.readLong(), pInput.readLong(), pInput.readLong());
-                uberPage.setReferenceKey(0, pInput.readLong());
-                return uberPage;
-            case IConstants.INDIRCTPAGE:
-                IndirectPage indirectPage = new IndirectPage(pInput.readLong());
-                for (int offset = 0; offset < indirectPage.getReferenceKeys().length; offset++) {
-                    indirectPage.setReferenceKey(offset, pInput.readLong());
+                return metaBucket;
+            case IConstants.UBERBUCKET:
+                UberBucket uberBucket = new UberBucket(pInput.readLong(), pInput.readLong(), pInput.readLong());
+                uberBucket.setReferenceKey(0, pInput.readLong());
+                return uberBucket;
+            case IConstants.INDIRCTBUCKET:
+                IndirectBucket indirectBucket = new IndirectBucket(pInput.readLong());
+                for (int offset = 0; offset < indirectBucket.getReferenceKeys().length; offset++) {
+                    indirectBucket.setReferenceKey(offset, pInput.readLong());
                 }
-                return indirectPage;
-            case IConstants.REVISIONROOTPAGE:
-                RevisionRootPage revRootPage =
-                    new RevisionRootPage(pInput.readLong(), pInput.readLong(), pInput.readLong());
-                for (int offset = 0; offset < revRootPage.getReferenceKeys().length; offset++) {
-                    revRootPage.setReferenceKey(offset, pInput.readLong());
+                return indirectBucket;
+            case IConstants.REVISIONROOTBUCKET:
+                RevisionRootBucket revRootBucket =
+                    new RevisionRootBucket(pInput.readLong(), pInput.readLong(), pInput.readLong());
+                for (int offset = 0; offset < revRootBucket.getReferenceKeys().length; offset++) {
+                    revRootBucket.setReferenceKey(offset, pInput.readLong());
                 }
-                return revRootPage;
+                return revRootBucket;
             default:
                 throw new IllegalStateException(
-                    "Invalid Kind of Page. Something went wrong in the serialization/deserialization");
+                    "Invalid Kind of Bucket. Something went wrong in the serialization/deserialization");
             }
         } catch (final IOException exc) {
             throw new TTIOException(exc);

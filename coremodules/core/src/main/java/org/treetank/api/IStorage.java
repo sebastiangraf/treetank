@@ -57,8 +57,8 @@ import org.treetank.exception.TTIOException;
  *      final IStorage storage = Storage.openStorage(FILE);
  *      final ISession session =
  *           storage.getSession(new SessionConfiguration(RESOURCENAME, KEY));
- *      final IPageReadTrx pRtx = session.beginPageReadTransaction(REVISION);
- *      final IPageWriteTrx pWtx = session.beginPageWriteTransaction();
+ *      final IBucketReadTrx pRtx = session.beginBucketRtx(REVISION);
+ *      final IBucketWriteTrx pWtx = session.beginBucketWtx();
  * </code>
  * 
  * 

@@ -3,7 +3,7 @@ Treetank - Core Module
 
 This module represents the core functionality of Treetank. The core functionality mainly covers:
 
-* the page layer
+* the bucket layer
 * different backends
 * transactions for getting data in Treetank
 * related test cases

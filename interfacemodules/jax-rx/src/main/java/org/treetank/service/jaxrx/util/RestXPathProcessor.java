@@ -164,9 +164,9 @@ public class RestXPathProcessor {
                 // Creating a transaction
 
                 if (doRevision == null) {
-                    rtx = new NodeReadTrx(session.beginPageReadTransaction(session.getMostRecentVersion()));
+                    rtx = new NodeReadTrx(session.beginBucketRtx(session.getMostRecentVersion()));
                 } else {
-                    rtx = new NodeReadTrx(session.beginPageReadTransaction(doRevision));
+                    rtx = new NodeReadTrx(session.beginBucketRtx(doRevision));
                 }
 
                 final boolean exist = rtx.moveTo(rId);
@@ -223,9 +223,9 @@ public class RestXPathProcessor {
                 session = mDatabase.getSession(new SessionConfiguration(resource, StandardSettings.KEY));
                 // Creating a transaction
                 if (revision == null) {
-                    rtx = new NodeReadTrx(session.beginPageReadTransaction(session.getMostRecentVersion()));
+                    rtx = new NodeReadTrx(session.beginBucketRtx(session.getMostRecentVersion()));
                 } else {
-                    rtx = new NodeReadTrx(session.beginPageReadTransaction(revision));
+                    rtx = new NodeReadTrx(session.beginBucketRtx(revision));
                 }
 
                 final AbsAxis axis = new XPathAxis(rtx, xpath);

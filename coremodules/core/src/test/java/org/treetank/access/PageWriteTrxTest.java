@@ -22,17 +22,17 @@ import org.treetank.ModuleFactory;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.StandardSettings;
-import org.treetank.api.IPageReadTrx;
-import org.treetank.api.IPageWriteTrx;
+import org.treetank.api.IBucketReadTrx;
+import org.treetank.api.IBucketWriteTrx;
+import org.treetank.bucket.DumbMetaEntryFactory.DumbKey;
+import org.treetank.bucket.DumbMetaEntryFactory.DumbValue;
+import org.treetank.bucket.DumbNodeFactory.DumbNode;
 import org.treetank.exception.TTException;
-import org.treetank.page.DumbMetaEntryFactory.DumbKey;
-import org.treetank.page.DumbMetaEntryFactory.DumbValue;
-import org.treetank.page.DumbNodeFactory.DumbNode;
 
 import com.google.inject.Inject;
 
 /**
- * Test case for the PageWriteTrx-class
+ * Test case for the BucketWriteTrx-class
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
@@ -67,7 +67,7 @@ public class PageWriteTrxTest {
     }
 
     /**
-     * Test method for {@link org.treetank.access.PageWriteTrx#getRevision()}.
+     * Test method for {@link org.treetank.access.BucketWriteTrx#getRevision()}.
      * 
      * @throws TTException
      */
@@ -75,13 +75,13 @@ public class PageWriteTrxTest {
     public void testRevision() throws TTException {
         CoreTestHelper.createTestData(mHolder);
         PageReadTrxTest.testRevision(mHolder.getSession());
-        IPageWriteTrx wtx = mHolder.getSession().beginPageWriteTransaction();
+        IBucketWriteTrx wtx = mHolder.getSession().beginBucketWtx();
         assertEquals(mHolder.getSession().getMostRecentVersion() + 1, wtx.getRevision());
         wtx.close();
     }
 
     /**
-     * Test method for {@link org.treetank.access.PageWriteTrx#getMetaPage()}.
+     * Test method for {@link org.treetank.access.BucketWriteTrx#getMetaBucket()}.
      * 
      * @throws TTException
      */
@@ -89,17 +89,17 @@ public class PageWriteTrxTest {
     public void testGetMetaPage() throws TTException {
         List<List<Map.Entry<DumbKey, DumbValue>>> meta = CoreTestHelper.createTestMeta(mHolder);
         PageReadTrxTest.testMeta(mHolder.getSession(), meta);
-        IPageWriteTrx wtx = mHolder.getSession().beginPageWriteTransaction();
+        IBucketWriteTrx wtx = mHolder.getSession().beginBucketWtx();
         CoreTestHelper.checkStructure(meta.get(meta.size() - 1), wtx, false);
         wtx.commit();
         assertTrue(wtx.close());
-        wtx = mHolder.getSession().beginPageWriteTransaction();
-        assertEquals(0, wtx.getMetaPage().getMetaMap().size());
+        wtx = mHolder.getSession().beginBucketWtx();
+        assertEquals(0, wtx.getMetaBucket().getMetaMap().size());
 
     }
 
     /**
-     * Test method for {@link org.treetank.access.PageWriteTrx#getNode(long)}.
+     * Test method for {@link org.treetank.access.BucketWriteTrx#getNode(long)}.
      * 
      * @throws TTException
      */
@@ -108,18 +108,18 @@ public class PageWriteTrxTest {
         DumbNode[][] nodes = CoreTestHelper.createTestData(mHolder);
         PageReadTrxTest.testGet(mHolder.getSession(), nodes);
         List<DumbNode> list = CoreTestHelper.combineNodes(nodes);
-        final IPageWriteTrx wtx = mHolder.getSession().beginPageWriteTransaction();
+        final IBucketWriteTrx wtx = mHolder.getSession().beginBucketWtx();
         CoreTestHelper.checkStructure(list, wtx, 0);
     }
 
     /**
-     * Test method for {@link org.treetank.access.PageWriteTrx#setNode(org.treetank.api.INode)}.
+     * Test method for {@link org.treetank.access.BucketWriteTrx#setNode(org.treetank.api.INode)}.
      * 
      * @throws TTException
      */
     @Test
     public void testSetNode() throws TTException {
-        final IPageWriteTrx wtx = mHolder.getSession().beginPageWriteTransaction();
+        final IBucketWriteTrx wtx = mHolder.getSession().beginBucketWtx();
         int elementsToSet = 16385;
         List<DumbNode> nodes = new ArrayList<DumbNode>();
         for (int i = 0; i < elementsToSet; i++) {
@@ -151,15 +151,15 @@ public class PageWriteTrxTest {
         }
         wtx.commit();
 
-        final IPageReadTrx rtx =
-            mHolder.getSession().beginPageReadTransaction(mHolder.getSession().getMostRecentVersion());
+        final IBucketReadTrx rtx =
+            mHolder.getSession().beginBucketRtx(mHolder.getSession().getMostRecentVersion());
         CoreTestHelper.checkStructure(nodes, rtx, 0);
         CoreTestHelper.checkStructure(nodes, wtx, 0);
 
     }
 
     /**
-     * Test method for {@link org.treetank.access.PageWriteTrx#removeNode(org.treetank.api.INode)}.
+     * Test method for {@link org.treetank.access.BucketWriteTrx#removeNode(org.treetank.api.INode)}.
      * 
      * @throws TTException
      */
@@ -167,7 +167,7 @@ public class PageWriteTrxTest {
     public void testRemoveNode() throws TTException {
         DumbNode[][] nodes = CoreTestHelper.createTestData(mHolder);
         List<DumbNode> list = CoreTestHelper.combineNodes(nodes);
-        final IPageWriteTrx wtx = mHolder.getSession().beginPageWriteTransaction();
+        final IBucketWriteTrx wtx = mHolder.getSession().beginBucketWtx();
         int elementsDeleted = 10;
         int revisions = 1;
         for (int i = 0; i < revisions; i++) {
@@ -181,26 +181,26 @@ public class PageWriteTrxTest {
             CoreTestHelper.checkStructure(list, wtx, 0);
             wtx.commit();
             CoreTestHelper.checkStructure(list, wtx, 0);
-            final IPageReadTrx rtx =
-                mHolder.getSession().beginPageReadTransaction(mHolder.getSession().getMostRecentVersion());
+            final IBucketReadTrx rtx =
+                mHolder.getSession().beginBucketRtx(mHolder.getSession().getMostRecentVersion());
             CoreTestHelper.checkStructure(list, rtx, 0);
             rtx.close();
         }
         wtx.close();
-        final IPageReadTrx rtx =
-            mHolder.getSession().beginPageReadTransaction(mHolder.getSession().getMostRecentVersion());
+        final IBucketReadTrx rtx =
+            mHolder.getSession().beginBucketRtx(mHolder.getSession().getMostRecentVersion());
         CoreTestHelper.checkStructure(list, rtx, 0);
     }
 
     /**
-     * Test method for {@link org.treetank.access.PageWriteTrx#close()} and
-     * {@link org.treetank.access.PageWriteTrx#isClosed()}.
+     * Test method for {@link org.treetank.access.BucketWriteTrx#close()} and
+     * {@link org.treetank.access.BucketWriteTrx#isClosed()}.
      * 
      * @throws TTException
      */
     @Test
     public void testCloseAndIsClosed() throws TTException {
-        IPageWriteTrx rtx = mHolder.getSession().beginPageWriteTransaction();
+        IBucketWriteTrx rtx = mHolder.getSession().beginBucketWtx();
         PageReadTrxTest.testClose(mHolder.getStorage(), mHolder.getSession(), rtx);
     }
 

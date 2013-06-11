@@ -1,11 +1,10 @@
 package org.treetank.access.commit;
 
-import org.treetank.api.ISession;
+import org.treetank.bucket.MetaBucket;
+import org.treetank.bucket.RevisionRootBucket;
+import org.treetank.bucket.UberBucket;
 import org.treetank.io.IBackendWriter;
 import org.treetank.log.LRULog;
-import org.treetank.page.MetaPage;
-import org.treetank.page.RevisionRootPage;
-import org.treetank.page.UberPage;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
@@ -21,11 +20,11 @@ public class CommitStrategyModule extends AbstractModule {
 
     private IBackendWriter mWriter;
 
-    private UberPage mUber;
+    private UberBucket mUber;
 
-    private MetaPage mMeta;
+    private MetaBucket mMeta;
 
-    private RevisionRootPage mRev;
+    private RevisionRootBucket mRev;
 
     public CommitStrategyModule setmLog(LRULog mLog) {
         this.mLog = mLog;
@@ -37,17 +36,17 @@ public class CommitStrategyModule extends AbstractModule {
         return this;
     }
 
-    public CommitStrategyModule setmUber(UberPage mUber) {
+    public CommitStrategyModule setmUber(UberBucket mUber) {
         this.mUber = mUber;
         return this;
     }
 
-    public CommitStrategyModule setmMeta(MetaPage mMeta) {
+    public CommitStrategyModule setmMeta(MetaBucket mMeta) {
         this.mMeta = mMeta;
         return this;
     }
 
-    public CommitStrategyModule setmRev(RevisionRootPage mRev) {
+    public CommitStrategyModule setmRev(RevisionRootBucket mRev) {
         this.mRev = mRev;
         return this;
     }
@@ -56,9 +55,9 @@ public class CommitStrategyModule extends AbstractModule {
     protected void configure() {
         bind(LRULog.class).annotatedWith(Names.named("pLog")).toInstance(mLog);
         bind(IBackendWriter.class).annotatedWith(Names.named("pWriter")).toInstance(mWriter);
-        bind(UberPage.class).annotatedWith(Names.named("pUber")).toInstance(mUber);
-        bind(MetaPage.class).annotatedWith(Names.named("pMeta")).toInstance(mMeta);
-        bind(RevisionRootPage.class).annotatedWith(Names.named("pRoot")).toInstance(mRev);
+        bind(UberBucket.class).annotatedWith(Names.named("pUber")).toInstance(mUber);
+        bind(MetaBucket.class).annotatedWith(Names.named("pMeta")).toInstance(mMeta);
+        bind(RevisionRootBucket.class).annotatedWith(Names.named("pRoot")).toInstance(mRev);
     }
 
 }

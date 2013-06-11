@@ -39,7 +39,7 @@ import java.util.ArrayList;
 import javax.xml.namespace.QName;
 
 import org.treetank.api.INodeWriteTrx;
-import org.treetank.api.IPageWriteTrx;
+import org.treetank.api.IBucketWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
@@ -116,7 +116,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      * @throws TTUsageException
      *             if paramMaxNodeCount < 0 or paramMaxTime < 0
      */
-    public NodeWriteTrx(final ISession pSession, final IPageWriteTrx pPageWriteTrx, final HashKind kind)
+    public NodeWriteTrx(final ISession pSession, final IBucketWriteTrx pPageWriteTrx, final HashKind kind)
         throws TTException {
 
         mHashKind = kind;
@@ -441,7 +441,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
         checkArgument(pRevision >= 0, "Parameter must be >= 0, but was %s", pRevision);
         getPtx().close();
         // Reset internal transaction state to new uber page.
-        mDelegate.setPageTransaction(mSession.beginPageWriteTransaction(pRevision));
+        mDelegate.setPageTransaction(mSession.beginBucketWtx(pRevision));
         moveTo(ROOT_NODE);
 
     }
@@ -468,7 +468,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
         getPtx().close();
 
         // Reset internal transaction state to last committed uber page.
-        mDelegate.setPageTransaction(mSession.beginPageWriteTransaction(revisionToSet));
+        mDelegate.setPageTransaction(mSession.beginBucketWtx(revisionToSet));
     }
 
     /**
@@ -493,7 +493,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
         final int nameKey = NamePageHash.generateHashForString(string);
         NodeMetaPageFactory.MetaKey key = new NodeMetaPageFactory.MetaKey(nameKey);
         NodeMetaPageFactory.MetaValue value = new NodeMetaPageFactory.MetaValue(string);
-        getPageWtx().getMetaPage().setEntry(key, value);
+        getPageWtx().getMetaBucket().setEntry(key, value);
         return nameKey;
     }
 
@@ -607,8 +607,8 @@ public class NodeWriteTrx implements INodeWriteTrx {
      * 
      * @return The state of this transaction.
      */
-    private PageWriteTrx getPtx() {
-        return (PageWriteTrx)mDelegate.mPageReadTrx;
+    private BucketWriteTrx getPtx() {
+        return (BucketWriteTrx)mDelegate.mPageReadTrx;
     }
 
     /**
@@ -924,7 +924,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      * {@inheritDoc}
      */
     @Override
-    public IPageWriteTrx getPageWtx() throws TTException {
+    public IBucketWriteTrx getPageWtx() throws TTException {
         return getPtx();
     }
 

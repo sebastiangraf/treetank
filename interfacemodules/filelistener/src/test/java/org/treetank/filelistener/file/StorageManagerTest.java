@@ -50,7 +50,7 @@ public class StorageManagerTest {
     public void testGetSession() throws ResourceNotExistingException, TTException {
         ISession session = StorageManager.getSession(mStorageName);
         assertNotNull(session);
-        assertNotNull(session.beginPageWriteTransaction());
+        assertNotNull(session.beginBucketWtx());
         assertTrue(session.close());
     }
 

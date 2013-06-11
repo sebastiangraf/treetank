@@ -42,6 +42,13 @@ import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
+import org.treetank.bucket.IConstants;
+import org.treetank.bucket.IndirectBucket;
+import org.treetank.bucket.MetaBucket;
+import org.treetank.bucket.NodeBucket;
+import org.treetank.bucket.RevisionRootBucket;
+import org.treetank.bucket.UberBucket;
+import org.treetank.bucket.interfaces.IReferenceBucket;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackend;
@@ -51,13 +58,6 @@ import org.treetank.io.IOUtils;
 import org.treetank.log.LRULog;
 import org.treetank.log.LogKey;
 import org.treetank.log.LogValue;
-import org.treetank.page.IConstants;
-import org.treetank.page.IndirectPage;
-import org.treetank.page.MetaPage;
-import org.treetank.page.NodePage;
-import org.treetank.page.RevisionRootPage;
-import org.treetank.page.UberPage;
-import org.treetank.page.interfaces.IReferencePage;
 
 /**
  * This class represents one concrete database for enabling several {@link ISession} objects.
@@ -279,10 +279,10 @@ public final class Storage implements IStorage {
             config.mBackend.initialize();
             // reading first reference and instantiate this.
             final IBackendReader backendReader = config.mBackend.getReader();
-            UberPage page = backendReader.readUber();
+            UberBucket bucket = backendReader.readUber();
             backendReader.close();
 
-            returnVal = new Session(this, config, pSessionConf, page);
+            returnVal = new Session(this, config, pSessionConf, bucket);
             mSessions.put(pSessionConf.getResource(), returnVal);
         }
         return returnVal;
@@ -345,64 +345,64 @@ public final class Storage implements IStorage {
             new LRULog(new File(pResourceConf.mProperties.getProperty(ConstructorProps.RESOURCEPATH)),
                 pResourceConf.mNodeFac, pResourceConf.mMetaFac);
 
-        UberPage uberPage = new UberPage(1, 0, 2);
-        long newPageKey = uberPage.incrementPageCounter();
-        uberPage.setReferenceKey(IReferencePage.GUARANTEED_INDIRECT_OFFSET, newPageKey);
+        UberBucket uberBucket = new UberBucket(1, 0, 2);
+        long newBucketKey = uberBucket.incrementBucketCounter();
+        uberBucket.setReferenceKey(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET, newBucketKey);
 
         // --- Create revision tree
         // ------------------------------------------------
         // Initialize revision tree to guarantee that there is a revision root
-        // page.
+        // bucket.
 
-        IReferencePage page;
-        for (int i = 0; i < IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i++) {
-            page = new IndirectPage(newPageKey);
-            newPageKey = uberPage.incrementPageCounter();
-            page.setReferenceKey(0, newPageKey);
+        IReferenceBucket bucket;
+        for (int i = 0; i < IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length; i++) {
+            bucket = new IndirectBucket(newBucketKey);
+            newBucketKey = uberBucket.incrementBucketCounter();
+            bucket.setReferenceKey(0, newBucketKey);
             LogKey key = new LogKey(true, i, 0);
-            log.put(key, new LogValue(page, page));
+            log.put(key, new LogValue(bucket, bucket));
         }
 
-        page = new RevisionRootPage(newPageKey, 0, 0);
+        bucket = new RevisionRootBucket(newBucketKey, 0, 0);
 
-        newPageKey = uberPage.incrementPageCounter();
-        // establishing fresh NamePage
-        MetaPage namePage = new MetaPage(newPageKey);
-        page.setReferenceKey(RevisionRootPage.NAME_REFERENCE_OFFSET, newPageKey);
+        newBucketKey = uberBucket.incrementBucketCounter();
+        // establishing fresh NameBucket
+        MetaBucket nameBucket = new MetaBucket(newBucketKey);
+        bucket.setReferenceKey(RevisionRootBucket.NAME_REFERENCE_OFFSET, newBucketKey);
         LogKey key = new LogKey(false, -1, -1);
-        log.put(key, new LogValue(namePage, namePage));
+        log.put(key, new LogValue(nameBucket, nameBucket));
 
-        newPageKey = uberPage.incrementPageCounter();
-        IndirectPage indirectPage = new IndirectPage(newPageKey);
-        page.setReferenceKey(IReferencePage.GUARANTEED_INDIRECT_OFFSET, newPageKey);
+        newBucketKey = uberBucket.incrementBucketCounter();
+        IndirectBucket indirectBucket = new IndirectBucket(newBucketKey);
+        bucket.setReferenceKey(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET, newBucketKey);
         key = new LogKey(false, -1, 0);
-        log.put(key, new LogValue(page, page));
+        log.put(key, new LogValue(bucket, bucket));
 
         // --- Create node tree
         // ----------------------------------------------------
 
         // Initialize revision tree to guarantee that there is a revision root
-        // page.
+        // bucket.
 
-        page = indirectPage;
+        bucket = indirectBucket;
 
-        for (int i = 0; i < IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i++) {
-            newPageKey = uberPage.incrementPageCounter();
-            page.setReferenceKey(0, newPageKey);
+        for (int i = 0; i < IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length; i++) {
+            newBucketKey = uberBucket.incrementBucketCounter();
+            bucket.setReferenceKey(0, newBucketKey);
             key = new LogKey(false, i, 0);
-            log.put(key, new LogValue(page, page));
-            page = new IndirectPage(newPageKey);
+            log.put(key, new LogValue(bucket, bucket));
+            bucket = new IndirectBucket(newBucketKey);
         }
 
-        final NodePage ndp = new NodePage(newPageKey, IConstants.NULL_NODE);
-        key = new LogKey(false, IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length, 0);
+        final NodeBucket ndp = new NodeBucket(newBucketKey, IConstants.NULL_NODE);
+        key = new LogKey(false, IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length, 0);
         log.put(key, new LogValue(ndp, ndp));
 
         IBackend storage = pResourceConf.mBackend;
         storage.initialize();
         IBackendWriter writer = storage.getWriter();
 
-        writer.writeUberPage(uberPage);
+        writer.writeUberBucket(uberBucket);
 
         Iterator<LogValue> entries = log.getIterator();
         while (entries.hasNext()) {

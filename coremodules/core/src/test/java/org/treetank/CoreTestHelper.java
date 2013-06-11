@@ -47,18 +47,18 @@ import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.api.IMetaEntry;
-import org.treetank.api.IPageReadTrx;
-import org.treetank.api.IPageWriteTrx;
+import org.treetank.api.IBucketReadTrx;
+import org.treetank.api.IBucketWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
+import org.treetank.bucket.IndirectBucket;
+import org.treetank.bucket.NodeBucket;
+import org.treetank.bucket.DumbMetaEntryFactory.DumbKey;
+import org.treetank.bucket.DumbMetaEntryFactory.DumbValue;
+import org.treetank.bucket.DumbNodeFactory.DumbNode;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
-import org.treetank.page.DumbMetaEntryFactory.DumbKey;
-import org.treetank.page.DumbMetaEntryFactory.DumbValue;
-import org.treetank.page.DumbNodeFactory.DumbNode;
-import org.treetank.page.IndirectPage;
-import org.treetank.page.NodePage;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -190,11 +190,11 @@ public final class CoreTestHelper {
      *            key of the nodepage
      * @param lastPageKey
      *            key of the former page
-     * @return a {@link NodePage} filled
+     * @return a {@link NodeBucket} filled
      */
-    public static final NodePage getNodePage(final int offset, final int length, final long nodePageKey,
+    public static final NodeBucket getNodePage(final int offset, final int length, final long nodePageKey,
         final long lastPageKey) {
-        final NodePage page = new NodePage(nodePageKey, lastPageKey);
+        final NodeBucket page = new NodeBucket(nodePageKey, lastPageKey);
         for (int i = offset; i < length; i++) {
             page.setNode(i, generateOne());
         }
@@ -232,7 +232,7 @@ public final class CoreTestHelper {
         // iterating through the tree..
         for (int i = 0; i < offsets.length; i++) {
             // ...and create a new page.
-            final IndirectPage page = new IndirectPage(pKey);
+            final IndirectBucket page = new IndirectBucket(pKey);
             long oldKey = pKey;
             // set the offsets until the defined parameter...
             for (int j = 0; j <= offsets[i]; j++) {
@@ -264,7 +264,7 @@ public final class CoreTestHelper {
         returnVal.add(firstRevList);
         // adding all data for upcoming revisions
         for (int i = 0; i < pNumbers.length; i++) {
-            IPageWriteTrx wtx = pHolder.getSession().beginPageWriteTransaction();
+            IBucketWriteTrx wtx = pHolder.getSession().beginBucketWtx();
             List<Map.Entry<DumbKey, DumbValue>> dataPerVersion =
                 insertMetaWithTransaction(pNumbers[i], wtx, returnVal.get(i));
             returnVal.add(dataPerVersion);
@@ -282,7 +282,7 @@ public final class CoreTestHelper {
      * @throws TTException
      */
     public static final DumbNode[][] createTestData(Holder pHolder) throws TTException {
-        IPageWriteTrx wtx = pHolder.getSession().beginPageWriteTransaction();
+        IBucketWriteTrx wtx = pHolder.getSession().beginBucketWtx();
         int[] nodesPerRevision = new int[10];
         Arrays.fill(nodesPerRevision, 128);
         DumbNode[][] nodes = CoreTestHelper.insertNodesWithTransaction(nodesPerRevision, wtx);
@@ -301,7 +301,7 @@ public final class CoreTestHelper {
      * @throws TTException
      */
     public static final DumbNode[][] insertNodesWithTransaction(final int[] pNodesPerRevision,
-        final IPageWriteTrx pWtx) throws TTException {
+        final IBucketWriteTrx pWtx) throws TTException {
         final DumbNode[][] returnVal = createNodes(pNodesPerRevision);
         for (int i = 0; i < returnVal.length; i++) {
             for (int j = 0; j < returnVal[i].length; j++) {
@@ -329,14 +329,14 @@ public final class CoreTestHelper {
      * @throws TTException
      */
     public static final List<Map.Entry<DumbKey, DumbValue>> insertMetaWithTransaction(final int pNumbers,
-        final IPageWriteTrx pWtx, List<Map.Entry<DumbKey, DumbValue>> pAlreadyExistingEntries)
+        final IBucketWriteTrx pWtx, List<Map.Entry<DumbKey, DumbValue>> pAlreadyExistingEntries)
         throws TTException {
         List<Map.Entry<DumbKey, DumbValue>> returnVal = createMetaEntries(pNumbers);
         List<Map.Entry<DumbKey, DumbValue>> toCheck = Lists.newArrayList();
         assertTrue(pAlreadyExistingEntries.isEmpty() != toCheck.addAll(pAlreadyExistingEntries));
         for (Map.Entry<DumbKey, DumbValue> entry : returnVal) {
             assertTrue(toCheck.add(entry));
-            assertNull(pWtx.getMetaPage().getMetaMap().put(entry.getKey(), entry.getValue()));
+            assertNull(pWtx.getMetaBucket().getMetaMap().put(entry.getKey(), entry.getValue()));
             checkStructure(toCheck, pWtx, true);
         }
         assertTrue(pAlreadyExistingEntries.isEmpty() != returnVal.addAll(pAlreadyExistingEntries));
@@ -409,13 +409,13 @@ public final class CoreTestHelper {
      * @throws TTIOException
      */
     public static final void checkStructure(final List<Map.Entry<DumbKey, DumbValue>> pEntries,
-        final IPageReadTrx pRtx, final boolean pWorkOnClone) throws TTIOException {
+        final IBucketReadTrx pRtx, final boolean pWorkOnClone) throws TTIOException {
         Map<IMetaEntry, IMetaEntry> map;
         if (pWorkOnClone) {
             map = Maps.newHashMap();
-            map.putAll(pRtx.getMetaPage().getMetaMap());
+            map.putAll(pRtx.getMetaBucket().getMetaMap());
         } else {
-            map = pRtx.getMetaPage().getMetaMap();
+            map = pRtx.getMetaBucket().getMetaMap();
         }
         for (Map.Entry<DumbKey, DumbValue> entry : pEntries) {
             IMetaEntry value = map.remove(entry.getKey());
@@ -434,7 +434,7 @@ public final class CoreTestHelper {
      *            to check
      * @throws TTIOException
      */
-    public static final void checkStructure(final List<DumbNode> pNodes, final IPageReadTrx pRtx,
+    public static final void checkStructure(final List<DumbNode> pNodes, final IBucketReadTrx pRtx,
         final long startKey) throws TTIOException {
         long key = startKey;
         for (DumbNode node : pNodes) {

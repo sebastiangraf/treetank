@@ -35,8 +35,8 @@ import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.INodeWriteTrx;
-import org.treetank.api.IPageReadTrx;
-import org.treetank.api.IPageWriteTrx;
+import org.treetank.api.IBucketReadTrx;
+import org.treetank.api.IBucketWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
 
@@ -58,7 +58,7 @@ public class Holder {
         Holder holder = new Holder();
         holder.mHolder = pHolder;
         CoreTestHelper.Holder.generateSession(pHolder, pConf);
-        IPageWriteTrx wtx = pHolder.getSession().beginPageWriteTransaction();
+        IBucketWriteTrx wtx = pHolder.getSession().beginBucketWtx();
         holder.mNRtx = new NodeWriteTrx(holder.mHolder.getSession(), wtx, HashKind.None);
         return holder;
     }
@@ -68,8 +68,8 @@ public class Holder {
         Holder holder = new Holder();
         holder.mHolder = pHolder;
         CoreTestHelper.Holder.generateSession(pHolder, pConf);
-        IPageReadTrx rtx =
-            pHolder.getSession().beginPageReadTransaction(pHolder.getSession().getMostRecentVersion());
+        IBucketReadTrx rtx =
+            pHolder.getSession().beginBucketRtx(pHolder.getSession().getMostRecentVersion());
         holder.mNRtx = new NodeReadTrx(rtx);
         return holder;
     }

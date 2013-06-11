@@ -61,7 +61,7 @@ public final class DiffTestHelper {
 
     static void setUpFirst(final Holder paramHolder) throws TTException {
         final INodeWriteTrx wtx =
-            new NodeWriteTrx(paramHolder.getSession(), paramHolder.getSession().beginPageWriteTransaction(),
+            new NodeWriteTrx(paramHolder.getSession(), paramHolder.getSession().beginBucketWtx(),
                 HashKind.Rolling);
         XMLTestHelper.DocumentCreater.createVersioned(wtx);
         wtx.close();
@@ -97,7 +97,7 @@ public final class DiffTestHelper {
         IOException, XMLStreamException {
 
         final INodeWriteTrx wtx =
-            new NodeWriteTrx(paramHolder.getSession(), paramHolder.getSession().beginPageWriteTransaction(),
+            new NodeWriteTrx(paramHolder.getSession(), paramHolder.getSession().beginBucketWtx(),
                 HashKind.Rolling);
 
         int i = 0;

@@ -107,8 +107,8 @@ abstract class AbsDiff extends AbsDiffObservable {
 
         mDiffKind = paramBuilder.mKind;
         synchronized (paramBuilder.mSession) {
-            mNewRtx = new NodeReadTrx(paramBuilder.mSession.beginPageReadTransaction(paramBuilder.mNewRev));
-            mOldRtx = new NodeReadTrx(paramBuilder.mSession.beginPageReadTransaction(paramBuilder.mOldRev));
+            mNewRtx = new NodeReadTrx(paramBuilder.mSession.beginBucketRtx(paramBuilder.mNewRev));
+            mOldRtx = new NodeReadTrx(paramBuilder.mSession.beginBucketRtx(paramBuilder.mOldRev));
             mHashKind = HashKind.Postorder;
         }
         mNewRtx.moveTo(paramBuilder.mKey);

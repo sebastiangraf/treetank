@@ -211,9 +211,9 @@ public interface INodeWriteTrx extends INodeReadTrx {
     /**
      * Getting the Page Transaction
      * 
-     * @return the stored {@link IPageWriteTrx}.
+     * @return the stored {@link IBucketWriteTrx}.
      * @throws TTException
      */
-    IPageWriteTrx getPageWtx() throws TTException;
+    IBucketWriteTrx getPageWtx() throws TTException;
 
 }

@@ -31,7 +31,7 @@ import org.treetank.access.IscsiWriteTrx;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.api.IIscsiReadTrx;
 import org.treetank.api.IIscsiWriteTrx;
-import org.treetank.api.IPageWriteTrx;
+import org.treetank.api.IBucketWriteTrx;
 import org.treetank.exception.TTException;
 
 /**
@@ -57,7 +57,7 @@ public class Holder {
         throws TTException {
         final Holder holder = new Holder();
         holder.mHolder = pHolder;
-        IPageWriteTrx wtx = pHolder.getSession().beginPageWriteTransaction();
+        IBucketWriteTrx wtx = pHolder.getSession().beginBucketWtx();
         holder.mIRtx = new IscsiWriteTrx(wtx, holder.mHolder.getSession());
         return holder;
     }

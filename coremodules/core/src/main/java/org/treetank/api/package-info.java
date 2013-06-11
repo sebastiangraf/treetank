@@ -39,8 +39,8 @@
  * <li>ISession: This layer denotes a runtime access on a resource stored in a storage. Only one ISession is allowed at one time.
  * The layer has ability to provide runtime-settings as well. Especially settings regarding the
  * transaction-handling can be provided.</li>
- * <li>IPageReadTrx/IPageWriteTrx: This layer provided direct access to the database. All access to nodes used
- * either a <code>IPageReadTrx</code> or <code>IPageWriteTrx</code>.
+ * <li>IBucketReadTrx/IBucketWriteTrx: This layer provided direct access to the database. All access to nodes used
+ * either a <code>IBucketReadTrx</code> or <code>IBucketWriteTrx</code>.
  * </ul>
  * Additional to these access-interfaces, this api-packages provides direct access-methods for the
  * node-structure:

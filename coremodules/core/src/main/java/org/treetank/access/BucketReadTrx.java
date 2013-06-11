@@ -36,26 +36,26 @@ import java.util.List;
 
 import org.treetank.access.conf.ConstructorProps;
 import org.treetank.api.INode;
-import org.treetank.api.IPageReadTrx;
+import org.treetank.api.IBucketReadTrx;
 import org.treetank.api.ISession;
+import org.treetank.bucket.IConstants;
+import org.treetank.bucket.IndirectBucket;
+import org.treetank.bucket.MetaBucket;
+import org.treetank.bucket.NodeBucket;
+import org.treetank.bucket.RevisionRootBucket;
+import org.treetank.bucket.UberBucket;
+import org.treetank.bucket.NodeBucket.DeletedNode;
+import org.treetank.bucket.interfaces.IReferenceBucket;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
-import org.treetank.page.IConstants;
-import org.treetank.page.IndirectPage;
-import org.treetank.page.MetaPage;
-import org.treetank.page.NodePage;
-import org.treetank.page.NodePage.DeletedNode;
-import org.treetank.page.RevisionRootPage;
-import org.treetank.page.UberPage;
-import org.treetank.page.interfaces.IReferencePage;
 import org.treetank.revisioning.IRevisioning;
 
 /**
- * <h1>PageReadTrx</h1>
+ * <h1>BucketReadTrx</h1>
  * 
  * <p>
- * State of a reading transaction. The only thing shared amongst transactions is the page cache. Everything
+ * State of a reading transaction. The only thing shared amongst transactions is the bucket cache. Everything
  * else is exclusive to this transaction. It is required that only a single thread has access to this
  * transaction.
  * </p>
@@ -64,19 +64,19 @@ import org.treetank.revisioning.IRevisioning;
  * A path-like cache boosts sequential operations.
  * </p>
  */
-public class PageReadTrx implements IPageReadTrx {
+public class BucketReadTrx implements IBucketReadTrx {
 
-    /** Page reader exclusively assigned to this transaction. */
-    private final IBackendReader mPageReader;
+    /** Bucket reader exclusively assigned to this transaction. */
+    private final IBackendReader mBucketReader;
 
-    /** Uber page this transaction is bound to. */
-    private final UberPage mUberPage;
+    /** Uber bucket this transaction is bound to. */
+    private final UberBucket mUberBucket;
 
-    /** Cached root page of this revision. */
-    protected final RevisionRootPage mRootPage;
+    /** Cached root bucket of this revision. */
+    protected final RevisionRootBucket mRootBucket;
 
-    /** Cached name page of this revision. */
-    protected final MetaPage mMetaPage;
+    /** Cached name bucket of this revision. */
+    protected final MetaBucket mMetaBucket;
 
     /** Configuration of the session */
     protected final ISession mSession;
@@ -89,25 +89,25 @@ public class PageReadTrx implements IPageReadTrx {
      * 
      * @param pSession
      *            State of state.
-     * @param pUberpage
-     *            Uber page to start reading with.
+     * @param pUberBucket
+     *            Uber bucket to start reading with.
      * @param pRevKey
-     *            Key of revision to read from uber page.
+     *            Key of revision to read from uber bucket.
      * @param pReader
      *            for this transaction
      * @throws TTIOException
      *             if the read of the persistent storage fails
      */
-    protected PageReadTrx(final ISession pSession, final UberPage pUberpage, final long pRevKey,
+    protected BucketReadTrx(final ISession pSession, final UberBucket pUberBucket, final long pRevKey,
         final IBackendReader pReader) throws TTException {
         mSession = pSession;
-        mPageReader = pReader;
-        mUberPage = pUberpage;
-        mRootPage =
-            (RevisionRootPage)mPageReader.read(dereferenceLeafOfTree(mPageReader, mUberPage
-                .getReferenceKeys()[IReferencePage.GUARANTEED_INDIRECT_OFFSET], pRevKey));
-        mMetaPage =
-            (MetaPage)mPageReader.read(mRootPage.getReferenceKeys()[RevisionRootPage.NAME_REFERENCE_OFFSET]);
+        mBucketReader = pReader;
+        mUberBucket = pUberBucket;
+        mRootBucket =
+            (RevisionRootBucket)mBucketReader.read(dereferenceLeafOfTree(mBucketReader, mUberBucket
+                .getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET], pRevKey));
+        mMetaBucket =
+            (MetaBucket)mBucketReader.read(mRootBucket.getReferenceKeys()[RevisionRootBucket.NAME_REFERENCE_OFFSET]);
         mClose = false;
     }
 
@@ -123,14 +123,14 @@ public class PageReadTrx implements IPageReadTrx {
     public INode getNode(final long pNodeKey) throws TTIOException {
         checkArgument(pNodeKey >= 0);
         checkState(!mClose, "Transaction already closed");
-        // Calculate page and node part for given nodeKey.
-        final long seqNodePageKey = pNodeKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3];
-        final int nodePageOffset = nodePageOffset(pNodeKey);
-        final NodePage[] revs = getSnapshotPages(seqNodePageKey);
-        // Build up the complete page.
+        // Calculate bucket and node part for given nodeKey.
+        final long seqBucketKey = pNodeKey >> IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3];
+        final int nodeBucketOffset = nodeBucketOffset(pNodeKey);
+        final NodeBucket[] revs = getSnapshotBuckets(seqBucketKey);
+        // Build up the complete bucket.
         final IRevisioning revision = mSession.getConfig().mRevision;
-        NodePage page = revision.combinePages(revs);
-        final INode returnVal = page.getNode(nodePageOffset);
+        NodeBucket bucket = revision.combineBuckets(revs);
+        final INode returnVal = bucket.getNode(nodeBucketOffset);
         // root-node is excluded from the checkagainst deletion based on the necesssity of the node-layer to
         // reference against this node while creation of the transaction
         if (pNodeKey == 0) {
@@ -149,8 +149,8 @@ public class PageReadTrx implements IPageReadTrx {
      */
     public boolean close() throws TTIOException {
         if (!mClose) {
-            mSession.deregisterPageTrx(this);
-            mPageReader.close();
+            mSession.deregisterBucketTrx(this);
+            mBucketReader.close();
             mClose = true;
             return true;
         } else {
@@ -164,7 +164,7 @@ public class PageReadTrx implements IPageReadTrx {
      */
     public long getRevision() throws TTIOException {
         checkState(!mClose, "Transaction already closed");
-        return mRootPage.getRevision();
+        return mRootBucket.getRevision();
     }
 
     /**
@@ -179,9 +179,9 @@ public class PageReadTrx implements IPageReadTrx {
      * {@inheritDoc}
      */
     @Override
-    public MetaPage getMetaPage() {
+    public MetaBucket getMetaBucket() {
         checkState(!mClose, "Transaction already closed");
-        return mMetaPage;
+        return mMetaBucket;
     }
 
     /**
@@ -202,102 +202,102 @@ public class PageReadTrx implements IPageReadTrx {
     }
 
     /**
-     * Dereference node page reference.
+     * Dereference node bucket reference.
      * 
-     * @param pSeqNodePageKey
-     *            Key of node page.
-     * @return Dereferenced page.
+     * @param pSeqNodeBucketKey
+     *            Key of node bucket.
+     * @return Dereferenced bucket.
      * 
      * @throws TTIOException
      *             if something odd happens within the creation process.
      */
-    protected final NodePage[] getSnapshotPages(final long pSeqNodePageKey) throws TTIOException {
+    protected final NodeBucket[] getSnapshotBuckets(final long pSeqNodeBucketKey) throws TTIOException {
 
         // Return Value, since the revision iterates a flexible number of version, this has to be a list
         // first.
-        final List<NodePage> nodePages = new ArrayList<NodePage>();
+        final List<NodeBucket> nodeBuckets = new ArrayList<NodeBucket>();
 
         // Getting the keys for the revRoots
         final long currentRevKey =
-            PageReadTrx.dereferenceLeafOfTree(mPageReader,
-                mUberPage.getReferenceKeys()[IReferencePage.GUARANTEED_INDIRECT_OFFSET], mRootPage
+            BucketReadTrx.dereferenceLeafOfTree(mBucketReader,
+                mUberBucket.getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET], mRootBucket
                     .getRevision());
-        final RevisionRootPage rootPage = (RevisionRootPage)mPageReader.read(currentRevKey);
+        final RevisionRootBucket rootBucket = (RevisionRootBucket)mBucketReader.read(currentRevKey);
         final int numbersToRestore =
             Integer.parseInt(mSession.getConfig().mProperties.getProperty(ConstructorProps.NUMBERTORESTORE));
-        // starting from the current nodepage
-        long nodePageKey =
-            dereferenceLeafOfTree(mPageReader,
-                rootPage.getReferenceKeys()[IReferencePage.GUARANTEED_INDIRECT_OFFSET], pSeqNodePageKey);
-        NodePage page;
-        // jumping through the nodepages based on the pointers
-        while (nodePages.size() < numbersToRestore && nodePageKey > -1) {
-            page = (NodePage)mPageReader.read(nodePageKey);
-            nodePages.add(page);
-            nodePageKey = page.getLastPagePointer();
+        // starting from the current nodebucket
+        long nodeBucketKey =
+            dereferenceLeafOfTree(mBucketReader,
+                rootBucket.getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET], pSeqNodeBucketKey);
+        NodeBucket bucket;
+        // jumping through the nodebuckets based on the pointers
+        while (nodeBuckets.size() < numbersToRestore && nodeBucketKey > -1) {
+            bucket = (NodeBucket)mBucketReader.read(nodeBucketKey);
+            nodeBuckets.add(bucket);
+            nodeBucketKey = bucket.getLastBucketPointer();
         }
 
-        checkState(nodePages.size() > 0);
-        return nodePages.toArray(new NodePage[nodePages.size()]);
+        checkState(nodeBuckets.size() > 0);
+        return nodeBuckets.toArray(new NodeBucket[nodeBuckets.size()]);
 
     }
 
     /**
-     * Calculate node page offset for a given node key.
+     * Calculate node bucket offset for a given node key.
      * 
      * @param pNodeKey
      *            Node key to find offset for.
-     * @return Offset into node page.
+     * @return Offset into node bucket.
      */
-    protected static final int nodePageOffset(final long pNodeKey) {
-        // INP_LEVEL_PAGE_COUNT_EXPONENT[3] is only taken to get the difference between 2^7 and the actual
+    protected static final int nodeBucketOffset(final long pNodeKey) {
+        // INP_LEVEL_BUCKET_COUNT_EXPONENT[3] is only taken to get the difference between 2^7 and the actual
         // nodekey as offset. It has nothing to do with the levels.
-        final long nodePageOffset =
-            (pNodeKey - ((pNodeKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3]) << IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[3]));
-        return (int)nodePageOffset;
+        final long nodeBucketOffset =
+            (pNodeKey - ((pNodeKey >> IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3]) << IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3]));
+        return (int)nodeBucketOffset;
     }
 
     /**
-     * Find reference pointing to leaf page of an indirect tree.
+     * Find reference pointing to leaf bucket of an indirect tree.
      * 
      * @param pStartKey
      *            Start reference pointing to the indirect tree.
-     * @param pSeqPageKey
+     * @param pSeqBucketKey
      *            Key to look up in the indirect tree.
-     * @return Reference denoted by key pointing to the leaf page.
+     * @return Reference denoted by key pointing to the leaf bucket.
      * 
      * @throws TTIOException
      *             if something odd happens within the creation process.
      */
     protected static final long dereferenceLeafOfTree(final IBackendReader pReader, final long pStartKey,
-        final long pSeqPageKey) throws TTIOException {
+        final long pSeqBucketKey) throws TTIOException {
         // computing the ordernumbers within all level. The ordernumbers are the position in the sequence of
-        // all pages within the same level.
+        // all buckets within the same level.
         // ranges are for level 0: 0-127; level 1: 0-16383; level 2: 0-2097151; level 3: 0-268435455; ;level
         // 4: 0-34359738367
-        long[] orderNumber = new long[IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length];
+        long[] orderNumber = new long[IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length];
         for (int level = 0; level < orderNumber.length; level++) {
-            orderNumber[level] = pSeqPageKey >> IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT[level];
+            orderNumber[level] = pSeqBucketKey >> IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[level];
         }
 
-        // Initial state pointing to the indirect page of level 0.
-        long pageKey = pStartKey;
-        IndirectPage page = null;
+        // Initial state pointing to the indirect bucket of level 0.
+        long bucketKey = pStartKey;
+        IndirectBucket bucket = null;
         // Iterate through all levels...
         
         for (int level = 0; level < orderNumber.length; level++) {
-            // ..read the pages and..
-            page = (IndirectPage)pReader.read(pageKey);
+            // ..read the buckets and..
+            bucket = (IndirectBucket)pReader.read(bucketKey);
             // ..compute the offsets out of the order-numbers pre-computed before.
-            pageKey = page.getReferenceKeys()[nodePageOffset(orderNumber[level])];
-            // if the pageKey is 0, return -1 to distinguish mark non-written pages explicitely.
-            if (pageKey == 0) {
+            bucketKey = bucket.getReferenceKeys()[nodeBucketOffset(orderNumber[level])];
+            // if the bucketKey is 0, return -1 to distinguish mark non-written buckets explicitely.
+            if (bucketKey == 0) {
                 return -1;
             }
         }
 
         // Return reference to leaf of indirect tree.
-        return pageKey;
+        return bucketKey;
     }
 
     /**
@@ -305,8 +305,8 @@ public class PageReadTrx implements IPageReadTrx {
      */
     @Override
     public String toString() {
-        return toStringHelper(this).add("mPageReader", mPageReader).add("mPageReader", mUberPage).add(
-            "mRootPage", mRootPage).add("mClose", mClose).toString();
+        return toStringHelper(this).add("mBucketReader", mBucketReader).add("mBucketReader", mUberBucket).add(
+            "mRootBucket", mRootBucket).add("mClose", mClose).toString();
     }
 
 }

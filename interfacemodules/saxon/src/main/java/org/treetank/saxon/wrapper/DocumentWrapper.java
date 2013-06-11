@@ -131,7 +131,7 @@ public final class DocumentWrapper implements DocumentInfo {
     public NodeInfo selectID(final String ID, final boolean getParent) {
         try {
             final INodeReadTrx rtx =
-                new NodeReadTrx(mSession.beginPageReadTransaction(mSession.getMostRecentVersion()));
+                new NodeReadTrx(mSession.beginBucketRtx(mSession.getMostRecentVersion()));
             final AbsAxis axis = new DescendantAxis(rtx, true);
             while (axis.hasNext()) {
                 if (rtx.getNode().getKind() == IConstants.ELEMENT) {

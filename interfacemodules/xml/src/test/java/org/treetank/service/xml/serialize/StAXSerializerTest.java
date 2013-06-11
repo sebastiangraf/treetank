@@ -105,7 +105,7 @@ public class StAXSerializerTest {
         xmlSerializer.call();
 
         final INodeReadTrx rtx =
-            new NodeReadTrx(holder.getSession().beginPageReadTransaction(
+            new NodeReadTrx(holder.getSession().beginBucketRtx(
                 holder.getSession().getMostRecentVersion()));
         StAXSerializer serializer = new StAXSerializer(new DescendantAxis(rtx), rtx);
         final StringBuilder strBuilder = new StringBuilder();

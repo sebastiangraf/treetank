@@ -116,7 +116,7 @@ public class XMLShredderTest {
         final ISession session =
             database2.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
         final INodeReadTrx rtx =
-            new NodeReadTrx(session.beginPageReadTransaction(session.getMostRecentVersion()));
+            new NodeReadTrx(session.beginBucketRtx(session.getMostRecentVersion()));
         rtx.moveTo(ROOT_NODE);
         final Iterator<Long> expectedDescendants = new DescendantAxis(expectedTrx);
         final Iterator<Long> descendants = new DescendantAxis(rtx);
@@ -173,14 +173,14 @@ public class XMLShredderTest {
             database2.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
 
         final INodeWriteTrx expectedTrx =
-            new NodeWriteTrx(expectedSession, expectedSession.beginPageWriteTransaction(), HashKind.Rolling);
+            new NodeWriteTrx(expectedSession, expectedSession.beginBucketWtx(), HashKind.Rolling);
         NodeTestHelper.DocumentCreater.create(expectedTrx);
         expectedTrx.commit();
         expectedTrx.moveTo(ROOT_NODE);
 
         // Verify.
         final INodeReadTrx rtx =
-            new NodeReadTrx(holder.getSession().beginPageReadTransaction(
+            new NodeReadTrx(holder.getSession().beginBucketRtx(
                 holder.getSession().getMostRecentVersion()));
 
         final Iterator<Long> descendants = new DescendantAxis(rtx);
@@ -220,7 +220,7 @@ public class XMLShredderTest {
         final ISession session2 =
             database2.getSession(new SessionConfiguration(CoreTestHelper.RESOURCENAME, StandardSettings.KEY));
         final INodeWriteTrx wtx =
-            new NodeWriteTrx(session2, session2.beginPageWriteTransaction(), HashKind.Rolling);
+            new NodeWriteTrx(session2, session2.beginBucketWtx(), HashKind.Rolling);
         final XMLShredder shredder =
             new XMLShredder(wtx, XMLShredder.createFileReader(new File(XML2)),
                 EShredderInsert.ADDASFIRSTCHILD);
@@ -229,7 +229,7 @@ public class XMLShredderTest {
 
         // Verify.
         final INodeReadTrx rtx =
-            new NodeReadTrx(session2.beginPageReadTransaction(session2.getMostRecentVersion()));
+            new NodeReadTrx(session2.beginBucketRtx(session2.getMostRecentVersion()));
         rtx.moveTo(ROOT_NODE);
         final Iterator<Long> expectedAttributes = new DescendantAxis(holder.getNWtx());
         final Iterator<Long> attributes = new DescendantAxis(rtx);
@@ -262,7 +262,7 @@ public class XMLShredderTest {
         final ISession session =
             storage.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
         final INodeWriteTrx wtx =
-            new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
+            new NodeWriteTrx(session, session.beginBucketWtx(), HashKind.Rolling);
         final XMLShredder shredder =
             new XMLShredder(wtx, XMLShredder.createFileReader(new File(XML3)),
                 EShredderInsert.ADDASFIRSTCHILD);
@@ -270,7 +270,7 @@ public class XMLShredderTest {
         wtx.close();
 
         final INodeReadTrx rtx =
-            new NodeReadTrx(session.beginPageReadTransaction(session.getMostRecentVersion()));
+            new NodeReadTrx(session.beginBucketRtx(session.getMostRecentVersion()));
         AssertJUnit.assertTrue(rtx.moveTo(((IStructNode)rtx.getNode()).getFirstChildKey()));
         AssertJUnit.assertTrue(rtx.moveTo(((IStructNode)rtx.getNode()).getFirstChildKey()));
 

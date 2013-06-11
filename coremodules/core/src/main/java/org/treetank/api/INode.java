@@ -8,7 +8,7 @@ import java.io.DataOutput;
 import org.treetank.exception.TTIOException;
 
 /**
- * Overall {@link INode}-Interface for the interaction with the page-layer. All
+ * Overall {@link INode}-Interface for the interaction with the bucket-layer. All
  * persistence functionality must be handled over this interface while all
  * node-layers interfaces inherit from this interface.
  * 
@@ -28,7 +28,7 @@ public interface INode {
 
     /**
      * Gets unique {@link INode} key.
-     * This key should be set over the <code>IPageWtx.incrementNodeKey</code> for getting the correct offset
+     * This key should be set over the <code>IBucketWriteTrx.incrementNodeKey</code> for getting the correct offset
      * within retrievals.
      * 
      * @return node key

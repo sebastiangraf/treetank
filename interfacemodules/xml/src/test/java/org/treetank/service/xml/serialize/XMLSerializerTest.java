@@ -80,7 +80,7 @@ public class XMLSerializerTest {
     @Test
     public void testXMLSerializer() throws Exception {
         final INodeWriteTrx wtx =
-            new NodeWriteTrx(holder.getSession(), holder.getSession().beginPageWriteTransaction(),
+            new NodeWriteTrx(holder.getSession(), holder.getSession().beginBucketWtx(),
                 HashKind.Rolling);
         NodeTestHelper.DocumentCreater.create(wtx);
         wtx.commit();
@@ -101,7 +101,7 @@ public class XMLSerializerTest {
     public void testRestSerializer() throws Exception {
 
         final INodeWriteTrx wtx =
-            new NodeWriteTrx(holder.getSession(), holder.getSession().beginPageWriteTransaction(),
+            new NodeWriteTrx(holder.getSession(), holder.getSession().beginBucketWtx(),
                 HashKind.Rolling);
         NodeTestHelper.DocumentCreater.create(wtx);
         wtx.commit();
@@ -122,7 +122,7 @@ public class XMLSerializerTest {
     @Test
     public void testIDSerializer() throws Exception {
         final INodeWriteTrx wtx =
-            new NodeWriteTrx(holder.getSession(), holder.getSession().beginPageWriteTransaction(),
+            new NodeWriteTrx(holder.getSession(), holder.getSession().beginBucketWtx(),
                 HashKind.Rolling);
         NodeTestHelper.DocumentCreater.create(wtx);
         wtx.commit();
@@ -141,7 +141,7 @@ public class XMLSerializerTest {
     @Test
     public void testSampleCompleteSerializer() throws Exception {
         final INodeWriteTrx wtx =
-            new NodeWriteTrx(holder.getSession(), holder.getSession().beginPageWriteTransaction(),
+            new NodeWriteTrx(holder.getSession(), holder.getSession().beginBucketWtx(),
                 HashKind.Rolling);
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
@@ -169,7 +169,7 @@ public class XMLSerializerTest {
     public void testKeyStart() throws Exception {
 
         final INodeWriteTrx wtx =
-            new NodeWriteTrx(holder.getSession(), holder.getSession().beginPageWriteTransaction(),
+            new NodeWriteTrx(holder.getSession(), holder.getSession().beginBucketWtx(),
                 HashKind.Rolling);
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
 

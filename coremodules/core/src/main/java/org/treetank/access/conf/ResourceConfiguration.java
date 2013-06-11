@@ -257,9 +257,9 @@ public final class ResourceConfiguration {
             FileReader fileReader = new FileReader(file);
             JsonReader jsonReader = new JsonReader(fileReader);
             jsonReader.beginObject();
-            // caring about the metapage
+            // caring about the kind of the metabucket
             jsonReader.nextName().equals(JSONNAMES[0]);
-            Class<?> metaPageClazz = Class.forName(jsonReader.nextString());
+            Class<?> metaBucketClazz = Class.forName(jsonReader.nextString());
             // caring about the versioning
             jsonReader.nextName().equals(JSONNAMES[1]);
             Class<?> revClazz = Class.forName(jsonReader.nextString());
@@ -299,8 +299,8 @@ public final class ResourceConfiguration {
             jsonReader.close();
             fileReader.close();
 
-            Constructor<?> metapageCons = metaPageClazz.getConstructors()[0];
-            IMetaEntryFactory metaFac = (IMetaEntryFactory)metapageCons.newInstance();
+            Constructor<?> metaBucketCons = metaBucketClazz.getConstructors()[0];
+            IMetaEntryFactory metaFac = (IMetaEntryFactory)metaBucketCons.newInstance();
 
             Constructor<?> nodeFacCons = nodeFacClazz.getConstructors()[0];
             INodeFactory nodeFactory = (INodeFactory)nodeFacCons.newInstance();

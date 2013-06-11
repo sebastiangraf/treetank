@@ -3,12 +3,12 @@
  */
 package org.treetank.api;
 
+import org.treetank.bucket.MetaBucket;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.page.MetaPage;
 
 /**
- * Read-Transaction of a page ensuring read-only access to any pages.
+ * Read-Transaction of a bucket ensuring read-only access to any buckets.
  * The transaction must be bound to a revision and bases on a session.
  * 
  * <code>
@@ -16,17 +16,17 @@ import org.treetank.page.MetaPage;
  *      final IStorage storage = Storage.openStorage(FILE);
  *      final ISession session =
  *           storage.getSession(new SessionConfiguration(RESOURCENAME, KEY));
- *      final IPageReadTrx pRtx = session.beginPageReadTransaction(REVISION);
+ *      final IBucketReadTrx pRtx = session.beginBucketRtx(REVISION);
  * </code>
  * 
- * Each {@link IPageReadTrx} can afterwards get nodes from the page-layer and the underlaying backend.
+ * Each {@link IBucketReadTrx} can afterwards get nodes from the bucket-layer and the underlaying backend.
  * Note that each session furthermore has access to a centralized store of common strings referencable over a
  * key.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public interface IPageReadTrx {
+public interface IBucketReadTrx {
 
     /**
      * Getting the node related to a key.
@@ -68,8 +68,8 @@ public interface IPageReadTrx {
     /**
      * Getting the map with the entire mapping for retrieving meta-information related to the bundle.
      * 
-     * @return the meta page
+     * @return the meta bucket
      */
-    MetaPage getMetaPage();
+    MetaBucket getMetaBucket();
 
 }

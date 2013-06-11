@@ -46,13 +46,13 @@ import org.treetank.access.conf.ConstructorProps;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.StandardSettings;
+import org.treetank.bucket.IConstants;
+import org.treetank.bucket.NodeBucket;
+import org.treetank.bucket.interfaces.IBucket;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IOUtils;
 import org.treetank.log.LRULog.LogIterator;
-import org.treetank.page.IConstants;
-import org.treetank.page.NodePage;
-import org.treetank.page.interfaces.IPage;
 
 import com.google.inject.Inject;
 
@@ -68,9 +68,9 @@ public class LRULogTest {
 
     private ResourceConfiguration mResource;
 
-    private NodePage[][] mPages;
+    private NodeBucket[][] mPages;
     private LRULog mCache;
-    private Set<NodePage> mPageSet;
+    private Set<NodeBucket> mPageSet;
 
     private static final int LEVEL = 100;
     private static final int ELEMENTS = 100;
@@ -88,7 +88,7 @@ public class LRULogTest {
         mResource = mResourceConfig.create(props);
         mCache = new LRULog(CoreTestHelper.PATHS.PATH1.getFile(), mResource.mNodeFac, mResource.mMetaFac);
 
-        mPages = new NodePage[LEVEL][ELEMENTS];
+        mPages = new NodeBucket[LEVEL][ELEMENTS];
         insertData();
     }
 
@@ -132,7 +132,7 @@ public class LRULogTest {
             for (int j = 0; j < ELEMENTS; j++) {
                 LogKey toRetrieve = new LogKey(true, i, j);
                 final LogValue cont = mCache.get(toRetrieve);
-                final IPage current = cont.getComplete();
+                final IBucket current = cont.getComplete();
                 assertEquals(mPages[i][j], current);
             }
         }
@@ -154,7 +154,7 @@ public class LRULogTest {
     }
 
     private void insertData() throws TTIOException {
-        mPageSet = new HashSet<NodePage>();
+        mPageSet = new HashSet<NodeBucket>();
         long key = 0;
         for (int i = 0; i < mPages.length; i++) {
             for (int j = 0; j < mPages[i].length; j++) {
