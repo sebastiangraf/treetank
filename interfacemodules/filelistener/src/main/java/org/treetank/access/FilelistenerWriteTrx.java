@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.nio.channels.OverlappingFileLockException;
@@ -93,7 +94,7 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
     public synchronized void addEmptyFile(String pRelativePath) throws TTException, IOException {
         MetaKey key = new MetaKey(pRelativePath);
         MetaValue value = new MetaValue(FilelistenerReadTrx.emptyFileKey);
-        getPageTransaction().getMetaBucket().getMetaMap().put(key, value);
+        getBucketTransaction().getMetaBucket().getMetaMap().put(key, value);
 
         return;
     }
@@ -129,22 +130,20 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
             }
         }
         
-        BufferedInputStream stream = Files.asByteSource(pFile).openBufferedStream();
-        LOGGER.info("Successfully initialized byte source.");
+        ByteBuffer buffer = ByteBuffer.allocate(FileNode.FILENODESIZE);
         
-        while(stream == null);
-        byte[] fileBytes = new byte[FileNode.FILENODESIZE];
-        readingAmount += stream.read(fileBytes);
+        LOGGER.info("Successfully initialized byte source.");
+        readingAmount += ch.read(buffer);
 
         if (readingAmount <= 0) {
             MetaKey key = new MetaKey(pRelativePath);
             MetaValue value = new MetaValue(FilelistenerReadTrx.emptyFileKey);
-            getPageTransaction().getMetaBucket().getMetaMap().put(key, value);
+            getBucketTransaction().getMetaBucket().getMetaMap().put(key, value);
 
             return;
         }
 
-        long newKey = getPageTransaction().incrementNodeKey();
+        long newKey = getBucketTransaction().incrementNodeKey();
 
         if (fileExists(pRelativePath)) {
             removeFile(pRelativePath);
@@ -156,58 +155,55 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
 
         // And adding it to the meta map
         LOGGER.info("Metakeypair setup");
-        getPageTransaction().getMetaBucket().getMetaMap().put(key, value);
+        getBucketTransaction().getMetaBucket().getMetaMap().put(key, value);
 
         // Creating and setting the headernode.
         FileNode headerNode = new FileNode(newKey, new byte[FileNode.FILENODESIZE]);
         headerNode.setHeader(true);
         headerNode.setEof(false);
 
-        headerNode.setVal(fileBytes);
+        headerNode.setVal(buffer.array());
 
-        getPageTransaction().setNode(headerNode);
+        getBucketTransaction().setNode(headerNode);
 
         // Creating and setting following nodes based on the file size.
         FileNode node;
         FileNode lastNode;
 
         int currentReadingAmount = 0;
-        while ((currentReadingAmount = stream.read(fileBytes = new byte[FileNode.FILENODESIZE])) > 0) {
+        while ((currentReadingAmount = ch.read(buffer = ByteBuffer.allocate(FileNode.FILENODESIZE))) > 0) {
             LOGGER.info("" + currentReadingAmount);
-            byte[] slice = Arrays.copyOf(fileBytes, currentReadingAmount);
+            byte[] slice = Arrays.copyOf(buffer.array(), currentReadingAmount);
 
-            node = new FileNode(getPageTransaction().incrementNodeKey(), slice);
+            node = new FileNode(getBucketTransaction().incrementNodeKey(), slice);
             node.setHeader(false);
             node.setEof(false);
 
-            lastNode = (FileNode)getPageTransaction().getNode(node.getNodeKey() - 1);
+            lastNode = (FileNode)getBucketTransaction().getNode(node.getNodeKey() - 1);
             lastNode.setNextNodeKey(node.getNodeKey());
-            getPageTransaction().setNode(lastNode);
-            getPageTransaction().setNode(node);
+            getBucketTransaction().setNode(lastNode);
+            getBucketTransaction().setNode(node);
 
             readingAmount += currentReadingAmount;
         }
         
-        stream.close();
-
         ByteArrayDataOutput size = ByteStreams.newDataOutput();
         size.writeInt(readingAmount);
 
-        node = new FileNode(getPageTransaction().incrementNodeKey(), size.toByteArray());
+        node = new FileNode(getBucketTransaction().incrementNodeKey(), size.toByteArray());
 
         node.setHeader(false);
         node.setEof(true);
 
-        lastNode = (FileNode)getPageTransaction().getNode(node.getNodeKey() - 1);
+        lastNode = (FileNode)getBucketTransaction().getNode(node.getNodeKey() - 1);
 
         lastNode.setNextNodeKey(node.getNodeKey());
 
-        getPageTransaction().setNode(lastNode);
+        getBucketTransaction().setNode(lastNode);
 
-        getPageTransaction().setNode(node);
+        getBucketTransaction().setNode(node);
 
-        Preconditions.checkArgument(getPageTransaction().getNode(newKey) != null);
-        
+        Preconditions.checkArgument(getBucketTransaction().getNode(newKey) != null);
         lock.release();
         ch.close();
         
@@ -221,7 +217,7 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
     public synchronized void removeFile(String pRelativePath) throws TTException {
         // If the file already exists we just override it
         // and remove the last meta entry since the key won't be correct anymore.
-        getPageTransaction().getMetaBucket().getMetaMap().remove(new MetaKey(pRelativePath));
+        getBucketTransaction().getMetaBucket().getMetaMap().remove(new MetaKey(pRelativePath));
     }
 
     /**
@@ -232,7 +228,7 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
         checkAccessAndCommit();
 
         // CommitStrategy uber page.
-        getPageTransaction().commit();
+        getBucketTransaction().commit();
     }
 
     /**
@@ -256,7 +252,7 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
         long revisionToSet = 0;
         revisionToSet = mDelegate.mPageReadTrx.getRevision() - 1;
 
-        getPageTransaction().close();
+        getBucketTransaction().close();
 
         // Reset internal transaction state to last committed uber page.
         mDelegate.setPageTransaction(mSession.beginBucketWtx(revisionToSet));
@@ -267,7 +263,7 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
      * 
      * @return The state of this transaction.
      */
-    private BucketWriteTrx getPageTransaction() {
+    private BucketWriteTrx getBucketTransaction() {
 
         return (BucketWriteTrx)mDelegate.mPageReadTrx;
     }
