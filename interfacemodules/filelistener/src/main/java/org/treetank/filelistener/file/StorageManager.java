@@ -62,7 +62,7 @@ public class StorageManager {
         File file = new File(ROOT_PATH);
         File storageFile = new File(STORAGE_PATH);
         
-        if (!file.exists()) {
+        if (!file.exists() || !storageFile.exists()) {
             file.mkdirs();   
 
             StorageConfiguration configuration = new StorageConfiguration(storageFile);
@@ -75,24 +75,17 @@ public class StorageManager {
         }
         
         IStorage storage = Storage.openStorage(storageFile);
-        
-        File resourceFile = new File(STORAGE_PATH + File.separator + "resources" + File.separator + name);
 
-        if (resourceFile.exists()) {
-            throw new StorageAlreadyExistsException();
-        } else {
+        Injector injector = Guice.createInjector(module);
+        IBackendFactory backend = injector.getInstance(IBackendFactory.class);
+        IRevisioning revision = injector.getInstance(IRevisioning.class);
 
-            Injector injector = Guice.createInjector(module);
-            IBackendFactory backend = injector.getInstance(IBackendFactory.class);
-            IRevisioning revision = injector.getInstance(IRevisioning.class);
+        Properties props = StandardSettings.getProps(storageFile.getAbsolutePath(), name);
+        ResourceConfiguration mResourceConfig =
+            new ResourceConfiguration(props, backend, revision, new FileNodeFactory(),
+                new FilelistenerMetaPageFactory());
 
-            Properties props = StandardSettings.getProps(storageFile.getAbsolutePath(), name);
-            ResourceConfiguration mResourceConfig =
-                new ResourceConfiguration(props, backend, revision, new FileNodeFactory(),
-                    new FilelistenerMetaPageFactory());
-
-            storage.createResource(mResourceConfig);
-        }
+        storage.createResource(mResourceConfig);
 
         return true;
     }

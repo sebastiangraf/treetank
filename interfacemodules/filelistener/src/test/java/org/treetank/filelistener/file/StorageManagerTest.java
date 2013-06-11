@@ -4,6 +4,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
+import java.io.File;
 import java.util.List;
 
 import org.testng.annotations.AfterMethod;
@@ -16,6 +17,7 @@ import org.treetank.filelistener.exceptions.StorageAlreadyExistsException;
 import org.treetank.filelistener.exceptions.ResourceNotExistingException;
 import org.treetank.filelistener.file.node.FileNodeFactory;
 import org.treetank.filelistener.file.node.FilelistenerMetaPageFactory;
+import org.treetank.io.IOUtils;
 
 /**
  * 
@@ -33,6 +35,7 @@ public class StorageManagerTest {
      */
     @BeforeMethod
     public void setUp() throws StorageAlreadyExistsException, TTException {
+        IOUtils.recursiveDelete(new File(StorageManager.ROOT_PATH));
         StorageManager.createResource(mStorageName, new ModuleSetter().setNodeFacClass(FileNodeFactory.class)
             .setMetaFacClass(FilelistenerMetaPageFactory.class).createModule());
     }
