@@ -14,7 +14,6 @@ import java.util.Random;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import org.treetank.access.Storage;
 import org.treetank.access.conf.ModuleSetter;
 import org.treetank.exception.TTException;
 import org.treetank.filelistener.exceptions.ResourceNotExistingException;
@@ -42,6 +41,15 @@ public class FilelistenerTest {
      */
     @BeforeMethod
     public void setUp() throws Exception {
+        try{
+            StorageManager.removeResource(RESOURCE_1);
+        }
+        catch(IllegalStateException e){}
+        try{
+            StorageManager.removeResource(RESOURCE_2);
+        }
+        catch(IllegalStateException e){}
+        
         StorageManager.createResource(RESOURCE_1, new ModuleSetter().setNodeFacClass(FileNodeFactory.class)
             .setMetaFacClass(FilelistenerMetaPageFactory.class).createModule());
         StorageManager.createResource(RESOURCE_2, new ModuleSetter().setNodeFacClass(FileNodeFactory.class)
