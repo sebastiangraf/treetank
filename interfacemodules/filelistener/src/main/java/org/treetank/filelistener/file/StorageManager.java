@@ -62,7 +62,7 @@ public class StorageManager {
         File file = new File(ROOT_PATH);
         File storageFile = new File(STORAGE_PATH);
         
-        if (!file.exists()) {
+        if (!storageFile.exists()) {
             file.mkdirs();   
 
             StorageConfiguration configuration = new StorageConfiguration(storageFile);
