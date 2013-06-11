@@ -27,10 +27,10 @@
 
 package org.treetank.io;
 
+import org.treetank.bucket.UberBucket;
+import org.treetank.bucket.interfaces.IBucket;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.page.UberPage;
-import org.treetank.page.interfaces.IPage;
 
 /**
  * Interface to provide the abstract layer related to write access of the
@@ -42,22 +42,22 @@ import org.treetank.page.interfaces.IPage;
 public interface IBackendWriter extends IBackendReader {
 
     /**
-     * Writing a page related to the reference.
+     * Writing a bucket related to the reference.
      * 
-     * @param page
-     *            page to be written
+     * @param bucket
+     *            bucket to be written
      * @throws TTException
      *             execption to be thrown if something bad happens
      */
-    void write(final IPage page) throws TTException;
+    void write(final IBucket bucket) throws TTException;
 
     /**
-     * Writing the Uberpage including the pointer to the page.
+     * Writing the {@link UberBucket} including the pointer to the bucket.
      * 
-     * @param page
-     *            the UberPage to be written.
+     * @param pUber
+     *            the UberBucket to be written.
      */
-    void writeUberPage(final UberPage page) throws TTException;
+    void writeUberBucket(final UberBucket pUber) throws TTException;
 
     /**
      * Closing the write access.

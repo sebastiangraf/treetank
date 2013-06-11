@@ -17,14 +17,14 @@ import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFact
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.StorageConfiguration;
-import org.treetank.api.IPageWriteTrx;
+import org.treetank.api.IBucketWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
+import org.treetank.bucket.DumbMetaEntryFactory;
+import org.treetank.bucket.DumbNodeFactory;
+import org.treetank.bucket.DumbNodeFactory.DumbNode;
 import org.treetank.exception.TTException;
 import org.treetank.io.IOUtils;
-import org.treetank.page.DumbMetaEntryFactory;
-import org.treetank.page.DumbNodeFactory;
-import org.treetank.page.DumbNodeFactory.DumbNode;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -39,7 +39,7 @@ public class InsertBench {
     private DumbNode[] mNodesToInsert = CoreTestHelper.createNodes(new int[] {
         262144
     })[0];
-    private IPageWriteTrx mTrx;
+    private IBucketWriteTrx mTrx;
 
     public InsertBench() throws TTException {
         final File storageFile = FileSystems.getDefault().getPath("tmp", "bench").toFile();
@@ -63,7 +63,7 @@ public class InsertBench {
     public void setUp() throws TTException {
         mStorage.createResource(mConfig);
         mSession = mStorage.getSession(new SessionConfiguration(RESOURCENAME, StandardSettings.KEY));
-        mTrx = mSession.beginPageWriteTransaction();
+        mTrx = mSession.beginBucketWtx();
     }
 
     @Bench

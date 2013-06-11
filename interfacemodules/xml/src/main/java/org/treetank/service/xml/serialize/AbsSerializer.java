@@ -133,7 +133,7 @@ abstract class AbsSerializer implements Callable<Void> {
 
         for (int i = 0; i < versionsToUse.length; i++) {
 
-            INodeReadTrx rtx = new NodeReadTrx(mSession.beginPageReadTransaction(versionsToUse[i]));
+            INodeReadTrx rtx = new NodeReadTrx(mSession.beginBucketRtx(versionsToUse[i]));
 
             if (versionsToUse == null || mVersions.length > 1) {
                 emitStartManualElement(i);

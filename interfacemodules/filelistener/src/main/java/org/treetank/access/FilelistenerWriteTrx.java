@@ -12,7 +12,7 @@ import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.treetank.api.IFilelistenerWriteTrx;
-import org.treetank.api.IPageWriteTrx;
+import org.treetank.api.IBucketWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
@@ -41,7 +41,7 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
     /**
      * {@inheritDoc}
      */
-    public FilelistenerWriteTrx(IPageWriteTrx pPageTrx, ISession pSession) throws TTException {
+    public FilelistenerWriteTrx(IBucketWriteTrx pPageTrx, ISession pSession) throws TTException {
         mSession = pSession;
         mDelegate = new FilelistenerReadTrx(pPageTrx);
     }
@@ -93,7 +93,7 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
     public synchronized void addEmptyFile(String pRelativePath) throws TTException, IOException {
         MetaKey key = new MetaKey(pRelativePath);
         MetaValue value = new MetaValue(FilelistenerReadTrx.emptyFileKey);
-        getPageTransaction().getMetaPage().getMetaMap().put(key, value);
+        getPageTransaction().getMetaBucket().getMetaMap().put(key, value);
 
         return;
     }
@@ -139,7 +139,7 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
         if (readingAmount <= 0) {
             MetaKey key = new MetaKey(pRelativePath);
             MetaValue value = new MetaValue(FilelistenerReadTrx.emptyFileKey);
-            getPageTransaction().getMetaPage().getMetaMap().put(key, value);
+            getPageTransaction().getMetaBucket().getMetaMap().put(key, value);
 
             return;
         }
@@ -156,7 +156,7 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
 
         // And adding it to the meta map
         LOGGER.info("Metakeypair setup");
-        getPageTransaction().getMetaPage().getMetaMap().put(key, value);
+        getPageTransaction().getMetaBucket().getMetaMap().put(key, value);
 
         // Creating and setting the headernode.
         FileNode headerNode = new FileNode(newKey, new byte[FileNode.FILENODESIZE]);
@@ -221,7 +221,7 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
     public synchronized void removeFile(String pRelativePath) throws TTException {
         // If the file already exists we just override it
         // and remove the last meta entry since the key won't be correct anymore.
-        getPageTransaction().getMetaPage().getMetaMap().remove(new MetaKey(pRelativePath));
+        getPageTransaction().getMetaBucket().getMetaMap().remove(new MetaKey(pRelativePath));
     }
 
     /**
@@ -231,7 +231,7 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
     public void commit() throws TTException {
         checkAccessAndCommit();
 
-        // Commit uber page.
+        // CommitStrategy uber page.
         getPageTransaction().commit();
     }
 
@@ -259,7 +259,7 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
         getPageTransaction().close();
 
         // Reset internal transaction state to last committed uber page.
-        mDelegate.setPageTransaction(mSession.beginPageWriteTransaction(revisionToSet));
+        mDelegate.setPageTransaction(mSession.beginBucketWtx(revisionToSet));
     }
 
     /**
@@ -267,8 +267,8 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
      * 
      * @return The state of this transaction.
      */
-    private PageWriteTrx getPageTransaction() {
+    private BucketWriteTrx getPageTransaction() {
 
-        return (PageWriteTrx)mDelegate.mPageReadTrx;
+        return (BucketWriteTrx)mDelegate.mPageReadTrx;
     }
 }

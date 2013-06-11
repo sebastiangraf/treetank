@@ -172,7 +172,7 @@ public interface INodeWriteTrx extends INodeReadTrx {
     void setValue(final String pValue) throws TTException;
 
     /**
-     * Commit all modifications of the exclusive write transaction. Even commit
+     * CommitStrategy all modifications of the exclusive write transaction. Even commit
      * if there are no modification at all.
      * 
      * @throws TTException
@@ -211,9 +211,9 @@ public interface INodeWriteTrx extends INodeReadTrx {
     /**
      * Getting the Page Transaction
      * 
-     * @return the stored {@link IPageWriteTrx}.
+     * @return the stored {@link IBucketWriteTrx}.
      * @throws TTException
      */
-    IPageWriteTrx getPageWtx() throws TTException;
+    IBucketWriteTrx getPageWtx() throws TTException;
 
 }

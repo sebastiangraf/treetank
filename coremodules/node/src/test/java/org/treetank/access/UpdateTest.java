@@ -49,7 +49,7 @@ import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFact
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.INodeWriteTrx;
-import org.treetank.api.IPageReadTrx;
+import org.treetank.api.IBucketReadTrx;
 import org.treetank.exception.TTException;
 import org.treetank.node.interfaces.IStructNode;
 
@@ -86,7 +86,7 @@ public class UpdateTest {
     public void testNodeTransactionIsolation() throws TTException {
 
         INodeReadTrx rtx =
-            new NodeReadTrx(holder.getSession().beginPageReadTransaction(
+            new NodeReadTrx(holder.getSession().beginBucketRtx(
                 holder.getSession().getMostRecentVersion()));
         INodeWriteTrx wtx = holder.getNWtx();
         wtx.moveTo(ROOT_NODE);
@@ -127,8 +127,8 @@ public class UpdateTest {
         wtx.commit();
         wtx.close();
 
-        IPageReadTrx pRtx =
-            holder.getSession().beginPageReadTransaction(holder.getSession().getMostRecentVersion());
+        IBucketReadTrx pRtx =
+            holder.getSession().beginBucketRtx(holder.getSession().getMostRecentVersion());
         INodeReadTrx rtx = new NodeReadTrx(pRtx);
 
         assertEquals(2L, pRtx.getRevision());
@@ -136,7 +136,7 @@ public class UpdateTest {
         // Insert 100 children.
         for (int i = 1; i <= 10; i++) {
             wtx =
-                new NodeWriteTrx(holder.getSession(), holder.getSession().beginPageWriteTransaction(),
+                new NodeWriteTrx(holder.getSession(), holder.getSession().beginBucketWtx(),
                     HashKind.Rolling);
 
             wtx.moveTo(ROOT_NODE);
@@ -145,7 +145,7 @@ public class UpdateTest {
             wtx.close();
 
             rtx =
-                new NodeReadTrx(holder.getSession().beginPageReadTransaction(
+                new NodeReadTrx(holder.getSession().beginBucketRtx(
                     holder.getSession().getMostRecentVersion()));
             rtx.moveTo(ROOT_NODE);
             rtx.moveTo(((IStructNode)rtx.getNode()).getFirstChildKey());
@@ -155,7 +155,7 @@ public class UpdateTest {
         }
 
         rtx =
-            new NodeReadTrx(holder.getSession().beginPageReadTransaction(
+            new NodeReadTrx(holder.getSession().beginBucketRtx(
                 holder.getSession().getMostRecentVersion()));
         rtx.moveTo(ROOT_NODE);
         rtx.moveTo(((IStructNode)rtx.getNode()).getFirstChildKey());
@@ -172,7 +172,7 @@ public class UpdateTest {
         wtx.close();
 
         wtx =
-            new NodeWriteTrx(holder.getSession(), holder.getSession().beginPageWriteTransaction(),
+            new NodeWriteTrx(holder.getSession(), holder.getSession().beginBucketWtx(),
                 HashKind.Rolling);
         NodeTestHelper.createDocumentRootNode(wtx);
         wtx.moveTo(ROOT_NODE);
@@ -185,7 +185,7 @@ public class UpdateTest {
         wtx.close();
 
         wtx =
-            new NodeWriteTrx(holder.getSession(), holder.getSession().beginPageWriteTransaction(),
+            new NodeWriteTrx(holder.getSession(), holder.getSession().beginBucketWtx(),
                 HashKind.Rolling);
         assertTrue(wtx.moveTo(ROOT_NODE));
         assertEquals(19L, wtx.insertElementAsFirstChild(new QName("")));
@@ -213,7 +213,7 @@ public class UpdateTest {
         assertEquals(2L, wtx.getNode().getNodeKey());
         wtx.close();
         final INodeReadTrx rtx =
-            new NodeReadTrx(holder.getSession().beginPageReadTransaction(
+            new NodeReadTrx(holder.getSession().beginBucketRtx(
                 holder.getSession().getMostRecentVersion()));
 
         assertTrue(rtx.moveTo(2L));
@@ -246,7 +246,7 @@ public class UpdateTest {
         removeDescendant(wtx);
         wtx.close();
         final INodeReadTrx rtx =
-            new NodeReadTrx(holder.getSession().beginPageReadTransaction(
+            new NodeReadTrx(holder.getSession().beginBucketRtx(
                 holder.getSession().getMostRecentVersion()));
         removeDescendant(rtx);
         rtx.close();

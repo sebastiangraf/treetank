@@ -47,7 +47,6 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalCause;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
-import com.sleepycat.je.CacheMode;
 import com.sleepycat.je.Cursor;
 import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseConfig;
@@ -89,12 +88,12 @@ public final class LRULog {
     private static final String NAME = "berkeleyCache";
 
     /**
-     * Binding for the key, which is the nodepage.
+     * Binding for the key, which is the nodebucket.
      */
     private final transient LogKeyBinding mKeyBinding;
 
     /**
-     * Binding for the value which is a page with related Nodes.
+     * Binding for the value which is a bucket with related Nodes.
      */
     private final transient LogValueBinding mValueBinding;
 
@@ -113,6 +112,8 @@ public final class LRULog {
 
     private final Cache<LogKey, LogValue> mCache;
 
+    private int mSelected_db;
+    
     /**
      * Creates a new LRU cache.
      * 
@@ -129,21 +130,28 @@ public final class LRULog {
         throws TTIOException {
         mKeyBinding = new LogKeyBinding();
         mValueBinding = new LogValueBinding(pNodeFac, pMetaFac);
-
-        mLocation = new File(pFile, ResourceConfiguration.Paths.TransactionLog.getFile().getName());
+        mSelected_db = 1;
+        
+        if(new File(pFile, ResourceConfiguration.Paths.TransactionLog.getFile().getName()).list().length > 0){
+            mLocation = new File(pFile, "_"+ResourceConfiguration.Paths.TransactionLog.getFile().getName());
+            mSelected_db = 2;
+        }
+        else{
+            mLocation = new File(pFile, ResourceConfiguration.Paths.TransactionLog.getFile().getName());
+        }
+        
         try {
             EnvironmentConfig config = new EnvironmentConfig();
             config.setAllowCreate(true);
-            config = config.setSharedCache(true);
+            config = config.setSharedCache(false);
             config.setLocking(false);
-            config.setCachePercent(40);
+            config.setCachePercent(20);
             mEnv = new Environment(mLocation, config);
+            mEnv.cleanLog();
             final DatabaseConfig dbConfig = new DatabaseConfig();
             dbConfig.setAllowCreate(true);
             dbConfig.setExclusiveCreate(true);
-            dbConfig.setDeferredWrite(true);
-            mDatabase = mEnv.openDatabase(null, NAME, dbConfig);
-            
+            mDatabase = mEnv.openDatabase(null, NAME+mSelected_db, dbConfig);
             
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
@@ -216,7 +224,7 @@ public final class LRULog {
     public void close() throws TTIOException {
         try {
             mDatabase.close();
-            mEnv.removeDatabase(null, NAME);
+            mEnv.removeDatabase(null, NAME+mSelected_db);
             mEnv.close();
             IOUtils.recursiveDelete(mLocation);
             mLocation.mkdir();
@@ -243,7 +251,7 @@ public final class LRULog {
         for (Entry<LogKey, LogValue> entry : entries) {
             insertIntoBDB(entry.getKey(), entry.getValue());
         }
-
+        
         return new LogIterator();
     }
 
@@ -329,6 +337,10 @@ public final class LRULog {
          */
         @Override
         public LogValue next() {
+            LogValue val;
+            if((val = mCache.getIfPresent(keyEntry)) != null){
+                return val;
+            }
             return mValueBinding.entryToObject(valueEntry);
         }
 

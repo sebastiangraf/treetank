@@ -41,7 +41,7 @@ public class CombinedStorage implements IBackend {
      * @param pNodeFac
      *            factory for the nodes
      * @param pMetaFac
-     *            factory for meta page
+     *            factory for meta bucket
      * @param pByteHandler
      *            handling any bytes
      * @throws TTIOException

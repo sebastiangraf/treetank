@@ -24,29 +24,29 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.treetank.page.interfaces;
+package org.treetank.bucket.interfaces;
 
 import java.io.DataOutput;
 
 import org.treetank.exception.TTIOException;
 
 /**
- * Interface to represent one page.
- * A page is the atomic unique to be serializible and represents one bucket when stored.
- * Pointers as well as any nodes may be stored within one page.
+ * Interface to represent one bucket.
+ * A bucket is the atomic unique to be serializible and represents one bucket when stored.
+ * Pointers as well as any nodes may be stored within one bucket.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public interface IPage {
+public interface IBucket {
 
     /**
-     * Getting the key of a page for dereferencing over any pointers as well, the access in the log and for
-     * retrieving pages from the persistent storage.
+     * Getting the key of a bucket for dereferencing over any pointers as well, the access in the log and for
+     * retrieving buckets from the persistent storage.
      * 
-     * @return the key of the page
+     * @return the key of the bucket
      */
-    long getPageKey();
+    long getBucketKey();
 
     /**
      * Serializing to given dataput

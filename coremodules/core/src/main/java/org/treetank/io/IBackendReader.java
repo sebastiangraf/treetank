@@ -27,13 +27,13 @@
 
 package org.treetank.io;
 
+import org.treetank.bucket.UberBucket;
+import org.treetank.bucket.interfaces.IBucket;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.page.UberPage;
-import org.treetank.page.interfaces.IPage;
 
 /**
- * Interface for reading the stored pages in every backend.
+ * Interface for reading the stored buckets in every backend.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
@@ -44,20 +44,20 @@ public interface IBackendReader {
      * Getting a reference for the given pointer.
      * 
      * @param pKey
-     *            the reference for the page to be determined
-     * @return a {@link IPage} as the base for a page
+     *            the reference for the bucket to be determined
+     * @return a {@link IBucket} as the base for a bucket
      * @throws TTException
      *             if something bad happens during read
      */
-    IPage read(final long pKey) throws TTIOException;
+    IBucket read(final long pKey) throws TTIOException;
 
     /**
-     * Reading the UberPage
+     * Reading the UberBucket
      * 
-     * @return the most recent UberPage
+     * @return the most recent UberBucket
      * @throws TTException
      */
-    UberPage readUber() throws TTIOException;
+    UberBucket readUber() throws TTIOException;
 
     /**
      * Closing the storage.

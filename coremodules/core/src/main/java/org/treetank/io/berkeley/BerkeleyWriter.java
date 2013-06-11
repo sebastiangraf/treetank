@@ -27,18 +27,23 @@
 
 package org.treetank.io.berkeley;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.treetank.access.Storage;
+import org.treetank.bucket.RevisionRootBucket;
+import org.treetank.bucket.UberBucket;
+import org.treetank.bucket.interfaces.IBucket;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendWriter;
-import org.treetank.page.UberPage;
-import org.treetank.page.interfaces.IPage;
 
 import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseEntry;
 import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.Environment;
+import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
 
 /**
@@ -56,26 +61,27 @@ public final class BerkeleyWriter implements IBackendWriter {
 
     /** Current {@link BerkeleyReader} to read with. */
     private final BerkeleyReader mReader;
-    
+
     /** Environment for synchronization */
     private final Environment mEnv;
 
     /**
      * Simple constructor starting with an {@link Environment} and a {@link Storage}.
-     * @param pEnv 
+     * 
+     * @param pEnv
      * 
      * @param pDatabase
      *            {@link Storage} reference where the data should be written to
-     * @param pPageBinding
-     *            {@link TupleBinding} for de/-serializing pages
+     * @param pBucketBinding
+     *            {@link TupleBinding} for de/-serializing buckets
      * 
      * @throws TTIOException
      *             if something odd happens
      */
-    public BerkeleyWriter(Environment pEnv, final Database pDatabase, final TupleBinding<IPage> pPageBinding)
+    public BerkeleyWriter(Environment pEnv, final Database pDatabase, final TupleBinding<IBucket> pBucketBinding)
         throws TTIOException {
         mDatabase = pDatabase;
-        mReader = new BerkeleyReader(pEnv, mDatabase, pPageBinding);
+        mReader = new BerkeleyReader(pEnv, mDatabase, pBucketBinding);
         mEnv = pEnv;
     }
 
@@ -83,18 +89,19 @@ public final class BerkeleyWriter implements IBackendWriter {
      * {@inheritDoc}
      */
     @Override
-    public synchronized void write(final IPage page) throws TTIOException {
+    public synchronized void write(final IBucket bucket) throws TTIOException {
 
         final DatabaseEntry valueEntry = new DatabaseEntry();
         final DatabaseEntry keyEntry = new DatabaseEntry();
 
-        mReader.mPageBinding.objectToEntry(page, valueEntry);
-        TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(page.getPageKey(), keyEntry);
+        mReader.mBucketBinding.objectToEntry(bucket, valueEntry);
+        TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(bucket.getBucketKey(), keyEntry);
 
         // final OperationStatus status = mBackend.put(mTxn, keyEntry, valueEntry);
         final OperationStatus status = mDatabase.put(null, keyEntry, valueEntry);
+        
         if (status != OperationStatus.SUCCESS) {
-            throw new TTIOException(new StringBuilder("Write of ").append(page.toString()).append(" failed!")
+            throw new TTIOException(new StringBuilder("Write of ").append(bucket.toString()).append(" failed!")
                 .toString());
         }
     }
@@ -103,7 +110,7 @@ public final class BerkeleyWriter implements IBackendWriter {
      * {@inheritDoc}
      */
     @Override
-    public synchronized IPage read(final long pKey) throws TTIOException {
+    public synchronized IBucket read(final long pKey) throws TTIOException {
         return mReader.read(pKey);
     }
 
@@ -120,7 +127,7 @@ public final class BerkeleyWriter implements IBackendWriter {
      * {@inheritDoc}
      */
     @Override
-    public UberPage readUber() throws TTIOException {
+    public UberBucket readUber() throws TTIOException {
         return mReader.readUber();
     }
 
@@ -128,15 +135,15 @@ public final class BerkeleyWriter implements IBackendWriter {
      * {@inheritDoc}
      */
     @Override
-    public void writeUberPage(UberPage page) throws TTException {
-        long pageKey = page.getPageKey();
-        write(page);
+    public void writeUberBucket(UberBucket pBucket) throws TTException {
+        long bucketKey = pBucket.getBucketKey();
+        write(pBucket);
 
         final DatabaseEntry keyEntry = new DatabaseEntry();
         TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(-1l, keyEntry);
 
         final DatabaseEntry valueEntry = new DatabaseEntry();
-        TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(pageKey, valueEntry);
+        TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(bucketKey, valueEntry);
 
         try {
             mDatabase.put(null, keyEntry, valueEntry);

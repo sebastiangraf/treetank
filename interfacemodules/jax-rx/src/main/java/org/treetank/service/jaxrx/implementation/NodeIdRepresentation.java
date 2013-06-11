@@ -233,7 +233,7 @@ public class NodeIdRepresentation {
                     session =
                         mDatabase.getSession(new SessionConfiguration(resourceName, StandardSettings.KEY));
                     // Creating a write transaction
-                    wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
+                    wtx = new NodeWriteTrx(session, session.beginBucketWtx(), HashKind.Rolling);
                     // move to node with given rest id and deletes it
                     if (wtx.moveTo(nodeId)) {
                         wtx.remove();
@@ -283,7 +283,7 @@ public class NodeIdRepresentation {
                     session =
                         mDatabase.getSession(new SessionConfiguration(resourceName, StandardSettings.KEY));
                     // Creating a write transaction
-                    wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
+                    wtx = new NodeWriteTrx(session, session.beginBucketWtx(), HashKind.Rolling);
 
                     if (wtx.moveTo(nodeId)) {
                         final long parentKey = wtx.getNode().getParentKey();
@@ -342,7 +342,7 @@ public class NodeIdRepresentation {
                     session =
                         mDatabase.getSession(new SessionConfiguration(resourceName, StandardSettings.KEY));
                     // Creating a write transaction
-                    wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
+                    wtx = new NodeWriteTrx(session, session.beginBucketWtx(), HashKind.Rolling);
                     final boolean exist = wtx.moveTo(nodeId);
                     if (exist) {
                         if (type == EIdAccessType.FIRSTCHILD) {
@@ -492,9 +492,9 @@ public class NodeIdRepresentation {
             try {
                 session = mDatabase.getSession(new SessionConfiguration(resource, StandardSettings.KEY));
                 if (revision == null) {
-                    rtx = new NodeReadTrx(session.beginPageReadTransaction(session.getMostRecentVersion()));
+                    rtx = new NodeReadTrx(session.beginBucketRtx(session.getMostRecentVersion()));
                 } else {
-                    rtx = new NodeReadTrx(session.beginPageReadTransaction(revision));
+                    rtx = new NodeReadTrx(session.beginBucketRtx(revision));
                 }
 
                 if (rtx.moveTo(nodeId)) {

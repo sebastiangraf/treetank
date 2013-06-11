@@ -16,6 +16,7 @@ import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.io.bytepipe.Zipper;
 import org.treetank.io.combined.CombinedStorage;
 import org.treetank.io.jclouds.JCloudsStorage;
+import org.treetank.revisioning.FullDump;
 import org.treetank.revisioning.IRevisioning;
 import org.treetank.revisioning.Incremental;
 import org.treetank.revisioning.SlidingSnapshot;
@@ -36,9 +37,9 @@ public class ModuleSetter {
     /** Class for MetaFactory. */
     private Class<? extends IMetaEntryFactory> mMetaFacClass;
     /** Class for Revision. */
-    private Class<? extends IRevisioning> mRevisioningClass = Incremental.class;
+    private Class<? extends IRevisioning> mRevisioningClass = SlidingSnapshot.class;
     /** Class for IBackend. */
-    private Class<? extends IBackend> mBackend = CombinedStorage.class;
+    private Class<? extends IBackend> mBackend = JCloudsStorage.class;
     /** Instance for ByteHandler. */
     private IByteHandlerPipeline mByteHandler = new ByteHandlerPipeline();
     /** Instance for Key. */

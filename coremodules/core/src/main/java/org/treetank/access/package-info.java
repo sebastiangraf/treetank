@@ -33,9 +33,9 @@
  * <li>There can only be a single {@link org.treetank.api.IStorage} instance per Storage-Folder</li>
  * <li>There can only be multiple {@link org.treetank.api.ISession} instances per
  * {@link org.treetank.api.IStorage} linked uniquely to resources representing concrete data-storages.</li>
- * <li>There can only be a single {@link org.treetank.api.IPageWriteTrx} instance per
+ * <li>There can only be a single {@link org.treetank.api.IBucketWriteTrx} instance per
  * {@link org.treetank.api.ISession}</li>
- * <li>There can be multiple {@link org.treetank.api.IPageReadTrx} instances per
+ * <li>There can be multiple {@link org.treetank.api.IBucketReadTrx} instances per
  * {@link org.treetank.api.ISession}.</li>
  * </ul>
  * </p>

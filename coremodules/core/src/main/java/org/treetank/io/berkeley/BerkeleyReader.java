@@ -28,10 +28,10 @@
 package org.treetank.io.berkeley;
 
 import org.treetank.access.Storage;
+import org.treetank.bucket.UberBucket;
+import org.treetank.bucket.interfaces.IBucket;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
-import org.treetank.page.UberPage;
-import org.treetank.page.interfaces.IPage;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -52,14 +52,14 @@ import com.sleepycat.je.OperationStatus;
  */
 public final class BerkeleyReader implements IBackendReader {
 
-    /** Binding for {@link IPage}. */
-    protected final TupleBinding<IPage> mPageBinding;
+    /** Binding for {@link IBucket}. */
+    protected final TupleBinding<IBucket> mBucketBinding;
 
     /** Link to the {@link Storage}. */
     private final Database mDatabase;
 
     /** Cache for reading data. */
-    protected final Cache<Long, IPage> mCache;
+    protected final Cache<Long, IBucket> mCache;
     
     protected final Environment mEnv;
 
@@ -69,12 +69,12 @@ public final class BerkeleyReader implements IBackendReader {
      * 
      * @param pDatabase
      *            {@link Storage} reference to be connected to
-     * @param pPageBinding
-     *            {@link TupleBinding} for de/-serializing pages
+     * @param pBucketBinding
+     *            {@link TupleBinding} for de/-serializing buckets
      */
-    public BerkeleyReader(Environment pEnv, final Database pDatabase, final TupleBinding<IPage> pPageBinding) {
+    public BerkeleyReader(Environment pEnv, final Database pDatabase, final TupleBinding<IBucket> pBucketBinding) {
         mDatabase = pDatabase;
-        mPageBinding = pPageBinding;
+        mBucketBinding = pBucketBinding;
         mCache = CacheBuilder.newBuilder().maximumSize(100).build();
         mEnv = pEnv;
     }
@@ -83,8 +83,8 @@ public final class BerkeleyReader implements IBackendReader {
      * {@inheritDoc}
      */
     @Override
-    public IPage read(final long pKey) throws TTIOException {
-        IPage returnval = mCache.getIfPresent(pKey);
+    public IBucket read(final long pKey) throws TTIOException {
+        IBucket returnval = mCache.getIfPresent(pKey);
         if (returnval == null) {
 
             final DatabaseEntry valueEntry = new DatabaseEntry();
@@ -95,7 +95,7 @@ public final class BerkeleyReader implements IBackendReader {
             try {
                 final OperationStatus status = mDatabase.get(null, keyEntry, valueEntry, LockMode.DEFAULT);
                 if (status == OperationStatus.SUCCESS) {
-                    returnval = mPageBinding.entryToObject(valueEntry);
+                    returnval = mBucketBinding.entryToObject(valueEntry);
                 }
 
             } catch (final DatabaseException exc) {
@@ -119,7 +119,7 @@ public final class BerkeleyReader implements IBackendReader {
      * {@inheritDoc}
      */
     @Override
-    public UberPage readUber() throws TTIOException {
+    public UberBucket readUber() throws TTIOException {
         final DatabaseEntry valueEntry = new DatabaseEntry();
         final DatabaseEntry keyEntry = new DatabaseEntry();
         TupleBinding.getPrimitiveBinding(Long.class).objectToEntry(-1l, keyEntry);
@@ -130,9 +130,9 @@ public final class BerkeleyReader implements IBackendReader {
             if (status == OperationStatus.SUCCESS) {
                 key = TupleBinding.getPrimitiveBinding(Long.class).entryToObject(valueEntry);
             }
-            final UberPage page = (UberPage)read(key);
+            final UberBucket bucket = (UberBucket)read(key);
 
-            return page;
+            return bucket;
         } catch (final DatabaseException e) {
             throw new TTIOException(e);
         }

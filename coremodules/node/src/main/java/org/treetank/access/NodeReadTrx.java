@@ -34,7 +34,7 @@ import static org.treetank.node.IConstants.NULL_NODE;
 import javax.xml.namespace.QName;
 
 import org.treetank.api.INodeReadTrx;
-import org.treetank.api.IPageReadTrx;
+import org.treetank.api.IBucketReadTrx;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.node.ElementNode;
@@ -56,7 +56,7 @@ import org.treetank.node.interfaces.IValNode;
 public class NodeReadTrx implements INodeReadTrx {
 
     /** State of transaction including all cached stuff. */
-    protected IPageReadTrx mPageReadTrx;
+    protected IBucketReadTrx mPageReadTrx;
 
     /** Strong reference to currently selected node. */
     private INode mCurrentNode;
@@ -70,7 +70,7 @@ public class NodeReadTrx implements INodeReadTrx {
      * @throws TTIOException
      *             if something odd happens within the creation process.
      */
-    public NodeReadTrx(final IPageReadTrx pPageTrx) throws TTException {
+    public NodeReadTrx(final IBucketReadTrx pPageTrx) throws TTException {
         mPageReadTrx = pPageTrx;
         mCurrentNode = (org.treetank.node.interfaces.INode)mPageReadTrx.getNode(IConstants.ROOT_NODE);
     }
@@ -172,7 +172,7 @@ public class NodeReadTrx implements INodeReadTrx {
     public final String nameForKey(final int mKey) {
         checkState(!mPageReadTrx.isClosed(), "Transaction is already closed.");
         NodeMetaPageFactory.MetaKey key = new NodeMetaPageFactory.MetaKey(mKey);
-        NodeMetaPageFactory.MetaValue value = (MetaValue)mPageReadTrx.getMetaPage().getMetaMap().get(key);
+        NodeMetaPageFactory.MetaValue value = (MetaValue)mPageReadTrx.getMetaBucket().getMetaMap().get(key);
         return value == null ? null : value.getData();
     }
 
@@ -211,7 +211,7 @@ public class NodeReadTrx implements INodeReadTrx {
      * @param pPageTrx
      *            Page Read Trx
      */
-    protected final void setPageTransaction(final IPageReadTrx pPageTrx) {
+    protected final void setPageTransaction(final IBucketReadTrx pPageTrx) {
         mPageReadTrx = pPageTrx;
     }
 

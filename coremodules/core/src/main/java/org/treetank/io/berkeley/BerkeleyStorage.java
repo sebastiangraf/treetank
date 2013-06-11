@@ -44,6 +44,8 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;
+import org.treetank.bucket.BucketFactory;
+import org.treetank.bucket.interfaces.IBucket;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackend;
@@ -51,8 +53,6 @@ import org.treetank.io.IBackendReader;
 import org.treetank.io.IBackendWriter;
 import org.treetank.io.IOUtils;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
-import org.treetank.page.PageFactory;
-import org.treetank.page.interfaces.IPage;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
@@ -87,14 +87,14 @@ public final class BerkeleyStorage implements IBackend {
     /** Storage instance per session. */
     private Database mDatabase;
 
-    /** Binding for de/-serializing pages. */
-    private final TupleBinding<IPage> mPageBinding;
+    /** Binding for de/-serializing buckets. */
+    private final TupleBinding<IBucket> mBucketBinding;
 
     /** Handling the byte-representation before serialization. */
     private final IByteHandlerPipeline mByteHandler;
 
-    /** Factory for Pages. */
-    private final PageFactory mFac;
+    /** Factory for Buckets. */
+    private final BucketFactory mFac;
 
     /** File for DB. */
     private final File mFile;
@@ -107,7 +107,7 @@ public final class BerkeleyStorage implements IBackend {
      * @param pNodeFac
      *            factory for the nodes
      * @param pMetaFac
-     *            factory for meta page
+     *            factory for meta bucket
      * @param pByteHandler
      *            handling any bytes
      * @throws TTIOException
@@ -121,9 +121,9 @@ public final class BerkeleyStorage implements IBackend {
             new File(pProperties.getProperty(ConstructorProps.RESOURCEPATH), ResourceConfiguration.Paths.Data
                 .getFile().getName());
 
-        mPageBinding = new PageBinding();
+        mBucketBinding = new BucketBinding();
         mByteHandler = pByteHandler;
-        mFac = new PageFactory(pNodeFac, pMetaFac);
+        mFac = new BucketFactory(pNodeFac, pMetaFac);
 
     }
 
@@ -136,12 +136,13 @@ public final class BerkeleyStorage implements IBackend {
             EnvironmentConfig config = new EnvironmentConfig();
             config = config.setSharedCache(true);
             config.setAllowCreate(true);
+            config.setTransactional(true);
             config.setCachePercent(20);
             mEnv = new Environment(mFile, config);
 
             final DatabaseConfig conf = new DatabaseConfig();
             conf.setAllowCreate(true);
-            conf.setDeferredWrite(true);
+            conf.setTransactional(true);
 
             mDatabase = mEnv.openDatabase(null, NAME, conf);
 
@@ -156,7 +157,7 @@ public final class BerkeleyStorage implements IBackend {
     @Override
     public synchronized IBackendReader getReader() throws TTIOException {
         try {
-            return new BerkeleyReader(mEnv, mDatabase, mPageBinding);
+            return new BerkeleyReader(mEnv, mDatabase, mBucketBinding);
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
         }
@@ -167,7 +168,7 @@ public final class BerkeleyStorage implements IBackend {
      */
     @Override
     public synchronized IBackendWriter getWriter() throws TTIOException {
-        return new BerkeleyWriter(mEnv, mDatabase, mPageBinding);
+        return new BerkeleyWriter(mEnv, mDatabase, mBucketBinding);
     }
 
     /**
@@ -212,22 +213,22 @@ public final class BerkeleyStorage implements IBackend {
     }
 
     /**
-     * Binding for storing {@link IPage} objects within the Berkeley DB.
+     * Binding for storing {@link IBucket} objects within the Berkeley DB.
      * 
      * @author Sebastian Graf, University of Konstanz
      * 
      */
-    class PageBinding extends TupleBinding<IPage> {
+    class BucketBinding extends TupleBinding<IBucket>{
 
         /**
          * {@inheritDoc}
          */
         @Override
-        public IPage entryToObject(final TupleInput arg0) {
+        public IBucket entryToObject(final TupleInput arg0) {
             try {
                 final InputStream handledStream = mByteHandler.deserialize(arg0);
                 final DataInput in = new DataInputStream(handledStream);
-                final IPage returnVal = mFac.deserializePage(in);
+                final IBucket returnVal = mFac.deserializeBucket(in);
                 handledStream.close();
                 arg0.close();
                 return returnVal;
@@ -240,7 +241,7 @@ public final class BerkeleyStorage implements IBackend {
          * {@inheritDoc}
          */
         @Override
-        public void objectToEntry(final IPage arg0, final TupleOutput arg1) {
+        public void objectToEntry(final IBucket arg0, final TupleOutput arg1) {
             try {
                 final OutputStream handledStream = mByteHandler.serialize(arg1);
                 final DataOutput output = new DataOutputStream(handledStream);

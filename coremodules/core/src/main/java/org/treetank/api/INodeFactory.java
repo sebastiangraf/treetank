@@ -5,8 +5,8 @@ package org.treetank.api;
 
 import java.io.DataInput;
 
+import org.treetank.bucket.DumbNodeFactory;
 import org.treetank.exception.TTIOException;
-import org.treetank.page.DumbNodeFactory;
 
 import com.google.inject.ImplementedBy;
 

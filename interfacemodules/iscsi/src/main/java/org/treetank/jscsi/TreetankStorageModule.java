@@ -54,8 +54,18 @@ public class TreetankStorageModule implements IStorageModule {
      *  - If a certain amount of bytes have been written, a commit is made to treetank. */
     private static long BYTE_WRITER_COUNTER = 0;
 
-    /** Number of Blocks in one Cluster. */
-    public static final int BLOCKS_IN_NODE = 8;
+    /** Number of Blocks in one Cluster.
+     *  8 equals 4KB nodes
+     * 16 equals 8KB nodes
+     * ...
+     * 
+     * When using berkeley db as a backend consider that if you increase the size of the blocks in node
+     * up to 12800 nodes can be held in ram.
+     * If you have a 1gb storage maximally 1gb heap is needed. However if the storage is bigger and
+     * the blocks per node is considerably high (e.g. 256kb per node) you might have to increase
+     * the ram for the jvm.
+     */
+    public static final int BLOCKS_IN_NODE = 64;
 
     /** Number of Bytes in Bucket. */
     public final static int BYTES_IN_NODE = BLOCKS_IN_NODE * VIRTUAL_BLOCK_SIZE;
@@ -105,7 +115,7 @@ public class TreetankStorageModule implements IStorageModule {
             + IStorageModule.VIRTUAL_BLOCK_SIZE);
         
         mSession = pSession;
-        mRtx = new IscsiWriteTrx(mSession.beginPageWriteTransaction(), mSession);
+        mRtx = new IscsiWriteTrx(mSession.beginBucketWtx(), mSession);
         
         ExecutorService service = Executors.newSingleThreadExecutor();
         
@@ -299,13 +309,13 @@ public class TreetankStorageModule implements IStorageModule {
             BYTE_WRITER_COUNTER += bytesWritten;
             
             //If 1024 nodes have been fully written.
-            if(BYTE_WRITER_COUNTER >= 268435456){
+            if(BYTE_WRITER_COUNTER >= 1073741824){
                 this.mRtx.commit();
 
                 LOGGER.debug("Commited changes to treetank.");
                 BYTE_WRITER_COUNTER = 0;
             }
-        } catch (Exception exc) {
+        } catch (TTException exc) {
             throw new IOException(exc);
         }
     }

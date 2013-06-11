@@ -25,24 +25,39 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package org.treetank.bucket;
+
 /**
- * <h1>Page Layer for Treetank</h1>
+ * <h1>ConstructorProps</h1>
+ * 
  * <p>
- * Contains all page kinds and page utils. 
+ * Interface to hold all constants of the bucket-layer.
  * </p>
- * <p>
- * The pages are namely
- * <ul>
- * <li>UberPage: Representing the main-entrance point in the page-structure of the structure.</li>
- * <li>IndirectPage: Pointing to other pages to multiply the fanout within the tree-structure within the entire structure as well as within the sub-structures under each revision namely the RevisionRootPages.</li>
- * <li>RevisionRootPage: Representing a single version within the structure. Offers to the ability to point to any Indirect-/NodePage (even if they were created in former versions.)</li>
- * <li>MetaPage: Storing application-specific metadata in a map-structure. The entries must be provided by the application.</li>
- * <li>NodePage: Storing application-specific nodes in any structure. The node must be provided by the application.</li>
- * </ul>
- * </p>
+ * 
  * @author Sebastian Graf, University of Konstanz
  * @author Marc Kramis, University of Konstanz
- * 
  */
-package org.treetank.page;
+public interface IConstants {
 
+    // --- Bucket Kinds
+    // ----------------------------------------------------------
+    public final static int NODEBUCKET = 1;
+    public final static int METABUCKET = 2;
+    public final static int UBERBUCKET = 3;
+    public final static int INDIRCTBUCKET = 4;
+    public final static int REVISIONROOTBUCKET = 5;
+
+    /** ID for not existing nodes. */
+    public final static int NULL_NODE = -22;
+    public final static int DELETEDNODE = -44;
+    public final static int INTERFACENODE = -66;
+
+    /** Count of indirect references in indirect bucket. */
+    public static final int CONTENT_COUNT = 128;
+
+    /** Exponent of buckets per level (root level = 0, leaf level = 5). */
+    public static final int[] INP_LEVEL_BUCKET_COUNT_EXPONENT = {
+        4 * 7, 3 * 7, 2 * 7, 1 * 7, 0 * 7
+    };
+
+}

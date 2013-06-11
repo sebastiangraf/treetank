@@ -25,13 +25,13 @@ import java.util.concurrent.TimeUnit;
 import org.ietf.jgss.Oid;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
+import org.treetank.bucket.BucketFactory;
+import org.treetank.bucket.UberBucket;
+import org.treetank.bucket.interfaces.IBucket;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
-import org.treetank.page.PageFactory;
-import org.treetank.page.UberPage;
-import org.treetank.page.interfaces.IPage;
 
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.cache.Cache;
@@ -68,8 +68,8 @@ public class JCloudsReader implements IBackendReader {
     /** Blob Store for Reading the data. */
     protected final BlobStore mBlobStore;
 
-    /** Factory for building Pages. */
-    private final PageFactory mFac;
+    /** Factory for building Buckets. */
+    private final BucketFactory mFac;
 
     /** Inflater to decompress. */
     protected final IByteHandlerPipeline mByteHandler;
@@ -78,19 +78,19 @@ public class JCloudsReader implements IBackendReader {
     protected final String mResourceName;
 
     /** Cache for reading data. */
-    protected final Cache<Long, IPage> mCache;
+    protected final Cache<Long, IBucket> mCache;
 
     //
     // /** Executing read requests. */
     // private final ExecutorService mReaderService;
     //
     // /** CompletionService for getting aware of concluded tasks. */
-    // private final CompletionService<Map.Entry<Long, IPage>> mReaderCompletion;
+    // private final CompletionService<Map.Entry<Long, IBucket>> mReaderCompletion;
     //
     // /** Blocking already performing tasks. */
-    // private final ConcurrentHashMap<Long, Future<Map.Entry<Long, IPage>>> mTasks;
+    // private final ConcurrentHashMap<Long, Future<Map.Entry<Long, IBucket>>> mTasks;
 
-    public JCloudsReader(BlobStore pBlobStore, PageFactory pFac, IByteHandlerPipeline pByteHandler,
+    public JCloudsReader(BlobStore pBlobStore, BucketFactory pFac, IByteHandlerPipeline pByteHandler,
         String pResourceName) throws TTException {
         mBlobStore = pBlobStore;
         mByteHandler = pByteHandler;
@@ -98,10 +98,10 @@ public class JCloudsReader implements IBackendReader {
         mResourceName = pResourceName;
         mCache = CacheBuilder.newBuilder().maximumSize(100).build();
 
-        // mTasks = new ConcurrentHashMap<Long, Future<Map.Entry<Long, IPage>>>();
+        // mTasks = new ConcurrentHashMap<Long, Future<Map.Entry<Long, IBucket>>>();
         // mReaderService = Executors.newFixedThreadPool(20);
         //
-        // mReaderCompletion = new ExecutorCompletionService<Map.Entry<Long, IPage>>(mReaderService);
+        // mReaderCompletion = new ExecutorCompletionService<Map.Entry<Long, IBucket>>(mReaderService);
         // final FutureCleaner cleaner = new FutureCleaner();
         // final ExecutorService cleanerService = Executors.newSingleThreadExecutor();
         // cleanerService.submit(cleaner);
@@ -112,14 +112,14 @@ public class JCloudsReader implements IBackendReader {
      * {@inheritDoc}
      */
     @Override
-    public UberPage readUber() throws TTIOException {
+    public UberBucket readUber() throws TTIOException {
         try {
             final Blob blobRetrieved = mBlobStore.getBlob(mResourceName, Long.toString(-1l));
             final DataInputStream datain = new DataInputStream(blobRetrieved.getPayload().getInput());
-            final long uberpagekey = datain.readLong();
-            final UberPage page = (UberPage)read(uberpagekey);
+            final long uberkey = datain.readLong();
+            final UberBucket bucket = (UberBucket)read(uberkey);
             datain.close();
-            return page;
+            return bucket;
         } catch (final IOException exc) {
             throw new TTIOException(exc);
         }
@@ -129,12 +129,12 @@ public class JCloudsReader implements IBackendReader {
      * {@inheritDoc}
      */
     @Override
-    public IPage read(long pKey) throws TTIOException {
-        IPage returnval = mCache.getIfPresent(pKey);
+    public IBucket read(long pKey) throws TTIOException {
+        IBucket returnval = mCache.getIfPresent(pKey);
         if (returnval == null) {
             try {
                 returnval = getAndprefetchBuckets(pKey);
-//                reader.write(returnval.getPageKey() + "," + returnval.getClass().getName() + "\n");
+//                reader.write(returnval.getBucketKey() + "," + returnval.getClass().getName() + "\n");
 //                reader.flush();
             } catch (Exception exc) {
                 throw new TTIOException(exc);
@@ -144,11 +144,11 @@ public class JCloudsReader implements IBackendReader {
 
     }
 
-    private final IPage getAndprefetchBuckets(final long pId) throws InterruptedException, ExecutionException {
-        IPage returnVal = null;
-        // // Future<Map.Entry<Long, IPage>> startTask = null;
+    private final IBucket getAndprefetchBuckets(final long pId) throws InterruptedException, ExecutionException {
+        IBucket returnVal = null;
+        // // Future<Map.Entry<Long, IBucket>> startTask = null;
         // for (long i = pId; i < pId + BUCKETS_TO_PREFETCH; i++) {
-        // Future<Map.Entry<Long, IPage>> currentTask = mTasks.remove(i);
+        // Future<Map.Entry<Long, IBucket>> currentTask = mTasks.remove(i);
         // if (currentTask == null) {
         // currentTask = mReaderCompletion.submit(new ReadTask(i));
         // mTasks.put(i, currentTask);
@@ -194,7 +194,7 @@ public class JCloudsReader implements IBackendReader {
     // public Long call() throws Exception {
     // boolean run = true;
     // while (run) {
-    // Future<Map.Entry<Long, IPage>> element = mReaderCompletion.take();
+    // Future<Map.Entry<Long, IBucket>> element = mReaderCompletion.take();
     // long number = element.get().getKey();
     // if (number == POISONNUMBER) {
     // run = false;
@@ -212,7 +212,7 @@ public class JCloudsReader implements IBackendReader {
      * @author Sebastian Graf, University of Konstanz
      * 
      */
-    class ReadTask implements Callable<Map.Entry<Long, IPage>> {
+    class ReadTask implements Callable<Map.Entry<Long, IBucket>> {
 
         /**
          * Bucket ID to be read.
@@ -224,38 +224,38 @@ public class JCloudsReader implements IBackendReader {
         }
 
         @Override
-        public Map.Entry<Long, IPage> call() throws Exception {
+        public Map.Entry<Long, IBucket> call() throws Exception {
 
-            IPage page = null;
-            // IPage page = mCache.getIfPresent(mBucketId);
-            // if (page == null) {
+            IBucket bucket = null;
+            // IBucket bucket = mCache.getIfPresent(mBucketId);
+            // if (bucket == null) {
             Blob blob = mBlobStore.getBlob(mResourceName, Long.toString(mBucketId));
             checkNotNull(blob, "Blob %s not found", mBucketId);
             DataInputStream datain =
                 new DataInputStream(mByteHandler.deserialize(blob.getPayload().getInput()));
-            page = mFac.deserializePage(datain);
+            bucket = mFac.deserializeBucket(datain);
             datain.close();
-            // mCache.put(mBucketId, page);
+            // mCache.put(mBucketId, bucket);
             // }
 
-            // download.write(page.getPageKey() + "," + page.getClass().getName() + "\n");
+            // download.write(bucket.getBucketKey() + "," + bucket.getClass().getName() + "\n");
             // download.flush();
 
-            final IPage returnVal = page;
+            final IBucket returnVal = bucket;
 
-            return new Map.Entry<Long, IPage>() {
+            return new Map.Entry<Long, IBucket>() {
                 @Override
                 public Long getKey() {
                     return mBucketId;
                 }
 
                 @Override
-                public IPage getValue() {
+                public IBucket getValue() {
                     return returnVal;
                 }
 
                 @Override
-                public IPage setValue(IPage value) {
+                public IBucket setValue(IBucket value) {
                     throw new UnsupportedOperationException();
                 }
             };
@@ -268,14 +268,14 @@ public class JCloudsReader implements IBackendReader {
      * @author Sebastian Graf, University of Konstanz
      * 
      */
-    class PoisonTask implements Callable<Map.Entry<Long, IPage>> {
+    class PoisonTask implements Callable<Map.Entry<Long, IBucket>> {
 
         /**
          * {@inheritDoc}
          */
         @Override
-        public Map.Entry<Long, IPage> call() throws Exception {
-            return new Map.Entry<Long, IPage>() {
+        public Map.Entry<Long, IBucket> call() throws Exception {
+            return new Map.Entry<Long, IBucket>() {
 
                 @Override
                 public Long getKey() {
@@ -283,12 +283,12 @@ public class JCloudsReader implements IBackendReader {
                 }
 
                 @Override
-                public IPage getValue() {
+                public IBucket getValue() {
                     return null;
                 }
 
                 @Override
-                public IPage setValue(IPage value) {
+                public IBucket setValue(IBucket value) {
                     throw new UnsupportedOperationException();
                 }
             };

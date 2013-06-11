@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.treetank.page;
+package org.treetank.bucket;
 
 import static com.google.common.base.Objects.toStringHelper;
 
@@ -15,7 +15,7 @@ import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTIOException;
 
 /**
- * Simple Factory for generating {@link DumbNode}s mainly for testing the page-layer.
+ * Simple Factory for generating {@link DumbNode}s mainly for testing the bucket-layer.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
@@ -40,7 +40,7 @@ public class DumbNodeFactory implements INodeFactory {
     }
 
     /**
-     * Simple DumbNode just for testing the {@link NodePage}s.
+     * Simple DumbNode just for testing the {@link NodeBucket}s.
      * 
      * @author Sebastian Graf, University of Konstanz
      * 

@@ -28,7 +28,7 @@
 package org.treetank.access;
 
 import org.treetank.api.IIscsiReadTrx;
-import org.treetank.api.IPageReadTrx;
+import org.treetank.api.IBucketReadTrx;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.node.ByteNode;
@@ -40,7 +40,7 @@ import org.treetank.node.ByteNode;
 public class IscsiReadTrx implements IIscsiReadTrx {
 
     /** State of transaction including all cached stuff. */
-    protected IPageReadTrx mPageReadTrx;
+    protected IBucketReadTrx mPageReadTrx;
 
     /** Strong reference to currently selected node. */
     private ByteNode mCurrentNode;
@@ -54,7 +54,7 @@ public class IscsiReadTrx implements IIscsiReadTrx {
      * @throws TTException
      *             if something odd happens within the creation process.
      */
-    public IscsiReadTrx(final IPageReadTrx pPageTrx) throws TTException {
+    public IscsiReadTrx(final IBucketReadTrx pPageTrx) throws TTException {
         mPageReadTrx = pPageTrx;
         mCurrentNode = (ByteNode)mPageReadTrx.getNode(0);
     }
@@ -147,7 +147,7 @@ public class IscsiReadTrx implements IIscsiReadTrx {
      * @param paramTransactionState
      *            State of transaction.
      */
-    protected final void setPageTransaction(final IPageReadTrx paramTransactionState) {
+    protected final void setPageTransaction(final IBucketReadTrx paramTransactionState) {
         mPageReadTrx = paramTransactionState;
     }
 

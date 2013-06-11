@@ -7,11 +7,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import org.treetank.bucket.UberBucket;
+import org.treetank.bucket.interfaces.IBucket;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendWriter;
-import org.treetank.page.UberPage;
-import org.treetank.page.interfaces.IPage;
 
 /**
  * Combined Writer for writing to a first and a second writer.
@@ -48,14 +48,14 @@ public class CombinedWriter implements IBackendWriter {
      * {@inheritDoc}
      */
     @Override
-    public IPage read(final long pKey) throws TTIOException {
-        Future<IPage> secondReturn = mService.submit(new Callable<IPage>() {
+    public IBucket read(final long pKey) throws TTIOException {
+        Future<IBucket> secondReturn = mService.submit(new Callable<IBucket>() {
             @Override
-            public IPage call() throws Exception {
+            public IBucket call() throws Exception {
                 return mSecondWriter.read(pKey);
             }
         });
-        IPage returnVal = mFirstWriter.read(pKey);
+        IBucket returnVal = mFirstWriter.read(pKey);
         try {
             if (returnVal == null) {
                 return secondReturn.get();
@@ -71,14 +71,14 @@ public class CombinedWriter implements IBackendWriter {
      * {@inheritDoc}
      */
     @Override
-    public UberPage readUber() throws TTIOException {
-        Future<UberPage> secondReturn = mService.submit(new Callable<UberPage>() {
+    public UberBucket readUber() throws TTIOException {
+        Future<UberBucket> secondReturn = mService.submit(new Callable<UberBucket>() {
             @Override
-            public UberPage call() throws Exception {
+            public UberBucket call() throws Exception {
                 return mSecondWriter.readUber();
             }
         });
-        UberPage returnVal = mFirstWriter.readUber();
+        UberBucket returnVal = mFirstWriter.readUber();
         try {
             if (returnVal == null) {
                 return secondReturn.get();
@@ -94,30 +94,30 @@ public class CombinedWriter implements IBackendWriter {
      * {@inheritDoc}
      */
     @Override
-    public void write(final IPage page) throws TTException {
+    public void write(final IBucket bucket) throws TTException {
         mService.submit(new Callable<Void>() {
             @Override
             public Void call() throws Exception {
-                mSecondWriter.write(page);
+                mSecondWriter.write(bucket);
                 return null;
             }
         });
-        mFirstWriter.write(page);
+        mFirstWriter.write(bucket);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void writeUberPage(final UberPage page) throws TTException {
+    public void writeUberBucket(final UberBucket pBucket) throws TTException {
         mService.submit(new Callable<Void>() {
             @Override
             public Void call() throws Exception {
-                mSecondWriter.writeUberPage(page);
+                mSecondWriter.writeUberBucket(pBucket);
                 return null;
             }
         });
-        mFirstWriter.writeUberPage(page);
+        mFirstWriter.writeUberBucket(pBucket);
     }
 
     /**

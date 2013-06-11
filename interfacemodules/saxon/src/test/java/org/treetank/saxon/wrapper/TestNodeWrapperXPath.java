@@ -392,7 +392,7 @@ public final class TestNodeWrapperXPath {
         assertNotNull(result);
 
         final INodeReadTrx rtx =
-            new NodeReadTrx(holder.getSession().beginPageReadTransaction(
+            new NodeReadTrx(holder.getSession().beginBucketRtx(
                 holder.getSession().getMostRecentVersion()));
         rtx.moveTo(result.get(0).getNodeKey());
         assertEquals("oops1", rtx.getValueOfCurrentNode());
@@ -444,7 +444,7 @@ public final class TestNodeWrapperXPath {
         assertEquals(9, result.get(1).getNodeKey());
 
         final INodeReadTrx rtx =
-            new NodeReadTrx(holder.getSession().beginPageReadTransaction(
+            new NodeReadTrx(holder.getSession().beginBucketRtx(
                 holder.getSession().getMostRecentVersion()));
         rtx.moveTo(result.get(0).getNodeKey());
         assertEquals("b", rtx.getQNameOfCurrentNode().getLocalPart());

@@ -39,13 +39,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StorageConfiguration;
-import org.treetank.api.IPageReadTrx;
-import org.treetank.api.IPageWriteTrx;
+import org.treetank.api.IBucketReadTrx;
+import org.treetank.api.IBucketWriteTrx;
 import org.treetank.api.ISession;
+import org.treetank.bucket.UberBucket;
 import org.treetank.exception.TTException;
 import org.treetank.io.IBackendWriter;
 import org.treetank.io.IOUtils;
-import org.treetank.page.UberPage;
 
 /**
  * <h1>Session</h1>
@@ -65,11 +65,11 @@ public final class Session implements ISession {
     /** Storage for centralized closure of related Sessions. */
     private final Storage mDatabase;
 
-    /** Strong reference to uber page before the begin of a write transaction. */
-    private UberPage mLastCommittedUberPage;
+    /** Strong reference to uber bucket before the begin of a write transaction. */
+    private UberBucket mLastCommittedUberBucket;
 
     /** Remember the write separately because of the concurrent writes. */
-    private final Set<IPageReadTrx> mPageTrxs;
+    private final Set<IBucketReadTrx> mBucketTrxs;
 
     /** Determines if session was closed. */
     private transient boolean mClosed;
@@ -87,42 +87,42 @@ public final class Session implements ISession {
      *            StorageConfiguration for general setting about the storage
      * @param pResourceConf
      *            ResourceConfiguration for handling this specific session
-     * @param pPage
+     * @param pBucket
      *            to be set.
      * @throws TTException
      */
     protected Session(final Storage pStorage, final ResourceConfiguration pResourceConf,
-        final SessionConfiguration pSessionConf, final UberPage pPage) throws TTException {
+        final SessionConfiguration pSessionConf, final UberBucket pBucket) throws TTException {
         mDatabase = pStorage;
         mResourceConfig = pResourceConf;
         mSessionConfig = pSessionConf;
-        mPageTrxs = new CopyOnWriteArraySet<IPageReadTrx>();
+        mBucketTrxs = new CopyOnWriteArraySet<IBucketReadTrx>();
         mClosed = false;
-        mLastCommittedUberPage = pPage;
+        mLastCommittedUberBucket = pBucket;
         mWriteTransactionUsed = new AtomicBoolean(false);
     }
 
-    public IPageReadTrx beginPageReadTransaction(final long pRevKey) throws TTException {
+    public IBucketReadTrx beginBucketRtx(final long pRevKey) throws TTException {
         assertAccess(pRevKey);
-        final PageReadTrx trx =
-            new PageReadTrx(this, mLastCommittedUberPage, pRevKey, mResourceConfig.mBackend.getReader());
-        mPageTrxs.add(trx);
+        final BucketReadTrx trx =
+            new BucketReadTrx(this, mLastCommittedUberBucket, pRevKey, mResourceConfig.mBackend.getReader());
+        mBucketTrxs.add(trx);
         return trx;
     }
 
-    public IPageWriteTrx beginPageWriteTransaction() throws TTException {
-        return beginPageWriteTransaction(mLastCommittedUberPage.getRevisionNumber());
+    public IBucketWriteTrx beginBucketWtx() throws TTException {
+        return beginBucketWtx(mLastCommittedUberBucket.getRevisionNumber());
 
     }
 
-    public IPageWriteTrx beginPageWriteTransaction(final long mRepresentRevision) throws TTException {
+    public IBucketWriteTrx beginBucketWtx(final long mRepresentRevision) throws TTException {
         checkState(mWriteTransactionUsed.compareAndSet(false, true),
             "Only one WriteTransaction per Session is allowed");
         assertAccess(mRepresentRevision);
         final IBackendWriter backendWriter = mResourceConfig.mBackend.getWriter();
-        final IPageWriteTrx trx =
-            new PageWriteTrx(this, mLastCommittedUberPage, backendWriter, mRepresentRevision);
-        mPageTrxs.add(trx);
+        final IBucketWriteTrx trx =
+            new BucketWriteTrx(this, mLastCommittedUberBucket, backendWriter, mRepresentRevision);
+        mBucketTrxs.add(trx);
         return trx;
     }
 
@@ -132,13 +132,17 @@ public final class Session implements ISession {
     public synchronized boolean close() throws TTException {
         if (!mClosed) {
             // Forcibly close all open transactions.
-            for (final IPageReadTrx rtx : mPageTrxs) {
+            for (final IBucketReadTrx rtx : mBucketTrxs) {
+                // If the transaction is a WriteTrx, clear log aswell..
+                if(rtx instanceof BucketWriteTrx){
+                    ((BucketWriteTrx)rtx).clearLog();
+                }
                 rtx.close();
             }
 
             // Immediately release all resources.
-            mLastCommittedUberPage = null;
-            mPageTrxs.clear();
+            mLastCommittedUberBucket = null;
+            mBucketTrxs.clear();
             mResourceConfig.mBackend.close();
             mDatabase.mSessions.remove(mSessionConfig.getResource());
             mClosed = true;
@@ -155,12 +159,12 @@ public final class Session implements ISession {
         checkState(!mClosed, "Session must be opened to truncate.");
         if (mResourceConfig.mBackend.truncate()) {
             // Forcibly close all open transactions.
-            for (final IPageReadTrx rtx : mPageTrxs) {
+            for (final IBucketReadTrx rtx : mBucketTrxs) {
                 rtx.close();
             }
             // Immediately release all resources.
-            mLastCommittedUberPage = null;
-            mPageTrxs.clear();
+            mLastCommittedUberBucket = null;
+            mBucketTrxs.clear();
             mDatabase.mSessions.remove(mSessionConfig.getResource());
             mClosed = true;
             return IOUtils.recursiveDelete(new File(new File(mDatabase.getLocation(),
@@ -178,12 +182,12 @@ public final class Session implements ISession {
      */
     private void assertAccess(final long pRevision) {
         checkState(!mClosed, "Session is already closed.");
-        checkArgument(pRevision <= mLastCommittedUberPage.getRevisionNumber(),
-            "Revision must not be bigger than %s", mLastCommittedUberPage.getRevisionNumber());
+        checkArgument(pRevision <= mLastCommittedUberBucket.getRevisionNumber(),
+            "Revision must not be bigger than %s", mLastCommittedUberBucket.getRevisionNumber());
     }
 
-    protected void setLastCommittedUberPage(final UberPage paramPage) {
-        this.mLastCommittedUberPage = paramPage;
+    protected void setLastCommittedUberBucket(final UberBucket pBucket) {
+        this.mLastCommittedUberBucket = pBucket;
     }
 
     /**
@@ -191,7 +195,7 @@ public final class Session implements ISession {
      */
     @Override
     public long getMostRecentVersion() {
-        return mLastCommittedUberPage.getRevisionNumber();
+        return mLastCommittedUberBucket.getRevisionNumber();
     }
 
     /**
@@ -206,11 +210,11 @@ public final class Session implements ISession {
      * {@inheritDoc}
      */
     @Override
-    public boolean deregisterPageTrx(IPageReadTrx pTrx) {
-        if (pTrx instanceof IPageWriteTrx) {
+    public boolean deregisterBucketTrx(IBucketReadTrx pTrx) {
+        if (pTrx instanceof IBucketWriteTrx) {
             mWriteTransactionUsed.set(false);
         }
-        return mPageTrxs.remove(pTrx);
+        return mBucketTrxs.remove(pTrx);
     }
 
     /**
@@ -219,7 +223,7 @@ public final class Session implements ISession {
     @Override
     public String toString() {
         return toStringHelper(this).add("mResourceConfig", mResourceConfig).add("mSessionConfig",
-            mSessionConfig).add("mLastCommittedUberPage", mLastCommittedUberPage).add(
-            "mLastCommittedUberPage", mPageTrxs).toString();
+            mSessionConfig).add("mLastCommittedUberBucket", mLastCommittedUberBucket).add(
+            "mLastCommittedUberBucket", mBucketTrxs).toString();
     }
 }

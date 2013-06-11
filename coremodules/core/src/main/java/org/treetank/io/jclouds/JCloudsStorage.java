@@ -11,6 +11,7 @@ import org.jclouds.blobstore.BlobStoreContext;
 import org.treetank.access.conf.ConstructorProps;
 import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;
+import org.treetank.bucket.BucketFactory;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackend;
@@ -18,7 +19,6 @@ import org.treetank.io.IBackendReader;
 import org.treetank.io.IBackendWriter;
 import org.treetank.io.bytepipe.ByteHandlerPipeline;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
-import org.treetank.page.PageFactory;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
@@ -29,8 +29,8 @@ import com.google.inject.assistedinject.Assisted;
  */
 public class JCloudsStorage implements IBackend {
 
-    /** Factory for Pages. */
-    private final PageFactory mFac;
+    /** Factory for Buckets. */
+    private final BucketFactory mFac;
 
     /** Handling the byte-representation before serialization. */
     private final IByteHandlerPipeline mByteHandler;
@@ -52,7 +52,7 @@ public class JCloudsStorage implements IBackend {
      * @param pNodeFac
      *            factory for the nodes
      * @param pMetaFac
-     *            factory for meta page
+     *            factory for meta bucket
      * @param pByteHandler
      *            handling any bytes
      * 
@@ -61,7 +61,7 @@ public class JCloudsStorage implements IBackend {
     public JCloudsStorage(@Assisted Properties pProperties, INodeFactory pNodeFac,
         IMetaEntryFactory pMetaFac, IByteHandlerPipeline pByteHandler) {
         mProperties = pProperties;
-        mFac = new PageFactory(pNodeFac, pMetaFac);
+        mFac = new BucketFactory(pNodeFac, pMetaFac);
         mByteHandler = (ByteHandlerPipeline)pByteHandler;
 
         mContext =

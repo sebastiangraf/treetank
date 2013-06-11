@@ -13,14 +13,14 @@ import java.util.concurrent.Callable;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobBuilder;
+import org.treetank.bucket.BucketFactory;
+import org.treetank.bucket.UberBucket;
+import org.treetank.bucket.interfaces.IBucket;
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendWriter;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
-import org.treetank.page.PageFactory;
-import org.treetank.page.UberPage;
-import org.treetank.page.interfaces.IPage;
 
 /**
  * @author Sebastian Graf, University of Konstanz
@@ -54,7 +54,7 @@ public class JCloudsWriter implements IBackendWriter {
     // /** Executing read requests. */
     // private final ExecutorService mWriterService;
 
-    public JCloudsWriter(BlobStore pBlobStore, PageFactory pFac, IByteHandlerPipeline pByteHandler,
+    public JCloudsWriter(BlobStore pBlobStore, BucketFactory pFac, IByteHandlerPipeline pByteHandler,
         String pResourceName) throws TTException {
         mReader = new JCloudsReader(pBlobStore, pFac, pByteHandler, pResourceName);
 
@@ -73,7 +73,7 @@ public class JCloudsWriter implements IBackendWriter {
      * {@inheritDoc}
      */
     @Override
-    public IPage read(long pKey) throws TTIOException {
+    public IBucket read(long pKey) throws TTIOException {
         // Future<Long> task = mRunningWriteTasks.get(pKey);
         // if (task != null) {
         // try {
@@ -89,15 +89,15 @@ public class JCloudsWriter implements IBackendWriter {
      * {@inheritDoc}
      */
     @Override
-    public void write(final IPage pPage) throws TTIOException, TTByteHandleException {
+    public void write(final IBucket pBucket) throws TTIOException, TTByteHandleException {
         try {
-//            writer.write(pPage.getPageKey() + "," + pPage.getClass().getName() + "\n");
+//            writer.write(pBucket.getBucketKey() + "," + pBucket.getClass().getName() + "\n");
 //            writer.flush();
 
-            new WriteTask(pPage).call();
-            // Future<Long> task = mWriterCompletion.submit(new WriteTask(pPage));
-            // mRunningWriteTasks.put(pPage.getPageKey(), task);
-            // mReader.mCache.put(pPage.getPageKey(), pPage);
+            new WriteTask(pBucket).call();
+            // Future<Long> task = mWriterCompletion.submit(new WriteTask(pBucket));
+            // mRunningWriteTasks.put(pBucket.getBucketKey(), task);
+            // mReader.mCache.put(pBucket.getBucketKey(), pBucket);
         } catch (final Exception exc) {
             throw new TTIOException(exc);
         }
@@ -123,7 +123,7 @@ public class JCloudsWriter implements IBackendWriter {
      * {@inheritDoc}
      */
     @Override
-    public UberPage readUber() throws TTIOException {
+    public UberBucket readUber() throws TTIOException {
         return mReader.readUber();
     }
 
@@ -131,10 +131,10 @@ public class JCloudsWriter implements IBackendWriter {
      * {@inheritDoc}
      */
     @Override
-    public void writeUberPage(UberPage page) throws TTException {
+    public void writeUberBucket(UberBucket pBucket) throws TTException {
         try {
-            long key = page.getPageKey();
-            write(page);
+            long key = pBucket.getBucketKey();
+            write(pBucket);
             BlobBuilder blobbuilder = mReader.mBlobStore.blobBuilder(Long.toString(-1L));
             Blob blob = blobbuilder.build();
             ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
@@ -159,10 +159,10 @@ public class JCloudsWriter implements IBackendWriter {
         /**
          * The bytes to buffer.
          */
-        final IPage mPage;
+        final IBucket mBucket;
 
-        WriteTask(IPage pPage) {
-            this.mPage = pPage;
+        WriteTask(IBucket pBucket) {
+            this.mBucket = pBucket;
         }
 
         @Override
@@ -172,21 +172,21 @@ public class JCloudsWriter implements IBackendWriter {
             while (!finished) {
                 ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
                 DataOutputStream dataOut = new DataOutputStream(mReader.mByteHandler.serialize(byteOut));
-                mPage.serialize(dataOut);
+                mBucket.serialize(dataOut);
                 dataOut.close();
 
-                BlobBuilder blobbuilder = mReader.mBlobStore.blobBuilder(Long.toString(mPage.getPageKey()));
+                BlobBuilder blobbuilder = mReader.mBlobStore.blobBuilder(Long.toString(mBucket.getBucketKey()));
                 Blob blob = blobbuilder.build();
                 blob.setPayload(byteOut.toByteArray());
 
                 mReader.mBlobStore.putBlob(mReader.mResourceName, blob);
                 finished = true;
 
-                // upload.write(mPage.getPageKey() + "," + mPage.getClass().getName() + "\n");
+                // upload.write(mBucket.getBucketKey() + "," + mBucket.getClass().getName() + "\n");
                 // upload.flush();
             }
 
-            return mPage.getPageKey();
+            return mBucket.getBucketKey();
         }
     }
     //

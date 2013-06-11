@@ -5,11 +5,11 @@ package org.treetank.revisioning;
 
 import static com.google.common.base.Objects.toStringHelper;
 
+import org.treetank.bucket.NodeBucket;
 import org.treetank.log.LogValue;
-import org.treetank.page.NodePage;
 
 /**
- * FullDump versioning of {@link NodePage}s.
+ * FullDump versioning of {@link NodeBucket}s.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
@@ -20,10 +20,10 @@ public class FullDump implements IRevisioning {
      * {@inheritDoc}
      */
     @Override
-    public NodePage combinePages(NodePage[] pages) {
-        final NodePage returnVal = new NodePage(pages[0].getPageKey(), pages[0].getLastPagePointer());
-        for (int i = 0; i < pages[0].getNodes().length; i++) {
-            returnVal.setNode(i, pages[0].getNode(i));
+    public NodeBucket combineBuckets(NodeBucket[] pBuckets) {
+        final NodeBucket returnVal = new NodeBucket(pBuckets[0].getBucketKey(), pBuckets[0].getLastBucketPointer());
+        for (int i = 0; i < pBuckets[0].getNodes().length; i++) {
+            returnVal.setNode(i, pBuckets[0].getNode(i));
         }
         return returnVal;
     }
@@ -32,17 +32,17 @@ public class FullDump implements IRevisioning {
      * {@inheritDoc}
      */
     @Override
-    public LogValue combinePagesForModification(int pRevisionsToRestore, long pNewPageKey, NodePage[] pages,
+    public LogValue combineBucketsForModification(int pRevisionsToRestore, long pNewBucketKey, NodeBucket[] pBuckets,
         boolean fullDump) {
-        final NodePage[] returnVal =
+        final NodeBucket[] returnVal =
             {
-                new NodePage(pages[0].getPageKey(), pages[0].getLastPagePointer()),
-                new NodePage(pNewPageKey, pages[0].getPageKey())
+                new NodeBucket(pBuckets[0].getBucketKey(), pBuckets[0].getLastBucketPointer()),
+                new NodeBucket(pNewBucketKey, pBuckets[0].getBucketKey())
             };
 
-        for (int i = 0; i < pages[0].getNodes().length; i++) {
-            returnVal[0].setNode(i, pages[0].getNode(i));
-            returnVal[1].setNode(i, pages[0].getNode(i));
+        for (int i = 0; i < pBuckets[0].getNodes().length; i++) {
+            returnVal[0].setNode(i, pBuckets[0].getNode(i));
+            returnVal[1].setNode(i, pBuckets[0].getNode(i));
         }
 
         return new LogValue(returnVal[0], returnVal[1]);

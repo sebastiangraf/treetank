@@ -34,30 +34,30 @@ import org.treetank.exception.TTException;
  * Each <code>IStorage</code> contains multiple resources. To each resource, one {@link ISession} can be
  * bound.
  * 
- * Transactions can then be started from this instance. There can only be one {@link IPageWriteTrx} at the
+ * Transactions can then be started from this instance. There can only be one {@link IBucketWriteTrx} at the
  * time.
- * However, multiple {@link IPageReadTrx} can coexist concurrently:
+ * However, multiple {@link IBucketReadTrx} can coexist concurrently:
  * 
  * * <code>
  *      //Ensure, storage and resources are created
  *      final IStorage storage = Storage.openStorage(FILE);
  *      final ISession session =
  *           storage.getSession(new SessionConfiguration(RESOURCENAME, KEY));
- *      final IPageReadTrx pRtx = session.beginPageReadTransaction(REVISION);
- *      final IPageWriteTrx pWtx = session.beginPageWriteTransaction();
+ *      final IBucketReadTrx pRtx = session.beginBucketRtx(REVISION);
+ *      final IBucketWriteTrx pWtx = session.beginBucketWtx();
  * </code>
  * 
  */
 public interface ISession {
 
     /**
-     * Deregisters a registered page transaction.
+     * Deregisters a registered bucket transaction.
      * 
      * @param pTrx
      *            to be deregistered.
      * @return true if successful, false otherwise
      */
-    boolean deregisterPageTrx(final IPageReadTrx pTrx);
+    boolean deregisterBucketTrx(final IBucketReadTrx pTrx);
 
     /**
      * Getting the resource configuration
@@ -74,32 +74,32 @@ public interface ISession {
     long getMostRecentVersion();
 
     /**
-     * Begin exclusive write transaction on the page layer
+     * Begin exclusive write transaction on the bucket layer
      * 
      * 
-     * @return a {@link IPageReadTrx} instance
+     * @return a {@link IBucketReadTrx} instance
      * @throws TTException
      */
-    IPageWriteTrx beginPageWriteTransaction() throws TTException;
+    IBucketWriteTrx beginBucketWtx() throws TTException;
 
     /**
-     * Begin exclusive write transaction on the page layer with fixed revisions.
+     * Begin exclusive write transaction on the bucket layer with fixed revisions.
      * 
      * @param pRevToRepresent
-     * @return a {@link IPageReadTrx} instance
+     * @return a {@link IBucketReadTrx} instance
      * @throws TTException
      */
-    IPageWriteTrx beginPageWriteTransaction(final long pRevToRepresent) throws TTException;
+    IBucketWriteTrx beginBucketWtx(final long pRevToRepresent) throws TTException;
 
     /**
-     * Begin exclusive read transaction on the page layer
+     * Begin exclusive read transaction on the bucket layer
      * 
      * @param pRevKey
      *            revision key for the revision ask
-     * @return a {@link IPageReadTrx} instance
+     * @return a {@link IBucketReadTrx} instance
      * @throws TTException
      */
-    IPageReadTrx beginPageReadTransaction(final long pRevKey) throws TTException;
+    IBucketReadTrx beginBucketRtx(final long pRevKey) throws TTException;
 
     /**
      * Safely close session and immediately release all resources. If there are

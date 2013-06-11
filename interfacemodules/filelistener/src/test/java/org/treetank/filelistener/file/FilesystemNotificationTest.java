@@ -57,7 +57,7 @@ public class FilesystemNotificationTest {
      */
     @Test
     public void testDifferentEvents() throws Exception{
-        IFilelistenerWriteTrx trx = new FilelistenerWriteTrx(mHolder.getSession().beginPageWriteTransaction(), mHolder.getSession());
+        IFilelistenerWriteTrx trx = new FilelistenerWriteTrx(mHolder.getSession().beginBucketWtx(), mHolder.getSession());
         File tmp = Files.createTempDir();
         
         String relativePath = File.separator+"file.txt";

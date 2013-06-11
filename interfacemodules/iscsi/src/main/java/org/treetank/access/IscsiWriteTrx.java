@@ -27,7 +27,7 @@ package org.treetank.access;
 import static com.google.common.base.Preconditions.checkState;
 
 import org.treetank.api.IIscsiWriteTrx;
-import org.treetank.api.IPageWriteTrx;
+import org.treetank.api.IBucketWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
@@ -53,7 +53,7 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
      *            session from treetank
      * @throws TTException
      */
-    public IscsiWriteTrx(IPageWriteTrx pPageTrx, ISession pSession) throws TTException {
+    public IscsiWriteTrx(IBucketWriteTrx pPageTrx, ISession pSession) throws TTException {
 
         mSession = pSession;
         mDelegate = new IscsiReadTrx(pPageTrx);
@@ -101,7 +101,7 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
     public void commit() throws TTException {
         checkState(!mDelegate.isClosed(), "Transaction is already closed.");
 
-        // Commit uber page.
+        // CommitStrategy uber page.
         getPageTransaction().commit();
 
     }
@@ -119,7 +119,7 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
         getPageTransaction().close();
 
         // Reset internal transaction state to last committed uber page.
-        mDelegate.setPageTransaction(mSession.beginPageWriteTransaction(revisionToSet));
+        mDelegate.setPageTransaction(mSession.beginBucketWtx(revisionToSet));
 
     }
 
@@ -182,9 +182,9 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
      * 
      * @return The state of this transaction.
      */
-    private PageWriteTrx getPageTransaction() {
+    private BucketWriteTrx getPageTransaction() {
 
-        return (PageWriteTrx)mDelegate.mPageReadTrx;
+        return (BucketWriteTrx)mDelegate.mPageReadTrx;
     }
 
     @Override

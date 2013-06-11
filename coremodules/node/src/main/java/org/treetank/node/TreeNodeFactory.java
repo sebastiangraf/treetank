@@ -10,12 +10,12 @@ import java.util.List;
 
 import org.treetank.api.INode;
 import org.treetank.api.INodeFactory;
+import org.treetank.bucket.NodeBucket.DeletedNode;
 import org.treetank.exception.TTIOException;
 import org.treetank.node.delegates.NameNodeDelegate;
 import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.delegates.StructNodeDelegate;
 import org.treetank.node.delegates.ValNodeDelegate;
-import org.treetank.page.NodePage.DeletedNode;
 
 /**
  * Factory necessary to deserialize tree-nodes.
@@ -101,7 +101,7 @@ public class TreeNodeFactory implements INodeFactory {
                 nameDel = new NameNodeDelegate(nodeDel, input.readInt(), input.readInt());
                 returnVal = new NamespaceNode(nodeDel, nameDel);
                 break;
-            case org.treetank.page.IConstants.NULL_NODE:
+            case org.treetank.bucket.IConstants.NULL_NODE:
                 returnVal = new DeletedNode(input.readLong());
                 break;
             default:

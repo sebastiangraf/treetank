@@ -25,7 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.page;
+package org.treetank.bucket;
 
 import static com.google.common.base.Objects.toStringHelper;
 
@@ -36,36 +36,36 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.treetank.api.IMetaEntry;
+import org.treetank.bucket.interfaces.IBucket;
 import org.treetank.exception.TTIOException;
-import org.treetank.page.interfaces.IPage;
 
 /**
- * <h1>MetaPage</h1>
+ * <h1>MetaBucket</h1>
  * 
  * <p>
- * This page stored variable key -> value mappings, whereas elements must implement the {@link IMetaEntry}s.
+ * This bucket stored variable key -> value mappings, whereas elements must implement the {@link IMetaEntry}s.
  * </p>
  * 
  * @author Sebastian Graf, University of Konstanz
  * @author Marc Kramis, University of Konstanz
  */
-public final class MetaPage implements IPage {
+public final class MetaBucket implements IBucket {
 
     /** Map the hash of a name to its name. */
     private final Map<IMetaEntry, IMetaEntry> mMetaMap;
 
-    /** Key of this page. */
-    private final long mPageKey;
+    /** Key of this bucket. */
+    private final long mBucketKey;
 
     /**
-     * Create name page.
+     * Create name bucket.
      * 
-     * @param pPageKey
-     *            key of this page
+     * @param pBucketKey
+     *            key of this bucket
      */
-    public MetaPage(final long pPageKey) {
+    public MetaBucket(final long pBucketKey) {
         mMetaMap = new HashMap<IMetaEntry, IMetaEntry>();
-        mPageKey = pPageKey;
+        mBucketKey = pBucketKey;
     }
 
     /**
@@ -95,8 +95,8 @@ public final class MetaPage implements IPage {
     @Override
     public void serialize(final DataOutput pOutput) throws TTIOException {
         try {
-            pOutput.writeInt(IConstants.METAPAGE);
-            pOutput.writeLong(mPageKey);
+            pOutput.writeInt(IConstants.METABUCKET);
+            pOutput.writeLong(mBucketKey);
             pOutput.writeInt(mMetaMap.size());
             for (final IMetaEntry key : mMetaMap.keySet()) {
                 key.serialize(pOutput);
@@ -111,8 +111,8 @@ public final class MetaPage implements IPage {
      * {@inheritDoc}
      */
     @Override
-    public long getPageKey() {
-        return mPageKey;
+    public long getBucketKey() {
+        return mBucketKey;
     }
 
     /**
@@ -120,7 +120,7 @@ public final class MetaPage implements IPage {
      */
     @Override
     public String toString() {
-        return toStringHelper(this).add("mPageKey", mPageKey).add("mMetaMap", mMetaMap).toString();
+        return toStringHelper(this).add("mBucketKey", mBucketKey).add("mMetaMap", mMetaMap).toString();
     }
 
     /**
@@ -128,7 +128,7 @@ public final class MetaPage implements IPage {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(mPageKey, mMetaMap);
+        return Objects.hash(mBucketKey, mMetaMap);
     }
 
     /**

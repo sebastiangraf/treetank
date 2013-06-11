@@ -48,7 +48,7 @@ import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFact
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.INodeWriteTrx;
-import org.treetank.api.IPageWriteTrx;
+import org.treetank.api.IBucketWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
 import org.treetank.exception.TTException;
@@ -253,7 +253,7 @@ public class HashTest {
         CoreTestHelper.createResource(res);
         final ISession session =
             storage.getSession(new SessionConfiguration(CoreTestHelper.RESOURCENAME, StandardSettings.KEY));
-        final IPageWriteTrx pTrx = session.beginPageWriteTransaction();
+        final IBucketWriteTrx pTrx = session.beginBucketWtx();
         final INodeWriteTrx wTrx = new NodeWriteTrx(session, pTrx, kind);
         NodeTestHelper.createDocumentRootNode(wTrx);
         return wTrx;

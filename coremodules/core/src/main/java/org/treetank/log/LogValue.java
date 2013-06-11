@@ -37,23 +37,25 @@ import java.io.IOException;
 
 import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;
+import org.treetank.bucket.NodeBucket;
+import org.treetank.bucket.BucketFactory;
+import org.treetank.bucket.interfaces.IBucket;
 import org.treetank.exception.TTIOException;
-import org.treetank.page.NodePage;
-import org.treetank.page.PageFactory;
-import org.treetank.page.interfaces.IPage;
 
 import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
 
 /**
- * <h1>NodePageContainer</h1> This class acts as a container for revisioned {@link NodePage}s. Each
- * {@link NodePage} is stored in a versioned manner. If
- * modifications occur, the versioned {@link NodePage}s are dereferenced and
- * reconstructed. Afterwards, this container is used to store a complete {@link NodePage} as well as one for
+ * <h1>LogValue</h1> 
+ * 
+ * This class acts as a container for revisioned {@link NodeBucket}s. Each
+ * {@link NodeBucket} is stored in a versioned manner. If
+ * modifications occur, the versioned {@link NodeBucket}s are dereferenced and
+ * reconstructed. Afterwards, this container is used to store a complete {@link NodeBucket} as well as one for
  * upcoming modifications.
  * 
- * Both {@link NodePage}s can differ since the complete one is mainly used for
+ * Both {@link NodeBucket}s can differ since the complete one is mainly used for
  * read access and the modifying one for write access (and therefore mostly lazy
  * dereferenced).
  * 
@@ -65,38 +67,38 @@ import com.sleepycat.bind.tuple.TupleOutput;
  */
 public final class LogValue {
 
-    private final IPage mComplete;
+    private final IBucket mComplete;
 
-    private final IPage mModified;
+    private final IBucket mModified;
 
     /**
-     * Constructor with both, complete and modifying page.
+     * Constructor with both, complete and modifying bucket.
      * 
      * @param pComplete
      *            to be used as a base for this container
      * @param pModifying
      *            to be used as a base for this container
      */
-    public LogValue(final IPage pComplete, final IPage pModifying) {
+    public LogValue(final IBucket pComplete, final IBucket pModifying) {
         this.mComplete = pComplete;
         this.mModified = pModifying;
     }
 
     /**
-     * Getting the complete page.
+     * Getting the complete bucket.
      * 
-     * @return the complete page
+     * @return the complete bucket
      */
-    public IPage getComplete() {
+    public IBucket getComplete() {
         return mComplete;
     }
 
     /**
-     * Getting the modified page.
+     * Getting the modified bucket.
      * 
-     * @return the modified page
+     * @return the modified bucket
      */
-    public IPage getModified() {
+    public IBucket getModified() {
         return mModified;
     }
 
@@ -117,7 +119,7 @@ public final class LogValue {
      */
     static class LogValueBinding extends TupleBinding<LogValue> {
 
-        private final PageFactory mFac;
+        private final BucketFactory mFac;
 
         /**
          * Constructor
@@ -128,7 +130,7 @@ public final class LogValue {
          *            for the deserialization of meta-entries
          */
         public LogValueBinding(final INodeFactory pNodeFac, final IMetaEntryFactory pMetaFac) {
-            mFac = new PageFactory(pNodeFac, pMetaFac);
+            mFac = new BucketFactory(pNodeFac, pMetaFac);
         }
 
         /**
@@ -138,8 +140,8 @@ public final class LogValue {
         public LogValue entryToObject(final TupleInput arg0) {
             try {
                 final DataInput data = new DataInputStream(arg0);
-                final IPage current = mFac.deserializePage(data);
-                final IPage modified = mFac.deserializePage(data);
+                final IBucket current = mFac.deserializeBucket(data);
+                final IBucket modified = mFac.deserializeBucket(data);
                 arg0.close();
                 return new LogValue(current, modified);
             } catch (IOException | TTIOException exc) {

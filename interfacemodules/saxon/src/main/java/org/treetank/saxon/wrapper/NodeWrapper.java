@@ -145,7 +145,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
         this.mDocWrapper = pDocWrapper;
 
         final INodeReadTrx rtx =
-            new NodeReadTrx(mDocWrapper.mSession.beginPageReadTransaction(mDocWrapper.mSession
+            new NodeReadTrx(mDocWrapper.mSession.beginBucketRtx(mDocWrapper.mSession
                 .getMostRecentVersion()));
         rtx.moveTo(pNodekeyToStart);
         this.nodeKind = rtx.getNode().getKind();
@@ -852,7 +852,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 
     private final INodeReadTrx createRtxAndMove() throws TTException {
         final INodeReadTrx rtx =
-            new NodeReadTrx(mDocWrapper.mSession.beginPageReadTransaction(mDocWrapper.mSession
+            new NodeReadTrx(mDocWrapper.mSession.beginBucketRtx(mDocWrapper.mSession
                 .getMostRecentVersion()));
         rtx.moveTo(mKey);
         return rtx;

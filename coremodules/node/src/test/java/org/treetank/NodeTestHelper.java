@@ -42,7 +42,7 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.INodeWriteTrx;
-import org.treetank.api.IPageWriteTrx;
+import org.treetank.api.IBucketWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
 import org.treetank.exception.TTException;
@@ -73,7 +73,7 @@ public final class NodeTestHelper {
         assertTrue(storage.createResource(mResourceConfig));
         final ISession session =
             storage.getSession(new SessionConfiguration(CoreTestHelper.RESOURCENAME, StandardSettings.KEY));
-        final IPageWriteTrx pWtx = session.beginPageWriteTransaction();
+        final IBucketWriteTrx pWtx = session.beginBucketWtx();
         final INodeWriteTrx nWtx = new NodeWriteTrx(session, pWtx, HashKind.Rolling);
         DocumentCreater.create(nWtx);
         nWtx.commit();

@@ -66,7 +66,7 @@ public final class LabelFMESVisitor {
      *             if setting up treetank fails
      */
     public LabelFMESVisitor(final ISession paramSession) throws TTException {
-        mRtx = new NodeReadTrx(paramSession.beginPageReadTransaction(paramSession.getMostRecentVersion()));
+        mRtx = new NodeReadTrx(paramSession.beginBucketRtx(paramSession.getMostRecentVersion()));
         mLabels = new HashMap<Integer, List<INode>>();
         mLeafLabels = new HashMap<Integer, List<INode>>();
     }

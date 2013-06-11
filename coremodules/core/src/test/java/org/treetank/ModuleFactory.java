@@ -61,8 +61,8 @@ public class ModuleFactory implements IModuleFactory {
             String module = elements[elements.length - 3];
             switch (module) {
             case "core":
-                nodeFacName = "org.treetank.page.DumbNodeFactory";
-                metaFacName = "org.treetank.page.DumbMetaEntryFactory";
+                nodeFacName = "org.treetank.bucket.DumbNodeFactory";
+                metaFacName = "org.treetank.bucket.DumbMetaEntryFactory";
                 break;
             case "node":
             case "xml":

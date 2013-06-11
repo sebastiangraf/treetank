@@ -57,7 +57,7 @@ import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.INodeWriteTrx;
-import org.treetank.api.IPageWriteTrx;
+import org.treetank.api.IBucketWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
 import org.treetank.axis.AbsAxis;
@@ -297,7 +297,7 @@ public class DatabaseRepresentation {
     public final boolean shred(final InputStream xmlInput, final String resource) throws TTException {
         boolean allOk;
         INodeWriteTrx wtx = null;
-        IPageWriteTrx pWtx = null;
+        IBucketWriteTrx pWtx = null;
         ISession session = null;
         boolean abort = false;
         try {
@@ -311,7 +311,7 @@ public class DatabaseRepresentation {
             }
 
             session = mDatabase.getSession(new SessionConfiguration(resource, StandardSettings.KEY));
-            pWtx = session.beginPageWriteTransaction();
+            pWtx = session.beginBucketWtx();
             wtx = new NodeWriteTrx(session, pWtx, HashKind.Rolling);
             wtx.moveTo(ROOT_NODE);
             final XMLShredder shredder =
@@ -448,7 +448,7 @@ public class DatabaseRepresentation {
                 session = mDatabase.getSession(new SessionConfiguration(resourceName, StandardSettings.KEY));
 
                 // get highest rest-id from given revision 1
-                rtx = new NodeReadTrx(session.beginPageReadTransaction(revision1));
+                rtx = new NodeReadTrx(session.beginBucketRtx(revision1));
                 axis = new XPathAxis(rtx, ".//*");
 
                 while (axis.hasNext()) {
@@ -462,7 +462,7 @@ public class DatabaseRepresentation {
                 rtx.close();
 
                 // get highest rest-id from given revision 2
-                rtx = new NodeReadTrx(session.beginPageReadTransaction(revision2));
+                rtx = new NodeReadTrx(session.beginBucketRtx(revision2));
                 axis = new XPathAxis(rtx, ".//*");
 
                 while (axis.hasNext()) {
@@ -487,7 +487,7 @@ public class DatabaseRepresentation {
                 rtx.moveTo(ROOT_NODE);
                 rtx.close();
 
-                rtx = new NodeReadTrx(session.beginPageReadTransaction(revision1));
+                rtx = new NodeReadTrx(session.beginBucketRtx(revision1));
 
                 // linked list for holding unique restids from revision 1
                 final List<Long> restIdsRev1New = new LinkedList<Long>();
@@ -514,7 +514,7 @@ public class DatabaseRepresentation {
                  * Shred modified restids from revision 2 to xml fragment Just
                  * modifications done by post commands
                  */
-                rtx = new NodeReadTrx(session.beginPageReadTransaction(revision2));
+                rtx = new NodeReadTrx(session.beginBucketRtx(revision2));
 
                 for (Long nodeKey : modificRestids) {
                     rtx.moveTo(nodeKey);
@@ -527,7 +527,7 @@ public class DatabaseRepresentation {
                  * Shred modified restids from revision 1 to xml fragment Just
                  * modifications done by put and deletes
                  */
-                rtx = new NodeReadTrx(session.beginPageReadTransaction(revision1));
+                rtx = new NodeReadTrx(session.beginBucketRtx(revision1));
                 for (Long nodeKey : restIdsRev1New) {
                     rtx.moveTo(nodeKey);
                     WorkerHelper.serializeXML(session, output, false, nodeid, nodeKey, revision1).call();
@@ -614,7 +614,7 @@ public class DatabaseRepresentation {
         boolean abort = false;
         try {
             session = mDatabase.getSession(new SessionConfiguration(resourceName, StandardSettings.KEY));
-            wtx = new NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
+            wtx = new NodeWriteTrx(session, session.beginBucketWtx(), HashKind.Rolling);
             wtx.revertTo(backToRevision);
             wtx.commit();
         } catch (final TTException exce) {

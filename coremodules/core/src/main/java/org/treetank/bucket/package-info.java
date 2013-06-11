@@ -25,39 +25,24 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.page;
-
 /**
- * <h1>ConstructorProps</h1>
- * 
+ * <h1>Bucket Layer for Treetank</h1>
  * <p>
- * Interface to hold all constants of the pagelayer.
+ * Contains all bucket kinds and bucket utils. 
  * </p>
- * 
+ * <p>
+ * The buckets are namely
+ * <ul>
+ * <li>UberBucket: Representing the main-entrance point in the bucket-structure of the structure.</li>
+ * <li>IndirectBucket: Pointing to other buckets to multiply the fanout within the tree-structure within the entire structure as well as within the sub-structures under each revision namely the RevisionRootBuckets.</li>
+ * <li>RevisionRootBucket: Representing a single version within the structure. Offers to the ability to point to any Indirect-/NodeBucket (even if they were created in former versions.)</li>
+ * <li>MetaBucket: Storing application-specific metadata in a map-structure. The entries must be provided by the application.</li>
+ * <li>NodeBucket: Storing application-specific nodes in any structure. The node must be provided by the application.</li>
+ * </ul>
+ * </p>
  * @author Sebastian Graf, University of Konstanz
  * @author Marc Kramis, University of Konstanz
+ * 
  */
-public interface IConstants {
+package org.treetank.bucket;
 
-    // --- Page Kinds
-    // ----------------------------------------------------------
-    public final static int NODEPAGE = 1;
-    public final static int METAPAGE = 2;
-    public final static int UBERPAGE = 3;
-    public final static int INDIRCTPAGE = 4;
-    public final static int REVISIONROOTPAGE = 5;
-
-    /** ID for not existing nodes. */
-    public final static int NULL_NODE = -22;
-    public final static int DELETEDNODE = -44;
-    public final static int INTERFACENODE = -66;
-
-    /** Count of indirect references in indirect page. */
-    public static final int CONTENT_COUNT = 128;
-
-    /** Exponent of pages per level (root level = 0, leaf level = 5). */
-    public static final int[] INP_LEVEL_PAGE_COUNT_EXPONENT = {
-        4 * 7, 3 * 7, 2 * 7, 1 * 7, 0 * 7
-    };
-
-}

@@ -8,9 +8,9 @@ import com.sleepycat.bind.tuple.TupleOutput;
 
 /**
  * Container for Key-Entry in the log determining the level and the the sequence in the level.
- * Needed for the WriteTrx for getting inserting any modified pages in the right order since the page-key can
+ * Needed for the WriteTrx for getting inserting any modified buckets in the right order since the bucket-key can
  * not be computed from the nodekeys due to the relative position of the nodes in the subtree of the related
- * RevisionRootPage.
+ * RevisionRootBucket.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
@@ -25,11 +25,13 @@ public class LogKey {
 
     /** Sequence Key. */
     private final long mSeq;
-
+    
     /**
      * Constructor.
      * 
      * @param pRootLevel
+     * 
+     * 
      *            is key part of the revision-part or the node-part
      * @param pLevel
      *            to be set.

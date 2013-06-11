@@ -58,7 +58,7 @@ public interface IIscsiWriteTrx extends IIscsiReadTrx {
     public void setValue(final byte[] pValue) throws TTException;
 
     /**
-     * Commit all modifications of the exclusive write transaction. Even commit
+     * CommitStrategy all modifications of the exclusive write transaction. Even commit
      * if there are no modification at all.
      * 
      * @throws TTException

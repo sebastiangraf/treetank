@@ -16,6 +16,15 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;
+import org.treetank.bucket.DumbMetaEntryFactory;
+import org.treetank.bucket.DumbNodeFactory;
+import org.treetank.bucket.IConstants;
+import org.treetank.bucket.IndirectBucket;
+import org.treetank.bucket.MetaBucket;
+import org.treetank.bucket.NodeBucket;
+import org.treetank.bucket.RevisionRootBucket;
+import org.treetank.bucket.UberBucket;
+import org.treetank.bucket.interfaces.IBucket;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.berkeley.BerkeleyStorage;
@@ -25,15 +34,6 @@ import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.io.bytepipe.Zipper;
 import org.treetank.io.combined.CombinedStorage;
 import org.treetank.io.jclouds.JCloudsStorage;
-import org.treetank.page.DumbMetaEntryFactory;
-import org.treetank.page.DumbNodeFactory;
-import org.treetank.page.IConstants;
-import org.treetank.page.IndirectPage;
-import org.treetank.page.MetaPage;
-import org.treetank.page.NodePage;
-import org.treetank.page.RevisionRootPage;
-import org.treetank.page.UberPage;
-import org.treetank.page.interfaces.IPage;
 
 public class IBackendTest {
 
@@ -54,21 +54,21 @@ public class IBackendTest {
                 .values());
             final IBackend backend = backendCreator.getBackend();
             backend.initialize();
-            final UberPage page1 =
-                new UberPage(CoreTestHelper.random.nextLong(), CoreTestHelper.random.nextLong(),
+            final UberBucket page1 =
+                new UberBucket(CoreTestHelper.random.nextLong(), CoreTestHelper.random.nextLong(),
                     CoreTestHelper.random.nextLong());
 
             // same instance check
             final IBackendWriter backendWriter = backend.getWriter();
-            backendWriter.writeUberPage(page1);
-            final UberPage page2 = backendWriter.readUber();
+            backendWriter.writeUberBucket(page1);
+            final UberBucket page2 = backendWriter.readUber();
             assertEquals(new StringBuilder("Check for ").append(backend.getClass()).append(" failed.")
                 .toString(), page1, page2);
             backendWriter.close();
 
             // new instance check
             final IBackendReader backendReader = backend.getReader();
-            final UberPage page3 = backendReader.readUber();
+            final UberBucket page3 = backendReader.readUber();
             assertEquals(new StringBuilder("Check for ").append(pBackends.getClass()).append(" failed.")
                 .toString(), page1, page3);
             backendReader.close();
@@ -81,9 +81,9 @@ public class IBackendTest {
     public void testOtherReferences(Class<IBackendCreator> clazz, IBackendCreator[] pBackends)
         throws TTException {
         // initializing structure
-        Map<Long, IPage> pages = new HashMap<Long, IPage>();
+        Map<Long, IBucket> buckets = new HashMap<Long, IBucket>();
         for (int i = 0; i < 100; i++) {
-            pages.put(new Long(i), generatePage(i));
+            buckets.put(new Long(i), generatePage(i));
         }
 
         // checking for backends
@@ -94,20 +94,20 @@ public class IBackendTest {
             final IBackend backend = backendCreator.getBackend();
             backend.initialize();
             final IBackendWriter backendWriter = backend.getWriter();
-            for (Long i : pages.keySet()) {
+            for (Long i : buckets.keySet()) {
                 // same instance check
-                backendWriter.write(pages.get(i));
-                final IPage page2 = backendWriter.read(i);
+                backendWriter.write(buckets.get(i));
+                final IBucket page2 = backendWriter.read(i);
                 assertEquals(new StringBuilder("Check for ").append(backend.getClass()).append(
-                    " failed on index ").append(i).toString(), pages.get(i), page2);
+                    " failed on index ").append(i).toString(), buckets.get(i), page2);
             }
             backendWriter.close();
             final IBackendReader backendReader = backend.getReader();
-            for (Long i : pages.keySet()) {
+            for (Long i : buckets.keySet()) {
                 // new instance check
-                final IPage page3 = backendReader.read(i);
+                final IBucket page3 = backendReader.read(i);
                 assertEquals(new StringBuilder("Check for ").append(pBackends.getClass()).append(" failed.")
-                    .toString(), pages.get(i), page3);
+                    .toString(), buckets.get(i), page3);
             }
             backendReader.close();
 
@@ -218,16 +218,16 @@ public class IBackendTest {
         return new JCloudsStorage(props, pNodeFac, pMetaFac, pHandler);
     }
 
-    private static IPage generatePage(long pKey) {
+    private static IBucket generatePage(long pKey) {
         final double whichPage = CoreTestHelper.random.nextDouble();
         if (whichPage < 0.2) {
-            IndirectPage returnVal = new IndirectPage(pKey);
+            IndirectBucket returnVal = new IndirectBucket(pKey);
             for (int i = 0; i < IConstants.CONTENT_COUNT; i++) {
                 returnVal.setReferenceKey(i, CoreTestHelper.random.nextLong());
             }
             return returnVal;
         } else if (whichPage < 0.4) {
-            MetaPage returnVal = new MetaPage(pKey);
+            MetaBucket returnVal = new MetaBucket(pKey);
             for (int i = 0; i < IConstants.CONTENT_COUNT; i++) {
                 returnVal.getMetaMap().put(
                     new DumbMetaEntryFactory.DumbKey(CoreTestHelper.random.nextLong()),
@@ -235,20 +235,20 @@ public class IBackendTest {
             }
             return returnVal;
         } else if (whichPage < 0.6) {
-            NodePage returnVal = new NodePage(pKey, pKey);
+            NodeBucket returnVal = new NodeBucket(pKey, pKey);
             for (int i = 0; i < IConstants.CONTENT_COUNT; i++) {
                 returnVal.setNode(i, CoreTestHelper.generateOne());
             }
             return returnVal;
         } else if (whichPage < 0.8) {
-            RevisionRootPage returnVal =
-                new RevisionRootPage(pKey, CoreTestHelper.random.nextLong(), CoreTestHelper.random.nextLong());
+            RevisionRootBucket returnVal =
+                new RevisionRootBucket(pKey, CoreTestHelper.random.nextLong(), CoreTestHelper.random.nextLong());
             returnVal.setReferenceKey(0, CoreTestHelper.random.nextLong());
             returnVal.setReferenceKey(1, CoreTestHelper.random.nextLong());
             return returnVal;
         } else {
-            UberPage returnVal =
-                new UberPage(pKey, CoreTestHelper.random.nextLong(), CoreTestHelper.random.nextLong());
+            UberBucket returnVal =
+                new UberBucket(pKey, CoreTestHelper.random.nextLong(), CoreTestHelper.random.nextLong());
             returnVal.setReferenceKey(0, CoreTestHelper.random.nextLong());
             return returnVal;
         }
