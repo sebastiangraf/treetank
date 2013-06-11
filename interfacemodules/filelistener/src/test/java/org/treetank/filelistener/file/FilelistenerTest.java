@@ -44,11 +44,11 @@ public class FilelistenerTest {
         try{
             StorageManager.removeResource(RESOURCE_1);
         }
-        catch(IllegalStateException e){}
+        catch(Exception e){}
         try{
             StorageManager.removeResource(RESOURCE_2);
         }
-        catch(IllegalStateException e){}
+        catch(Exception e){}
         
         StorageManager.createResource(RESOURCE_1, new ModuleSetter().setNodeFacClass(FileNodeFactory.class)
             .setMetaFacClass(FilelistenerMetaPageFactory.class).createModule());
