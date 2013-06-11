@@ -19,6 +19,7 @@ import org.treetank.exception.TTException;
 import org.treetank.filelistener.exceptions.ResourceNotExistingException;
 import org.treetank.filelistener.file.node.FileNodeFactory;
 import org.treetank.filelistener.file.node.FilelistenerMetaPageFactory;
+import org.treetank.io.IOUtils;
 
 import com.google.common.io.Files;
 
@@ -41,14 +42,7 @@ public class FilelistenerTest {
      */
     @BeforeMethod
     public void setUp() throws Exception {
-        try{
-            StorageManager.removeResource(RESOURCE_1);
-        }
-        catch(Exception e){}
-        try{
-            StorageManager.removeResource(RESOURCE_2);
-        }
-        catch(Exception e){}
+        IOUtils.recursiveDelete(new File(StorageManager.ROOT_PATH));
         
         StorageManager.createResource(RESOURCE_1, new ModuleSetter().setNodeFacClass(FileNodeFactory.class)
             .setMetaFacClass(FilelistenerMetaPageFactory.class).createModule());
