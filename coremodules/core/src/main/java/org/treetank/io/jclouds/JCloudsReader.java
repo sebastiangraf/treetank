@@ -3,26 +3,14 @@
  */
 package org.treetank.io.jclouds;
 
-import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 
 import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.Callable;
-import java.util.concurrent.CompletionService;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorCompletionService;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
-import org.ietf.jgss.Oid;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.treetank.bucket.BucketFactory;
@@ -33,7 +21,6 @@ import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 
-import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
@@ -63,7 +50,7 @@ public class JCloudsReader implements IBackendReader {
 
     private final static long POISONNUMBER = -15;
 
-    private final static int BUCKETS_TO_PREFETCH = 3;
+//    private final static int BUCKETS_TO_PREFETCH = 3;
 
     /** Blob Store for Reading the data. */
     protected final BlobStore mBlobStore;

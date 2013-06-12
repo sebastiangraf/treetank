@@ -48,12 +48,12 @@ import org.treetank.bucket.NodeBucket.DeletedNode;
 import org.treetank.bucket.RevisionRootBucket;
 import org.treetank.bucket.UberBucket;
 import org.treetank.bucket.interfaces.IReferenceBucket;
+import org.treetank.commit.CommitStrategyModule;
+import org.treetank.commit.ICommitStrategy;
+import org.treetank.commit.ICommitStrategy.BlockingCommit;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendWriter;
-import org.treetank.io.commit.CommitStrategy;
-import org.treetank.io.commit.CommitStrategy.BlockingCommit;
-import org.treetank.io.commit.CommitStrategyModule;
 import org.treetank.log.LRULog;
 import org.treetank.log.LogKey;
 import org.treetank.log.LogValue;
@@ -88,10 +88,10 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
     private BucketReadTrx mDelegate;
 
     /** Commit strategy implementation to be used */
-    private final Class<? extends CommitStrategy> mCommitStrategy;
+    private final Class<? extends ICommitStrategy> mCommitStrategy;
 
     /** Currently (or just previously) running commitstrategy */
-    private CommitStrategy mCommitInProgress;
+    private ICommitStrategy mCommitInProgress;
 
     /**
      * Standard constructor.

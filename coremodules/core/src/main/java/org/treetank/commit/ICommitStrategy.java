@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.treetank.io.commit;
+package org.treetank.commit;
 
 import java.util.Iterator;
 
@@ -23,7 +23,7 @@ import com.google.inject.name.Named;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public interface CommitStrategy {
+public interface ICommitStrategy {
 
     public void execute() throws TTException;
    
@@ -36,11 +36,11 @@ public interface CommitStrategy {
         /**
          * Generating a commit strategy
          */
-        CommitStrategy create();
+        ICommitStrategy create();
         
     }
 
-    public static class BlockingCommit implements CommitStrategy {
+    public static class BlockingCommit implements ICommitStrategy {
 
         private final LRULog mLog;
 

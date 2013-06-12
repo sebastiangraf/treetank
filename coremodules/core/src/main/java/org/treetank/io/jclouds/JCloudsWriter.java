@@ -5,8 +5,6 @@ package org.treetank.io.jclouds;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.concurrent.Callable;
 
@@ -44,7 +42,7 @@ public class JCloudsWriter implements IBackendWriter {
 //        }
 //    }
 
-    private final static long POISONNUMBER = -15;
+//    private final static long POISONNUMBER = -15;
 
     /** Delegate for reader. */
     private final JCloudsReader mReader;
