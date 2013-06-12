@@ -1,4 +1,4 @@
-package org.treetank.io.commit;
+package org.treetank.commit;
 
 import java.util.Iterator;
 import java.util.concurrent.Callable;

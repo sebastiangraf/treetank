@@ -64,7 +64,6 @@ import com.sleepycat.je.DatabaseConfig;
 import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
-import com.sleepycat.je.Transaction;
 
 /**
  * Factory class to build up {@link IBackendReader} {@link IBackendWriter} instances for the

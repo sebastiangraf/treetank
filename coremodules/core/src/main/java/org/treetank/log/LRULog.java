@@ -276,8 +276,8 @@ public final class LRULog {
 //                    System.out.println(mDatabase.count());
 //                }
 
-                OperationStatus status = mDatabase.put(null, keyEntry, valueEntry);
-                
+                //OperationStatus status = mDatabase.put(null, keyEntry, valueEntry);
+                mDatabase.put(null, keyEntry, valueEntry);
                 // insert.write(pKey.getLevel() + "," + pKey.getSeq() + "\n");
                 // insert.flush();
 

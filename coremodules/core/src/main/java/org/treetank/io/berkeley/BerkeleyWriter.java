@@ -27,11 +27,7 @@
 
 package org.treetank.io.berkeley;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.treetank.access.Storage;
-import org.treetank.bucket.RevisionRootBucket;
 import org.treetank.bucket.UberBucket;
 import org.treetank.bucket.interfaces.IBucket;
 import org.treetank.exception.TTException;
@@ -43,7 +39,6 @@ import com.sleepycat.je.Database;
 import com.sleepycat.je.DatabaseEntry;
 import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.Environment;
-import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
 
 /**
@@ -62,14 +57,11 @@ public final class BerkeleyWriter implements IBackendWriter {
     /** Current {@link BerkeleyReader} to read with. */
     private final BerkeleyReader mReader;
 
-    /** Environment for synchronization */
-    private final Environment mEnv;
-
     /**
      * Simple constructor starting with an {@link Environment} and a {@link Storage}.
      * 
      * @param pEnv
-     * 
+     *            env to create new reader
      * @param pDatabase
      *            {@link Storage} reference where the data should be written to
      * @param pBucketBinding
@@ -78,11 +70,10 @@ public final class BerkeleyWriter implements IBackendWriter {
      * @throws TTIOException
      *             if something odd happens
      */
-    public BerkeleyWriter(Environment pEnv, final Database pDatabase, final TupleBinding<IBucket> pBucketBinding)
-        throws TTIOException {
+    public BerkeleyWriter(final Environment pEnv, final Database pDatabase,
+        final TupleBinding<IBucket> pBucketBinding) throws TTIOException {
         mDatabase = pDatabase;
         mReader = new BerkeleyReader(pEnv, mDatabase, pBucketBinding);
-        mEnv = pEnv;
     }
 
     /**
@@ -99,10 +90,10 @@ public final class BerkeleyWriter implements IBackendWriter {
 
         // final OperationStatus status = mBackend.put(mTxn, keyEntry, valueEntry);
         final OperationStatus status = mDatabase.put(null, keyEntry, valueEntry);
-        
+
         if (status != OperationStatus.SUCCESS) {
-            throw new TTIOException(new StringBuilder("Write of ").append(bucket.toString()).append(" failed!")
-                .toString());
+            throw new TTIOException(new StringBuilder("Write of ").append(bucket.toString()).append(
+                " failed!").toString());
         }
     }
 
