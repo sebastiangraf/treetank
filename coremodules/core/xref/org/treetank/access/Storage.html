@@ -52,22 +52,22 @@
 <a class="jxr_linenumber" name="42" href="#42">42</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.StorageConfiguration;
 <a class="jxr_linenumber" name="43" href="#43">43</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.ISession;
 <a class="jxr_linenumber" name="44" href="#44">44</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.IStorage;
-<a class="jxr_linenumber" name="45" href="#45">45</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTException;
-<a class="jxr_linenumber" name="46" href="#46">46</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTIOException;
-<a class="jxr_linenumber" name="47" href="#47">47</a>  <strong class="jxr_keyword">import</strong> org.treetank.io.IBackend;
-<a class="jxr_linenumber" name="48" href="#48">48</a>  <strong class="jxr_keyword">import</strong> org.treetank.io.IBackendReader;
-<a class="jxr_linenumber" name="49" href="#49">49</a>  <strong class="jxr_keyword">import</strong> org.treetank.io.IBackendWriter;
-<a class="jxr_linenumber" name="50" href="#50">50</a>  <strong class="jxr_keyword">import</strong> org.treetank.io.IOUtils;
-<a class="jxr_linenumber" name="51" href="#51">51</a>  <strong class="jxr_keyword">import</strong> org.treetank.log.LRULog;
-<a class="jxr_linenumber" name="52" href="#52">52</a>  <strong class="jxr_keyword">import</strong> org.treetank.log.LogKey;
-<a class="jxr_linenumber" name="53" href="#53">53</a>  <strong class="jxr_keyword">import</strong> org.treetank.log.LogValue;
-<a class="jxr_linenumber" name="54" href="#54">54</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.IConstants;
-<a class="jxr_linenumber" name="55" href="#55">55</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.IndirectPage;
-<a class="jxr_linenumber" name="56" href="#56">56</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.MetaPage;
-<a class="jxr_linenumber" name="57" href="#57">57</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.NodePage;
-<a class="jxr_linenumber" name="58" href="#58">58</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.RevisionRootPage;
-<a class="jxr_linenumber" name="59" href="#59">59</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.UberPage;
-<a class="jxr_linenumber" name="60" href="#60">60</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.interfaces.IReferencePage;
+<a class="jxr_linenumber" name="45" href="#45">45</a>  <strong class="jxr_keyword">import</strong> org.treetank.bucket.IConstants;
+<a class="jxr_linenumber" name="46" href="#46">46</a>  <strong class="jxr_keyword">import</strong> org.treetank.bucket.IndirectBucket;
+<a class="jxr_linenumber" name="47" href="#47">47</a>  <strong class="jxr_keyword">import</strong> org.treetank.bucket.MetaBucket;
+<a class="jxr_linenumber" name="48" href="#48">48</a>  <strong class="jxr_keyword">import</strong> org.treetank.bucket.NodeBucket;
+<a class="jxr_linenumber" name="49" href="#49">49</a>  <strong class="jxr_keyword">import</strong> org.treetank.bucket.RevisionRootBucket;
+<a class="jxr_linenumber" name="50" href="#50">50</a>  <strong class="jxr_keyword">import</strong> org.treetank.bucket.UberBucket;
+<a class="jxr_linenumber" name="51" href="#51">51</a>  <strong class="jxr_keyword">import</strong> org.treetank.bucket.interfaces.IReferenceBucket;
+<a class="jxr_linenumber" name="52" href="#52">52</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTException;
+<a class="jxr_linenumber" name="53" href="#53">53</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTIOException;
+<a class="jxr_linenumber" name="54" href="#54">54</a>  <strong class="jxr_keyword">import</strong> org.treetank.io.IBackend;
+<a class="jxr_linenumber" name="55" href="#55">55</a>  <strong class="jxr_keyword">import</strong> org.treetank.io.IBackendReader;
+<a class="jxr_linenumber" name="56" href="#56">56</a>  <strong class="jxr_keyword">import</strong> org.treetank.io.IBackendWriter;
+<a class="jxr_linenumber" name="57" href="#57">57</a>  <strong class="jxr_keyword">import</strong> org.treetank.io.IOUtils;
+<a class="jxr_linenumber" name="58" href="#58">58</a>  <strong class="jxr_keyword">import</strong> org.treetank.log.LRULog;
+<a class="jxr_linenumber" name="59" href="#59">59</a>  <strong class="jxr_keyword">import</strong> org.treetank.log.LogKey;
+<a class="jxr_linenumber" name="60" href="#60">60</a>  <strong class="jxr_keyword">import</strong> org.treetank.log.LogValue;
 <a class="jxr_linenumber" name="61" href="#61">61</a>  
 <a class="jxr_linenumber" name="62" href="#62">62</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="63" href="#63">63</a>  <em class="jxr_javadoccomment"> * This class represents one concrete database for enabling several {@link ISession} objects.</em>
@@ -289,10 +289,10 @@
 <a class="jxr_linenumber" name="279" href="#279">279</a>             config.mBackend.initialize();
 <a class="jxr_linenumber" name="280" href="#280">280</a>             <em class="jxr_comment">// reading first reference and instantiate this.</em>
 <a class="jxr_linenumber" name="281" href="#281">281</a>             <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/io/IBackendReader.html">IBackendReader</a> backendReader = config.mBackend.getReader();
-<a class="jxr_linenumber" name="282" href="#282">282</a>             <a href="../../../org/treetank/page/UberPage.html">UberPage</a> page = backendReader.readUber();
+<a class="jxr_linenumber" name="282" href="#282">282</a>             <a href="../../../org/treetank/bucket/UberBucket.html">UberBucket</a> bucket = backendReader.readUber();
 <a class="jxr_linenumber" name="283" href="#283">283</a>             backendReader.close();
 <a class="jxr_linenumber" name="284" href="#284">284</a> 
-<a class="jxr_linenumber" name="285" href="#285">285</a>             returnVal = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/access/Session.html">Session</a>(<strong class="jxr_keyword">this</strong>, config, pSessionConf, page);
+<a class="jxr_linenumber" name="285" href="#285">285</a>             returnVal = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/access/Session.html">Session</a>(<strong class="jxr_keyword">this</strong>, config, pSessionConf, bucket);
 <a class="jxr_linenumber" name="286" href="#286">286</a>             mSessions.put(pSessionConf.getResource(), returnVal);
 <a class="jxr_linenumber" name="287" href="#287">287</a>         }
 <a class="jxr_linenumber" name="288" href="#288">288</a>         <strong class="jxr_keyword">return</strong> returnVal;
@@ -355,64 +355,64 @@
 <a class="jxr_linenumber" name="345" href="#345">345</a>             <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/log/LRULog.html">LRULog</a>(<strong class="jxr_keyword">new</strong> File(pResourceConf.mProperties.getProperty(ConstructorProps.RESOURCEPATH)),
 <a class="jxr_linenumber" name="346" href="#346">346</a>                 pResourceConf.mNodeFac, pResourceConf.mMetaFac);
 <a class="jxr_linenumber" name="347" href="#347">347</a> 
-<a class="jxr_linenumber" name="348" href="#348">348</a>         <a href="../../../org/treetank/page/UberPage.html">UberPage</a> uberPage = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/page/UberPage.html">UberPage</a>(1, 0, 2);
-<a class="jxr_linenumber" name="349" href="#349">349</a>         <strong class="jxr_keyword">long</strong> newPageKey = uberPage.incrementPageCounter();
-<a class="jxr_linenumber" name="350" href="#350">350</a>         uberPage.setReferenceKey(IReferencePage.GUARANTEED_INDIRECT_OFFSET, newPageKey);
+<a class="jxr_linenumber" name="348" href="#348">348</a>         <a href="../../../org/treetank/bucket/UberBucket.html">UberBucket</a> uberBucket = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/bucket/UberBucket.html">UberBucket</a>(1, 0, 2);
+<a class="jxr_linenumber" name="349" href="#349">349</a>         <strong class="jxr_keyword">long</strong> newBucketKey = uberBucket.incrementBucketCounter();
+<a class="jxr_linenumber" name="350" href="#350">350</a>         uberBucket.setReferenceKey(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET, newBucketKey);
 <a class="jxr_linenumber" name="351" href="#351">351</a> 
 <a class="jxr_linenumber" name="352" href="#352">352</a>         <em class="jxr_comment">// --- Create revision tree</em>
 <a class="jxr_linenumber" name="353" href="#353">353</a>         <em class="jxr_comment">// ------------------------------------------------</em>
 <a class="jxr_linenumber" name="354" href="#354">354</a>         <em class="jxr_comment">// Initialize revision tree to guarantee that there is a revision root</em>
-<a class="jxr_linenumber" name="355" href="#355">355</a>         <em class="jxr_comment">// page.</em>
+<a class="jxr_linenumber" name="355" href="#355">355</a>         <em class="jxr_comment">// bucket.</em>
 <a class="jxr_linenumber" name="356" href="#356">356</a> 
-<a class="jxr_linenumber" name="357" href="#357">357</a>         <a href="../../../org/treetank/page/interfaces/IReferencePage.html">IReferencePage</a> page;
-<a class="jxr_linenumber" name="358" href="#358">358</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i++) {
-<a class="jxr_linenumber" name="359" href="#359">359</a>             page = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/page/IndirectPage.html">IndirectPage</a>(newPageKey);
-<a class="jxr_linenumber" name="360" href="#360">360</a>             newPageKey = uberPage.incrementPageCounter();
-<a class="jxr_linenumber" name="361" href="#361">361</a>             page.setReferenceKey(0, newPageKey);
+<a class="jxr_linenumber" name="357" href="#357">357</a>         <a href="../../../org/treetank/bucket/interfaces/IReferenceBucket.html">IReferenceBucket</a> bucket;
+<a class="jxr_linenumber" name="358" href="#358">358</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length; i++) {
+<a class="jxr_linenumber" name="359" href="#359">359</a>             bucket = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/bucket/IndirectBucket.html">IndirectBucket</a>(newBucketKey);
+<a class="jxr_linenumber" name="360" href="#360">360</a>             newBucketKey = uberBucket.incrementBucketCounter();
+<a class="jxr_linenumber" name="361" href="#361">361</a>             bucket.setReferenceKey(0, newBucketKey);
 <a class="jxr_linenumber" name="362" href="#362">362</a>             <a href="../../../org/treetank/log/LogKey.html">LogKey</a> key = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/log/LogKey.html">LogKey</a>(<strong class="jxr_keyword">true</strong>, i, 0);
-<a class="jxr_linenumber" name="363" href="#363">363</a>             log.put(key, <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/log/LogValue.html">LogValue</a>(page, page));
+<a class="jxr_linenumber" name="363" href="#363">363</a>             log.put(key, <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/log/LogValue.html">LogValue</a>(bucket, bucket));
 <a class="jxr_linenumber" name="364" href="#364">364</a>         }
 <a class="jxr_linenumber" name="365" href="#365">365</a> 
-<a class="jxr_linenumber" name="366" href="#366">366</a>         page = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/page/RevisionRootPage.html">RevisionRootPage</a>(newPageKey, 0, 0);
+<a class="jxr_linenumber" name="366" href="#366">366</a>         bucket = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/bucket/RevisionRootBucket.html">RevisionRootBucket</a>(newBucketKey, 0, 0);
 <a class="jxr_linenumber" name="367" href="#367">367</a> 
-<a class="jxr_linenumber" name="368" href="#368">368</a>         newPageKey = uberPage.incrementPageCounter();
-<a class="jxr_linenumber" name="369" href="#369">369</a>         <em class="jxr_comment">// establishing fresh NamePage</em>
-<a class="jxr_linenumber" name="370" href="#370">370</a>         <a href="../../../org/treetank/page/MetaPage.html">MetaPage</a> namePage = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/page/MetaPage.html">MetaPage</a>(newPageKey);
-<a class="jxr_linenumber" name="371" href="#371">371</a>         page.setReferenceKey(RevisionRootPage.NAME_REFERENCE_OFFSET, newPageKey);
+<a class="jxr_linenumber" name="368" href="#368">368</a>         newBucketKey = uberBucket.incrementBucketCounter();
+<a class="jxr_linenumber" name="369" href="#369">369</a>         <em class="jxr_comment">// establishing fresh NameBucket</em>
+<a class="jxr_linenumber" name="370" href="#370">370</a>         <a href="../../../org/treetank/bucket/MetaBucket.html">MetaBucket</a> nameBucket = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/bucket/MetaBucket.html">MetaBucket</a>(newBucketKey);
+<a class="jxr_linenumber" name="371" href="#371">371</a>         bucket.setReferenceKey(RevisionRootBucket.NAME_REFERENCE_OFFSET, newBucketKey);
 <a class="jxr_linenumber" name="372" href="#372">372</a>         <a href="../../../org/treetank/log/LogKey.html">LogKey</a> key = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/log/LogKey.html">LogKey</a>(false, -1, -1);
-<a class="jxr_linenumber" name="373" href="#373">373</a>         log.put(key, <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/log/LogValue.html">LogValue</a>(namePage, namePage));
+<a class="jxr_linenumber" name="373" href="#373">373</a>         log.put(key, <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/log/LogValue.html">LogValue</a>(nameBucket, nameBucket));
 <a class="jxr_linenumber" name="374" href="#374">374</a> 
-<a class="jxr_linenumber" name="375" href="#375">375</a>         newPageKey = uberPage.incrementPageCounter();
-<a class="jxr_linenumber" name="376" href="#376">376</a>         <a href="../../../org/treetank/page/IndirectPage.html">IndirectPage</a> indirectPage = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/page/IndirectPage.html">IndirectPage</a>(newPageKey);
-<a class="jxr_linenumber" name="377" href="#377">377</a>         page.setReferenceKey(IReferencePage.GUARANTEED_INDIRECT_OFFSET, newPageKey);
+<a class="jxr_linenumber" name="375" href="#375">375</a>         newBucketKey = uberBucket.incrementBucketCounter();
+<a class="jxr_linenumber" name="376" href="#376">376</a>         <a href="../../../org/treetank/bucket/IndirectBucket.html">IndirectBucket</a> indirectBucket = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/bucket/IndirectBucket.html">IndirectBucket</a>(newBucketKey);
+<a class="jxr_linenumber" name="377" href="#377">377</a>         bucket.setReferenceKey(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET, newBucketKey);
 <a class="jxr_linenumber" name="378" href="#378">378</a>         key = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/log/LogKey.html">LogKey</a>(false, -1, 0);
-<a class="jxr_linenumber" name="379" href="#379">379</a>         log.put(key, <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/log/LogValue.html">LogValue</a>(page, page));
+<a class="jxr_linenumber" name="379" href="#379">379</a>         log.put(key, <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/log/LogValue.html">LogValue</a>(bucket, bucket));
 <a class="jxr_linenumber" name="380" href="#380">380</a> 
 <a class="jxr_linenumber" name="381" href="#381">381</a>         <em class="jxr_comment">// --- Create node tree</em>
 <a class="jxr_linenumber" name="382" href="#382">382</a>         <em class="jxr_comment">// ----------------------------------------------------</em>
 <a class="jxr_linenumber" name="383" href="#383">383</a> 
 <a class="jxr_linenumber" name="384" href="#384">384</a>         <em class="jxr_comment">// Initialize revision tree to guarantee that there is a revision root</em>
-<a class="jxr_linenumber" name="385" href="#385">385</a>         <em class="jxr_comment">// page.</em>
+<a class="jxr_linenumber" name="385" href="#385">385</a>         <em class="jxr_comment">// bucket.</em>
 <a class="jxr_linenumber" name="386" href="#386">386</a> 
-<a class="jxr_linenumber" name="387" href="#387">387</a>         page = indirectPage;
+<a class="jxr_linenumber" name="387" href="#387">387</a>         bucket = indirectBucket;
 <a class="jxr_linenumber" name="388" href="#388">388</a> 
-<a class="jxr_linenumber" name="389" href="#389">389</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length; i++) {
-<a class="jxr_linenumber" name="390" href="#390">390</a>             newPageKey = uberPage.incrementPageCounter();
-<a class="jxr_linenumber" name="391" href="#391">391</a>             page.setReferenceKey(0, newPageKey);
+<a class="jxr_linenumber" name="389" href="#389">389</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length; i++) {
+<a class="jxr_linenumber" name="390" href="#390">390</a>             newBucketKey = uberBucket.incrementBucketCounter();
+<a class="jxr_linenumber" name="391" href="#391">391</a>             bucket.setReferenceKey(0, newBucketKey);
 <a class="jxr_linenumber" name="392" href="#392">392</a>             key = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/log/LogKey.html">LogKey</a>(false, i, 0);
-<a class="jxr_linenumber" name="393" href="#393">393</a>             log.put(key, <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/log/LogValue.html">LogValue</a>(page, page));
-<a class="jxr_linenumber" name="394" href="#394">394</a>             page = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/page/IndirectPage.html">IndirectPage</a>(newPageKey);
+<a class="jxr_linenumber" name="393" href="#393">393</a>             log.put(key, <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/log/LogValue.html">LogValue</a>(bucket, bucket));
+<a class="jxr_linenumber" name="394" href="#394">394</a>             bucket = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/bucket/IndirectBucket.html">IndirectBucket</a>(newBucketKey);
 <a class="jxr_linenumber" name="395" href="#395">395</a>         }
 <a class="jxr_linenumber" name="396" href="#396">396</a> 
-<a class="jxr_linenumber" name="397" href="#397">397</a>         <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/page/NodePage.html">NodePage</a> ndp = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/page/NodePage.html">NodePage</a>(newPageKey, IConstants.NULL_NODE);
-<a class="jxr_linenumber" name="398" href="#398">398</a>         key = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/log/LogKey.html">LogKey</a>(false, IConstants.INP_LEVEL_PAGE_COUNT_EXPONENT.length, 0);
+<a class="jxr_linenumber" name="397" href="#397">397</a>         <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/bucket/NodeBucket.html">NodeBucket</a> ndp = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/bucket/NodeBucket.html">NodeBucket</a>(newBucketKey, IConstants.NULL_NODE);
+<a class="jxr_linenumber" name="398" href="#398">398</a>         key = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/log/LogKey.html">LogKey</a>(false, IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length, 0);
 <a class="jxr_linenumber" name="399" href="#399">399</a>         log.put(key, <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/log/LogValue.html">LogValue</a>(ndp, ndp));
 <a class="jxr_linenumber" name="400" href="#400">400</a> 
 <a class="jxr_linenumber" name="401" href="#401">401</a>         <a href="../../../org/treetank/io/IBackend.html">IBackend</a> storage = pResourceConf.mBackend;
 <a class="jxr_linenumber" name="402" href="#402">402</a>         storage.initialize();
 <a class="jxr_linenumber" name="403" href="#403">403</a>         <a href="../../../org/treetank/io/IBackendWriter.html">IBackendWriter</a> writer = storage.getWriter();
 <a class="jxr_linenumber" name="404" href="#404">404</a> 
-<a class="jxr_linenumber" name="405" href="#405">405</a>         writer.writeUberPage(uberPage);
+<a class="jxr_linenumber" name="405" href="#405">405</a>         writer.writeUberBucket(uberBucket);
 <a class="jxr_linenumber" name="406" href="#406">406</a> 
 <a class="jxr_linenumber" name="407" href="#407">407</a>         Iterator&lt;LogValue&gt; entries = log.getIterator();
 <a class="jxr_linenumber" name="408" href="#408">408</a>         <strong class="jxr_keyword">while</strong> (entries.hasNext()) {

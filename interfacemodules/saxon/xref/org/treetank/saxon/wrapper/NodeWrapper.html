@@ -155,7 +155,7 @@
 <a class="jxr_linenumber" name="145" href="#145">145</a>         <strong class="jxr_keyword">this</strong>.mDocWrapper = pDocWrapper;
 <a class="jxr_linenumber" name="146" href="#146">146</a> 
 <a class="jxr_linenumber" name="147" href="#147">147</a>         <strong class="jxr_keyword">final</strong> INodeReadTrx rtx =
-<a class="jxr_linenumber" name="148" href="#148">148</a>             <strong class="jxr_keyword">new</strong> NodeReadTrx(mDocWrapper.mSession.beginPageReadTransaction(mDocWrapper.mSession
+<a class="jxr_linenumber" name="148" href="#148">148</a>             <strong class="jxr_keyword">new</strong> NodeReadTrx(mDocWrapper.mSession.beginBucketRtx(mDocWrapper.mSession
 <a class="jxr_linenumber" name="149" href="#149">149</a>                 .getMostRecentVersion()));
 <a class="jxr_linenumber" name="150" href="#150">150</a>         rtx.moveTo(pNodekeyToStart);
 <a class="jxr_linenumber" name="151" href="#151">151</a>         <strong class="jxr_keyword">this</strong>.nodeKind = rtx.getNode().getKind();
@@ -862,7 +862,7 @@
 <a class="jxr_linenumber" name="852" href="#852">852</a> 
 <a class="jxr_linenumber" name="853" href="#853">853</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> INodeReadTrx createRtxAndMove() <strong class="jxr_keyword">throws</strong> TTException {
 <a class="jxr_linenumber" name="854" href="#854">854</a>         <strong class="jxr_keyword">final</strong> INodeReadTrx rtx =
-<a class="jxr_linenumber" name="855" href="#855">855</a>             <strong class="jxr_keyword">new</strong> NodeReadTrx(mDocWrapper.mSession.beginPageReadTransaction(mDocWrapper.mSession
+<a class="jxr_linenumber" name="855" href="#855">855</a>             <strong class="jxr_keyword">new</strong> NodeReadTrx(mDocWrapper.mSession.beginBucketRtx(mDocWrapper.mSession
 <a class="jxr_linenumber" name="856" href="#856">856</a>                 .getMostRecentVersion()));
 <a class="jxr_linenumber" name="857" href="#857">857</a>         rtx.moveTo(mKey);
 <a class="jxr_linenumber" name="858" href="#858">858</a>         <strong class="jxr_keyword">return</strong> rtx;

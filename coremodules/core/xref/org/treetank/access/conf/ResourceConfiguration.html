@@ -267,9 +267,9 @@
 <a class="jxr_linenumber" name="257" href="#257">257</a>             FileReader fileReader = <strong class="jxr_keyword">new</strong> FileReader(file);
 <a class="jxr_linenumber" name="258" href="#258">258</a>             JsonReader jsonReader = <strong class="jxr_keyword">new</strong> JsonReader(fileReader);
 <a class="jxr_linenumber" name="259" href="#259">259</a>             jsonReader.beginObject();
-<a class="jxr_linenumber" name="260" href="#260">260</a>             <em class="jxr_comment">// caring about the metapage</em>
+<a class="jxr_linenumber" name="260" href="#260">260</a>             <em class="jxr_comment">// caring about the kind of the metabucket</em>
 <a class="jxr_linenumber" name="261" href="#261">261</a>             jsonReader.nextName().equals(JSONNAMES[0]);
-<a class="jxr_linenumber" name="262" href="#262">262</a>             Class&lt;?&gt; metaPageClazz = Class.forName(jsonReader.nextString());
+<a class="jxr_linenumber" name="262" href="#262">262</a>             Class&lt;?&gt; metaBucketClazz = Class.forName(jsonReader.nextString());
 <a class="jxr_linenumber" name="263" href="#263">263</a>             <em class="jxr_comment">// caring about the versioning</em>
 <a class="jxr_linenumber" name="264" href="#264">264</a>             jsonReader.nextName().equals(JSONNAMES[1]);
 <a class="jxr_linenumber" name="265" href="#265">265</a>             Class&lt;?&gt; revClazz = Class.forName(jsonReader.nextString());
@@ -309,8 +309,8 @@
 <a class="jxr_linenumber" name="299" href="#299">299</a>             jsonReader.close();
 <a class="jxr_linenumber" name="300" href="#300">300</a>             fileReader.close();
 <a class="jxr_linenumber" name="301" href="#301">301</a> 
-<a class="jxr_linenumber" name="302" href="#302">302</a>             Constructor&lt;?&gt; metapageCons = metaPageClazz.getConstructors()[0];
-<a class="jxr_linenumber" name="303" href="#303">303</a>             <a href="../../../../org/treetank/api/IMetaEntryFactory.html">IMetaEntryFactory</a> metaFac = (IMetaEntryFactory)metapageCons.newInstance();
+<a class="jxr_linenumber" name="302" href="#302">302</a>             Constructor&lt;?&gt; metaBucketCons = metaBucketClazz.getConstructors()[0];
+<a class="jxr_linenumber" name="303" href="#303">303</a>             <a href="../../../../org/treetank/api/IMetaEntryFactory.html">IMetaEntryFactory</a> metaFac = (IMetaEntryFactory)metaBucketCons.newInstance();
 <a class="jxr_linenumber" name="304" href="#304">304</a> 
 <a class="jxr_linenumber" name="305" href="#305">305</a>             Constructor&lt;?&gt; nodeFacCons = nodeFacClazz.getConstructors()[0];
 <a class="jxr_linenumber" name="306" href="#306">306</a>             <a href="../../../../org/treetank/api/INodeFactory.html">INodeFactory</a> nodeFactory = (INodeFactory)nodeFacCons.newInstance();

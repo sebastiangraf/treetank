@@ -402,7 +402,7 @@
 <a class="jxr_linenumber" name="392" href="#392">392</a>         assertNotNull(result);
 <a class="jxr_linenumber" name="393" href="#393">393</a> 
 <a class="jxr_linenumber" name="394" href="#394">394</a>         <strong class="jxr_keyword">final</strong> INodeReadTrx rtx =
-<a class="jxr_linenumber" name="395" href="#395">395</a>             <strong class="jxr_keyword">new</strong> NodeReadTrx(holder.getSession().beginPageReadTransaction(
+<a class="jxr_linenumber" name="395" href="#395">395</a>             <strong class="jxr_keyword">new</strong> NodeReadTrx(holder.getSession().beginBucketRtx(
 <a class="jxr_linenumber" name="396" href="#396">396</a>                 holder.getSession().getMostRecentVersion()));
 <a class="jxr_linenumber" name="397" href="#397">397</a>         rtx.moveTo(result.get(0).getNodeKey());
 <a class="jxr_linenumber" name="398" href="#398">398</a>         assertEquals(<span class="jxr_string">"oops1"</span>, rtx.getValueOfCurrentNode());
@@ -454,7 +454,7 @@
 <a class="jxr_linenumber" name="444" href="#444">444</a>         assertEquals(9, result.get(1).getNodeKey());
 <a class="jxr_linenumber" name="445" href="#445">445</a> 
 <a class="jxr_linenumber" name="446" href="#446">446</a>         <strong class="jxr_keyword">final</strong> INodeReadTrx rtx =
-<a class="jxr_linenumber" name="447" href="#447">447</a>             <strong class="jxr_keyword">new</strong> NodeReadTrx(holder.getSession().beginPageReadTransaction(
+<a class="jxr_linenumber" name="447" href="#447">447</a>             <strong class="jxr_keyword">new</strong> NodeReadTrx(holder.getSession().beginBucketRtx(
 <a class="jxr_linenumber" name="448" href="#448">448</a>                 holder.getSession().getMostRecentVersion()));
 <a class="jxr_linenumber" name="449" href="#449">449</a>         rtx.moveTo(result.get(0).getNodeKey());
 <a class="jxr_linenumber" name="450" href="#450">450</a>         assertEquals(<span class="jxr_string">"b"</span>, rtx.getQNameOfCurrentNode().getLocalPart());

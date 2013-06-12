@@ -143,7 +143,7 @@
 <a class="jxr_linenumber" name="133" href="#133">133</a> 
 <a class="jxr_linenumber" name="134" href="#134">134</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; versionsToUse.length; i++) {
 <a class="jxr_linenumber" name="135" href="#135">135</a> 
-<a class="jxr_linenumber" name="136" href="#136">136</a>             INodeReadTrx rtx = <strong class="jxr_keyword">new</strong> NodeReadTrx(mSession.beginPageReadTransaction(versionsToUse[i]));
+<a class="jxr_linenumber" name="136" href="#136">136</a>             INodeReadTrx rtx = <strong class="jxr_keyword">new</strong> NodeReadTrx(mSession.beginBucketRtx(versionsToUse[i]));
 <a class="jxr_linenumber" name="137" href="#137">137</a> 
 <a class="jxr_linenumber" name="138" href="#138">138</a>             <strong class="jxr_keyword">if</strong> (versionsToUse == <strong class="jxr_keyword">null</strong> || mVersions.length &gt; 1) {
 <a class="jxr_linenumber" name="139" href="#139">139</a>                 emitStartManualElement(i);

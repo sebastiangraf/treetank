@@ -44,7 +44,7 @@
 <a class="jxr_linenumber" name="34" href="#34">34</a>  <strong class="jxr_keyword">import</strong> javax.xml.namespace.QName;
 <a class="jxr_linenumber" name="35" href="#35">35</a>  
 <a class="jxr_linenumber" name="36" href="#36">36</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.INodeReadTrx;
-<a class="jxr_linenumber" name="37" href="#37">37</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.IPageReadTrx;
+<a class="jxr_linenumber" name="37" href="#37">37</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.IBucketReadTrx;
 <a class="jxr_linenumber" name="38" href="#38">38</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTException;
 <a class="jxr_linenumber" name="39" href="#39">39</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTIOException;
 <a class="jxr_linenumber" name="40" href="#40">40</a>  <strong class="jxr_keyword">import</strong> org.treetank.node.ElementNode;
@@ -66,7 +66,7 @@
 <a class="jxr_linenumber" name="56" href="#56">56</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../org/treetank/access/NodeReadTrx.html">NodeReadTrx</a> <strong class="jxr_keyword">implements</strong> <a href="../../../org/treetank/api/INodeReadTrx.html">INodeReadTrx</a> {
 <a class="jxr_linenumber" name="57" href="#57">57</a>  
 <a class="jxr_linenumber" name="58" href="#58">58</a>      <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> State of transaction including all cached stuff. */</em>
-<a class="jxr_linenumber" name="59" href="#59">59</a>      <strong class="jxr_keyword">protected</strong> IPageReadTrx mPageReadTrx;
+<a class="jxr_linenumber" name="59" href="#59">59</a>      <strong class="jxr_keyword">protected</strong> IBucketReadTrx mPageReadTrx;
 <a class="jxr_linenumber" name="60" href="#60">60</a>  
 <a class="jxr_linenumber" name="61" href="#61">61</a>      <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> Strong reference to currently selected node. */</em>
 <a class="jxr_linenumber" name="62" href="#62">62</a>      <strong class="jxr_keyword">private</strong> <a href="../../../org/treetank/node/interfaces/INode.html">INode</a> mCurrentNode;
@@ -80,7 +80,7 @@
 <a class="jxr_linenumber" name="70" href="#70">70</a>  <em class="jxr_javadoccomment">     * @throws TTIOException</em>
 <a class="jxr_linenumber" name="71" href="#71">71</a>  <em class="jxr_javadoccomment">     *             if something odd happens within the creation process.</em>
 <a class="jxr_linenumber" name="72" href="#72">72</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="73" href="#73">73</a>      <strong class="jxr_keyword">public</strong> <a href="../../../org/treetank/access/NodeReadTrx.html">NodeReadTrx</a>(<strong class="jxr_keyword">final</strong> IPageReadTrx pPageTrx) <strong class="jxr_keyword">throws</strong> TTException {
+<a class="jxr_linenumber" name="73" href="#73">73</a>      <strong class="jxr_keyword">public</strong> <a href="../../../org/treetank/access/NodeReadTrx.html">NodeReadTrx</a>(<strong class="jxr_keyword">final</strong> IBucketReadTrx pPageTrx) <strong class="jxr_keyword">throws</strong> TTException {
 <a class="jxr_linenumber" name="74" href="#74">74</a>          mPageReadTrx = pPageTrx;
 <a class="jxr_linenumber" name="75" href="#75">75</a>          mCurrentNode = (org.treetank.node.interfaces.INode)mPageReadTrx.getNode(IConstants.ROOT_NODE);
 <a class="jxr_linenumber" name="76" href="#76">76</a>      }
@@ -182,7 +182,7 @@
 <a class="jxr_linenumber" name="172" href="#172">172</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> String nameForKey(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> mKey) {
 <a class="jxr_linenumber" name="173" href="#173">173</a>         checkState(!mPageReadTrx.isClosed(), <span class="jxr_string">"Transaction is already closed."</span>);
 <a class="jxr_linenumber" name="174" href="#174">174</a>         NodeMetaPageFactory.MetaKey key = <strong class="jxr_keyword">new</strong> NodeMetaPageFactory.MetaKey(mKey);
-<a class="jxr_linenumber" name="175" href="#175">175</a>         NodeMetaPageFactory.MetaValue value = (MetaValue)mPageReadTrx.getMetaPage().getMetaMap().get(key);
+<a class="jxr_linenumber" name="175" href="#175">175</a>         NodeMetaPageFactory.MetaValue value = (MetaValue)mPageReadTrx.getMetaBucket().getMetaMap().get(key);
 <a class="jxr_linenumber" name="176" href="#176">176</a>         <strong class="jxr_keyword">return</strong> value == <strong class="jxr_keyword">null</strong> ? <strong class="jxr_keyword">null</strong> : value.getData();
 <a class="jxr_linenumber" name="177" href="#177">177</a>     }
 <a class="jxr_linenumber" name="178" href="#178">178</a> 
@@ -221,7 +221,7 @@
 <a class="jxr_linenumber" name="211" href="#211">211</a> <em class="jxr_javadoccomment">     * @param pPageTrx</em>
 <a class="jxr_linenumber" name="212" href="#212">212</a> <em class="jxr_javadoccomment">     *            Page Read Trx</em>
 <a class="jxr_linenumber" name="213" href="#213">213</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="214" href="#214">214</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> setPageTransaction(<strong class="jxr_keyword">final</strong> IPageReadTrx pPageTrx) {
+<a class="jxr_linenumber" name="214" href="#214">214</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> setPageTransaction(<strong class="jxr_keyword">final</strong> IBucketReadTrx pPageTrx) {
 <a class="jxr_linenumber" name="215" href="#215">215</a>         mPageReadTrx = pPageTrx;
 <a class="jxr_linenumber" name="216" href="#216">216</a>     }
 <a class="jxr_linenumber" name="217" href="#217">217</a> 

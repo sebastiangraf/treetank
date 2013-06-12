@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <pmd-cpd>
-<duplication lines="33" tokens="150">
-<file line="18" path="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/revisioning/Incremental.java"/>
-<file line="18" path="/Users/sebi/Documents/workspace/treetank/coremodules/core/src/main/java/org/treetank/revisioning/SlidingSnapshot.java"/>
+<duplication lines="44" tokens="233">
+<file line="18" path="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/revisioning/Incremental.java"/>
+<file line="18" path="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/revisioning/SlidingSnapshot.java"/>
 <codefragment>
 <![CDATA[
 public class Incremental implements IRevisioning {
@@ -11,21 +11,21 @@ public class Incremental implements IRevisioning {
      * {@inheritDoc}
      */
     @Override
-    public NodePage combinePages(final NodePage[] pages) {
-        checkArgument(pages.length > 0, "At least one Nodepage must be provided");
-        // create entire page..
-        final NodePage returnVal = new NodePage(pages[0].getPageKey(), pages[0].getLastPagePointer());
+    public NodeBucket combineBuckets(final NodeBucket[] pBuckets) {
+        checkArgument(pBuckets.length > 0, "At least one Nodebucket must be provided");
+        // create entire bucket..
+        final NodeBucket returnVal = new NodeBucket(pBuckets[0].getBucketKey(), pBuckets[0].getLastBucketPointer());
         // ...iterate through the nodes and check if it is stored..
-        for (int i = 0; i < pages[0].getNodes().length; i++) {
-            boolean pageSkip = false;
+        for (int i = 0; i < pBuckets[0].getNodes().length; i++) {
+            boolean bucketSkip = false;
             // ... form the newest version to the oldest one..
-            for (int j = 0; !pageSkip && j < pages.length; j++) {
+            for (int j = 0; !bucketSkip && j < pBuckets.length; j++) {
                 // if the node is not set yet but existing in the current version..
-                if (pages[j].getNode(i) != null) {
+                if (pBuckets[j].getNode(i) != null) {
                     // ...break out the loop the next time and..
-                    pageSkip = true;
+                    bucketSkip = true;
                     // ...set it
-                    returnVal.setNode(i, pages[j].getNode(i));
+                    returnVal.setNode(i, pBuckets[j].getNode(i));
                 }
 
             }
@@ -37,7 +37,18 @@ public class Incremental implements IRevisioning {
      * {@inheritDoc}
      */
     @Override
-    public LogValue combinePagesForModification(int pRevisionsToRestore, long pNewPageKey, NodePage[] pages,
+    public LogValue combineBucketsForModification(int pRevisionsToRestore, long pNewBucketKey, NodeBucket[] pBuckets,
+        boolean pFullDump) {
+        checkArgument(pBuckets.length > 0, "At least one Nodebucket must be provided");
+        // create buckets for container..
+        final NodeBucket[] returnVal =
+            {
+                new NodeBucket(pBuckets[0].getBucketKey(), pBuckets[0].getLastBucketPointer()),
+                new NodeBucket(pNewBucketKey, pBuckets[0].getBucketKey())
+            };
+        // ...iterate through the nodes and check if it is stored..
+        for (int i = 0; i < pBuckets[0].getNodes().length; i++) {
+            boolean bucketSkip = false;
 ]]>
 </codefragment>
 </duplication>

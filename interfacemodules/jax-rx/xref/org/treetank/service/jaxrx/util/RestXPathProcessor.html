@@ -174,9 +174,9 @@
 <a class="jxr_linenumber" name="164" href="#164">164</a>                 <em class="jxr_comment">// Creating a transaction</em>
 <a class="jxr_linenumber" name="165" href="#165">165</a> 
 <a class="jxr_linenumber" name="166" href="#166">166</a>                 <strong class="jxr_keyword">if</strong> (doRevision == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="167" href="#167">167</a>                     rtx = <strong class="jxr_keyword">new</strong> NodeReadTrx(session.beginPageReadTransaction(session.getMostRecentVersion()));
+<a class="jxr_linenumber" name="167" href="#167">167</a>                     rtx = <strong class="jxr_keyword">new</strong> NodeReadTrx(session.beginBucketRtx(session.getMostRecentVersion()));
 <a class="jxr_linenumber" name="168" href="#168">168</a>                 } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="169" href="#169">169</a>                     rtx = <strong class="jxr_keyword">new</strong> NodeReadTrx(session.beginPageReadTransaction(doRevision));
+<a class="jxr_linenumber" name="169" href="#169">169</a>                     rtx = <strong class="jxr_keyword">new</strong> NodeReadTrx(session.beginBucketRtx(doRevision));
 <a class="jxr_linenumber" name="170" href="#170">170</a>                 }
 <a class="jxr_linenumber" name="171" href="#171">171</a> 
 <a class="jxr_linenumber" name="172" href="#172">172</a>                 <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> exist = rtx.moveTo(rId);
@@ -233,9 +233,9 @@
 <a class="jxr_linenumber" name="223" href="#223">223</a>                 session = mDatabase.getSession(<strong class="jxr_keyword">new</strong> SessionConfiguration(resource, StandardSettings.KEY));
 <a class="jxr_linenumber" name="224" href="#224">224</a>                 <em class="jxr_comment">// Creating a transaction</em>
 <a class="jxr_linenumber" name="225" href="#225">225</a>                 <strong class="jxr_keyword">if</strong> (revision == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="226" href="#226">226</a>                     rtx = <strong class="jxr_keyword">new</strong> NodeReadTrx(session.beginPageReadTransaction(session.getMostRecentVersion()));
+<a class="jxr_linenumber" name="226" href="#226">226</a>                     rtx = <strong class="jxr_keyword">new</strong> NodeReadTrx(session.beginBucketRtx(session.getMostRecentVersion()));
 <a class="jxr_linenumber" name="227" href="#227">227</a>                 } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="228" href="#228">228</a>                     rtx = <strong class="jxr_keyword">new</strong> NodeReadTrx(session.beginPageReadTransaction(revision));
+<a class="jxr_linenumber" name="228" href="#228">228</a>                     rtx = <strong class="jxr_keyword">new</strong> NodeReadTrx(session.beginBucketRtx(revision));
 <a class="jxr_linenumber" name="229" href="#229">229</a>                 }
 <a class="jxr_linenumber" name="230" href="#230">230</a> 
 <a class="jxr_linenumber" name="231" href="#231">231</a>                 <strong class="jxr_keyword">final</strong> AbsAxis axis = <strong class="jxr_keyword">new</strong> XPathAxis(rtx, xpath);

@@ -1,18 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pmd version="4.3" timestamp="2013-02-28T15:12:04.324">
-<file name="/Users/sebi/Documents/workspace/treetank/interfacemodules/iscsi/src/main/java/org/treetank/api/IIscsiReadTrx.java">
-<violation beginline="30" endline="30" begincolumn="1" endcolumn="30" rule="ImportFromSamePackage" ruleset="Import Statement Rules" package="org.treetank.api" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#ImportFromSamePackage" priority="3">
-No need to import a type that lives in the same package
-</violation>
-</file>
-<file name="/Users/sebi/Documents/workspace/treetank/interfacemodules/iscsi/src/main/java/org/treetank/api/IIscsiWriteTrx.java">
-<violation beginline="31" endline="31" begincolumn="1" endcolumn="44" rule="UnusedImports" ruleset="Import Statement Rules" package="org.treetank.api" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#UnusedImports" priority="4">
-Avoid unused imports such as 'org.treetank.exception.TTIOException'
-</violation>
-</file>
-<file name="/Users/sebi/Documents/workspace/treetank/interfacemodules/iscsi/src/main/java/org/treetank/jscsi/TreetankTargetServer.java">
-<violation beginline="28" endline="28" begincolumn="1" endcolumn="27" rule="UnusedImports" ruleset="Import Statement Rules" package="org.treetank.jscsi" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#UnusedImports" priority="4">
-Avoid unused imports such as 'java.io.IOException'
+<pmd version="4.3" timestamp="2013-06-12T11:20:07.708">
+<file name="/Users/sebi/Dropbox/github/treetank/interfacemodules/iscsi/src/main/java/org/treetank/jscsi/TreetankTargetServer.java">
+<violation beginline="47" endline="47" begincolumn="1" endcolumn="37" rule="UnusedImports" ruleset="Import Statement Rules" package="org.treetank.jscsi" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#UnusedImports" priority="4">
+Avoid unused imports such as 'org.treetank.api.INodeFactory'
 </violation>
 </file>
 </pmd>

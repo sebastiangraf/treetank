@@ -15,11 +15,11 @@
 <a class="jxr_linenumber" name="5" href="#5">5</a>   
 <a class="jxr_linenumber" name="6" href="#6">6</a>   <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> com.google.common.base.Objects.toStringHelper;
 <a class="jxr_linenumber" name="7" href="#7">7</a>   
-<a class="jxr_linenumber" name="8" href="#8">8</a>   <strong class="jxr_keyword">import</strong> org.treetank.log.LogValue;
-<a class="jxr_linenumber" name="9" href="#9">9</a>   <strong class="jxr_keyword">import</strong> org.treetank.page.NodePage;
+<a class="jxr_linenumber" name="8" href="#8">8</a>   <strong class="jxr_keyword">import</strong> org.treetank.bucket.NodeBucket;
+<a class="jxr_linenumber" name="9" href="#9">9</a>   <strong class="jxr_keyword">import</strong> org.treetank.log.LogValue;
 <a class="jxr_linenumber" name="10" href="#10">10</a>  
 <a class="jxr_linenumber" name="11" href="#11">11</a>  <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="12" href="#12">12</a>  <em class="jxr_javadoccomment"> * FullDump versioning of {@link NodePage}s.</em>
+<a class="jxr_linenumber" name="12" href="#12">12</a>  <em class="jxr_javadoccomment"> * FullDump versioning of {@link NodeBucket}s.</em>
 <a class="jxr_linenumber" name="13" href="#13">13</a>  <em class="jxr_javadoccomment"> * </em>
 <a class="jxr_linenumber" name="14" href="#14">14</a>  <em class="jxr_javadoccomment"> * @author Sebastian Graf, University of Konstanz</em>
 <a class="jxr_linenumber" name="15" href="#15">15</a>  <em class="jxr_javadoccomment"> * </em>
@@ -30,10 +30,10 @@
 <a class="jxr_linenumber" name="20" href="#20">20</a>  <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
 <a class="jxr_linenumber" name="21" href="#21">21</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="22" href="#22">22</a>      @Override
-<a class="jxr_linenumber" name="23" href="#23">23</a>      <strong class="jxr_keyword">public</strong> <a href="../../../org/treetank/page/NodePage.html">NodePage</a> combinePages(<a href="../../../org/treetank/page/NodePage.html">NodePage</a>[] pages) {
-<a class="jxr_linenumber" name="24" href="#24">24</a>          <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/page/NodePage.html">NodePage</a> returnVal = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/page/NodePage.html">NodePage</a>(pages[0].getPageKey(), pages[0].getLastPagePointer());
-<a class="jxr_linenumber" name="25" href="#25">25</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; pages[0].getNodes().length; i++) {
-<a class="jxr_linenumber" name="26" href="#26">26</a>              returnVal.setNode(i, pages[0].getNode(i));
+<a class="jxr_linenumber" name="23" href="#23">23</a>      <strong class="jxr_keyword">public</strong> <a href="../../../org/treetank/bucket/NodeBucket.html">NodeBucket</a> combineBuckets(<a href="../../../org/treetank/bucket/NodeBucket.html">NodeBucket</a>[] pBuckets) {
+<a class="jxr_linenumber" name="24" href="#24">24</a>          <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/bucket/NodeBucket.html">NodeBucket</a> returnVal = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/bucket/NodeBucket.html">NodeBucket</a>(pBuckets[0].getBucketKey(), pBuckets[0].getLastBucketPointer());
+<a class="jxr_linenumber" name="25" href="#25">25</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; pBuckets[0].getNodes().length; i++) {
+<a class="jxr_linenumber" name="26" href="#26">26</a>              returnVal.setNode(i, pBuckets[0].getNode(i));
 <a class="jxr_linenumber" name="27" href="#27">27</a>          }
 <a class="jxr_linenumber" name="28" href="#28">28</a>          <strong class="jxr_keyword">return</strong> returnVal;
 <a class="jxr_linenumber" name="29" href="#29">29</a>      }
@@ -42,17 +42,17 @@
 <a class="jxr_linenumber" name="32" href="#32">32</a>  <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
 <a class="jxr_linenumber" name="33" href="#33">33</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="34" href="#34">34</a>      @Override
-<a class="jxr_linenumber" name="35" href="#35">35</a>      <strong class="jxr_keyword">public</strong> <a href="../../../org/treetank/log/LogValue.html">LogValue</a> combinePagesForModification(<strong class="jxr_keyword">int</strong> pRevisionsToRestore, <strong class="jxr_keyword">long</strong> pNewPageKey, <a href="../../../org/treetank/page/NodePage.html">NodePage</a>[] pages,
+<a class="jxr_linenumber" name="35" href="#35">35</a>      <strong class="jxr_keyword">public</strong> <a href="../../../org/treetank/log/LogValue.html">LogValue</a> combineBucketsForModification(<strong class="jxr_keyword">int</strong> pRevisionsToRestore, <strong class="jxr_keyword">long</strong> pNewBucketKey, <a href="../../../org/treetank/bucket/NodeBucket.html">NodeBucket</a>[] pBuckets,
 <a class="jxr_linenumber" name="36" href="#36">36</a>          <strong class="jxr_keyword">boolean</strong> fullDump) {
-<a class="jxr_linenumber" name="37" href="#37">37</a>          <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/page/NodePage.html">NodePage</a>[] returnVal =
+<a class="jxr_linenumber" name="37" href="#37">37</a>          <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/bucket/NodeBucket.html">NodeBucket</a>[] returnVal =
 <a class="jxr_linenumber" name="38" href="#38">38</a>              {
-<a class="jxr_linenumber" name="39" href="#39">39</a>                  <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/page/NodePage.html">NodePage</a>(pages[0].getPageKey(), pages[0].getLastPagePointer()),
-<a class="jxr_linenumber" name="40" href="#40">40</a>                  <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/page/NodePage.html">NodePage</a>(pNewPageKey, pages[0].getPageKey())
+<a class="jxr_linenumber" name="39" href="#39">39</a>                  <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/bucket/NodeBucket.html">NodeBucket</a>(pBuckets[0].getBucketKey(), pBuckets[0].getLastBucketPointer()),
+<a class="jxr_linenumber" name="40" href="#40">40</a>                  <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/bucket/NodeBucket.html">NodeBucket</a>(pNewBucketKey, pBuckets[0].getBucketKey())
 <a class="jxr_linenumber" name="41" href="#41">41</a>              };
 <a class="jxr_linenumber" name="42" href="#42">42</a>  
-<a class="jxr_linenumber" name="43" href="#43">43</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; pages[0].getNodes().length; i++) {
-<a class="jxr_linenumber" name="44" href="#44">44</a>              returnVal[0].setNode(i, pages[0].getNode(i));
-<a class="jxr_linenumber" name="45" href="#45">45</a>              returnVal[1].setNode(i, pages[0].getNode(i));
+<a class="jxr_linenumber" name="43" href="#43">43</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; pBuckets[0].getNodes().length; i++) {
+<a class="jxr_linenumber" name="44" href="#44">44</a>              returnVal[0].setNode(i, pBuckets[0].getNode(i));
+<a class="jxr_linenumber" name="45" href="#45">45</a>              returnVal[1].setNode(i, pBuckets[0].getNode(i));
 <a class="jxr_linenumber" name="46" href="#46">46</a>          }
 <a class="jxr_linenumber" name="47" href="#47">47</a>  
 <a class="jxr_linenumber" name="48" href="#48">48</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/log/LogValue.html">LogValue</a>(returnVal[0], returnVal[1]);

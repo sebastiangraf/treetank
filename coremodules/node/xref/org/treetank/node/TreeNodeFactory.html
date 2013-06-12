@@ -20,12 +20,12 @@
 <a class="jxr_linenumber" name="10" href="#10">10</a>  
 <a class="jxr_linenumber" name="11" href="#11">11</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.INode;
 <a class="jxr_linenumber" name="12" href="#12">12</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.INodeFactory;
-<a class="jxr_linenumber" name="13" href="#13">13</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTIOException;
-<a class="jxr_linenumber" name="14" href="#14">14</a>  <strong class="jxr_keyword">import</strong> org.treetank.node.delegates.NameNodeDelegate;
-<a class="jxr_linenumber" name="15" href="#15">15</a>  <strong class="jxr_keyword">import</strong> org.treetank.node.delegates.NodeDelegate;
-<a class="jxr_linenumber" name="16" href="#16">16</a>  <strong class="jxr_keyword">import</strong> org.treetank.node.delegates.StructNodeDelegate;
-<a class="jxr_linenumber" name="17" href="#17">17</a>  <strong class="jxr_keyword">import</strong> org.treetank.node.delegates.ValNodeDelegate;
-<a class="jxr_linenumber" name="18" href="#18">18</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.NodePage.DeletedNode;
+<a class="jxr_linenumber" name="13" href="#13">13</a>  <strong class="jxr_keyword">import</strong> org.treetank.bucket.NodeBucket.DeletedNode;
+<a class="jxr_linenumber" name="14" href="#14">14</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTIOException;
+<a class="jxr_linenumber" name="15" href="#15">15</a>  <strong class="jxr_keyword">import</strong> org.treetank.node.delegates.NameNodeDelegate;
+<a class="jxr_linenumber" name="16" href="#16">16</a>  <strong class="jxr_keyword">import</strong> org.treetank.node.delegates.NodeDelegate;
+<a class="jxr_linenumber" name="17" href="#17">17</a>  <strong class="jxr_keyword">import</strong> org.treetank.node.delegates.StructNodeDelegate;
+<a class="jxr_linenumber" name="18" href="#18">18</a>  <strong class="jxr_keyword">import</strong> org.treetank.node.delegates.ValNodeDelegate;
 <a class="jxr_linenumber" name="19" href="#19">19</a>  
 <a class="jxr_linenumber" name="20" href="#20">20</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="21" href="#21">21</a>  <em class="jxr_javadoccomment"> * Factory necessary to deserialize tree-nodes.</em>
@@ -111,7 +111,7 @@
 <a class="jxr_linenumber" name="101" href="#101">101</a>                 nameDel = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/node/delegates/NameNodeDelegate.html">NameNodeDelegate</a>(nodeDel, input.readInt(), input.readInt());
 <a class="jxr_linenumber" name="102" href="#102">102</a>                 returnVal = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/node/NamespaceNode.html">NamespaceNode</a>(nodeDel, nameDel);
 <a class="jxr_linenumber" name="103" href="#103">103</a>                 <strong class="jxr_keyword">break</strong>;
-<a class="jxr_linenumber" name="104" href="#104">104</a>             <strong class="jxr_keyword">case</strong> org.treetank.page.IConstants.NULL_NODE:
+<a class="jxr_linenumber" name="104" href="#104">104</a>             <strong class="jxr_keyword">case</strong> org.treetank.bucket.IConstants.NULL_NODE:
 <a class="jxr_linenumber" name="105" href="#105">105</a>                 returnVal = <strong class="jxr_keyword">new</strong> DeletedNode(input.readLong());
 <a class="jxr_linenumber" name="106" href="#106">106</a>                 <strong class="jxr_keyword">break</strong>;
 <a class="jxr_linenumber" name="107" href="#107">107</a>             <strong class="jxr_keyword">default</strong>:

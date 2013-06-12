@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <pmd-cpd>
 <duplication lines="87" tokens="114">
-<file line="188" path="/Users/sebi/Documents/workspace/treetank/coremodules/node/src/main/java/org/treetank/node/delegates/StructNodeDelegate.java"/>
-<file line="76" path="/Users/sebi/Documents/workspace/treetank/coremodules/node/src/main/java/org/treetank/node/delegates/ValNodeDelegate.java"/>
+<file line="188" path="/Users/sebi/Dropbox/github/treetank/coremodules/node/src/main/java/org/treetank/node/delegates/StructNodeDelegate.java"/>
+<file line="76" path="/Users/sebi/Dropbox/github/treetank/coremodules/node/src/main/java/org/treetank/node/delegates/ValNodeDelegate.java"/>
 <codefragment>
 <![CDATA[
     }
@@ -96,8 +96,8 @@
 </codefragment>
 </duplication>
 <duplication lines="64" tokens="113">
-<file line="139" path="/Users/sebi/Documents/workspace/treetank/coremodules/node/src/main/java/org/treetank/node/DocumentRootNode.java"/>
-<file line="269" path="/Users/sebi/Documents/workspace/treetank/coremodules/node/src/main/java/org/treetank/node/ElementNode.java"/>
+<file line="139" path="/Users/sebi/Dropbox/github/treetank/coremodules/node/src/main/java/org/treetank/node/DocumentRootNode.java"/>
+<file line="269" path="/Users/sebi/Dropbox/github/treetank/coremodules/node/src/main/java/org/treetank/node/ElementNode.java"/>
 <codefragment>
 <![CDATA[
         return mDel.hasParent();
@@ -168,8 +168,8 @@
 </codefragment>
 </duplication>
 <duplication lines="56" tokens="103">
-<file line="107" path="/Users/sebi/Documents/workspace/treetank/coremodules/node/src/main/java/org/treetank/node/NamespaceNode.java"/>
-<file line="106" path="/Users/sebi/Documents/workspace/treetank/coremodules/node/src/main/java/org/treetank/node/TextNode.java"/>
+<file line="107" path="/Users/sebi/Dropbox/github/treetank/coremodules/node/src/main/java/org/treetank/node/NamespaceNode.java"/>
+<file line="106" path="/Users/sebi/Dropbox/github/treetank/coremodules/node/src/main/java/org/treetank/node/TextNode.java"/>
 <codefragment>
 <![CDATA[
         mNameDel.setURIKey(pUriKey);

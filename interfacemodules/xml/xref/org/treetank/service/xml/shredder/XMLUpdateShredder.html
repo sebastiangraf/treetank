@@ -1293,7 +1293,7 @@
 <a class="jxr_linenumber" name="1283" href="#1283">1283</a>             <strong class="jxr_keyword">final</strong> ISession session =
 <a class="jxr_linenumber" name="1284" href="#1284">1284</a>                 db.getSession(<strong class="jxr_keyword">new</strong> SessionConfiguration(<span class="jxr_string">"shredded"</span>, StandardSettings.KEY));
 <a class="jxr_linenumber" name="1285" href="#1285">1285</a>             <strong class="jxr_keyword">final</strong> INodeWriteTrx wtx =
-<a class="jxr_linenumber" name="1286" href="#1286">1286</a>                 <strong class="jxr_keyword">new</strong> NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
+<a class="jxr_linenumber" name="1286" href="#1286">1286</a>                 <strong class="jxr_keyword">new</strong> NodeWriteTrx(session, session.beginBucketWtx(), HashKind.Rolling);
 <a class="jxr_linenumber" name="1287" href="#1287">1287</a>             <strong class="jxr_keyword">final</strong> XMLEventReader reader = createFileReader(<strong class="jxr_keyword">new</strong> File(args[0]));
 <a class="jxr_linenumber" name="1288" href="#1288">1288</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../../org/treetank/service/xml/shredder/XMLUpdateShredder.html">XMLUpdateShredder</a> shredder =
 <a class="jxr_linenumber" name="1289" href="#1289">1289</a>                 <strong class="jxr_keyword">new</strong> <a href="../../../../../org/treetank/service/xml/shredder/XMLUpdateShredder.html">XMLUpdateShredder</a>(wtx, reader, EShredderInsert.ADDASFIRSTCHILD, <strong class="jxr_keyword">new</strong> File(args[0]),

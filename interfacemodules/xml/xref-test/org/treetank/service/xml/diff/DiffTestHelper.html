@@ -71,7 +71,7 @@
 <a class="jxr_linenumber" name="61" href="#61">61</a>  
 <a class="jxr_linenumber" name="62" href="#62">62</a>      <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> setUpFirst(<strong class="jxr_keyword">final</strong> Holder paramHolder) <strong class="jxr_keyword">throws</strong> TTException {
 <a class="jxr_linenumber" name="63" href="#63">63</a>          <strong class="jxr_keyword">final</strong> INodeWriteTrx wtx =
-<a class="jxr_linenumber" name="64" href="#64">64</a>              <strong class="jxr_keyword">new</strong> NodeWriteTrx(paramHolder.getSession(), paramHolder.getSession().beginPageWriteTransaction(),
+<a class="jxr_linenumber" name="64" href="#64">64</a>              <strong class="jxr_keyword">new</strong> NodeWriteTrx(paramHolder.getSession(), paramHolder.getSession().beginBucketWtx(),
 <a class="jxr_linenumber" name="65" href="#65">65</a>                  HashKind.Rolling);
 <a class="jxr_linenumber" name="66" href="#66">66</a>          XMLTestHelper.DocumentCreater.createVersioned(wtx);
 <a class="jxr_linenumber" name="67" href="#67">67</a>          wtx.close();
@@ -107,7 +107,7 @@
 <a class="jxr_linenumber" name="97" href="#97">97</a>          IOException, XMLStreamException {
 <a class="jxr_linenumber" name="98" href="#98">98</a>  
 <a class="jxr_linenumber" name="99" href="#99">99</a>          <strong class="jxr_keyword">final</strong> INodeWriteTrx wtx =
-<a class="jxr_linenumber" name="100" href="#100">100</a>             <strong class="jxr_keyword">new</strong> NodeWriteTrx(paramHolder.getSession(), paramHolder.getSession().beginPageWriteTransaction(),
+<a class="jxr_linenumber" name="100" href="#100">100</a>             <strong class="jxr_keyword">new</strong> NodeWriteTrx(paramHolder.getSession(), paramHolder.getSession().beginBucketWtx(),
 <a class="jxr_linenumber" name="101" href="#101">101</a>                 HashKind.Rolling);
 <a class="jxr_linenumber" name="102" href="#102">102</a> 
 <a class="jxr_linenumber" name="103" href="#103">103</a>         <strong class="jxr_keyword">int</strong> i = 0;

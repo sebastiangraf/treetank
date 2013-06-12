@@ -90,10 +90,10 @@
 <tr>  <td class="numLine">&nbsp;36</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;<span class="comment"> * </span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;37</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;<span class="comment"> * @author Andreas Rain</span></pre></td></tr>
+  <td class="src"><pre class="src">&nbsp;<span class="comment"> * @author Andreas Rain, University of Konstanz</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;38</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;<span class="comment"> */</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;39</td>  <td class="nbHitsCovered">&nbsp;10</td>  <td class="src"><pre class="src">&nbsp;<span class="keyword">public</span> <span class="keyword">class</span> ByteNodeFactory <span class="keyword">implements</span> INodeFactory {</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;39</td>  <td class="nbHitsCovered">&nbsp;13</td>  <td class="src"><pre class="src">&nbsp;<span class="keyword">public</span> <span class="keyword">class</span> ByteNodeFactory <span class="keyword">implements</span> INodeFactory {</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;40</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;41</td>  <td class="nbHits">&nbsp;</td>
@@ -110,20 +110,20 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> INode deserializeNode(DataInput input) <span class="keyword">throws</span> TTIOException {</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;47</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="keyword">try</span> {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;48</td>  <td class="nbHitsCovered">&nbsp;789504</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">int</span> size = input.readInt();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;49</td>  <td class="nbHitsCovered">&nbsp;789504</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">long</span> index = input.readLong();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;50</td>  <td class="nbHitsCovered">&nbsp;789504</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">long</span> nodeKey = input.readLong();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;51</td>  <td class="nbHitsCovered">&nbsp;789504</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">long</span> previousNodeKey = input.readLong();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;52</td>  <td class="nbHitsCovered">&nbsp;789504</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">long</span> nextNodeKey = input.readLong();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;53</td>  <td class="nbHitsCovered">&nbsp;789504</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">byte</span>[] data = <span class="keyword">new</span> <span class="keyword">byte</span>[size];</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;54</td>  <td class="nbHitsCovered">&nbsp;789504</td>  <td class="src"><pre class="src">&nbsp;            input.readFully(data);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;48</td>  <td class="nbHitsCovered">&nbsp;12899</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">int</span> size = input.readInt();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;49</td>  <td class="nbHitsCovered">&nbsp;12899</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">long</span> index = input.readLong();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;50</td>  <td class="nbHitsCovered">&nbsp;12899</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">long</span> nodeKey = input.readLong();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;51</td>  <td class="nbHitsCovered">&nbsp;12899</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">long</span> previousNodeKey = input.readLong();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;52</td>  <td class="nbHitsCovered">&nbsp;12899</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">long</span> nextNodeKey = input.readLong();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;53</td>  <td class="nbHitsCovered">&nbsp;12899</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">byte</span>[] data = <span class="keyword">new</span> <span class="keyword">byte</span>[size];</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;54</td>  <td class="nbHitsCovered">&nbsp;12899</td>  <td class="src"><pre class="src">&nbsp;            input.readFully(data);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;55</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;56</td>  <td class="nbHitsCovered">&nbsp;789504</td>  <td class="src"><pre class="src">&nbsp;            ByteNode node = <span class="keyword">new</span> ByteNode(nodeKey, data);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;57</td>  <td class="nbHitsCovered">&nbsp;789504</td>  <td class="src"><pre class="src">&nbsp;            node.setIndex(index);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;58</td>  <td class="nbHitsCovered">&nbsp;789504</td>  <td class="src"><pre class="src">&nbsp;            node.setNextNodeKey(nextNodeKey);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;59</td>  <td class="nbHitsCovered">&nbsp;789504</td>  <td class="src"><pre class="src">&nbsp;            node.setPreviousNodeKey(previousNodeKey);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;60</td>  <td class="nbHitsCovered">&nbsp;789504</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">return</span> node;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;56</td>  <td class="nbHitsCovered">&nbsp;12899</td>  <td class="src"><pre class="src">&nbsp;            ByteNode node = <span class="keyword">new</span> ByteNode(nodeKey, data);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;57</td>  <td class="nbHitsCovered">&nbsp;12899</td>  <td class="src"><pre class="src">&nbsp;            node.setIndex(index);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;58</td>  <td class="nbHitsCovered">&nbsp;12899</td>  <td class="src"><pre class="src">&nbsp;            node.setNextNodeKey(nextNodeKey);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;59</td>  <td class="nbHitsCovered">&nbsp;12899</td>  <td class="src"><pre class="src">&nbsp;            node.setPreviousNodeKey(previousNodeKey);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;60</td>  <td class="nbHitsCovered">&nbsp;12899</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">return</span> node;</pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;61</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        } <span class="keyword">catch</span> (<span class="keyword">final</span> IOException exc) {</span></pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;62</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">throw</span> <span class="keyword">new</span> TTIOException(exc);</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;63</td>  <td class="nbHits">&nbsp;</td>
@@ -136,6 +136,6 @@
   <td class="src"><pre class="src">&nbsp;}</pre></td></tr>
 </table>
 
-<div class="footer">Report generated by <a href="http://cobertura.sourceforge.net/" target="_top">Cobertura</a> 1.9.4.1 on 2/28/13 3:12 PM.</div>
+<div class="footer">Report generated by <a href="http://cobertura.sourceforge.net/" target="_top">Cobertura</a> 1.9.4.1 on 6/12/13 11:20 AM.</div>
 </body>
 </html>

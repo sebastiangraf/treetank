@@ -141,7 +141,7 @@
 <a class="jxr_linenumber" name="131" href="#131">131</a>     <strong class="jxr_keyword">public</strong> NodeInfo selectID(<strong class="jxr_keyword">final</strong> String ID, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> getParent) {
 <a class="jxr_linenumber" name="132" href="#132">132</a>         <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="133" href="#133">133</a>             <strong class="jxr_keyword">final</strong> INodeReadTrx rtx =
-<a class="jxr_linenumber" name="134" href="#134">134</a>                 <strong class="jxr_keyword">new</strong> NodeReadTrx(mSession.beginPageReadTransaction(mSession.getMostRecentVersion()));
+<a class="jxr_linenumber" name="134" href="#134">134</a>                 <strong class="jxr_keyword">new</strong> NodeReadTrx(mSession.beginBucketRtx(mSession.getMostRecentVersion()));
 <a class="jxr_linenumber" name="135" href="#135">135</a>             <strong class="jxr_keyword">final</strong> AbsAxis axis = <strong class="jxr_keyword">new</strong> DescendantAxis(rtx, <strong class="jxr_keyword">true</strong>);
 <a class="jxr_linenumber" name="136" href="#136">136</a>             <strong class="jxr_keyword">while</strong> (axis.hasNext()) {
 <a class="jxr_linenumber" name="137" href="#137">137</a>                 <strong class="jxr_keyword">if</strong> (rtx.getNode().getKind() == IConstants.ELEMENT) {

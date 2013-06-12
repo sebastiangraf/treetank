@@ -59,7 +59,7 @@
 <a class="jxr_linenumber" name="49" href="#49">49</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.StandardSettings;
 <a class="jxr_linenumber" name="50" href="#50">50</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.INodeReadTrx;
 <a class="jxr_linenumber" name="51" href="#51">51</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.INodeWriteTrx;
-<a class="jxr_linenumber" name="52" href="#52">52</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.IPageReadTrx;
+<a class="jxr_linenumber" name="52" href="#52">52</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.IBucketReadTrx;
 <a class="jxr_linenumber" name="53" href="#53">53</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTException;
 <a class="jxr_linenumber" name="54" href="#54">54</a>  <strong class="jxr_keyword">import</strong> org.treetank.node.interfaces.IStructNode;
 <a class="jxr_linenumber" name="55" href="#55">55</a>  
@@ -96,7 +96,7 @@
 <a class="jxr_linenumber" name="86" href="#86">86</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testNodeTransactionIsolation() <strong class="jxr_keyword">throws</strong> TTException {
 <a class="jxr_linenumber" name="87" href="#87">87</a>  
 <a class="jxr_linenumber" name="88" href="#88">88</a>          INodeReadTrx rtx =
-<a class="jxr_linenumber" name="89" href="#89">89</a>              <strong class="jxr_keyword">new</strong> NodeReadTrx(holder.getSession().beginPageReadTransaction(
+<a class="jxr_linenumber" name="89" href="#89">89</a>              <strong class="jxr_keyword">new</strong> NodeReadTrx(holder.getSession().beginBucketRtx(
 <a class="jxr_linenumber" name="90" href="#90">90</a>                  holder.getSession().getMostRecentVersion()));
 <a class="jxr_linenumber" name="91" href="#91">91</a>          INodeWriteTrx wtx = holder.getNWtx();
 <a class="jxr_linenumber" name="92" href="#92">92</a>          wtx.moveTo(ROOT_NODE);
@@ -137,8 +137,8 @@
 <a class="jxr_linenumber" name="127" href="#127">127</a>         wtx.commit();
 <a class="jxr_linenumber" name="128" href="#128">128</a>         wtx.close();
 <a class="jxr_linenumber" name="129" href="#129">129</a> 
-<a class="jxr_linenumber" name="130" href="#130">130</a>         IPageReadTrx pRtx =
-<a class="jxr_linenumber" name="131" href="#131">131</a>             holder.getSession().beginPageReadTransaction(holder.getSession().getMostRecentVersion());
+<a class="jxr_linenumber" name="130" href="#130">130</a>         IBucketReadTrx pRtx =
+<a class="jxr_linenumber" name="131" href="#131">131</a>             holder.getSession().beginBucketRtx(holder.getSession().getMostRecentVersion());
 <a class="jxr_linenumber" name="132" href="#132">132</a>         INodeReadTrx rtx = <strong class="jxr_keyword">new</strong> NodeReadTrx(pRtx);
 <a class="jxr_linenumber" name="133" href="#133">133</a> 
 <a class="jxr_linenumber" name="134" href="#134">134</a>         assertEquals(2L, pRtx.getRevision());
@@ -146,7 +146,7 @@
 <a class="jxr_linenumber" name="136" href="#136">136</a>         <em class="jxr_comment">// Insert 100 children.</em>
 <a class="jxr_linenumber" name="137" href="#137">137</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 1; i &lt;= 10; i++) {
 <a class="jxr_linenumber" name="138" href="#138">138</a>             wtx =
-<a class="jxr_linenumber" name="139" href="#139">139</a>                 <strong class="jxr_keyword">new</strong> NodeWriteTrx(holder.getSession(), holder.getSession().beginPageWriteTransaction(),
+<a class="jxr_linenumber" name="139" href="#139">139</a>                 <strong class="jxr_keyword">new</strong> NodeWriteTrx(holder.getSession(), holder.getSession().beginBucketWtx(),
 <a class="jxr_linenumber" name="140" href="#140">140</a>                     HashKind.Rolling);
 <a class="jxr_linenumber" name="141" href="#141">141</a> 
 <a class="jxr_linenumber" name="142" href="#142">142</a>             wtx.moveTo(ROOT_NODE);
@@ -155,7 +155,7 @@
 <a class="jxr_linenumber" name="145" href="#145">145</a>             wtx.close();
 <a class="jxr_linenumber" name="146" href="#146">146</a> 
 <a class="jxr_linenumber" name="147" href="#147">147</a>             rtx =
-<a class="jxr_linenumber" name="148" href="#148">148</a>                 <strong class="jxr_keyword">new</strong> NodeReadTrx(holder.getSession().beginPageReadTransaction(
+<a class="jxr_linenumber" name="148" href="#148">148</a>                 <strong class="jxr_keyword">new</strong> NodeReadTrx(holder.getSession().beginBucketRtx(
 <a class="jxr_linenumber" name="149" href="#149">149</a>                     holder.getSession().getMostRecentVersion()));
 <a class="jxr_linenumber" name="150" href="#150">150</a>             rtx.moveTo(ROOT_NODE);
 <a class="jxr_linenumber" name="151" href="#151">151</a>             rtx.moveTo(((IStructNode)rtx.getNode()).getFirstChildKey());
@@ -165,7 +165,7 @@
 <a class="jxr_linenumber" name="155" href="#155">155</a>         }
 <a class="jxr_linenumber" name="156" href="#156">156</a> 
 <a class="jxr_linenumber" name="157" href="#157">157</a>         rtx =
-<a class="jxr_linenumber" name="158" href="#158">158</a>             <strong class="jxr_keyword">new</strong> NodeReadTrx(holder.getSession().beginPageReadTransaction(
+<a class="jxr_linenumber" name="158" href="#158">158</a>             <strong class="jxr_keyword">new</strong> NodeReadTrx(holder.getSession().beginBucketRtx(
 <a class="jxr_linenumber" name="159" href="#159">159</a>                 holder.getSession().getMostRecentVersion()));
 <a class="jxr_linenumber" name="160" href="#160">160</a>         rtx.moveTo(ROOT_NODE);
 <a class="jxr_linenumber" name="161" href="#161">161</a>         rtx.moveTo(((IStructNode)rtx.getNode()).getFirstChildKey());
@@ -182,7 +182,7 @@
 <a class="jxr_linenumber" name="172" href="#172">172</a>         wtx.close();
 <a class="jxr_linenumber" name="173" href="#173">173</a> 
 <a class="jxr_linenumber" name="174" href="#174">174</a>         wtx =
-<a class="jxr_linenumber" name="175" href="#175">175</a>             <strong class="jxr_keyword">new</strong> NodeWriteTrx(holder.getSession(), holder.getSession().beginPageWriteTransaction(),
+<a class="jxr_linenumber" name="175" href="#175">175</a>             <strong class="jxr_keyword">new</strong> NodeWriteTrx(holder.getSession(), holder.getSession().beginBucketWtx(),
 <a class="jxr_linenumber" name="176" href="#176">176</a>                 HashKind.Rolling);
 <a class="jxr_linenumber" name="177" href="#177">177</a>         NodeTestHelper.createDocumentRootNode(wtx);
 <a class="jxr_linenumber" name="178" href="#178">178</a>         wtx.moveTo(ROOT_NODE);
@@ -195,7 +195,7 @@
 <a class="jxr_linenumber" name="185" href="#185">185</a>         wtx.close();
 <a class="jxr_linenumber" name="186" href="#186">186</a> 
 <a class="jxr_linenumber" name="187" href="#187">187</a>         wtx =
-<a class="jxr_linenumber" name="188" href="#188">188</a>             <strong class="jxr_keyword">new</strong> NodeWriteTrx(holder.getSession(), holder.getSession().beginPageWriteTransaction(),
+<a class="jxr_linenumber" name="188" href="#188">188</a>             <strong class="jxr_keyword">new</strong> NodeWriteTrx(holder.getSession(), holder.getSession().beginBucketWtx(),
 <a class="jxr_linenumber" name="189" href="#189">189</a>                 HashKind.Rolling);
 <a class="jxr_linenumber" name="190" href="#190">190</a>         assertTrue(wtx.moveTo(ROOT_NODE));
 <a class="jxr_linenumber" name="191" href="#191">191</a>         assertEquals(19L, wtx.insertElementAsFirstChild(<strong class="jxr_keyword">new</strong> QName(<span class="jxr_string">""</span>)));
@@ -223,7 +223,7 @@
 <a class="jxr_linenumber" name="213" href="#213">213</a>         assertEquals(2L, wtx.getNode().getNodeKey());
 <a class="jxr_linenumber" name="214" href="#214">214</a>         wtx.close();
 <a class="jxr_linenumber" name="215" href="#215">215</a>         <strong class="jxr_keyword">final</strong> INodeReadTrx rtx =
-<a class="jxr_linenumber" name="216" href="#216">216</a>             <strong class="jxr_keyword">new</strong> NodeReadTrx(holder.getSession().beginPageReadTransaction(
+<a class="jxr_linenumber" name="216" href="#216">216</a>             <strong class="jxr_keyword">new</strong> NodeReadTrx(holder.getSession().beginBucketRtx(
 <a class="jxr_linenumber" name="217" href="#217">217</a>                 holder.getSession().getMostRecentVersion()));
 <a class="jxr_linenumber" name="218" href="#218">218</a> 
 <a class="jxr_linenumber" name="219" href="#219">219</a>         assertTrue(rtx.moveTo(2L));
@@ -256,7 +256,7 @@
 <a class="jxr_linenumber" name="246" href="#246">246</a>         removeDescendant(wtx);
 <a class="jxr_linenumber" name="247" href="#247">247</a>         wtx.close();
 <a class="jxr_linenumber" name="248" href="#248">248</a>         <strong class="jxr_keyword">final</strong> INodeReadTrx rtx =
-<a class="jxr_linenumber" name="249" href="#249">249</a>             <strong class="jxr_keyword">new</strong> NodeReadTrx(holder.getSession().beginPageReadTransaction(
+<a class="jxr_linenumber" name="249" href="#249">249</a>             <strong class="jxr_keyword">new</strong> NodeReadTrx(holder.getSession().beginBucketRtx(
 <a class="jxr_linenumber" name="250" href="#250">250</a>                 holder.getSession().getMostRecentVersion()));
 <a class="jxr_linenumber" name="251" href="#251">251</a>         removeDescendant(rtx);
 <a class="jxr_linenumber" name="252" href="#252">252</a>         rtx.close();

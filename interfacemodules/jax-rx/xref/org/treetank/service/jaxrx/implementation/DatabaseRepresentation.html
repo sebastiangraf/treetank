@@ -67,7 +67,7 @@
 <a class="jxr_linenumber" name="57" href="#57">57</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.INodeFactory;
 <a class="jxr_linenumber" name="58" href="#58">58</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.INodeReadTrx;
 <a class="jxr_linenumber" name="59" href="#59">59</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.INodeWriteTrx;
-<a class="jxr_linenumber" name="60" href="#60">60</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.IPageWriteTrx;
+<a class="jxr_linenumber" name="60" href="#60">60</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.IBucketWriteTrx;
 <a class="jxr_linenumber" name="61" href="#61">61</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.ISession;
 <a class="jxr_linenumber" name="62" href="#62">62</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.IStorage;
 <a class="jxr_linenumber" name="63" href="#63">63</a>  <strong class="jxr_keyword">import</strong> org.treetank.axis.AbsAxis;
@@ -307,7 +307,7 @@
 <a class="jxr_linenumber" name="297" href="#297">297</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> shred(<strong class="jxr_keyword">final</strong> InputStream xmlInput, <strong class="jxr_keyword">final</strong> String resource) <strong class="jxr_keyword">throws</strong> TTException {
 <a class="jxr_linenumber" name="298" href="#298">298</a>         <strong class="jxr_keyword">boolean</strong> allOk;
 <a class="jxr_linenumber" name="299" href="#299">299</a>         INodeWriteTrx wtx = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="300" href="#300">300</a>         IPageWriteTrx pWtx = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="300" href="#300">300</a>         IBucketWriteTrx pWtx = <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="301" href="#301">301</a>         ISession session = <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="302" href="#302">302</a>         <strong class="jxr_keyword">boolean</strong> abort = false;
 <a class="jxr_linenumber" name="303" href="#303">303</a>         <strong class="jxr_keyword">try</strong> {
@@ -321,7 +321,7 @@
 <a class="jxr_linenumber" name="311" href="#311">311</a>             }
 <a class="jxr_linenumber" name="312" href="#312">312</a> 
 <a class="jxr_linenumber" name="313" href="#313">313</a>             session = mDatabase.getSession(<strong class="jxr_keyword">new</strong> SessionConfiguration(resource, StandardSettings.KEY));
-<a class="jxr_linenumber" name="314" href="#314">314</a>             pWtx = session.beginPageWriteTransaction();
+<a class="jxr_linenumber" name="314" href="#314">314</a>             pWtx = session.beginBucketWtx();
 <a class="jxr_linenumber" name="315" href="#315">315</a>             wtx = <strong class="jxr_keyword">new</strong> NodeWriteTrx(session, pWtx, HashKind.Rolling);
 <a class="jxr_linenumber" name="316" href="#316">316</a>             wtx.moveTo(ROOT_NODE);
 <a class="jxr_linenumber" name="317" href="#317">317</a>             <strong class="jxr_keyword">final</strong> XMLShredder shredder =
@@ -458,7 +458,7 @@
 <a class="jxr_linenumber" name="448" href="#448">448</a>                 session = mDatabase.getSession(<strong class="jxr_keyword">new</strong> SessionConfiguration(resourceName, StandardSettings.KEY));
 <a class="jxr_linenumber" name="449" href="#449">449</a> 
 <a class="jxr_linenumber" name="450" href="#450">450</a>                 <em class="jxr_comment">// get highest rest-id from given revision 1</em>
-<a class="jxr_linenumber" name="451" href="#451">451</a>                 rtx = <strong class="jxr_keyword">new</strong> NodeReadTrx(session.beginPageReadTransaction(revision1));
+<a class="jxr_linenumber" name="451" href="#451">451</a>                 rtx = <strong class="jxr_keyword">new</strong> NodeReadTrx(session.beginBucketRtx(revision1));
 <a class="jxr_linenumber" name="452" href="#452">452</a>                 axis = <strong class="jxr_keyword">new</strong> XPathAxis(rtx, <span class="jxr_string">".//*"</span>);
 <a class="jxr_linenumber" name="453" href="#453">453</a> 
 <a class="jxr_linenumber" name="454" href="#454">454</a>                 <strong class="jxr_keyword">while</strong> (axis.hasNext()) {
@@ -472,7 +472,7 @@
 <a class="jxr_linenumber" name="462" href="#462">462</a>                 rtx.close();
 <a class="jxr_linenumber" name="463" href="#463">463</a> 
 <a class="jxr_linenumber" name="464" href="#464">464</a>                 <em class="jxr_comment">// get highest rest-id from given revision 2</em>
-<a class="jxr_linenumber" name="465" href="#465">465</a>                 rtx = <strong class="jxr_keyword">new</strong> NodeReadTrx(session.beginPageReadTransaction(revision2));
+<a class="jxr_linenumber" name="465" href="#465">465</a>                 rtx = <strong class="jxr_keyword">new</strong> NodeReadTrx(session.beginBucketRtx(revision2));
 <a class="jxr_linenumber" name="466" href="#466">466</a>                 axis = <strong class="jxr_keyword">new</strong> XPathAxis(rtx, <span class="jxr_string">".//*"</span>);
 <a class="jxr_linenumber" name="467" href="#467">467</a> 
 <a class="jxr_linenumber" name="468" href="#468">468</a>                 <strong class="jxr_keyword">while</strong> (axis.hasNext()) {
@@ -497,7 +497,7 @@
 <a class="jxr_linenumber" name="487" href="#487">487</a>                 rtx.moveTo(ROOT_NODE);
 <a class="jxr_linenumber" name="488" href="#488">488</a>                 rtx.close();
 <a class="jxr_linenumber" name="489" href="#489">489</a> 
-<a class="jxr_linenumber" name="490" href="#490">490</a>                 rtx = <strong class="jxr_keyword">new</strong> NodeReadTrx(session.beginPageReadTransaction(revision1));
+<a class="jxr_linenumber" name="490" href="#490">490</a>                 rtx = <strong class="jxr_keyword">new</strong> NodeReadTrx(session.beginBucketRtx(revision1));
 <a class="jxr_linenumber" name="491" href="#491">491</a> 
 <a class="jxr_linenumber" name="492" href="#492">492</a>                 <em class="jxr_comment">// linked list for holding unique restids from revision 1</em>
 <a class="jxr_linenumber" name="493" href="#493">493</a>                 <strong class="jxr_keyword">final</strong> List&lt;Long&gt; restIdsRev1New = <strong class="jxr_keyword">new</strong> LinkedList&lt;Long&gt;();
@@ -524,7 +524,7 @@
 <a class="jxr_linenumber" name="514" href="#514">514</a> <em class="jxr_comment">                 * Shred modified restids from revision 2 to xml fragment Just</em>
 <a class="jxr_linenumber" name="515" href="#515">515</a> <em class="jxr_comment">                 * modifications done by post commands</em>
 <a class="jxr_linenumber" name="516" href="#516">516</a> <em class="jxr_comment">                 */</em>
-<a class="jxr_linenumber" name="517" href="#517">517</a>                 rtx = <strong class="jxr_keyword">new</strong> NodeReadTrx(session.beginPageReadTransaction(revision2));
+<a class="jxr_linenumber" name="517" href="#517">517</a>                 rtx = <strong class="jxr_keyword">new</strong> NodeReadTrx(session.beginBucketRtx(revision2));
 <a class="jxr_linenumber" name="518" href="#518">518</a> 
 <a class="jxr_linenumber" name="519" href="#519">519</a>                 <strong class="jxr_keyword">for</strong> (Long nodeKey : modificRestids) {
 <a class="jxr_linenumber" name="520" href="#520">520</a>                     rtx.moveTo(nodeKey);
@@ -537,7 +537,7 @@
 <a class="jxr_linenumber" name="527" href="#527">527</a> <em class="jxr_comment">                 * Shred modified restids from revision 1 to xml fragment Just</em>
 <a class="jxr_linenumber" name="528" href="#528">528</a> <em class="jxr_comment">                 * modifications done by put and deletes</em>
 <a class="jxr_linenumber" name="529" href="#529">529</a> <em class="jxr_comment">                 */</em>
-<a class="jxr_linenumber" name="530" href="#530">530</a>                 rtx = <strong class="jxr_keyword">new</strong> NodeReadTrx(session.beginPageReadTransaction(revision1));
+<a class="jxr_linenumber" name="530" href="#530">530</a>                 rtx = <strong class="jxr_keyword">new</strong> NodeReadTrx(session.beginBucketRtx(revision1));
 <a class="jxr_linenumber" name="531" href="#531">531</a>                 <strong class="jxr_keyword">for</strong> (Long nodeKey : restIdsRev1New) {
 <a class="jxr_linenumber" name="532" href="#532">532</a>                     rtx.moveTo(nodeKey);
 <a class="jxr_linenumber" name="533" href="#533">533</a>                     WorkerHelper.serializeXML(session, output, false, nodeid, nodeKey, revision1).call();
@@ -624,7 +624,7 @@
 <a class="jxr_linenumber" name="614" href="#614">614</a>         <strong class="jxr_keyword">boolean</strong> abort = false;
 <a class="jxr_linenumber" name="615" href="#615">615</a>         <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="616" href="#616">616</a>             session = mDatabase.getSession(<strong class="jxr_keyword">new</strong> SessionConfiguration(resourceName, StandardSettings.KEY));
-<a class="jxr_linenumber" name="617" href="#617">617</a>             wtx = <strong class="jxr_keyword">new</strong> NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
+<a class="jxr_linenumber" name="617" href="#617">617</a>             wtx = <strong class="jxr_keyword">new</strong> NodeWriteTrx(session, session.beginBucketWtx(), HashKind.Rolling);
 <a class="jxr_linenumber" name="618" href="#618">618</a>             wtx.revertTo(backToRevision);
 <a class="jxr_linenumber" name="619" href="#619">619</a>             wtx.commit();
 <a class="jxr_linenumber" name="620" href="#620">620</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> TTException exce) {

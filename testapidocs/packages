@@ -1,10 +1,11 @@
 org.treetank.access.conf
 org.treetank.access
+org.treetank.bench
+org.treetank.bucket
 org.treetank
 org.treetank.io
 org.treetank.io.bytepipe
 org.treetank.log
-org.treetank.page
 org.treetank.revisioning
 org.treetank.axis
 org.treetank.node
@@ -24,5 +25,4 @@ org.treetank.service.jaxrx.implementation
 org.treetank.service.jaxrx.server
 org.treetank.service.jaxrx.util
 org.treetank.jscsi
-org.treetank.access.test
-org.treetank.filelistener.file.test
+org.treetank.filelistener.file

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <pmd-cpd>
 <duplication lines="100" tokens="295">
-<file line="32" path="/Users/sebi/Documents/workspace/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/xpath/EXPathError.java"/>
-<file line="90" path="/Users/sebi/Documents/workspace/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/xpath/XPathError.java"/>
+<file line="32" path="/Users/sebi/Dropbox/github/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/xpath/EXPathError.java"/>
+<file line="90" path="/Users/sebi/Dropbox/github/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/xpath/XPathError.java"/>
 <codefragment>
 <![CDATA[
 public enum EXPathError {
@@ -109,8 +109,8 @@ public enum EXPathError {
 </codefragment>
 </duplication>
 <duplication lines="49" tokens="200">
-<file line="85" path="/Users/sebi/Documents/workspace/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/xpath/operators/MulOpAxis.java"/>
-<file line="88" path="/Users/sebi/Documents/workspace/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/xpath/operators/SubOpAxis.java"/>
+<file line="85" path="/Users/sebi/Dropbox/github/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/xpath/operators/MulOpAxis.java"/>
+<file line="88" path="/Users/sebi/Dropbox/github/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/xpath/operators/SubOpAxis.java"/>
 <codefragment>
 <![CDATA[
         case YEAR_MONTH_DURATION:
@@ -166,8 +166,8 @@ public enum EXPathError {
 </codefragment>
 </duplication>
 <duplication lines="39" tokens="166">
-<file line="110" path="/Users/sebi/Documents/workspace/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/xpath/operators/DivOpAxis.java"/>
-<file line="96" path="/Users/sebi/Documents/workspace/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/xpath/operators/MulOpAxis.java"/>
+<file line="110" path="/Users/sebi/Dropbox/github/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/xpath/operators/DivOpAxis.java"/>
+<file line="96" path="/Users/sebi/Dropbox/github/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/xpath/operators/MulOpAxis.java"/>
 <codefragment>
 <![CDATA[
     }
@@ -213,8 +213,8 @@ public enum EXPathError {
 </codefragment>
 </duplication>
 <duplication lines="38" tokens="161">
-<file line="110" path="/Users/sebi/Documents/workspace/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/xpath/operators/DivOpAxis.java"/>
-<file line="99" path="/Users/sebi/Documents/workspace/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/xpath/operators/SubOpAxis.java"/>
+<file line="110" path="/Users/sebi/Dropbox/github/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/xpath/operators/DivOpAxis.java"/>
+<file line="99" path="/Users/sebi/Dropbox/github/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/xpath/operators/SubOpAxis.java"/>
 <codefragment>
 <![CDATA[
     }
@@ -259,9 +259,9 @@ public enum EXPathError {
 </codefragment>
 </duplication>
 <duplication lines="26" tokens="137">
-<file line="57" path="/Users/sebi/Documents/workspace/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/xpath/operators/AddOpAxis.java"/>
-<file line="58" path="/Users/sebi/Documents/workspace/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/xpath/operators/MulOpAxis.java"/>
-<file line="58" path="/Users/sebi/Documents/workspace/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/xpath/operators/SubOpAxis.java"/>
+<file line="57" path="/Users/sebi/Dropbox/github/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/xpath/operators/AddOpAxis.java"/>
+<file line="58" path="/Users/sebi/Dropbox/github/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/xpath/operators/MulOpAxis.java"/>
+<file line="58" path="/Users/sebi/Dropbox/github/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/xpath/operators/SubOpAxis.java"/>
 <codefragment>
 <![CDATA[
     public AddOpAxis(final INodeReadTrx rtx, final AbsAxis mOp1, final AbsAxis mOp2) {
@@ -294,8 +294,8 @@ public enum EXPathError {
 </codefragment>
 </duplication>
 <duplication lines="36" tokens="103">
-<file line="70" path="/Users/sebi/Documents/workspace/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/xpath/axis/ExceptAxis.java"/>
-<file line="66" path="/Users/sebi/Documents/workspace/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/xpath/axis/IntersectAxis.java"/>
+<file line="70" path="/Users/sebi/Dropbox/github/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/xpath/axis/ExceptAxis.java"/>
+<file line="66" path="/Users/sebi/Dropbox/github/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/xpath/axis/IntersectAxis.java"/>
 <codefragment>
 <![CDATA[
     public ExceptAxis(final INodeReadTrx rtx, final AbsAxis mOperand1, final AbsAxis mOperand2) {
@@ -338,10 +338,10 @@ public enum EXPathError {
 </codefragment>
 </duplication>
 <duplication lines="21" tokens="103">
-<file line="123" path="/Users/sebi/Documents/workspace/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/xpath/operators/DivOpAxis.java"/>
-<file line="111" path="/Users/sebi/Documents/workspace/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/xpath/operators/ModOpAxis.java"/>
-<file line="109" path="/Users/sebi/Documents/workspace/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/xpath/operators/MulOpAxis.java"/>
-<file line="112" path="/Users/sebi/Documents/workspace/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/xpath/operators/SubOpAxis.java"/>
+<file line="123" path="/Users/sebi/Dropbox/github/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/xpath/operators/DivOpAxis.java"/>
+<file line="111" path="/Users/sebi/Dropbox/github/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/xpath/operators/ModOpAxis.java"/>
+<file line="109" path="/Users/sebi/Dropbox/github/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/xpath/operators/MulOpAxis.java"/>
+<file line="112" path="/Users/sebi/Dropbox/github/treetank/interfacemodules/xml/src/main/java/org/treetank/service/xml/xpath/operators/SubOpAxis.java"/>
 <codefragment>
 <![CDATA[
         } catch (final IllegalStateException e) {

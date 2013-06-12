@@ -49,7 +49,7 @@
 <a class="jxr_linenumber" name="39" href="#39">39</a>  <strong class="jxr_keyword">import</strong> javax.xml.namespace.QName;
 <a class="jxr_linenumber" name="40" href="#40">40</a>  
 <a class="jxr_linenumber" name="41" href="#41">41</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.INodeWriteTrx;
-<a class="jxr_linenumber" name="42" href="#42">42</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.IPageWriteTrx;
+<a class="jxr_linenumber" name="42" href="#42">42</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.IBucketWriteTrx;
 <a class="jxr_linenumber" name="43" href="#43">43</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.ISession;
 <a class="jxr_linenumber" name="44" href="#44">44</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTException;
 <a class="jxr_linenumber" name="45" href="#45">45</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTIOException;
@@ -126,7 +126,7 @@
 <a class="jxr_linenumber" name="116" href="#116">116</a> <em class="jxr_javadoccomment">     * @throws TTUsageException</em>
 <a class="jxr_linenumber" name="117" href="#117">117</a> <em class="jxr_javadoccomment">     *             if paramMaxNodeCount &lt; 0 or paramMaxTime &lt; 0</em>
 <a class="jxr_linenumber" name="118" href="#118">118</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="119" href="#119">119</a>     <strong class="jxr_keyword">public</strong> <a href="../../../org/treetank/access/NodeWriteTrx.html">NodeWriteTrx</a>(<strong class="jxr_keyword">final</strong> ISession pSession, <strong class="jxr_keyword">final</strong> IPageWriteTrx pPageWriteTrx, <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/access/NodeWriteTrx.html">HashKind</a> kind)
+<a class="jxr_linenumber" name="119" href="#119">119</a>     <strong class="jxr_keyword">public</strong> <a href="../../../org/treetank/access/NodeWriteTrx.html">NodeWriteTrx</a>(<strong class="jxr_keyword">final</strong> ISession pSession, <strong class="jxr_keyword">final</strong> IBucketWriteTrx pPageWriteTrx, <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/access/NodeWriteTrx.html">HashKind</a> kind)
 <a class="jxr_linenumber" name="120" href="#120">120</a>         <strong class="jxr_keyword">throws</strong> TTException {
 <a class="jxr_linenumber" name="121" href="#121">121</a> 
 <a class="jxr_linenumber" name="122" href="#122">122</a>         mHashKind = kind;
@@ -451,7 +451,7 @@
 <a class="jxr_linenumber" name="441" href="#441">441</a>         checkArgument(pRevision &gt;= 0, <span class="jxr_string">"Parameter must be &gt;= 0, but was %s"</span>, pRevision);
 <a class="jxr_linenumber" name="442" href="#442">442</a>         getPtx().close();
 <a class="jxr_linenumber" name="443" href="#443">443</a>         <em class="jxr_comment">// Reset internal transaction state to new uber page.</em>
-<a class="jxr_linenumber" name="444" href="#444">444</a>         mDelegate.setPageTransaction(mSession.beginPageWriteTransaction(pRevision));
+<a class="jxr_linenumber" name="444" href="#444">444</a>         mDelegate.setPageTransaction(mSession.beginBucketWtx(pRevision));
 <a class="jxr_linenumber" name="445" href="#445">445</a>         moveTo(ROOT_NODE);
 <a class="jxr_linenumber" name="446" href="#446">446</a> 
 <a class="jxr_linenumber" name="447" href="#447">447</a>     }
@@ -462,7 +462,7 @@
 <a class="jxr_linenumber" name="452" href="#452">452</a>     @Override
 <a class="jxr_linenumber" name="453" href="#453">453</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> commit() <strong class="jxr_keyword">throws</strong> TTException {
 <a class="jxr_linenumber" name="454" href="#454">454</a>         checkState(!mDelegate.isClosed(), <span class="jxr_string">"Transaction is already closed."</span>);
-<a class="jxr_linenumber" name="455" href="#455">455</a>         <em class="jxr_comment">// Commit uber page.</em>
+<a class="jxr_linenumber" name="455" href="#455">455</a>         <em class="jxr_comment">// CommitStrategy uber page.</em>
 <a class="jxr_linenumber" name="456" href="#456">456</a>         getPtx().commit();
 <a class="jxr_linenumber" name="457" href="#457">457</a>     }
 <a class="jxr_linenumber" name="458" href="#458">458</a> 
@@ -478,7 +478,7 @@
 <a class="jxr_linenumber" name="468" href="#468">468</a>         getPtx().close();
 <a class="jxr_linenumber" name="469" href="#469">469</a> 
 <a class="jxr_linenumber" name="470" href="#470">470</a>         <em class="jxr_comment">// Reset internal transaction state to last committed uber page.</em>
-<a class="jxr_linenumber" name="471" href="#471">471</a>         mDelegate.setPageTransaction(mSession.beginPageWriteTransaction(revisionToSet));
+<a class="jxr_linenumber" name="471" href="#471">471</a>         mDelegate.setPageTransaction(mSession.beginBucketWtx(revisionToSet));
 <a class="jxr_linenumber" name="472" href="#472">472</a>     }
 <a class="jxr_linenumber" name="473" href="#473">473</a> 
 <a class="jxr_linenumber" name="474" href="#474">474</a>     <em class="jxr_javadoccomment">/**</em>
@@ -503,7 +503,7 @@
 <a class="jxr_linenumber" name="493" href="#493">493</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> nameKey = NamePageHash.generateHashForString(string);
 <a class="jxr_linenumber" name="494" href="#494">494</a>         NodeMetaPageFactory.MetaKey key = <strong class="jxr_keyword">new</strong> NodeMetaPageFactory.MetaKey(nameKey);
 <a class="jxr_linenumber" name="495" href="#495">495</a>         NodeMetaPageFactory.MetaValue value = <strong class="jxr_keyword">new</strong> NodeMetaPageFactory.MetaValue(string);
-<a class="jxr_linenumber" name="496" href="#496">496</a>         getPageWtx().getMetaPage().setEntry(key, value);
+<a class="jxr_linenumber" name="496" href="#496">496</a>         getPageWtx().getMetaBucket().setEntry(key, value);
 <a class="jxr_linenumber" name="497" href="#497">497</a>         <strong class="jxr_keyword">return</strong> nameKey;
 <a class="jxr_linenumber" name="498" href="#498">498</a>     }
 <a class="jxr_linenumber" name="499" href="#499">499</a> 
@@ -617,8 +617,8 @@
 <a class="jxr_linenumber" name="607" href="#607">607</a> <em class="jxr_javadoccomment">     * </em>
 <a class="jxr_linenumber" name="608" href="#608">608</a> <em class="jxr_javadoccomment">     * @return The state of this transaction.</em>
 <a class="jxr_linenumber" name="609" href="#609">609</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="610" href="#610">610</a>     <strong class="jxr_keyword">private</strong> PageWriteTrx getPtx() {
-<a class="jxr_linenumber" name="611" href="#611">611</a>         <strong class="jxr_keyword">return</strong> (PageWriteTrx)mDelegate.mPageReadTrx;
+<a class="jxr_linenumber" name="610" href="#610">610</a>     <strong class="jxr_keyword">private</strong> BucketWriteTrx getPtx() {
+<a class="jxr_linenumber" name="611" href="#611">611</a>         <strong class="jxr_keyword">return</strong> (BucketWriteTrx)mDelegate.mPageReadTrx;
 <a class="jxr_linenumber" name="612" href="#612">612</a>     }
 <a class="jxr_linenumber" name="613" href="#613">613</a> 
 <a class="jxr_linenumber" name="614" href="#614">614</a>     <em class="jxr_javadoccomment">/**</em>
@@ -934,7 +934,7 @@
 <a class="jxr_linenumber" name="924" href="#924">924</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
 <a class="jxr_linenumber" name="925" href="#925">925</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="926" href="#926">926</a>     @Override
-<a class="jxr_linenumber" name="927" href="#927">927</a>     <strong class="jxr_keyword">public</strong> IPageWriteTrx getPageWtx() <strong class="jxr_keyword">throws</strong> TTException {
+<a class="jxr_linenumber" name="927" href="#927">927</a>     <strong class="jxr_keyword">public</strong> IBucketWriteTrx getPageWtx() <strong class="jxr_keyword">throws</strong> TTException {
 <a class="jxr_linenumber" name="928" href="#928">928</a>         <strong class="jxr_keyword">return</strong> getPtx();
 <a class="jxr_linenumber" name="929" href="#929">929</a>     }
 <a class="jxr_linenumber" name="930" href="#930">930</a> 

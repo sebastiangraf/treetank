@@ -182,7 +182,7 @@
 <a class="jxr_linenumber" name="172" href="#172">172</a>     <strong class="jxr_keyword">void</strong> setValue(<strong class="jxr_keyword">final</strong> String pValue) <strong class="jxr_keyword">throws</strong> TTException;
 <a class="jxr_linenumber" name="173" href="#173">173</a> 
 <a class="jxr_linenumber" name="174" href="#174">174</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="175" href="#175">175</a> <em class="jxr_javadoccomment">     * Commit all modifications of the exclusive write transaction. Even commit</em>
+<a class="jxr_linenumber" name="175" href="#175">175</a> <em class="jxr_javadoccomment">     * CommitStrategy all modifications of the exclusive write transaction. Even commit</em>
 <a class="jxr_linenumber" name="176" href="#176">176</a> <em class="jxr_javadoccomment">     * if there are no modification at all.</em>
 <a class="jxr_linenumber" name="177" href="#177">177</a> <em class="jxr_javadoccomment">     * </em>
 <a class="jxr_linenumber" name="178" href="#178">178</a> <em class="jxr_javadoccomment">     * @throws TTException</em>
@@ -221,10 +221,10 @@
 <a class="jxr_linenumber" name="211" href="#211">211</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="212" href="#212">212</a> <em class="jxr_javadoccomment">     * Getting the Page Transaction</em>
 <a class="jxr_linenumber" name="213" href="#213">213</a> <em class="jxr_javadoccomment">     * </em>
-<a class="jxr_linenumber" name="214" href="#214">214</a> <em class="jxr_javadoccomment">     * @return the stored {@link IPageWriteTrx}.</em>
+<a class="jxr_linenumber" name="214" href="#214">214</a> <em class="jxr_javadoccomment">     * @return the stored {@link IBucketWriteTrx}.</em>
 <a class="jxr_linenumber" name="215" href="#215">215</a> <em class="jxr_javadoccomment">     * @throws TTException</em>
 <a class="jxr_linenumber" name="216" href="#216">216</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="217" href="#217">217</a>     IPageWriteTrx getPageWtx() <strong class="jxr_keyword">throws</strong> TTException;
+<a class="jxr_linenumber" name="217" href="#217">217</a>     IBucketWriteTrx getPageWtx() <strong class="jxr_keyword">throws</strong> TTException;
 <a class="jxr_linenumber" name="218" href="#218">218</a> 
 <a class="jxr_linenumber" name="219" href="#219">219</a> }
 </pre>

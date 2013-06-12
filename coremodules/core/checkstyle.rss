@@ -8,8 +8,8 @@
     <language>en-us</language>
     <copyright>&#169;2013 Distributed Systems Group</copyright>
     <item>
-      <title>File: 65,
-             Errors: 1301,
+      <title>File: 68,
+             Errors: 1582,
              Warnings: 0,
              Infos: 0
       </title>
@@ -43,6 +43,20 @@
               </tr>
                           <tr>
                 <td>
+                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.api.IBucketWriteTrx.java">org/treetank/api/IBucketWriteTrx.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  15
+                </td>
+              </tr>
+                          <tr>
+                <td>
                   <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.io.combined.CombinedReader.java">org/treetank/io/combined/CombinedReader.java</a>
                 </td>
                 <td>
@@ -71,20 +85,6 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.page.interfaces.IRevisionPage.java">org/treetank/page/interfaces/IRevisionPage.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  5
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.access.conf.ConstructorProps.java">org/treetank/access/conf/ConstructorProps.java</a>
                 </td>
                 <td>
@@ -95,6 +95,34 @@
                 </td>
                 <td>
                   18
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.access.BucketWriteTrx.java">org/treetank/access/BucketWriteTrx.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  106
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.access.BucketReadTrx.java">org/treetank/access/BucketReadTrx.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  64
                 </td>
               </tr>
                           <tr>
@@ -127,7 +155,7 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.api.IPageReadTrx.java">org/treetank/api/IPageReadTrx.java</a>
+                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.access.commit.CommitStrategyModule.java">org/treetank/access/commit/CommitStrategyModule.java</a>
                 </td>
                 <td>
                   0
@@ -136,7 +164,7 @@
                   0
                 </td>
                 <td>
-                  18
+                  32
                 </td>
               </tr>
                           <tr>
@@ -150,7 +178,7 @@
                   0
                 </td>
                 <td>
-                  20
+                  28
                 </td>
               </tr>
                           <tr>
@@ -169,6 +197,20 @@
               </tr>
                           <tr>
                 <td>
+                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.bucket.RevisionRootBucket.java">org/treetank/bucket/RevisionRootBucket.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  17
+                </td>
+              </tr>
+                          <tr>
+                <td>
                   <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.io.berkeley.BerkeleyStorage.java">org/treetank/io/berkeley/BerkeleyStorage.java</a>
                 </td>
                 <td>
@@ -178,7 +220,7 @@
                   0
                 </td>
                 <td>
-                  23
+                  25
                 </td>
               </tr>
                           <tr>
@@ -211,7 +253,7 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.page.DumbNodeFactory.java">org/treetank/page/DumbNodeFactory.java</a>
+                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.bucket.interfaces.IReferenceBucket.java">org/treetank/bucket/interfaces/IReferenceBucket.java</a>
                 </td>
                 <td>
                   0
@@ -220,7 +262,21 @@
                   0
                 </td>
                 <td>
-                  26
+                  6
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.bucket.package-info.java">org/treetank/bucket/package-info.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  10
                 </td>
               </tr>
                           <tr>
@@ -267,6 +323,20 @@
               </tr>
                           <tr>
                 <td>
+                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.api.IBucketReadTrx.java">org/treetank/api/IBucketReadTrx.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  18
+                </td>
+              </tr>
+                          <tr>
+                <td>
                   <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.access.conf.package-info.java">org/treetank/access/conf/package-info.java</a>
                 </td>
                 <td>
@@ -281,7 +351,7 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.page.UberPage.java">org/treetank/page/UberPage.java</a>
+                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.access.CommitStrategy.java">org/treetank/access/CommitStrategy.java</a>
                 </td>
                 <td>
                   0
@@ -290,21 +360,7 @@
                   0
                 </td>
                 <td>
-                  17
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.access.PageReadTrx.java">org/treetank/access/PageReadTrx.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  63
+                  45
                 </td>
               </tr>
                           <tr>
@@ -318,12 +374,12 @@
                   0
                 </td>
                 <td>
-                  35
+                  40
                 </td>
               </tr>
                           <tr>
                 <td>
-                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.access.PageWriteTrx.java">org/treetank/access/PageWriteTrx.java</a>
+                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.bucket.DumbNodeFactory.java">org/treetank/bucket/DumbNodeFactory.java</a>
                 </td>
                 <td>
                   0
@@ -332,7 +388,7 @@
                   0
                 </td>
                 <td>
-                  93
+                  30
                 </td>
               </tr>
                           <tr>
@@ -379,6 +435,20 @@
               </tr>
                           <tr>
                 <td>
+                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.bucket.UberBucket.java">org/treetank/bucket/UberBucket.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  17
+                </td>
+              </tr>
+                          <tr>
+                <td>
                   <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.io.jclouds.JCloudsReader.java">org/treetank/io/jclouds/JCloudsReader.java</a>
                 </td>
                 <td>
@@ -388,7 +458,7 @@
                   0
                 </td>
                 <td>
-                  26
+                  60
                 </td>
               </tr>
                           <tr>
@@ -435,6 +505,20 @@
               </tr>
                           <tr>
                 <td>
+                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.bucket.NodeBucket.java">org/treetank/bucket/NodeBucket.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  34
+                </td>
+              </tr>
+                          <tr>
+                <td>
                   <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.access.conf.SessionConfiguration.java">org/treetank/access/conf/SessionConfiguration.java</a>
                 </td>
                 <td>
@@ -458,7 +542,21 @@
                   0
                 </td>
                 <td>
-                  21
+                  19
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.bucket.BucketFactory.java">org/treetank/bucket/BucketFactory.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  23
                 </td>
               </tr>
                           <tr>
@@ -477,20 +575,6 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.page.MetaPage.java">org/treetank/page/MetaPage.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  11
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.access.conf.ResourceConfiguration.java">org/treetank/access/conf/ResourceConfiguration.java</a>
                 </td>
                 <td>
@@ -500,7 +584,21 @@
                   0
                 </td>
                 <td>
-                  98
+                  99
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.bucket.DumbMetaEntryFactory.java">org/treetank/bucket/DumbMetaEntryFactory.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  19
                 </td>
               </tr>
                           <tr>
@@ -514,7 +612,7 @@
                   0
                 </td>
                 <td>
-                  23
+                  37
                 </td>
               </tr>
                           <tr>
@@ -547,20 +645,6 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.page.interfaces.IReferencePage.java">org/treetank/page/interfaces/IReferencePage.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  6
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.access.conf.StorageConfiguration.java">org/treetank/access/conf/StorageConfiguration.java</a>
                 </td>
                 <td>
@@ -575,34 +659,6 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.page.package-info.java">org/treetank/page/package-info.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  10
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.page.IConstants.java">org/treetank/page/IConstants.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  31
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.io.bytepipe.Encryptor.java">org/treetank/io/bytepipe/Encryptor.java</a>
                 </td>
                 <td>
@@ -612,7 +668,21 @@
                   0
                 </td>
                 <td>
-                  12
+                  14
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.bucket.interfaces.IRevisionBucket.java">org/treetank/bucket/interfaces/IRevisionBucket.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  5
                 </td>
               </tr>
                           <tr>
@@ -631,20 +701,6 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.page.NodePage.java">org/treetank/page/NodePage.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  22
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.io.berkeley.BerkeleyReader.java">org/treetank/io/berkeley/BerkeleyReader.java</a>
                 </td>
                 <td>
@@ -654,7 +710,7 @@
                   0
                 </td>
                 <td>
-                  18
+                  23
                 </td>
               </tr>
                           <tr>
@@ -682,21 +738,7 @@
                   0
                 </td>
                 <td>
-                  31
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.page.DumbMetaEntryFactory.java">org/treetank/page/DumbMetaEntryFactory.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  19
+                  68
                 </td>
               </tr>
                           <tr>
@@ -724,7 +766,7 @@
                   0
                 </td>
                 <td>
-                  25
+                  26
                 </td>
               </tr>
                           <tr>
@@ -738,7 +780,7 @@
                   0
                 </td>
                 <td>
-                  50
+                  51
                 </td>
               </tr>
                           <tr>
@@ -766,12 +808,12 @@
                   0
                 </td>
                 <td>
-                  30
+                  32
                 </td>
               </tr>
                           <tr>
                 <td>
-                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.page.PageFactory.java">org/treetank/page/PageFactory.java</a>
+                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.bucket.interfaces.IBucket.java">org/treetank/bucket/interfaces/IBucket.java</a>
                 </td>
                 <td>
                   0
@@ -780,7 +822,21 @@
                   0
                 </td>
                 <td>
-                  21
+                  12
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.log.LogKey.java">org/treetank/log/LogKey.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  42
                 </td>
               </tr>
                           <tr>
@@ -799,35 +855,7 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.log.LogKey.java">org/treetank/log/LogKey.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  25
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.api.INode.java">org/treetank/api/INode.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  9
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.page.IndirectPage.java">org/treetank/page/IndirectPage.java</a>
                 </td>
                 <td>
                   0
@@ -855,7 +883,7 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.page.RevisionRootPage.java">org/treetank/page/RevisionRootPage.java</a>
+                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.bucket.IndirectBucket.java">org/treetank/bucket/IndirectBucket.java</a>
                 </td>
                 <td>
                   0
@@ -864,7 +892,7 @@
                   0
                 </td>
                 <td>
-                  16
+                  10
                 </td>
               </tr>
                           <tr>
@@ -883,6 +911,20 @@
               </tr>
                           <tr>
                 <td>
+                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.access.commit.NonBlockingCommitStrategy.java">org/treetank/access/commit/NonBlockingCommitStrategy.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  29
+                </td>
+              </tr>
+                          <tr>
+                <td>
                   <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.io.jclouds.JCloudsWriter.java">org/treetank/io/jclouds/JCloudsWriter.java</a>
                 </td>
                 <td>
@@ -892,7 +934,35 @@
                   0
                 </td>
                 <td>
-                  22
+                  36
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.bucket.IConstants.java">org/treetank/bucket/IConstants.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  31
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.bucket.MetaBucket.java">org/treetank/bucket/MetaBucket.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  11
                 </td>
               </tr>
                           <tr>
@@ -907,34 +977,6 @@
                 </td>
                 <td>
                   9
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.api.IPageWriteTrx.java">org/treetank/api/IPageWriteTrx.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  15
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://disy.github.com/treetank/coremodules/core//checkstyle.html#org.treetank.page.interfaces.IPage.java">org/treetank/page/interfaces/IPage.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  12
                 </td>
               </tr>
                       </tbody>

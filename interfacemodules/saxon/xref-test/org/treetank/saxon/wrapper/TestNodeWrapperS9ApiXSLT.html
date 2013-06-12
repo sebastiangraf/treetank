@@ -123,7 +123,7 @@
 <a class="jxr_linenumber" name="113" href="#113">113</a>             databaseBooks.getSession(<strong class="jxr_keyword">new</strong> SessionConfiguration(CoreTestHelper.RESOURCENAME,
 <a class="jxr_linenumber" name="114" href="#114">114</a>                 StandardSettings.KEY));
 <a class="jxr_linenumber" name="115" href="#115">115</a>         <strong class="jxr_keyword">final</strong> INodeWriteTrx wtx =
-<a class="jxr_linenumber" name="116" href="#116">116</a>             <strong class="jxr_keyword">new</strong> NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
+<a class="jxr_linenumber" name="116" href="#116">116</a>             <strong class="jxr_keyword">new</strong> NodeWriteTrx(session, session.beginBucketWtx(), HashKind.Rolling);
 <a class="jxr_linenumber" name="117" href="#117">117</a>         NodeTestHelper.createDocumentRootNode(wtx);
 <a class="jxr_linenumber" name="118" href="#118">118</a>         <strong class="jxr_keyword">final</strong> XMLEventReader reader = XMLShredder.createFileReader(BOOKS);
 <a class="jxr_linenumber" name="119" href="#119">119</a>         <strong class="jxr_keyword">final</strong> XMLShredder shredder = <strong class="jxr_keyword">new</strong> XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);

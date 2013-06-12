@@ -376,7 +376,7 @@
 <a class="jxr_linenumber" name="366" href="#366">366</a>             <strong class="jxr_keyword">new</strong> NodeMetaPageFactory()));
 <a class="jxr_linenumber" name="367" href="#367">367</a>         <strong class="jxr_keyword">final</strong> ISession session = db.getSession(<strong class="jxr_keyword">new</strong> SessionConfiguration(<span class="jxr_string">"shredded"</span>, StandardSettings.KEY));
 <a class="jxr_linenumber" name="368" href="#368">368</a>         <strong class="jxr_keyword">final</strong> INodeWriteTrx wtx =
-<a class="jxr_linenumber" name="369" href="#369">369</a>             <strong class="jxr_keyword">new</strong> NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
+<a class="jxr_linenumber" name="369" href="#369">369</a>             <strong class="jxr_keyword">new</strong> NodeWriteTrx(session, session.beginBucketWtx(), HashKind.Rolling);
 <a class="jxr_linenumber" name="370" href="#370">370</a>         <em class="jxr_comment">// generating root node</em>
 <a class="jxr_linenumber" name="371" href="#371">371</a>         <strong class="jxr_keyword">final</strong> NodeDelegate nodeDel = <strong class="jxr_keyword">new</strong> NodeDelegate(wtx.getPageWtx().incrementNodeKey(), NULL_NODE, 0);
 <a class="jxr_linenumber" name="372" href="#372">372</a>         DocumentRootNode node =

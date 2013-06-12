@@ -237,7 +237,7 @@
 <a class="jxr_linenumber" name="227" href="#227">227</a>             <strong class="jxr_keyword">if</strong> (file.getName().endsWith(<span class="jxr_string">".xml"</span>)) {
 <a class="jxr_linenumber" name="228" href="#228">228</a> 
 <a class="jxr_linenumber" name="229" href="#229">229</a>                 <strong class="jxr_keyword">final</strong> INodeWriteTrx wtx =
-<a class="jxr_linenumber" name="230" href="#230">230</a>                     <strong class="jxr_keyword">new</strong> NodeWriteTrx(holder.getSession(), holder.getSession().beginPageWriteTransaction(),
+<a class="jxr_linenumber" name="230" href="#230">230</a>                     <strong class="jxr_keyword">new</strong> NodeWriteTrx(holder.getSession(), holder.getSession().beginBucketWtx(),
 <a class="jxr_linenumber" name="231" href="#231">231</a>                         HashKind.Rolling);
 <a class="jxr_linenumber" name="232" href="#232">232</a>                 <strong class="jxr_keyword">if</strong> (first) {
 <a class="jxr_linenumber" name="233" href="#233">233</a>                     <strong class="jxr_keyword">final</strong> XMLShredder shredder =

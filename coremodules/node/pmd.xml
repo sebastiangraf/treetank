@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pmd version="4.3" timestamp="2013-02-28T15:02:27.518">
-<file name="/Users/sebi/Documents/workspace/treetank/coremodules/node/src/main/java/org/treetank/access/NodeWriteTrx.java">
+<pmd version="4.3" timestamp="2013-06-12T11:14:30.190">
+<file name="/Users/sebi/Dropbox/github/treetank/coremodules/node/src/main/java/org/treetank/access/NodeWriteTrx.java">
 <violation beginline="28" endline="960" begincolumn="1" endcolumn="2" rule="TooManyStaticImports" ruleset="Import Statement Rules" package="org.treetank.access" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#TooManyStaticImports" priority="3">
 Too many static imports may lead to messy code
 </violation>
@@ -8,12 +8,12 @@ Too many static imports may lead to messy code
 Avoid unused method parameters such as 'hash'.
 </violation>
 </file>
-<file name="/Users/sebi/Documents/workspace/treetank/coremodules/node/src/main/java/org/treetank/api/INodeWriteTrx.java">
+<file name="/Users/sebi/Dropbox/github/treetank/coremodules/node/src/main/java/org/treetank/api/INodeWriteTrx.java">
 <violation beginline="33" endline="33" begincolumn="1" endcolumn="44" rule="UnusedImports" ruleset="Import Statement Rules" package="org.treetank.api" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#UnusedImports" priority="4">
 Avoid unused imports such as 'org.treetank.exception.TTIOException'
 </violation>
 </file>
-<file name="/Users/sebi/Documents/workspace/treetank/coremodules/node/src/main/java/org/treetank/node/Type.java">
+<file name="/Users/sebi/Dropbox/github/treetank/coremodules/node/src/main/java/org/treetank/node/Type.java">
 <violation beginline="1024" endline="1027" begincolumn="13" endcolumn="13" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="org.treetank.node" method="isCastableTo" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
 These nested if statements could be combined
 </violation>

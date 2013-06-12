@@ -56,13 +56,13 @@
 <a class="jxr_linenumber" name="46" href="#46">46</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.ResourceConfiguration;
 <a class="jxr_linenumber" name="47" href="#47">47</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 <a class="jxr_linenumber" name="48" href="#48">48</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.StandardSettings;
-<a class="jxr_linenumber" name="49" href="#49">49</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTException;
-<a class="jxr_linenumber" name="50" href="#50">50</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTIOException;
-<a class="jxr_linenumber" name="51" href="#51">51</a>  <strong class="jxr_keyword">import</strong> org.treetank.io.IOUtils;
-<a class="jxr_linenumber" name="52" href="#52">52</a>  <strong class="jxr_keyword">import</strong> org.treetank.log.LRULog.LogIterator;
-<a class="jxr_linenumber" name="53" href="#53">53</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.IConstants;
-<a class="jxr_linenumber" name="54" href="#54">54</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.NodePage;
-<a class="jxr_linenumber" name="55" href="#55">55</a>  <strong class="jxr_keyword">import</strong> org.treetank.page.interfaces.IPage;
+<a class="jxr_linenumber" name="49" href="#49">49</a>  <strong class="jxr_keyword">import</strong> org.treetank.bucket.IConstants;
+<a class="jxr_linenumber" name="50" href="#50">50</a>  <strong class="jxr_keyword">import</strong> org.treetank.bucket.NodeBucket;
+<a class="jxr_linenumber" name="51" href="#51">51</a>  <strong class="jxr_keyword">import</strong> org.treetank.bucket.interfaces.IBucket;
+<a class="jxr_linenumber" name="52" href="#52">52</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTException;
+<a class="jxr_linenumber" name="53" href="#53">53</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTIOException;
+<a class="jxr_linenumber" name="54" href="#54">54</a>  <strong class="jxr_keyword">import</strong> org.treetank.io.IOUtils;
+<a class="jxr_linenumber" name="55" href="#55">55</a>  <strong class="jxr_keyword">import</strong> org.treetank.log.LRULog.LogIterator;
 <a class="jxr_linenumber" name="56" href="#56">56</a>  
 <a class="jxr_linenumber" name="57" href="#57">57</a>  <strong class="jxr_keyword">import</strong> com.google.inject.Inject;
 <a class="jxr_linenumber" name="58" href="#58">58</a>  
@@ -78,9 +78,9 @@
 <a class="jxr_linenumber" name="68" href="#68">68</a>  
 <a class="jxr_linenumber" name="69" href="#69">69</a>      <strong class="jxr_keyword">private</strong> ResourceConfiguration mResource;
 <a class="jxr_linenumber" name="70" href="#70">70</a>  
-<a class="jxr_linenumber" name="71" href="#71">71</a>      <strong class="jxr_keyword">private</strong> NodePage[][] mPages;
+<a class="jxr_linenumber" name="71" href="#71">71</a>      <strong class="jxr_keyword">private</strong> NodeBucket[][] mPages;
 <a class="jxr_linenumber" name="72" href="#72">72</a>      <strong class="jxr_keyword">private</strong> LRULog mCache;
-<a class="jxr_linenumber" name="73" href="#73">73</a>      <strong class="jxr_keyword">private</strong> Set&lt;NodePage&gt; mPageSet;
+<a class="jxr_linenumber" name="73" href="#73">73</a>      <strong class="jxr_keyword">private</strong> Set&lt;NodeBucket&gt; mPageSet;
 <a class="jxr_linenumber" name="74" href="#74">74</a>  
 <a class="jxr_linenumber" name="75" href="#75">75</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> LEVEL = 100;
 <a class="jxr_linenumber" name="76" href="#76">76</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> ELEMENTS = 100;
@@ -98,7 +98,7 @@
 <a class="jxr_linenumber" name="88" href="#88">88</a>          mResource = mResourceConfig.create(props);
 <a class="jxr_linenumber" name="89" href="#89">89</a>          mCache = <strong class="jxr_keyword">new</strong> LRULog(CoreTestHelper.PATHS.PATH1.getFile(), mResource.mNodeFac, mResource.mMetaFac);
 <a class="jxr_linenumber" name="90" href="#90">90</a>  
-<a class="jxr_linenumber" name="91" href="#91">91</a>          mPages = <strong class="jxr_keyword">new</strong> NodePage[LEVEL][ELEMENTS];
+<a class="jxr_linenumber" name="91" href="#91">91</a>          mPages = <strong class="jxr_keyword">new</strong> NodeBucket[LEVEL][ELEMENTS];
 <a class="jxr_linenumber" name="92" href="#92">92</a>          insertData();
 <a class="jxr_linenumber" name="93" href="#93">93</a>      }
 <a class="jxr_linenumber" name="94" href="#94">94</a>  
@@ -117,7 +117,7 @@
 <a class="jxr_linenumber" name="107" href="#107">107</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testClearAndNull() <strong class="jxr_keyword">throws</strong> TTIOException {
 <a class="jxr_linenumber" name="108" href="#108">108</a>         <em class="jxr_comment">// testing for null</em>
 <a class="jxr_linenumber" name="109" href="#109">109</a>         LogValue nullValue = mCache.get(<strong class="jxr_keyword">new</strong> LogKey(<strong class="jxr_keyword">true</strong>, -1, -1));
-<a class="jxr_linenumber" name="110" href="#110">110</a>         assertNull(nullValue);
+<a class="jxr_linenumber" name="110" href="#110">110</a>         assertNull(nullValue.getModified());
 <a class="jxr_linenumber" name="111" href="#111">111</a>         LogValue value = mCache.get(<strong class="jxr_keyword">new</strong> LogKey(<strong class="jxr_keyword">true</strong>, 0, 0));
 <a class="jxr_linenumber" name="112" href="#112">112</a>         assertNotNull(value);
 <a class="jxr_linenumber" name="113" href="#113">113</a>         mCache.close();
@@ -142,7 +142,7 @@
 <a class="jxr_linenumber" name="132" href="#132">132</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> j = 0; j &lt; ELEMENTS; j++) {
 <a class="jxr_linenumber" name="133" href="#133">133</a>                 LogKey toRetrieve = <strong class="jxr_keyword">new</strong> LogKey(<strong class="jxr_keyword">true</strong>, i, j);
 <a class="jxr_linenumber" name="134" href="#134">134</a>                 <strong class="jxr_keyword">final</strong> LogValue cont = mCache.get(toRetrieve);
-<a class="jxr_linenumber" name="135" href="#135">135</a>                 <strong class="jxr_keyword">final</strong> IPage current = cont.getComplete();
+<a class="jxr_linenumber" name="135" href="#135">135</a>                 <strong class="jxr_keyword">final</strong> IBucket current = cont.getComplete();
 <a class="jxr_linenumber" name="136" href="#136">136</a>                 assertEquals(mPages[i][j], current);
 <a class="jxr_linenumber" name="137" href="#137">137</a>             }
 <a class="jxr_linenumber" name="138" href="#138">138</a>         }
@@ -158,13 +158,13 @@
 <a class="jxr_linenumber" name="148" href="#148">148</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> j = 0; j &lt; ELEMENTS; j++) {
 <a class="jxr_linenumber" name="149" href="#149">149</a>                 LogKey toRetrieve = <strong class="jxr_keyword">new</strong> LogKey(<strong class="jxr_keyword">true</strong>, i, j);
 <a class="jxr_linenumber" name="150" href="#150">150</a>                 <strong class="jxr_keyword">final</strong> LogValue cont = mCache.get(toRetrieve);
-<a class="jxr_linenumber" name="151" href="#151">151</a>                 assertNull(cont);
+<a class="jxr_linenumber" name="151" href="#151">151</a>                 assertNull(cont.getModified());
 <a class="jxr_linenumber" name="152" href="#152">152</a>             }
 <a class="jxr_linenumber" name="153" href="#153">153</a>         }
 <a class="jxr_linenumber" name="154" href="#154">154</a>     }
 <a class="jxr_linenumber" name="155" href="#155">155</a> 
 <a class="jxr_linenumber" name="156" href="#156">156</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> insertData() <strong class="jxr_keyword">throws</strong> TTIOException {
-<a class="jxr_linenumber" name="157" href="#157">157</a>         mPageSet = <strong class="jxr_keyword">new</strong> HashSet&lt;NodePage&gt;();
+<a class="jxr_linenumber" name="157" href="#157">157</a>         mPageSet = <strong class="jxr_keyword">new</strong> HashSet&lt;NodeBucket&gt;();
 <a class="jxr_linenumber" name="158" href="#158">158</a>         <strong class="jxr_keyword">long</strong> key = 0;
 <a class="jxr_linenumber" name="159" href="#159">159</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; mPages.length; i++) {
 <a class="jxr_linenumber" name="160" href="#160">160</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> j = 0; j &lt; mPages[i].length; j++) {

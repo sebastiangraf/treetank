@@ -76,7 +76,7 @@
 <a class="jxr_linenumber" name="66" href="#66">66</a>  <em class="jxr_javadoccomment">     *             if setting up treetank fails</em>
 <a class="jxr_linenumber" name="67" href="#67">67</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="68" href="#68">68</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../../../org/treetank/service/xml/diff/algorithm/fmes/LabelFMESVisitor.html">LabelFMESVisitor</a>(<strong class="jxr_keyword">final</strong> ISession paramSession) <strong class="jxr_keyword">throws</strong> TTException {
-<a class="jxr_linenumber" name="69" href="#69">69</a>          mRtx = <strong class="jxr_keyword">new</strong> NodeReadTrx(paramSession.beginPageReadTransaction(paramSession.getMostRecentVersion()));
+<a class="jxr_linenumber" name="69" href="#69">69</a>          mRtx = <strong class="jxr_keyword">new</strong> NodeReadTrx(paramSession.beginBucketRtx(paramSession.getMostRecentVersion()));
 <a class="jxr_linenumber" name="70" href="#70">70</a>          mLabels = <strong class="jxr_keyword">new</strong> HashMap&lt;Integer, List&lt;INode&gt;&gt;();
 <a class="jxr_linenumber" name="71" href="#71">71</a>          mLeafLabels = <strong class="jxr_keyword">new</strong> HashMap&lt;Integer, List&lt;INode&gt;&gt;();
 <a class="jxr_linenumber" name="72" href="#72">72</a>      }

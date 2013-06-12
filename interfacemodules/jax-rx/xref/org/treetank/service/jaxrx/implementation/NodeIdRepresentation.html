@@ -243,7 +243,7 @@
 <a class="jxr_linenumber" name="233" href="#233">233</a>                     session =
 <a class="jxr_linenumber" name="234" href="#234">234</a>                         mDatabase.getSession(<strong class="jxr_keyword">new</strong> SessionConfiguration(resourceName, StandardSettings.KEY));
 <a class="jxr_linenumber" name="235" href="#235">235</a>                     <em class="jxr_comment">// Creating a write transaction</em>
-<a class="jxr_linenumber" name="236" href="#236">236</a>                     wtx = <strong class="jxr_keyword">new</strong> NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
+<a class="jxr_linenumber" name="236" href="#236">236</a>                     wtx = <strong class="jxr_keyword">new</strong> NodeWriteTrx(session, session.beginBucketWtx(), HashKind.Rolling);
 <a class="jxr_linenumber" name="237" href="#237">237</a>                     <em class="jxr_comment">// move to node with given rest id and deletes it</em>
 <a class="jxr_linenumber" name="238" href="#238">238</a>                     <strong class="jxr_keyword">if</strong> (wtx.moveTo(nodeId)) {
 <a class="jxr_linenumber" name="239" href="#239">239</a>                         wtx.remove();
@@ -293,7 +293,7 @@
 <a class="jxr_linenumber" name="283" href="#283">283</a>                     session =
 <a class="jxr_linenumber" name="284" href="#284">284</a>                         mDatabase.getSession(<strong class="jxr_keyword">new</strong> SessionConfiguration(resourceName, StandardSettings.KEY));
 <a class="jxr_linenumber" name="285" href="#285">285</a>                     <em class="jxr_comment">// Creating a write transaction</em>
-<a class="jxr_linenumber" name="286" href="#286">286</a>                     wtx = <strong class="jxr_keyword">new</strong> NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
+<a class="jxr_linenumber" name="286" href="#286">286</a>                     wtx = <strong class="jxr_keyword">new</strong> NodeWriteTrx(session, session.beginBucketWtx(), HashKind.Rolling);
 <a class="jxr_linenumber" name="287" href="#287">287</a> 
 <a class="jxr_linenumber" name="288" href="#288">288</a>                     <strong class="jxr_keyword">if</strong> (wtx.moveTo(nodeId)) {
 <a class="jxr_linenumber" name="289" href="#289">289</a>                         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> parentKey = wtx.getNode().getParentKey();
@@ -352,7 +352,7 @@
 <a class="jxr_linenumber" name="342" href="#342">342</a>                     session =
 <a class="jxr_linenumber" name="343" href="#343">343</a>                         mDatabase.getSession(<strong class="jxr_keyword">new</strong> SessionConfiguration(resourceName, StandardSettings.KEY));
 <a class="jxr_linenumber" name="344" href="#344">344</a>                     <em class="jxr_comment">// Creating a write transaction</em>
-<a class="jxr_linenumber" name="345" href="#345">345</a>                     wtx = <strong class="jxr_keyword">new</strong> NodeWriteTrx(session, session.beginPageWriteTransaction(), HashKind.Rolling);
+<a class="jxr_linenumber" name="345" href="#345">345</a>                     wtx = <strong class="jxr_keyword">new</strong> NodeWriteTrx(session, session.beginBucketWtx(), HashKind.Rolling);
 <a class="jxr_linenumber" name="346" href="#346">346</a>                     <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> exist = wtx.moveTo(nodeId);
 <a class="jxr_linenumber" name="347" href="#347">347</a>                     <strong class="jxr_keyword">if</strong> (exist) {
 <a class="jxr_linenumber" name="348" href="#348">348</a>                         <strong class="jxr_keyword">if</strong> (type == EIdAccessType.FIRSTCHILD) {
@@ -502,9 +502,9 @@
 <a class="jxr_linenumber" name="492" href="#492">492</a>             <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="493" href="#493">493</a>                 session = mDatabase.getSession(<strong class="jxr_keyword">new</strong> SessionConfiguration(resource, StandardSettings.KEY));
 <a class="jxr_linenumber" name="494" href="#494">494</a>                 <strong class="jxr_keyword">if</strong> (revision == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="495" href="#495">495</a>                     rtx = <strong class="jxr_keyword">new</strong> NodeReadTrx(session.beginPageReadTransaction(session.getMostRecentVersion()));
+<a class="jxr_linenumber" name="495" href="#495">495</a>                     rtx = <strong class="jxr_keyword">new</strong> NodeReadTrx(session.beginBucketRtx(session.getMostRecentVersion()));
 <a class="jxr_linenumber" name="496" href="#496">496</a>                 } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="497" href="#497">497</a>                     rtx = <strong class="jxr_keyword">new</strong> NodeReadTrx(session.beginPageReadTransaction(revision));
+<a class="jxr_linenumber" name="497" href="#497">497</a>                     rtx = <strong class="jxr_keyword">new</strong> NodeReadTrx(session.beginBucketRtx(revision));
 <a class="jxr_linenumber" name="498" href="#498">498</a>                 }
 <a class="jxr_linenumber" name="499" href="#499">499</a> 
 <a class="jxr_linenumber" name="500" href="#500">500</a>                 <strong class="jxr_keyword">if</strong> (rtx.moveTo(nodeId)) {
