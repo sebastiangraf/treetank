@@ -172,7 +172,7 @@ public interface INodeWriteTrx extends INodeReadTrx {
     void setValue(final String pValue) throws TTException;
 
     /**
-     * CommitStrategy all modifications of the exclusive write transaction. Even commit
+     * ICommitStrategy all modifications of the exclusive write transaction. Even commit
      * if there are no modification at all.
      * 
      * @throws TTException

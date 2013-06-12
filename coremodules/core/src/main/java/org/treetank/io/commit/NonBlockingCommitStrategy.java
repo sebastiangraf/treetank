@@ -24,7 +24,7 @@ import com.google.inject.name.Named;
  * @author Andreas Rain, University of Konstanz
  * 
  */
-public class NonBlockingCommitStrategy implements CommitStrategy {
+public class NonBlockingCommitStrategy implements ICommitStrategy {
     /** Log used during commit, not final since a copy is created during the execution */
     private LRULog mLog;
 
