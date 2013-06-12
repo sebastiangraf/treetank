@@ -1,4 +1,4 @@
-package org.treetank.access.commit;
+package org.treetank.io.commit;
 
 import org.treetank.bucket.MetaBucket;
 import org.treetank.bucket.RevisionRootBucket;

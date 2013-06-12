@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.treetank.access;
+package org.treetank.io.commit;
 
 import java.util.Iterator;
 

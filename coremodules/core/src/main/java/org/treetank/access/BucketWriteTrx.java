@@ -35,12 +35,10 @@ import static org.treetank.access.BucketReadTrx.nodeBucketOffset;
 import java.io.File;
 import java.util.Map;
 
-import org.treetank.access.CommitStrategy.BlockingCommit;
-import org.treetank.access.commit.CommitStrategyModule;
 import org.treetank.access.conf.ConstructorProps;
+import org.treetank.api.IBucketWriteTrx;
 import org.treetank.api.IMetaEntry;
 import org.treetank.api.INode;
-import org.treetank.api.IBucketWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.bucket.IConstants;
 import org.treetank.bucket.IndirectBucket;
@@ -53,6 +51,9 @@ import org.treetank.bucket.interfaces.IReferenceBucket;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendWriter;
+import org.treetank.io.commit.CommitStrategy;
+import org.treetank.io.commit.CommitStrategy.BlockingCommit;
+import org.treetank.io.commit.CommitStrategyModule;
 import org.treetank.log.LRULog;
 import org.treetank.log.LogKey;
 import org.treetank.log.LogValue;
@@ -112,6 +113,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
 
         mBucketWriter = pWriter;
         // TODO: Change to NonBlockingCommitStrategy
+        // mCommitStrategy = NonBlockingCommitStrategy.class;
         mCommitStrategy = BlockingCommit.class;
         setUpTransaction(pUberBucket, pSession, pRepresentRev, pWriter);
     }
@@ -320,9 +322,11 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
                                 .getProperty(ConstructorProps.NUMBERTORESTORE)), newBucketKey, buckets, true);
                 } else {
                     container =
-                        mDelegate.mSession.getConfig().mRevision.combineBucketsForModification(Integer
-                            .parseInt(mDelegate.mSession.getConfig().mProperties
-                                .getProperty(ConstructorProps.NUMBERTORESTORE)), newBucketKey, buckets, false);
+                        mDelegate.mSession.getConfig().mRevision
+                            .combineBucketsForModification(Integer
+                                .parseInt(mDelegate.mSession.getConfig().mProperties
+                                    .getProperty(ConstructorProps.NUMBERTORESTORE)), newBucketKey, buckets,
+                                false);
                 }
             } else {
                 NodeBucket newBucket = new NodeBucket(newBucketKey, IConstants.NULL_NODE);
@@ -429,15 +433,14 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
 
     private void setUpTransaction(final UberBucket pUberBucket, final ISession pSession,
         final long pRepresentRev, final IBackendWriter pWriter) throws TTException {
-        // TODO need to be fixed over here
         mLog =
             new LRULog(new File(pSession.getConfig().mProperties
                 .getProperty(org.treetank.access.conf.ConstructorProps.RESOURCEPATH)),
                 pSession.getConfig().mNodeFac, pSession.getConfig().mMetaFac);
 
         mNewUber =
-            new UberBucket(pUberBucket.incrementBucketCounter(), pUberBucket.getRevisionNumber() + 1, pUberBucket
-                .getBucketCounter());
+            new UberBucket(pUberBucket.incrementBucketCounter(), pUberBucket.getRevisionNumber() + 1,
+                pUberBucket.getBucketCounter());
         mNewUber.setReferenceKey(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET,
             pUberBucket.getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET]);
 

@@ -1,11 +1,10 @@
-package org.treetank.access.commit;
+package org.treetank.io.commit;
 
 import java.util.Iterator;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.treetank.access.CommitStrategy;
 import org.treetank.bucket.MetaBucket;
 import org.treetank.bucket.NodeBucket;
 import org.treetank.bucket.RevisionRootBucket;
