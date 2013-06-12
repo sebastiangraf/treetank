@@ -29,10 +29,8 @@ package org.treetank.io;
 
 import org.treetank.bucket.UberBucket;
 import org.treetank.bucket.interfaces.IBucket;
-import org.treetank.commit.ICommitStrategy;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.log.LRULog;
 
 /**
  * Interface to provide the abstract layer related to write access of the
@@ -69,20 +67,5 @@ public interface IBackendWriter extends IBackendReader {
      */
     @Override
     void close() throws TTIOException;
-    
-    
-    class WriterDelegate {
-    
-        private final LRULog mLog;
-        private final ICommitStrategy mStrategy;
-        
-        WriterDelegate(final LRULog pLog, final ICommitStrategy pStrategy) {
-            mLog = pLog;
-            mStrategy = pStrategy;
-        }
-        
-        
-        
-    }
 
 }
