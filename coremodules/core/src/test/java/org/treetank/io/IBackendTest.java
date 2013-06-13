@@ -54,23 +54,23 @@ public class IBackendTest {
                 .values());
             final IBackend backend = backendCreator.getBackend();
             backend.initialize();
-            final UberBucket page1 =
+            final UberBucket bucket1 =
                 new UberBucket(CoreTestHelper.random.nextLong(), CoreTestHelper.random.nextLong(),
                     CoreTestHelper.random.nextLong());
 
             // same instance check
             final IBackendWriter backendWriter = backend.getWriter();
-            backendWriter.writeUberBucket(page1);
-            final UberBucket page2 = backendWriter.readUber();
+            backendWriter.writeUberBucket(bucket1);
+            final UberBucket bucket2 = backendWriter.readUber();
             assertEquals(new StringBuilder("Check for ").append(backend.getClass()).append(" failed.")
-                .toString(), page1, page2);
+                .toString(), bucket1, bucket2);
             backendWriter.close();
 
             // new instance check
             final IBackendReader backendReader = backend.getReader();
-            final UberBucket page3 = backendReader.readUber();
+            final UberBucket bucket3 = backendReader.readUber();
             assertEquals(new StringBuilder("Check for ").append(pBackends.getClass()).append(" failed.")
-                .toString(), page1, page3);
+                .toString(), bucket1, bucket3);
             backendReader.close();
 
             backend.truncate();
@@ -83,7 +83,7 @@ public class IBackendTest {
         // initializing structure
         Map<Long, IBucket> buckets = new HashMap<Long, IBucket>();
         for (int i = 0; i < 100; i++) {
-            buckets.put(new Long(i), generatePage(i));
+            buckets.put(new Long(i), generateBucket(i));
         }
 
         // checking for backends
@@ -97,17 +97,17 @@ public class IBackendTest {
             for (Long i : buckets.keySet()) {
                 // same instance check
                 backendWriter.write(buckets.get(i));
-                final IBucket page2 = backendWriter.read(i);
+                final IBucket bucket2 = backendWriter.read(i);
                 assertEquals(new StringBuilder("Check for ").append(backend.getClass()).append(
-                    " failed on index ").append(i).toString(), buckets.get(i), page2);
+                    " failed on index ").append(i).toString(), buckets.get(i), bucket2);
             }
             backendWriter.close();
             final IBackendReader backendReader = backend.getReader();
             for (Long i : buckets.keySet()) {
                 // new instance check
-                final IBucket page3 = backendReader.read(i);
+                final IBucket bucket3 = backendReader.read(i);
                 assertEquals(new StringBuilder("Check for ").append(pBackends.getClass()).append(" failed.")
-                    .toString(), buckets.get(i), page3);
+                    .toString(), buckets.get(i), bucket3);
             }
             backendReader.close();
 
@@ -218,15 +218,15 @@ public class IBackendTest {
         return new JCloudsStorage(props, pNodeFac, pMetaFac, pHandler);
     }
 
-    private static IBucket generatePage(long pKey) {
-        final double whichPage = CoreTestHelper.random.nextDouble();
-        if (whichPage < 0.2) {
+    private static IBucket generateBucket(long pKey) {
+        final double whichBucketPage = CoreTestHelper.random.nextDouble();
+        if (whichBucketPage < 0.2) {
             IndirectBucket returnVal = new IndirectBucket(pKey);
             for (int i = 0; i < IConstants.CONTENT_COUNT; i++) {
                 returnVal.setReferenceKey(i, CoreTestHelper.random.nextLong());
             }
             return returnVal;
-        } else if (whichPage < 0.4) {
+        } else if (whichBucketPage < 0.4) {
             MetaBucket returnVal = new MetaBucket(pKey);
             for (int i = 0; i < IConstants.CONTENT_COUNT; i++) {
                 returnVal.getMetaMap().put(
@@ -234,13 +234,13 @@ public class IBackendTest {
                     new DumbMetaEntryFactory.DumbValue(CoreTestHelper.random.nextLong()));
             }
             return returnVal;
-        } else if (whichPage < 0.6) {
+        } else if (whichBucketPage < 0.6) {
             NodeBucket returnVal = new NodeBucket(pKey, pKey);
             for (int i = 0; i < IConstants.CONTENT_COUNT; i++) {
                 returnVal.setNode(i, CoreTestHelper.generateOne());
             }
             return returnVal;
-        } else if (whichPage < 0.8) {
+        } else if (whichBucketPage < 0.8) {
             RevisionRootBucket returnVal =
                 new RevisionRootBucket(pKey, CoreTestHelper.random.nextLong(), CoreTestHelper.random.nextLong());
             returnVal.setReferenceKey(0, CoreTestHelper.random.nextLong());

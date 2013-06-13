@@ -180,25 +180,25 @@ public final class CoreTestHelper {
     }
 
     /**
-     * Getting a node pages filled with nodes.
+     * Getting a node buckets filled with nodes.
      * 
      * @param offset
-     *            offset to start within the page
+     *            offset to start within the bucket
      * @param length
-     *            length of the page
-     * @param nodePageKey
-     *            key of the nodepage
-     * @param lastPageKey
-     *            key of the former page
+     *            length of the bucket
+     * @param nodebucketKey
+     *            key of the nodebucket
+     * @param lastbucketKey
+     *            key of the former bucket
      * @return a {@link NodeBucket} filled
      */
-    public static final NodeBucket getNodePage(final int offset, final int length, final long nodePageKey,
-        final long lastPageKey) {
-        final NodeBucket page = new NodeBucket(nodePageKey, lastPageKey);
+    public static final NodeBucket getNodeBucket(final int offset, final int length, final long nodeBucketKey,
+        final long lastBucketKey) {
+        final NodeBucket bucket = new NodeBucket(nodeBucketKey, lastBucketKey);
         for (int i = offset; i < length; i++) {
-            page.setNode(i, generateOne());
+            bucket.setNode(i, generateOne());
         }
-        return page;
+        return bucket;
     }
 
     /**
@@ -213,9 +213,9 @@ public final class CoreTestHelper {
     }
 
     /**
-     * Getting a fake structure for testing consiting of different arranged pages.
-     * This structure starts with the key 1 and incrementally sets a new pagekey for the defined offsets in
-     * the indirectpages to simulate different versions and node-offsets.
+     * Getting a fake structure for testing consisting of different arranged buckets.
+     * This structure starts with the key 1 and incrementally sets a new bucketkey for the defined offsets in
+     * the indirectbuckets to simulate different versions and node-offsets.
      * The key retrieved thereby has always the value 6 (1 (starting) + 5 (number of indirect layers)
      * 
      * @param offsets
@@ -227,20 +227,20 @@ public final class CoreTestHelper {
         assertEquals(5, offsets.length);
         // mocking the reader
         IBackendReader reader = mock(IBackendReader.class);
-        // variable storing the related keys to the pages created in the mock
+        // variable storing the related keys to the buckets created in the mock
         long pKey = 1;
         // iterating through the tree..
         for (int i = 0; i < offsets.length; i++) {
-            // ...and create a new page.
-            final IndirectBucket page = new IndirectBucket(pKey);
+            // ...and create a new buckets.
+            final IndirectBucket buckets = new IndirectBucket(pKey);
             long oldKey = pKey;
             // set the offsets until the defined parameter...
             for (int j = 0; j <= offsets[i]; j++) {
                 // ...by setting the related key to the defined offset and...
-                page.setReferenceKey(j, ++pKey);
+                buckets.setReferenceKey(j, ++pKey);
             }
             // ...tell the mock to react when the key is demanded.
-            when(reader.read(oldKey)).thenReturn(page);
+            when(reader.read(oldKey)).thenReturn(buckets);
         }
         // returning the mock
         return reader;
@@ -345,7 +345,7 @@ public final class CoreTestHelper {
     }
 
     /**
-     * Creating a list of meta entries for testing the meta-page stuff
+     * Creating a list of meta entries for testing the meta-bucket stuff
      * 
      * @param pNumbers
      *            of entries

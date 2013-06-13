@@ -6,7 +6,7 @@ package org.treetank.revisioning;
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertNull;
 import static org.testng.AssertJUnit.assertTrue;
-import static org.treetank.CoreTestHelper.getNodePage;
+import static org.treetank.CoreTestHelper.getNodeBucket;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -62,10 +62,10 @@ public class IRevisioningTest {
      *            different node-generators
      */
     @Test(dataProvider = "instantiateVersioning")
-    public void testCombinePagesForModification(Class<IRevisioning> pRevisioningClass,
+    public void testCombineBucketsForModification(Class<IRevisioning> pRevisioningClass,
         IRevisioning[] pRevisioning, Class<IRevisionChecker> pRevisionCheckerClass,
-        IRevisionChecker[] pRevisionChecker, Class<INodePageGenerator> pNodeGeneratorClass,
-        INodePageGenerator[] pNodeGenerator) {
+        IRevisionChecker[] pRevisionChecker, Class<INodeBucketGenerator> pNodeGeneratorClass,
+        INodeBucketGenerator[] pNodeGenerator) {
 
         // be sure you have enough checkers for the revisioning to check
         assertEquals(pRevisioning.length, pRevisionChecker.length);
@@ -77,13 +77,13 @@ public class IRevisioningTest {
             // ...check if revision is not SlidingSnapshot (since SlidingSnapshot is not working with entire
             // full-dump...
             if (!(pRevisioning[i] instanceof SlidingSnapshot)) {
-                // ...get the node pages for not full-dump test and...
-                final NodeBucket[] pages = pNodeGenerator[i].generateNodePages();
+                // ...get the node buckets for not full-dump test and...
+                final NodeBucket[] buckets = pNodeGenerator[i].generateNodeBuckets();
                 // ..recombine them...
-                final LogValue page =
-                    pRevisioning[i].combineBucketsForModification(pages.length, 0, pages, true);
+                final LogValue bucket =
+                    pRevisioning[i].combineBucketsForModification(buckets.length, 0, buckets, true);
                 // ...and check them suitable to the versioning approach
-                pRevisionChecker[i].checkCompletePagesForModification(page, pages, true);
+                pRevisionChecker[i].checkCompleteBucketsForModification(bucket, buckets, true);
             }
         }
 
@@ -93,13 +93,13 @@ public class IRevisioningTest {
             // ...check if revision is not FullDump (since FullDump must always be used within FullDump)
             // and...
             if (!(pRevisioning[i] instanceof FullDump)) {
-                // ...get the node pages for full-dump test and...
-                final NodeBucket[] pages = pNodeGenerator[i].generateNodePages();
+                // ...get the node buckets for full-dump test and...
+                final NodeBucket[] buckets = pNodeGenerator[i].generateNodeBuckets();
                 // ..recombine them...
-                final LogValue page =
-                    pRevisioning[i].combineBucketsForModification(pages.length - 1, 0, pages, false);
+                final LogValue bucket =
+                    pRevisioning[i].combineBucketsForModification(buckets.length - 1, 0, buckets, false);
                 // ...and check them suitable to the versioning approach
-                pRevisionChecker[i].checkCompletePagesForModification(page, pages, false);
+                pRevisionChecker[i].checkCompleteBucketsForModification(bucket, buckets, false);
             }
         }
     }
@@ -123,9 +123,9 @@ public class IRevisioningTest {
      *            different node-generators
      */
     @Test(dataProvider = "instantiateVersioning")
-    public void testCombinePages(Class<IRevisioning> pRevisioningClass, IRevisioning[] pRevisioning,
+    public void testCombineBuckets(Class<IRevisioning> pRevisioningClass, IRevisioning[] pRevisioning,
         Class<IRevisionChecker> pRevisionCheckerClass, IRevisionChecker[] pRevisionChecker,
-        Class<INodePageGenerator> pNodeGeneratorClass, INodePageGenerator[] pNodeGenerator) {
+        Class<INodeBucketGenerator> pNodeGeneratorClass, INodeBucketGenerator[] pNodeGenerator) {
 
         // be sure you have enough checkers for the revisioning to check
         assertEquals(pRevisioning.length, pRevisionChecker.length);
@@ -133,12 +133,12 @@ public class IRevisioningTest {
 
         // for all revision-approaches...
         for (int i = 0; i < pRevisioning.length; i++) {
-            // ...get the node pages and...
-            final NodeBucket[] pages = pNodeGenerator[i].generateNodePages();
+            // ...get the node buckets and...
+            final NodeBucket[] buckets = pNodeGenerator[i].generateNodeBuckets();
             // ..and recombine them...
-            final NodeBucket page = pRevisioning[i].combineBuckets(pages);
+            final NodeBucket bucket = pRevisioning[i].combineBuckets(buckets);
             // ...and check them suitable to the versioning approach
-            pRevisionChecker[i].checkCompletePages(page, pages);
+            pRevisionChecker[i].checkCompleteBuckets(bucket, buckets);
         }
     }
 
@@ -159,7 +159,7 @@ public class IRevisioningTest {
                     // Checker for FullDump
                     new IRevisionChecker() {
                         @Override
-                        public void checkCompletePages(NodeBucket pComplete, NodeBucket[] pFragments) {
+                        public void checkCompleteBuckets(NodeBucket pComplete, NodeBucket[] pFragments) {
                             // Check only the last version since the complete dump consists out of the last
                             // version within the FullDump
                             for (int i = 0; i < pComplete.getNodes().length; i++) {
@@ -169,7 +169,7 @@ public class IRevisioningTest {
                         }
 
                         @Override
-                        public void checkCompletePagesForModification(LogValue pComplete,
+                        public void checkCompleteBucketsForModification(LogValue pComplete,
                             NodeBucket[] pFragments, boolean pFullDump) {
                             // must always be true since it is the Fulldump
                             assertTrue(pFullDump);
@@ -189,8 +189,8 @@ public class IRevisioningTest {
                     // Checker for Incremental
                     new IRevisionChecker() {
                         @Override
-                        public void checkCompletePages(NodeBucket pComplete, NodeBucket[] pFragments) {
-                            // Incrementally iterate through all pages to reconstruct the complete page.
+                        public void checkCompleteBuckets(NodeBucket pComplete, NodeBucket[] pFragments) {
+                            // Incrementally iterate through all buckets to reconstruct the complete bucket.
                             int j = 0;
                             // taking first the fragments into account and..
                             for (int i = 0; i < pFragments.length - 1; i++) {
@@ -207,7 +207,7 @@ public class IRevisioningTest {
                         }
 
                         @Override
-                        public void checkCompletePagesForModification(LogValue pComplete,
+                        public void checkCompleteBucketsForModification(LogValue pComplete,
                             NodeBucket[] pFragments, boolean pFullDump) {
                             NodeBucket complete = (NodeBucket)pComplete.getComplete();
                             NodeBucket modified = (NodeBucket)pComplete.getModified();
@@ -241,7 +241,7 @@ public class IRevisioningTest {
                     }// Checker for Differential
                     , new IRevisionChecker() {
                         @Override
-                        public void checkCompletePages(NodeBucket pComplete, NodeBucket[] pFragments) {
+                        public void checkCompleteBuckets(NodeBucket pComplete, NodeBucket[] pFragments) {
                             int j = 0;
                             // Take the last version first, to get the data out there...
                             for (j = 0; j < 32; j++) {
@@ -258,7 +258,7 @@ public class IRevisioningTest {
                         }
 
                         @Override
-                        public void checkCompletePagesForModification(LogValue pComplete,
+                        public void checkCompleteBucketsForModification(LogValue pComplete,
                             NodeBucket[] pFragments, boolean pFullDump) {
                             NodeBucket complete = (NodeBucket)pComplete.getComplete();
                             NodeBucket modified = (NodeBucket)pComplete.getModified();
@@ -286,7 +286,7 @@ public class IRevisioningTest {
                     },// check for Sliding Snapshot
                     new IRevisionChecker() {
                         @Override
-                        public void checkCompletePages(NodeBucket pComplete, NodeBucket[] pFragments) {
+                        public void checkCompleteBuckets(NodeBucket pComplete, NodeBucket[] pFragments) {
                             for (int i = 0; i < pFragments.length; i++) {
                                 for (int j = i * 2; j < (i * 2) + 2; j++) {
                                     assertEquals("Check for Sliding Snapshot failed.", pFragments[i]
@@ -296,7 +296,7 @@ public class IRevisioningTest {
                         }
 
                         @Override
-                        public void checkCompletePagesForModification(LogValue pComplete,
+                        public void checkCompleteBucketsForModification(LogValue pComplete,
                             NodeBucket[] pFragments, boolean fullDump) {
                             NodeBucket complete = (NodeBucket)pComplete.getComplete();
                             NodeBucket modified = (NodeBucket)pComplete.getModified();
@@ -320,63 +320,63 @@ public class IRevisioningTest {
                         }
 
                     }
-                }, INodePageGenerator.class, new INodePageGenerator[] {
+                }, INodeBucketGenerator.class, new INodeBucketGenerator[] {
                     // Checker for FullDump
-                    new INodePageGenerator() {
+                    new INodeBucketGenerator() {
                         @Override
-                        public NodeBucket[] generateNodePages() {
+                        public NodeBucket[] generateNodeBuckets() {
                             NodeBucket[] returnVal = {
-                                getNodePage(0, IConstants.CONTENT_COUNT, 0, -1)
+                                getNodeBucket(0, IConstants.CONTENT_COUNT, 0, -1)
                             };
                             return returnVal;
                         }
                     },
                     // Checker for Incremental
-                    new INodePageGenerator() {
+                    new INodeBucketGenerator() {
                         @Override
-                        public NodeBucket[] generateNodePages() {
+                        public NodeBucket[] generateNodeBuckets() {
                             // initialize all fragments first...
-                            final NodeBucket[] pages = new NodeBucket[63];
-                            // fill all pages up to number of restores first...
+                            final NodeBucket[] buckets = new NodeBucket[63];
+                            // fill all buckets up to number of restores first...
                             for (int j = 0; j < 62; j++) {
-                                // filling nodepages from end to start with 2 elements each slot
-                                pages[j] =
-                                    getNodePage(j * 2, (j * 2) + 2, pages.length - j - 1, pages.length - j
+                                // filling nodebuckets from end to start with 2 elements each slot
+                                buckets[j] =
+                                    getNodeBucket(j * 2, (j * 2) + 2, buckets.length - j - 1, buckets.length - j
                                         - 2);
                             }
                             // set a fulldump as last revision
-                            pages[62] = getNodePage(0, 128, 0, -1);
-                            return pages;
+                            buckets[62] = getNodeBucket(0, 128, 0, -1);
+                            return buckets;
                         }
                     },
                     // Checker for Differential
-                    new INodePageGenerator() {
+                    new INodeBucketGenerator() {
                         @Override
-                        public NodeBucket[] generateNodePages() {
+                        public NodeBucket[] generateNodeBuckets() {
                             // initialize all fragments first...
-                            final NodeBucket[] pages = new NodeBucket[2];
-                            // setting one pages to a fragment only...
-                            pages[0] = getNodePage(0, 32, 0, -1);
+                            final NodeBucket[] buckets = new NodeBucket[2];
+                            // setting one buckets to a fragment only...
+                            buckets[0] = getNodeBucket(0, 32, 0, -1);
                             // ..and the other as entire fulldump
-                            pages[1] = getNodePage(0, 128, 1, 0);
-                            return pages;
+                            buckets[1] = getNodeBucket(0, 128, 1, 0);
+                            return buckets;
                         }
 
                     },
                     // Checker for Sliding Snapshot
-                    new INodePageGenerator() {
+                    new INodeBucketGenerator() {
                         @Override
-                        public NodeBucket[] generateNodePages() {
+                        public NodeBucket[] generateNodeBuckets() {
                             // initialize all fragments first...
-                            final NodeBucket[] pages = new NodeBucket[64];
-                            // fill all pages up to number of restores first...
+                            final NodeBucket[] buckets = new NodeBucket[64];
+                            // fill all buckets up to number of restores first...
                             for (int j = 0; j < 64; j++) {
-                                // filling nodepages from end to start with 2 elements each slot
-                                pages[j] =
-                                    getNodePage(j * 2, (j * 2) + 2, pages.length - j - 1, pages.length - j
+                                // filling nodebuckets from end to start with 2 elements each slot
+                                buckets[j] =
+                                    getNodeBucket(j * 2, (j * 2) + 2, buckets.length - j - 1, buckets.length - j
                                         - 2);
                             }
-                            return pages;
+                            return buckets;
                         }
                     }
                 }
@@ -386,25 +386,25 @@ public class IRevisioningTest {
     }
 
     /**
-     * Interface to check reconstructed pages.
+     * Interface to check reconstructed buckets.
      * 
      * @author Sebastian Graf, University of Konstanz
      * 
      */
     interface IRevisionChecker {
-        void checkCompletePages(NodeBucket pComplete, NodeBucket[] pFragments);
+        void checkCompleteBuckets(NodeBucket pComplete, NodeBucket[] pFragments);
 
-        void checkCompletePagesForModification(LogValue pComplete, NodeBucket[] pFragments, boolean fullDump);
+        void checkCompleteBucketsForModification(LogValue pComplete, NodeBucket[] pFragments, boolean fullDump);
     }
 
     /**
-     * Node Page Generator for new NodePages.
+     * Node Bucket Generator for new NodeBuckets.
      * 
      * @author Sebastian Graf, University of Konstanz
      * 
      */
-    interface INodePageGenerator {
-        NodeBucket[] generateNodePages();
+    interface INodeBucketGenerator {
+        NodeBucket[] generateNodeBuckets();
     }
 
 }

@@ -71,9 +71,9 @@ public class LRULogTest {
 
     private ResourceConfiguration mResource;
 
-    private NodeBucket[][] mPages;
+    private NodeBucket[][] mBucket;
     private LRULog mCache;
-    private Set<NodeBucket> mPageSet;
+    private Set<NodeBucket> mBucketSet;
 
     private static final int LEVEL = 100;
     private static final int ELEMENTS = 100;
@@ -91,7 +91,7 @@ public class LRULogTest {
         mResource = mResourceConfig.create(props);
         mCache = new LRULog(CoreTestHelper.PATHS.PATH1.getFile(), mResource.mNodeFac, mResource.mMetaFac);
 
-        mPages = new NodeBucket[LEVEL][ELEMENTS];
+        mBucket = new NodeBucket[LEVEL][ELEMENTS];
         insertData();
     }
 
@@ -136,13 +136,13 @@ public class LRULogTest {
                 LogKey toRetrieve = new LogKey(true, i, j);
                 final LogValue cont = mCache.get(toRetrieve);
                 final IBucket current = cont.getComplete();
-                assertEquals(mPages[i][j], current);
+                assertEquals(mBucket[i][j], current);
             }
         }
         LogIterator it = mCache.getIterator();
         for (LogValue val : it) {
             assertEquals(val.getComplete(), val.getModified());
-            assertTrue(mPageSet.contains(val.getComplete()));
+            assertTrue(mBucketSet.contains(val.getComplete()));
         }
     }
 
@@ -157,18 +157,18 @@ public class LRULogTest {
     }
 
     private void insertData() throws TTIOException {
-        mPageSet = new HashSet<NodeBucket>();
+        mBucketSet = new HashSet<NodeBucket>();
         long key = 0;
-        for (int i = 0; i < mPages.length; i++) {
-            for (int j = 0; j < mPages[i].length; j++) {
+        for (int i = 0; i < mBucket.length; i++) {
+            for (int j = 0; j < mBucket[i].length; j++) {
                 LogKey toStore = new LogKey(true, i, j);
-                mPages[i][j] = CoreTestHelper.getNodePage(0, IConstants.CONTENT_COUNT, key, key - 1);
-                mCache.put(toStore, new LogValue(mPages[i][j], mPages[i][j]));
-                mPageSet.add(mPages[i][j]);
+                mBucket[i][j] = CoreTestHelper.getNodeBucket(0, IConstants.CONTENT_COUNT, key, key - 1);
+                mCache.put(toStore, new LogValue(mBucket[i][j], mBucket[i][j]));
+                mBucketSet.add(mBucket[i][j]);
                 key++;
             }
         }
-        assertEquals(LEVEL * ELEMENTS, mPageSet.size());
+        assertEquals(LEVEL * ELEMENTS, mBucketSet.size());
     }
 
 }
