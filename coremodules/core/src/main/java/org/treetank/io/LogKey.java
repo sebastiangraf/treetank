@@ -1,4 +1,4 @@
-package org.treetank.log;
+package org.treetank.io;
 
 import static com.google.common.base.Objects.toStringHelper;
 

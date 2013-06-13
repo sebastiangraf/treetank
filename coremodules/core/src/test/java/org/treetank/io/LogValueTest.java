@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.treetank.log;
+package org.treetank.io;
 
 import static org.testng.AssertJUnit.assertEquals;
 
@@ -18,7 +18,8 @@ import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFact
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.bucket.IConstants;
 import org.treetank.exception.TTException;
-import org.treetank.log.LogValue.LogValueBinding;
+import org.treetank.io.LogValue;
+import org.treetank.io.LogValue.LogValueBinding;
 
 import com.google.inject.Inject;
 import com.sleepycat.bind.tuple.TupleInput;
@@ -59,8 +60,8 @@ public class LogValueTest {
         LogValueBinding binding = new LogValueBinding(mConf.mNodeFac, mConf.mMetaFac);
         for (int i = 0; i < NUMBEROFELEMENTS; i++) {
             LogValue value =
-                new LogValue(CoreTestHelper.getNodePage(0, IConstants.CONTENT_COUNT, 0, 0), CoreTestHelper
-                    .getNodePage(0, IConstants.CONTENT_COUNT, 0, 0));
+                new LogValue(CoreTestHelper.getNodeBucket(0, IConstants.CONTENT_COUNT, 0, 0), CoreTestHelper
+                    .getNodeBucket(0, IConstants.CONTENT_COUNT, 0, 0));
             TupleOutput output = new TupleOutput();
             binding.objectToEntry(value, output);
 

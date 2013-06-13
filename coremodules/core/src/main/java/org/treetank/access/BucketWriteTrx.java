@@ -48,17 +48,12 @@ import org.treetank.bucket.NodeBucket.DeletedNode;
 import org.treetank.bucket.RevisionRootBucket;
 import org.treetank.bucket.UberBucket;
 import org.treetank.bucket.interfaces.IReferenceBucket;
-import org.treetank.commit.CommitStrategyModule;
-import org.treetank.commit.ICommitStrategy;
-import org.treetank.commit.ICommitStrategy.BlockingCommit;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
+import org.treetank.io.BackendWriterProxy;
 import org.treetank.io.IBackendWriter;
-import org.treetank.log.LRULog;
-import org.treetank.log.LogKey;
-import org.treetank.log.LogValue;
-
-import com.google.inject.Injector;
+import org.treetank.io.LogKey;
+import org.treetank.io.LogValue;
 
 /**
  * <h1>BucketWriteTrx</h1>
@@ -70,10 +65,7 @@ import com.google.inject.Injector;
 public final class BucketWriteTrx implements IBucketWriteTrx {
 
     /** Bucket writer to serialize. */
-    private final IBackendWriter mBucketWriter;
-
-    /** Cache to store the changes in this writetransaction. */
-    private LRULog mLog;
+    private final BackendWriterProxy mBucketWriter;
 
     /** Reference to the actual uberBucket. */
     private UberBucket mNewUber;
@@ -86,12 +78,6 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
 
     /** Delegate for read access. */
     private BucketReadTrx mDelegate;
-
-    /** Commit strategy implementation to be used */
-    private final Class<? extends ICommitStrategy> mCommitStrategy;
-
-    /** Currently (or just previously) running commitstrategy */
-    private ICommitStrategy mCommitInProgress;
 
     /**
      * Standard constructor.
@@ -111,11 +97,11 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
     protected BucketWriteTrx(final ISession pSession, final UberBucket pUberBucket,
         final IBackendWriter pWriter, final long pRepresentRev) throws TTException {
 
-        mBucketWriter = pWriter;
-        // TODO: Change to NonBlockingCommitStrategy
-        // mCommitStrategy = NonBlockingCommitStrategy.class;
-        mCommitStrategy = BlockingCommit.class;
-        setUpTransaction(pUberBucket, pSession, pRepresentRev, pWriter);
+        mBucketWriter =
+            new BackendWriterProxy(pWriter, new File(pSession.getConfig().mProperties
+                .getProperty(org.treetank.access.conf.ConstructorProps.RESOURCEPATH)),
+                pSession.getConfig().mNodeFac, pSession.getConfig().mMetaFac);
+        setUpTransaction(pUberBucket, pSession, pRepresentRev, mBucketWriter);
     }
 
     /**
@@ -130,7 +116,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         LogValue container = prepareNodeBucket(nodeKey);
         final NodeBucket bucket = ((NodeBucket)container.getModified());
         bucket.setNode(nodeBucketOffset, pNode);
-        mLog.put(new LogKey(false, IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length, seqBucketKey),
+        mBucketWriter.put(new LogKey(false, IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length, seqBucketKey),
             container);
         return nodeKey;
     }
@@ -148,8 +134,8 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         ((NodeBucket)container.getComplete()).setNode(nodeBucketOffset(pNode.getNodeKey()), delNode);
         ((NodeBucket)container.getModified()).setNode(nodeBucketOffset(pNode.getNodeKey()), delNode);
 
-        mLog.put(new LogKey(false, IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length, nodeBucketKey),
-            container);
+        mBucketWriter.put(
+            new LogKey(false, IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length, nodeBucketKey), container);
     }
 
     /**
@@ -163,20 +149,10 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
 
         final LogKey key =
             new LogKey(false, IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length, nodeBucketKey);
-        final LogValue container = mLog.get(key);
+        final LogValue container = mBucketWriter.get(key);
         // Bucket was not modified yet, delegate to read or..
         if (container.getModified() == null) {
-            NodeBucket fromCommitLog;
-
-            // True if the any commit has been done before
-            // and the last commit is still in progress
-            // and the bucket is available in the log from the commit.
-            if (mCommitInProgress != null && mCommitInProgress.isInProgress()
-                && (fromCommitLog = mCommitInProgress.valueInProgress(key)) != null) {
-                return fromCommitLog.getNode(nodeBucketOffset);
-            } else {
-                return mDelegate.getNode(pNodeKey);
-            }
+            return mDelegate.getNode(pNodeKey);
         }// ...bucket was modified, but not this node, take the complete part, or...
         else if (((NodeBucket)container.getModified()).getNode(nodeBucketOffset) == null) {
             final INode item = ((NodeBucket)container.getComplete()).getNode(nodeBucketOffset);
@@ -198,34 +174,14 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
     public void commit() throws TTException {
         checkState(!mDelegate.isClosed(), "Transaction already closed");
 
-        // Check if the commit object has been initialized before..
-        if (mCommitInProgress != null) {
-            try {
-                // .. if so, is a commit still in progress ..
-                if (mCommitInProgress.isInProgress()) {
-                    // .. assuming it is, wait for notification to further proceeding
-                    // and block this state, until the commit can be executed.
-                    mCommitInProgress.wait();
-                }
-            } catch (InterruptedException e) {
-                throw new TTIOException("A commit has been interrupted due to " + e.getMessage());
-            }
-        }
-
-        final Injector injector =
-            com.google.inject.Guice.createInjector(new CommitStrategyModule().setmLog(mLog)
-                .setmMeta(mNewMeta).setmRev(mNewRoot).setmUber(mNewUber).setmWriter(mBucketWriter));
-        mCommitInProgress = injector.getInstance(mCommitStrategy);
-
-        mCommitInProgress.execute();
-
+        mBucketWriter.commit(mNewUber, mNewMeta, mNewRoot);
         ((Session)mDelegate.mSession).setLastCommittedUberBucket(mNewUber);
         setUpTransaction(mNewUber, mDelegate.mSession, mNewUber.getRevisionNumber(), mBucketWriter);
 
     }
 
     public void clearLog() throws TTIOException {
-        mLog.close();
+        mBucketWriter.close();
     }
 
     /**
@@ -233,13 +189,6 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
      */
     @Override
     public boolean close() throws TTIOException {
-        if (mCommitInProgress != null && mCommitInProgress.isInProgress()) {
-            try {
-                mCommitInProgress.wait();
-            } catch (InterruptedException e) {
-                throw new TTIOException(e);
-            }
-        }
 
         if (!mDelegate.isClosed()) {
             mDelegate.close();
@@ -248,7 +197,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
                 // Try to close the log.
                 // It may already be closed if a commit
                 // was the last operation.
-                mLog.close();
+                mBucketWriter.close();
             } catch (IllegalStateException e) {
                 // Do nothing
             }
@@ -300,12 +249,12 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
 
         LogKey key = new LogKey(false, IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length, seqNodeBucketKey);
         // See if on nodeBucketLevel, there are any buckets...
-        LogValue container = mLog.get(key);
+        LogValue container = mBucketWriter.get(key);
         // ... and start dereferencing of not.
         if (container.getModified() == null) {
             LogKey indirectKey = preparePathToLeaf(false, mNewRoot, pNodeKey);
 
-            LogValue indirectContainer = mLog.get(indirectKey);
+            LogValue indirectContainer = mBucketWriter.get(indirectKey);
             int nodeOffset = nodeBucketOffset(seqNodeBucketKey);
             long bucketKey = ((IndirectBucket)indirectContainer.getModified()).getReferenceKeys()[nodeOffset];
 
@@ -333,8 +282,8 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
                 container = new LogValue(newBucket, newBucket);
             }
             ((IndirectBucket)indirectContainer.getModified()).setReferenceKey(nodeOffset, newBucketKey);
-            mLog.put(indirectKey, indirectContainer);
-            mLog.put(key, container);
+            mBucketWriter.put(indirectKey, indirectContainer);
+            mBucketWriter.put(key, container);
         }
         return container;
     }
@@ -386,7 +335,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         for (int level = 0; level < orderNumber.length; level++) {
             // ...see if the actual bucket requested is already in the log
             key = new LogKey(pIsRootLevel, level, orderNumber[level]);
-            LogValue container = mLog.get(key);
+            LogValue container = mBucketWriter.get(key);
             // if the bucket is not existing,..
             if (container.getModified() == null) {
                 // ..create a new bucket
@@ -412,11 +361,11 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
                 // ..if the parent is not referenced as UberBucket or RevisionRootBucket within the Wtx
                 // itself...
                 if (level > 0) {
-                    mLog.put(parentKey, container);
+                    mBucketWriter.put(parentKey, container);
                 }
                 // ..but set the reference of the current bucket in every case.
                 container = new LogValue(bucket, bucket);
-                mLog.put(key, container);
+                mBucketWriter.put(key, container);
 
             } // if the bucket is already in the log, get it simply from the log.
             else {
@@ -432,11 +381,8 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
     }
 
     private void setUpTransaction(final UberBucket pUberBucket, final ISession pSession,
-        final long pRepresentRev, final IBackendWriter pWriter) throws TTException {
-        mLog =
-            new LRULog(new File(pSession.getConfig().mProperties
-                .getProperty(org.treetank.access.conf.ConstructorProps.RESOURCEPATH)),
-                pSession.getConfig().mNodeFac, pSession.getConfig().mMetaFac);
+        final long pRepresentRev, final BackendWriterProxy pWriter) throws TTException {
+        mBucketWriter.setNewLog();
 
         mNewUber =
             new UberBucket(pUberBucket.incrementBucketCounter(), pUberBucket.getRevisionNumber() + 1,
@@ -458,10 +404,10 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         // Prepare indirect tree to hold reference to prepared revision root
         // nodeBucketReference.
         LogKey indirectKey = preparePathToLeaf(true, mNewUber, mNewUber.getRevisionNumber());
-        LogValue indirectContainer = mLog.get(indirectKey);
+        LogValue indirectContainer = mBucketWriter.get(indirectKey);
         int offset = nodeBucketOffset(mNewUber.getRevisionNumber());
         ((IndirectBucket)indirectContainer.getModified()).setReferenceKey(offset, mNewRoot.getBucketKey());
-        mLog.put(indirectKey, indirectContainer);
+        mBucketWriter.put(indirectKey, indirectContainer);
 
         // Setting up a new metabucket
         Map<IMetaEntry, IMetaEntry> oldMap = mDelegate.mMetaBucket.getMetaMap();
@@ -480,8 +426,8 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
      */
     @Override
     public String toString() {
-        return toStringHelper(this).add("mDelegate", mDelegate).add("mBucketWriter", mBucketWriter).add(
-            "mLog", mLog).add("mRootBucket", mNewRoot).add("mDelegate", mDelegate).toString();
+        return toStringHelper(this).add("mDelegate", mDelegate).add("mBucketWriterProxy", mBucketWriter).add(
+            "mRootBucket", mNewRoot).add("mDelegate", mDelegate).toString();
     }
 
 }

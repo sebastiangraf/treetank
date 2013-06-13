@@ -105,7 +105,7 @@ public class SessionTest {
             mResourceConfig.create(StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
                 .getAbsolutePath(), CoreTestHelper.RESOURCENAME + "2"));
         CoreTestHelper.Holder.generateSession(mHolder, config);
-        // Take a look at CoreTestHelper#generateWtx, always creating pageTrx under standard ResourceName
+        // Take a look at CoreTestHelper#generateWtx, always creating bucketTrx under standard ResourceName
         // CoreTestHelper.Holder.generateWtx(mHolder, config);
 
         config =
@@ -118,7 +118,7 @@ public class SessionTest {
     }
 
     @Test
-    public void testBeginPageReadTransaction() throws TTException {
+    public void testBeginBucketReadTransaction() throws TTException {
         // generate first valid read transaction
         final IBucketReadTrx pRtx1 = mHolder.getSession().beginBucketRtx(0);
         assertNotNull(pRtx1);
@@ -137,7 +137,7 @@ public class SessionTest {
     }
 
     @Test
-    public void testBeginPageWriteTransaction() throws TTException {
+    public void testBeginBucketWriteTransaction() throws TTException {
         // generate first valid write transaction
         final IBucketWriteTrx pWtx1 = mHolder.getSession().beginBucketWtx();
         assertNotNull(pWtx1);

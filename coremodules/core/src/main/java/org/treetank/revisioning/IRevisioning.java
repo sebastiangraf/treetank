@@ -4,7 +4,7 @@
 package org.treetank.revisioning;
 
 import org.treetank.bucket.NodeBucket;
-import org.treetank.log.LogValue;
+import org.treetank.io.LogValue;
 
 /**
  * This interface offers methods to revision data differently.

@@ -7,7 +7,7 @@ import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import org.treetank.bucket.NodeBucket;
-import org.treetank.log.LogValue;
+import org.treetank.io.LogValue;
 
 /**
  * Sliding Snapshot versioning of {@link NodeBucket}s.

@@ -43,7 +43,7 @@ import com.google.inject.Inject;
  * 
  */
 @Guice(moduleFactory = ModuleFactory.class)
-public class PageReadTrxTest {
+public class BucketReadTrxTest {
 
     @Inject
     private IResourceConfigurationFactory mResourceConfig;
@@ -112,7 +112,7 @@ public class PageReadTrxTest {
      * @throws TTException
      */
     @Test
-    public void testGetMetaPage() throws TTException {
+    public void testGetMetaBucket() throws TTException {
         List<List<Map.Entry<DumbKey, DumbValue>>> data = CoreTestHelper.createTestMeta(mHolder);
         testMeta(mHolder.getSession(), data);
     }
@@ -135,7 +135,7 @@ public class PageReadTrxTest {
         offsets[4] = 127;
         reader = getFakedStructure(offsets);
         key = BucketReadTrx.dereferenceLeafOfTree(reader, 1, 127);
-        // 6 as base plus 127 as offset on last page
+        // 6 as base plus 127 as offset on last bucket
         assertEquals(133, key);
 
         offsets[3] = 1;
@@ -217,7 +217,7 @@ public class PageReadTrxTest {
      * Test method for {@link org.treetank.access.BucketReadTrx#nodeBucketOffset(long)}.
      */
     @Test
-    public void testNodePageOffset() {
+    public void testNodeBucketOffset() {
         assertEquals(0, BucketReadTrx.nodeBucketOffset(0));
         assertEquals(127, BucketReadTrx.nodeBucketOffset(127));
         assertEquals(0, BucketReadTrx.nodeBucketOffset(128));

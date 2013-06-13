@@ -46,23 +46,23 @@ public class IBucketTest {
      * 
      * @param clazz
      *            IBucket as class
-     * @param pPages
-     *            different pages
+     * @param pBuckets
+     *            different buckets
      * @throws TTIOException
      */
-    @Test(dataProvider = "instantiatePages")
-    public void testByteRepresentation(Class<IBucket> clazz, IBucket[] pPages) throws TTIOException {
+    @Test(dataProvider = "instantiateBuckets")
+    public void testByteRepresentation(Class<IBucket> clazz, IBucket[] pBuckets) throws TTIOException {
         final BucketFactory fac = new BucketFactory(new DumbNodeFactory(), new DumbMetaEntryFactory());
 
-        for (final IBucket bucket : pPages) {
+        for (final IBucket bucket : pBuckets) {
             ByteArrayDataOutput output = ByteStreams.newDataOutput();
             bucket.serialize(output);
             byte[] firstSerialized = output.toByteArray();
             ByteArrayDataInput input = ByteStreams.newDataInput(firstSerialized);
 
-            final IBucket serializedPage = fac.deserializeBucket(input);
+            final IBucket serializedBucket = fac.deserializeBucket(input);
             output = ByteStreams.newDataOutput();
-            serializedPage.serialize(output);
+            serializedBucket.serialize(output);
             byte[] secondSerialized = output.toByteArray();
             assertTrue(new StringBuilder("Check for ").append(bucket.getClass()).append(" failed.").toString(),
                 Arrays.equals(firstSerialized, secondSerialized));
@@ -76,20 +76,20 @@ public class IBucketTest {
      * 
      * @param clazz
      *            IBucket as class
-     * @param pPages
-     *            different pages
+     * @param pBuckets
+     *            different buckets
      * @throws TTIOException
      */
-    @Test(dataProvider = "instantiatePages")
-    public void testEqualsAndHashCode(Class<IBucket> clazz, IBucket[] pPages) throws TTIOException {
+    @Test(dataProvider = "instantiateBuckets")
+    public void testEqualsAndHashCode(Class<IBucket> clazz, IBucket[] pBuckets) throws TTIOException {
 
-        for (int i = 0; i < pPages.length; i++) {
-            IBucket onePage = pPages[i % pPages.length];
-            IBucket secondPage = pPages[(i + 1) % pPages.length];
-            assertEquals(onePage.hashCode(), onePage.hashCode());
-            assertNotSame(onePage.hashCode(), secondPage.hashCode());
-            assertTrue(onePage.equals(onePage));
-            assertFalse(onePage.equals(secondPage));
+        for (int i = 0; i < pBuckets.length; i++) {
+            IBucket oneBucket = pBuckets[i % pBuckets.length];
+            IBucket secondBucket = pBuckets[(i + 1) % pBuckets.length];
+            assertEquals(oneBucket.hashCode(), oneBucket.hashCode());
+            assertNotSame(oneBucket.hashCode(), secondBucket.hashCode());
+            assertTrue(oneBucket.equals(oneBucket));
+            assertFalse(oneBucket.equals(secondBucket));
         }
 
     }
@@ -100,8 +100,8 @@ public class IBucketTest {
      * @return different classes of the {@link IByteHandler}
      * @throws TTByteHandleException
      */
-    @DataProvider(name = "instantiatePages")
-    public Object[][] instantiatePages() throws TTByteHandleException {
+    @DataProvider(name = "instantiateBuckets")
+    public Object[][] instantiateBuckets() throws TTByteHandleException {
         // UberBucket setup
         UberBucket uberBucket =
             new UberBucket(CoreTestHelper.random.nextLong(), CoreTestHelper.random.nextLong(),
@@ -109,7 +109,7 @@ public class IBucketTest {
         // IndirectBucket setup
         IndirectBucket indirectBucket = new IndirectBucket(CoreTestHelper.random.nextLong());
         // RevisionRootBucket setup
-        RevisionRootBucket revRootPage =
+        RevisionRootBucket revRootBucket =
             new RevisionRootBucket(CoreTestHelper.random.nextLong(), CoreTestHelper.random.nextLong(),
                 CoreTestHelper.random.nextLong());
         // NodeBucket setup
@@ -125,7 +125,7 @@ public class IBucketTest {
         Object[][] returnVal = {
             {
                 IBucket.class, new IBucket[] {
-                    indirectBucket, revRootPage, nodeBucket, metaBucket, uberBucket
+                    indirectBucket, revRootBucket, nodeBucket, metaBucket, uberBucket
                 }
             }
         };

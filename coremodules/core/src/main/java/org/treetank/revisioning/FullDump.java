@@ -6,7 +6,7 @@ package org.treetank.revisioning;
 import static com.google.common.base.Objects.toStringHelper;
 
 import org.treetank.bucket.NodeBucket;
-import org.treetank.log.LogValue;
+import org.treetank.io.LogValue;
 
 /**
  * FullDump versioning of {@link NodeBucket}s.

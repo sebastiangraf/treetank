@@ -38,7 +38,7 @@ import com.google.inject.Inject;
  * 
  */
 @Guice(moduleFactory = ModuleFactory.class)
-public class PageWriteTrxTest {
+public class BucketWriteTrxTest {
 
     @Inject
     private IResourceConfigurationFactory mResourceConfig;
@@ -74,7 +74,7 @@ public class PageWriteTrxTest {
     @Test
     public void testRevision() throws TTException {
         CoreTestHelper.createTestData(mHolder);
-        PageReadTrxTest.testRevision(mHolder.getSession());
+        BucketReadTrxTest.testRevision(mHolder.getSession());
         IBucketWriteTrx wtx = mHolder.getSession().beginBucketWtx();
         assertEquals(mHolder.getSession().getMostRecentVersion() + 1, wtx.getRevision());
         wtx.close();
@@ -86,9 +86,9 @@ public class PageWriteTrxTest {
      * @throws TTException
      */
     @Test
-    public void testGetMetaPage() throws TTException {
+    public void testGetMetaBucket() throws TTException {
         List<List<Map.Entry<DumbKey, DumbValue>>> meta = CoreTestHelper.createTestMeta(mHolder);
-        PageReadTrxTest.testMeta(mHolder.getSession(), meta);
+        BucketReadTrxTest.testMeta(mHolder.getSession(), meta);
         IBucketWriteTrx wtx = mHolder.getSession().beginBucketWtx();
         CoreTestHelper.checkStructure(meta.get(meta.size() - 1), wtx, false);
         wtx.commit();
@@ -106,7 +106,7 @@ public class PageWriteTrxTest {
     @Test
     public void testGetNode() throws TTException {
         DumbNode[][] nodes = CoreTestHelper.createTestData(mHolder);
-        PageReadTrxTest.testGet(mHolder.getSession(), nodes);
+        BucketReadTrxTest.testGet(mHolder.getSession(), nodes);
         List<DumbNode> list = CoreTestHelper.combineNodes(nodes);
         final IBucketWriteTrx wtx = mHolder.getSession().beginBucketWtx();
         CoreTestHelper.checkStructure(list, wtx, 0);
@@ -201,7 +201,7 @@ public class PageWriteTrxTest {
     @Test
     public void testCloseAndIsClosed() throws TTException {
         IBucketWriteTrx rtx = mHolder.getSession().beginBucketWtx();
-        PageReadTrxTest.testClose(mHolder.getStorage(), mHolder.getSession(), rtx);
+        BucketReadTrxTest.testClose(mHolder.getStorage(), mHolder.getSession(), rtx);
     }
 
 }

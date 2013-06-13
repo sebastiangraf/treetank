@@ -25,7 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.log;
+package org.treetank.io;
 
 import static com.google.common.base.Objects.toStringHelper;
 
@@ -38,9 +38,8 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTIOException;
-import org.treetank.io.IOUtils;
-import org.treetank.log.LogKey.LogKeyBinding;
-import org.treetank.log.LogValue.LogValueBinding;
+import org.treetank.io.LogKey.LogKeyBinding;
+import org.treetank.io.LogValue.LogValueBinding;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -64,7 +63,7 @@ import com.sleepycat.je.OperationStatus;
  * 
  * @author Sebastian Graf, University of Konstanz
  */
-public final class LRULog {
+final class LRULog {
     //
     // // START DEBUG CODE
     // private final static File insertFile = new File("/Users/sebi/Desktop/runtimeResults/insert.txt");
@@ -113,7 +112,7 @@ public final class LRULog {
     private final Cache<LogKey, LogValue> mCache;
 
     private int mSelected_db;
-    
+
     /**
      * Creates a new LRU cache.
      * 
@@ -126,20 +125,19 @@ public final class LRULog {
      * @throws TTIOException
      * 
      */
-    public LRULog(final File pFile, final INodeFactory pNodeFac, final IMetaEntryFactory pMetaFac)
+    LRULog(final File pFile, final INodeFactory pNodeFac, final IMetaEntryFactory pMetaFac)
         throws TTIOException {
         mKeyBinding = new LogKeyBinding();
         mValueBinding = new LogValueBinding(pNodeFac, pMetaFac);
         mSelected_db = 1;
-        
-        if(new File(pFile, ResourceConfiguration.Paths.TransactionLog.getFile().getName()).list().length > 0){
-            mLocation = new File(pFile, "_"+ResourceConfiguration.Paths.TransactionLog.getFile().getName());
+
+        if (new File(pFile, ResourceConfiguration.Paths.TransactionLog.getFile().getName()).list().length > 0) {
+            mLocation = new File(pFile, "_" + ResourceConfiguration.Paths.TransactionLog.getFile().getName());
             mSelected_db = 2;
-        }
-        else{
+        } else {
             mLocation = new File(pFile, ResourceConfiguration.Paths.TransactionLog.getFile().getName());
         }
-        
+
         try {
             EnvironmentConfig config = new EnvironmentConfig();
             config.setAllowCreate(true);
@@ -151,8 +149,8 @@ public final class LRULog {
             final DatabaseConfig dbConfig = new DatabaseConfig();
             dbConfig.setAllowCreate(true);
             dbConfig.setExclusiveCreate(true);
-            mDatabase = mEnv.openDatabase(null, NAME+mSelected_db, dbConfig);
-            
+            mDatabase = mEnv.openDatabase(null, NAME + mSelected_db, dbConfig);
+
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
         }
@@ -224,7 +222,7 @@ public final class LRULog {
     public void close() throws TTIOException {
         try {
             mDatabase.close();
-            mEnv.removeDatabase(null, NAME+mSelected_db);
+            mEnv.removeDatabase(null, NAME + mSelected_db);
             mEnv.close();
             IOUtils.recursiveDelete(mLocation);
             mLocation.mkdir();
@@ -251,7 +249,7 @@ public final class LRULog {
         for (Entry<LogKey, LogValue> entry : entries) {
             insertIntoBDB(entry.getKey(), entry.getValue());
         }
-        
+
         return new LogIterator();
     }
 
@@ -262,21 +260,21 @@ public final class LRULog {
             mKeyBinding.objectToEntry(pKey, keyEntry);
             mValueBinding.objectToEntry(pVal, valueEntry);
             try {
-                
-//                ////TODO DEBUGCODE///////
-//                final DatabaseEntry valueOld = new DatabaseEntry();
-//                OperationStatus status2 = mDatabase.get(null, keyEntry, valueOld, LockMode.DEFAULT);
-//                if (status2 == OperationStatus.SUCCESS) {
-//                    System.out.println(mDatabase.count());
-//                    status2 = mDatabase.delete(null, keyEntry);
-//                    System.out.println(mDatabase.count());
-//                    status2 = mDatabase.get(null, keyEntry, valueOld, LockMode.DEFAULT);
-//                    System.out.println(mDatabase.count());
-//                    mDatabase.sync();
-//                    System.out.println(mDatabase.count());
-//                }
 
-                //OperationStatus status = mDatabase.put(null, keyEntry, valueEntry);
+                // ////TODO DEBUGCODE///////
+                // final DatabaseEntry valueOld = new DatabaseEntry();
+                // OperationStatus status2 = mDatabase.get(null, keyEntry, valueOld, LockMode.DEFAULT);
+                // if (status2 == OperationStatus.SUCCESS) {
+                // System.out.println(mDatabase.count());
+                // status2 = mDatabase.delete(null, keyEntry);
+                // System.out.println(mDatabase.count());
+                // status2 = mDatabase.get(null, keyEntry, valueOld, LockMode.DEFAULT);
+                // System.out.println(mDatabase.count());
+                // mDatabase.sync();
+                // System.out.println(mDatabase.count());
+                // }
+
+                // OperationStatus status = mDatabase.put(null, keyEntry, valueEntry);
                 mDatabase.put(null, keyEntry, valueEntry);
                 // insert.write(pKey.getLevel() + "," + pKey.getSeq() + "\n");
                 // insert.flush();
@@ -338,7 +336,7 @@ public final class LRULog {
         @Override
         public LogValue next() {
             LogValue val;
-            if((val = mCache.getIfPresent(keyEntry)) != null){
+            if ((val = mCache.getIfPresent(keyEntry)) != null) {
                 return val;
             }
             return mValueBinding.entryToObject(valueEntry);
