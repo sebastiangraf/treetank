@@ -25,7 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.log;
+package org.treetank.io;
 
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertNotNull;
@@ -52,7 +52,10 @@ import org.treetank.bucket.interfaces.IBucket;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IOUtils;
-import org.treetank.log.LRULog.LogIterator;
+import org.treetank.io.LRULog;
+import org.treetank.io.LogKey;
+import org.treetank.io.LogValue;
+import org.treetank.io.LRULog.LogIterator;
 
 import com.google.inject.Inject;
 

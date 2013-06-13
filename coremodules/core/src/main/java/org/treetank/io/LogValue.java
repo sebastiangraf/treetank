@@ -25,7 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.log;
+package org.treetank.io;
 
 import static com.google.common.base.Objects.toStringHelper;
 

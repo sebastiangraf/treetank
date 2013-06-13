@@ -31,7 +31,6 @@ import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.io.File;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -51,13 +50,12 @@ import org.treetank.bucket.UberBucket;
 import org.treetank.bucket.interfaces.IReferenceBucket;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
+import org.treetank.io.BackendWriterProxy;
 import org.treetank.io.IBackend;
 import org.treetank.io.IBackendReader;
-import org.treetank.io.IBackendWriter;
 import org.treetank.io.IOUtils;
-import org.treetank.log.LRULog;
-import org.treetank.log.LogKey;
-import org.treetank.log.LogValue;
+import org.treetank.io.LogKey;
+import org.treetank.io.LogValue;
 
 /**
  * This class represents one concrete database for enabling several {@link ISession} objects.
@@ -341,9 +339,14 @@ public final class Storage implements IStorage {
      */
     private static void bootstrap(final Storage pStorage, final ResourceConfiguration pResourceConf)
         throws TTException {
-        final LRULog log =
-            new LRULog(new File(pResourceConf.mProperties.getProperty(ConstructorProps.RESOURCEPATH)),
+
+        final IBackend storage = pResourceConf.mBackend;
+        storage.initialize();
+        final BackendWriterProxy writer =
+            new BackendWriterProxy(storage.getWriter(), new File(pResourceConf.mProperties
+                .getProperty(org.treetank.access.conf.ConstructorProps.RESOURCEPATH)),
                 pResourceConf.mNodeFac, pResourceConf.mMetaFac);
+        writer.setNewLog();
 
         UberBucket uberBucket = new UberBucket(1, 0, 2);
         long newBucketKey = uberBucket.incrementBucketCounter();
@@ -360,23 +363,23 @@ public final class Storage implements IStorage {
             newBucketKey = uberBucket.incrementBucketCounter();
             bucket.setReferenceKey(0, newBucketKey);
             LogKey key = new LogKey(true, i, 0);
-            log.put(key, new LogValue(bucket, bucket));
+            writer.put(key, new LogValue(bucket, bucket));
         }
 
-        bucket = new RevisionRootBucket(newBucketKey, 0, 0);
+        RevisionRootBucket revBucket = new RevisionRootBucket(newBucketKey, 0, 0);
 
         newBucketKey = uberBucket.incrementBucketCounter();
         // establishing fresh NameBucket
         MetaBucket nameBucket = new MetaBucket(newBucketKey);
-        bucket.setReferenceKey(RevisionRootBucket.NAME_REFERENCE_OFFSET, newBucketKey);
+        revBucket.setReferenceKey(RevisionRootBucket.NAME_REFERENCE_OFFSET, newBucketKey);
         LogKey key = new LogKey(false, -1, -1);
-        log.put(key, new LogValue(nameBucket, nameBucket));
+        writer.put(key, new LogValue(nameBucket, nameBucket));
 
         newBucketKey = uberBucket.incrementBucketCounter();
         IndirectBucket indirectBucket = new IndirectBucket(newBucketKey);
-        bucket.setReferenceKey(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET, newBucketKey);
+        revBucket.setReferenceKey(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET, newBucketKey);
         key = new LogKey(false, -1, 0);
-        log.put(key, new LogValue(bucket, bucket));
+        writer.put(key, new LogValue(revBucket, revBucket));
 
         // --- Create node tree
         // ----------------------------------------------------
@@ -390,26 +393,15 @@ public final class Storage implements IStorage {
             newBucketKey = uberBucket.incrementBucketCounter();
             bucket.setReferenceKey(0, newBucketKey);
             key = new LogKey(false, i, 0);
-            log.put(key, new LogValue(bucket, bucket));
+            writer.put(key, new LogValue(bucket, bucket));
             bucket = new IndirectBucket(newBucketKey);
         }
 
         final NodeBucket ndp = new NodeBucket(newBucketKey, IConstants.NULL_NODE);
         key = new LogKey(false, IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length, 0);
-        log.put(key, new LogValue(ndp, ndp));
+        writer.put(key, new LogValue(ndp, ndp));
 
-        IBackend storage = pResourceConf.mBackend;
-        storage.initialize();
-        IBackendWriter writer = storage.getWriter();
-
-        writer.writeUberBucket(uberBucket);
-
-        Iterator<LogValue> entries = log.getIterator();
-        while (entries.hasNext()) {
-            LogValue next = entries.next();
-            writer.write(next.getModified());
-        }
-        log.close();
+        writer.commit(uberBucket, nameBucket, revBucket);
         writer.close();
         storage.close();
 

@@ -16,7 +16,7 @@ import org.treetank.CoreTestHelper;
 import org.treetank.bucket.IConstants;
 import org.treetank.bucket.NodeBucket;
 import org.treetank.exception.TTByteHandleException;
-import org.treetank.log.LogValue;
+import org.treetank.io.LogValue;
 
 /**
  * Test for {@link IRevisioning}-interface.

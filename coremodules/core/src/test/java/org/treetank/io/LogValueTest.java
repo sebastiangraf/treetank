@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.treetank.log;
+package org.treetank.io;
 
 import static org.testng.AssertJUnit.assertEquals;
 
@@ -18,7 +18,8 @@ import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFact
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.bucket.IConstants;
 import org.treetank.exception.TTException;
-import org.treetank.log.LogValue.LogValueBinding;
+import org.treetank.io.LogValue;
+import org.treetank.io.LogValue.LogValueBinding;
 
 import com.google.inject.Inject;
 import com.sleepycat.bind.tuple.TupleInput;

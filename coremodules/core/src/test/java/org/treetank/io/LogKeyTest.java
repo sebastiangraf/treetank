@@ -1,13 +1,14 @@
 /**
  * 
  */
-package org.treetank.log;
+package org.treetank.io;
 
 import static org.testng.AssertJUnit.assertEquals;
 
 import org.testng.annotations.Test;
 import org.treetank.CoreTestHelper;
-import org.treetank.log.LogKey.LogKeyBinding;
+import org.treetank.io.LogKey;
+import org.treetank.io.LogKey.LogKeyBinding;
 
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
