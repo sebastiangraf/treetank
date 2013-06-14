@@ -2,6 +2,12 @@ package org.treetank.io;
 
 import java.io.File;
 import java.util.Iterator;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;
@@ -22,6 +28,10 @@ public class BackendWriterProxy implements IBackendReader {
     private final INodeFactory mNodeFac;
     private final IMetaEntryFactory mMetaFac;
 
+    private LRULog mFormerLog;
+    private final ExecutorService mExec;
+    private Future<Void> mRunningTask;
+
     public BackendWriterProxy(final IBackendWriter pWriter, final File pPathToLog,
         final INodeFactory pNodeFac, final IMetaEntryFactory pMetaFac) throws TTIOException {
         mWriter = pWriter;
@@ -29,20 +39,39 @@ public class BackendWriterProxy implements IBackendReader {
         mNodeFac = pNodeFac;
         mMetaFac = pMetaFac;
         mLog = new LRULog(mPathToLog, mNodeFac, mMetaFac);
+        mExec = Executors.newSingleThreadExecutor();
+
     }
 
     public void commit(final UberBucket pUber, final MetaBucket pMeta, final RevisionRootBucket pRev)
         throws TTException {
-        Iterator<LogValue> entries = mLog.getIterator();
-        while (entries.hasNext()) {
-            LogValue next = entries.next();
-            mWriter.write(next.getModified());
+        try {
+            // blocking already running tasks
+            if (mRunningTask != null && !mRunningTask.isDone()) {
+                mRunningTask.get();
+            }
+            mRunningTask = mExec.submit(new Callable<Void>() {
+
+                @Override
+                public Void call() throws Exception {
+                    Iterator<LogValue> entries = mLog.getIterator();
+                    while (entries.hasNext()) {
+                        LogValue next = entries.next();
+                        mWriter.write(next.getModified());
+                    }
+                    mWriter.write(pMeta);
+                    mWriter.write(pRev);
+                    mWriter.writeUberBucket(pUber);
+                    mLog.close();
+                    return null;
+                }
+            });
+            mRunningTask.get();
+            mLog = new LRULog(mPathToLog, mNodeFac, mMetaFac);
+
+        } catch (final InterruptedException | ExecutionException exc) {
+            throw new TTIOException(exc);
         }
-        mWriter.write(pMeta);
-        mWriter.write(pRev);
-        mWriter.writeUberBucket(pUber);
-        mLog.close();
-        mLog = new LRULog(mPathToLog, mNodeFac, mMetaFac);
     }
 
     public void put(final LogKey pKey, final LogValue pValue) throws TTIOException {
@@ -72,6 +101,12 @@ public class BackendWriterProxy implements IBackendReader {
             mLog.close();
         } catch (IllegalStateException e) {
             // Do nothing
+        }
+        mExec.shutdown();
+        try {
+            mExec.awaitTermination(300, TimeUnit.SECONDS);
+        } catch (InterruptedException exc) {
+            throw new TTIOException(exc);
         }
         mWriter.close();
     }
