@@ -50,11 +50,13 @@ public class BackendWriterProxy implements IBackendReader {
             if (mRunningTask != null && !mRunningTask.isDone()) {
                 mRunningTask.get();
             }
+            mFormerLog = mLog;
+            mLog = new LRULog(mPathToLog, mNodeFac, mMetaFac);
             mRunningTask = mExec.submit(new Callable<Void>() {
 
                 @Override
                 public Void call() throws Exception {
-                    Iterator<LogValue> entries = mLog.getIterator();
+                    Iterator<LogValue> entries = mFormerLog.getIterator();
                     while (entries.hasNext()) {
                         LogValue next = entries.next();
                         mWriter.write(next.getModified());
@@ -62,13 +64,13 @@ public class BackendWriterProxy implements IBackendReader {
                     mWriter.write(pMeta);
                     mWriter.write(pRev);
                     mWriter.writeUberBucket(pUber);
-                    mLog.close();
+                    mFormerLog.close();
+
                     return null;
                 }
             });
             mRunningTask.get();
-            mLog = new LRULog(mPathToLog, mNodeFac, mMetaFac);
-
+            
         } catch (final InterruptedException | ExecutionException exc) {
             throw new TTIOException(exc);
         }
@@ -79,7 +81,11 @@ public class BackendWriterProxy implements IBackendReader {
     }
 
     public LogValue get(final LogKey pKey) throws TTIOException {
-        return mLog.get(pKey);
+        LogValue val = mLog.get(pKey);
+        if (val == null && mFormerLog.isClosed()) {
+            val = mFormerLog.get(pKey);
+        }
+        return val;
     }
 
     @Override
@@ -94,13 +100,8 @@ public class BackendWriterProxy implements IBackendReader {
 
     @Override
     public void close() throws TTIOException {
-        try {
-            // Try to close the log.
-            // It may already be closed if a commit
-            // was the last operation.
+        if (!mLog.isClosed()) {
             mLog.close();
-        } catch (IllegalStateException e) {
-            // Do nothing
         }
         mExec.shutdown();
         try {
