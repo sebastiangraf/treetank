@@ -106,7 +106,7 @@ public class BucketReadTrx implements IBucketReadTrx {
         mRootBucket = pRevBucket;
         mMetaBucket =
             (MetaBucket)mBucketReader
-                .read(mRootBucket.getReferenceKeys()[RevisionRootBucket.NAME_REFERENCE_OFFSET]);
+                .read(mRootBucket.getReferenceKeys()[RevisionRootBucket.META_REFERENCE_OFFSET]);
         mClose = false;
     }
 

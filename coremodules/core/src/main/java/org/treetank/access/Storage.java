@@ -371,7 +371,7 @@ public final class Storage implements IStorage {
         newBucketKey = uberBucket.incrementBucketCounter();
         // establishing fresh MetaBucket
         MetaBucket metaBucker = new MetaBucket(newBucketKey);
-        revBucket.setReferenceKey(RevisionRootBucket.NAME_REFERENCE_OFFSET, newBucketKey);
+        revBucket.setReferenceKey(RevisionRootBucket.META_REFERENCE_OFFSET, newBucketKey);
 
         newBucketKey = uberBucket.incrementBucketCounter();
         IndirectBucket indirectBucket = new IndirectBucket(newBucketKey);
