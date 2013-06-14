@@ -346,7 +346,6 @@ public final class Storage implements IStorage {
             new BackendWriterProxy(storage.getWriter(), new File(pResourceConf.mProperties
                 .getProperty(org.treetank.access.conf.ConstructorProps.RESOURCEPATH)),
                 pResourceConf.mNodeFac, pResourceConf.mMetaFac);
-        writer.setNewLog();
 
         UberBucket uberBucket = new UberBucket(1, 0, 2);
         long newBucketKey = uberBucket.incrementBucketCounter();

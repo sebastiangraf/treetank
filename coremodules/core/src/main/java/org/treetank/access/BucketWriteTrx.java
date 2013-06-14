@@ -382,7 +382,6 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
 
     private void setUpTransaction(final UberBucket pUberBucket, final ISession pSession,
         final long pRepresentRev, final BackendWriterProxy pWriter) throws TTException {
-        mBucketWriter.setNewLog();
 
         mNewUber =
             new UberBucket(pUberBucket.incrementBucketCounter(), pUberBucket.getRevisionNumber() + 1,

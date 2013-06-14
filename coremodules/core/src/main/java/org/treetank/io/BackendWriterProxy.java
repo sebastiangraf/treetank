@@ -1,6 +1,7 @@
 package org.treetank.io;
 
 import java.io.File;
+import java.util.Iterator;
 
 import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;
@@ -18,8 +19,6 @@ public class BackendWriterProxy implements IBackendReader {
 
     private LRULog mLog;
 
-    private final ICommitStrategy mCommitStrategy;
-
     private final INodeFactory mNodeFac;
     private final IMetaEntryFactory mMetaFac;
 
@@ -29,13 +28,21 @@ public class BackendWriterProxy implements IBackendReader {
         mPathToLog = pPathToLog;
         mNodeFac = pNodeFac;
         mMetaFac = pMetaFac;
-        mCommitStrategy = new ICommitStrategy.BlockingCommit(mWriter);
+        mLog = new LRULog(mPathToLog, mNodeFac, mMetaFac);
     }
 
     public void commit(final UberBucket pUber, final MetaBucket pMeta, final RevisionRootBucket pRev)
         throws TTException {
-        mCommitStrategy.execute(pUber, pMeta, pRev);
+        Iterator<LogValue> entries = mLog.getIterator();
+        while (entries.hasNext()) {
+            LogValue next = entries.next();
+            mWriter.write(next.getModified());
+        }
+        mWriter.write(pMeta);
+        mWriter.write(pRev);
+        mWriter.writeUberBucket(pUber);
         mLog.close();
+        mLog = new LRULog(mPathToLog, mNodeFac, mMetaFac);
     }
 
     public void put(final LogKey pKey, final LogValue pValue) throws TTIOException {
@@ -44,11 +51,6 @@ public class BackendWriterProxy implements IBackendReader {
 
     public LogValue get(final LogKey pKey) throws TTIOException {
         return mLog.get(pKey);
-    }
-
-    public void setNewLog() throws TTIOException {
-        mLog = new LRULog(mPathToLog, mNodeFac, mMetaFac);
-        mCommitStrategy.setLog(mLog);
     }
 
     @Override
