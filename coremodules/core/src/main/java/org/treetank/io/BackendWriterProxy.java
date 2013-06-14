@@ -18,6 +18,8 @@ import org.treetank.bucket.interfaces.IBucket;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 
+import com.sleepycat.je.dbi.GetMode;
+
 public class BackendWriterProxy implements IBackendReader {
 
     private final IBackendWriter mWriter;
@@ -40,7 +42,7 @@ public class BackendWriterProxy implements IBackendReader {
         mMetaFac = pMetaFac;
         mLog = new LRULog(mPathToLog, mNodeFac, mMetaFac);
         mExec = Executors.newSingleThreadExecutor();
-
+        mFormerLog = mLog;
     }
 
     public void commit(final UberBucket pUber, final MetaBucket pMeta, final RevisionRootBucket pRev)
@@ -82,7 +84,7 @@ public class BackendWriterProxy implements IBackendReader {
 
     public LogValue get(final LogKey pKey) throws TTIOException {
         LogValue val = mLog.get(pKey);
-        if (val == null && mFormerLog.isClosed()) {
+        if (val.getModified() == null) {
             val = mFormerLog.get(pKey);
         }
         return val;

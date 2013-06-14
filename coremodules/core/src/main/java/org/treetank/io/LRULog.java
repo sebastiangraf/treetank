@@ -184,7 +184,10 @@ final class LRULog {
      * @return a suitable {@link LogValue} if present, false otherwise
      * @throws TTIOException
      */
-    public LogValue get(final LogKey pKey) throws TTIOException {
+    public synchronized LogValue get(final LogKey pKey) throws TTIOException {
+        if (isClosed()) {
+            return new LogValue(null, null);
+        }
         LogValue val = mCache.getIfPresent(pKey);
         if (val == null) {
             final DatabaseEntry valueEntry = new DatabaseEntry();
@@ -226,14 +229,15 @@ final class LRULog {
      * 
      * @throws TTIOException
      */
-    public void close() throws TTIOException {
+    public synchronized void close() throws TTIOException {
         try {
+            mClosed = true;
             mDatabase.close();
             mEnv.removeDatabase(null, NAME + mSelected_db);
             mEnv.close();
             IOUtils.recursiveDelete(mLocation);
             mLocation.mkdir();
-            mClosed = true;
+
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
         }
@@ -244,7 +248,7 @@ final class LRULog {
      * 
      * @return if log is closed.
      */
-    public boolean isClosed() {
+    public synchronized boolean isClosed() {
         return mClosed;
     }
 
