@@ -70,7 +70,7 @@ public class BackendWriterProxy implements IBackendReader {
                 }
             });
             mRunningTask.get();
-            
+
         } catch (final InterruptedException | ExecutionException exc) {
             throw new TTIOException(exc);
         }

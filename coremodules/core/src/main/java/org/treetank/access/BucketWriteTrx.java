@@ -389,7 +389,11 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         mNewUber.setReferenceKey(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET,
             pUberBucket.getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET]);
 
-        mDelegate = new BucketReadTrx(pSession, pUberBucket, pRepresentRev, pWriter);
+        final RevisionRootBucket revBucket =
+            (RevisionRootBucket)pWriter.read(BucketReadTrx.dereferenceLeafOfTree(pWriter, mNewUber
+                .getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET], pRepresentRev));
+
+        mDelegate = new BucketReadTrx(pSession, pUberBucket, revBucket, pWriter);
 
         // Get previous revision root bucket..
         final RevisionRootBucket previousRevRoot = mDelegate.mRootBucket;
