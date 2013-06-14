@@ -91,23 +91,22 @@ public class BucketReadTrx implements IBucketReadTrx {
      *            State of state.
      * @param pUberBucket
      *            Uber bucket to start reading with.
-     * @param pRevKey
-     *            Key of revision to read from uber bucket.
+     * @param pRevBucket
+     *            RevisionBucket with reference from either log to commit or persistent memory.
      * @param pReader
      *            for this transaction
      * @throws TTIOException
      *             if the read of the persistent storage fails
      */
-    protected BucketReadTrx(final ISession pSession, final UberBucket pUberBucket, final long pRevKey,
-        final IBackendReader pReader) throws TTException {
+    protected BucketReadTrx(final ISession pSession, final UberBucket pUberBucket,
+        final RevisionRootBucket pRevBucket, final IBackendReader pReader) throws TTException {
         mSession = pSession;
         mBucketReader = pReader;
         mUberBucket = pUberBucket;
-        mRootBucket =
-            (RevisionRootBucket)mBucketReader.read(dereferenceLeafOfTree(mBucketReader, mUberBucket
-                .getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET], pRevKey));
+        mRootBucket = pRevBucket;
         mMetaBucket =
-            (MetaBucket)mBucketReader.read(mRootBucket.getReferenceKeys()[RevisionRootBucket.NAME_REFERENCE_OFFSET]);
+            (MetaBucket)mBucketReader
+                .read(mRootBucket.getReferenceKeys()[RevisionRootBucket.META_REFERENCE_OFFSET]);
         mClose = false;
     }
 
@@ -284,7 +283,7 @@ public class BucketReadTrx implements IBucketReadTrx {
         long bucketKey = pStartKey;
         IndirectBucket bucket = null;
         // Iterate through all levels...
-        
+
         for (int level = 0; level < orderNumber.length; level++) {
             // ..read the buckets and..
             bucket = (IndirectBucket)pReader.read(bucketKey);
@@ -305,8 +304,8 @@ public class BucketReadTrx implements IBucketReadTrx {
      */
     @Override
     public String toString() {
-        return toStringHelper(this).add("mBucketReader", mBucketReader).add("mBucketReader", mUberBucket).add(
-            "mRootBucket", mRootBucket).add("mClose", mClose).toString();
+        return toStringHelper(this).add("mBucketReader", mBucketReader).add("mBucketReader", mUberBucket)
+            .add("mRootBucket", mRootBucket).add("mClose", mClose).toString();
     }
 
 }

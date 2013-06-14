@@ -42,8 +42,11 @@ import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.api.IBucketReadTrx;
 import org.treetank.api.IBucketWriteTrx;
 import org.treetank.api.ISession;
+import org.treetank.bucket.RevisionRootBucket;
 import org.treetank.bucket.UberBucket;
+import org.treetank.bucket.interfaces.IReferenceBucket;
 import org.treetank.exception.TTException;
+import org.treetank.io.IBackendReader;
 import org.treetank.io.IBackendWriter;
 import org.treetank.io.IOUtils;
 
@@ -104,8 +107,12 @@ public final class Session implements ISession {
 
     public IBucketReadTrx beginBucketRtx(final long pRevKey) throws TTException {
         assertAccess(pRevKey);
-        final BucketReadTrx trx =
-            new BucketReadTrx(this, mLastCommittedUberBucket, pRevKey, mResourceConfig.mBackend.getReader());
+        final IBackendReader bucketReader = mResourceConfig.mBackend.getReader();
+        final RevisionRootBucket revBucket =
+            (RevisionRootBucket)bucketReader.read(BucketReadTrx.dereferenceLeafOfTree(bucketReader,
+                mLastCommittedUberBucket.getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET],
+                pRevKey));
+        final BucketReadTrx trx = new BucketReadTrx(this, mLastCommittedUberBucket, revBucket, bucketReader);
         mBucketTrxs.add(trx);
         return trx;
     }
@@ -134,7 +141,7 @@ public final class Session implements ISession {
             // Forcibly close all open transactions.
             for (final IBucketReadTrx rtx : mBucketTrxs) {
                 // If the transaction is a WriteTrx, clear log aswell..
-                if(rtx instanceof BucketWriteTrx){
+                if (rtx instanceof BucketWriteTrx) {
                     ((BucketWriteTrx)rtx).clearLog();
                 }
                 rtx.close();

@@ -109,9 +109,14 @@ final class LRULog {
     /** Location to the BDB. */
     private final transient File mLocation;
 
+    /** Transient cache for buffering buckets. */
     private final Cache<LogKey, LogValue> mCache;
 
+    /** DB to select to support non-blocking writes. */
     private int mSelected_db;
+
+    /** Flag if closed. */
+    private boolean mClosed;
 
     /**
      * Creates a new LRU cache.
@@ -127,12 +132,14 @@ final class LRULog {
      */
     LRULog(final File pFile, final INodeFactory pNodeFac, final IMetaEntryFactory pMetaFac)
         throws TTIOException {
+        mClosed = false;
         mKeyBinding = new LogKeyBinding();
         mValueBinding = new LogValueBinding(pNodeFac, pMetaFac);
         mSelected_db = 1;
 
         if (new File(pFile, ResourceConfiguration.Paths.TransactionLog.getFile().getName()).list().length > 0) {
             mLocation = new File(pFile, "_" + ResourceConfiguration.Paths.TransactionLog.getFile().getName());
+            mLocation.mkdirs();
             mSelected_db = 2;
         } else {
             mLocation = new File(pFile, ResourceConfiguration.Paths.TransactionLog.getFile().getName());
@@ -177,7 +184,10 @@ final class LRULog {
      * @return a suitable {@link LogValue} if present, false otherwise
      * @throws TTIOException
      */
-    public LogValue get(final LogKey pKey) throws TTIOException {
+    public synchronized LogValue get(final LogKey pKey) throws TTIOException {
+        if (isClosed()) {
+            return new LogValue(null, null);
+        }
         LogValue val = mCache.getIfPresent(pKey);
         if (val == null) {
             final DatabaseEntry valueEntry = new DatabaseEntry();
@@ -219,16 +229,27 @@ final class LRULog {
      * 
      * @throws TTIOException
      */
-    public void close() throws TTIOException {
+    public synchronized void close() throws TTIOException {
         try {
+            mClosed = true;
             mDatabase.close();
             mEnv.removeDatabase(null, NAME + mSelected_db);
             mEnv.close();
             IOUtils.recursiveDelete(mLocation);
             mLocation.mkdir();
+
         } catch (final DatabaseException exc) {
             throw new TTIOException(exc);
         }
+    }
+
+    /**
+     * Check if log is closed or not.
+     * 
+     * @return if log is closed.
+     */
+    public synchronized boolean isClosed() {
+        return mClosed;
     }
 
     /**

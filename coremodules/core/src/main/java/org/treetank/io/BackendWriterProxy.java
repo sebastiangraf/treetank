@@ -1,6 +1,13 @@
 package org.treetank.io;
 
 import java.io.File;
+import java.util.Iterator;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;
@@ -11,6 +18,8 @@ import org.treetank.bucket.interfaces.IBucket;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 
+import com.sleepycat.je.dbi.GetMode;
+
 public class BackendWriterProxy implements IBackendReader {
 
     private final IBackendWriter mWriter;
@@ -18,10 +27,12 @@ public class BackendWriterProxy implements IBackendReader {
 
     private LRULog mLog;
 
-    private final ICommitStrategy mCommitStrategy;
-
     private final INodeFactory mNodeFac;
     private final IMetaEntryFactory mMetaFac;
+
+    private LRULog mFormerLog;
+    private final ExecutorService mExec;
+    private Future<Void> mRunningTask;
 
     public BackendWriterProxy(final IBackendWriter pWriter, final File pPathToLog,
         final INodeFactory pNodeFac, final IMetaEntryFactory pMetaFac) throws TTIOException {
@@ -29,13 +40,42 @@ public class BackendWriterProxy implements IBackendReader {
         mPathToLog = pPathToLog;
         mNodeFac = pNodeFac;
         mMetaFac = pMetaFac;
-        mCommitStrategy = new ICommitStrategy.BlockingCommit(mWriter);
+        mLog = new LRULog(mPathToLog, mNodeFac, mMetaFac);
+        mExec = Executors.newSingleThreadExecutor();
+        mFormerLog = mLog;
     }
 
     public void commit(final UberBucket pUber, final MetaBucket pMeta, final RevisionRootBucket pRev)
         throws TTException {
-        mCommitStrategy.execute(pUber, pMeta, pRev);
-        mLog.close();
+        try {
+            // blocking already running tasks
+            if (mRunningTask != null && !mRunningTask.isDone()) {
+                mRunningTask.get();
+            }
+            mFormerLog = mLog;
+            mLog = new LRULog(mPathToLog, mNodeFac, mMetaFac);
+            mRunningTask = mExec.submit(new Callable<Void>() {
+
+                @Override
+                public Void call() throws Exception {
+                    Iterator<LogValue> entries = mFormerLog.getIterator();
+                    while (entries.hasNext()) {
+                        LogValue next = entries.next();
+                        mWriter.write(next.getModified());
+                    }
+                    mWriter.write(pMeta);
+                    mWriter.write(pRev);
+                    mWriter.writeUberBucket(pUber);
+                    mFormerLog.close();
+
+                    return null;
+                }
+            });
+            mRunningTask.get();
+
+        } catch (final InterruptedException | ExecutionException exc) {
+            throw new TTIOException(exc);
+        }
     }
 
     public void put(final LogKey pKey, final LogValue pValue) throws TTIOException {
@@ -43,12 +83,11 @@ public class BackendWriterProxy implements IBackendReader {
     }
 
     public LogValue get(final LogKey pKey) throws TTIOException {
-        return mLog.get(pKey);
-    }
-
-    public void setNewLog() throws TTIOException {
-        mLog = new LRULog(mPathToLog, mNodeFac, mMetaFac);
-        mCommitStrategy.setLog(mLog);
+        LogValue val = mLog.get(pKey);
+        if (val.getModified() == null) {
+            val = mFormerLog.get(pKey);
+        }
+        return val;
     }
 
     @Override
@@ -63,13 +102,14 @@ public class BackendWriterProxy implements IBackendReader {
 
     @Override
     public void close() throws TTIOException {
-        try {
-            // Try to close the log.
-            // It may already be closed if a commit
-            // was the last operation.
+        if (!mLog.isClosed()) {
             mLog.close();
-        } catch (IllegalStateException e) {
-            // Do nothing
+        }
+        mExec.shutdown();
+        try {
+            mExec.awaitTermination(300, TimeUnit.SECONDS);
+        } catch (InterruptedException exc) {
+            throw new TTIOException(exc);
         }
         mWriter.close();
     }

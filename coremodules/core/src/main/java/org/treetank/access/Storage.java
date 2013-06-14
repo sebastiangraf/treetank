@@ -346,7 +346,6 @@ public final class Storage implements IStorage {
             new BackendWriterProxy(storage.getWriter(), new File(pResourceConf.mProperties
                 .getProperty(org.treetank.access.conf.ConstructorProps.RESOURCEPATH)),
                 pResourceConf.mNodeFac, pResourceConf.mMetaFac);
-        writer.setNewLog();
 
         UberBucket uberBucket = new UberBucket(1, 0, 2);
         long newBucketKey = uberBucket.incrementBucketCounter();
@@ -358,28 +357,25 @@ public final class Storage implements IStorage {
         // bucket.
 
         IReferenceBucket bucket;
+        LogKey key;
         for (int i = 0; i < IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length; i++) {
             bucket = new IndirectBucket(newBucketKey);
             newBucketKey = uberBucket.incrementBucketCounter();
             bucket.setReferenceKey(0, newBucketKey);
-            LogKey key = new LogKey(true, i, 0);
+            key = new LogKey(true, i, 0);
             writer.put(key, new LogValue(bucket, bucket));
         }
 
         RevisionRootBucket revBucket = new RevisionRootBucket(newBucketKey, 0, 0);
 
         newBucketKey = uberBucket.incrementBucketCounter();
-        // establishing fresh NameBucket
-        MetaBucket nameBucket = new MetaBucket(newBucketKey);
-        revBucket.setReferenceKey(RevisionRootBucket.NAME_REFERENCE_OFFSET, newBucketKey);
-        LogKey key = new LogKey(false, -1, -1);
-        writer.put(key, new LogValue(nameBucket, nameBucket));
+        // establishing fresh MetaBucket
+        MetaBucket metaBucker = new MetaBucket(newBucketKey);
+        revBucket.setReferenceKey(RevisionRootBucket.META_REFERENCE_OFFSET, newBucketKey);
 
         newBucketKey = uberBucket.incrementBucketCounter();
         IndirectBucket indirectBucket = new IndirectBucket(newBucketKey);
         revBucket.setReferenceKey(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET, newBucketKey);
-        key = new LogKey(false, -1, 0);
-        writer.put(key, new LogValue(revBucket, revBucket));
 
         // --- Create node tree
         // ----------------------------------------------------
@@ -401,7 +397,7 @@ public final class Storage implements IStorage {
         key = new LogKey(false, IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length, 0);
         writer.put(key, new LogValue(ndp, ndp));
 
-        writer.commit(uberBucket, nameBucket, revBucket);
+        writer.commit(uberBucket, metaBucker, revBucket);
         writer.close();
         storage.close();
 

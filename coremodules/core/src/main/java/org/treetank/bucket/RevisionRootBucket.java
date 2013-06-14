@@ -51,7 +51,7 @@ import org.treetank.exception.TTIOException;
 public final class RevisionRootBucket implements IRevisionBucket, IReferenceBucket {
 
     /** Offset of name bucket reference. */
-    public static final int NAME_REFERENCE_OFFSET = 1;
+    public static final int META_REFERENCE_OFFSET = 1;
 
     /** Last allocated node key. */
     private long mMaxNodeKey;

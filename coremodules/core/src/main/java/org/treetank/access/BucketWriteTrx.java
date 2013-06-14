@@ -101,7 +101,14 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
             new BackendWriterProxy(pWriter, new File(pSession.getConfig().mProperties
                 .getProperty(org.treetank.access.conf.ConstructorProps.RESOURCEPATH)),
                 pSession.getConfig().mNodeFac, pSession.getConfig().mMetaFac);
-        setUpTransaction(pUberBucket, pSession, pRepresentRev, mBucketWriter);
+
+        final RevisionRootBucket revBucket =
+            (RevisionRootBucket)pWriter.read(BucketReadTrx.dereferenceLeafOfTree(pWriter, pUberBucket
+                .getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET], pRepresentRev));
+        final MetaBucket metaBucket =
+            (MetaBucket)pWriter.read(revBucket.getReferenceKeys()[RevisionRootBucket.META_REFERENCE_OFFSET]);
+
+        setUpTransaction(pUberBucket, revBucket, metaBucket, pSession, pRepresentRev, mBucketWriter);
     }
 
     /**
@@ -176,7 +183,8 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
 
         mBucketWriter.commit(mNewUber, mNewMeta, mNewRoot);
         ((Session)mDelegate.mSession).setLastCommittedUberBucket(mNewUber);
-        setUpTransaction(mNewUber, mDelegate.mSession, mNewUber.getRevisionNumber(), mBucketWriter);
+        setUpTransaction(mNewUber, mNewRoot, mNewMeta, mDelegate.mSession, mNewUber.getRevisionNumber(),
+            mBucketWriter);
 
     }
 
@@ -380,9 +388,9 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         return key;
     }
 
-    private void setUpTransaction(final UberBucket pUberBucket, final ISession pSession,
-        final long pRepresentRev, final BackendWriterProxy pWriter) throws TTException {
-        mBucketWriter.setNewLog();
+    private void setUpTransaction(final UberBucket pUberBucket, final RevisionRootBucket pRevRoot,
+        final MetaBucket pMetaOld, final ISession pSession, final long pRepresentRev,
+        final BackendWriterProxy pWriter) throws TTException {
 
         mNewUber =
             new UberBucket(pUberBucket.incrementBucketCounter(), pUberBucket.getRevisionNumber() + 1,
@@ -390,7 +398,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         mNewUber.setReferenceKey(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET,
             pUberBucket.getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET]);
 
-        mDelegate = new BucketReadTrx(pSession, pUberBucket, pRepresentRev, pWriter);
+        mDelegate = new BucketReadTrx(pSession, pUberBucket, pRevRoot, pWriter);
 
         // Get previous revision root bucket..
         final RevisionRootBucket previousRevRoot = mDelegate.mRootBucket;
@@ -410,14 +418,14 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         mBucketWriter.put(indirectKey, indirectContainer);
 
         // Setting up a new metabucket
-        Map<IMetaEntry, IMetaEntry> oldMap = mDelegate.mMetaBucket.getMetaMap();
+        Map<IMetaEntry, IMetaEntry> oldMap = pMetaOld.getMetaMap();
         mNewMeta = new MetaBucket(mNewUber.incrementBucketCounter());
 
         for (IMetaEntry key : oldMap.keySet()) {
             mNewMeta.setEntry(key, oldMap.get(key));
         }
 
-        mNewRoot.setReferenceKey(RevisionRootBucket.NAME_REFERENCE_OFFSET, mNewMeta.getBucketKey());
+        mNewRoot.setReferenceKey(RevisionRootBucket.META_REFERENCE_OFFSET, mNewMeta.getBucketKey());
 
     }
 

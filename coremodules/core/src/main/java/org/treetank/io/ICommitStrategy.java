@@ -19,6 +19,7 @@ import org.treetank.exception.TTIOException;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
+@Deprecated
 public interface ICommitStrategy {
 
     public void execute(final UberBucket pUber, final MetaBucket pMeta, final RevisionRootBucket pRev)
