@@ -357,28 +357,25 @@ public final class Storage implements IStorage {
         // bucket.
 
         IReferenceBucket bucket;
+        LogKey key;
         for (int i = 0; i < IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length; i++) {
             bucket = new IndirectBucket(newBucketKey);
             newBucketKey = uberBucket.incrementBucketCounter();
             bucket.setReferenceKey(0, newBucketKey);
-            LogKey key = new LogKey(true, i, 0);
+            key = new LogKey(true, i, 0);
             writer.put(key, new LogValue(bucket, bucket));
         }
 
         RevisionRootBucket revBucket = new RevisionRootBucket(newBucketKey, 0, 0);
 
         newBucketKey = uberBucket.incrementBucketCounter();
-        // establishing fresh NameBucket
-        MetaBucket nameBucket = new MetaBucket(newBucketKey);
+        // establishing fresh MetaBucket
+        MetaBucket metaBucker = new MetaBucket(newBucketKey);
         revBucket.setReferenceKey(RevisionRootBucket.NAME_REFERENCE_OFFSET, newBucketKey);
-        LogKey key = new LogKey(false, -1, -1);
-        writer.put(key, new LogValue(nameBucket, nameBucket));
 
         newBucketKey = uberBucket.incrementBucketCounter();
         IndirectBucket indirectBucket = new IndirectBucket(newBucketKey);
         revBucket.setReferenceKey(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET, newBucketKey);
-        key = new LogKey(false, -1, 0);
-        writer.put(key, new LogValue(revBucket, revBucket));
 
         // --- Create node tree
         // ----------------------------------------------------
@@ -400,7 +397,7 @@ public final class Storage implements IStorage {
         key = new LogKey(false, IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length, 0);
         writer.put(key, new LogValue(ndp, ndp));
 
-        writer.commit(uberBucket, nameBucket, revBucket);
+        writer.commit(uberBucket, metaBucker, revBucket);
         writer.close();
         storage.close();
 
