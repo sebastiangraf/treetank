@@ -101,7 +101,12 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
             new BackendWriterProxy(pWriter, new File(pSession.getConfig().mProperties
                 .getProperty(org.treetank.access.conf.ConstructorProps.RESOURCEPATH)),
                 pSession.getConfig().mNodeFac, pSession.getConfig().mMetaFac);
-        setUpTransaction(pUberBucket, pSession, pRepresentRev, mBucketWriter);
+
+        final RevisionRootBucket revBucket =
+            (RevisionRootBucket)pWriter.read(BucketReadTrx.dereferenceLeafOfTree(pWriter, pUberBucket
+                .getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET], pRepresentRev));
+
+        setUpTransaction(pUberBucket, revBucket, pSession, pRepresentRev, mBucketWriter);
     }
 
     /**
@@ -176,7 +181,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
 
         mBucketWriter.commit(mNewUber, mNewMeta, mNewRoot);
         ((Session)mDelegate.mSession).setLastCommittedUberBucket(mNewUber);
-        setUpTransaction(mNewUber, mDelegate.mSession, mNewUber.getRevisionNumber(), mBucketWriter);
+        setUpTransaction(mNewUber, mNewRoot, mDelegate.mSession, mNewUber.getRevisionNumber(), mBucketWriter);
 
     }
 
@@ -380,8 +385,9 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         return key;
     }
 
-    private void setUpTransaction(final UberBucket pUberBucket, final ISession pSession,
-        final long pRepresentRev, final BackendWriterProxy pWriter) throws TTException {
+    private void setUpTransaction(final UberBucket pUberBucket, final RevisionRootBucket pRevRoot,
+        final ISession pSession, final long pRepresentRev, final BackendWriterProxy pWriter)
+        throws TTException {
 
         mNewUber =
             new UberBucket(pUberBucket.incrementBucketCounter(), pUberBucket.getRevisionNumber() + 1,
@@ -389,11 +395,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         mNewUber.setReferenceKey(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET,
             pUberBucket.getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET]);
 
-        final RevisionRootBucket revBucket =
-            (RevisionRootBucket)pWriter.read(BucketReadTrx.dereferenceLeafOfTree(pWriter, mNewUber
-                .getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET], pRepresentRev));
-
-        mDelegate = new BucketReadTrx(pSession, pUberBucket, revBucket, pWriter);
+        mDelegate = new BucketReadTrx(pSession, pUberBucket, pRevRoot, pWriter);
 
         // Get previous revision root bucket..
         final RevisionRootBucket previousRevRoot = mDelegate.mRootBucket;
