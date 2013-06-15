@@ -93,20 +93,21 @@ public class BucketReadTrx implements IBucketReadTrx {
      *            Uber bucket to start reading with.
      * @param pRevBucket
      *            RevisionBucket with reference from either log to commit or persistent memory.
+     * @param pMetaBucket
+     *            MetaBucket with reference from either log to commit or persistent memory.
      * @param pReader
      *            for this transaction
      * @throws TTIOException
      *             if the read of the persistent storage fails
      */
     protected BucketReadTrx(final ISession pSession, final UberBucket pUberBucket,
-        final RevisionRootBucket pRevBucket, final IBackendReader pReader) throws TTException {
+        final RevisionRootBucket pRevBucket, final MetaBucket pMetaBucket, final IBackendReader pReader)
+        throws TTException {
         mSession = pSession;
         mBucketReader = pReader;
         mUberBucket = pUberBucket;
         mRootBucket = pRevBucket;
-        mMetaBucket =
-            (MetaBucket)mBucketReader
-                .read(mRootBucket.getReferenceKeys()[RevisionRootBucket.META_REFERENCE_OFFSET]);
+        mMetaBucket = pMetaBucket;
         mClose = false;
     }
 
