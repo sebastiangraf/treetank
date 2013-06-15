@@ -43,7 +43,7 @@ public class BackendWriterProxy implements IBackendReader {
         mFormerLog = mLog;
     }
 
-    public void commit(final UberBucket pUber, final MetaBucket pMeta, final RevisionRootBucket pRev)
+    public Future<Void> commit(final UberBucket pUber, final MetaBucket pMeta, final RevisionRootBucket pRev)
         throws TTException {
         try {
             // blocking already running tasks
@@ -70,6 +70,7 @@ public class BackendWriterProxy implements IBackendReader {
                 }
             });
             mRunningTask.get();
+            return mRunningTask;
 
         } catch (final InterruptedException | ExecutionException exc) {
             throw new TTIOException(exc);

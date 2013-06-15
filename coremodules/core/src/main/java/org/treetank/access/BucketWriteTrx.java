@@ -34,6 +34,10 @@ import static org.treetank.access.BucketReadTrx.nodeBucketOffset;
 
 import java.io.File;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.treetank.access.conf.ConstructorProps;
 import org.treetank.api.IBucketWriteTrx;
@@ -79,6 +83,9 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
     /** Delegate for read access. */
     private BucketReadTrx mDelegate;
 
+    /** Executor for tracing commit in progress. */
+    private final ExecutorService mCommitInProgress;
+
     /**
      * Standard constructor.
      * 
@@ -107,6 +114,8 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
                 .getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET], pRepresentRev));
         final MetaBucket metaBucket =
             (MetaBucket)pWriter.read(revBucket.getReferenceKeys()[RevisionRootBucket.META_REFERENCE_OFFSET]);
+
+        mCommitInProgress = Executors.newSingleThreadExecutor();
 
         setUpTransaction(pUberBucket, revBucket, metaBucket, pSession, pRepresentRev, mBucketWriter);
     }
@@ -181,10 +190,20 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
     public void commit() throws TTException {
         checkState(!mDelegate.isClosed(), "Transaction already closed");
 
-        mBucketWriter.commit(mNewUber, mNewMeta, mNewRoot);
-        ((Session)mDelegate.mSession).setLastCommittedUberBucket(mNewUber);
+        final Future<Void> commitInProgress = mBucketWriter.commit(mNewUber, mNewMeta, mNewRoot);
+         ((Session)mDelegate.mSession).setLastCommittedUberBucket(mNewUber);
         setUpTransaction(mNewUber, mNewRoot, mNewMeta, mDelegate.mSession, mNewUber.getRevisionNumber(),
             mBucketWriter);
+
+        Callable<Void> tracingCommit = new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                commitInProgress.get();
+//                ((Session)mDelegate.mSession).setLastCommittedUberBucket(mNewUber);
+                return null;
+            }
+        };
+        mCommitInProgress.submit(tracingCommit);
 
     }
 
@@ -197,7 +216,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
      */
     @Override
     public boolean close() throws TTIOException {
-
+        mCommitInProgress.shutdown();
         if (!mDelegate.isClosed()) {
             mDelegate.close();
 
