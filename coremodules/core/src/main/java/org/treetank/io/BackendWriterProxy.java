@@ -18,8 +18,6 @@ import org.treetank.bucket.interfaces.IBucket;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 
-import com.sleepycat.je.dbi.GetMode;
-
 public class BackendWriterProxy implements IBackendReader {
 
     private final IBackendWriter mWriter;

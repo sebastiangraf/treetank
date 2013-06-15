@@ -42,6 +42,7 @@ import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.api.IBucketReadTrx;
 import org.treetank.api.IBucketWriteTrx;
 import org.treetank.api.ISession;
+import org.treetank.bucket.MetaBucket;
 import org.treetank.bucket.RevisionRootBucket;
 import org.treetank.bucket.UberBucket;
 import org.treetank.bucket.interfaces.IReferenceBucket;
@@ -112,7 +113,11 @@ public final class Session implements ISession {
             (RevisionRootBucket)bucketReader.read(BucketReadTrx.dereferenceLeafOfTree(bucketReader,
                 mLastCommittedUberBucket.getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET],
                 pRevKey));
-        final BucketReadTrx trx = new BucketReadTrx(this, mLastCommittedUberBucket, revBucket, bucketReader);
+        final MetaBucket metaBucket =
+            (MetaBucket)bucketReader
+                .read(revBucket.getReferenceKeys()[RevisionRootBucket.META_REFERENCE_OFFSET]);
+        final BucketReadTrx trx =
+            new BucketReadTrx(this, mLastCommittedUberBucket, revBucket, metaBucket, bucketReader);
         mBucketTrxs.add(trx);
         return trx;
     }
