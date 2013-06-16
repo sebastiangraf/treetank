@@ -35,6 +35,7 @@ import static org.treetank.access.BucketReadTrx.nodeBucketOffset;
 import java.io.File;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -185,25 +186,31 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
     /**
      * 
      * {@inheritDoc}
+     * 
+     * @throws ExecutionException
+     * @throws InterruptedException
      */
     @Override
     public void commit() throws TTException {
         checkState(!mDelegate.isClosed(), "Transaction already closed");
 
         final Future<Void> commitInProgress = mBucketWriter.commit(mNewUber, mNewMeta, mNewRoot);
-         ((Session)mDelegate.mSession).setLastCommittedUberBucket(mNewUber);
-        setUpTransaction(mNewUber, mNewRoot, mNewMeta, mDelegate.mSession, mNewUber.getRevisionNumber(),
-            mBucketWriter);
 
         Callable<Void> tracingCommit = new Callable<Void>() {
             @Override
             public Void call() throws Exception {
                 commitInProgress.get();
-//                ((Session)mDelegate.mSession).setLastCommittedUberBucket(mNewUber);
+                ((Session)mDelegate.mSession).setLastCommittedUberBucket(mNewUber);
                 return null;
             }
         };
-        mCommitInProgress.submit(tracingCommit);
+        try {
+            mCommitInProgress.submit(tracingCommit).get();
+        } catch (InterruptedException | ExecutionException exc) {
+            throw new TTIOException(exc);
+        }
+        setUpTransaction(mNewUber, mNewRoot, mNewMeta, mDelegate.mSession, mNewUber.getRevisionNumber(),
+            mBucketWriter);
 
     }
 
