@@ -50,31 +50,29 @@ public class BackendWriterProxy implements IBackendReader {
             if (mRunningTask != null && !mRunningTask.isDone()) {
                 mRunningTask.get();
             }
-            mFormerLog = mLog;
-            mLog = new LRULog(mPathToLog, mNodeFac, mMetaFac);
-            mRunningTask = mExec.submit(new Callable<Void>() {
-
-                @Override
-                public Void call() throws Exception {
-                    Iterator<LogValue> entries = mFormerLog.getIterator();
-                    while (entries.hasNext()) {
-                        LogValue next = entries.next();
-                        mWriter.write(next.getModified());
-                    }
-                    mWriter.write(pMeta);
-                    mWriter.write(pRev);
-                    mWriter.writeUberBucket(pUber);
-                    mFormerLog.close();
-
-                    return null;
-                }
-            });
-            mRunningTask.get();
-            return mRunningTask;
-
         } catch (final InterruptedException | ExecutionException exc) {
             throw new TTIOException(exc);
         }
+        mFormerLog = mLog;
+        mLog = new LRULog(mPathToLog, mNodeFac, mMetaFac);
+        mRunningTask = mExec.submit(new Callable<Void>() {
+
+            @Override
+            public Void call() throws Exception {
+                Iterator<LogValue> entries = mFormerLog.getIterator();
+                while (entries.hasNext()) {
+                    LogValue next = entries.next();
+                    mWriter.write(next.getModified());
+                }
+                mWriter.write(pMeta);
+                mWriter.write(pRev);
+                mWriter.writeUberBucket(pUber);
+                mFormerLog.close();
+
+                return null;
+            }
+        });
+        return mRunningTask;
     }
 
     public void put(final LogKey pKey, final LogValue pValue) throws TTIOException {

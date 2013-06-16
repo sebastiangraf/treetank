@@ -35,6 +35,7 @@ import java.io.File;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
@@ -70,7 +71,7 @@ public final class Session implements ISession {
     private final Storage mDatabase;
 
     /** Strong reference to uber bucket before the begin of a write transaction. */
-    private UberBucket mLastCommittedUberBucket;
+    private AtomicReference<UberBucket> mLastCommittedUberBucket;
 
     /** Remember the write separately because of the concurrent writes. */
     private final Set<IBucketReadTrx> mBucketTrxs;
@@ -102,7 +103,7 @@ public final class Session implements ISession {
         mSessionConfig = pSessionConf;
         mBucketTrxs = new CopyOnWriteArraySet<IBucketReadTrx>();
         mClosed = false;
-        mLastCommittedUberBucket = pBucket;
+        mLastCommittedUberBucket = new AtomicReference<UberBucket>(pBucket);
         mWriteTransactionUsed = new AtomicBoolean(false);
     }
 
@@ -110,20 +111,20 @@ public final class Session implements ISession {
         assertAccess(pRevKey);
         final IBackendReader bucketReader = mResourceConfig.mBackend.getReader();
         final RevisionRootBucket revBucket =
-            (RevisionRootBucket)bucketReader.read(BucketReadTrx.dereferenceLeafOfTree(bucketReader,
-                mLastCommittedUberBucket.getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET],
-                pRevKey));
+            (RevisionRootBucket)bucketReader
+                .read(BucketReadTrx.dereferenceLeafOfTree(bucketReader, mLastCommittedUberBucket.get()
+                    .getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET], pRevKey));
         final MetaBucket metaBucket =
             (MetaBucket)bucketReader
                 .read(revBucket.getReferenceKeys()[RevisionRootBucket.META_REFERENCE_OFFSET]);
         final BucketReadTrx trx =
-            new BucketReadTrx(this, mLastCommittedUberBucket, revBucket, metaBucket, bucketReader);
+            new BucketReadTrx(this, mLastCommittedUberBucket.get(), revBucket, metaBucket, bucketReader);
         mBucketTrxs.add(trx);
         return trx;
     }
 
     public IBucketWriteTrx beginBucketWtx() throws TTException {
-        return beginBucketWtx(mLastCommittedUberBucket.getRevisionNumber());
+        return beginBucketWtx(getMostRecentVersion());
 
     }
 
@@ -133,7 +134,7 @@ public final class Session implements ISession {
         assertAccess(mRepresentRevision);
         final IBackendWriter backendWriter = mResourceConfig.mBackend.getWriter();
         final IBucketWriteTrx trx =
-            new BucketWriteTrx(this, mLastCommittedUberBucket, backendWriter, mRepresentRevision);
+            new BucketWriteTrx(this, mLastCommittedUberBucket.get(), backendWriter, mRepresentRevision);
         mBucketTrxs.add(trx);
         return trx;
     }
@@ -194,12 +195,12 @@ public final class Session implements ISession {
      */
     private void assertAccess(final long pRevision) {
         checkState(!mClosed, "Session is already closed.");
-        checkArgument(pRevision <= mLastCommittedUberBucket.getRevisionNumber(),
-            "Revision must not be bigger than %s", mLastCommittedUberBucket.getRevisionNumber());
+        checkArgument(pRevision <= getMostRecentVersion(), "Revision must not be bigger than %s",
+            getMostRecentVersion());
     }
 
     protected void setLastCommittedUberBucket(final UberBucket pBucket) {
-        this.mLastCommittedUberBucket = pBucket;
+        this.mLastCommittedUberBucket.set(pBucket);
     }
 
     /**
@@ -207,7 +208,7 @@ public final class Session implements ISession {
      */
     @Override
     public long getMostRecentVersion() {
-        return mLastCommittedUberBucket.getRevisionNumber();
+        return mLastCommittedUberBucket.get().getRevisionNumber();
     }
 
     /**

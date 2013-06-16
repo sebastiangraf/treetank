@@ -34,6 +34,7 @@ import java.io.File;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ExecutionException;
 
 import org.treetank.access.conf.ConstructorProps;
 import org.treetank.access.conf.ResourceConfiguration;
@@ -397,7 +398,11 @@ public final class Storage implements IStorage {
         key = new LogKey(false, IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length, 0);
         writer.put(key, new LogValue(ndp, ndp));
 
-        writer.commit(uberBucket, metaBucker, revBucket);
+        try {
+            writer.commit(uberBucket, metaBucker, revBucket).get();
+        } catch (InterruptedException | ExecutionException exc) {
+            throw new RuntimeException(exc);
+        }
         writer.close();
         storage.close();
 
