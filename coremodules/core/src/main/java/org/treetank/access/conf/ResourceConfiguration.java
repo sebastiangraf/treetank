@@ -161,7 +161,7 @@ public final class ResourceConfiguration {
      * @param pRevisioning
      * @param pNodeFac
      */
-    private ResourceConfiguration(Properties pProperties, IBackend pStorage, IRevisioning pRevisioning,
+    public ResourceConfiguration(Properties pProperties, IBackend pStorage, IRevisioning pRevisioning,
         INodeFactory pNodeFac, IMetaEntryFactory pMetaFac) {
         mProperties = pProperties;
         mBackend = pStorage;
@@ -274,12 +274,12 @@ public final class ResourceConfiguration {
                 while (jsonReader.hasNext()) {
                     Class<?> handlerClazz = Class.forName(jsonReader.nextString());
                     Constructor<?> handlerCons = handlerClazz.getConstructors()[0];
-                    if(handlerClazz.getName().equals(Encryptor.class.getName())) {
+                    if (handlerClazz.getName().equals(Encryptor.class.getName())) {
                         handlerList.add((IByteHandler)handlerCons.newInstance(StandardSettings.KEY));
                     } else {
-                        handlerList.add((IByteHandler)handlerCons.newInstance());    
+                        handlerList.add((IByteHandler)handlerCons.newInstance());
                     }
-                    
+
                 }
                 jsonReader.endArray();
             }

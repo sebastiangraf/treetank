@@ -290,7 +290,7 @@ public class BucketReadTrx implements IBucketReadTrx {
             bucket = (IndirectBucket)pReader.read(bucketKey);
             // ..compute the offsets out of the order-numbers pre-computed before.
             bucketKey = bucket.getReferenceKeys()[nodeBucketOffset(orderNumber[level])];
-            // if the bucketKey is 0, return -1 to distinguish mark non-written buckets explicitely.
+            // if the bucketKey is 0, return -1 to distinguish mark non-written buckets explicitly.
             if (bucketKey == 0) {
                 return -1;
             }

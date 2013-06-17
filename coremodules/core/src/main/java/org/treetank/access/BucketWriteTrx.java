@@ -104,15 +104,15 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
      */
     protected BucketWriteTrx(final ISession pSession, final UberBucket pUberBucket,
         final IBackendWriter pWriter, final long pRepresentRev) throws TTException {
-
         mBucketWriter =
             new BackendWriterProxy(pWriter, new File(pSession.getConfig().mProperties
                 .getProperty(org.treetank.access.conf.ConstructorProps.RESOURCEPATH)),
                 pSession.getConfig().mNodeFac, pSession.getConfig().mMetaFac);
 
-        final RevisionRootBucket revBucket =
-            (RevisionRootBucket)pWriter.read(BucketReadTrx.dereferenceLeafOfTree(pWriter, pUberBucket
-                .getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET], pRepresentRev));
+        final long revkey =
+            BucketReadTrx.dereferenceLeafOfTree(pWriter,
+                pUberBucket.getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET], pRepresentRev);
+        final RevisionRootBucket revBucket = (RevisionRootBucket)pWriter.read(revkey);
         final MetaBucket metaBucket =
             (MetaBucket)pWriter.read(revBucket.getReferenceKeys()[RevisionRootBucket.META_REFERENCE_OFFSET]);
 
@@ -195,17 +195,18 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         checkState(!mDelegate.isClosed(), "Transaction already closed");
 
         final Future<Void> commitInProgress = mBucketWriter.commit(mNewUber, mNewMeta, mNewRoot);
-
-        Callable<Void> tracingCommit = new Callable<Void>() {
+        final Future<Void> syncUber = mCommitInProgress.submit(new Callable<Void>() {
             @Override
             public Void call() throws Exception {
+//                Thread.sleep(10000);
+
                 commitInProgress.get();
                 ((Session)mDelegate.mSession).setLastCommittedUberBucket(mNewUber);
                 return null;
             }
-        };
+        });
         try {
-            mCommitInProgress.submit(tracingCommit).get();
+            syncUber.get();
         } catch (InterruptedException | ExecutionException exc) {
             throw new TTIOException(exc);
         }
