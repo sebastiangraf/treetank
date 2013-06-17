@@ -219,7 +219,6 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
                 return null;
             }
         });
-
         if (mCommitRunning != null) {
             try {
                 mCommitRunning.get();
