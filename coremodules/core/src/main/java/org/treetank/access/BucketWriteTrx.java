@@ -196,12 +196,13 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
 
         final UberBucket page =
             new UberBucket(mNewUber.getBucketKey(), mNewUber.getRevisionNumber(), mNewUber.getBucketCounter());
+        page.setReferenceKey(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET, mNewUber.getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET]);
         final Future<Void> commitInProgress = mBucketWriter.commit(mNewUber, mNewMeta, mNewRoot);
         final Future<Void> syncUber = mCommitInProgress.submit(new Callable<Void>() {
             @Override
             public Void call() throws Exception {
                 commitInProgress.get();
-                ((Session)mDelegate.mSession).setLastCommittedUberBucket(mNewUber);
+                ((Session)mDelegate.mSession).setLastCommittedUberBucket(page);
                 return null;
             }
         });
@@ -210,7 +211,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         } catch (InterruptedException | ExecutionException exc) {
             throw new TTIOException(exc);
         }
-        setUpTransaction(mNewUber, mNewRoot, mNewMeta, mDelegate.mSession, mNewUber.getRevisionNumber(),
+        setUpTransaction(page, mNewRoot, mNewMeta, mDelegate.mSession, page.getRevisionNumber(),
             mBucketWriter);
 
     }
@@ -420,8 +421,8 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         final BackendWriterProxy pWriter) throws TTException {
 
         mNewUber =
-            new UberBucket(pUberOld.incrementBucketCounter(), pUberOld.getRevisionNumber() + 1,
-                pUberOld.getBucketCounter());
+            new UberBucket(pUberOld.incrementBucketCounter(), pUberOld.getRevisionNumber() + 1, pUberOld
+                .getBucketCounter());
         mNewUber.setReferenceKey(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET,
             pUberOld.getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET]);
 
