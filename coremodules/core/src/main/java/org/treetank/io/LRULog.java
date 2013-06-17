@@ -189,7 +189,7 @@ final class LRULog {
             return new LogValue(null, null);
         }
         LogValue val = mCache.getIfPresent(pKey);
-        if (val == null) {
+        if (val == null || val.getModified() == null) {
             final DatabaseEntry valueEntry = new DatabaseEntry();
             final DatabaseEntry keyEntry = new DatabaseEntry();
             mKeyBinding.objectToEntry(pKey, keyEntry);

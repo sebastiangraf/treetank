@@ -124,7 +124,7 @@ public final class Session implements ISession {
     }
 
     public IBucketWriteTrx beginBucketWtx() throws TTException {
-        return beginBucketWtx(getMostRecentVersion());
+        return beginBucketWtx(mLastCommittedUberBucket.get().getRevisionNumber());
 
     }
 

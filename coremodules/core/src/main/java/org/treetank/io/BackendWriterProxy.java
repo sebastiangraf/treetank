@@ -3,7 +3,6 @@ package org.treetank.io;
 import java.io.File;
 import java.util.Iterator;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -30,7 +29,6 @@ public class BackendWriterProxy implements IBackendReader {
 
     private LRULog mFormerLog;
     private final ExecutorService mExec;
-    private Future<Void> mRunningTask;
 
     public BackendWriterProxy(final IBackendWriter pWriter, final File pPathToLog,
         final INodeFactory pNodeFac, final IMetaEntryFactory pMetaFac) throws TTIOException {
@@ -45,17 +43,9 @@ public class BackendWriterProxy implements IBackendReader {
 
     public Future<Void> commit(final UberBucket pUber, final MetaBucket pMeta, final RevisionRootBucket pRev)
         throws TTException {
-        try {
-            // blocking already running tasks
-            if (mRunningTask != null && !mRunningTask.isDone()) {
-                mRunningTask.get();
-            }
-        } catch (final InterruptedException | ExecutionException exc) {
-            throw new TTIOException(exc);
-        }
         mFormerLog = mLog;
         mLog = new LRULog(mPathToLog, mNodeFac, mMetaFac);
-        mRunningTask = mExec.submit(new Callable<Void>() {
+        final Future<Void> runningTask = mExec.submit(new Callable<Void>() {
 
             @Override
             public Void call() throws Exception {
@@ -72,7 +62,7 @@ public class BackendWriterProxy implements IBackendReader {
                 return null;
             }
         });
-        return mRunningTask;
+        return runningTask;
     }
 
     public void put(final LogKey pKey, final LogValue pValue) throws TTIOException {
