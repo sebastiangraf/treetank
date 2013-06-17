@@ -194,12 +194,12 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
     public void commit() throws TTException {
         checkState(!mDelegate.isClosed(), "Transaction already closed");
 
+        final UberBucket page =
+            new UberBucket(mNewUber.getBucketKey(), mNewUber.getRevisionNumber(), mNewUber.getBucketCounter());
         final Future<Void> commitInProgress = mBucketWriter.commit(mNewUber, mNewMeta, mNewRoot);
         final Future<Void> syncUber = mCommitInProgress.submit(new Callable<Void>() {
             @Override
             public Void call() throws Exception {
-//                Thread.sleep(10000);
-
                 commitInProgress.get();
                 ((Session)mDelegate.mSession).setLastCommittedUberBucket(mNewUber);
                 return null;
@@ -415,17 +415,17 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         return key;
     }
 
-    private void setUpTransaction(final UberBucket pUberBucket, final RevisionRootBucket pRevRoot,
+    private void setUpTransaction(final UberBucket pUberOld, final RevisionRootBucket pRootToRepresent,
         final MetaBucket pMetaOld, final ISession pSession, final long pRepresentRev,
         final BackendWriterProxy pWriter) throws TTException {
 
         mNewUber =
-            new UberBucket(pUberBucket.incrementBucketCounter(), pUberBucket.getRevisionNumber() + 1,
-                pUberBucket.getBucketCounter());
+            new UberBucket(pUberOld.incrementBucketCounter(), pUberOld.getRevisionNumber() + 1,
+                pUberOld.getBucketCounter());
         mNewUber.setReferenceKey(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET,
-            pUberBucket.getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET]);
+            pUberOld.getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET]);
 
-        mDelegate = new BucketReadTrx(pSession, pUberBucket, pRevRoot, pMetaOld, pWriter);
+        mDelegate = new BucketReadTrx(pSession, pUberOld, pRootToRepresent, pMetaOld, pWriter);
 
         // Get previous revision root bucket..
         final RevisionRootBucket previousRevRoot = mDelegate.mRootBucket;
