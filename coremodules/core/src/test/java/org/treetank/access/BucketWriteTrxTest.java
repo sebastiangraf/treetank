@@ -163,7 +163,7 @@ public class BucketWriteTrxTest {
 
         final IBucketReadTrx rtx =
             mHolder.getSession().beginBucketRtx(mHolder.getSession().getMostRecentVersion());
-        CoreTestHelper.checkStructure(nodes, rtx, 0);
+//        CoreTestHelper.checkStructure(nodes, rtx, 0);
         CoreTestHelper.checkStructure(nodes, wtx, 0);
 
     }
@@ -233,7 +233,7 @@ public class BucketWriteTrxTest {
 
         CoreTestHelper.Holder.generateSession(test.mHolder, config);
 
-        test.testGetMetaBucket();
+        test.testSetNode();
 
         CoreTestHelper.closeEverything();
         System.out.println("ENDING!!!!");

@@ -8,6 +8,7 @@ import static com.google.common.base.Objects.toStringHelper;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Objects;
 
 import org.treetank.api.INode;
@@ -106,12 +107,26 @@ public class DumbNodeFactory implements INodeFactory {
             return mHash;
         }
 
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String toString() {
+            return toStringHelper(this).add("mNodeKey", mNodeKey).add("mHash", mHash).add("values", Objects.hash(mValue)).toString();
+        }
+
         /**
          * {@inheritDoc}
          */
         @Override
         public int hashCode() {
-            return Objects.hash(mNodeKey, mHash);
+            final int prime = 94907;
+            int result = 1;
+            result = prime * result + (int)(mHash ^ (mHash >>> 32));
+            result = prime * result + (int)(mNodeKey ^ (mNodeKey >>> 32));
+            result = prime * result + Arrays.hashCode(mValue);
+            return result;
         }
 
         /**
@@ -119,15 +134,20 @@ public class DumbNodeFactory implements INodeFactory {
          */
         @Override
         public boolean equals(Object obj) {
-            return this.hashCode() == obj.hashCode();
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String toString() {
-            return toStringHelper(this).add("mNodeKey", mNodeKey).add("mHash", mHash).toString();
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            DumbNode other = (DumbNode)obj;
+            if (mHash != other.mHash)
+                return false;
+            if (mNodeKey != other.mNodeKey)
+                return false;
+            if (!Arrays.equals(mValue, other.mValue))
+                return false;
+            return true;
         }
 
     }

@@ -87,6 +87,9 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
     /** Executor for tracing commit in progress. */
     private final ExecutorService mCommitInProgress;
 
+    /** Future to determine if a commit is currently running. */
+    private Future<Void> mCommitRunning = null;
+
     /**
      * Standard constructor.
      * 
@@ -194,11 +197,21 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
     public void commit() throws TTException {
         checkState(!mDelegate.isClosed(), "Transaction already closed");
 
+        if (mCommitRunning != null) {
+            try {
+                mCommitRunning.get();
+                mCommitRunning = null;
+            } catch (InterruptedException | ExecutionException exc) {
+                throw new TTIOException(exc);
+            }
+        }
+
         final UberBucket page =
             new UberBucket(mNewUber.getBucketKey(), mNewUber.getRevisionNumber(), mNewUber.getBucketCounter());
-        page.setReferenceKey(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET, mNewUber.getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET]);
+        page.setReferenceKey(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET,
+            mNewUber.getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET]);
         final Future<Void> commitInProgress = mBucketWriter.commit(mNewUber, mNewMeta, mNewRoot);
-        final Future<Void> syncUber = mCommitInProgress.submit(new Callable<Void>() {
+        mCommitRunning = mCommitInProgress.submit(new Callable<Void>() {
             @Override
             public Void call() throws Exception {
                 commitInProgress.get();
@@ -206,11 +219,16 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
                 return null;
             }
         });
-        try {
-            syncUber.get();
-        } catch (InterruptedException | ExecutionException exc) {
-            throw new TTIOException(exc);
+
+        if (mCommitRunning != null) {
+            try {
+                mCommitRunning.get();
+                mCommitRunning = null;
+            } catch (InterruptedException | ExecutionException exc) {
+                throw new TTIOException(exc);
+            }
         }
+
         setUpTransaction(page, mNewRoot, mNewMeta, mDelegate.mSession, page.getRevisionNumber(),
             mBucketWriter);
 

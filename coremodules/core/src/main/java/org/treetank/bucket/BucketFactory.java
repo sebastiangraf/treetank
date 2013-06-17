@@ -128,16 +128,6 @@ public final class BucketFactory {
                 }
                 return revRootBucket;
             default:
-                ByteArrayDataOutput stream = ByteStreams.newDataOutput();
-                boolean out = false;
-                while (!out) {
-                    try {
-                        stream.write(pInput.readByte());
-                    } catch (IOException exc) {
-                        out = true;
-                    }
-                }
-                byte[] bla = stream.toByteArray();
                 throw new IllegalStateException(
                     "Invalid Kind of Bucket. Something went wrong in the serialization/deserialization");
             }
