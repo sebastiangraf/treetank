@@ -41,6 +41,7 @@ public class StandardSettings {
 
         // properties.setProperty(ConstructorProps.JCLOUDSTYPE, "aws-s3");
         properties.setProperty(ConstructorProps.JCLOUDSTYPE, "filesystem");
+        //Path not to main storage but to any to simulate remote cloud location.
         properties.setProperty(FilesystemConstants.PROPERTY_BASEDIR, Files.createTempDir().getAbsolutePath());
         String[] awsCredentials = getCredentials();
         if (awsCredentials.length == 0) {

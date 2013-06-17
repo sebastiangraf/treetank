@@ -163,7 +163,7 @@ public class BucketWriteTrxTest {
 
         final IBucketReadTrx rtx =
             mHolder.getSession().beginBucketRtx(mHolder.getSession().getMostRecentVersion());
-//        CoreTestHelper.checkStructure(nodes, rtx, 0);
+        // CoreTestHelper.checkStructure(nodes, rtx, 0);
         CoreTestHelper.checkStructure(nodes, wtx, 0);
 
     }
@@ -226,6 +226,7 @@ public class BucketWriteTrxTest {
         final Properties props =
             StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
                 CoreTestHelper.RESOURCENAME);
+        System.out.println(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath());
         final IBackend backend = new JCloudsStorage(props, nodeFac, metaFac, new ByteHandlerPipeline());
 
         final ResourceConfiguration config =
@@ -233,7 +234,7 @@ public class BucketWriteTrxTest {
 
         CoreTestHelper.Holder.generateSession(test.mHolder, config);
 
-        test.testSetNode();
+        test.testRemoveNode();
 
         CoreTestHelper.closeEverything();
         System.out.println("ENDING!!!!");
