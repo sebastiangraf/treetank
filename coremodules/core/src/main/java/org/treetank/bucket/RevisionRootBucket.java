@@ -153,8 +153,8 @@ public final class RevisionRootBucket implements IRevisionBucket, IReferenceBuck
      */
     @Override
     public String toString() {
-        return toStringHelper(this).add("mBucketKey", mBucketKey).add("mRevision", mRevision).add(
-            "mReferenceKeys", mReferenceKeys).add("mMaxNodeKey", mMaxNodeKey).toString();
+        return toStringHelper(this).add("mBucketKey", mBucketKey).add("mRevision", mRevision).add("mMaxNodeKey", mMaxNodeKey).add(
+            "mReferenceKeys", Arrays.toString(mReferenceKeys)).toString();
     }
 
     /**

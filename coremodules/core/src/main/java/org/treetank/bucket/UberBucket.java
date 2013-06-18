@@ -151,7 +151,8 @@ public final class UberBucket implements IReferenceBucket {
     @Override
     public String toString() {
         return toStringHelper(this).add("mBucketKey", mBucketKey).add("mBucketCounter", mBucketCounter).add(
-            "mReferenceKeys", mReferenceKeys).toString();
+            "mRevisionCount", mRevisionCount).add("mReferenceKeys", Arrays.toString(mReferenceKeys))
+            .toString();
     }
 
     /**
