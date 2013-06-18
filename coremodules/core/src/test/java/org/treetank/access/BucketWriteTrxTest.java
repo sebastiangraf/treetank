@@ -163,7 +163,7 @@ public class BucketWriteTrxTest {
 
         final IBucketReadTrx rtx =
             mHolder.getSession().beginBucketRtx(mHolder.getSession().getMostRecentVersion());
-        // CoreTestHelper.checkStructure(nodes, rtx, 0);
+        CoreTestHelper.checkStructure(nodes, rtx, 0);
         CoreTestHelper.checkStructure(nodes, wtx, 0);
 
     }
