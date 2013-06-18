@@ -163,7 +163,7 @@ public class BucketWriteTrxTest {
 
         final IBucketReadTrx rtx =
             mHolder.getSession().beginBucketRtx(mHolder.getSession().getMostRecentVersion());
-        // CoreTestHelper.checkStructure(nodes, rtx, 0);
+        CoreTestHelper.checkStructure(nodes, rtx, 0);
         CoreTestHelper.checkStructure(nodes, wtx, 0);
 
     }
@@ -214,31 +214,35 @@ public class BucketWriteTrxTest {
         BucketReadTrxTest.testClose(mHolder.getStorage(), mHolder.getSession(), rtx);
     }
 
-    public static void main(String[] args) throws TTException {
-        System.out.println("STARTING!!!!");
-        BucketWriteTrxTest test = new BucketWriteTrxTest();
-        CoreTestHelper.deleteEverything();
-        test.mHolder = CoreTestHelper.Holder.generateStorage();
+    public static void main(String[] args) {
+        try {
+            System.out.println("STARTING!!!!");
+            BucketWriteTrxTest test = new BucketWriteTrxTest();
+            CoreTestHelper.deleteEverything();
+            test.mHolder = CoreTestHelper.Holder.generateStorage();
 
-        final IRevisioning revision = new SlidingSnapshot();
-        final INodeFactory nodeFac = new DumbNodeFactory();
-        final IMetaEntryFactory metaFac = new DumbMetaEntryFactory();
-        final Properties props =
-            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
-                CoreTestHelper.RESOURCENAME);
-        System.out.println(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath());
-        final IBackend backend = new JCloudsStorage(props, nodeFac, metaFac, new ByteHandlerPipeline());
+            final IRevisioning revision = new SlidingSnapshot();
+            final INodeFactory nodeFac = new DumbNodeFactory();
+            final IMetaEntryFactory metaFac = new DumbMetaEntryFactory();
+            final Properties props =
+                StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                    CoreTestHelper.RESOURCENAME);
+            System.out.println(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath());
+            final IBackend backend = new JCloudsStorage(props, nodeFac, metaFac, new ByteHandlerPipeline());
 
-        final ResourceConfiguration config =
-            new ResourceConfiguration(props, backend, revision, nodeFac, metaFac);
+            final ResourceConfiguration config =
+                new ResourceConfiguration(props, backend, revision, nodeFac, metaFac);
 
-        CoreTestHelper.Holder.generateSession(test.mHolder, config);
+            CoreTestHelper.Holder.generateSession(test.mHolder, config);
 
-        test.testRemoveNode();
+            test.testRemoveNode();
 
-        CoreTestHelper.closeEverything();
-        System.out.println("ENDING!!!!");
-        CoreTestHelper.deleteEverything();
-
+            CoreTestHelper.closeEverything();
+            System.out.println("ENDING!!!!");
+            CoreTestHelper.deleteEverything();
+        } catch (Exception exc) {
+            exc.printStackTrace();
+            System.exit(-1);
+        }
     }
 }

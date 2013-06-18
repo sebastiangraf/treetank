@@ -117,7 +117,8 @@ public final class UberBucket implements IReferenceBucket {
      * @return the incremented counter
      */
     public long incrementBucketCounter() {
-        return mBucketCounter++;
+        mBucketCounter = mBucketCounter + 1;
+        return mBucketCounter;
     }
 
     /**
@@ -151,7 +152,8 @@ public final class UberBucket implements IReferenceBucket {
     @Override
     public String toString() {
         return toStringHelper(this).add("mBucketKey", mBucketKey).add("mBucketCounter", mBucketCounter).add(
-            "mReferenceKeys", mReferenceKeys).toString();
+            "mRevisionCount", mRevisionCount).add("mReferenceKeys", Arrays.toString(mReferenceKeys))
+            .toString();
     }
 
     /**

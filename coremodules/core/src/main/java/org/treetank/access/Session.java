@@ -34,6 +34,8 @@ import static com.google.common.base.Preconditions.checkState;
 import java.io.File;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -48,6 +50,7 @@ import org.treetank.bucket.RevisionRootBucket;
 import org.treetank.bucket.UberBucket;
 import org.treetank.bucket.interfaces.IReferenceBucket;
 import org.treetank.exception.TTException;
+import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
 import org.treetank.io.IBackendWriter;
 import org.treetank.io.IOUtils;
@@ -82,6 +85,8 @@ public final class Session implements ISession {
     /** Check if already a Wtx is used. */
     private AtomicBoolean mWriteTransactionUsed;
 
+    private Future<Void> mCommitRunning = null;
+
     /**
      * 
      * Hidden constructor, only visible for the Storage-Class for instantiation.
@@ -108,6 +113,7 @@ public final class Session implements ISession {
     }
 
     public IBucketReadTrx beginBucketRtx(final long pRevKey) throws TTException {
+        waitForRunningCommit();
         assertAccess(pRevKey);
         final IBackendReader bucketReader = mResourceConfig.mBackend.getReader();
         final RevisionRootBucket revBucket =
@@ -124,6 +130,7 @@ public final class Session implements ISession {
     }
 
     public IBucketWriteTrx beginBucketWtx() throws TTException {
+        waitForRunningCommit();
         return beginBucketWtx(mLastCommittedUberBucket.get().getRevisionNumber());
 
     }
@@ -131,6 +138,7 @@ public final class Session implements ISession {
     public IBucketWriteTrx beginBucketWtx(final long mRepresentRevision) throws TTException {
         checkState(mWriteTransactionUsed.compareAndSet(false, true),
             "Only one WriteTransaction per Session is allowed");
+        waitForRunningCommit();
         assertAccess(mRepresentRevision);
         final IBackendWriter backendWriter = mResourceConfig.mBackend.getWriter();
         final IBucketWriteTrx trx =
@@ -143,6 +151,7 @@ public final class Session implements ISession {
      * {@inheritDoc}
      */
     public synchronized boolean close() throws TTException {
+        waitForRunningCommit();
         if (!mClosed) {
             // Forcibly close all open transactions.
             for (final IBucketReadTrx rtx : mBucketTrxs) {
@@ -238,5 +247,29 @@ public final class Session implements ISession {
         return toStringHelper(this).add("mResourceConfig", mResourceConfig).add("mSessionConfig",
             mSessionConfig).add("mLastCommittedUberBucket", mLastCommittedUberBucket).add(
             "mLastCommittedUberBucket", mBucketTrxs).toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void waitForRunningCommit() throws TTIOException {
+        if (mCommitRunning != null) {
+            try {
+                mCommitRunning.get();
+                mCommitRunning = null;
+            } catch (InterruptedException | ExecutionException exc) {
+                throw new TTIOException(exc);
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setRunningCommit(Future<Void> pRunningCommit) {
+        mCommitRunning = pRunningCommit;
+
     }
 }

@@ -27,8 +27,11 @@
 
 package org.treetank.api;
 
+import java.util.concurrent.Future;
+
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.exception.TTException;
+import org.treetank.exception.TTIOException;
 
 /**
  * Each <code>IStorage</code> contains multiple resources. To each resource, one {@link ISession} can be
@@ -123,5 +126,22 @@ public interface ISession {
      *             if anything weird happens.
      */
     boolean truncate() throws TTException;
+
+    /**
+     * Waiting and blocking for running commit. Necessary before new commits are triggered or new transactions
+     * are started.
+     * 
+     * @throws TTIOException
+     *             if something goes weird
+     */
+    void waitForRunningCommit() throws TTIOException;
+
+    /**
+     * Setting running commit to session.
+     * 
+     * @param pRunningCommit
+     *            to be set
+     */
+    void setRunningCommit(Future<Void> pRunningCommit);
 
 }

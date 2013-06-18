@@ -192,8 +192,8 @@ public final class CoreTestHelper {
      *            key of the former bucket
      * @return a {@link NodeBucket} filled
      */
-    public static final NodeBucket getNodeBucket(final int offset, final int length, final long nodeBucketKey,
-        final long lastBucketKey) {
+    public static final NodeBucket getNodeBucket(final int offset, final int length,
+        final long nodeBucketKey, final long lastBucketKey) {
         final NodeBucket bucket = new NodeBucket(nodeBucketKey, lastBucketKey);
         for (int i = offset; i < length; i++) {
             bucket.setNode(i, generateOne());
@@ -476,7 +476,6 @@ public final class CoreTestHelper {
                 pHolder.mStorage.getSession(new SessionConfiguration(CoreTestHelper.RESOURCENAME,
                     StandardSettings.KEY));
         }
-
 
         public IStorage getStorage() {
             return mStorage;
