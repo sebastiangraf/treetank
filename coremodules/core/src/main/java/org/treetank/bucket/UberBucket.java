@@ -117,7 +117,8 @@ public final class UberBucket implements IReferenceBucket {
      * @return the incremented counter
      */
     public long incrementBucketCounter() {
-        return mBucketCounter++;
+        mBucketCounter = mBucketCounter + 1;
+        return mBucketCounter;
     }
 
     /**

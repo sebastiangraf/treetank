@@ -120,7 +120,6 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
             (MetaBucket)pWriter.read(revBucket.getReferenceKeys()[RevisionRootBucket.META_REFERENCE_OFFSET]);
 
         mCommitInProgress = Executors.newSingleThreadExecutor();
-
         setUpTransaction(pUberBucket, revBucket, metaBucket, pSession, pRepresentRev, mBucketWriter);
     }
 
@@ -207,7 +206,8 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         }
 
         final UberBucket page =
-            new UberBucket(mNewUber.getBucketKey(), mNewUber.getRevisionNumber(), mNewUber.getBucketCounter());
+            new UberBucket(mNewUber.getBucketKey(), mNewUber.getRevisionNumber(), mNewUber
+                .getBucketCounter());
         page.setReferenceKey(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET,
             mNewUber.getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET]);
         final Future<Void> commitInProgress = mBucketWriter.commit(mNewUber, mNewMeta, mNewRoot);
@@ -228,7 +228,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
             }
         }
 
-        setUpTransaction(page, mNewRoot, mNewMeta, mDelegate.mSession, page.getRevisionNumber(),
+        setUpTransaction(mNewUber, mNewRoot, mNewMeta, mDelegate.mSession, page.getRevisionNumber(),
             mBucketWriter);
 
     }
