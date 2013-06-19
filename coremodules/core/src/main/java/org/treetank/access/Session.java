@@ -201,8 +201,9 @@ public final class Session implements ISession {
      * 
      * @param pRevision
      *            the revision to be validated
+     * @throws TTIOException 
      */
-    private void assertAccess(final long pRevision) {
+    private void assertAccess(final long pRevision) throws TTIOException {
         checkState(!mClosed, "Session is already closed.");
         checkArgument(pRevision <= getMostRecentVersion(), "Revision must not be bigger than %s",
             getMostRecentVersion());
@@ -216,7 +217,8 @@ public final class Session implements ISession {
      * {@inheritDoc}
      */
     @Override
-    public long getMostRecentVersion() {
+    public long getMostRecentVersion() throws TTIOException {
+        waitForRunningCommit();
         return mLastCommittedUberBucket.get().getRevisionNumber();
     }
 
