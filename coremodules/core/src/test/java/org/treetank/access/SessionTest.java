@@ -26,6 +26,7 @@ import org.treetank.api.IBucketReadTrx;
 import org.treetank.api.IBucketWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
+import org.treetank.exception.TTIOException;
 
 import com.google.inject.Inject;
 
@@ -200,7 +201,7 @@ public class SessionTest {
     }
 
     @Test
-    public void testGetMostRecentVersion() {
+    public void testGetMostRecentVersion() throws TTIOException {
         assertEquals(0, mHolder.getSession().getMostRecentVersion());
     }
 

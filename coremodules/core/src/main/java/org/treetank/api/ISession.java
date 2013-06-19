@@ -74,7 +74,7 @@ public interface ISession {
      * 
      * @return the most recent version
      */
-    long getMostRecentVersion();
+    long getMostRecentVersion() throws TTIOException;
 
     /**
      * Begin exclusive write transaction on the bucket layer
