@@ -420,13 +420,13 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         final MetaBucket pMetaOld, final ISession pSession, final long pRepresentRev,
         final BackendWriterProxy pWriter) throws TTException {
 
+        mDelegate = new BucketReadTrx(pSession, pUberOld, pRootToRepresent, pMetaOld, pWriter);
+        
         mNewUber =
             new UberBucket(pUberOld.getBucketCounter() + 1, pUberOld.getRevisionNumber() + 1, pUberOld
                 .getBucketCounter() + 1);
         mNewUber.setReferenceKey(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET,
             pUberOld.getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET]);
-
-        mDelegate = new BucketReadTrx(pSession, pUberOld, pRootToRepresent, pMetaOld, pWriter);
 
         // Prepare indirect tree to hold reference to prepared revision root
         // nodeBucketReference.
