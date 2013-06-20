@@ -421,8 +421,8 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         final BackendWriterProxy pWriter) throws TTException {
 
         mNewUber =
-            new UberBucket(pUberOld.incrementBucketCounter(), pUberOld.getRevisionNumber() + 1, pUberOld
-                .getBucketCounter());
+            new UberBucket(pUberOld.getBucketCounter() + 1, pUberOld.getRevisionNumber() + 1, pUberOld
+                .getBucketCounter() + 1);
         mNewUber.setReferenceKey(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET,
             pUberOld.getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET]);
 
