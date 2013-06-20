@@ -50,7 +50,7 @@ public class BackendWriterProxy implements IBackendReader {
             @Override
             public Void call() throws Exception {
                 ///DEBUG CODE!!!!
-                Thread.sleep(100);
+//                Thread.sleep(10000);
 
                 Iterator<LogValue> entries = mFormerLog.getIterator();
                 while (entries.hasNext()) {

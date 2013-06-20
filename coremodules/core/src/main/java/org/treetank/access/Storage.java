@@ -348,7 +348,7 @@ public final class Storage implements IStorage {
                 .getProperty(org.treetank.access.conf.ConstructorProps.RESOURCEPATH)),
                 pResourceConf.mNodeFac, pResourceConf.mMetaFac);
 
-        UberBucket uberBucket = new UberBucket(1, 0, 2);
+        UberBucket uberBucket = new UberBucket(1, 0, 1);
         long newBucketKey = uberBucket.incrementBucketCounter();
         uberBucket.setReferenceKey(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET, newBucketKey);
 

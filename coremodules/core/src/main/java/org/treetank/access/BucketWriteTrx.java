@@ -428,6 +428,12 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
 
         mDelegate = new BucketReadTrx(pSession, pUberOld, pRootToRepresent, pMetaOld, pWriter);
 
+        // Prepare indirect tree to hold reference to prepared revision root
+        // nodeBucketReference.
+        final LogKey indirectKey = preparePathToLeaf(true, mNewUber, mNewUber.getRevisionNumber());
+        final LogValue indirectContainer = mBucketWriter.get(indirectKey);
+        final int offset = nodeBucketOffset(mNewUber.getRevisionNumber());
+
         // Get previous revision root bucket..
         final RevisionRootBucket previousRevRoot = mDelegate.mRootBucket;
         // ...and using this data to initialize a fresh revision root including the pointers.
@@ -437,22 +443,16 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         mNewRoot.setReferenceKey(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET, previousRevRoot
             .getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET]);
 
-        // Prepare indirect tree to hold reference to prepared revision root
-        // nodeBucketReference.
-        LogKey indirectKey = preparePathToLeaf(true, mNewUber, mNewUber.getRevisionNumber());
-        LogValue indirectContainer = mBucketWriter.get(indirectKey);
-        int offset = nodeBucketOffset(mNewUber.getRevisionNumber());
+        // setting the new revRoot to the correct offset
         ((IndirectBucket)indirectContainer.getModified()).setReferenceKey(offset, mNewRoot.getBucketKey());
         mBucketWriter.put(indirectKey, indirectContainer);
 
-        // Setting up a new metabucket
+        // Setting up a new metabucket and link it to the new root
         Map<IMetaEntry, IMetaEntry> oldMap = pMetaOld.getMetaMap();
         mNewMeta = new MetaBucket(mNewUber.incrementBucketCounter());
-
         for (IMetaEntry key : oldMap.keySet()) {
             mNewMeta.setEntry(key, oldMap.get(key));
         }
-
         mNewRoot.setReferenceKey(RevisionRootBucket.META_REFERENCE_OFFSET, mNewMeta.getBucketKey());
 
     }

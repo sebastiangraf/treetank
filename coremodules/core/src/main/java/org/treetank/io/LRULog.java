@@ -137,14 +137,17 @@ final class LRULog {
         mValueBinding = new LogValueBinding(pNodeFac, pMetaFac);
         mSelected_db = 1;
 
-        if (new File(pFile, ResourceConfiguration.Paths.TransactionLog.getFile().getName()).list().length > 0) {
+        final File classicLogLocation =
+            new File(pFile, ResourceConfiguration.Paths.TransactionLog.getFile().getName());
+
+        if (classicLogLocation.list().length > 0) {
             mLocation = new File(pFile, "_" + ResourceConfiguration.Paths.TransactionLog.getFile().getName());
             mLocation.mkdirs();
             mSelected_db = 2;
         } else {
-            mLocation = new File(pFile, ResourceConfiguration.Paths.TransactionLog.getFile().getName());
+            mLocation = classicLogLocation;
         }
-        String bla = mLocation.toString();
+
         try {
             EnvironmentConfig config = new EnvironmentConfig();
             config.setAllowCreate(true);
