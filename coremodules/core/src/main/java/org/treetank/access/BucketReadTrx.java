@@ -237,7 +237,7 @@ public class BucketReadTrx implements IBucketReadTrx {
             nodeBucketKey = bucket.getLastBucketPointer();
         }
 
-        checkState(nodeBuckets.size() > 0);
+        checkState(nodeBuckets.size() > 0, "Number of Buckets to reconstruct must be larger than 0");
         return nodeBuckets.toArray(new NodeBucket[nodeBuckets.size()]);
 
     }

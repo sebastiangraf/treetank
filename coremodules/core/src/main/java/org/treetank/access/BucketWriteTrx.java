@@ -196,7 +196,8 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         mDelegate.mSession.waitForRunningCommit();
 
         final UberBucket page =
-            new UberBucket(mNewUber.getBucketKey(), mNewUber.getRevisionNumber(), mNewUber.getBucketCounter());
+            new UberBucket(mNewUber.getBucketKey(), mNewUber.getRevisionNumber(), mNewUber
+                .getBucketCounter());
         page.setReferenceKey(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET,
             mNewUber.getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET]);
         final Future<Void> commitInProgress = mBucketWriter.commit(mNewUber, mNewMeta, mNewRoot);
@@ -421,7 +422,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         final BackendWriterProxy pWriter) throws TTException {
 
         mDelegate = new BucketReadTrx(pSession, pUberOld, pRootToRepresent, pMetaOld, pWriter);
-        
+
         mNewUber =
             new UberBucket(pUberOld.getBucketCounter() + 1, pUberOld.getRevisionNumber() + 1, pUberOld
                 .getBucketCounter() + 1);
