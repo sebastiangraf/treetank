@@ -144,7 +144,7 @@ final class LRULog {
         } else {
             mLocation = new File(pFile, ResourceConfiguration.Paths.TransactionLog.getFile().getName());
         }
-
+        String bla = mLocation.toString();
         try {
             EnvironmentConfig config = new EnvironmentConfig();
             config.setAllowCreate(true);
