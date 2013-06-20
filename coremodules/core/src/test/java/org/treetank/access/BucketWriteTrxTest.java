@@ -227,7 +227,6 @@ public class BucketWriteTrxTest {
             final Properties props =
                 StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
                     CoreTestHelper.RESOURCENAME);
-            System.out.println(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath());
             final IBackend backend = new JCloudsStorage(props, nodeFac, metaFac, new ByteHandlerPipeline());
 
             final ResourceConfiguration config =
