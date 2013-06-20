@@ -129,7 +129,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         final long nodeKey = pNode.getNodeKey();
         final long seqBucketKey = nodeKey >> IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3];
         final int nodeBucketOffset = nodeBucketOffset(nodeKey);
-        LogValue container = prepareNodeBucket(nodeKey);
+        final LogValue container = prepareNodeBucket(nodeKey);
         final NodeBucket bucket = ((NodeBucket)container.getModified());
         bucket.setNode(nodeBucketOffset, pNode);
         mBucketWriter.put(new LogKey(false, IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length, seqBucketKey),
