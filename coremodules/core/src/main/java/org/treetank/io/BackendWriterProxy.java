@@ -75,13 +75,10 @@ public class BackendWriterProxy implements IBackendReader {
     }
 
     public LogValue get(final LogKey pKey) throws TTIOException {
-        LogValue val = mLog.get(pKey);
-        if (val.getModified() == null && !pKey.isRootLevel()) {
-            val = mFormerLog.get(pKey);
-        }
+        final LogValue val = mLog.get(pKey);
         return val;
     }
-    
+
     public LogValue getFormer(final LogKey pKey) throws TTIOException {
         LogValue val = mFormerLog.get(pKey);
         return val;

@@ -208,7 +208,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
             }
         }));
 
-         mDelegate.mSession.waitForRunningCommit();
+        mDelegate.mSession.waitForRunningCommit();
 
         setUpTransaction(mNewUber, mNewRoot, mNewMeta, mDelegate.mSession, uber.getRevisionNumber(),
             mBucketWriter);
@@ -391,7 +391,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
                 else if (parentBucket.getReferenceKeys()[offset] != 0) {
                     oldBucket = (IReferenceBucket)mBucketWriter.read(parentBucket.getReferenceKeys()[offset]);
                 }
-                //..copy all references to the new log.
+                // ..copy all references to the new log.
                 if (oldBucket != null) {
                     for (int i = 0; i < oldBucket.getReferenceKeys().length; i++) {
                         bucket.setReferenceKey(i, oldBucket.getReferenceKeys()[i]);
