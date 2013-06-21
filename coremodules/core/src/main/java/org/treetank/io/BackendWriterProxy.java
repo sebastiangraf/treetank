@@ -52,7 +52,7 @@ public class BackendWriterProxy implements IBackendReader {
             @Override
             public Void call() throws Exception {
                 // DEBUG CODE!!!!
-//                Thread.sleep(100);
+                // Thread.sleep(100);
 
                 Iterator<LogValue> entries = mFormerLog.getIterator();
                 while (entries.hasNext()) {
@@ -63,7 +63,6 @@ public class BackendWriterProxy implements IBackendReader {
                 mWriter.write(pRev);
                 mWriter.writeUberBucket(pUber);
                 mFormerLog.close();
-
                 return null;
             }
         });
@@ -92,6 +91,12 @@ public class BackendWriterProxy implements IBackendReader {
     @Override
     public UberBucket readUber() throws TTIOException {
         return mWriter.readUber();
+    }
+
+    public void closeFormerLog() throws TTIOException {
+        if (mFormerLog != null && !mFormerLog.isClosed()) {
+            mFormerLog.close();
+        }
     }
 
     @Override

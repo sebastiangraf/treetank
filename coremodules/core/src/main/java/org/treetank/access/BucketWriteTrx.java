@@ -225,6 +225,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
             public Void call() throws Exception {
                 commitInProgress.get();
                 ((Session)mDelegate.mSession).setLastCommittedUberBucket(uber);
+                mBucketWriter.closeFormerLog();
                 return null;
             }
         }));
