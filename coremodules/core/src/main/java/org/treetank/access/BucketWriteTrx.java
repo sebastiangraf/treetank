@@ -195,24 +195,20 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
 
         mDelegate.mSession.waitForRunningCommit();
 
-        final UberBucket page =
-            new UberBucket(mNewUber.getBucketKey(), mNewUber.getRevisionNumber(), mNewUber
-                .getBucketCounter());
-        page.setReferenceKey(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET,
-            mNewUber.getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET]);
-        final Future<Void> commitInProgress = mBucketWriter.commit(mNewUber, mNewMeta, mNewRoot);
+        final UberBucket uber = UberBucket.copy(mNewUber);
+        final Future<Void> commitInProgress = mBucketWriter.commit(uber, mNewMeta, mNewRoot);
         mDelegate.mSession.setRunningCommit(mCommitInProgress.submit(new Callable<Void>() {
             @Override
             public Void call() throws Exception {
                 commitInProgress.get();
-                ((Session)mDelegate.mSession).setLastCommittedUberBucket(page);
+                ((Session)mDelegate.mSession).setLastCommittedUberBucket(uber);
                 return null;
             }
         }));
 
         mDelegate.mSession.waitForRunningCommit();
 
-        setUpTransaction(mNewUber, mNewRoot, mNewMeta, mDelegate.mSession, page.getRevisionNumber(),
+        setUpTransaction(mNewUber, mNewRoot, mNewMeta, mDelegate.mSession, uber.getRevisionNumber(),
             mBucketWriter);
 
     }
