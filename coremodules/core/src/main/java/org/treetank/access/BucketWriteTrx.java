@@ -117,6 +117,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
             (MetaBucket)pWriter.read(revBucket.getReferenceKeys()[RevisionRootBucket.META_REFERENCE_OFFSET]);
 
         mCommitInProgress = Executors.newSingleThreadExecutor();
+        mDelegate = new BucketReadTrx(pSession, pUberBucket, revBucket, metaBucket, pWriter);
         setUpTransaction(pUberBucket, revBucket, metaBucket, pSession, pRepresentRev, mBucketWriter);
     }
 
@@ -130,8 +131,10 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         final long seqBucketKey = nodeKey >> IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3];
         final int nodeBucketOffset = nodeBucketOffset(nodeKey);
         final LogValue container = prepareNodeBucket(nodeKey);
-        final NodeBucket bucket = ((NodeBucket)container.getModified());
-        bucket.setNode(nodeBucketOffset, pNode);
+        final NodeBucket modified = ((NodeBucket)container.getModified());
+        final NodeBucket complete = ((NodeBucket)container.getComplete());
+        modified.setNode(nodeBucketOffset, pNode);
+        complete.setNode(nodeBucketOffset, pNode);
         mBucketWriter.put(new LogKey(false, IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length, seqBucketKey),
             container);
         return nodeKey;
@@ -165,21 +168,40 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
 
         final LogKey key =
             new LogKey(false, IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length, nodeBucketKey);
-        final LogValue container = mBucketWriter.get(key);
-        // Bucket was not modified yet, delegate to read or..
-        if (container.getModified() == null) {
-            return mDelegate.getNode(pNodeKey);
-        }// ...bucket was modified, but not this node, take the complete part, or...
-        else if (((NodeBucket)container.getModified()).getNode(nodeBucketOffset) == null) {
-            final INode item = ((NodeBucket)container.getComplete()).getNode(nodeBucketOffset);
-            return mDelegate.checkItemIfDeleted(item);
-
-        }// ...bucket was modified and the modification touched this node.
+        LogValue container = mBucketWriter.get(key);
+        INode item = null;
+        // Bucket was modified...
+        if (container.getModified() != null) {
+            // ..check if the real node was touched and set it or..
+            if (((NodeBucket)container.getModified()).getNode(nodeBucketOffset) == null) {
+                item = ((NodeBucket)container.getComplete()).getNode(nodeBucketOffset);
+            }// ..take the node from the complete status of the page.
+            else {
+                item = ((NodeBucket)container.getModified()).getNode(nodeBucketOffset);
+            }
+            checkNotNull(item, "Item must be set!");
+            item = mDelegate.checkItemIfDeleted(item);
+        }// ...bucket was modified within a former version,...
         else {
-            final INode item = ((NodeBucket)container.getModified()).getNode(nodeBucketOffset);
-            return mDelegate.checkItemIfDeleted(item);
+            // check the former version as..
+            container = mBucketWriter.getFormer(key);
+            // ..modified element within this version or...
+            if (container.getModified() != null) {
+                // ..check if the real node was touched and set it or..
+                if (((NodeBucket)container.getModified()).getNode(nodeBucketOffset) == null) {
+                    item = ((NodeBucket)container.getComplete()).getNode(nodeBucketOffset);
+                }// ..take the node from the complete status of the page.
+                else {
+                    item = ((NodeBucket)container.getComplete()).getNode(nodeBucketOffset);
+                }
+                checkNotNull(item, "Item must be set!");
+                item = mDelegate.checkItemIfDeleted(item);
+            }// bucket was modified long long before, read it normally.
+            else {
+                item = mDelegate.getNode(pNodeKey);
+            }
         }
-
+        return item;
     }
 
     /**
@@ -195,25 +217,25 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
 
         mDelegate.mSession.waitForRunningCommit();
 
-        final UberBucket page =
-            new UberBucket(mNewUber.getBucketKey(), mNewUber.getRevisionNumber(), mNewUber
-                .getBucketCounter());
-        page.setReferenceKey(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET,
-            mNewUber.getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET]);
-        final Future<Void> commitInProgress = mBucketWriter.commit(mNewUber, mNewMeta, mNewRoot);
+        final UberBucket uber = UberBucket.copy(mNewUber);
+        final MetaBucket meta = MetaBucket.copy(mNewMeta);
+        final RevisionRootBucket rev = RevisionRootBucket.copy(mNewRoot);
+        final Future<Void> commitInProgress = mBucketWriter.commit(uber, meta, rev);
         mDelegate.mSession.setRunningCommit(mCommitInProgress.submit(new Callable<Void>() {
             @Override
             public Void call() throws Exception {
+                //serializing of new UberPage including its Subtree is concluded.
                 commitInProgress.get();
-                ((Session)mDelegate.mSession).setLastCommittedUberBucket(page);
+                ((Session)mDelegate.mSession).setLastCommittedUberBucket(uber);
+                mDelegate = new BucketReadTrx(mDelegate.mSession, uber, rev, meta, mBucketWriter);
+                mBucketWriter.closeFormerLog();
                 return null;
             }
         }));
 
         mDelegate.mSession.waitForRunningCommit();
 
-        setUpTransaction(mNewUber, mNewRoot, mNewMeta, mDelegate.mSession, page.getRevisionNumber(),
-            mBucketWriter);
+        setUpTransaction(uber, rev, meta, mDelegate.mSession, uber.getRevisionNumber(), mBucketWriter);
 
     }
 
@@ -382,24 +404,33 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
                 // compute the offset of the new bucket
                 int offset = nodeBucketOffset(orderNumber[level]);
 
-                // if there existed the same bucket in former versions (referencable over the offset within
-                // the parent)...
-                if (parentBucket.getReferenceKeys()[offset] != 0) {
-                    IReferenceBucket oldBucket =
-                        (IReferenceBucket)mBucketWriter.read(parentBucket.getReferenceKeys()[offset]);
+                // if there existed the same bucket in former versions in a former log or
+                container = mBucketWriter.getFormer(key);
+                IReferenceBucket oldBucket = null;
+                if (container.getModified() != null) {
+                    oldBucket = (IReferenceBucket)container.getModified();
+                }
+                // over the former log or the offset within
+                // the parent...
+                else if (parentBucket.getReferenceKeys()[offset] != 0) {
+                    oldBucket = (IReferenceBucket)mBucketWriter.read(parentBucket.getReferenceKeys()[offset]);
+                }
+                // ..copy all references to the new log.
+                if (oldBucket != null) {
                     for (int i = 0; i < oldBucket.getReferenceKeys().length; i++) {
                         bucket.setReferenceKey(i, oldBucket.getReferenceKeys()[i]);
                     }
                 }
+
                 // Set the newKey on the computed offset...
                 parentBucket.setReferenceKey(offset, newKey);
                 // .. and put the parent-reference to the log...
                 container = new LogValue(parentBucket, parentBucket);
                 // ..if the parent is not referenced as UberBucket or RevisionRootBucket within the Wtx
                 // itself...
-                if (level > 0) {
-                    mBucketWriter.put(parentKey, container);
-                }
+                // if (level > 0) {
+                mBucketWriter.put(parentKey, container);
+                // }
                 // ..but set the reference of the current bucket in every case.
                 container = new LogValue(bucket, bucket);
                 mBucketWriter.put(key, container);
@@ -420,8 +451,6 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
     private void setUpTransaction(final UberBucket pUberOld, final RevisionRootBucket pRootToRepresent,
         final MetaBucket pMetaOld, final ISession pSession, final long pRepresentRev,
         final BackendWriterProxy pWriter) throws TTException {
-
-        mDelegate = new BucketReadTrx(pSession, pUberOld, pRootToRepresent, pMetaOld, pWriter);
 
         mNewUber =
             new UberBucket(pUberOld.getBucketCounter() + 1, pUberOld.getRevisionNumber() + 1, pUberOld

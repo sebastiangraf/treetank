@@ -143,7 +143,7 @@ public class BucketWriteTrxTest {
                 try {
                     wtx.getNode(nodeKey);
                     fail();
-                } catch (IllegalStateException exc) {
+                } catch (NullPointerException | IllegalStateException exc) {
                 }
             }
             wtx.setNode(nodes.get(i));

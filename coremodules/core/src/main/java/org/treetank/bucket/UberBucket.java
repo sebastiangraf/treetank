@@ -172,4 +172,19 @@ public final class UberBucket implements IReferenceBucket {
         return this.hashCode() == obj.hashCode();
     }
 
+    /**
+     * Copying a bucket into a new one.
+     * 
+     * @param pBucket
+     *            to be copied
+     * @return new copy
+     */
+    public static final UberBucket copy(final UberBucket pBucket) {
+        final UberBucket copy =
+            new UberBucket(pBucket.mBucketKey, pBucket.mRevisionCount, pBucket.mBucketCounter);
+        copy.mReferenceKeys[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET] =
+            pBucket.mReferenceKeys[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET];
+        return copy;
+    }
+
 }

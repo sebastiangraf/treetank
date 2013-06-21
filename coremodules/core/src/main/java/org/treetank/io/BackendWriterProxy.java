@@ -10,7 +10,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;
-import org.treetank.bucket.IConstants;
 import org.treetank.bucket.MetaBucket;
 import org.treetank.bucket.RevisionRootBucket;
 import org.treetank.bucket.UberBucket;
@@ -47,13 +46,13 @@ public class BackendWriterProxy implements IBackendReader {
 
         mFormerLog = mLog;
         mLog = new LRULog(mPathToLog, mNodeFac, mMetaFac);
-        
+
         final Future<Void> runningTask = mExec.submit(new Callable<Void>() {
 
             @Override
             public Void call() throws Exception {
                 // DEBUG CODE!!!!
-//                Thread.sleep(100);
+//                 Thread.sleep(100);
 
                 Iterator<LogValue> entries = mFormerLog.getIterator();
                 while (entries.hasNext()) {
@@ -63,8 +62,6 @@ public class BackendWriterProxy implements IBackendReader {
                 mWriter.write(pMeta);
                 mWriter.write(pRev);
                 mWriter.writeUberBucket(pUber);
-                mFormerLog.close();
-
                 return null;
             }
         });
@@ -76,10 +73,12 @@ public class BackendWriterProxy implements IBackendReader {
     }
 
     public LogValue get(final LogKey pKey) throws TTIOException {
-        LogValue val = mLog.get(pKey);
-        if (val.getModified() == null) {
-            val = mFormerLog.get(pKey);
-        }
+        final LogValue val = mLog.get(pKey);
+        return val;
+    }
+
+    public LogValue getFormer(final LogKey pKey) throws TTIOException {
+        LogValue val = mFormerLog.get(pKey);
         return val;
     }
 
@@ -91,6 +90,12 @@ public class BackendWriterProxy implements IBackendReader {
     @Override
     public UberBucket readUber() throws TTIOException {
         return mWriter.readUber();
+    }
+
+    public void closeFormerLog() throws TTIOException {
+        if (mFormerLog != null && !mFormerLog.isClosed()) {
+            mFormerLog.close();
+        }
     }
 
     @Override
