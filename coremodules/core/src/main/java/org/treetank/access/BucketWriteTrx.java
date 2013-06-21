@@ -130,8 +130,10 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         final long seqBucketKey = nodeKey >> IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3];
         final int nodeBucketOffset = nodeBucketOffset(nodeKey);
         final LogValue container = prepareNodeBucket(nodeKey);
-        final NodeBucket bucket = ((NodeBucket)container.getModified());
-        bucket.setNode(nodeBucketOffset, pNode);
+        final NodeBucket modified = ((NodeBucket)container.getModified());
+        final NodeBucket complete = ((NodeBucket)container.getComplete());
+        modified.setNode(nodeBucketOffset, pNode);
+        complete.setNode(nodeBucketOffset, pNode);
         mBucketWriter.put(new LogKey(false, IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length, seqBucketKey),
             container);
         return nodeKey;
@@ -165,21 +167,40 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
 
         final LogKey key =
             new LogKey(false, IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length, nodeBucketKey);
-        final LogValue container = mBucketWriter.get(key);
-        // Bucket was not modified yet, delegate to read or..
-        if (container.getModified() == null) {
-            return mDelegate.getNode(pNodeKey);
-        }// ...bucket was modified, but not this node, take the complete part, or...
-        else if (((NodeBucket)container.getModified()).getNode(nodeBucketOffset) == null) {
-            final INode item = ((NodeBucket)container.getComplete()).getNode(nodeBucketOffset);
-            return mDelegate.checkItemIfDeleted(item);
-
-        }// ...bucket was modified and the modification touched this node.
+        LogValue container = mBucketWriter.get(key);
+        INode item = null;
+        // Bucket was modified...
+        if (container.getModified() != null) {
+            // ..check if the real node was touched and set it or..
+            if (((NodeBucket)container.getModified()).getNode(nodeBucketOffset) == null) {
+                item = ((NodeBucket)container.getComplete()).getNode(nodeBucketOffset);
+            }// ..take the node from the complete status of the page.
+            else {
+                item = ((NodeBucket)container.getModified()).getNode(nodeBucketOffset);
+            }
+            checkNotNull(item, "Item must be set!");
+            item = mDelegate.checkItemIfDeleted(item);
+        }// ...bucket was modified within a former version,...
         else {
-            final INode item = ((NodeBucket)container.getModified()).getNode(nodeBucketOffset);
-            return mDelegate.checkItemIfDeleted(item);
+            // check the former version as..
+            container = mBucketWriter.getFormer(key);
+            // ..modified element within this version or...
+            if (container.getModified() != null) {
+                // ..check if the real node was touched and set it or..
+                if (((NodeBucket)container.getModified()).getNode(nodeBucketOffset) == null) {
+                    item = ((NodeBucket)container.getComplete()).getNode(nodeBucketOffset);
+                }// ..take the node from the complete status of the page.
+                else {
+                    item = ((NodeBucket)container.getComplete()).getNode(nodeBucketOffset);
+                }
+                checkNotNull(item, "Item must be set!");
+                item = mDelegate.checkItemIfDeleted(item);
+            }// bucket was modified long long before, read it normally.
+            else {
+                item = mDelegate.getNode(pNodeKey);
+            }
         }
-
+        return item;
     }
 
     /**
@@ -404,9 +425,9 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
                 container = new LogValue(parentBucket, parentBucket);
                 // ..if the parent is not referenced as UberBucket or RevisionRootBucket within the Wtx
                 // itself...
-//                if (level > 0) {
-                    mBucketWriter.put(parentKey, container);
-//                }
+                // if (level > 0) {
+                mBucketWriter.put(parentKey, container);
+                // }
                 // ..but set the reference of the current bucket in every case.
                 container = new LogValue(bucket, bucket);
                 mBucketWriter.put(key, container);
