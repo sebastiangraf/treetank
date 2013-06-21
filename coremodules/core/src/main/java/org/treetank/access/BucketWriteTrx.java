@@ -196,7 +196,9 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         mDelegate.mSession.waitForRunningCommit();
 
         final UberBucket uber = UberBucket.copy(mNewUber);
-        final Future<Void> commitInProgress = mBucketWriter.commit(uber, mNewMeta, mNewRoot);
+        final MetaBucket meta = MetaBucket.copy(mNewMeta);
+        final RevisionRootBucket rev = RevisionRootBucket.copy(mNewRoot);
+        final Future<Void> commitInProgress = mBucketWriter.commit(uber, meta, rev);
         mDelegate.mSession.setRunningCommit(mCommitInProgress.submit(new Callable<Void>() {
             @Override
             public Void call() throws Exception {
