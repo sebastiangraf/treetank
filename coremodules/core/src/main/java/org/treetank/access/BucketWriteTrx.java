@@ -117,6 +117,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
             (MetaBucket)pWriter.read(revBucket.getReferenceKeys()[RevisionRootBucket.META_REFERENCE_OFFSET]);
 
         mCommitInProgress = Executors.newSingleThreadExecutor();
+        mDelegate = new BucketReadTrx(pSession, pUberBucket, revBucket, metaBucket, pWriter);
         setUpTransaction(pUberBucket, revBucket, metaBucket, pSession, pRepresentRev, mBucketWriter);
     }
 
@@ -223,8 +224,10 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         mDelegate.mSession.setRunningCommit(mCommitInProgress.submit(new Callable<Void>() {
             @Override
             public Void call() throws Exception {
+                //serializing of new UberPage including its Subtree is concluded.
                 commitInProgress.get();
                 ((Session)mDelegate.mSession).setLastCommittedUberBucket(uber);
+                mDelegate = new BucketReadTrx(mDelegate.mSession, uber, rev, meta, mBucketWriter);
                 mBucketWriter.closeFormerLog();
                 return null;
             }
@@ -448,8 +451,6 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
     private void setUpTransaction(final UberBucket pUberOld, final RevisionRootBucket pRootToRepresent,
         final MetaBucket pMetaOld, final ISession pSession, final long pRepresentRev,
         final BackendWriterProxy pWriter) throws TTException {
-
-        mDelegate = new BucketReadTrx(pSession, pUberOld, pRootToRepresent, pMetaOld, pWriter);
 
         mNewUber =
             new UberBucket(pUberOld.getBucketCounter() + 1, pUberOld.getRevisionNumber() + 1, pUberOld

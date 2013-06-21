@@ -400,6 +400,7 @@ public final class Storage implements IStorage {
 
         try {
             writer.commit(uberBucket, metaBucker, revBucket).get();
+            writer.closeFormerLog();
         } catch (InterruptedException | ExecutionException exc) {
             throw new RuntimeException(exc);
         }
