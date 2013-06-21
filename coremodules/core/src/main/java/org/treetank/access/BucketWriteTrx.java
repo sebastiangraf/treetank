@@ -404,9 +404,9 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
                 container = new LogValue(parentBucket, parentBucket);
                 // ..if the parent is not referenced as UberBucket or RevisionRootBucket within the Wtx
                 // itself...
-                if (level > 0) {
+//                if (level > 0) {
                     mBucketWriter.put(parentKey, container);
-                }
+//                }
                 // ..but set the reference of the current bucket in every case.
                 container = new LogValue(bucket, bucket);
                 mBucketWriter.put(key, container);
