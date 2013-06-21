@@ -231,8 +231,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
 
         mDelegate.mSession.waitForRunningCommit();
 
-        setUpTransaction(mNewUber, mNewRoot, mNewMeta, mDelegate.mSession, uber.getRevisionNumber(),
-            mBucketWriter);
+        setUpTransaction(uber, rev, meta, mDelegate.mSession, uber.getRevisionNumber(), mBucketWriter);
 
     }
 
