@@ -208,7 +208,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
             }
         }));
 
-        mDelegate.mSession.waitForRunningCommit();
+         mDelegate.mSession.waitForRunningCommit();
 
         setUpTransaction(mNewUber, mNewRoot, mNewMeta, mDelegate.mSession, uber.getRevisionNumber(),
             mBucketWriter);
@@ -380,15 +380,24 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
                 // compute the offset of the new bucket
                 int offset = nodeBucketOffset(orderNumber[level]);
 
-                // if there existed the same bucket in former versions (referencable over the offset within
-                // the parent)...
-                if (parentBucket.getReferenceKeys()[offset] != 0) {
-                    IReferenceBucket oldBucket =
-                        (IReferenceBucket)mBucketWriter.read(parentBucket.getReferenceKeys()[offset]);
+                // if there existed the same bucket in former versions in a former log or
+                container = mBucketWriter.getFormer(key);
+                IReferenceBucket oldBucket = null;
+                if (container.getModified() != null) {
+                    oldBucket = (IReferenceBucket)container.getModified();
+                }
+                // over the former log or the offset within
+                // the parent...
+                else if (parentBucket.getReferenceKeys()[offset] != 0) {
+                    oldBucket = (IReferenceBucket)mBucketWriter.read(parentBucket.getReferenceKeys()[offset]);
+                }
+                //..copy all references to the new log.
+                if (oldBucket != null) {
                     for (int i = 0; i < oldBucket.getReferenceKeys().length; i++) {
                         bucket.setReferenceKey(i, oldBucket.getReferenceKeys()[i]);
                     }
                 }
+
                 // Set the newKey on the computed offset...
                 parentBucket.setReferenceKey(offset, newKey);
                 // .. and put the parent-reference to the log...
