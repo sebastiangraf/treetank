@@ -48,9 +48,18 @@ import org.treetank.NodeTestHelper;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.StandardSettings;
+import org.treetank.api.IMetaEntryFactory;
+import org.treetank.api.INodeFactory;
 import org.treetank.exception.TTException;
+import org.treetank.io.IBackend;
+import org.treetank.io.bytepipe.ByteHandlerPipeline;
+import org.treetank.io.jclouds.JCloudsStorage;
 import org.treetank.node.ElementNode;
 import org.treetank.node.IConstants;
+import org.treetank.node.NodeMetaPageFactory;
+import org.treetank.node.TreeNodeFactory;
+import org.treetank.revisioning.IRevisioning;
+import org.treetank.revisioning.SlidingSnapshot;
 
 import com.google.inject.Inject;
 
@@ -79,7 +88,7 @@ public final class OverallTest {
             StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
                 CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
-        this.holder = Holder.generateWtx(holder,mResource);
+        this.holder = Holder.generateWtx(holder, mResource);
     }
 
     @Test
@@ -164,4 +173,34 @@ public final class OverallTest {
         return new String(buf);
     }
 
+    public static void main(String[] args) {
+        try {
+            System.out.println("STARTING!!!!");
+            long time = System.currentTimeMillis();
+            OverallTest test = new OverallTest();
+            CoreTestHelper.deleteEverything();
+            final CoreTestHelper.Holder holder = CoreTestHelper.Holder.generateStorage();
+
+            final IRevisioning revision = new SlidingSnapshot();
+            final INodeFactory nodeFac = new TreeNodeFactory();
+            final IMetaEntryFactory metaFac = new NodeMetaPageFactory();
+            final Properties props =
+                StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                    CoreTestHelper.RESOURCENAME);
+            final IBackend backend = new JCloudsStorage(props, nodeFac, metaFac, new ByteHandlerPipeline());
+
+            test.mResource = new ResourceConfiguration(props, backend, revision, nodeFac, metaFac);
+            test.holder = Holder.generateWtx(holder, test.mResource);
+
+            test.testJustEverything();
+
+            CoreTestHelper.closeEverything();
+            System.out.println(System.currentTimeMillis() - time + "ms");
+            System.out.println("ENDING!!!!");
+            CoreTestHelper.deleteEverything();
+        } catch (Exception exc) {
+            exc.printStackTrace();
+            System.exit(-1);
+        }
+    }
 }
