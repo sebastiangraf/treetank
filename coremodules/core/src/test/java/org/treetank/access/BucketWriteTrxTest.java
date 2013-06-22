@@ -215,36 +215,4 @@ public class BucketWriteTrxTest {
         BucketReadTrxTest.testClose(mHolder.getStorage(), mHolder.getSession(), rtx);
     }
 
-    public static void main(String[] args) {
-        try {
-            System.out.println("STARTING!!!!");
-            long time = System.currentTimeMillis();
-            BucketWriteTrxTest test = new BucketWriteTrxTest();
-            CoreTestHelper.deleteEverything();
-            test.mHolder = CoreTestHelper.Holder.generateStorage();
-
-            final IRevisioning revision = new SlidingSnapshot();
-            final INodeFactory nodeFac = new DumbNodeFactory();
-            final IMetaEntryFactory metaFac = new DumbMetaEntryFactory();
-            final Properties props =
-                StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
-                    CoreTestHelper.RESOURCENAME);
-            final IBackend backend = new JCloudsStorage(props, nodeFac, metaFac, new ByteHandlerPipeline());
-
-            final ResourceConfiguration config =
-                new ResourceConfiguration(props, backend, revision, nodeFac, metaFac);
-
-            CoreTestHelper.Holder.generateSession(test.mHolder, config);
-
-            test.testSetNode();
-
-            CoreTestHelper.closeEverything();
-            System.out.println(System.currentTimeMillis() - time + "ms");
-            System.out.println("ENDING!!!!");
-            CoreTestHelper.deleteEverything();
-        } catch (Exception exc) {
-            exc.printStackTrace();
-            System.exit(-1);
-        }
-    }
 }
