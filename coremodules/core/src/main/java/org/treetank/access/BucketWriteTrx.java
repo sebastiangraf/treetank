@@ -464,13 +464,11 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         final LogValue indirectContainer = mBucketWriter.get(indirectKey);
         final int offset = nodeBucketOffset(mNewUber.getRevisionNumber());
 
-        // Get previous revision root bucket..
-        final RevisionRootBucket previousRevRoot = mDelegate.mRootBucket;
-        // ...and using this data to initialize a fresh revision root including the pointers.
+        // Get previous revision root bucket and using this data to initialize a fresh revision root including the pointers.
         mNewRoot =
-            new RevisionRootBucket(mNewUber.incrementBucketCounter(), pRepresentRev + 1, previousRevRoot
+            new RevisionRootBucket(mNewUber.incrementBucketCounter(), pRepresentRev + 1, pRootToRepresent
                 .getMaxNodeKey());
-        mNewRoot.setReferenceKey(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET, previousRevRoot
+        mNewRoot.setReferenceKey(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET, pRootToRepresent
             .getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET]);
 
         // setting the new revRoot to the correct offset

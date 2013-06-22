@@ -217,6 +217,7 @@ public class BucketWriteTrxTest {
     public static void main(String[] args) {
         try {
             System.out.println("STARTING!!!!");
+            long time = System.currentTimeMillis();
             BucketWriteTrxTest test = new BucketWriteTrxTest();
             CoreTestHelper.deleteEverything();
             test.mHolder = CoreTestHelper.Holder.generateStorage();
@@ -234,9 +235,10 @@ public class BucketWriteTrxTest {
 
             CoreTestHelper.Holder.generateSession(test.mHolder, config);
 
-            test.testRemoveNode();
+            test.testSetNode();
 
             CoreTestHelper.closeEverything();
+            System.out.println(System.currentTimeMillis() - time + "ms");
             System.out.println("ENDING!!!!");
             CoreTestHelper.deleteEverything();
         } catch (Exception exc) {
