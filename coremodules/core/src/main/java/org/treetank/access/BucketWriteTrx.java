@@ -224,7 +224,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         mDelegate.mSession.setRunningCommit(mCommitInProgress.submit(new Callable<Void>() {
             @Override
             public Void call() throws Exception {
-                //serializing of new UberPage including its Subtree is concluded.
+                // serializing of new UberPage including its Subtree is concluded.
                 commitInProgress.get();
                 ((Session)mDelegate.mSession).setLastCommittedUberBucket(uber);
                 mDelegate = new BucketReadTrx(mDelegate.mSession, uber, rev, meta, mBucketWriter);
@@ -233,7 +233,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
             }
         }));
 
-        mDelegate.mSession.waitForRunningCommit();
+         mDelegate.mSession.waitForRunningCommit();
 
         setUpTransaction(uber, rev, meta, mDelegate.mSession, uber.getRevisionNumber(), mBucketWriter);
 
@@ -306,39 +306,48 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
 
         final long seqNodeBucketKey = pNodeKey >> IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3];
 
-        LogKey key = new LogKey(false, IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length, seqNodeBucketKey);
-        // See if on nodeBucketLevel, there are any buckets...
+        final LogKey key = new LogKey(false, IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length, seqNodeBucketKey);
+        // See if on nodeBucketLevel, there are any buckets.
         LogValue container = mBucketWriter.get(key);
-        // ... and start dereferencing of not.
+        // if not,...
         if (container.getModified() == null) {
-            LogKey indirectKey = preparePathToLeaf(false, mNewRoot, pNodeKey);
+            // ..start preparing a new container to be logged
+            final LogKey indirectKey = preparePathToLeaf(false, mNewRoot, pNodeKey);
+            final LogValue indirectContainer = mBucketWriter.get(indirectKey);
+            final int nodeOffset = nodeBucketOffset(seqNodeBucketKey);
+            final long bucketKey = ((IndirectBucket)indirectContainer.getModified()).getReferenceKeys()[nodeOffset];
+            final long newBucketKey = mNewUber.incrementBucketCounter();
 
-            LogValue indirectContainer = mBucketWriter.get(indirectKey);
-            int nodeOffset = nodeBucketOffset(seqNodeBucketKey);
-            long bucketKey = ((IndirectBucket)indirectContainer.getModified()).getReferenceKeys()[nodeOffset];
-
-            long newBucketKey = mNewUber.incrementBucketCounter();
-            if (bucketKey != 0) {
-                NodeBucket[] buckets = mDelegate.getSnapshotBuckets(seqNodeBucketKey);
-                checkState(buckets.length > 0);
-                if (mNewRoot.getRevision()
-                    % Integer.parseInt(mDelegate.mSession.getConfig().mProperties
-                        .getProperty(ConstructorProps.NUMBERTORESTORE)) == 0) {
-                    container =
-                        mDelegate.mSession.getConfig().mRevision.combineBucketsForModification(Integer
-                            .parseInt(mDelegate.mSession.getConfig().mProperties
-                                .getProperty(ConstructorProps.NUMBERTORESTORE)), newBucketKey, buckets, true);
-                } else {
-                    container =
-                        mDelegate.mSession.getConfig().mRevision
-                            .combineBucketsForModification(Integer
+            // look, if a former log is currently in process to be written, and prepare one reflecting the entire status...
+            final LogValue formerModified = mBucketWriter.getFormer(key);
+            if (formerModified.getComplete() != null) {
+                final NodeBucket newBucket =
+                    new NodeBucket(newBucketKey, formerModified.getComplete().getBucketKey());
+                container = new LogValue(formerModified.getComplete(), newBucket);
+            }//..else, read from the persisted storage and set up a new one.
+            else {
+                if (bucketKey != 0) {
+                    final NodeBucket[] buckets = mDelegate.getSnapshotBuckets(seqNodeBucketKey);
+                    checkState(buckets.length > 0);
+                    if (mNewRoot.getRevision()
+                        % Integer.parseInt(mDelegate.mSession.getConfig().mProperties
+                            .getProperty(ConstructorProps.NUMBERTORESTORE)) == 0) {
+                        container =
+                            mDelegate.mSession.getConfig().mRevision.combineBucketsForModification(Integer
+                                .parseInt(mDelegate.mSession.getConfig().mProperties
+                                    .getProperty(ConstructorProps.NUMBERTORESTORE)), newBucketKey, buckets,
+                                true);
+                    } else {
+                        container =
+                            mDelegate.mSession.getConfig().mRevision.combineBucketsForModification(Integer
                                 .parseInt(mDelegate.mSession.getConfig().mProperties
                                     .getProperty(ConstructorProps.NUMBERTORESTORE)), newBucketKey, buckets,
                                 false);
+                    }
+                } else {
+                    final NodeBucket newBucket = new NodeBucket(newBucketKey, IConstants.NULL_NODE);
+                    container = new LogValue(newBucket, newBucket);
                 }
-            } else {
-                NodeBucket newBucket = new NodeBucket(newBucketKey, IConstants.NULL_NODE);
-                container = new LogValue(newBucket, newBucket);
             }
             ((IndirectBucket)indirectContainer.getModified()).setReferenceKey(nodeOffset, newBucketKey);
             mBucketWriter.put(indirectKey, indirectContainer);
@@ -464,7 +473,8 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         final LogValue indirectContainer = mBucketWriter.get(indirectKey);
         final int offset = nodeBucketOffset(mNewUber.getRevisionNumber());
 
-        // Get previous revision root bucket and using this data to initialize a fresh revision root including the pointers.
+        // Get previous revision root bucket and using this data to initialize a fresh revision root including
+        // the pointers.
         mNewRoot =
             new RevisionRootBucket(mNewUber.incrementBucketCounter(), pRepresentRev + 1, pRootToRepresent
                 .getMaxNodeKey());

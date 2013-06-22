@@ -131,6 +131,7 @@ public class BucketWriteTrxTest {
     public void testSetNode() throws TTException {
         final IBucketWriteTrx wtx = mHolder.getSession().beginBucketWtx();
         int elementsToSet = 16385;
+        // int elementsToSet = 10;
         List<DumbNode> nodes = new ArrayList<DumbNode>();
         for (int i = 0; i < elementsToSet; i++) {
             long nodeKey = wtx.incrementNodeKey();
