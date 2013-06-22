@@ -11,7 +11,6 @@ import static org.testng.AssertJUnit.fail;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -25,19 +24,10 @@ import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFact
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.IBucketReadTrx;
 import org.treetank.api.IBucketWriteTrx;
-import org.treetank.api.IMetaEntryFactory;
-import org.treetank.api.INodeFactory;
-import org.treetank.bucket.DumbMetaEntryFactory;
 import org.treetank.bucket.DumbMetaEntryFactory.DumbKey;
 import org.treetank.bucket.DumbMetaEntryFactory.DumbValue;
-import org.treetank.bucket.DumbNodeFactory;
 import org.treetank.bucket.DumbNodeFactory.DumbNode;
 import org.treetank.exception.TTException;
-import org.treetank.io.IBackend;
-import org.treetank.io.bytepipe.ByteHandlerPipeline;
-import org.treetank.io.jclouds.JCloudsStorage;
-import org.treetank.revisioning.IRevisioning;
-import org.treetank.revisioning.SlidingSnapshot;
 
 import com.google.inject.Inject;
 

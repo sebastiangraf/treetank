@@ -306,7 +306,8 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
 
         final long seqNodeBucketKey = pNodeKey >> IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3];
 
-        final LogKey key = new LogKey(false, IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length, seqNodeBucketKey);
+        final LogKey key =
+            new LogKey(false, IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length, seqNodeBucketKey);
         // See if on nodeBucketLevel, there are any buckets.
         LogValue container = mBucketWriter.get(key);
         // if not,...
@@ -315,16 +316,18 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
             final LogKey indirectKey = preparePathToLeaf(false, mNewRoot, pNodeKey);
             final LogValue indirectContainer = mBucketWriter.get(indirectKey);
             final int nodeOffset = nodeBucketOffset(seqNodeBucketKey);
-            final long bucketKey = ((IndirectBucket)indirectContainer.getModified()).getReferenceKeys()[nodeOffset];
+            final long bucketKey =
+                ((IndirectBucket)indirectContainer.getModified()).getReferenceKeys()[nodeOffset];
             final long newBucketKey = mNewUber.incrementBucketCounter();
 
-            // look, if a former log is currently in process to be written, and prepare one reflecting the entire status...
+            // look, if a former log is currently in process to be written, and prepare one reflecting the
+            // entire status...
             final LogValue formerModified = mBucketWriter.getFormer(key);
             if (formerModified.getComplete() != null) {
                 final NodeBucket newBucket =
                     new NodeBucket(newBucketKey, formerModified.getComplete().getBucketKey());
                 container = new LogValue(formerModified.getComplete(), newBucket);
-            }//..else, read from the persisted storage and set up a new one.
+            }// ..else, read from the persisted storage and set up a new one.
             else {
                 if (bucketKey != 0) {
                     final NodeBucket[] buckets = mDelegate.getSnapshotBuckets(seqNodeBucketKey);
