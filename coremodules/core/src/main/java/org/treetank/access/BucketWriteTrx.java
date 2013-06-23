@@ -233,7 +233,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
             }
         }));
 
-         mDelegate.mSession.waitForRunningCommit();
+        mDelegate.mSession.waitForRunningCommit();
 
         setUpTransaction(uber, rev, meta, mDelegate.mSession, uber.getRevisionNumber(), mBucketWriter);
 
@@ -319,11 +319,16 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
             final long bucketKey =
                 ((IndirectBucket)indirectContainer.getModified()).getReferenceKeys()[nodeOffset];
             final long newBucketKey = mNewUber.incrementBucketCounter();
-            //if there is a bucket already existing...
+            // if there is a bucket already existing...
             if (bucketKey != 0) {
-                // ...look, if a former log is currently in process to be written, and prepare one reflecting the
+                // ...look, if a former log is currently in process to be written, and prepare one reflecting
+                // the
                 // entire status...
                 final LogValue formerModified = mBucketWriter.getFormer(key);
+                final int revToRestore =
+                    Integer.parseInt(mDelegate.mSession.getConfig().mProperties
+                        .getProperty(ConstructorProps.NUMBERTORESTORE));
+
                 if (formerModified.getModified() != null) {
                     final NodeBucket currentlyInProgress = (NodeBucket)formerModified.getModified();
 
@@ -335,24 +340,11 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
 
                     final NodeBucket[] buckets = mDelegate.getSnapshotBuckets(seqNodeBucketKey);
                     checkState(buckets.length > 0);
-                    if (mNewRoot.getRevision()
-                        % Integer.parseInt(mDelegate.mSession.getConfig().mProperties
-                            .getProperty(ConstructorProps.NUMBERTORESTORE)) == 0) {
-                        container =
-                            mDelegate.mSession.getConfig().mRevision.combineBucketsForModification(Integer
-                                .parseInt(mDelegate.mSession.getConfig().mProperties
-                                    .getProperty(ConstructorProps.NUMBERTORESTORE)), newBucketKey, buckets,
-                                true);
-                    } else {
-                        container =
-                            mDelegate.mSession.getConfig().mRevision.combineBucketsForModification(Integer
-                                .parseInt(mDelegate.mSession.getConfig().mProperties
-                                    .getProperty(ConstructorProps.NUMBERTORESTORE)), newBucketKey, buckets,
-                                false);
-                    }
-
+                    container =
+                        mDelegate.mSession.getConfig().mRevision.combineBucketsForModification(revToRestore,
+                            newBucketKey, buckets, mNewRoot.getRevision() % revToRestore == 0);
                 }
-            }//...if no bucket is existing, create an entirely new one.
+            }// ...if no bucket is existing, create an entirely new one.
             else {
                 final NodeBucket newBucket = new NodeBucket(newBucketKey, IConstants.NULL_NODE);
                 container = new LogValue(newBucket, newBucket);
