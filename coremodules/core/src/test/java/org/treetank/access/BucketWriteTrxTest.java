@@ -120,9 +120,9 @@ public class BucketWriteTrxTest {
     @Test
     public void testSetNode() throws TTException {
         final IBucketWriteTrx wtx = mHolder.getSession().beginBucketWtx();
-        int elementsToSet = 16385;
-        // int elementsToSet = 10;
-        List<DumbNode> nodes = new ArrayList<DumbNode>();
+        final int elementsToSet = 16385;
+        final List<DumbNode> nodes = new ArrayList<DumbNode>();
+        final int newVersions = 100;
         for (int i = 0; i < elementsToSet; i++) {
             long nodeKey = wtx.incrementNodeKey();
             DumbNode node = CoreTestHelper.generateOne();
@@ -142,16 +142,19 @@ public class BucketWriteTrxTest {
         }
         wtx.commit();
 
-        for (int i = 0; i < elementsToSet; i++) {
-            assertEquals(nodes.get(i), wtx.getNode(i));
-            DumbNode node = CoreTestHelper.generateOne();
-            node.setNodeKey(i);
-            nodes.set(i, node);
-            wtx.setNode(nodes.get(i));
-            assertEquals(nodes.get(i), wtx.getNode(i));
+        for (int j = 0; j < newVersions; j++) {
+            for (int i = 0; i < elementsToSet; i++) {
+                assertEquals(nodes.get(i), wtx.getNode(i));
+                DumbNode node = CoreTestHelper.generateOne();
+                node.setNodeKey(i);
+                nodes.set(i, node);
+                wtx.setNode(nodes.get(i));
+                assertEquals(nodes.get(i), wtx.getNode(i));
+            }
+            CoreTestHelper.checkStructure(nodes, wtx, 0);
+            wtx.commit();
+            CoreTestHelper.checkStructure(nodes, wtx, 0);
         }
-        wtx.commit();
-
         final IBucketReadTrx rtx =
             mHolder.getSession().beginBucketRtx(mHolder.getSession().getMostRecentVersion());
         CoreTestHelper.checkStructure(nodes, rtx, 0);
