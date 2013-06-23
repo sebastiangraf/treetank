@@ -233,7 +233,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
             }
         }));
 
-         mDelegate.mSession.waitForRunningCommit();
+        mDelegate.mSession.waitForRunningCommit();
 
         setUpTransaction(uber, rev, meta, mDelegate.mSession, uber.getRevisionNumber(), mBucketWriter);
 
@@ -319,38 +319,35 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
             final long bucketKey =
                 ((IndirectBucket)indirectContainer.getModified()).getReferenceKeys()[nodeOffset];
             final long newBucketKey = mNewUber.incrementBucketCounter();
+            // if there is a bucket already existing...
+            if (bucketKey != 0) {
+                // ...look, if a former log is currently in process to be written, and prepare one reflecting
+                // the
+                // entire status...
+                final LogValue formerModified = mBucketWriter.getFormer(key);
+                final int revToRestore =
+                    Integer.parseInt(mDelegate.mSession.getConfig().mProperties
+                        .getProperty(ConstructorProps.NUMBERTORESTORE));
 
-            // look, if a former log is currently in process to be written, and prepare one reflecting the
-            // entire status...
-            final LogValue formerModified = mBucketWriter.getFormer(key);
-            if (formerModified.getComplete() != null) {
-                final NodeBucket newBucket =
-                    new NodeBucket(newBucketKey, formerModified.getComplete().getBucketKey());
-                container = new LogValue(formerModified.getComplete(), newBucket);
-            }// ..else, read from the persisted storage and set up a new one.
-            else {
-                if (bucketKey != 0) {
+                if (formerModified.getModified() != null) {
+                    final NodeBucket currentlyInProgress = (NodeBucket)formerModified.getModified();
+
+                    final NodeBucket newBucket =
+                        new NodeBucket(newBucketKey, formerModified.getComplete().getBucketKey());
+                    container = new LogValue(formerModified.getComplete(), newBucket);
+                }// ..else, read from the persisted storage and set up a new one.
+                else {
+
                     final NodeBucket[] buckets = mDelegate.getSnapshotBuckets(seqNodeBucketKey);
                     checkState(buckets.length > 0);
-                    if (mNewRoot.getRevision()
-                        % Integer.parseInt(mDelegate.mSession.getConfig().mProperties
-                            .getProperty(ConstructorProps.NUMBERTORESTORE)) == 0) {
-                        container =
-                            mDelegate.mSession.getConfig().mRevision.combineBucketsForModification(Integer
-                                .parseInt(mDelegate.mSession.getConfig().mProperties
-                                    .getProperty(ConstructorProps.NUMBERTORESTORE)), newBucketKey, buckets,
-                                true);
-                    } else {
-                        container =
-                            mDelegate.mSession.getConfig().mRevision.combineBucketsForModification(Integer
-                                .parseInt(mDelegate.mSession.getConfig().mProperties
-                                    .getProperty(ConstructorProps.NUMBERTORESTORE)), newBucketKey, buckets,
-                                false);
-                    }
-                } else {
-                    final NodeBucket newBucket = new NodeBucket(newBucketKey, IConstants.NULL_NODE);
-                    container = new LogValue(newBucket, newBucket);
+                    container =
+                        mDelegate.mSession.getConfig().mRevision.combineBucketsForModification(revToRestore,
+                            newBucketKey, buckets, mNewRoot.getRevision() % revToRestore == 0);
                 }
+            }// ...if no bucket is existing, create an entirely new one.
+            else {
+                final NodeBucket newBucket = new NodeBucket(newBucketKey, IConstants.NULL_NODE);
+                container = new LogValue(newBucket, newBucket);
             }
             ((IndirectBucket)indirectContainer.getModified()).setReferenceKey(nodeOffset, newBucketKey);
             mBucketWriter.put(indirectKey, indirectContainer);
