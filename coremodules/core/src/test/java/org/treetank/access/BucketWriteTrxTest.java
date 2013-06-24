@@ -11,6 +11,7 @@ import static org.testng.AssertJUnit.fail;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -24,10 +25,19 @@ import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFact
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.IBucketReadTrx;
 import org.treetank.api.IBucketWriteTrx;
+import org.treetank.api.IMetaEntryFactory;
+import org.treetank.api.INodeFactory;
+import org.treetank.bucket.DumbMetaEntryFactory;
 import org.treetank.bucket.DumbMetaEntryFactory.DumbKey;
 import org.treetank.bucket.DumbMetaEntryFactory.DumbValue;
+import org.treetank.bucket.DumbNodeFactory;
 import org.treetank.bucket.DumbNodeFactory.DumbNode;
 import org.treetank.exception.TTException;
+import org.treetank.io.IBackend;
+import org.treetank.io.bytepipe.ByteHandlerPipeline;
+import org.treetank.io.jclouds.JCloudsStorage;
+import org.treetank.revisioning.IRevisioning;
+import org.treetank.revisioning.SlidingSnapshot;
 
 import com.google.inject.Inject;
 
@@ -121,8 +131,9 @@ public class BucketWriteTrxTest {
     public void testSetNode() throws TTException {
         final IBucketWriteTrx wtx = mHolder.getSession().beginBucketWtx();
         final int elementsToSet = 16385;
+        final int versionToWrite = 10;
+        // int elementsToSet = 10;
         final List<DumbNode> nodes = new ArrayList<DumbNode>();
-        final int newVersions = 100;
         for (int i = 0; i < elementsToSet; i++) {
             long nodeKey = wtx.incrementNodeKey();
             DumbNode node = CoreTestHelper.generateOne();
@@ -142,19 +153,24 @@ public class BucketWriteTrxTest {
         }
         wtx.commit();
 
-        for (int j = 0; j < newVersions; j++) {
+        int numbersToAdapt = 16;
+        for (int j = 0; j < versionToWrite; j++) {
             for (int i = 0; i < elementsToSet; i++) {
                 assertEquals(nodes.get(i), wtx.getNode(i));
-                DumbNode node = CoreTestHelper.generateOne();
-                node.setNodeKey(i);
-                nodes.set(i, node);
-                wtx.setNode(nodes.get(i));
-                assertEquals(nodes.get(i), wtx.getNode(i));
+                if (i % numbersToAdapt == 0) {
+                    DumbNode node = CoreTestHelper.generateOne();
+                    node.setNodeKey(i);
+                    nodes.set(i, node);
+                    wtx.setNode(nodes.get(i));
+                    assertEquals(nodes.get(i), wtx.getNode(i));
+                }
             }
             CoreTestHelper.checkStructure(nodes, wtx, 0);
             wtx.commit();
             CoreTestHelper.checkStructure(nodes, wtx, 0);
+            numbersToAdapt++;
         }
+
         final IBucketReadTrx rtx =
             mHolder.getSession().beginBucketRtx(mHolder.getSession().getMostRecentVersion());
         CoreTestHelper.checkStructure(nodes, rtx, 0);
@@ -208,4 +224,35 @@ public class BucketWriteTrxTest {
         BucketReadTrxTest.testClose(mHolder.getStorage(), mHolder.getSession(), rtx);
     }
 
+    public static void main(String[] args) {
+        try {
+            System.out.println("STARTING!!!!");
+            long time = System.currentTimeMillis();
+            BucketWriteTrxTest test = new BucketWriteTrxTest();
+            CoreTestHelper.deleteEverything();
+
+            final IRevisioning revision = new SlidingSnapshot();
+            final INodeFactory nodeFac = new DumbNodeFactory();
+            final IMetaEntryFactory metaFac = new DumbMetaEntryFactory();
+            final Properties props =
+                StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                    CoreTestHelper.RESOURCENAME);
+            final IBackend backend = new JCloudsStorage(props, nodeFac, metaFac, new ByteHandlerPipeline());
+
+            ResourceConfiguration config =
+                new ResourceConfiguration(props, backend, revision, nodeFac, metaFac);
+            test.mHolder = CoreTestHelper.Holder.generateStorage();
+            CoreTestHelper.Holder.generateSession(test.mHolder, config);
+
+            test.testSetNode();
+
+            CoreTestHelper.closeEverything();
+            System.out.println(System.currentTimeMillis() - time + "ms");
+            System.out.println("ENDING!!!!");
+            CoreTestHelper.deleteEverything();
+        } catch (Exception exc) {
+            exc.printStackTrace();
+            System.exit(-1);
+        }
+    }
 }

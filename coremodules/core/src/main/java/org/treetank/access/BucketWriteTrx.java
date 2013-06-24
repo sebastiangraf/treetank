@@ -329,21 +329,24 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
                     Integer.parseInt(mDelegate.mSession.getConfig().mProperties
                         .getProperty(ConstructorProps.NUMBERTORESTORE));
 
+                NodeBucket[] buckets;
                 if (formerModified.getModified() != null) {
                     final NodeBucket currentlyInProgress = (NodeBucket)formerModified.getModified();
 
-                    final NodeBucket newBucket =
-                        new NodeBucket(newBucketKey, formerModified.getComplete().getBucketKey());
-                    container = new LogValue(formerModified.getComplete(), newBucket);
+                    final NodeBucket[] formerBuckets = mDelegate.getSnapshotBuckets(seqNodeBucketKey, true);
+                    buckets = new NodeBucket[formerBuckets.length + 1];
+                    buckets[0] = currentlyInProgress;
+                    System.arraycopy(formerBuckets, 0, buckets, 1, formerBuckets.length);
+
                 }// ..else, read from the persisted storage and set up a new one.
                 else {
-
-                    final NodeBucket[] buckets = mDelegate.getSnapshotBuckets(seqNodeBucketKey);
-                    checkState(buckets.length > 0);
-                    container =
-                        mDelegate.mSession.getConfig().mRevision.combineBucketsForModification(revToRestore,
-                            newBucketKey, buckets, mNewRoot.getRevision() % revToRestore == 0);
+                    buckets = mDelegate.getSnapshotBuckets(seqNodeBucketKey, false);
                 }
+                checkState(buckets.length > 0);
+                container =
+                    mDelegate.mSession.getConfig().mRevision.combineBucketsForModification(revToRestore,
+                        newBucketKey, buckets, mNewRoot.getRevision() % revToRestore == 0);
+
             }// ...if no bucket is existing, create an entirely new one.
             else {
                 final NodeBucket newBucket = new NodeBucket(newBucketKey, IConstants.NULL_NODE);
