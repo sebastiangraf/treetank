@@ -149,9 +149,9 @@ public final class NodeBucket implements IBucket {
      */
     @Override
     public String toString() {
-        return toStringHelper(this).add("mBucketKey", mBucketKey).add("mNodes", mNodes).toString();
+        return toStringHelper(this).add("mBucketKey", mBucketKey).add("mNodes", Arrays.toString(mNodes))
+            .toString();
     }
-
 
     /**
      * Static class to mark deleted entries within the bucket.
@@ -215,7 +215,6 @@ public final class NodeBucket implements IBucket {
         }
 
     }
-
 
     /**
      * {@inheritDoc}

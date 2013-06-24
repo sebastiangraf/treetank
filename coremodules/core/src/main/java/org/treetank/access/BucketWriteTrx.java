@@ -33,6 +33,8 @@ import static com.google.common.base.Preconditions.checkState;
 import static org.treetank.access.BucketReadTrx.nodeBucketOffset;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -319,31 +321,70 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
             final long bucketKey =
                 ((IndirectBucket)indirectContainer.getModified()).getReferenceKeys()[nodeOffset];
             final long newBucketKey = mNewUber.incrementBucketCounter();
-            // if there is a bucket already existing...
+            // if there is not any bucket already existing...
             if (bucketKey != 0) {
-                // ...look, if a former log is currently in process to be written, and prepare one reflecting
-                // the
-                // entire status...
-                final LogValue formerModified = mBucketWriter.getFormer(key);
+                // ...just denote the number of elements necessary to restore (only for visibility reasons).
                 final int revToRestore =
                     Integer.parseInt(mDelegate.mSession.getConfig().mProperties
                         .getProperty(ConstructorProps.NUMBERTORESTORE));
 
+                // Gather all data, from the former log..
+                final LogValue formerModified = mBucketWriter.getFormer(key);
+                // ..and from the former revision.
+                final List<NodeBucket> formerBuckets = mDelegate.getSnapshotBuckets(seqNodeBucketKey);
+                // declare summarized buckets.
+                final List<NodeBucket> bucketList = new ArrayList<NodeBucket>();
+
+                // Look, if a former log is currently in process to be written...
                 if (formerModified.getModified() != null) {
+                    // ..if so, check if the modified one...
                     final NodeBucket currentlyInProgress = (NodeBucket)formerModified.getModified();
-
-                    final NodeBucket newBucket =
-                        new NodeBucket(newBucketKey, formerModified.getComplete().getBucketKey());
-                    container = new LogValue(formerModified.getComplete(), newBucket);
-                }// ..else, read from the persisted storage and set up a new one.
-                else {
-
-                    final NodeBucket[] buckets = mDelegate.getSnapshotBuckets(seqNodeBucketKey);
-                    checkState(buckets.length > 0);
-                    container =
-                        mDelegate.mSession.getConfig().mRevision.combineBucketsForModification(revToRestore,
-                            newBucketKey, buckets, mNewRoot.getRevision() % revToRestore == 0);
+                    // ... is the same one than recently written (to avoid race conditions).
+                    if (formerBuckets.isEmpty()
+                        || formerBuckets.get(0).getBucketKey() == currentlyInProgress.getBucketKey()) {
+                        bucketList.add(currentlyInProgress);
+                    }
                 }
+
+                // All currently written elements are inserted so if no elements are in the bucketlist...
+                if (bucketList.isEmpty()) {
+                    // ...add all former ones...
+                    bucketList.addAll(formerBuckets);
+                }// ..otherwise, take all elements starting index 1 into account
+                else {
+                    if (formerBuckets.size() > 1) {
+                        bucketList.addAll(formerBuckets.subList(1, formerBuckets.size() - 1));
+                    }
+                }
+
+                // Transform into array..
+                final NodeBucket[] buckets = bucketList.toArray(new NodeBucket[bucketList.size()]);
+                // ..and check that the number of buckets are valid and return the entire bucket.
+                checkState(buckets.length > 0);
+                container =
+                    mDelegate.mSession.getConfig().mRevision.combineBucketsForModification(revToRestore,
+                        newBucketKey, buckets, mNewRoot.getRevision() % revToRestore == 0);
+
+//                // DEBUG CODE!!!!!
+//                INode[] toCheck = ((NodeBucket)container.getComplete()).getNodes();
+//                boolean nullFound = false;
+//                for (int i = 0; i < toCheck.length && !nullFound; i++) {
+//                    if ((i < toCheck.length - 1 && i > 0)
+//                        && (toCheck[i + 1] != null && toCheck[i] == null && toCheck[i - 1] != null)) {
+//                        nullFound = true;
+//                    }
+//                }
+//                if (nullFound) {
+//                    System.out.println("-----FAILURE------");
+//                    for (int i = 0; i < buckets.length; i++) {
+//                        System.out.println("+++++++++++++++");
+//                        System.out.println(buckets[i].toString());
+//                        System.out.println("+++++++++++++++");
+//                    }
+//                    System.out.println("-----------");
+//                    System.exit(-1);
+//                }
+
             }// ...if no bucket is existing, create an entirely new one.
             else {
                 final NodeBucket newBucket = new NodeBucket(newBucketKey, IConstants.NULL_NODE);
