@@ -39,6 +39,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.Semaphore;
 
 import org.treetank.access.conf.ConstructorProps;
 import org.treetank.api.IBucketWriteTrx;
@@ -87,6 +88,9 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
     /** Executor for tracing commit in progress. */
     private final ExecutorService mCommitInProgress;
 
+    /** Blocking the delegate from being changed. */
+    private final Semaphore mBlockDelegate;
+
     /**
      * Standard constructor.
      * 
@@ -116,6 +120,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         final MetaBucket metaBucket =
             (MetaBucket)pWriter.read(revBucket.getReferenceKeys()[RevisionRootBucket.META_REFERENCE_OFFSET]);
 
+        mBlockDelegate = new Semaphore(1);
         mCommitInProgress = Executors.newSingleThreadExecutor();
         mDelegate = new BucketReadTrx(pSession, pUberBucket, revBucket, metaBucket, pWriter);
         setUpTransaction(pUberBucket, revBucket, metaBucket, pSession, pRepresentRev, mBucketWriter);
@@ -227,7 +232,9 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
                 // serializing of new UberPage including its Subtree is concluded.
                 commitInProgress.get();
                 ((Session)mDelegate.mSession).setLastCommittedUberBucket(uber);
+                mBlockDelegate.acquire();
                 mDelegate = new BucketReadTrx(mDelegate.mSession, uber, rev, meta, mBucketWriter);
+                mBlockDelegate.release();
                 mBucketWriter.closeFormerLog();
                 return null;
             }
@@ -326,8 +333,15 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
                     Integer.parseInt(mDelegate.mSession.getConfig().mProperties
                         .getProperty(ConstructorProps.NUMBERTORESTORE));
 
+                try {
+                    mBlockDelegate.acquire();
+                } catch (final InterruptedException exc) {
+                    throw new TTIOException(exc);
+                }
+
                 final LogValue formerModified = mBucketWriter.getFormer(key);
                 NodeBucket[] buckets;
+
                 // Look, if a former log is currently in process to be written...
                 if (formerModified.getModified() != null) {
                     // ..if so, get the modified one..
@@ -343,11 +357,34 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
                     // ...just read from the persistent storage
                     buckets = mDelegate.getSnapshotBuckets(seqNodeBucketKey, false);
                 }
+
+                mBlockDelegate.release();
+
                 // check that the number of buckets are valid and return the entire bucket.
                 checkState(buckets.length > 0);
                 container =
                     mDelegate.mSession.getConfig().mRevision.combineBucketsForModification(revToRestore,
                         newBucketKey, buckets, mNewRoot.getRevision() % revToRestore == 0);
+
+                // DEBUG CODE!!!!!
+                INode[] toCheck = ((NodeBucket)container.getComplete()).getNodes();
+                boolean nullFound = false;
+                for (int i = 0; i < toCheck.length && !nullFound; i++) {
+                    if ((i < toCheck.length - 1 && i > 0)
+                        && (toCheck[i + 1] != null && toCheck[i] == null && toCheck[i - 1] != null)) {
+                        nullFound = true;
+                    }
+                }
+                if (nullFound) {
+                    System.out.println("-----FAILURE------");
+                    for (int i = 0; i < buckets.length; i++) {
+                        System.out.println("+++++++++++++++");
+                        System.out.println(buckets[i].toString());
+                        System.out.println("+++++++++++++++");
+                    }
+                    System.out.println("-----------");
+                    System.exit(-1);
+                }
 
             }// ...if no bucket is existing, create an entirely new one.
             else {
