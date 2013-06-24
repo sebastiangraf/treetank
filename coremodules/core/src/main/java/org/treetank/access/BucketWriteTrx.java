@@ -319,29 +319,31 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
             final long bucketKey =
                 ((IndirectBucket)indirectContainer.getModified()).getReferenceKeys()[nodeOffset];
             final long newBucketKey = mNewUber.incrementBucketCounter();
-            // if there is a bucket already existing...
+            // if there is not any bucket already existing...
             if (bucketKey != 0) {
-                // ...look, if a former log is currently in process to be written, and prepare one reflecting
-                // the
-                // entire status...
-                final LogValue formerModified = mBucketWriter.getFormer(key);
+                // ...just denote the number of elements necessary to restore (only for visibility reasons).
                 final int revToRestore =
                     Integer.parseInt(mDelegate.mSession.getConfig().mProperties
                         .getProperty(ConstructorProps.NUMBERTORESTORE));
 
+                final LogValue formerModified = mBucketWriter.getFormer(key);
                 NodeBucket[] buckets;
+                // Look, if a former log is currently in process to be written...
                 if (formerModified.getModified() != null) {
+                    // ..if so, get the modified one..
                     final NodeBucket currentlyInProgress = (NodeBucket)formerModified.getModified();
-
+                    // ..and combine them with the former buckets to get the entire status
                     final NodeBucket[] formerBuckets = mDelegate.getSnapshotBuckets(seqNodeBucketKey, true);
                     buckets = new NodeBucket[formerBuckets.length + 1];
                     buckets[0] = currentlyInProgress;
                     System.arraycopy(formerBuckets, 0, buckets, 1, formerBuckets.length);
 
-                }// ..else, read from the persisted storage and set up a new one.
+                }// if the bucket is not currently in process,..
                 else {
+                    // ...just read from the persistent storage
                     buckets = mDelegate.getSnapshotBuckets(seqNodeBucketKey, false);
                 }
+                // check that the number of buckets are valid and return the entire bucket.
                 checkState(buckets.length > 0);
                 container =
                     mDelegate.mSession.getConfig().mRevision.combineBucketsForModification(revToRestore,
