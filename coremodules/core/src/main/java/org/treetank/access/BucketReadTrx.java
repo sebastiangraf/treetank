@@ -126,7 +126,9 @@ public class BucketReadTrx implements IBucketReadTrx {
         // Calculate bucket and node part for given nodeKey.
         final long seqBucketKey = pNodeKey >> IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3];
         final int nodeBucketOffset = nodeBucketOffset(pNodeKey);
-        final NodeBucket[] revs = getSnapshotBuckets(seqBucketKey, false);
+        final List<NodeBucket> listRevs = getSnapshotBuckets(seqBucketKey);
+        final NodeBucket[] revs = listRevs.toArray(new NodeBucket[listRevs.size()]);
+        checkState(revs.length > 0, "Number of Buckets to reconstruct must be larger than 0");
         // Build up the complete bucket.
         final IRevisioning revision = mSession.getConfig().mRevision;
         NodeBucket bucket = revision.combineBuckets(revs);
@@ -206,16 +208,12 @@ public class BucketReadTrx implements IBucketReadTrx {
      * 
      * @param pSeqNodeBucketKey
      *            Key of node bucket.
-     * @param pCommitInProcess
-     *            if commit in provess, the most current bucket comes from the wtx resulting in one revision
-     *            less to read
      * @return Dereferenced bucket.
      * 
      * @throws TTIOException
      *             if something odd happens within the creation process.
      */
-    protected final NodeBucket[] getSnapshotBuckets(final long pSeqNodeBucketKey, boolean pCommitInProcess)
-        throws TTIOException {
+    protected final List<NodeBucket> getSnapshotBuckets(final long pSeqNodeBucketKey) throws TTIOException {
 
         // Return Value, since the revision iterates a flexible number of version, this has to be a list
         // first.
@@ -228,9 +226,7 @@ public class BucketReadTrx implements IBucketReadTrx {
                     .getRevision());
         final RevisionRootBucket rootBucket = (RevisionRootBucket)mBucketReader.read(currentRevKey);
         final int numbersToRestore =
-            pCommitInProcess ? Integer.parseInt(mSession.getConfig().mProperties
-                .getProperty(ConstructorProps.NUMBERTORESTORE)) - 1 : Integer
-                .parseInt(mSession.getConfig().mProperties.getProperty(ConstructorProps.NUMBERTORESTORE));
+            Integer.parseInt(mSession.getConfig().mProperties.getProperty(ConstructorProps.NUMBERTORESTORE));
         // starting from the current nodebucket
         long nodeBucketKey =
             dereferenceLeafOfTree(mBucketReader,
@@ -243,9 +239,7 @@ public class BucketReadTrx implements IBucketReadTrx {
             nodeBucketKey = bucket.getLastBucketPointer();
         }
 
-        checkState(!(nodeBuckets.size() == 0 && !pCommitInProcess),
-            "Number of Buckets to reconstruct must be larger than 0");
-        return nodeBuckets.toArray(new NodeBucket[nodeBuckets.size()]);
+        return nodeBuckets;
 
     }
 
