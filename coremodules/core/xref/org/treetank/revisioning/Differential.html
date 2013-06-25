@@ -17,7 +17,7 @@
 <a class="jxr_linenumber" name="7" href="#7">7</a>   <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> com.google.common.base.Preconditions.checkArgument;
 <a class="jxr_linenumber" name="8" href="#8">8</a>   
 <a class="jxr_linenumber" name="9" href="#9">9</a>   <strong class="jxr_keyword">import</strong> org.treetank.bucket.NodeBucket;
-<a class="jxr_linenumber" name="10" href="#10">10</a>  <strong class="jxr_keyword">import</strong> org.treetank.log.LogValue;
+<a class="jxr_linenumber" name="10" href="#10">10</a>  <strong class="jxr_keyword">import</strong> org.treetank.io.LogValue;
 <a class="jxr_linenumber" name="11" href="#11">11</a>  
 <a class="jxr_linenumber" name="12" href="#12">12</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="13" href="#13">13</a>  <em class="jxr_javadoccomment"> * Differential versioning of {@link NodeBucket}s.</em>
@@ -53,7 +53,7 @@
 <a class="jxr_linenumber" name="43" href="#43">43</a>  <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
 <a class="jxr_linenumber" name="44" href="#44">44</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="45" href="#45">45</a>      @Override
-<a class="jxr_linenumber" name="46" href="#46">46</a>      <strong class="jxr_keyword">public</strong> <a href="../../../org/treetank/log/LogValue.html">LogValue</a> combineBucketsForModification(<strong class="jxr_keyword">int</strong> pRevisionsToRestore, <strong class="jxr_keyword">long</strong> pNewBucketKey, <a href="../../../org/treetank/bucket/NodeBucket.html">NodeBucket</a>[] pBuckets,
+<a class="jxr_linenumber" name="46" href="#46">46</a>      <strong class="jxr_keyword">public</strong> <a href="../../../org/treetank/io/LogValue.html">LogValue</a> combineBucketsForModification(<strong class="jxr_keyword">int</strong> pRevisionsToRestore, <strong class="jxr_keyword">long</strong> pNewBucketKey, <a href="../../../org/treetank/bucket/NodeBucket.html">NodeBucket</a>[] pBuckets,
 <a class="jxr_linenumber" name="47" href="#47">47</a>          <strong class="jxr_keyword">boolean</strong> pFullDump) {
 <a class="jxr_linenumber" name="48" href="#48">48</a>          <em class="jxr_comment">// check to have only the newer version and the related fulldump to read on</em>
 <a class="jxr_linenumber" name="49" href="#49">49</a>          checkArgument(pBuckets.length &gt; 0, <span class="jxr_string">"At least one Nodebucket must be provided"</span>);
@@ -81,7 +81,7 @@
 <a class="jxr_linenumber" name="71" href="#71">71</a>              }
 <a class="jxr_linenumber" name="72" href="#72">72</a>          }
 <a class="jxr_linenumber" name="73" href="#73">73</a>          <em class="jxr_comment">// return the container</em>
-<a class="jxr_linenumber" name="74" href="#74">74</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/log/LogValue.html">LogValue</a>(returnVal[0], returnVal[1]);
+<a class="jxr_linenumber" name="74" href="#74">74</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/io/LogValue.html">LogValue</a>(returnVal[0], returnVal[1]);
 <a class="jxr_linenumber" name="75" href="#75">75</a>      }
 <a class="jxr_linenumber" name="76" href="#76">76</a>  
 <a class="jxr_linenumber" name="77" href="#77">77</a>      <em class="jxr_javadoccomment">/**</em>

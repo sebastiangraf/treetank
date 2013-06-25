@@ -36,7 +36,7 @@
 <tr>  <td class="numLine">&nbsp;9</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;<span class="keyword">import</span> org.treetank.bucket.NodeBucket;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;10</td>  <td class="nbHits">&nbsp;</td>
-  <td class="src"><pre class="src">&nbsp;<span class="keyword">import</span> org.treetank.log.LogValue;</pre></td></tr>
+  <td class="src"><pre class="src">&nbsp;<span class="keyword">import</span> org.treetank.io.LogValue;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;11</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;12</td>  <td class="nbHits">&nbsp;</td>
@@ -64,26 +64,26 @@
   <td class="src"><pre class="src">&nbsp;    @Override</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;24</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> NodeBucket combineBuckets(<span class="keyword">final</span> NodeBucket[] pBuckets) {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;25</td>  <td class="nbHitsUncovered"><a title="Line 25: Conditional coverage 50% (1/2).">&nbsp;47365</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 25: Conditional coverage 50% (1/2).">        checkArgument(pBuckets.length &gt; 0, <span class="string">"At least one Nodebucket must be provided"</span>);</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;25</td>  <td class="nbHitsUncovered"><a title="Line 25: Conditional coverage 50% (1/2).">&nbsp;211469</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 25: Conditional coverage 50% (1/2).">        checkArgument(pBuckets.length &gt; 0, <span class="string">"At least one Nodebucket must be provided"</span>);</a></span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;26</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="comment">// create entire bucket..</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;27</td>  <td class="nbHitsCovered">&nbsp;47365</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> NodeBucket returnVal = <span class="keyword">new</span> NodeBucket(pBuckets[0].getBucketKey(), pBuckets[0].getLastBucketPointer());</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;27</td>  <td class="nbHitsCovered">&nbsp;211469</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> NodeBucket returnVal = <span class="keyword">new</span> NodeBucket(pBuckets[0].getBucketKey(), pBuckets[0].getLastBucketPointer());</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;28</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="comment">// ...iterate through the nodes and check if it is stored..</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;29</td>  <td class="nbHitsCovered"><a title="Line 29: Conditional coverage 100% (2/2).">&nbsp;6110085</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 29: Conditional coverage 100% (2/2).">        <span class="keyword">for</span> (<span class="keyword">int</span> i = 0; i &lt; pBuckets[0].getNodes().length; i++) {</a></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;30</td>  <td class="nbHitsCovered">&nbsp;6062720</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">boolean</span> bucketSkip = <span class="keyword">false</span>;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;29</td>  <td class="nbHitsCovered"><a title="Line 29: Conditional coverage 100% (2/2).">&nbsp;27279501</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 29: Conditional coverage 100% (2/2).">        <span class="keyword">for</span> (<span class="keyword">int</span> i = 0; i &lt; pBuckets[0].getNodes().length; i++) {</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;30</td>  <td class="nbHitsCovered">&nbsp;27068032</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">boolean</span> bucketSkip = <span class="keyword">false</span>;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;31</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            <span class="comment">// ... form the newest version to the oldest one..</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;32</td>  <td class="nbHitsCovered"><a title="Line 32: Conditional coverage 100% (4/4) [each condition: 100%, 100%].">&nbsp;12469950</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 32: Conditional coverage 100% (4/4) [each condition: 100%, 100%].">            <span class="keyword">for</span> (<span class="keyword">int</span> j = 0; !bucketSkip &amp;&amp; j &lt; pBuckets.length; j++) {</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;32</td>  <td class="nbHitsCovered"><a title="Line 32: Conditional coverage 100% (4/4) [each condition: 100%, 100%].">&nbsp;93878500</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 32: Conditional coverage 100% (4/4) [each condition: 100%, 100%].">            <span class="keyword">for</span> (<span class="keyword">int</span> j = 0; !bucketSkip &amp;&amp; j &lt; pBuckets.length; j++) {</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;33</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                <span class="comment">// if the node is not set yet but existing in the current version..</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;34</td>  <td class="nbHitsCovered"><a title="Line 34: Conditional coverage 100% (2/2).">&nbsp;6407230</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 34: Conditional coverage 100% (2/2).">                <span class="keyword">if</span> (pBuckets[j].getNode(i) != <span class="keyword">null</span>) {</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;34</td>  <td class="nbHitsCovered"><a title="Line 34: Conditional coverage 100% (2/2).">&nbsp;66810468</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 34: Conditional coverage 100% (2/2).">                <span class="keyword">if</span> (pBuckets[j].getNode(i) != <span class="keyword">null</span>) {</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;35</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                    <span class="comment">// ...break out the loop the next time and..</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;36</td>  <td class="nbHitsCovered">&nbsp;6062211</td>  <td class="src"><pre class="src">&nbsp;                    bucketSkip = <span class="keyword">true</span>;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;36</td>  <td class="nbHitsCovered">&nbsp;27063967</td>  <td class="src"><pre class="src">&nbsp;                    bucketSkip = <span class="keyword">true</span>;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;37</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                    <span class="comment">// ...set it</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;38</td>  <td class="nbHitsCovered">&nbsp;6062211</td>  <td class="src"><pre class="src">&nbsp;                    returnVal.setNode(i, pBuckets[j].getNode(i));</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;38</td>  <td class="nbHitsCovered">&nbsp;27063967</td>  <td class="src"><pre class="src">&nbsp;                    returnVal.setNode(i, pBuckets[j].getNode(i));</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;39</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;40</td>  <td class="nbHits">&nbsp;</td>
@@ -92,7 +92,7 @@
   <td class="src"><pre class="src">&nbsp;            }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;42</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;43</td>  <td class="nbHitsCovered">&nbsp;47365</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> returnVal;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;43</td>  <td class="nbHitsCovered">&nbsp;211469</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> returnVal;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;44</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;45</td>  <td class="nbHits">&nbsp;</td>
@@ -109,10 +109,10 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> LogValue combineBucketsForModification(<span class="keyword">int</span> pRevisionsToRestore, <span class="keyword">long</span> pNewBucketKey, NodeBucket[] pBuckets,</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;51</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="keyword">boolean</span> pFullDump) {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;52</td>  <td class="nbHitsUncovered"><a title="Line 52: Conditional coverage 50% (1/2).">&nbsp;143</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 52: Conditional coverage 50% (1/2).">        checkArgument(pBuckets.length &gt; 0, <span class="string">"At least one Nodebucket must be provided"</span>);</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;52</td>  <td class="nbHitsUncovered"><a title="Line 52: Conditional coverage 50% (1/2).">&nbsp;1290</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 52: Conditional coverage 50% (1/2).">        checkArgument(pBuckets.length &gt; 0, <span class="string">"At least one Nodebucket must be provided"</span>);</a></span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;53</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="comment">// create buckets for container..</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;54</td>  <td class="nbHitsCovered">&nbsp;143</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> NodeBucket[] returnVal =</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;54</td>  <td class="nbHitsCovered">&nbsp;1290</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">final</span> NodeBucket[] returnVal =</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;55</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            {</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;56</td>  <td class="nbHits">&nbsp;</td>
@@ -123,26 +123,26 @@
   <td class="src"><pre class="src">&nbsp;            };</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;59</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="comment">// ...iterate through the nodes and check if it is stored..</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;60</td>  <td class="nbHitsCovered"><a title="Line 60: Conditional coverage 100% (2/2).">&nbsp;18447</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 60: Conditional coverage 100% (2/2).">        <span class="keyword">for</span> (<span class="keyword">int</span> i = 0; i &lt; pBuckets[0].getNodes().length; i++) {</a></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;61</td>  <td class="nbHitsCovered">&nbsp;18304</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">boolean</span> continueVal = <span class="keyword">true</span>;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;60</td>  <td class="nbHitsCovered"><a title="Line 60: Conditional coverage 100% (2/2).">&nbsp;166410</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 60: Conditional coverage 100% (2/2).">        <span class="keyword">for</span> (<span class="keyword">int</span> i = 0; i &lt; pBuckets[0].getNodes().length; i++) {</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;61</td>  <td class="nbHitsCovered">&nbsp;165120</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">boolean</span> continueVal = <span class="keyword">true</span>;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;62</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;            <span class="comment">// ... form the newest version to the oldest one..</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;63</td>  <td class="nbHitsCovered"><a title="Line 63: Conditional coverage 100% (4/4) [each condition: 100%, 100%].">&nbsp;40640</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 63: Conditional coverage 100% (4/4) [each condition: 100%, 100%].">            <span class="keyword">for</span> (<span class="keyword">int</span> j = 0; j &lt; pBuckets.length &amp;&amp; continueVal; j++) {</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;63</td>  <td class="nbHitsCovered"><a title="Line 63: Conditional coverage 100% (4/4) [each condition: 100%, 100%].">&nbsp;541636</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 63: Conditional coverage 100% (4/4) [each condition: 100%, 100%].">            <span class="keyword">for</span> (<span class="keyword">int</span> j = 0; j &lt; pBuckets.length &amp;&amp; continueVal; j++) {</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;64</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                <span class="comment">// check if the node is not set..</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;65</td>  <td class="nbHitsUncovered"><a title="Line 65: Conditional coverage 75% (3/4) [each condition: 50%, 100%].">&nbsp;22336</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 65: Conditional coverage 75% (3/4) [each condition: 50%, 100%].">                <span class="keyword">if</span> (returnVal[0].getNode(i) == <span class="keyword">null</span> &amp;&amp; pBuckets[j].getNode(i) != <span class="keyword">null</span>) {</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;65</td>  <td class="nbHitsUncovered"><a title="Line 65: Conditional coverage 75% (3/4) [each condition: 50%, 100%].">&nbsp;376516</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 65: Conditional coverage 75% (3/4) [each condition: 50%, 100%].">                <span class="keyword">if</span> (returnVal[0].getNode(i) == <span class="keyword">null</span> &amp;&amp; pBuckets[j].getNode(i) != <span class="keyword">null</span>) {</a></span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;66</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                    <span class="comment">// ...set it to the read-cache and..</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;67</td>  <td class="nbHitsCovered">&nbsp;17409</td>  <td class="src"><pre class="src">&nbsp;                    returnVal[0].setNode(i, pBuckets[j].getNode(i));</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;67</td>  <td class="nbHitsCovered">&nbsp;164225</td>  <td class="src"><pre class="src">&nbsp;                    returnVal[0].setNode(i, pBuckets[j].getNode(i));</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;68</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                    <span class="comment">// ..if we receive the oldest version where the node was not set yet, then copy it by hand</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;69</td>  <td class="nbHitsCovered"><a title="Line 69: Conditional coverage 100% (4/4) [each condition: 100%, 100%].">&nbsp;17409</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 69: Conditional coverage 100% (4/4) [each condition: 100%, 100%].">                    <span class="keyword">if</span> (pBuckets.length &gt;= pRevisionsToRestore &amp;&amp; j == pBuckets.length - 1) {</a></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;70</td>  <td class="nbHitsCovered">&nbsp;2</td>  <td class="src"><pre class="src">&nbsp;                        returnVal[1].setNode(i, pBuckets[j].getNode(i));</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;69</td>  <td class="nbHitsCovered"><a title="Line 69: Conditional coverage 100% (4/4) [each condition: 100%, 100%].">&nbsp;164225</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 69: Conditional coverage 100% (4/4) [each condition: 100%, 100%].">                    <span class="keyword">if</span> (pBuckets.length &gt;= pRevisionsToRestore &amp;&amp; j == pBuckets.length - 1) {</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;70</td>  <td class="nbHitsCovered">&nbsp;30824</td>  <td class="src"><pre class="src">&nbsp;                        returnVal[1].setNode(i, pBuckets[j].getNode(i));</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;71</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;72</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                    <span class="comment">// escape this loop since val was set</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;73</td>  <td class="nbHitsCovered">&nbsp;17409</td>  <td class="src"><pre class="src">&nbsp;                    continueVal = <span class="keyword">false</span>;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;73</td>  <td class="nbHitsCovered">&nbsp;164225</td>  <td class="src"><pre class="src">&nbsp;                    continueVal = <span class="keyword">false</span>;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;74</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;75</td>  <td class="nbHits">&nbsp;</td>
@@ -151,7 +151,7 @@
   <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;77</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="comment">// return the container</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;78</td>  <td class="nbHitsCovered">&nbsp;143</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> <span class="keyword">new</span> LogValue(returnVal[0], returnVal[1]);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;78</td>  <td class="nbHitsCovered">&nbsp;1290</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> <span class="keyword">new</span> LogValue(returnVal[0], returnVal[1]);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;79</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;80</td>  <td class="nbHits">&nbsp;</td>
@@ -175,6 +175,6 @@
   <td class="src"><pre class="src">&nbsp;}</pre></td></tr>
 </table>
 
-<div class="footer">Report generated by <a href="http://cobertura.sourceforge.net/" target="_top">Cobertura</a> 1.9.4.1 on 6/12/13 11:13 AM.</div>
+<div class="footer">Report generated by <a href="http://cobertura.sourceforge.net/" target="_top">Cobertura</a> 1.9.4.1 on 6/25/13 3:03 PM.</div>
 </body>
 </html>

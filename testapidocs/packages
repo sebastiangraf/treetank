@@ -1,11 +1,10 @@
-org.treetank.access.conf
 org.treetank.access
+org.treetank.access.conf
 org.treetank.bench
 org.treetank.bucket
 org.treetank
 org.treetank.io
 org.treetank.io.bytepipe
-org.treetank.log
 org.treetank.revisioning
 org.treetank.axis
 org.treetank.node

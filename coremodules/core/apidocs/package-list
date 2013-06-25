@@ -1,6 +1,5 @@
 org.treetank
 org.treetank.access
-org.treetank.access.commit
 org.treetank.access.conf
 org.treetank.api
 org.treetank.bucket
@@ -10,5 +9,4 @@ org.treetank.io.berkeley
 org.treetank.io.bytepipe
 org.treetank.io.combined
 org.treetank.io.jclouds
-org.treetank.log
 org.treetank.revisioning

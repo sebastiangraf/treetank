@@ -43,46 +43,46 @@
 <a class="jxr_linenumber" name="33" href="#33">33</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.treetank.access.BucketReadTrx.nodeBucketOffset;
 <a class="jxr_linenumber" name="34" href="#34">34</a>  
 <a class="jxr_linenumber" name="35" href="#35">35</a>  <strong class="jxr_keyword">import</strong> java.io.File;
-<a class="jxr_linenumber" name="36" href="#36">36</a>  <strong class="jxr_keyword">import</strong> java.util.Map;
-<a class="jxr_linenumber" name="37" href="#37">37</a>  
-<a class="jxr_linenumber" name="38" href="#38">38</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.CommitStrategy.BlockingCommit;
-<a class="jxr_linenumber" name="39" href="#39">39</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.commit.CommitStrategyModule;
-<a class="jxr_linenumber" name="40" href="#40">40</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.ConstructorProps;
-<a class="jxr_linenumber" name="41" href="#41">41</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.IMetaEntry;
-<a class="jxr_linenumber" name="42" href="#42">42</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.INode;
-<a class="jxr_linenumber" name="43" href="#43">43</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.IBucketWriteTrx;
-<a class="jxr_linenumber" name="44" href="#44">44</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.ISession;
-<a class="jxr_linenumber" name="45" href="#45">45</a>  <strong class="jxr_keyword">import</strong> org.treetank.bucket.IConstants;
-<a class="jxr_linenumber" name="46" href="#46">46</a>  <strong class="jxr_keyword">import</strong> org.treetank.bucket.IndirectBucket;
-<a class="jxr_linenumber" name="47" href="#47">47</a>  <strong class="jxr_keyword">import</strong> org.treetank.bucket.MetaBucket;
-<a class="jxr_linenumber" name="48" href="#48">48</a>  <strong class="jxr_keyword">import</strong> org.treetank.bucket.NodeBucket;
-<a class="jxr_linenumber" name="49" href="#49">49</a>  <strong class="jxr_keyword">import</strong> org.treetank.bucket.NodeBucket.DeletedNode;
-<a class="jxr_linenumber" name="50" href="#50">50</a>  <strong class="jxr_keyword">import</strong> org.treetank.bucket.RevisionRootBucket;
-<a class="jxr_linenumber" name="51" href="#51">51</a>  <strong class="jxr_keyword">import</strong> org.treetank.bucket.UberBucket;
-<a class="jxr_linenumber" name="52" href="#52">52</a>  <strong class="jxr_keyword">import</strong> org.treetank.bucket.interfaces.IReferenceBucket;
-<a class="jxr_linenumber" name="53" href="#53">53</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTException;
-<a class="jxr_linenumber" name="54" href="#54">54</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTIOException;
-<a class="jxr_linenumber" name="55" href="#55">55</a>  <strong class="jxr_keyword">import</strong> org.treetank.io.IBackendWriter;
-<a class="jxr_linenumber" name="56" href="#56">56</a>  <strong class="jxr_keyword">import</strong> org.treetank.log.LRULog;
-<a class="jxr_linenumber" name="57" href="#57">57</a>  <strong class="jxr_keyword">import</strong> org.treetank.log.LogKey;
-<a class="jxr_linenumber" name="58" href="#58">58</a>  <strong class="jxr_keyword">import</strong> org.treetank.log.LogValue;
-<a class="jxr_linenumber" name="59" href="#59">59</a>  
-<a class="jxr_linenumber" name="60" href="#60">60</a>  <strong class="jxr_keyword">import</strong> com.google.inject.Injector;
-<a class="jxr_linenumber" name="61" href="#61">61</a>  
-<a class="jxr_linenumber" name="62" href="#62">62</a>  <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="63" href="#63">63</a>  <em class="jxr_javadoccomment"> * &lt;h1&gt;BucketWriteTrx&lt;/h1&gt;</em>
-<a class="jxr_linenumber" name="64" href="#64">64</a>  <em class="jxr_javadoccomment"> * </em>
-<a class="jxr_linenumber" name="65" href="#65">65</a>  <em class="jxr_javadoccomment"> * &lt;p&gt;</em>
-<a class="jxr_linenumber" name="66" href="#66">66</a>  <em class="jxr_javadoccomment"> * See {@link BucketReadTrx}.</em>
-<a class="jxr_linenumber" name="67" href="#67">67</a>  <em class="jxr_javadoccomment"> * &lt;/p&gt;</em>
-<a class="jxr_linenumber" name="68" href="#68">68</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="69" href="#69">69</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a href="../../../org/treetank/access/BucketWriteTrx.html">BucketWriteTrx</a> <strong class="jxr_keyword">implements</strong> <a href="../../../org/treetank/api/IBucketWriteTrx.html">IBucketWriteTrx</a> {
-<a class="jxr_linenumber" name="70" href="#70">70</a>  
-<a class="jxr_linenumber" name="71" href="#71">71</a>      <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> Bucket writer to serialize. */</em>
-<a class="jxr_linenumber" name="72" href="#72">72</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/io/IBackendWriter.html">IBackendWriter</a> mBucketWriter;
+<a class="jxr_linenumber" name="36" href="#36">36</a>  <strong class="jxr_keyword">import</strong> java.util.ArrayList;
+<a class="jxr_linenumber" name="37" href="#37">37</a>  <strong class="jxr_keyword">import</strong> java.util.List;
+<a class="jxr_linenumber" name="38" href="#38">38</a>  <strong class="jxr_keyword">import</strong> java.util.Map;
+<a class="jxr_linenumber" name="39" href="#39">39</a>  <strong class="jxr_keyword">import</strong> java.util.concurrent.Callable;
+<a class="jxr_linenumber" name="40" href="#40">40</a>  <strong class="jxr_keyword">import</strong> java.util.concurrent.ExecutionException;
+<a class="jxr_linenumber" name="41" href="#41">41</a>  <strong class="jxr_keyword">import</strong> java.util.concurrent.ExecutorService;
+<a class="jxr_linenumber" name="42" href="#42">42</a>  <strong class="jxr_keyword">import</strong> java.util.concurrent.Executors;
+<a class="jxr_linenumber" name="43" href="#43">43</a>  <strong class="jxr_keyword">import</strong> java.util.concurrent.Future;
+<a class="jxr_linenumber" name="44" href="#44">44</a>  
+<a class="jxr_linenumber" name="45" href="#45">45</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.ConstructorProps;
+<a class="jxr_linenumber" name="46" href="#46">46</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.IBucketWriteTrx;
+<a class="jxr_linenumber" name="47" href="#47">47</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.IMetaEntry;
+<a class="jxr_linenumber" name="48" href="#48">48</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.INode;
+<a class="jxr_linenumber" name="49" href="#49">49</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.ISession;
+<a class="jxr_linenumber" name="50" href="#50">50</a>  <strong class="jxr_keyword">import</strong> org.treetank.bucket.IConstants;
+<a class="jxr_linenumber" name="51" href="#51">51</a>  <strong class="jxr_keyword">import</strong> org.treetank.bucket.IndirectBucket;
+<a class="jxr_linenumber" name="52" href="#52">52</a>  <strong class="jxr_keyword">import</strong> org.treetank.bucket.MetaBucket;
+<a class="jxr_linenumber" name="53" href="#53">53</a>  <strong class="jxr_keyword">import</strong> org.treetank.bucket.NodeBucket;
+<a class="jxr_linenumber" name="54" href="#54">54</a>  <strong class="jxr_keyword">import</strong> org.treetank.bucket.NodeBucket.DeletedNode;
+<a class="jxr_linenumber" name="55" href="#55">55</a>  <strong class="jxr_keyword">import</strong> org.treetank.bucket.RevisionRootBucket;
+<a class="jxr_linenumber" name="56" href="#56">56</a>  <strong class="jxr_keyword">import</strong> org.treetank.bucket.UberBucket;
+<a class="jxr_linenumber" name="57" href="#57">57</a>  <strong class="jxr_keyword">import</strong> org.treetank.bucket.interfaces.IReferenceBucket;
+<a class="jxr_linenumber" name="58" href="#58">58</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTException;
+<a class="jxr_linenumber" name="59" href="#59">59</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTIOException;
+<a class="jxr_linenumber" name="60" href="#60">60</a>  <strong class="jxr_keyword">import</strong> org.treetank.io.BackendWriterProxy;
+<a class="jxr_linenumber" name="61" href="#61">61</a>  <strong class="jxr_keyword">import</strong> org.treetank.io.IBackendWriter;
+<a class="jxr_linenumber" name="62" href="#62">62</a>  <strong class="jxr_keyword">import</strong> org.treetank.io.LogKey;
+<a class="jxr_linenumber" name="63" href="#63">63</a>  <strong class="jxr_keyword">import</strong> org.treetank.io.LogValue;
+<a class="jxr_linenumber" name="64" href="#64">64</a>  
+<a class="jxr_linenumber" name="65" href="#65">65</a>  <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="66" href="#66">66</a>  <em class="jxr_javadoccomment"> * &lt;h1&gt;BucketWriteTrx&lt;/h1&gt;</em>
+<a class="jxr_linenumber" name="67" href="#67">67</a>  <em class="jxr_javadoccomment"> * </em>
+<a class="jxr_linenumber" name="68" href="#68">68</a>  <em class="jxr_javadoccomment"> * &lt;p&gt;</em>
+<a class="jxr_linenumber" name="69" href="#69">69</a>  <em class="jxr_javadoccomment"> * See {@link BucketReadTrx}.</em>
+<a class="jxr_linenumber" name="70" href="#70">70</a>  <em class="jxr_javadoccomment"> * &lt;/p&gt;</em>
+<a class="jxr_linenumber" name="71" href="#71">71</a>  <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="72" href="#72">72</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a href="../../../org/treetank/access/BucketWriteTrx.html">BucketWriteTrx</a> <strong class="jxr_keyword">implements</strong> <a href="../../../org/treetank/api/IBucketWriteTrx.html">IBucketWriteTrx</a> {
 <a class="jxr_linenumber" name="73" href="#73">73</a>  
-<a class="jxr_linenumber" name="74" href="#74">74</a>      <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> Cache to store the changes in this writetransaction. */</em>
-<a class="jxr_linenumber" name="75" href="#75">75</a>      <strong class="jxr_keyword">private</strong> <a href="../../../org/treetank/log/LRULog.html">LRULog</a> mLog;
+<a class="jxr_linenumber" name="74" href="#74">74</a>      <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> Bucket writer to serialize. */</em>
+<a class="jxr_linenumber" name="75" href="#75">75</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/io/BackendWriterProxy.html">BackendWriterProxy</a> mBucketWriter;
 <a class="jxr_linenumber" name="76" href="#76">76</a>  
 <a class="jxr_linenumber" name="77" href="#77">77</a>      <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> Reference to the actual uberBucket. */</em>
 <a class="jxr_linenumber" name="78" href="#78">78</a>      <strong class="jxr_keyword">private</strong> <a href="../../../org/treetank/bucket/UberBucket.html">UberBucket</a> mNewUber;
@@ -96,402 +96,466 @@
 <a class="jxr_linenumber" name="86" href="#86">86</a>      <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> Delegate for read access. */</em>
 <a class="jxr_linenumber" name="87" href="#87">87</a>      <strong class="jxr_keyword">private</strong> <a href="../../../org/treetank/access/BucketReadTrx.html">BucketReadTrx</a> mDelegate;
 <a class="jxr_linenumber" name="88" href="#88">88</a>  
-<a class="jxr_linenumber" name="89" href="#89">89</a>      <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> Commit strategy implementation to be used */</em>
-<a class="jxr_linenumber" name="90" href="#90">90</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Class&lt;? <strong class="jxr_keyword">extends</strong> CommitStrategy&gt; mCommitStrategy;
+<a class="jxr_linenumber" name="89" href="#89">89</a>      <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> Executor for tracing commit in progress. */</em>
+<a class="jxr_linenumber" name="90" href="#90">90</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> ExecutorService mCommitInProgress;
 <a class="jxr_linenumber" name="91" href="#91">91</a>  
-<a class="jxr_linenumber" name="92" href="#92">92</a>      <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> Currently (or just previously) running commitstrategy */</em>
-<a class="jxr_linenumber" name="93" href="#93">93</a>      <strong class="jxr_keyword">private</strong> <a href="../../../org/treetank/access/CommitStrategy.html">CommitStrategy</a> mCommitInProgress;
-<a class="jxr_linenumber" name="94" href="#94">94</a>  
-<a class="jxr_linenumber" name="95" href="#95">95</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="96" href="#96">96</a>  <em class="jxr_javadoccomment">     * Standard constructor.</em>
-<a class="jxr_linenumber" name="97" href="#97">97</a>  <em class="jxr_javadoccomment">     * </em>
-<a class="jxr_linenumber" name="98" href="#98">98</a>  <em class="jxr_javadoccomment">     * </em>
-<a class="jxr_linenumber" name="99" href="#99">99</a>  <em class="jxr_javadoccomment">     * @param pSession</em>
-<a class="jxr_linenumber" name="100" href="#100">100</a> <em class="jxr_javadoccomment">     *            {@link ISession} reference</em>
-<a class="jxr_linenumber" name="101" href="#101">101</a> <em class="jxr_javadoccomment">     * @param pUberBucket</em>
-<a class="jxr_linenumber" name="102" href="#102">102</a> <em class="jxr_javadoccomment">     *            root of resource</em>
-<a class="jxr_linenumber" name="103" href="#103">103</a> <em class="jxr_javadoccomment">     * @param pWriter</em>
-<a class="jxr_linenumber" name="104" href="#104">104</a> <em class="jxr_javadoccomment">     *            writer where this transaction should write to</em>
-<a class="jxr_linenumber" name="105" href="#105">105</a> <em class="jxr_javadoccomment">     * @param pRepresentRev</em>
-<a class="jxr_linenumber" name="106" href="#106">106</a> <em class="jxr_javadoccomment">     *            revision represent</em>
-<a class="jxr_linenumber" name="107" href="#107">107</a> <em class="jxr_javadoccomment">     * @throws TTIOException</em>
-<a class="jxr_linenumber" name="108" href="#108">108</a> <em class="jxr_javadoccomment">     *             if IO Error</em>
-<a class="jxr_linenumber" name="109" href="#109">109</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="110" href="#110">110</a>     <strong class="jxr_keyword">protected</strong> <a href="../../../org/treetank/access/BucketWriteTrx.html">BucketWriteTrx</a>(<strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/api/ISession.html">ISession</a> pSession, <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/bucket/UberBucket.html">UberBucket</a> pUberBucket,
-<a class="jxr_linenumber" name="111" href="#111">111</a>         <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/io/IBackendWriter.html">IBackendWriter</a> pWriter, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> pRepresentRev) <strong class="jxr_keyword">throws</strong> TTException {
-<a class="jxr_linenumber" name="112" href="#112">112</a> 
-<a class="jxr_linenumber" name="113" href="#113">113</a>         mBucketWriter = pWriter;
-<a class="jxr_linenumber" name="114" href="#114">114</a>         <em class="jxr_comment">// TODO: Change to NonBlockingCommitStrategy</em>
-<a class="jxr_linenumber" name="115" href="#115">115</a>         mCommitStrategy = BlockingCommit.<strong class="jxr_keyword">class</strong>;
-<a class="jxr_linenumber" name="116" href="#116">116</a>         setUpTransaction(pUberBucket, pSession, pRepresentRev, pWriter);
-<a class="jxr_linenumber" name="117" href="#117">117</a>     }
-<a class="jxr_linenumber" name="118" href="#118">118</a> 
-<a class="jxr_linenumber" name="119" href="#119">119</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="120" href="#120">120</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
-<a class="jxr_linenumber" name="121" href="#121">121</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="122" href="#122">122</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">long</strong> setNode(<strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/api/INode.html">INode</a> pNode) <strong class="jxr_keyword">throws</strong> TTException {
-<a class="jxr_linenumber" name="123" href="#123">123</a>         checkState(!mDelegate.isClosed(), <span class="jxr_string">"Transaction already closed"</span>);
-<a class="jxr_linenumber" name="124" href="#124">124</a>         <em class="jxr_comment">// Allocate node key and increment node count.</em>
-<a class="jxr_linenumber" name="125" href="#125">125</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> nodeKey = pNode.getNodeKey();
-<a class="jxr_linenumber" name="126" href="#126">126</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> seqBucketKey = nodeKey &gt;&gt; IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3];
-<a class="jxr_linenumber" name="127" href="#127">127</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> nodeBucketOffset = nodeBucketOffset(nodeKey);
-<a class="jxr_linenumber" name="128" href="#128">128</a>         <a href="../../../org/treetank/log/LogValue.html">LogValue</a> container = prepareNodeBucket(nodeKey);
-<a class="jxr_linenumber" name="129" href="#129">129</a>         <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/bucket/NodeBucket.html">NodeBucket</a> bucket = ((NodeBucket)container.getModified());
-<a class="jxr_linenumber" name="130" href="#130">130</a>         bucket.setNode(nodeBucketOffset, pNode);
-<a class="jxr_linenumber" name="131" href="#131">131</a>         mLog.put(<strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/log/LogKey.html">LogKey</a>(false, IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length, seqBucketKey),
-<a class="jxr_linenumber" name="132" href="#132">132</a>             container);
-<a class="jxr_linenumber" name="133" href="#133">133</a>         <strong class="jxr_keyword">return</strong> nodeKey;
-<a class="jxr_linenumber" name="134" href="#134">134</a>     }
-<a class="jxr_linenumber" name="135" href="#135">135</a> 
-<a class="jxr_linenumber" name="136" href="#136">136</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="137" href="#137">137</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
-<a class="jxr_linenumber" name="138" href="#138">138</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="139" href="#139">139</a>     @Override
-<a class="jxr_linenumber" name="140" href="#140">140</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> removeNode(<strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/api/INode.html">INode</a> pNode) <strong class="jxr_keyword">throws</strong> TTException {
-<a class="jxr_linenumber" name="141" href="#141">141</a>         checkState(!mDelegate.isClosed(), <span class="jxr_string">"Transaction already closed"</span>);
-<a class="jxr_linenumber" name="142" href="#142">142</a>         checkNotNull(pNode);
-<a class="jxr_linenumber" name="143" href="#143">143</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> nodeBucketKey = pNode.getNodeKey() &gt;&gt; IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3];
-<a class="jxr_linenumber" name="144" href="#144">144</a>         <a href="../../../org/treetank/log/LogValue.html">LogValue</a> container = prepareNodeBucket(pNode.getNodeKey());
-<a class="jxr_linenumber" name="145" href="#145">145</a>         <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/api/INode.html">INode</a> delNode = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/bucket/NodeBucket.html">DeletedNode</a>(pNode.getNodeKey());
-<a class="jxr_linenumber" name="146" href="#146">146</a>         ((<a href="../../../org/treetank/bucket/NodeBucket.html">NodeBucket</a>)container.getComplete()).setNode(nodeBucketOffset(pNode.getNodeKey()), delNode);
-<a class="jxr_linenumber" name="147" href="#147">147</a>         ((<a href="../../../org/treetank/bucket/NodeBucket.html">NodeBucket</a>)container.getModified()).setNode(nodeBucketOffset(pNode.getNodeKey()), delNode);
-<a class="jxr_linenumber" name="148" href="#148">148</a> 
-<a class="jxr_linenumber" name="149" href="#149">149</a>         mLog.put(<strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/log/LogKey.html">LogKey</a>(false, IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length, nodeBucketKey),
-<a class="jxr_linenumber" name="150" href="#150">150</a>             container);
-<a class="jxr_linenumber" name="151" href="#151">151</a>     }
-<a class="jxr_linenumber" name="152" href="#152">152</a> 
-<a class="jxr_linenumber" name="153" href="#153">153</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="154" href="#154">154</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
-<a class="jxr_linenumber" name="155" href="#155">155</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="156" href="#156">156</a>     <strong class="jxr_keyword">public</strong> <a href="../../../org/treetank/api/INode.html">INode</a> getNode(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> pNodeKey) <strong class="jxr_keyword">throws</strong> TTIOException {
-<a class="jxr_linenumber" name="157" href="#157">157</a>         checkState(!mDelegate.isClosed(), <span class="jxr_string">"Transaction already closed"</span>);
-<a class="jxr_linenumber" name="158" href="#158">158</a>         <em class="jxr_comment">// Calculate bucket and node part for given nodeKey.</em>
-<a class="jxr_linenumber" name="159" href="#159">159</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> nodeBucketKey = pNodeKey &gt;&gt; IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3];
-<a class="jxr_linenumber" name="160" href="#160">160</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> nodeBucketOffset = nodeBucketOffset(pNodeKey);
+<a class="jxr_linenumber" name="92" href="#92">92</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="93" href="#93">93</a>  <em class="jxr_javadoccomment">     * Standard constructor.</em>
+<a class="jxr_linenumber" name="94" href="#94">94</a>  <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="95" href="#95">95</a>  <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="96" href="#96">96</a>  <em class="jxr_javadoccomment">     * @param pSession</em>
+<a class="jxr_linenumber" name="97" href="#97">97</a>  <em class="jxr_javadoccomment">     *            {@link ISession} reference</em>
+<a class="jxr_linenumber" name="98" href="#98">98</a>  <em class="jxr_javadoccomment">     * @param pUberBucket</em>
+<a class="jxr_linenumber" name="99" href="#99">99</a>  <em class="jxr_javadoccomment">     *            root of resource</em>
+<a class="jxr_linenumber" name="100" href="#100">100</a> <em class="jxr_javadoccomment">     * @param pWriter</em>
+<a class="jxr_linenumber" name="101" href="#101">101</a> <em class="jxr_javadoccomment">     *            writer where this transaction should write to</em>
+<a class="jxr_linenumber" name="102" href="#102">102</a> <em class="jxr_javadoccomment">     * @param pRepresentRev</em>
+<a class="jxr_linenumber" name="103" href="#103">103</a> <em class="jxr_javadoccomment">     *            revision represent</em>
+<a class="jxr_linenumber" name="104" href="#104">104</a> <em class="jxr_javadoccomment">     * @throws TTIOException</em>
+<a class="jxr_linenumber" name="105" href="#105">105</a> <em class="jxr_javadoccomment">     *             if IO Error</em>
+<a class="jxr_linenumber" name="106" href="#106">106</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="107" href="#107">107</a>     <strong class="jxr_keyword">protected</strong> <a href="../../../org/treetank/access/BucketWriteTrx.html">BucketWriteTrx</a>(<strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/api/ISession.html">ISession</a> pSession, <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/bucket/UberBucket.html">UberBucket</a> pUberBucket,
+<a class="jxr_linenumber" name="108" href="#108">108</a>         <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/io/IBackendWriter.html">IBackendWriter</a> pWriter, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> pRepresentRev) <strong class="jxr_keyword">throws</strong> TTException {
+<a class="jxr_linenumber" name="109" href="#109">109</a>         mBucketWriter =
+<a class="jxr_linenumber" name="110" href="#110">110</a>             <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/io/BackendWriterProxy.html">BackendWriterProxy</a>(pWriter, <strong class="jxr_keyword">new</strong> File(pSession.getConfig().mProperties
+<a class="jxr_linenumber" name="111" href="#111">111</a>                 .getProperty(org.treetank.access.conf.ConstructorProps.RESOURCEPATH)),
+<a class="jxr_linenumber" name="112" href="#112">112</a>                 pSession.getConfig().mNodeFac, pSession.getConfig().mMetaFac);
+<a class="jxr_linenumber" name="113" href="#113">113</a> 
+<a class="jxr_linenumber" name="114" href="#114">114</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> revkey =
+<a class="jxr_linenumber" name="115" href="#115">115</a>             BucketReadTrx.dereferenceLeafOfTree(pWriter,
+<a class="jxr_linenumber" name="116" href="#116">116</a>                 pUberBucket.getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET], pRepresentRev);
+<a class="jxr_linenumber" name="117" href="#117">117</a>         <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/bucket/RevisionRootBucket.html">RevisionRootBucket</a> revBucket = (RevisionRootBucket)pWriter.read(revkey);
+<a class="jxr_linenumber" name="118" href="#118">118</a>         <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/bucket/MetaBucket.html">MetaBucket</a> metaBucket =
+<a class="jxr_linenumber" name="119" href="#119">119</a>             (<a href="../../../org/treetank/bucket/MetaBucket.html">MetaBucket</a>)pWriter.read(revBucket.getReferenceKeys()[RevisionRootBucket.META_REFERENCE_OFFSET]);
+<a class="jxr_linenumber" name="120" href="#120">120</a> 
+<a class="jxr_linenumber" name="121" href="#121">121</a>         mCommitInProgress = Executors.newSingleThreadExecutor();
+<a class="jxr_linenumber" name="122" href="#122">122</a>         mDelegate = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/access/BucketReadTrx.html">BucketReadTrx</a>(pSession, pUberBucket, revBucket, metaBucket, pWriter);
+<a class="jxr_linenumber" name="123" href="#123">123</a>         setUpTransaction(pUberBucket, revBucket, metaBucket, pSession, pRepresentRev, mBucketWriter);
+<a class="jxr_linenumber" name="124" href="#124">124</a>     }
+<a class="jxr_linenumber" name="125" href="#125">125</a> 
+<a class="jxr_linenumber" name="126" href="#126">126</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="127" href="#127">127</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
+<a class="jxr_linenumber" name="128" href="#128">128</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="129" href="#129">129</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">long</strong> setNode(<strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/api/INode.html">INode</a> pNode) <strong class="jxr_keyword">throws</strong> TTException {
+<a class="jxr_linenumber" name="130" href="#130">130</a>         checkState(!mDelegate.isClosed(), <span class="jxr_string">"Transaction already closed"</span>);
+<a class="jxr_linenumber" name="131" href="#131">131</a>         <em class="jxr_comment">// Allocate node key and increment node count.</em>
+<a class="jxr_linenumber" name="132" href="#132">132</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> nodeKey = pNode.getNodeKey();
+<a class="jxr_linenumber" name="133" href="#133">133</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> seqBucketKey = nodeKey &gt;&gt; IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3];
+<a class="jxr_linenumber" name="134" href="#134">134</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> nodeBucketOffset = nodeBucketOffset(nodeKey);
+<a class="jxr_linenumber" name="135" href="#135">135</a>         <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/io/LogValue.html">LogValue</a> container = prepareNodeBucket(nodeKey);
+<a class="jxr_linenumber" name="136" href="#136">136</a>         <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/bucket/NodeBucket.html">NodeBucket</a> modified = ((NodeBucket)container.getModified());
+<a class="jxr_linenumber" name="137" href="#137">137</a>         <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/bucket/NodeBucket.html">NodeBucket</a> complete = ((NodeBucket)container.getComplete());
+<a class="jxr_linenumber" name="138" href="#138">138</a>         modified.setNode(nodeBucketOffset, pNode);
+<a class="jxr_linenumber" name="139" href="#139">139</a>         complete.setNode(nodeBucketOffset, pNode);
+<a class="jxr_linenumber" name="140" href="#140">140</a>         mBucketWriter.put(<strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/io/LogKey.html">LogKey</a>(false, IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length, seqBucketKey),
+<a class="jxr_linenumber" name="141" href="#141">141</a>             container);
+<a class="jxr_linenumber" name="142" href="#142">142</a>         <strong class="jxr_keyword">return</strong> nodeKey;
+<a class="jxr_linenumber" name="143" href="#143">143</a>     }
+<a class="jxr_linenumber" name="144" href="#144">144</a> 
+<a class="jxr_linenumber" name="145" href="#145">145</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="146" href="#146">146</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
+<a class="jxr_linenumber" name="147" href="#147">147</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="148" href="#148">148</a>     @Override
+<a class="jxr_linenumber" name="149" href="#149">149</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> removeNode(<strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/api/INode.html">INode</a> pNode) <strong class="jxr_keyword">throws</strong> TTException {
+<a class="jxr_linenumber" name="150" href="#150">150</a>         checkState(!mDelegate.isClosed(), <span class="jxr_string">"Transaction already closed"</span>);
+<a class="jxr_linenumber" name="151" href="#151">151</a>         checkNotNull(pNode);
+<a class="jxr_linenumber" name="152" href="#152">152</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> nodeBucketKey = pNode.getNodeKey() &gt;&gt; IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3];
+<a class="jxr_linenumber" name="153" href="#153">153</a>         <a href="../../../org/treetank/io/LogValue.html">LogValue</a> container = prepareNodeBucket(pNode.getNodeKey());
+<a class="jxr_linenumber" name="154" href="#154">154</a>         <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/api/INode.html">INode</a> delNode = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/bucket/NodeBucket.html">DeletedNode</a>(pNode.getNodeKey());
+<a class="jxr_linenumber" name="155" href="#155">155</a>         ((<a href="../../../org/treetank/bucket/NodeBucket.html">NodeBucket</a>)container.getComplete()).setNode(nodeBucketOffset(pNode.getNodeKey()), delNode);
+<a class="jxr_linenumber" name="156" href="#156">156</a>         ((<a href="../../../org/treetank/bucket/NodeBucket.html">NodeBucket</a>)container.getModified()).setNode(nodeBucketOffset(pNode.getNodeKey()), delNode);
+<a class="jxr_linenumber" name="157" href="#157">157</a> 
+<a class="jxr_linenumber" name="158" href="#158">158</a>         mBucketWriter.put(
+<a class="jxr_linenumber" name="159" href="#159">159</a>             <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/io/LogKey.html">LogKey</a>(false, IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length, nodeBucketKey), container);
+<a class="jxr_linenumber" name="160" href="#160">160</a>     }
 <a class="jxr_linenumber" name="161" href="#161">161</a> 
-<a class="jxr_linenumber" name="162" href="#162">162</a>         <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/log/LogKey.html">LogKey</a> key =
-<a class="jxr_linenumber" name="163" href="#163">163</a>             <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/log/LogKey.html">LogKey</a>(false, IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length, nodeBucketKey);
-<a class="jxr_linenumber" name="164" href="#164">164</a>         <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/log/LogValue.html">LogValue</a> container = mLog.get(key);
-<a class="jxr_linenumber" name="165" href="#165">165</a>         <em class="jxr_comment">// Bucket was not modified yet, delegate to read or..</em>
-<a class="jxr_linenumber" name="166" href="#166">166</a>         <strong class="jxr_keyword">if</strong> (container.getModified() == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="167" href="#167">167</a>             <a href="../../../org/treetank/bucket/NodeBucket.html">NodeBucket</a> fromCommitLog;
-<a class="jxr_linenumber" name="168" href="#168">168</a> 
-<a class="jxr_linenumber" name="169" href="#169">169</a>             <em class="jxr_comment">// True if the any commit has been done before</em>
-<a class="jxr_linenumber" name="170" href="#170">170</a>             <em class="jxr_comment">// and the last commit is still in progress</em>
-<a class="jxr_linenumber" name="171" href="#171">171</a>             <em class="jxr_comment">// and the bucket is available in the log from the commit.</em>
-<a class="jxr_linenumber" name="172" href="#172">172</a>             <strong class="jxr_keyword">if</strong> (mCommitInProgress != <strong class="jxr_keyword">null</strong> &amp;&amp; mCommitInProgress.isInProgress()
-<a class="jxr_linenumber" name="173" href="#173">173</a>                 &amp;&amp; (fromCommitLog = mCommitInProgress.valueInProgress(key)) != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="174" href="#174">174</a>                 <strong class="jxr_keyword">return</strong> fromCommitLog.getNode(nodeBucketOffset);
-<a class="jxr_linenumber" name="175" href="#175">175</a>             } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="176" href="#176">176</a>                 <strong class="jxr_keyword">return</strong> mDelegate.getNode(pNodeKey);
-<a class="jxr_linenumber" name="177" href="#177">177</a>             }
-<a class="jxr_linenumber" name="178" href="#178">178</a>         }<em class="jxr_comment">// ...bucket was modified, but not this node, take the complete part, or...</em>
-<a class="jxr_linenumber" name="179" href="#179">179</a>         <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (((NodeBucket)container.getModified()).getNode(nodeBucketOffset) == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="180" href="#180">180</a>             <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/api/INode.html">INode</a> item = ((NodeBucket)container.getComplete()).getNode(nodeBucketOffset);
-<a class="jxr_linenumber" name="181" href="#181">181</a>             <strong class="jxr_keyword">return</strong> mDelegate.checkItemIfDeleted(item);
-<a class="jxr_linenumber" name="182" href="#182">182</a> 
-<a class="jxr_linenumber" name="183" href="#183">183</a>         }<em class="jxr_comment">// ...bucket was modified and the modification touched this node.</em>
-<a class="jxr_linenumber" name="184" href="#184">184</a>         <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="185" href="#185">185</a>             <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/api/INode.html">INode</a> item = ((NodeBucket)container.getModified()).getNode(nodeBucketOffset);
-<a class="jxr_linenumber" name="186" href="#186">186</a>             <strong class="jxr_keyword">return</strong> mDelegate.checkItemIfDeleted(item);
-<a class="jxr_linenumber" name="187" href="#187">187</a>         }
-<a class="jxr_linenumber" name="188" href="#188">188</a> 
-<a class="jxr_linenumber" name="189" href="#189">189</a>     }
-<a class="jxr_linenumber" name="190" href="#190">190</a> 
-<a class="jxr_linenumber" name="191" href="#191">191</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="192" href="#192">192</a> <em class="jxr_javadoccomment">     * </em>
-<a class="jxr_linenumber" name="193" href="#193">193</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
-<a class="jxr_linenumber" name="194" href="#194">194</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="195" href="#195">195</a>     @Override
-<a class="jxr_linenumber" name="196" href="#196">196</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> commit() <strong class="jxr_keyword">throws</strong> TTException {
-<a class="jxr_linenumber" name="197" href="#197">197</a>         checkState(!mDelegate.isClosed(), <span class="jxr_string">"Transaction already closed"</span>);
-<a class="jxr_linenumber" name="198" href="#198">198</a> 
-<a class="jxr_linenumber" name="199" href="#199">199</a>         <em class="jxr_comment">// Check if the commit object has been initialized before..</em>
-<a class="jxr_linenumber" name="200" href="#200">200</a>         <strong class="jxr_keyword">if</strong> (mCommitInProgress != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="201" href="#201">201</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="202" href="#202">202</a>                 <em class="jxr_comment">// .. if so, is a commit still in progress ..</em>
-<a class="jxr_linenumber" name="203" href="#203">203</a>                 <strong class="jxr_keyword">if</strong> (mCommitInProgress.isInProgress()) {
-<a class="jxr_linenumber" name="204" href="#204">204</a>                     <em class="jxr_comment">// .. assuming it is, wait for notification to further proceeding</em>
-<a class="jxr_linenumber" name="205" href="#205">205</a>                     <em class="jxr_comment">// and block this state, until the commit can be executed.</em>
-<a class="jxr_linenumber" name="206" href="#206">206</a>                     mCommitInProgress.wait();
-<a class="jxr_linenumber" name="207" href="#207">207</a>                 }
-<a class="jxr_linenumber" name="208" href="#208">208</a>             } <strong class="jxr_keyword">catch</strong> (InterruptedException e) {
-<a class="jxr_linenumber" name="209" href="#209">209</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> TTIOException(<span class="jxr_string">"A commit has been interrupted due to "</span> + e.getMessage());
-<a class="jxr_linenumber" name="210" href="#210">210</a>             }
-<a class="jxr_linenumber" name="211" href="#211">211</a>         }
-<a class="jxr_linenumber" name="212" href="#212">212</a> 
-<a class="jxr_linenumber" name="213" href="#213">213</a>         <strong class="jxr_keyword">final</strong> Injector injector =
-<a class="jxr_linenumber" name="214" href="#214">214</a>             com.google.inject.Guice.createInjector(<strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/access/commit/CommitStrategyModule.html">CommitStrategyModule</a>().setmLog(mLog)
-<a class="jxr_linenumber" name="215" href="#215">215</a>                 .setmMeta(mNewMeta).setmRev(mNewRoot).setmUber(mNewUber).setmWriter(mBucketWriter));
-<a class="jxr_linenumber" name="216" href="#216">216</a>         mCommitInProgress = injector.getInstance(mCommitStrategy);
-<a class="jxr_linenumber" name="217" href="#217">217</a> 
-<a class="jxr_linenumber" name="218" href="#218">218</a>         mCommitInProgress.execute();
+<a class="jxr_linenumber" name="162" href="#162">162</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="163" href="#163">163</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
+<a class="jxr_linenumber" name="164" href="#164">164</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="165" href="#165">165</a>     <strong class="jxr_keyword">public</strong> <a href="../../../org/treetank/api/INode.html">INode</a> getNode(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> pNodeKey) <strong class="jxr_keyword">throws</strong> TTIOException {
+<a class="jxr_linenumber" name="166" href="#166">166</a>         checkState(!mDelegate.isClosed(), <span class="jxr_string">"Transaction already closed"</span>);
+<a class="jxr_linenumber" name="167" href="#167">167</a>         <em class="jxr_comment">// Calculate bucket and node part for given nodeKey.</em>
+<a class="jxr_linenumber" name="168" href="#168">168</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> nodeBucketKey = pNodeKey &gt;&gt; IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3];
+<a class="jxr_linenumber" name="169" href="#169">169</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> nodeBucketOffset = nodeBucketOffset(pNodeKey);
+<a class="jxr_linenumber" name="170" href="#170">170</a> 
+<a class="jxr_linenumber" name="171" href="#171">171</a>         <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/io/LogKey.html">LogKey</a> key =
+<a class="jxr_linenumber" name="172" href="#172">172</a>             <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/io/LogKey.html">LogKey</a>(false, IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length, nodeBucketKey);
+<a class="jxr_linenumber" name="173" href="#173">173</a>         <a href="../../../org/treetank/io/LogValue.html">LogValue</a> container = mBucketWriter.get(key);
+<a class="jxr_linenumber" name="174" href="#174">174</a>         <a href="../../../org/treetank/api/INode.html">INode</a> item = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="175" href="#175">175</a>         <em class="jxr_comment">// Bucket was modified...</em>
+<a class="jxr_linenumber" name="176" href="#176">176</a>         <strong class="jxr_keyword">if</strong> (container.getModified() != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="177" href="#177">177</a>             <em class="jxr_comment">// ..check if the real node was touched and set it or..</em>
+<a class="jxr_linenumber" name="178" href="#178">178</a>             <strong class="jxr_keyword">if</strong> (((NodeBucket)container.getModified()).getNode(nodeBucketOffset) == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="179" href="#179">179</a>                 item = ((NodeBucket)container.getComplete()).getNode(nodeBucketOffset);
+<a class="jxr_linenumber" name="180" href="#180">180</a>             }<em class="jxr_comment">// ..take the node from the complete status of the page.</em>
+<a class="jxr_linenumber" name="181" href="#181">181</a>             <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="182" href="#182">182</a>                 item = ((NodeBucket)container.getModified()).getNode(nodeBucketOffset);
+<a class="jxr_linenumber" name="183" href="#183">183</a>             }
+<a class="jxr_linenumber" name="184" href="#184">184</a>             checkNotNull(item, <span class="jxr_string">"Item must be set!"</span>);
+<a class="jxr_linenumber" name="185" href="#185">185</a>             item = mDelegate.checkItemIfDeleted(item);
+<a class="jxr_linenumber" name="186" href="#186">186</a>         }<em class="jxr_comment">// ...bucket was modified within a former version,...</em>
+<a class="jxr_linenumber" name="187" href="#187">187</a>         <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="188" href="#188">188</a>             <em class="jxr_comment">// check the former version as..</em>
+<a class="jxr_linenumber" name="189" href="#189">189</a>             container = mBucketWriter.getFormer(key);
+<a class="jxr_linenumber" name="190" href="#190">190</a>             <em class="jxr_comment">// ..modified element within this version or...</em>
+<a class="jxr_linenumber" name="191" href="#191">191</a>             <strong class="jxr_keyword">if</strong> (container.getModified() != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="192" href="#192">192</a>                 <em class="jxr_comment">// ..check if the real node was touched and set it or..</em>
+<a class="jxr_linenumber" name="193" href="#193">193</a>                 <strong class="jxr_keyword">if</strong> (((NodeBucket)container.getModified()).getNode(nodeBucketOffset) == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="194" href="#194">194</a>                     item = ((NodeBucket)container.getComplete()).getNode(nodeBucketOffset);
+<a class="jxr_linenumber" name="195" href="#195">195</a>                 }<em class="jxr_comment">// ..take the node from the complete status of the page.</em>
+<a class="jxr_linenumber" name="196" href="#196">196</a>                 <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="197" href="#197">197</a>                     item = ((NodeBucket)container.getComplete()).getNode(nodeBucketOffset);
+<a class="jxr_linenumber" name="198" href="#198">198</a>                 }
+<a class="jxr_linenumber" name="199" href="#199">199</a>                 checkNotNull(item, <span class="jxr_string">"Item must be set!"</span>);
+<a class="jxr_linenumber" name="200" href="#200">200</a>                 item = mDelegate.checkItemIfDeleted(item);
+<a class="jxr_linenumber" name="201" href="#201">201</a>             }<em class="jxr_comment">// bucket was modified long long before, read it normally.</em>
+<a class="jxr_linenumber" name="202" href="#202">202</a>             <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="203" href="#203">203</a>                 item = mDelegate.getNode(pNodeKey);
+<a class="jxr_linenumber" name="204" href="#204">204</a>             }
+<a class="jxr_linenumber" name="205" href="#205">205</a>         }
+<a class="jxr_linenumber" name="206" href="#206">206</a>         <strong class="jxr_keyword">return</strong> item;
+<a class="jxr_linenumber" name="207" href="#207">207</a>     }
+<a class="jxr_linenumber" name="208" href="#208">208</a> 
+<a class="jxr_linenumber" name="209" href="#209">209</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="210" href="#210">210</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="211" href="#211">211</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
+<a class="jxr_linenumber" name="212" href="#212">212</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="213" href="#213">213</a> <em class="jxr_javadoccomment">     * @throws ExecutionException</em>
+<a class="jxr_linenumber" name="214" href="#214">214</a> <em class="jxr_javadoccomment">     * @throws InterruptedException</em>
+<a class="jxr_linenumber" name="215" href="#215">215</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="216" href="#216">216</a>     @Override
+<a class="jxr_linenumber" name="217" href="#217">217</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> commit() <strong class="jxr_keyword">throws</strong> TTException {
+<a class="jxr_linenumber" name="218" href="#218">218</a>         checkState(!mDelegate.isClosed(), <span class="jxr_string">"Transaction already closed"</span>);
 <a class="jxr_linenumber" name="219" href="#219">219</a> 
-<a class="jxr_linenumber" name="220" href="#220">220</a>         ((<a href="../../../org/treetank/access/Session.html">Session</a>)mDelegate.mSession).setLastCommittedUberBucket(mNewUber);
-<a class="jxr_linenumber" name="221" href="#221">221</a>         setUpTransaction(mNewUber, mDelegate.mSession, mNewUber.getRevisionNumber(), mBucketWriter);
-<a class="jxr_linenumber" name="222" href="#222">222</a> 
-<a class="jxr_linenumber" name="223" href="#223">223</a>     }
-<a class="jxr_linenumber" name="224" href="#224">224</a> 
-<a class="jxr_linenumber" name="225" href="#225">225</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> clearLog() <strong class="jxr_keyword">throws</strong> TTIOException {
-<a class="jxr_linenumber" name="226" href="#226">226</a>         mLog.close();
-<a class="jxr_linenumber" name="227" href="#227">227</a>     }
-<a class="jxr_linenumber" name="228" href="#228">228</a> 
-<a class="jxr_linenumber" name="229" href="#229">229</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="230" href="#230">230</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
-<a class="jxr_linenumber" name="231" href="#231">231</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="232" href="#232">232</a>     @Override
-<a class="jxr_linenumber" name="233" href="#233">233</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> close() <strong class="jxr_keyword">throws</strong> TTIOException {
-<a class="jxr_linenumber" name="234" href="#234">234</a>         <strong class="jxr_keyword">if</strong> (mCommitInProgress != <strong class="jxr_keyword">null</strong> &amp;&amp; mCommitInProgress.isInProgress()) {
-<a class="jxr_linenumber" name="235" href="#235">235</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="236" href="#236">236</a>                 mCommitInProgress.wait();
-<a class="jxr_linenumber" name="237" href="#237">237</a>             } <strong class="jxr_keyword">catch</strong> (InterruptedException e) {
-<a class="jxr_linenumber" name="238" href="#238">238</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> TTIOException(e);
-<a class="jxr_linenumber" name="239" href="#239">239</a>             }
-<a class="jxr_linenumber" name="240" href="#240">240</a>         }
+<a class="jxr_linenumber" name="220" href="#220">220</a>         mDelegate.mSession.waitForRunningCommit();
+<a class="jxr_linenumber" name="221" href="#221">221</a> 
+<a class="jxr_linenumber" name="222" href="#222">222</a>         <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/bucket/UberBucket.html">UberBucket</a> uber = UberBucket.copy(mNewUber);
+<a class="jxr_linenumber" name="223" href="#223">223</a>         <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/bucket/MetaBucket.html">MetaBucket</a> meta = MetaBucket.copy(mNewMeta);
+<a class="jxr_linenumber" name="224" href="#224">224</a>         <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/bucket/RevisionRootBucket.html">RevisionRootBucket</a> rev = RevisionRootBucket.copy(mNewRoot);
+<a class="jxr_linenumber" name="225" href="#225">225</a>         <strong class="jxr_keyword">final</strong> Future&lt;Void&gt; commitInProgress = mBucketWriter.commit(uber, meta, rev);
+<a class="jxr_linenumber" name="226" href="#226">226</a>         mDelegate.mSession.setRunningCommit(mCommitInProgress.submit(<strong class="jxr_keyword">new</strong> Callable&lt;Void&gt;() {
+<a class="jxr_linenumber" name="227" href="#227">227</a>             @Override
+<a class="jxr_linenumber" name="228" href="#228">228</a>             <strong class="jxr_keyword">public</strong> Void call() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="229" href="#229">229</a>                 <em class="jxr_comment">// serializing of new UberPage including its Subtree is concluded.</em>
+<a class="jxr_linenumber" name="230" href="#230">230</a>                 commitInProgress.get();
+<a class="jxr_linenumber" name="231" href="#231">231</a>                 ((<a href="../../../org/treetank/access/Session.html">Session</a>)mDelegate.mSession).setLastCommittedUberBucket(uber);
+<a class="jxr_linenumber" name="232" href="#232">232</a>                 mDelegate = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/access/BucketReadTrx.html">BucketReadTrx</a>(mDelegate.mSession, uber, rev, meta, mBucketWriter);
+<a class="jxr_linenumber" name="233" href="#233">233</a>                 mBucketWriter.closeFormerLog();
+<a class="jxr_linenumber" name="234" href="#234">234</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="235" href="#235">235</a>             }
+<a class="jxr_linenumber" name="236" href="#236">236</a>         }));
+<a class="jxr_linenumber" name="237" href="#237">237</a> 
+<a class="jxr_linenumber" name="238" href="#238">238</a>         mDelegate.mSession.waitForRunningCommit();
+<a class="jxr_linenumber" name="239" href="#239">239</a> 
+<a class="jxr_linenumber" name="240" href="#240">240</a>         setUpTransaction(uber, rev, meta, mDelegate.mSession, uber.getRevisionNumber(), mBucketWriter);
 <a class="jxr_linenumber" name="241" href="#241">241</a> 
-<a class="jxr_linenumber" name="242" href="#242">242</a>         <strong class="jxr_keyword">if</strong> (!mDelegate.isClosed()) {
-<a class="jxr_linenumber" name="243" href="#243">243</a>             mDelegate.close();
-<a class="jxr_linenumber" name="244" href="#244">244</a> 
-<a class="jxr_linenumber" name="245" href="#245">245</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="246" href="#246">246</a>                 <em class="jxr_comment">// Try to close the log.</em>
-<a class="jxr_linenumber" name="247" href="#247">247</a>                 <em class="jxr_comment">// It may already be closed if a commit</em>
-<a class="jxr_linenumber" name="248" href="#248">248</a>                 <em class="jxr_comment">// was the last operation.</em>
-<a class="jxr_linenumber" name="249" href="#249">249</a>                 mLog.close();
-<a class="jxr_linenumber" name="250" href="#250">250</a>             } <strong class="jxr_keyword">catch</strong> (IllegalStateException e) {
-<a class="jxr_linenumber" name="251" href="#251">251</a>                 <em class="jxr_comment">// Do nothing</em>
-<a class="jxr_linenumber" name="252" href="#252">252</a>             }
-<a class="jxr_linenumber" name="253" href="#253">253</a>             mDelegate.mSession.deregisterBucketTrx(<strong class="jxr_keyword">this</strong>);
-<a class="jxr_linenumber" name="254" href="#254">254</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="255" href="#255">255</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="256" href="#256">256</a>             <strong class="jxr_keyword">return</strong> false;
-<a class="jxr_linenumber" name="257" href="#257">257</a>         }
-<a class="jxr_linenumber" name="258" href="#258">258</a>     }
-<a class="jxr_linenumber" name="259" href="#259">259</a> 
-<a class="jxr_linenumber" name="260" href="#260">260</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="261" href="#261">261</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
-<a class="jxr_linenumber" name="262" href="#262">262</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="263" href="#263">263</a>     @Override
-<a class="jxr_linenumber" name="264" href="#264">264</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">long</strong> incrementNodeKey() {
-<a class="jxr_linenumber" name="265" href="#265">265</a>         checkState(!mDelegate.isClosed(), <span class="jxr_string">"Transaction already closed"</span>);
-<a class="jxr_linenumber" name="266" href="#266">266</a>         <strong class="jxr_keyword">return</strong> mNewRoot.incrementMaxNodeKey();
-<a class="jxr_linenumber" name="267" href="#267">267</a>     }
-<a class="jxr_linenumber" name="268" href="#268">268</a> 
-<a class="jxr_linenumber" name="269" href="#269">269</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="270" href="#270">270</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
-<a class="jxr_linenumber" name="271" href="#271">271</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="272" href="#272">272</a>     @Override
-<a class="jxr_linenumber" name="273" href="#273">273</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">long</strong> getRevision() <strong class="jxr_keyword">throws</strong> TTIOException {
-<a class="jxr_linenumber" name="274" href="#274">274</a>         checkState(!mDelegate.isClosed(), <span class="jxr_string">"Transaction already closed"</span>);
-<a class="jxr_linenumber" name="275" href="#275">275</a>         <strong class="jxr_keyword">return</strong> mNewRoot.getRevision();
-<a class="jxr_linenumber" name="276" href="#276">276</a>     }
-<a class="jxr_linenumber" name="277" href="#277">277</a> 
-<a class="jxr_linenumber" name="278" href="#278">278</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="279" href="#279">279</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
-<a class="jxr_linenumber" name="280" href="#280">280</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="281" href="#281">281</a>     @Override
-<a class="jxr_linenumber" name="282" href="#282">282</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isClosed() {
-<a class="jxr_linenumber" name="283" href="#283">283</a>         <strong class="jxr_keyword">return</strong> mDelegate.isClosed();
-<a class="jxr_linenumber" name="284" href="#284">284</a>     }
-<a class="jxr_linenumber" name="285" href="#285">285</a> 
-<a class="jxr_linenumber" name="286" href="#286">286</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="287" href="#287">287</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
-<a class="jxr_linenumber" name="288" href="#288">288</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="289" href="#289">289</a>     @Override
-<a class="jxr_linenumber" name="290" href="#290">290</a>     <strong class="jxr_keyword">public</strong> <a href="../../../org/treetank/bucket/MetaBucket.html">MetaBucket</a> getMetaBucket() {
-<a class="jxr_linenumber" name="291" href="#291">291</a>         checkState(!mDelegate.isClosed(), <span class="jxr_string">"Transaction already closed"</span>);
-<a class="jxr_linenumber" name="292" href="#292">292</a>         <strong class="jxr_keyword">return</strong> mNewMeta;
-<a class="jxr_linenumber" name="293" href="#293">293</a>     }
-<a class="jxr_linenumber" name="294" href="#294">294</a> 
-<a class="jxr_linenumber" name="295" href="#295">295</a>     <strong class="jxr_keyword">private</strong> <a href="../../../org/treetank/log/LogValue.html">LogValue</a> prepareNodeBucket(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> pNodeKey) <strong class="jxr_keyword">throws</strong> TTException {
-<a class="jxr_linenumber" name="296" href="#296">296</a> 
-<a class="jxr_linenumber" name="297" href="#297">297</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> seqNodeBucketKey = pNodeKey &gt;&gt; IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3];
-<a class="jxr_linenumber" name="298" href="#298">298</a> 
-<a class="jxr_linenumber" name="299" href="#299">299</a>         <a href="../../../org/treetank/log/LogKey.html">LogKey</a> key = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/log/LogKey.html">LogKey</a>(false, IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length, seqNodeBucketKey);
-<a class="jxr_linenumber" name="300" href="#300">300</a>         <em class="jxr_comment">// See if on nodeBucketLevel, there are any buckets...</em>
-<a class="jxr_linenumber" name="301" href="#301">301</a>         <a href="../../../org/treetank/log/LogValue.html">LogValue</a> container = mLog.get(key);
-<a class="jxr_linenumber" name="302" href="#302">302</a>         <em class="jxr_comment">// ... and start dereferencing of not.</em>
-<a class="jxr_linenumber" name="303" href="#303">303</a>         <strong class="jxr_keyword">if</strong> (container.getModified() == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="304" href="#304">304</a>             <a href="../../../org/treetank/log/LogKey.html">LogKey</a> indirectKey = preparePathToLeaf(false, mNewRoot, pNodeKey);
-<a class="jxr_linenumber" name="305" href="#305">305</a> 
-<a class="jxr_linenumber" name="306" href="#306">306</a>             <a href="../../../org/treetank/log/LogValue.html">LogValue</a> indirectContainer = mLog.get(indirectKey);
-<a class="jxr_linenumber" name="307" href="#307">307</a>             <strong class="jxr_keyword">int</strong> nodeOffset = nodeBucketOffset(seqNodeBucketKey);
-<a class="jxr_linenumber" name="308" href="#308">308</a>             <strong class="jxr_keyword">long</strong> bucketKey = ((IndirectBucket)indirectContainer.getModified()).getReferenceKeys()[nodeOffset];
-<a class="jxr_linenumber" name="309" href="#309">309</a> 
-<a class="jxr_linenumber" name="310" href="#310">310</a>             <strong class="jxr_keyword">long</strong> newBucketKey = mNewUber.incrementBucketCounter();
-<a class="jxr_linenumber" name="311" href="#311">311</a>             <strong class="jxr_keyword">if</strong> (bucketKey != 0) {
-<a class="jxr_linenumber" name="312" href="#312">312</a>                 <a href="../../../org/treetank/bucket/NodeBucket.html">NodeBucket</a>[] buckets = mDelegate.getSnapshotBuckets(seqNodeBucketKey);
-<a class="jxr_linenumber" name="313" href="#313">313</a>                 checkState(buckets.length &gt; 0);
-<a class="jxr_linenumber" name="314" href="#314">314</a>                 <strong class="jxr_keyword">if</strong> (mNewRoot.getRevision()
-<a class="jxr_linenumber" name="315" href="#315">315</a>                     % Integer.parseInt(mDelegate.mSession.getConfig().mProperties
-<a class="jxr_linenumber" name="316" href="#316">316</a>                         .getProperty(ConstructorProps.NUMBERTORESTORE)) == 0) {
-<a class="jxr_linenumber" name="317" href="#317">317</a>                     container =
-<a class="jxr_linenumber" name="318" href="#318">318</a>                         mDelegate.mSession.getConfig().mRevision.combineBucketsForModification(Integer
-<a class="jxr_linenumber" name="319" href="#319">319</a>                             .parseInt(mDelegate.mSession.getConfig().mProperties
-<a class="jxr_linenumber" name="320" href="#320">320</a>                                 .getProperty(ConstructorProps.NUMBERTORESTORE)), newBucketKey, buckets, <strong class="jxr_keyword">true</strong>);
-<a class="jxr_linenumber" name="321" href="#321">321</a>                 } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="322" href="#322">322</a>                     container =
-<a class="jxr_linenumber" name="323" href="#323">323</a>                         mDelegate.mSession.getConfig().mRevision.combineBucketsForModification(Integer
-<a class="jxr_linenumber" name="324" href="#324">324</a>                             .parseInt(mDelegate.mSession.getConfig().mProperties
-<a class="jxr_linenumber" name="325" href="#325">325</a>                                 .getProperty(ConstructorProps.NUMBERTORESTORE)), newBucketKey, buckets, false);
-<a class="jxr_linenumber" name="326" href="#326">326</a>                 }
-<a class="jxr_linenumber" name="327" href="#327">327</a>             } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="328" href="#328">328</a>                 <a href="../../../org/treetank/bucket/NodeBucket.html">NodeBucket</a> newBucket = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/bucket/NodeBucket.html">NodeBucket</a>(newBucketKey, IConstants.NULL_NODE);
-<a class="jxr_linenumber" name="329" href="#329">329</a>                 container = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/log/LogValue.html">LogValue</a>(newBucket, newBucket);
-<a class="jxr_linenumber" name="330" href="#330">330</a>             }
-<a class="jxr_linenumber" name="331" href="#331">331</a>             ((<a href="../../../org/treetank/bucket/IndirectBucket.html">IndirectBucket</a>)indirectContainer.getModified()).setReferenceKey(nodeOffset, newBucketKey);
-<a class="jxr_linenumber" name="332" href="#332">332</a>             mLog.put(indirectKey, indirectContainer);
-<a class="jxr_linenumber" name="333" href="#333">333</a>             mLog.put(key, container);
-<a class="jxr_linenumber" name="334" href="#334">334</a>         }
-<a class="jxr_linenumber" name="335" href="#335">335</a>         <strong class="jxr_keyword">return</strong> container;
-<a class="jxr_linenumber" name="336" href="#336">336</a>     }
+<a class="jxr_linenumber" name="242" href="#242">242</a>     }
+<a class="jxr_linenumber" name="243" href="#243">243</a> 
+<a class="jxr_linenumber" name="244" href="#244">244</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> clearLog() <strong class="jxr_keyword">throws</strong> TTIOException {
+<a class="jxr_linenumber" name="245" href="#245">245</a>         mBucketWriter.close();
+<a class="jxr_linenumber" name="246" href="#246">246</a>     }
+<a class="jxr_linenumber" name="247" href="#247">247</a> 
+<a class="jxr_linenumber" name="248" href="#248">248</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="249" href="#249">249</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
+<a class="jxr_linenumber" name="250" href="#250">250</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="251" href="#251">251</a>     @Override
+<a class="jxr_linenumber" name="252" href="#252">252</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> close() <strong class="jxr_keyword">throws</strong> TTIOException {
+<a class="jxr_linenumber" name="253" href="#253">253</a>         mCommitInProgress.shutdown();
+<a class="jxr_linenumber" name="254" href="#254">254</a>         <strong class="jxr_keyword">if</strong> (!mDelegate.isClosed()) {
+<a class="jxr_linenumber" name="255" href="#255">255</a>             mDelegate.close();
+<a class="jxr_linenumber" name="256" href="#256">256</a> 
+<a class="jxr_linenumber" name="257" href="#257">257</a>             <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="258" href="#258">258</a>                 <em class="jxr_comment">// Try to close the log.</em>
+<a class="jxr_linenumber" name="259" href="#259">259</a>                 <em class="jxr_comment">// It may already be closed if a commit</em>
+<a class="jxr_linenumber" name="260" href="#260">260</a>                 <em class="jxr_comment">// was the last operation.</em>
+<a class="jxr_linenumber" name="261" href="#261">261</a>                 mBucketWriter.close();
+<a class="jxr_linenumber" name="262" href="#262">262</a>             } <strong class="jxr_keyword">catch</strong> (IllegalStateException e) {
+<a class="jxr_linenumber" name="263" href="#263">263</a>                 <em class="jxr_comment">// Do nothing</em>
+<a class="jxr_linenumber" name="264" href="#264">264</a>             }
+<a class="jxr_linenumber" name="265" href="#265">265</a>             mDelegate.mSession.deregisterBucketTrx(<strong class="jxr_keyword">this</strong>);
+<a class="jxr_linenumber" name="266" href="#266">266</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="267" href="#267">267</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="268" href="#268">268</a>             <strong class="jxr_keyword">return</strong> false;
+<a class="jxr_linenumber" name="269" href="#269">269</a>         }
+<a class="jxr_linenumber" name="270" href="#270">270</a>     }
+<a class="jxr_linenumber" name="271" href="#271">271</a> 
+<a class="jxr_linenumber" name="272" href="#272">272</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="273" href="#273">273</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
+<a class="jxr_linenumber" name="274" href="#274">274</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="275" href="#275">275</a>     @Override
+<a class="jxr_linenumber" name="276" href="#276">276</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">long</strong> incrementNodeKey() {
+<a class="jxr_linenumber" name="277" href="#277">277</a>         checkState(!mDelegate.isClosed(), <span class="jxr_string">"Transaction already closed"</span>);
+<a class="jxr_linenumber" name="278" href="#278">278</a>         <strong class="jxr_keyword">return</strong> mNewRoot.incrementMaxNodeKey();
+<a class="jxr_linenumber" name="279" href="#279">279</a>     }
+<a class="jxr_linenumber" name="280" href="#280">280</a> 
+<a class="jxr_linenumber" name="281" href="#281">281</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="282" href="#282">282</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
+<a class="jxr_linenumber" name="283" href="#283">283</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="284" href="#284">284</a>     @Override
+<a class="jxr_linenumber" name="285" href="#285">285</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">long</strong> getRevision() <strong class="jxr_keyword">throws</strong> TTIOException {
+<a class="jxr_linenumber" name="286" href="#286">286</a>         checkState(!mDelegate.isClosed(), <span class="jxr_string">"Transaction already closed"</span>);
+<a class="jxr_linenumber" name="287" href="#287">287</a>         <strong class="jxr_keyword">return</strong> mNewRoot.getRevision();
+<a class="jxr_linenumber" name="288" href="#288">288</a>     }
+<a class="jxr_linenumber" name="289" href="#289">289</a> 
+<a class="jxr_linenumber" name="290" href="#290">290</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="291" href="#291">291</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
+<a class="jxr_linenumber" name="292" href="#292">292</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="293" href="#293">293</a>     @Override
+<a class="jxr_linenumber" name="294" href="#294">294</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isClosed() {
+<a class="jxr_linenumber" name="295" href="#295">295</a>         <strong class="jxr_keyword">return</strong> mDelegate.isClosed();
+<a class="jxr_linenumber" name="296" href="#296">296</a>     }
+<a class="jxr_linenumber" name="297" href="#297">297</a> 
+<a class="jxr_linenumber" name="298" href="#298">298</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="299" href="#299">299</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
+<a class="jxr_linenumber" name="300" href="#300">300</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="301" href="#301">301</a>     @Override
+<a class="jxr_linenumber" name="302" href="#302">302</a>     <strong class="jxr_keyword">public</strong> <a href="../../../org/treetank/bucket/MetaBucket.html">MetaBucket</a> getMetaBucket() {
+<a class="jxr_linenumber" name="303" href="#303">303</a>         checkState(!mDelegate.isClosed(), <span class="jxr_string">"Transaction already closed"</span>);
+<a class="jxr_linenumber" name="304" href="#304">304</a>         <strong class="jxr_keyword">return</strong> mNewMeta;
+<a class="jxr_linenumber" name="305" href="#305">305</a>     }
+<a class="jxr_linenumber" name="306" href="#306">306</a> 
+<a class="jxr_linenumber" name="307" href="#307">307</a>     <strong class="jxr_keyword">private</strong> <a href="../../../org/treetank/io/LogValue.html">LogValue</a> prepareNodeBucket(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> pNodeKey) <strong class="jxr_keyword">throws</strong> TTException {
+<a class="jxr_linenumber" name="308" href="#308">308</a> 
+<a class="jxr_linenumber" name="309" href="#309">309</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> seqNodeBucketKey = pNodeKey &gt;&gt; IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3];
+<a class="jxr_linenumber" name="310" href="#310">310</a> 
+<a class="jxr_linenumber" name="311" href="#311">311</a>         <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/io/LogKey.html">LogKey</a> key =
+<a class="jxr_linenumber" name="312" href="#312">312</a>             <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/io/LogKey.html">LogKey</a>(false, IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length, seqNodeBucketKey);
+<a class="jxr_linenumber" name="313" href="#313">313</a>         <em class="jxr_comment">// See if on nodeBucketLevel, there are any buckets.</em>
+<a class="jxr_linenumber" name="314" href="#314">314</a>         <a href="../../../org/treetank/io/LogValue.html">LogValue</a> container = mBucketWriter.get(key);
+<a class="jxr_linenumber" name="315" href="#315">315</a>         <em class="jxr_comment">// if not,...</em>
+<a class="jxr_linenumber" name="316" href="#316">316</a>         <strong class="jxr_keyword">if</strong> (container.getModified() == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="317" href="#317">317</a>             <em class="jxr_comment">// ..start preparing a new container to be logged</em>
+<a class="jxr_linenumber" name="318" href="#318">318</a>             <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/io/LogKey.html">LogKey</a> indirectKey = preparePathToLeaf(false, mNewRoot, pNodeKey);
+<a class="jxr_linenumber" name="319" href="#319">319</a>             <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/io/LogValue.html">LogValue</a> indirectContainer = mBucketWriter.get(indirectKey);
+<a class="jxr_linenumber" name="320" href="#320">320</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> nodeOffset = nodeBucketOffset(seqNodeBucketKey);
+<a class="jxr_linenumber" name="321" href="#321">321</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> bucketKey =
+<a class="jxr_linenumber" name="322" href="#322">322</a>                 ((<a href="../../../org/treetank/bucket/IndirectBucket.html">IndirectBucket</a>)indirectContainer.getModified()).getReferenceKeys()[nodeOffset];
+<a class="jxr_linenumber" name="323" href="#323">323</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> newBucketKey = mNewUber.incrementBucketCounter();
+<a class="jxr_linenumber" name="324" href="#324">324</a>             <em class="jxr_comment">// if there is not any bucket already existing...</em>
+<a class="jxr_linenumber" name="325" href="#325">325</a>             <strong class="jxr_keyword">if</strong> (bucketKey != 0) {
+<a class="jxr_linenumber" name="326" href="#326">326</a>                 <em class="jxr_comment">// ...just denote the number of elements necessary to restore (only for visibility reasons).</em>
+<a class="jxr_linenumber" name="327" href="#327">327</a>                 <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> revToRestore =
+<a class="jxr_linenumber" name="328" href="#328">328</a>                     Integer.parseInt(mDelegate.mSession.getConfig().mProperties
+<a class="jxr_linenumber" name="329" href="#329">329</a>                         .getProperty(ConstructorProps.NUMBERTORESTORE));
+<a class="jxr_linenumber" name="330" href="#330">330</a> 
+<a class="jxr_linenumber" name="331" href="#331">331</a>                 <em class="jxr_comment">// Gather all data, from the former log..</em>
+<a class="jxr_linenumber" name="332" href="#332">332</a>                 <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/io/LogValue.html">LogValue</a> formerModified = mBucketWriter.getFormer(key);
+<a class="jxr_linenumber" name="333" href="#333">333</a>                 <em class="jxr_comment">// ..and from the former revision.</em>
+<a class="jxr_linenumber" name="334" href="#334">334</a>                 <strong class="jxr_keyword">final</strong> List&lt;NodeBucket&gt; formerBuckets = mDelegate.getSnapshotBuckets(seqNodeBucketKey);
+<a class="jxr_linenumber" name="335" href="#335">335</a>                 <em class="jxr_comment">// declare summarized buckets.</em>
+<a class="jxr_linenumber" name="336" href="#336">336</a>                 <strong class="jxr_keyword">final</strong> List&lt;NodeBucket&gt; bucketList = <strong class="jxr_keyword">new</strong> ArrayList&lt;NodeBucket&gt;();
 <a class="jxr_linenumber" name="337" href="#337">337</a> 
-<a class="jxr_linenumber" name="338" href="#338">338</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="339" href="#339">339</a> <em class="jxr_javadoccomment">     * Getting a {@link LogKey} containing the last IndirectBucket with the reference to any new/modified</em>
-<a class="jxr_linenumber" name="340" href="#340">340</a> <em class="jxr_javadoccomment">     * bucket.</em>
-<a class="jxr_linenumber" name="341" href="#341">341</a> <em class="jxr_javadoccomment">     * </em>
-<a class="jxr_linenumber" name="342" href="#342">342</a> <em class="jxr_javadoccomment">     * @param pIsRootLevel</em>
-<a class="jxr_linenumber" name="343" href="#343">343</a> <em class="jxr_javadoccomment">     *            is this dereferencing walk based on the the search after a RevRoot or a NodeBucket. Needed</em>
-<a class="jxr_linenumber" name="344" href="#344">344</a> <em class="jxr_javadoccomment">     *            because of the same keys in both subtrees.</em>
-<a class="jxr_linenumber" name="345" href="#345">345</a> <em class="jxr_javadoccomment">     * @param pBucket</em>
-<a class="jxr_linenumber" name="346" href="#346">346</a> <em class="jxr_javadoccomment">     *            where to start the tree-walk: either from an UberBucket (related to new</em>
-<a class="jxr_linenumber" name="347" href="#347">347</a> <em class="jxr_javadoccomment">     *            RevisionRootBuckets) or from a RevisionRootBucket (related to new NodeBuckets).</em>
-<a class="jxr_linenumber" name="348" href="#348">348</a> <em class="jxr_javadoccomment">     * @param pElementKey</em>
-<a class="jxr_linenumber" name="349" href="#349">349</a> <em class="jxr_javadoccomment">     *            key to be dereferenced</em>
-<a class="jxr_linenumber" name="350" href="#350">350</a> <em class="jxr_javadoccomment">     * @return the key the container representing the last level</em>
-<a class="jxr_linenumber" name="351" href="#351">351</a> <em class="jxr_javadoccomment">     * @throws TTException</em>
-<a class="jxr_linenumber" name="352" href="#352">352</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="353" href="#353">353</a>     <strong class="jxr_keyword">private</strong> <a href="../../../org/treetank/log/LogKey.html">LogKey</a> preparePathToLeaf(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> pIsRootLevel, <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/bucket/interfaces/IReferenceBucket.html">IReferenceBucket</a> pBucket,
-<a class="jxr_linenumber" name="354" href="#354">354</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> pElementKey) <strong class="jxr_keyword">throws</strong> TTException {
-<a class="jxr_linenumber" name="355" href="#355">355</a> 
-<a class="jxr_linenumber" name="356" href="#356">356</a>         <em class="jxr_comment">// computing the ordernumbers within all level. The ordernumbers are the position in the sequence of</em>
-<a class="jxr_linenumber" name="357" href="#357">357</a>         <em class="jxr_comment">// all buckets within the same level.</em>
-<a class="jxr_linenumber" name="358" href="#358">358</a>         <em class="jxr_comment">// ranges are for level 0: 0-127; level 1: 0-16383; level 2: 0-2097151; level 3: 0-268435455; ;level</em>
-<a class="jxr_linenumber" name="359" href="#359">359</a>         <em class="jxr_comment">// 4: 0-34359738367</em>
-<a class="jxr_linenumber" name="360" href="#360">360</a>         <strong class="jxr_keyword">long</strong> seqBucketKey = -1;
-<a class="jxr_linenumber" name="361" href="#361">361</a>         <em class="jxr_comment">// since the revision points to a bucket, the sequence-key bases on the last indirect-layer directly</em>
-<a class="jxr_linenumber" name="362" href="#362">362</a>         <em class="jxr_comment">// within the search after a revision,...</em>
-<a class="jxr_linenumber" name="363" href="#363">363</a>         <strong class="jxr_keyword">if</strong> (pIsRootLevel) {
-<a class="jxr_linenumber" name="364" href="#364">364</a>             seqBucketKey = pElementKey &gt;&gt; IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3];
-<a class="jxr_linenumber" name="365" href="#365">365</a>         } <em class="jxr_comment">// ...whereas one layer above is used for the nodes based on the offsets pointing to nodes</em>
-<a class="jxr_linenumber" name="366" href="#366">366</a>           <em class="jxr_comment">// instead of buckets.</em>
-<a class="jxr_linenumber" name="367" href="#367">367</a>         <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="368" href="#368">368</a>             seqBucketKey = pElementKey &gt;&gt; IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[2];
-<a class="jxr_linenumber" name="369" href="#369">369</a>         }
-<a class="jxr_linenumber" name="370" href="#370">370</a> 
-<a class="jxr_linenumber" name="371" href="#371">371</a>         <strong class="jxr_keyword">long</strong>[] orderNumber = <strong class="jxr_keyword">new</strong> <strong class="jxr_keyword">long</strong>[IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length];
-<a class="jxr_linenumber" name="372" href="#372">372</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> level = 0; level &lt; orderNumber.length; level++) {
-<a class="jxr_linenumber" name="373" href="#373">373</a>             orderNumber[level] = seqBucketKey &gt;&gt; IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[level];
-<a class="jxr_linenumber" name="374" href="#374">374</a>         }
-<a class="jxr_linenumber" name="375" href="#375">375</a> 
-<a class="jxr_linenumber" name="376" href="#376">376</a>         <a href="../../../org/treetank/bucket/interfaces/IReferenceBucket.html">IReferenceBucket</a> bucket = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="377" href="#377">377</a>         <a href="../../../org/treetank/bucket/interfaces/IReferenceBucket.html">IReferenceBucket</a> parentBucket = pBucket;
-<a class="jxr_linenumber" name="378" href="#378">378</a>         <a href="../../../org/treetank/log/LogKey.html">LogKey</a> key = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="379" href="#379">379</a>         <a href="../../../org/treetank/log/LogKey.html">LogKey</a> parentKey = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/log/LogKey.html">LogKey</a>(pIsRootLevel, -1, 0);
-<a class="jxr_linenumber" name="380" href="#380">380</a> 
-<a class="jxr_linenumber" name="381" href="#381">381</a>         <em class="jxr_comment">// Iterate through all levels...</em>
-<a class="jxr_linenumber" name="382" href="#382">382</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> level = 0; level &lt; orderNumber.length; level++) {
-<a class="jxr_linenumber" name="383" href="#383">383</a>             <em class="jxr_comment">// ...see if the actual bucket requested is already in the log</em>
-<a class="jxr_linenumber" name="384" href="#384">384</a>             key = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/log/LogKey.html">LogKey</a>(pIsRootLevel, level, orderNumber[level]);
-<a class="jxr_linenumber" name="385" href="#385">385</a>             <a href="../../../org/treetank/log/LogValue.html">LogValue</a> container = mLog.get(key);
-<a class="jxr_linenumber" name="386" href="#386">386</a>             <em class="jxr_comment">// if the bucket is not existing,..</em>
-<a class="jxr_linenumber" name="387" href="#387">387</a>             <strong class="jxr_keyword">if</strong> (container.getModified() == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="388" href="#388">388</a>                 <em class="jxr_comment">// ..create a new bucket</em>
-<a class="jxr_linenumber" name="389" href="#389">389</a>                 <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> newKey = mNewUber.incrementBucketCounter();
-<a class="jxr_linenumber" name="390" href="#390">390</a>                 bucket = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/bucket/IndirectBucket.html">IndirectBucket</a>(newKey);
-<a class="jxr_linenumber" name="391" href="#391">391</a> 
-<a class="jxr_linenumber" name="392" href="#392">392</a>                 <em class="jxr_comment">// compute the offset of the new bucket</em>
-<a class="jxr_linenumber" name="393" href="#393">393</a>                 <strong class="jxr_keyword">int</strong> offset = nodeBucketOffset(orderNumber[level]);
-<a class="jxr_linenumber" name="394" href="#394">394</a> 
-<a class="jxr_linenumber" name="395" href="#395">395</a>                 <em class="jxr_comment">// if there existed the same bucket in former versions (referencable over the offset within</em>
-<a class="jxr_linenumber" name="396" href="#396">396</a>                 <em class="jxr_comment">// the parent)...</em>
-<a class="jxr_linenumber" name="397" href="#397">397</a>                 <strong class="jxr_keyword">if</strong> (parentBucket.getReferenceKeys()[offset] != 0) {
-<a class="jxr_linenumber" name="398" href="#398">398</a>                     <a href="../../../org/treetank/bucket/interfaces/IReferenceBucket.html">IReferenceBucket</a> oldBucket =
-<a class="jxr_linenumber" name="399" href="#399">399</a>                         (<a href="../../../org/treetank/bucket/interfaces/IReferenceBucket.html">IReferenceBucket</a>)mBucketWriter.read(parentBucket.getReferenceKeys()[offset]);
-<a class="jxr_linenumber" name="400" href="#400">400</a>                     <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; oldBucket.getReferenceKeys().length; i++) {
-<a class="jxr_linenumber" name="401" href="#401">401</a>                         bucket.setReferenceKey(i, oldBucket.getReferenceKeys()[i]);
-<a class="jxr_linenumber" name="402" href="#402">402</a>                     }
-<a class="jxr_linenumber" name="403" href="#403">403</a>                 }
-<a class="jxr_linenumber" name="404" href="#404">404</a>                 <em class="jxr_comment">// Set the newKey on the computed offset...</em>
-<a class="jxr_linenumber" name="405" href="#405">405</a>                 parentBucket.setReferenceKey(offset, newKey);
-<a class="jxr_linenumber" name="406" href="#406">406</a>                 <em class="jxr_comment">// .. and put the parent-reference to the log...</em>
-<a class="jxr_linenumber" name="407" href="#407">407</a>                 container = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/log/LogValue.html">LogValue</a>(parentBucket, parentBucket);
-<a class="jxr_linenumber" name="408" href="#408">408</a>                 <em class="jxr_comment">// ..if the parent is not referenced as UberBucket or RevisionRootBucket within the Wtx</em>
-<a class="jxr_linenumber" name="409" href="#409">409</a>                 <em class="jxr_comment">// itself...</em>
-<a class="jxr_linenumber" name="410" href="#410">410</a>                 <strong class="jxr_keyword">if</strong> (level &gt; 0) {
-<a class="jxr_linenumber" name="411" href="#411">411</a>                     mLog.put(parentKey, container);
-<a class="jxr_linenumber" name="412" href="#412">412</a>                 }
-<a class="jxr_linenumber" name="413" href="#413">413</a>                 <em class="jxr_comment">// ..but set the reference of the current bucket in every case.</em>
-<a class="jxr_linenumber" name="414" href="#414">414</a>                 container = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/log/LogValue.html">LogValue</a>(bucket, bucket);
-<a class="jxr_linenumber" name="415" href="#415">415</a>                 mLog.put(key, container);
-<a class="jxr_linenumber" name="416" href="#416">416</a> 
-<a class="jxr_linenumber" name="417" href="#417">417</a>             } <em class="jxr_comment">// if the bucket is already in the log, get it simply from the log.</em>
-<a class="jxr_linenumber" name="418" href="#418">418</a>             <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="419" href="#419">419</a>                 bucket = (IReferenceBucket)container.getModified();
-<a class="jxr_linenumber" name="420" href="#420">420</a>             }
-<a class="jxr_linenumber" name="421" href="#421">421</a>             <em class="jxr_comment">// finally, set the new bucketkey for the next level</em>
-<a class="jxr_linenumber" name="422" href="#422">422</a>             parentKey = key;
-<a class="jxr_linenumber" name="423" href="#423">423</a>             parentBucket = bucket;
-<a class="jxr_linenumber" name="424" href="#424">424</a>         }
-<a class="jxr_linenumber" name="425" href="#425">425</a> 
-<a class="jxr_linenumber" name="426" href="#426">426</a>         <em class="jxr_comment">// Return reference to leaf of indirect tree.</em>
-<a class="jxr_linenumber" name="427" href="#427">427</a>         <strong class="jxr_keyword">return</strong> key;
-<a class="jxr_linenumber" name="428" href="#428">428</a>     }
-<a class="jxr_linenumber" name="429" href="#429">429</a> 
-<a class="jxr_linenumber" name="430" href="#430">430</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> setUpTransaction(<strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/bucket/UberBucket.html">UberBucket</a> pUberBucket, <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/api/ISession.html">ISession</a> pSession,
-<a class="jxr_linenumber" name="431" href="#431">431</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> pRepresentRev, <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/io/IBackendWriter.html">IBackendWriter</a> pWriter) <strong class="jxr_keyword">throws</strong> TTException {
-<a class="jxr_linenumber" name="432" href="#432">432</a>         <em class="jxr_comment">// TODO need to be fixed over here</em>
-<a class="jxr_linenumber" name="433" href="#433">433</a>         mLog =
-<a class="jxr_linenumber" name="434" href="#434">434</a>             <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/log/LRULog.html">LRULog</a>(<strong class="jxr_keyword">new</strong> File(pSession.getConfig().mProperties
-<a class="jxr_linenumber" name="435" href="#435">435</a>                 .getProperty(org.treetank.access.conf.ConstructorProps.RESOURCEPATH)),
-<a class="jxr_linenumber" name="436" href="#436">436</a>                 pSession.getConfig().mNodeFac, pSession.getConfig().mMetaFac);
+<a class="jxr_linenumber" name="338" href="#338">338</a>                 <em class="jxr_comment">// Look, if a former log is currently in process to be written...</em>
+<a class="jxr_linenumber" name="339" href="#339">339</a>                 <strong class="jxr_keyword">if</strong> (formerModified.getModified() != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="340" href="#340">340</a>                     <em class="jxr_comment">// ..if so, check if the modified one...</em>
+<a class="jxr_linenumber" name="341" href="#341">341</a>                     <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/bucket/NodeBucket.html">NodeBucket</a> currentlyInProgress = (NodeBucket)formerModified.getModified();
+<a class="jxr_linenumber" name="342" href="#342">342</a>                     <em class="jxr_comment">// ... is the same one than recently written (to avoid race conditions).</em>
+<a class="jxr_linenumber" name="343" href="#343">343</a>                     <strong class="jxr_keyword">if</strong> (formerBuckets.isEmpty()
+<a class="jxr_linenumber" name="344" href="#344">344</a>                         || formerBuckets.get(0).getBucketKey() == currentlyInProgress.getBucketKey()) {
+<a class="jxr_linenumber" name="345" href="#345">345</a>                         bucketList.add(currentlyInProgress);
+<a class="jxr_linenumber" name="346" href="#346">346</a>                     }
+<a class="jxr_linenumber" name="347" href="#347">347</a>                 }
+<a class="jxr_linenumber" name="348" href="#348">348</a> 
+<a class="jxr_linenumber" name="349" href="#349">349</a>                 <em class="jxr_comment">// All currently written elements are inserted so if no elements are in the bucketlist...</em>
+<a class="jxr_linenumber" name="350" href="#350">350</a>                 <strong class="jxr_keyword">if</strong> (bucketList.isEmpty()) {
+<a class="jxr_linenumber" name="351" href="#351">351</a>                     <em class="jxr_comment">// ...add all former ones...</em>
+<a class="jxr_linenumber" name="352" href="#352">352</a>                     bucketList.addAll(formerBuckets);
+<a class="jxr_linenumber" name="353" href="#353">353</a>                 }<em class="jxr_comment">// ..otherwise, take all elements starting index 1 into account</em>
+<a class="jxr_linenumber" name="354" href="#354">354</a>                 <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="355" href="#355">355</a>                     <strong class="jxr_keyword">if</strong> (formerBuckets.size() &gt; 1) {
+<a class="jxr_linenumber" name="356" href="#356">356</a>                         bucketList.addAll(formerBuckets.subList(1, formerBuckets.size() - 1));
+<a class="jxr_linenumber" name="357" href="#357">357</a>                     }
+<a class="jxr_linenumber" name="358" href="#358">358</a>                 }
+<a class="jxr_linenumber" name="359" href="#359">359</a> 
+<a class="jxr_linenumber" name="360" href="#360">360</a>                 <em class="jxr_comment">// Transform into array..</em>
+<a class="jxr_linenumber" name="361" href="#361">361</a>                 <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/bucket/NodeBucket.html">NodeBucket</a>[] buckets = bucketList.toArray(<strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/bucket/NodeBucket.html">NodeBucket</a>[bucketList.size()]);
+<a class="jxr_linenumber" name="362" href="#362">362</a>                 <em class="jxr_comment">// ..and check that the number of buckets are valid and return the entire bucket.</em>
+<a class="jxr_linenumber" name="363" href="#363">363</a>                 checkState(buckets.length &gt; 0);
+<a class="jxr_linenumber" name="364" href="#364">364</a>                 container =
+<a class="jxr_linenumber" name="365" href="#365">365</a>                     mDelegate.mSession.getConfig().mRevision.combineBucketsForModification(revToRestore,
+<a class="jxr_linenumber" name="366" href="#366">366</a>                         newBucketKey, buckets, mNewRoot.getRevision() % revToRestore == 0);
+<a class="jxr_linenumber" name="367" href="#367">367</a> 
+<a class="jxr_linenumber" name="368" href="#368">368</a> <em class="jxr_comment">//                // DEBUG CODE!!!!!</em>
+<a class="jxr_linenumber" name="369" href="#369">369</a> <em class="jxr_comment">//                INode[] toCheck = ((NodeBucket)container.getComplete()).getNodes();</em>
+<a class="jxr_linenumber" name="370" href="#370">370</a> <em class="jxr_comment">//                boolean nullFound = false;</em>
+<a class="jxr_linenumber" name="371" href="#371">371</a> <em class="jxr_comment">//                for (int i = 0; i &lt; toCheck.length &amp;&amp; !nullFound; i++) {</em>
+<a class="jxr_linenumber" name="372" href="#372">372</a> <em class="jxr_comment">//                    if ((i &lt; toCheck.length - 1 &amp;&amp; i &gt; 0)</em>
+<a class="jxr_linenumber" name="373" href="#373">373</a> <em class="jxr_comment">//                        &amp;&amp; (toCheck[i + 1] != null &amp;&amp; toCheck[i] == null &amp;&amp; toCheck[i - 1] != null)) {</em>
+<a class="jxr_linenumber" name="374" href="#374">374</a> <em class="jxr_comment">//                        nullFound = true;</em>
+<a class="jxr_linenumber" name="375" href="#375">375</a> <em class="jxr_comment">//                    }</em>
+<a class="jxr_linenumber" name="376" href="#376">376</a> <em class="jxr_comment">//                }</em>
+<a class="jxr_linenumber" name="377" href="#377">377</a> <em class="jxr_comment">//                if (nullFound) {</em>
+<a class="jxr_linenumber" name="378" href="#378">378</a> <em class="jxr_comment">//                    System.out.println("-----FAILURE------");</em>
+<a class="jxr_linenumber" name="379" href="#379">379</a> <em class="jxr_comment">//                    for (int i = 0; i &lt; buckets.length; i++) {</em>
+<a class="jxr_linenumber" name="380" href="#380">380</a> <em class="jxr_comment">//                        System.out.println("+++++++++++++++");</em>
+<a class="jxr_linenumber" name="381" href="#381">381</a> <em class="jxr_comment">//                        System.out.println(buckets[i].toString());</em>
+<a class="jxr_linenumber" name="382" href="#382">382</a> <em class="jxr_comment">//                        System.out.println("+++++++++++++++");</em>
+<a class="jxr_linenumber" name="383" href="#383">383</a> <em class="jxr_comment">//                    }</em>
+<a class="jxr_linenumber" name="384" href="#384">384</a> <em class="jxr_comment">//                    System.out.println("-----------");</em>
+<a class="jxr_linenumber" name="385" href="#385">385</a> <em class="jxr_comment">//                    System.exit(-1);</em>
+<a class="jxr_linenumber" name="386" href="#386">386</a> <em class="jxr_comment">//                }</em>
+<a class="jxr_linenumber" name="387" href="#387">387</a> 
+<a class="jxr_linenumber" name="388" href="#388">388</a>             }<em class="jxr_comment">// ...if no bucket is existing, create an entirely new one.</em>
+<a class="jxr_linenumber" name="389" href="#389">389</a>             <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="390" href="#390">390</a>                 <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/bucket/NodeBucket.html">NodeBucket</a> newBucket = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/bucket/NodeBucket.html">NodeBucket</a>(newBucketKey, IConstants.NULL_NODE);
+<a class="jxr_linenumber" name="391" href="#391">391</a>                 container = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/io/LogValue.html">LogValue</a>(newBucket, newBucket);
+<a class="jxr_linenumber" name="392" href="#392">392</a>             }
+<a class="jxr_linenumber" name="393" href="#393">393</a>             ((<a href="../../../org/treetank/bucket/IndirectBucket.html">IndirectBucket</a>)indirectContainer.getModified()).setReferenceKey(nodeOffset, newBucketKey);
+<a class="jxr_linenumber" name="394" href="#394">394</a>             mBucketWriter.put(indirectKey, indirectContainer);
+<a class="jxr_linenumber" name="395" href="#395">395</a>             mBucketWriter.put(key, container);
+<a class="jxr_linenumber" name="396" href="#396">396</a>         }
+<a class="jxr_linenumber" name="397" href="#397">397</a>         <strong class="jxr_keyword">return</strong> container;
+<a class="jxr_linenumber" name="398" href="#398">398</a>     }
+<a class="jxr_linenumber" name="399" href="#399">399</a> 
+<a class="jxr_linenumber" name="400" href="#400">400</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="401" href="#401">401</a> <em class="jxr_javadoccomment">     * Getting a {@link LogKey} containing the last IndirectBucket with the reference to any new/modified</em>
+<a class="jxr_linenumber" name="402" href="#402">402</a> <em class="jxr_javadoccomment">     * bucket.</em>
+<a class="jxr_linenumber" name="403" href="#403">403</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="404" href="#404">404</a> <em class="jxr_javadoccomment">     * @param pIsRootLevel</em>
+<a class="jxr_linenumber" name="405" href="#405">405</a> <em class="jxr_javadoccomment">     *            is this dereferencing walk based on the the search after a RevRoot or a NodeBucket. Needed</em>
+<a class="jxr_linenumber" name="406" href="#406">406</a> <em class="jxr_javadoccomment">     *            because of the same keys in both subtrees.</em>
+<a class="jxr_linenumber" name="407" href="#407">407</a> <em class="jxr_javadoccomment">     * @param pBucket</em>
+<a class="jxr_linenumber" name="408" href="#408">408</a> <em class="jxr_javadoccomment">     *            where to start the tree-walk: either from an UberBucket (related to new</em>
+<a class="jxr_linenumber" name="409" href="#409">409</a> <em class="jxr_javadoccomment">     *            RevisionRootBuckets) or from a RevisionRootBucket (related to new NodeBuckets).</em>
+<a class="jxr_linenumber" name="410" href="#410">410</a> <em class="jxr_javadoccomment">     * @param pElementKey</em>
+<a class="jxr_linenumber" name="411" href="#411">411</a> <em class="jxr_javadoccomment">     *            key to be dereferenced</em>
+<a class="jxr_linenumber" name="412" href="#412">412</a> <em class="jxr_javadoccomment">     * @return the key the container representing the last level</em>
+<a class="jxr_linenumber" name="413" href="#413">413</a> <em class="jxr_javadoccomment">     * @throws TTException</em>
+<a class="jxr_linenumber" name="414" href="#414">414</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="415" href="#415">415</a>     <strong class="jxr_keyword">private</strong> <a href="../../../org/treetank/io/LogKey.html">LogKey</a> preparePathToLeaf(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> pIsRootLevel, <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/bucket/interfaces/IReferenceBucket.html">IReferenceBucket</a> pBucket,
+<a class="jxr_linenumber" name="416" href="#416">416</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> pElementKey) <strong class="jxr_keyword">throws</strong> TTException {
+<a class="jxr_linenumber" name="417" href="#417">417</a> 
+<a class="jxr_linenumber" name="418" href="#418">418</a>         <em class="jxr_comment">// computing the ordernumbers within all level. The ordernumbers are the position in the sequence of</em>
+<a class="jxr_linenumber" name="419" href="#419">419</a>         <em class="jxr_comment">// all buckets within the same level.</em>
+<a class="jxr_linenumber" name="420" href="#420">420</a>         <em class="jxr_comment">// ranges are for level 0: 0-127; level 1: 0-16383; level 2: 0-2097151; level 3: 0-268435455; ;level</em>
+<a class="jxr_linenumber" name="421" href="#421">421</a>         <em class="jxr_comment">// 4: 0-34359738367</em>
+<a class="jxr_linenumber" name="422" href="#422">422</a>         <strong class="jxr_keyword">long</strong> seqBucketKey = -1;
+<a class="jxr_linenumber" name="423" href="#423">423</a>         <em class="jxr_comment">// since the revision points to a bucket, the sequence-key bases on the last indirect-layer directly</em>
+<a class="jxr_linenumber" name="424" href="#424">424</a>         <em class="jxr_comment">// within the search after a revision,...</em>
+<a class="jxr_linenumber" name="425" href="#425">425</a>         <strong class="jxr_keyword">if</strong> (pIsRootLevel) {
+<a class="jxr_linenumber" name="426" href="#426">426</a>             seqBucketKey = pElementKey &gt;&gt; IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3];
+<a class="jxr_linenumber" name="427" href="#427">427</a>         } <em class="jxr_comment">// ...whereas one layer above is used for the nodes based on the offsets pointing to nodes</em>
+<a class="jxr_linenumber" name="428" href="#428">428</a>           <em class="jxr_comment">// instead of buckets.</em>
+<a class="jxr_linenumber" name="429" href="#429">429</a>         <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="430" href="#430">430</a>             seqBucketKey = pElementKey &gt;&gt; IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[2];
+<a class="jxr_linenumber" name="431" href="#431">431</a>         }
+<a class="jxr_linenumber" name="432" href="#432">432</a> 
+<a class="jxr_linenumber" name="433" href="#433">433</a>         <strong class="jxr_keyword">long</strong>[] orderNumber = <strong class="jxr_keyword">new</strong> <strong class="jxr_keyword">long</strong>[IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length];
+<a class="jxr_linenumber" name="434" href="#434">434</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> level = 0; level &lt; orderNumber.length; level++) {
+<a class="jxr_linenumber" name="435" href="#435">435</a>             orderNumber[level] = seqBucketKey &gt;&gt; IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[level];
+<a class="jxr_linenumber" name="436" href="#436">436</a>         }
 <a class="jxr_linenumber" name="437" href="#437">437</a> 
-<a class="jxr_linenumber" name="438" href="#438">438</a>         mNewUber =
-<a class="jxr_linenumber" name="439" href="#439">439</a>             <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/bucket/UberBucket.html">UberBucket</a>(pUberBucket.incrementBucketCounter(), pUberBucket.getRevisionNumber() + 1, pUberBucket
-<a class="jxr_linenumber" name="440" href="#440">440</a>                 .getBucketCounter());
-<a class="jxr_linenumber" name="441" href="#441">441</a>         mNewUber.setReferenceKey(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET,
-<a class="jxr_linenumber" name="442" href="#442">442</a>             pUberBucket.getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET]);
-<a class="jxr_linenumber" name="443" href="#443">443</a> 
-<a class="jxr_linenumber" name="444" href="#444">444</a>         mDelegate = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/access/BucketReadTrx.html">BucketReadTrx</a>(pSession, pUberBucket, pRepresentRev, pWriter);
-<a class="jxr_linenumber" name="445" href="#445">445</a> 
-<a class="jxr_linenumber" name="446" href="#446">446</a>         <em class="jxr_comment">// Get previous revision root bucket..</em>
-<a class="jxr_linenumber" name="447" href="#447">447</a>         <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/bucket/RevisionRootBucket.html">RevisionRootBucket</a> previousRevRoot = mDelegate.mRootBucket;
-<a class="jxr_linenumber" name="448" href="#448">448</a>         <em class="jxr_comment">// ...and using this data to initialize a fresh revision root including the pointers.</em>
-<a class="jxr_linenumber" name="449" href="#449">449</a>         mNewRoot =
-<a class="jxr_linenumber" name="450" href="#450">450</a>             <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/bucket/RevisionRootBucket.html">RevisionRootBucket</a>(mNewUber.incrementBucketCounter(), pRepresentRev + 1, previousRevRoot
-<a class="jxr_linenumber" name="451" href="#451">451</a>                 .getMaxNodeKey());
-<a class="jxr_linenumber" name="452" href="#452">452</a>         mNewRoot.setReferenceKey(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET, previousRevRoot
-<a class="jxr_linenumber" name="453" href="#453">453</a>             .getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET]);
-<a class="jxr_linenumber" name="454" href="#454">454</a> 
-<a class="jxr_linenumber" name="455" href="#455">455</a>         <em class="jxr_comment">// Prepare indirect tree to hold reference to prepared revision root</em>
-<a class="jxr_linenumber" name="456" href="#456">456</a>         <em class="jxr_comment">// nodeBucketReference.</em>
-<a class="jxr_linenumber" name="457" href="#457">457</a>         <a href="../../../org/treetank/log/LogKey.html">LogKey</a> indirectKey = preparePathToLeaf(<strong class="jxr_keyword">true</strong>, mNewUber, mNewUber.getRevisionNumber());
-<a class="jxr_linenumber" name="458" href="#458">458</a>         <a href="../../../org/treetank/log/LogValue.html">LogValue</a> indirectContainer = mLog.get(indirectKey);
-<a class="jxr_linenumber" name="459" href="#459">459</a>         <strong class="jxr_keyword">int</strong> offset = nodeBucketOffset(mNewUber.getRevisionNumber());
-<a class="jxr_linenumber" name="460" href="#460">460</a>         ((<a href="../../../org/treetank/bucket/IndirectBucket.html">IndirectBucket</a>)indirectContainer.getModified()).setReferenceKey(offset, mNewRoot.getBucketKey());
-<a class="jxr_linenumber" name="461" href="#461">461</a>         mLog.put(indirectKey, indirectContainer);
-<a class="jxr_linenumber" name="462" href="#462">462</a> 
-<a class="jxr_linenumber" name="463" href="#463">463</a>         <em class="jxr_comment">// Setting up a new metabucket</em>
-<a class="jxr_linenumber" name="464" href="#464">464</a>         Map&lt;IMetaEntry, IMetaEntry&gt; oldMap = mDelegate.mMetaBucket.getMetaMap();
-<a class="jxr_linenumber" name="465" href="#465">465</a>         mNewMeta = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/bucket/MetaBucket.html">MetaBucket</a>(mNewUber.incrementBucketCounter());
-<a class="jxr_linenumber" name="466" href="#466">466</a> 
-<a class="jxr_linenumber" name="467" href="#467">467</a>         <strong class="jxr_keyword">for</strong> (IMetaEntry key : oldMap.keySet()) {
-<a class="jxr_linenumber" name="468" href="#468">468</a>             mNewMeta.setEntry(key, oldMap.get(key));
-<a class="jxr_linenumber" name="469" href="#469">469</a>         }
-<a class="jxr_linenumber" name="470" href="#470">470</a> 
-<a class="jxr_linenumber" name="471" href="#471">471</a>         mNewRoot.setReferenceKey(RevisionRootBucket.NAME_REFERENCE_OFFSET, mNewMeta.getBucketKey());
-<a class="jxr_linenumber" name="472" href="#472">472</a> 
-<a class="jxr_linenumber" name="473" href="#473">473</a>     }
+<a class="jxr_linenumber" name="438" href="#438">438</a>         <a href="../../../org/treetank/bucket/interfaces/IReferenceBucket.html">IReferenceBucket</a> bucket = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="439" href="#439">439</a>         <a href="../../../org/treetank/bucket/interfaces/IReferenceBucket.html">IReferenceBucket</a> parentBucket = pBucket;
+<a class="jxr_linenumber" name="440" href="#440">440</a>         <a href="../../../org/treetank/io/LogKey.html">LogKey</a> key = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="441" href="#441">441</a>         <a href="../../../org/treetank/io/LogKey.html">LogKey</a> parentKey = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/io/LogKey.html">LogKey</a>(pIsRootLevel, -1, 0);
+<a class="jxr_linenumber" name="442" href="#442">442</a> 
+<a class="jxr_linenumber" name="443" href="#443">443</a>         <em class="jxr_comment">// Iterate through all levels...</em>
+<a class="jxr_linenumber" name="444" href="#444">444</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> level = 0; level &lt; orderNumber.length; level++) {
+<a class="jxr_linenumber" name="445" href="#445">445</a>             <em class="jxr_comment">// ...see if the actual bucket requested is already in the log</em>
+<a class="jxr_linenumber" name="446" href="#446">446</a>             key = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/io/LogKey.html">LogKey</a>(pIsRootLevel, level, orderNumber[level]);
+<a class="jxr_linenumber" name="447" href="#447">447</a>             <a href="../../../org/treetank/io/LogValue.html">LogValue</a> container = mBucketWriter.get(key);
+<a class="jxr_linenumber" name="448" href="#448">448</a>             <em class="jxr_comment">// if the bucket is not existing,..</em>
+<a class="jxr_linenumber" name="449" href="#449">449</a>             <strong class="jxr_keyword">if</strong> (container.getModified() == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="450" href="#450">450</a>                 <em class="jxr_comment">// ..create a new bucket</em>
+<a class="jxr_linenumber" name="451" href="#451">451</a>                 <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> newKey = mNewUber.incrementBucketCounter();
+<a class="jxr_linenumber" name="452" href="#452">452</a>                 bucket = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/bucket/IndirectBucket.html">IndirectBucket</a>(newKey);
+<a class="jxr_linenumber" name="453" href="#453">453</a> 
+<a class="jxr_linenumber" name="454" href="#454">454</a>                 <em class="jxr_comment">// compute the offset of the new bucket</em>
+<a class="jxr_linenumber" name="455" href="#455">455</a>                 <strong class="jxr_keyword">int</strong> offset = nodeBucketOffset(orderNumber[level]);
+<a class="jxr_linenumber" name="456" href="#456">456</a> 
+<a class="jxr_linenumber" name="457" href="#457">457</a>                 <em class="jxr_comment">// if there existed the same bucket in former versions in a former log or</em>
+<a class="jxr_linenumber" name="458" href="#458">458</a>                 container = mBucketWriter.getFormer(key);
+<a class="jxr_linenumber" name="459" href="#459">459</a>                 <a href="../../../org/treetank/bucket/interfaces/IReferenceBucket.html">IReferenceBucket</a> oldBucket = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="460" href="#460">460</a>                 <strong class="jxr_keyword">if</strong> (container.getModified() != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="461" href="#461">461</a>                     oldBucket = (IReferenceBucket)container.getModified();
+<a class="jxr_linenumber" name="462" href="#462">462</a>                 }
+<a class="jxr_linenumber" name="463" href="#463">463</a>                 <em class="jxr_comment">// over the former log or the offset within</em>
+<a class="jxr_linenumber" name="464" href="#464">464</a>                 <em class="jxr_comment">// the parent...</em>
+<a class="jxr_linenumber" name="465" href="#465">465</a>                 <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (parentBucket.getReferenceKeys()[offset] != 0) {
+<a class="jxr_linenumber" name="466" href="#466">466</a>                     oldBucket = (IReferenceBucket)mBucketWriter.read(parentBucket.getReferenceKeys()[offset]);
+<a class="jxr_linenumber" name="467" href="#467">467</a>                 }
+<a class="jxr_linenumber" name="468" href="#468">468</a>                 <em class="jxr_comment">// ..copy all references to the new log.</em>
+<a class="jxr_linenumber" name="469" href="#469">469</a>                 <strong class="jxr_keyword">if</strong> (oldBucket != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="470" href="#470">470</a>                     <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; oldBucket.getReferenceKeys().length; i++) {
+<a class="jxr_linenumber" name="471" href="#471">471</a>                         bucket.setReferenceKey(i, oldBucket.getReferenceKeys()[i]);
+<a class="jxr_linenumber" name="472" href="#472">472</a>                     }
+<a class="jxr_linenumber" name="473" href="#473">473</a>                 }
 <a class="jxr_linenumber" name="474" href="#474">474</a> 
-<a class="jxr_linenumber" name="475" href="#475">475</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="476" href="#476">476</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
-<a class="jxr_linenumber" name="477" href="#477">477</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="478" href="#478">478</a>     @Override
-<a class="jxr_linenumber" name="479" href="#479">479</a>     <strong class="jxr_keyword">public</strong> String toString() {
-<a class="jxr_linenumber" name="480" href="#480">480</a>         <strong class="jxr_keyword">return</strong> toStringHelper(<strong class="jxr_keyword">this</strong>).add(<span class="jxr_string">"mDelegate"</span>, mDelegate).add(<span class="jxr_string">"mBucketWriter"</span>, mBucketWriter).add(
-<a class="jxr_linenumber" name="481" href="#481">481</a>             <span class="jxr_string">"mLog"</span>, mLog).add(<span class="jxr_string">"mRootBucket"</span>, mNewRoot).add(<span class="jxr_string">"mDelegate"</span>, mDelegate).toString();
-<a class="jxr_linenumber" name="482" href="#482">482</a>     }
-<a class="jxr_linenumber" name="483" href="#483">483</a> 
-<a class="jxr_linenumber" name="484" href="#484">484</a> }
+<a class="jxr_linenumber" name="475" href="#475">475</a>                 <em class="jxr_comment">// Set the newKey on the computed offset...</em>
+<a class="jxr_linenumber" name="476" href="#476">476</a>                 parentBucket.setReferenceKey(offset, newKey);
+<a class="jxr_linenumber" name="477" href="#477">477</a>                 <em class="jxr_comment">// .. and put the parent-reference to the log...</em>
+<a class="jxr_linenumber" name="478" href="#478">478</a>                 container = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/io/LogValue.html">LogValue</a>(parentBucket, parentBucket);
+<a class="jxr_linenumber" name="479" href="#479">479</a>                 <em class="jxr_comment">// ..if the parent is not referenced as UberBucket or RevisionRootBucket within the Wtx</em>
+<a class="jxr_linenumber" name="480" href="#480">480</a>                 <em class="jxr_comment">// itself...</em>
+<a class="jxr_linenumber" name="481" href="#481">481</a>                 <em class="jxr_comment">// if (level &gt; 0) {</em>
+<a class="jxr_linenumber" name="482" href="#482">482</a>                 mBucketWriter.put(parentKey, container);
+<a class="jxr_linenumber" name="483" href="#483">483</a>                 <em class="jxr_comment">// }</em>
+<a class="jxr_linenumber" name="484" href="#484">484</a>                 <em class="jxr_comment">// ..but set the reference of the current bucket in every case.</em>
+<a class="jxr_linenumber" name="485" href="#485">485</a>                 container = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/io/LogValue.html">LogValue</a>(bucket, bucket);
+<a class="jxr_linenumber" name="486" href="#486">486</a>                 mBucketWriter.put(key, container);
+<a class="jxr_linenumber" name="487" href="#487">487</a> 
+<a class="jxr_linenumber" name="488" href="#488">488</a>             } <em class="jxr_comment">// if the bucket is already in the log, get it simply from the log.</em>
+<a class="jxr_linenumber" name="489" href="#489">489</a>             <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="490" href="#490">490</a>                 bucket = (IReferenceBucket)container.getModified();
+<a class="jxr_linenumber" name="491" href="#491">491</a>             }
+<a class="jxr_linenumber" name="492" href="#492">492</a>             <em class="jxr_comment">// finally, set the new bucketkey for the next level</em>
+<a class="jxr_linenumber" name="493" href="#493">493</a>             parentKey = key;
+<a class="jxr_linenumber" name="494" href="#494">494</a>             parentBucket = bucket;
+<a class="jxr_linenumber" name="495" href="#495">495</a>         }
+<a class="jxr_linenumber" name="496" href="#496">496</a> 
+<a class="jxr_linenumber" name="497" href="#497">497</a>         <em class="jxr_comment">// Return reference to leaf of indirect tree.</em>
+<a class="jxr_linenumber" name="498" href="#498">498</a>         <strong class="jxr_keyword">return</strong> key;
+<a class="jxr_linenumber" name="499" href="#499">499</a>     }
+<a class="jxr_linenumber" name="500" href="#500">500</a> 
+<a class="jxr_linenumber" name="501" href="#501">501</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> setUpTransaction(<strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/bucket/UberBucket.html">UberBucket</a> pUberOld, <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/bucket/RevisionRootBucket.html">RevisionRootBucket</a> pRootToRepresent,
+<a class="jxr_linenumber" name="502" href="#502">502</a>         <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/bucket/MetaBucket.html">MetaBucket</a> pMetaOld, <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/api/ISession.html">ISession</a> pSession, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> pRepresentRev,
+<a class="jxr_linenumber" name="503" href="#503">503</a>         <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/io/BackendWriterProxy.html">BackendWriterProxy</a> pWriter) <strong class="jxr_keyword">throws</strong> TTException {
+<a class="jxr_linenumber" name="504" href="#504">504</a> 
+<a class="jxr_linenumber" name="505" href="#505">505</a>         mNewUber =
+<a class="jxr_linenumber" name="506" href="#506">506</a>             <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/bucket/UberBucket.html">UberBucket</a>(pUberOld.getBucketCounter() + 1, pUberOld.getRevisionNumber() + 1, pUberOld
+<a class="jxr_linenumber" name="507" href="#507">507</a>                 .getBucketCounter() + 1);
+<a class="jxr_linenumber" name="508" href="#508">508</a>         mNewUber.setReferenceKey(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET,
+<a class="jxr_linenumber" name="509" href="#509">509</a>             pUberOld.getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET]);
+<a class="jxr_linenumber" name="510" href="#510">510</a> 
+<a class="jxr_linenumber" name="511" href="#511">511</a>         <em class="jxr_comment">// Prepare indirect tree to hold reference to prepared revision root</em>
+<a class="jxr_linenumber" name="512" href="#512">512</a>         <em class="jxr_comment">// nodeBucketReference.</em>
+<a class="jxr_linenumber" name="513" href="#513">513</a>         <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/io/LogKey.html">LogKey</a> indirectKey = preparePathToLeaf(<strong class="jxr_keyword">true</strong>, mNewUber, mNewUber.getRevisionNumber());
+<a class="jxr_linenumber" name="514" href="#514">514</a>         <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/io/LogValue.html">LogValue</a> indirectContainer = mBucketWriter.get(indirectKey);
+<a class="jxr_linenumber" name="515" href="#515">515</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> offset = nodeBucketOffset(mNewUber.getRevisionNumber());
+<a class="jxr_linenumber" name="516" href="#516">516</a> 
+<a class="jxr_linenumber" name="517" href="#517">517</a>         <em class="jxr_comment">// Get previous revision root bucket and using this data to initialize a fresh revision root including</em>
+<a class="jxr_linenumber" name="518" href="#518">518</a>         <em class="jxr_comment">// the pointers.</em>
+<a class="jxr_linenumber" name="519" href="#519">519</a>         mNewRoot =
+<a class="jxr_linenumber" name="520" href="#520">520</a>             <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/bucket/RevisionRootBucket.html">RevisionRootBucket</a>(mNewUber.incrementBucketCounter(), pRepresentRev + 1, pRootToRepresent
+<a class="jxr_linenumber" name="521" href="#521">521</a>                 .getMaxNodeKey());
+<a class="jxr_linenumber" name="522" href="#522">522</a>         mNewRoot.setReferenceKey(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET, pRootToRepresent
+<a class="jxr_linenumber" name="523" href="#523">523</a>             .getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET]);
+<a class="jxr_linenumber" name="524" href="#524">524</a> 
+<a class="jxr_linenumber" name="525" href="#525">525</a>         <em class="jxr_comment">// setting the new revRoot to the correct offset</em>
+<a class="jxr_linenumber" name="526" href="#526">526</a>         ((<a href="../../../org/treetank/bucket/IndirectBucket.html">IndirectBucket</a>)indirectContainer.getModified()).setReferenceKey(offset, mNewRoot.getBucketKey());
+<a class="jxr_linenumber" name="527" href="#527">527</a>         mBucketWriter.put(indirectKey, indirectContainer);
+<a class="jxr_linenumber" name="528" href="#528">528</a> 
+<a class="jxr_linenumber" name="529" href="#529">529</a>         <em class="jxr_comment">// Setting up a new metabucket and link it to the new root</em>
+<a class="jxr_linenumber" name="530" href="#530">530</a>         Map&lt;IMetaEntry, IMetaEntry&gt; oldMap = pMetaOld.getMetaMap();
+<a class="jxr_linenumber" name="531" href="#531">531</a>         mNewMeta = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/bucket/MetaBucket.html">MetaBucket</a>(mNewUber.incrementBucketCounter());
+<a class="jxr_linenumber" name="532" href="#532">532</a>         <strong class="jxr_keyword">for</strong> (IMetaEntry key : oldMap.keySet()) {
+<a class="jxr_linenumber" name="533" href="#533">533</a>             mNewMeta.setEntry(key, oldMap.get(key));
+<a class="jxr_linenumber" name="534" href="#534">534</a>         }
+<a class="jxr_linenumber" name="535" href="#535">535</a>         mNewRoot.setReferenceKey(RevisionRootBucket.META_REFERENCE_OFFSET, mNewMeta.getBucketKey());
+<a class="jxr_linenumber" name="536" href="#536">536</a> 
+<a class="jxr_linenumber" name="537" href="#537">537</a>     }
+<a class="jxr_linenumber" name="538" href="#538">538</a> 
+<a class="jxr_linenumber" name="539" href="#539">539</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="540" href="#540">540</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
+<a class="jxr_linenumber" name="541" href="#541">541</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="542" href="#542">542</a>     @Override
+<a class="jxr_linenumber" name="543" href="#543">543</a>     <strong class="jxr_keyword">public</strong> String toString() {
+<a class="jxr_linenumber" name="544" href="#544">544</a>         <strong class="jxr_keyword">return</strong> toStringHelper(<strong class="jxr_keyword">this</strong>).add(<span class="jxr_string">"mDelegate"</span>, mDelegate).add(<span class="jxr_string">"mBucketWriterProxy"</span>, mBucketWriter).add(
+<a class="jxr_linenumber" name="545" href="#545">545</a>             <span class="jxr_string">"mRootBucket"</span>, mNewRoot).add(<span class="jxr_string">"mDelegate"</span>, mDelegate).toString();
+<a class="jxr_linenumber" name="546" href="#546">546</a>     }
+<a class="jxr_linenumber" name="547" href="#547">547</a> 
+<a class="jxr_linenumber" name="548" href="#548">548</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

@@ -171,7 +171,7 @@
 <a class="jxr_linenumber" name="161" href="#161">161</a> <em class="jxr_javadoccomment">     * @param pRevisioning</em>
 <a class="jxr_linenumber" name="162" href="#162">162</a> <em class="jxr_javadoccomment">     * @param pNodeFac</em>
 <a class="jxr_linenumber" name="163" href="#163">163</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="164" href="#164">164</a>     <strong class="jxr_keyword">private</strong> <a href="../../../../org/treetank/access/conf/ResourceConfiguration.html">ResourceConfiguration</a>(Properties pProperties, <a href="../../../../org/treetank/io/IBackend.html">IBackend</a> pStorage, <a href="../../../../org/treetank/revisioning/IRevisioning.html">IRevisioning</a> pRevisioning,
+<a class="jxr_linenumber" name="164" href="#164">164</a>     <strong class="jxr_keyword">public</strong> <a href="../../../../org/treetank/access/conf/ResourceConfiguration.html">ResourceConfiguration</a>(Properties pProperties, <a href="../../../../org/treetank/io/IBackend.html">IBackend</a> pStorage, <a href="../../../../org/treetank/revisioning/IRevisioning.html">IRevisioning</a> pRevisioning,
 <a class="jxr_linenumber" name="165" href="#165">165</a>         <a href="../../../../org/treetank/api/INodeFactory.html">INodeFactory</a> pNodeFac, <a href="../../../../org/treetank/api/IMetaEntryFactory.html">IMetaEntryFactory</a> pMetaFac) {
 <a class="jxr_linenumber" name="166" href="#166">166</a>         mProperties = pProperties;
 <a class="jxr_linenumber" name="167" href="#167">167</a>         mBackend = pStorage;
@@ -284,12 +284,12 @@
 <a class="jxr_linenumber" name="274" href="#274">274</a>                 <strong class="jxr_keyword">while</strong> (jsonReader.hasNext()) {
 <a class="jxr_linenumber" name="275" href="#275">275</a>                     Class&lt;?&gt; handlerClazz = Class.forName(jsonReader.nextString());
 <a class="jxr_linenumber" name="276" href="#276">276</a>                     Constructor&lt;?&gt; handlerCons = handlerClazz.getConstructors()[0];
-<a class="jxr_linenumber" name="277" href="#277">277</a>                     <strong class="jxr_keyword">if</strong>(handlerClazz.getName().equals(Encryptor.<strong class="jxr_keyword">class</strong>.getName())) {
+<a class="jxr_linenumber" name="277" href="#277">277</a>                     <strong class="jxr_keyword">if</strong> (handlerClazz.getName().equals(Encryptor.<strong class="jxr_keyword">class</strong>.getName())) {
 <a class="jxr_linenumber" name="278" href="#278">278</a>                         handlerList.add((IByteHandler)handlerCons.newInstance(StandardSettings.KEY));
 <a class="jxr_linenumber" name="279" href="#279">279</a>                     } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="280" href="#280">280</a>                         handlerList.add((IByteHandler)handlerCons.newInstance());    
+<a class="jxr_linenumber" name="280" href="#280">280</a>                         handlerList.add((IByteHandler)handlerCons.newInstance());
 <a class="jxr_linenumber" name="281" href="#281">281</a>                     }
-<a class="jxr_linenumber" name="282" href="#282">282</a>                     
+<a class="jxr_linenumber" name="282" href="#282">282</a> 
 <a class="jxr_linenumber" name="283" href="#283">283</a>                 }
 <a class="jxr_linenumber" name="284" href="#284">284</a>                 jsonReader.endArray();
 <a class="jxr_linenumber" name="285" href="#285">285</a>             }

@@ -8,8 +8,8 @@
     <language>en-us</language>
     <copyright>&#169;2013 Distributed Systems Group</copyright>
     <item>
-      <title>File: 294,
-             Errors: 7907,
+      <title>File: 292,
+             Errors: 7866,
              Warnings: 0,
              Infos: 0
       </title>
@@ -332,7 +332,7 @@
                   0
                 </td>
                 <td>
-                  30
+                  41
                 </td>
               </tr>
                           <tr>
@@ -547,20 +547,6 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://disy.github.com/treetank//checkstyle.html#org.treetank.log.LogValue.java">org/treetank/log/LogValue.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  37
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://disy.github.com/treetank//checkstyle.html#org.treetank.service.xml.xpath.axis.VariableAxis.java">org/treetank/service/xml/xpath/axis/VariableAxis.java</a>
                 </td>
                 <td>
@@ -696,7 +682,7 @@
                   0
                 </td>
                 <td>
-                  28
+                  32
                 </td>
               </tr>
                           <tr>
@@ -822,7 +808,7 @@
                   0
                 </td>
                 <td>
-                  51
+                  53
                 </td>
               </tr>
                           <tr>
@@ -883,20 +869,6 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://disy.github.com/treetank//checkstyle.html#org.treetank.service.xml.xpath.expr.AndExpr.java">org/treetank/service/xml/xpath/expr/AndExpr.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  13
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://disy.github.com/treetank//checkstyle.html#org.treetank.api.INodeWriteTrx.java">org/treetank/api/INodeWriteTrx.java</a>
                 </td>
                 <td>
@@ -907,6 +879,20 @@
                 </td>
                 <td>
                   37
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://disy.github.com/treetank//checkstyle.html#org.treetank.service.xml.xpath.expr.AndExpr.java">org/treetank/service/xml/xpath/expr/AndExpr.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  13
                 </td>
               </tr>
                           <tr>
@@ -1200,7 +1186,7 @@
                   0
                 </td>
                 <td>
-                  64
+                  63
                 </td>
               </tr>
                           <tr>
@@ -1284,7 +1270,7 @@
                   0
                 </td>
                 <td>
-                  28
+                  18
                 </td>
               </tr>
                           <tr>
@@ -1331,6 +1317,20 @@
               </tr>
                           <tr>
                 <td>
+                  <a href="http://disy.github.com/treetank//checkstyle.html#org.treetank.io.LogValue.java">org/treetank/io/LogValue.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  37
+                </td>
+              </tr>
+                          <tr>
+                <td>
                   <a href="http://disy.github.com/treetank//checkstyle.html#org.treetank.service.xml.diff.StructuralDiff.java">org/treetank/service/xml/diff/StructuralDiff.java</a>
                 </td>
                 <td>
@@ -1341,20 +1341,6 @@
                 </td>
                 <td>
                   13
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://disy.github.com/treetank//checkstyle.html#org.treetank.log.package-info.java">org/treetank/log/package-info.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  6
                 </td>
               </tr>
                           <tr>
@@ -1564,7 +1550,7 @@
                   0
                 </td>
                 <td>
-                  60
+                  45
                 </td>
               </tr>
                           <tr>
@@ -1746,7 +1732,7 @@
                   0
                 </td>
                 <td>
-                  99
+                  96
                 </td>
               </tr>
                           <tr>
@@ -1901,6 +1887,20 @@
                 </td>
                 <td>
                   10
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://disy.github.com/treetank//checkstyle.html#org.treetank.io.BackendWriterProxy.java">org/treetank/io/BackendWriterProxy.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  28
                 </td>
               </tr>
                           <tr>
@@ -2129,20 +2129,6 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://disy.github.com/treetank//checkstyle.html#org.treetank.access.commit.NonBlockingCommitStrategy.java">org/treetank/access/commit/NonBlockingCommitStrategy.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  29
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://disy.github.com/treetank//checkstyle.html#org.treetank.access.IscsiReadTrx.java">org/treetank/access/IscsiReadTrx.java</a>
                 </td>
                 <td>
@@ -2255,20 +2241,6 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://disy.github.com/treetank//checkstyle.html#org.treetank.exception.TTByteHandleException.java">org/treetank/exception/TTByteHandleException.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  17
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://disy.github.com/treetank//checkstyle.html#org.treetank.api.IMetaEntry.java">org/treetank/api/IMetaEntry.java</a>
                 </td>
                 <td>
@@ -2279,6 +2251,20 @@
                 </td>
                 <td>
                   7
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://disy.github.com/treetank//checkstyle.html#org.treetank.exception.TTByteHandleException.java">org/treetank/exception/TTByteHandleException.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  17
                 </td>
               </tr>
                           <tr>
@@ -2353,20 +2339,6 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://disy.github.com/treetank//checkstyle.html#org.treetank.access.commit.CommitStrategyModule.java">org/treetank/access/commit/CommitStrategyModule.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  32
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://disy.github.com/treetank//checkstyle.html#org.treetank.io.IBackend.java">org/treetank/io/IBackend.java</a>
                 </td>
                 <td>
@@ -2404,7 +2376,7 @@
                   0
                 </td>
                 <td>
-                  25
+                  24
                 </td>
               </tr>
                           <tr>
@@ -2493,20 +2465,6 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://disy.github.com/treetank//checkstyle.html#org.treetank.access.CommitStrategy.java">org/treetank/access/CommitStrategy.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  45
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://disy.github.com/treetank//checkstyle.html#org.treetank.axis.PrecedingAxis.java">org/treetank/axis/PrecedingAxis.java</a>
                 </td>
                 <td>
@@ -2530,7 +2488,7 @@
                   0
                 </td>
                 <td>
-                  40
+                  35
                 </td>
               </tr>
                           <tr>
@@ -2544,7 +2502,7 @@
                   0
                 </td>
                 <td>
-                  17
+                  21
                 </td>
               </tr>
                           <tr>
@@ -2670,7 +2628,21 @@
                   0
                 </td>
                 <td>
-                  23
+                  26
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://disy.github.com/treetank//checkstyle.html#org.treetank.io.ICommitStrategy.java">org/treetank/io/ICommitStrategy.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  37
                 </td>
               </tr>
                           <tr>
@@ -2815,20 +2787,6 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://disy.github.com/treetank//checkstyle.html#org.treetank.log.LRULog.java">org/treetank/log/LRULog.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  68
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://disy.github.com/treetank//checkstyle.html#org.treetank.exception.TTThreadedException.java">org/treetank/exception/TTThreadedException.java</a>
                 </td>
                 <td>
@@ -2964,7 +2922,7 @@
                   0
                 </td>
                 <td>
-                  32
+                  40
                 </td>
               </tr>
                           <tr>
@@ -3048,7 +3006,7 @@
                   0
                 </td>
                 <td>
-                  36
+                  32
                 </td>
               </tr>
                           <tr>
@@ -3216,7 +3174,7 @@
                   0
                 </td>
                 <td>
-                  106
+                  135
                 </td>
               </tr>
                           <tr>
@@ -3235,20 +3193,6 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://disy.github.com/treetank//checkstyle.html#org.treetank.axis.filter.ElementFilter.java">org/treetank/axis/filter/ElementFilter.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  5
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://disy.github.com/treetank//checkstyle.html#org.treetank.axis.filter.TypeFilter.java">org/treetank/axis/filter/TypeFilter.java</a>
                 </td>
                 <td>
@@ -3259,6 +3203,20 @@
                 </td>
                 <td>
                   8
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://disy.github.com/treetank//checkstyle.html#org.treetank.axis.filter.ElementFilter.java">org/treetank/axis/filter/ElementFilter.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  5
                 </td>
               </tr>
                           <tr>
@@ -3342,7 +3300,21 @@
                   0
                 </td>
                 <td>
-                  17
+                  21
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://disy.github.com/treetank//checkstyle.html#org.treetank.io.LogKey.java">org/treetank/io/LogKey.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  42
                 </td>
               </tr>
                           <tr>
@@ -3963,6 +3935,20 @@
               </tr>
                           <tr>
                 <td>
+                  <a href="http://disy.github.com/treetank//checkstyle.html#org.treetank.io.LRULog.java">org/treetank/io/LRULog.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  46
+                </td>
+              </tr>
+                          <tr>
+                <td>
                   <a href="http://disy.github.com/treetank//checkstyle.html#org.treetank.bucket.interfaces.IBucket.java">org/treetank/bucket/interfaces/IBucket.java</a>
                 </td>
                 <td>
@@ -3987,20 +3973,6 @@
                 </td>
                 <td>
                   8
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://disy.github.com/treetank//checkstyle.html#org.treetank.log.LogKey.java">org/treetank/log/LogKey.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  42
                 </td>
               </tr>
                           <tr>
@@ -4098,7 +4070,7 @@
                   0
                 </td>
                 <td>
-                  11
+                  13
                 </td>
               </tr>
                           <tr>

@@ -15,22 +15,25 @@ All Packages
 <table width="100%">
 <tbody>
 <tr>
+<td nowrap="nowrap"><a target="summary" href="org.treetank.io.BackendWriterProxy.html">BackendWriterProxy</a> <i>(93%)</i></td>
+</tr>
+<tr>
 <td nowrap="nowrap"><a target="summary" href="org.treetank.io.berkeley.BerkeleyReader.html">BerkeleyReader</a> <i>(87%)</i></td>
 </tr>
 <tr>
 <td nowrap="nowrap"><a target="summary" href="org.treetank.io.berkeley.BerkeleyStorage.html">BerkeleyStorage</a> <i>(71%)</i></td>
 </tr>
 <tr>
-<td nowrap="nowrap"><a target="summary" href="org.treetank.io.berkeley.BerkeleyWriter.html">BerkeleyWriter</a> <i>(89%)</i></td>
+<td nowrap="nowrap"><a target="summary" href="org.treetank.io.berkeley.BerkeleyWriter.html">BerkeleyWriter</a> <i>(88%)</i></td>
 </tr>
 <tr>
 <td nowrap="nowrap"><a target="summary" href="org.treetank.bucket.BucketFactory.html">BucketFactory</a> <i>(88%)</i></td>
 </tr>
 <tr>
-<td nowrap="nowrap"><a target="summary" href="org.treetank.access.BucketReadTrx.html">BucketReadTrx</a> <i>(98%)</i></td>
+<td nowrap="nowrap"><a target="summary" href="org.treetank.access.BucketReadTrx.html">BucketReadTrx</a> <i>(96%)</i></td>
 </tr>
 <tr>
-<td nowrap="nowrap"><a target="summary" href="org.treetank.access.BucketWriteTrx.html">BucketWriteTrx</a> <i>(93%)</i></td>
+<td nowrap="nowrap"><a target="summary" href="org.treetank.access.BucketWriteTrx.html">BucketWriteTrx</a> <i>(92%)</i></td>
 </tr>
 <tr>
 <td nowrap="nowrap"><a target="summary" href="org.treetank.io.bytepipe.ByteHandlerPipeline.html">ByteHandlerPipeline</a> <i>(100%)</i></td>
@@ -45,12 +48,6 @@ All Packages
 <td nowrap="nowrap"><a target="summary" href="org.treetank.io.combined.CombinedWriter.html">CombinedWriter</a> <i>(81%)</i></td>
 </tr>
 <tr>
-<td nowrap="nowrap"><a target="summary" href="org.treetank.access.CommitStrategy.html">CommitStrategy</a> <i>(95%)</i></td>
-</tr>
-<tr>
-<td nowrap="nowrap"><a target="summary" href="org.treetank.access.commit.CommitStrategyModule.html">CommitStrategyModule</a> <i>(100%)</i></td>
-</tr>
-<tr>
 <td nowrap="nowrap"><a target="summary" href="org.treetank.access.conf.ConstructorProps.html">ConstructorProps</a> <i>(N/A)</i></td>
 </tr>
 <tr>
@@ -60,7 +57,7 @@ All Packages
 <td nowrap="nowrap"><a target="summary" href="org.treetank.bucket.DumbMetaEntryFactory.html">DumbMetaEntryFactory</a> <i>(78%)</i></td>
 </tr>
 <tr>
-<td nowrap="nowrap"><a target="summary" href="org.treetank.bucket.DumbNodeFactory.html">DumbNodeFactory</a> <i>(79%)</i></td>
+<td nowrap="nowrap"><a target="summary" href="org.treetank.bucket.DumbNodeFactory.html">DumbNodeFactory</a> <i>(78%)</i></td>
 </tr>
 <tr>
 <td nowrap="nowrap"><a target="summary" href="org.treetank.io.bytepipe.Encryptor.html">Encryptor</a> <i>(75%)</i></td>
@@ -88,6 +85,9 @@ All Packages
 </tr>
 <tr>
 <td nowrap="nowrap"><a target="summary" href="org.treetank.io.bytepipe.IByteHandler.html">IByteHandler</a> <i>(N/A)</i></td>
+</tr>
+<tr>
+<td nowrap="nowrap"><a target="summary" href="org.treetank.io.ICommitStrategy.html">ICommitStrategy</a> <i>(0%)</i></td>
 </tr>
 <tr>
 <td nowrap="nowrap"><a target="summary" href="org.treetank.access.conf.IConfigurationPath.html">IConfigurationPath</a> <i>(N/A)</i></td>
@@ -141,16 +141,16 @@ All Packages
 <td nowrap="nowrap"><a target="summary" href="org.treetank.io.jclouds.JCloudsWriter.html">JCloudsWriter</a> <i>(88%)</i></td>
 </tr>
 <tr>
-<td nowrap="nowrap"><a target="summary" href="org.treetank.log.LRULog.html">LRULog</a> <i>(83%)</i></td>
+<td nowrap="nowrap"><a target="summary" href="org.treetank.io.LRULog.html">LRULog</a> <i>(86%)</i></td>
 </tr>
 <tr>
-<td nowrap="nowrap"><a target="summary" href="org.treetank.log.LogKey.html">LogKey</a> <i>(86%)</i></td>
+<td nowrap="nowrap"><a target="summary" href="org.treetank.io.LogKey.html">LogKey</a> <i>(83%)</i></td>
 </tr>
 <tr>
-<td nowrap="nowrap"><a target="summary" href="org.treetank.log.LogValue.html">LogValue</a> <i>(61%)</i></td>
+<td nowrap="nowrap"><a target="summary" href="org.treetank.io.LogValue.html">LogValue</a> <i>(61%)</i></td>
 </tr>
 <tr>
-<td nowrap="nowrap"><a target="summary" href="org.treetank.bucket.MetaBucket.html">MetaBucket</a> <i>(90%)</i></td>
+<td nowrap="nowrap"><a target="summary" href="org.treetank.bucket.MetaBucket.html">MetaBucket</a> <i>(92%)</i></td>
 </tr>
 <tr>
 <td nowrap="nowrap"><a target="summary" href="org.treetank.access.conf.ModuleSetter.html">ModuleSetter</a> <i>(85%)</i></td>
@@ -159,16 +159,13 @@ All Packages
 <td nowrap="nowrap"><a target="summary" href="org.treetank.bucket.NodeBucket.html">NodeBucket</a> <i>(82%)</i></td>
 </tr>
 <tr>
-<td nowrap="nowrap"><a target="summary" href="org.treetank.access.commit.NonBlockingCommitStrategy.html">NonBlockingCommitStrategy</a> <i>(0%)</i></td>
-</tr>
-<tr>
 <td nowrap="nowrap"><a target="summary" href="org.treetank.access.conf.ResourceConfiguration.html">ResourceConfiguration</a> <i>(85%)</i></td>
 </tr>
 <tr>
-<td nowrap="nowrap"><a target="summary" href="org.treetank.bucket.RevisionRootBucket.html">RevisionRootBucket</a> <i>(92%)</i></td>
+<td nowrap="nowrap"><a target="summary" href="org.treetank.bucket.RevisionRootBucket.html">RevisionRootBucket</a> <i>(93%)</i></td>
 </tr>
 <tr>
-<td nowrap="nowrap"><a target="summary" href="org.treetank.access.Session.html">Session</a> <i>(92%)</i></td>
+<td nowrap="nowrap"><a target="summary" href="org.treetank.access.Session.html">Session</a> <i>(91%)</i></td>
 </tr>
 <tr>
 <td nowrap="nowrap"><a target="summary" href="org.treetank.access.conf.SessionConfiguration.html">SessionConfiguration</a> <i>(71%)</i></td>
@@ -180,13 +177,13 @@ All Packages
 <td nowrap="nowrap"><a target="summary" href="org.treetank.access.conf.StandardSettings.html">StandardSettings</a> <i>(79%)</i></td>
 </tr>
 <tr>
-<td nowrap="nowrap"><a target="summary" href="org.treetank.access.Storage.html">Storage</a> <i>(97%)</i></td>
+<td nowrap="nowrap"><a target="summary" href="org.treetank.access.Storage.html">Storage</a> <i>(95%)</i></td>
 </tr>
 <tr>
 <td nowrap="nowrap"><a target="summary" href="org.treetank.access.conf.StorageConfiguration.html">StorageConfiguration</a> <i>(83%)</i></td>
 </tr>
 <tr>
-<td nowrap="nowrap"><a target="summary" href="org.treetank.bucket.UberBucket.html">UberBucket</a> <i>(92%)</i></td>
+<td nowrap="nowrap"><a target="summary" href="org.treetank.bucket.UberBucket.html">UberBucket</a> <i>(93%)</i></td>
 </tr>
 <tr>
 <td nowrap="nowrap"><a target="summary" href="org.treetank.io.bytepipe.Zipper.html">Zipper</a> <i>(100%)</i></td>

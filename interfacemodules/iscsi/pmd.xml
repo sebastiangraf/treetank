@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pmd version="4.3" timestamp="2013-06-12T11:20:07.708">
+<pmd version="4.3" timestamp="2013-06-25T15:11:07.877">
 <file name="/Users/sebi/Dropbox/github/treetank/interfacemodules/iscsi/src/main/java/org/treetank/jscsi/TreetankTargetServer.java">
 <violation beginline="47" endline="47" begincolumn="1" endcolumn="37" rule="UnusedImports" ruleset="Import Statement Rules" package="org.treetank.jscsi" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#UnusedImports" priority="4">
 Avoid unused imports such as 'org.treetank.api.INodeFactory'

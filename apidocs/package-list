@@ -1,7 +1,6 @@
 org.eclipse.wb.swt
 org.treetank
 org.treetank.access
-org.treetank.access.commit
 org.treetank.access.conf
 org.treetank.api
 org.treetank.aspects.logging
@@ -23,7 +22,6 @@ org.treetank.io.bytepipe
 org.treetank.io.combined
 org.treetank.io.jclouds
 org.treetank.jscsi
-org.treetank.log
 org.treetank.node
 org.treetank.node.delegates
 org.treetank.node.interfaces

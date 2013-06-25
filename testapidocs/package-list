@@ -8,7 +8,6 @@ org.treetank.filelistener.file
 org.treetank.io
 org.treetank.io.bytepipe
 org.treetank.jscsi
-org.treetank.log
 org.treetank.node
 org.treetank.revisioning
 org.treetank.saxon.wrapper
