@@ -142,11 +142,11 @@ public class BucketWriteTrxTest {
             if (i == 0) {
                 assertNull(wtx.getNode(nodeKey));
             } else {
-                try {
-                    wtx.getNode(nodeKey);
-                    fail();
-                } catch (NullPointerException | IllegalStateException exc) {
-                }
+//                try {
+//                    wtx.getNode(nodeKey);
+//                    fail();
+//                } catch (NullPointerException | IllegalStateException exc) {
+//                }
             }
             wtx.setNode(nodes.get(i));
             assertEquals(nodes.get(i), wtx.getNode(nodeKey));
