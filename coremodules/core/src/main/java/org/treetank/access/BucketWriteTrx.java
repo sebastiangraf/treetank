@@ -234,8 +234,8 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
                 return null;
             }
         }));
-
-        mDelegate.mSession.waitForRunningCommit();
+        // Comment here to enabled blocked behaviour
+         mDelegate.mSession.waitForRunningCommit();
 
         setUpTransaction(uber, rev, meta, mDelegate.mSession, uber.getRevisionNumber(), mBucketWriter);
 
@@ -353,7 +353,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
                 }// ..otherwise, take all elements starting index 1 into account
                 else {
                     if (formerBuckets.size() > 1) {
-                        bucketList.addAll(formerBuckets.subList(1, formerBuckets.size() - 1));
+                        bucketList.addAll(formerBuckets.subList(0, formerBuckets.size() - 1));
                     }
                 }
 
@@ -365,25 +365,25 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
                     mDelegate.mSession.getConfig().mRevision.combineBucketsForModification(revToRestore,
                         newBucketKey, buckets, mNewRoot.getRevision() % revToRestore == 0);
 
-                // // DEBUG CODE!!!!!
-                INode[] toCheck = ((NodeBucket)container.getComplete()).getNodes();
-                boolean nullFound = false;
-                for (int i = 0; i < toCheck.length && !nullFound; i++) {
-                    if ((i < toCheck.length - 1 && i > 0)
-                        && (toCheck[i + 1] != null && toCheck[i] == null && toCheck[i - 1] != null)) {
-                        nullFound = true;
-                    }
-                }
-                if (nullFound) {
-                    System.out.println("-----FAILURE------");
-                    for (int i = 0; i < buckets.length; i++) {
-                        System.out.println("+++++++++++++++");
-                        System.out.println(buckets[i].toString());
-                        System.out.println("+++++++++++++++");
-                    }
-                    System.out.println("-----------");
-                    System.exit(-1);
-                }
+//                // // DEBUG CODE!!!!!
+//                INode[] toCheck = ((NodeBucket)container.getComplete()).getNodes();
+//                boolean nullFound = false;
+//                for (int i = 0; i < toCheck.length && !nullFound; i++) {
+//                    if ((i < toCheck.length - 1 && i > 0)
+//                        && (toCheck[i + 1] != null && toCheck[i] == null && toCheck[i - 1] != null)) {
+//                        nullFound = true;
+//                    }
+//                }
+//                if (nullFound) {
+//                    System.out.println("-----FAILURE------");
+//                    for (int i = 0; i < buckets.length; i++) {
+//                        System.out.println("+++++++++++++++");
+//                        System.out.println(buckets[i].toString());
+//                        System.out.println("+++++++++++++++");
+//                    }
+//                    System.out.println("-----------");
+//                    System.exit(-1);
+//                }
 
             }// ...if no bucket is existing, create an entirely new one.
             else {
