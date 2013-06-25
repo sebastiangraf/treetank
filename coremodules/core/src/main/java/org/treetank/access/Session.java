@@ -85,6 +85,7 @@ public final class Session implements ISession {
     /** Check if already a Wtx is used. */
     private AtomicBoolean mWriteTransactionUsed;
 
+    /** Future of currently running commit under this Session. */
     private Future<Void> mCommitRunning = null;
 
     /**
@@ -130,9 +131,7 @@ public final class Session implements ISession {
     }
 
     public IBucketWriteTrx beginBucketWtx() throws TTException {
-        waitForRunningCommit();
         return beginBucketWtx(mLastCommittedUberBucket.get().getRevisionNumber());
-
     }
 
     public IBucketWriteTrx beginBucketWtx(final long mRepresentRevision) throws TTException {
@@ -179,6 +178,7 @@ public final class Session implements ISession {
      */
     public boolean truncate() throws TTException {
         checkState(!mClosed, "Session must be opened to truncate.");
+        waitForRunningCommit();
         if (mResourceConfig.mBackend.truncate()) {
             // Forcibly close all open transactions.
             for (final IBucketReadTrx rtx : mBucketTrxs) {
@@ -201,7 +201,7 @@ public final class Session implements ISession {
      * 
      * @param pRevision
      *            the revision to be validated
-     * @throws TTIOException 
+     * @throws TTIOException
      */
     private void assertAccess(final long pRevision) throws TTIOException {
         checkState(!mClosed, "Session is already closed.");
@@ -234,7 +234,7 @@ public final class Session implements ISession {
      * {@inheritDoc}
      */
     @Override
-    public boolean deregisterBucketTrx(IBucketReadTrx pTrx) {
+    public boolean deregisterBucketTrx(IBucketReadTrx pTrx) throws TTIOException {
         if (pTrx instanceof IBucketWriteTrx) {
             mWriteTransactionUsed.set(false);
         }

@@ -60,7 +60,7 @@ public interface ISession {
      *            to be deregistered.
      * @return true if successful, false otherwise
      */
-    boolean deregisterBucketTrx(final IBucketReadTrx pTrx);
+    boolean deregisterBucketTrx(final IBucketReadTrx pTrx) throws TTIOException;
 
     /**
      * Getting the resource configuration
