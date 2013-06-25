@@ -142,11 +142,11 @@ public class BucketWriteTrxTest {
             if (i == 0) {
                 assertNull(wtx.getNode(nodeKey));
             } else {
-//                try {
-//                    wtx.getNode(nodeKey);
-//                    fail();
-//                } catch (NullPointerException | IllegalStateException exc) {
-//                }
+                // try {
+                // wtx.getNode(nodeKey);
+                // fail();
+                // } catch (NullPointerException | IllegalStateException exc) {
+                // }
             }
             wtx.setNode(nodes.get(i));
             assertEquals(nodes.get(i), wtx.getNode(nodeKey));
@@ -156,7 +156,8 @@ public class BucketWriteTrxTest {
         int numbersToAdapt = 16;
         for (int j = 0; j < versionToWrite; j++) {
             for (int i = 0; i < elementsToSet; i++) {
-                assertEquals(nodes.get(i), wtx.getNode(i));
+                assertEquals(new StringBuilder("Nodes differ in version ").append(j).append(" and node ")
+                    .append(i).toString(), nodes.get(i), wtx.getNode(i));
                 if (i % numbersToAdapt == 0) {
                     DumbNode node = CoreTestHelper.generateOne();
                     node.setNodeKey(i);

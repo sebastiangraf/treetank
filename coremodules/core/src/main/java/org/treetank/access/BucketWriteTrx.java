@@ -235,7 +235,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
             }
         }));
 
-         mDelegate.mSession.waitForRunningCommit();
+        mDelegate.mSession.waitForRunningCommit();
 
         setUpTransaction(uber, rev, meta, mDelegate.mSession, uber.getRevisionNumber(), mBucketWriter);
 
@@ -347,7 +347,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
                 }
 
                 // All currently written elements are inserted so if no elements are in the bucketlist...
-                if (bucketList.isEmpty()) {
+                if (bucketList.isEmpty() || formerBuckets.size() < revToRestore) {
                     // ...add all former ones...
                     bucketList.addAll(formerBuckets);
                 }// ..otherwise, take all elements starting index 1 into account
@@ -366,24 +366,24 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
                         newBucketKey, buckets, mNewRoot.getRevision() % revToRestore == 0);
 
                 // // DEBUG CODE!!!!!
-                // INode[] toCheck = ((NodeBucket)container.getComplete()).getNodes();
-                // boolean nullFound = false;
-                // for (int i = 0; i < toCheck.length && !nullFound; i++) {
-                // if ((i < toCheck.length - 1 && i > 0)
-                // && (toCheck[i + 1] != null && toCheck[i] == null && toCheck[i - 1] != null)) {
-                // nullFound = true;
-                // }
-                // }
-                // if (nullFound) {
-                // System.out.println("-----FAILURE------");
-                // for (int i = 0; i < buckets.length; i++) {
-                // System.out.println("+++++++++++++++");
-                // System.out.println(buckets[i].toString());
-                // System.out.println("+++++++++++++++");
-                // }
-                // System.out.println("-----------");
-                // System.exit(-1);
-                // }
+                INode[] toCheck = ((NodeBucket)container.getComplete()).getNodes();
+                boolean nullFound = false;
+                for (int i = 0; i < toCheck.length && !nullFound; i++) {
+                    if ((i < toCheck.length - 1 && i > 0)
+                        && (toCheck[i + 1] != null && toCheck[i] == null && toCheck[i - 1] != null)) {
+                        nullFound = true;
+                    }
+                }
+                if (nullFound) {
+                    System.out.println("-----FAILURE------");
+                    for (int i = 0; i < buckets.length; i++) {
+                        System.out.println("+++++++++++++++");
+                        System.out.println(buckets[i].toString());
+                        System.out.println("+++++++++++++++");
+                    }
+                    System.out.println("-----------");
+                    System.exit(-1);
+                }
 
             }// ...if no bucket is existing, create an entirely new one.
             else {
