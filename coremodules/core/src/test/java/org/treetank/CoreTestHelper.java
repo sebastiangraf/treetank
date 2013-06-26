@@ -260,7 +260,7 @@ public final class CoreTestHelper {
     public static final List<List<Map.Entry<DumbKey, DumbValue>>> createTestMeta(Holder pHolder)
         throws TTException {
         final int[] pNumbers = new int[10];
-        Arrays.fill(pNumbers, 1);
+        Arrays.fill(pNumbers, 200);
         final List<List<Map.Entry<DumbKey, DumbValue>>> returnVal = Lists.newArrayList();
         // adding null for revision 0
         final List<Map.Entry<DumbKey, DumbValue>> firstRevList = Lists.newArrayList();

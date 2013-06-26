@@ -173,20 +173,4 @@ public final class RevisionRootBucket implements IRevisionBucket, IReferenceBuck
         return this.hashCode() == obj.hashCode();
     }
 
-    /**
-     * Copying a bucket into a new one.
-     * 
-     * @param pBucket
-     *            to be copied
-     * @return new copy
-     */
-    public static final RevisionRootBucket copy(final RevisionRootBucket pBucket) {
-        final RevisionRootBucket copy =
-            new RevisionRootBucket(pBucket.mBucketKey, pBucket.mRevision, pBucket.mMaxNodeKey);
-        for (int i = 0; i < pBucket.mReferenceKeys.length; i++) {
-            copy.mReferenceKeys[i] = pBucket.mReferenceKeys[i];
-        }
-        return copy;
-    }
-
 }

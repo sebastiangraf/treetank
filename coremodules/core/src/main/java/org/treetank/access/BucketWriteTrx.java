@@ -56,6 +56,7 @@ import org.treetank.bucket.NodeBucket;
 import org.treetank.bucket.NodeBucket.DeletedNode;
 import org.treetank.bucket.RevisionRootBucket;
 import org.treetank.bucket.UberBucket;
+import org.treetank.bucket.interfaces.IBucket;
 import org.treetank.bucket.interfaces.IReferenceBucket;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
@@ -230,9 +231,9 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
 
         mDelegate.mSession.waitForRunningCommit();
 
-        final UberBucket uber = UberBucket.copy(mNewUber);
+        final UberBucket uber = clone(mNewUber);
         final MetaBucket meta = clone(mNewMeta);
-        final RevisionRootBucket rev = RevisionRootBucket.copy(mNewRoot);
+        final RevisionRootBucket rev = clone(mNewRoot);
         final Future<Void> commitInProgress = mBucketWriter.commit(uber, meta, rev);
         mDelegate.mSession.setRunningCommit(mCommitInProgress.submit(new Callable<Void>() {
             @Override
@@ -248,7 +249,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         // Comment here to enabled blocked behaviour
         mDelegate.mSession.waitForRunningCommit();
 
-        setUpTransaction(uber, rev, mNewMeta, mDelegate.mSession, uber.getRevisionNumber(), mBucketWriter);
+        setUpTransaction(uber, rev, meta, mDelegate.mSession, uber.getRevisionNumber(), mBucketWriter);
 
     }
 
@@ -261,6 +262,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
      */
     @Override
     public boolean close() throws TTIOException {
+        mDelegate.mSession.waitForRunningCommit();
         mCommitInProgress.shutdown();
         if (!mDelegate.isClosed()) {
             mDelegate.close();
@@ -353,7 +355,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
                     // ... is the same one than recently written (to avoid race conditions).
                     if (formerBuckets.isEmpty()
                         || formerBuckets.get(0).getBucketKey() < currentlyInProgress.getBucketKey()) {
-                        bucketList.add(clone(currentlyInProgress));
+                        bucketList.add((NodeBucket)clone(currentlyInProgress));
                     }
                 }
 
@@ -570,18 +572,12 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         return mDelegate.mSession.getConfig().mNodeFac.deserializeNode(input);
     }
 
-    private NodeBucket clone(final NodeBucket pToClone) throws TTIOException {
+    @SuppressWarnings("unchecked")
+    private <E extends IBucket> E clone(final E pToClone) throws TTIOException {
         final ByteArrayDataOutput output = ByteStreams.newDataOutput();
         pToClone.serialize(output);
         final ByteArrayDataInput input = ByteStreams.newDataInput(output.toByteArray());
-        return (NodeBucket)mBucketFac.deserializeBucket(input);
-    }
-
-    private MetaBucket clone(final MetaBucket pToClone) throws TTIOException {
-        final ByteArrayDataOutput output = ByteStreams.newDataOutput();
-        pToClone.serialize(output);
-        final ByteArrayDataInput input = ByteStreams.newDataInput(output.toByteArray());
-        return (MetaBucket)mBucketFac.deserializeBucket(input);
+        return (E)mBucketFac.deserializeBucket(input);
     }
 
 }

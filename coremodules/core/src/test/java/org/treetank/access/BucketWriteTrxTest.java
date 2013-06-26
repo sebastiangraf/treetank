@@ -245,7 +245,7 @@ public class BucketWriteTrxTest {
             test.mHolder = CoreTestHelper.Holder.generateStorage();
             CoreTestHelper.Holder.generateSession(test.mHolder, config);
 
-            test.testGetMetaBucket();
+            test.testRemoveNode();
 
             CoreTestHelper.closeEverything();
             System.out.println(System.currentTimeMillis() - time + "ms");
