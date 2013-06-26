@@ -64,8 +64,8 @@ public class IBucketTest {
             output = ByteStreams.newDataOutput();
             serializedBucket.serialize(output);
             byte[] secondSerialized = output.toByteArray();
-            assertTrue(new StringBuilder("Check for ").append(bucket.getClass()).append(" failed.").toString(),
-                Arrays.equals(firstSerialized, secondSerialized));
+            assertTrue(new StringBuilder("Check for ").append(bucket.getClass()).append(" failed.")
+                .toString(), Arrays.equals(firstSerialized, secondSerialized));
 
         }
     }
@@ -113,14 +113,15 @@ public class IBucketTest {
             new RevisionRootBucket(CoreTestHelper.random.nextLong(), CoreTestHelper.random.nextLong(),
                 CoreTestHelper.random.nextLong());
         // NodeBucket setup
-        NodeBucket nodeBucket = new NodeBucket(CoreTestHelper.random.nextLong(), CoreTestHelper.random.nextLong());
+        NodeBucket nodeBucket =
+            new NodeBucket(CoreTestHelper.random.nextLong(), CoreTestHelper.random.nextLong());
         for (int i = 0; i < IConstants.CONTENT_COUNT - 1; i++) {
             nodeBucket.setNode(i, CoreTestHelper.generateOne());
         }
         // MetaBucket setup
         MetaBucket metaBucket = new MetaBucket(CoreTestHelper.random.nextLong());
-        metaBucket.setEntry(new DumbKey(CoreTestHelper.random.nextLong()), new DumbValue(CoreTestHelper.random
-            .nextLong()));
+        metaBucket.put(new DumbKey(CoreTestHelper.random.nextLong()),
+            new DumbValue(CoreTestHelper.random.nextLong()));
 
         Object[][] returnVal = {
             {

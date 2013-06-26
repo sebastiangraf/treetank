@@ -31,9 +31,10 @@ import static com.google.common.base.Objects.toStringHelper;
 
 import java.io.DataOutput;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.treetank.api.IMetaEntry;
 import org.treetank.bucket.interfaces.IBucket;
@@ -64,29 +65,37 @@ public final class MetaBucket implements IBucket {
      *            key of this bucket
      */
     public MetaBucket(final long pBucketKey) {
-        mMetaMap = new HashMap<IMetaEntry, IMetaEntry>();
+        mMetaMap = new ConcurrentHashMap<IMetaEntry, IMetaEntry>();
         mBucketKey = pBucketKey;
     }
 
-    /**
-     * Create name key given a name.
-     * 
-     * @param pKey
-     *            Key to be set
-     * @param pValue
-     *            related value to be set
-     */
-    public void setEntry(final IMetaEntry pKey, final IMetaEntry pValue) {
-        mMetaMap.put(pKey, pValue);
+    // /**
+    // * Get name map.
+    // *
+    // * @return name map
+    // */
+    // public Map<IMetaEntry, IMetaEntry> getMetaMap() {
+    // return mMetaMap;
+    // }
+
+    public synchronized IMetaEntry put(final IMetaEntry pKey, final IMetaEntry pVal) {
+        return mMetaMap.put(pKey, pVal);
     }
 
-    /**
-     * Get name map.
-     * 
-     * @return name map
-     */
-    public Map<IMetaEntry, IMetaEntry> getMetaMap() {
-        return mMetaMap;
+    public synchronized IMetaEntry get(final IMetaEntry pKey) {
+        return mMetaMap.get(pKey);
+    }
+
+    public synchronized int size() {
+        return mMetaMap.size();
+    }
+
+    public synchronized Set<IMetaEntry> keySet() {
+        return mMetaMap.keySet();
+    }
+
+    public synchronized IMetaEntry remove(final IMetaEntry pKey) {
+        return mMetaMap.remove(pKey);
     }
 
     /**

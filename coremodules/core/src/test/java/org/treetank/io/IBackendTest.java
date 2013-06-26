@@ -229,8 +229,7 @@ public class IBackendTest {
         } else if (whichBucketPage < 0.4) {
             MetaBucket returnVal = new MetaBucket(pKey);
             for (int i = 0; i < IConstants.CONTENT_COUNT; i++) {
-                returnVal.getMetaMap().put(
-                    new DumbMetaEntryFactory.DumbKey(CoreTestHelper.random.nextLong()),
+                returnVal.put(new DumbMetaEntryFactory.DumbKey(CoreTestHelper.random.nextLong()),
                     new DumbMetaEntryFactory.DumbValue(CoreTestHelper.random.nextLong()));
             }
             return returnVal;
@@ -242,7 +241,8 @@ public class IBackendTest {
             return returnVal;
         } else if (whichBucketPage < 0.8) {
             RevisionRootBucket returnVal =
-                new RevisionRootBucket(pKey, CoreTestHelper.random.nextLong(), CoreTestHelper.random.nextLong());
+                new RevisionRootBucket(pKey, CoreTestHelper.random.nextLong(), CoreTestHelper.random
+                    .nextLong());
             returnVal.setReferenceKey(0, CoreTestHelper.random.nextLong());
             returnVal.setReferenceKey(1, CoreTestHelper.random.nextLong());
             return returnVal;

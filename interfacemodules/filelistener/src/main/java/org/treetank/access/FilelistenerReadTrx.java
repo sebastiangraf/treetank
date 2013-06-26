@@ -48,7 +48,7 @@ public class FilelistenerReadTrx implements IFilelistenerReadTrx {
      */
     @Override
     public String[] getFilePaths() {
-        Object[] metaKeys = mPageReadTrx.getMetaBucket().getMetaMap().keySet().toArray();
+        Object[] metaKeys = mPageReadTrx.getMetaBucket().keySet().toArray();
 
         String[] filePaths = new String[metaKeys.length];
 
@@ -81,7 +81,7 @@ public class FilelistenerReadTrx implements IFilelistenerReadTrx {
      */
     @Override
     public File getFullFile(String pRelativePath) throws TTIOException, IOException {
-        MetaValue value = (MetaValue)mPageReadTrx.getMetaBucket().getMetaMap().get(new MetaKey(pRelativePath));
+        MetaValue value = (MetaValue)mPageReadTrx.getMetaBucket().get(new MetaKey(pRelativePath));
 
         File file =
             new File(new StringBuilder().append(mTmpDir.getAbsolutePath()).append(File.separator).append(

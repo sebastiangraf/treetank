@@ -35,7 +35,7 @@ import static org.treetank.access.BucketReadTrx.nodeBucketOffset;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -245,9 +245,9 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
             }
         }));
         // Comment here to enabled blocked behaviour
-         mDelegate.mSession.waitForRunningCommit();
+        mDelegate.mSession.waitForRunningCommit();
 
-        setUpTransaction(uber, rev, meta, mDelegate.mSession, uber.getRevisionNumber(), mBucketWriter);
+        setUpTransaction(uber, rev, mNewMeta, mDelegate.mSession, uber.getRevisionNumber(), mBucketWriter);
 
     }
 
@@ -537,10 +537,10 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         mBucketWriter.put(indirectKey, indirectContainer);
 
         // Setting up a new metabucket and link it to the new root
-        Map<IMetaEntry, IMetaEntry> oldMap = pMetaOld.getMetaMap();
+        final Set<IMetaEntry> keySet = pMetaOld.keySet();
         mNewMeta = new MetaBucket(mNewUber.incrementBucketCounter());
-        for (IMetaEntry key : oldMap.keySet()) {
-            mNewMeta.setEntry(clone(key), clone(oldMap.get(key)));
+        for (IMetaEntry key : keySet) {
+            mNewMeta.put(clone(key), clone(pMetaOld.get(key)));
         }
         mNewRoot.setReferenceKey(RevisionRootBucket.META_REFERENCE_OFFSET, mNewMeta.getBucketKey());
 

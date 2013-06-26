@@ -103,7 +103,7 @@ public final class BucketFactory {
                 for (int i = 0; i < mapSize; i++) {
                     key = mEntryFac.deserializeEntry(pInput);
                     value = mEntryFac.deserializeEntry(pInput);
-                    metaBucket.setEntry(key, value);
+                    metaBucket.put(key, value);
                 }
                 return metaBucket;
             case IConstants.UBERBUCKET:

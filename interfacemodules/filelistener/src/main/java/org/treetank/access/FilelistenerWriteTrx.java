@@ -1,6 +1,5 @@
 package org.treetank.access;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -12,8 +11,8 @@ import java.util.Arrays;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.treetank.api.IFilelistenerWriteTrx;
 import org.treetank.api.IBucketWriteTrx;
+import org.treetank.api.IFilelistenerWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
@@ -24,13 +23,12 @@ import org.treetank.filelistener.file.node.FilelistenerMetaPageFactory.MetaValue
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-import com.google.common.io.Files;
 
 /**
  * @author Andreas Rain
  */
 public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(FilelistenerWriteTrx.class);
 
     /** Session for abort/commit. */
@@ -94,7 +92,7 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
     public synchronized void addEmptyFile(String pRelativePath) throws TTException, IOException {
         MetaKey key = new MetaKey(pRelativePath);
         MetaValue value = new MetaValue(FilelistenerReadTrx.emptyFileKey);
-        getBucketTransaction().getMetaBucket().getMetaMap().put(key, value);
+        getBucketTransaction().getMetaBucket().put(key, value);
 
         return;
     }
@@ -108,20 +106,20 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
     @Override
     public synchronized void addFile(File pFile, String pRelativePath) throws TTException, IOException {
         LOGGER.info("Adding file " + pFile.getName());
-        
+
         int readingAmount = 0;
 
         @SuppressWarnings("resource")
         FileChannel ch = new RandomAccessFile(pFile, "rw").getChannel();
         FileLock lock = null;
-        
-        while(lock == null){
+
+        while (lock == null) {
             try {
                 lock = ch.tryLock();
             } catch (OverlappingFileLockException e) {
                 // File is already locked in this thread or virtual machine
             }
-            
+
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -129,16 +127,16 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
                 e.printStackTrace();
             }
         }
-        
+
         ByteBuffer buffer = ByteBuffer.allocate(FileNode.FILENODESIZE);
-        
+
         LOGGER.info("Successfully initialized byte source.");
         readingAmount += ch.read(buffer);
 
         if (readingAmount <= 0) {
             MetaKey key = new MetaKey(pRelativePath);
             MetaValue value = new MetaValue(FilelistenerReadTrx.emptyFileKey);
-            getBucketTransaction().getMetaBucket().getMetaMap().put(key, value);
+            getBucketTransaction().getMetaBucket().put(key, value);
 
             return;
         }
@@ -155,7 +153,7 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
 
         // And adding it to the meta map
         LOGGER.info("Metakeypair setup");
-        getBucketTransaction().getMetaBucket().getMetaMap().put(key, value);
+        getBucketTransaction().getMetaBucket().put(key, value);
 
         // Creating and setting the headernode.
         FileNode headerNode = new FileNode(newKey, new byte[FileNode.FILENODESIZE]);
@@ -186,7 +184,7 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
 
             readingAmount += currentReadingAmount;
         }
-        
+
         ByteArrayDataOutput size = ByteStreams.newDataOutput();
         size.writeInt(readingAmount);
 
@@ -206,7 +204,7 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
         Preconditions.checkArgument(getBucketTransaction().getNode(newKey) != null);
         lock.release();
         ch.close();
-        
+
         System.out.println("Done writing.");
     }
 
@@ -217,7 +215,7 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
     public synchronized void removeFile(String pRelativePath) throws TTException {
         // If the file already exists we just override it
         // and remove the last meta entry since the key won't be correct anymore.
-        getBucketTransaction().getMetaBucket().getMetaMap().remove(new MetaKey(pRelativePath));
+        getBucketTransaction().getMetaBucket().remove(new MetaKey(pRelativePath));
     }
 
     /**

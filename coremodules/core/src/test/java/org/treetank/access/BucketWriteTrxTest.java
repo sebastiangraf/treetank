@@ -104,7 +104,7 @@ public class BucketWriteTrxTest {
         wtx.commit();
         assertTrue(wtx.close());
         wtx = mHolder.getSession().beginBucketWtx();
-        assertEquals(0, wtx.getMetaBucket().getMetaMap().size());
+        assertEquals(0, wtx.getMetaBucket().size());
 
     }
 
