@@ -39,11 +39,8 @@ import org.treetank.bucket.NodeBucket.DeletedNode;
 import org.treetank.bucket.interfaces.IBucket;
 import org.treetank.exception.TTIOException;
 
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.sleepycat.je.log.FileReader.EOFException;
 
 /**
  * Factory to deserialize buckets out of a chunk of bytes.

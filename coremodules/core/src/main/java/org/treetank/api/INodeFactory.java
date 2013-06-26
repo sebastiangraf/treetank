@@ -29,6 +29,8 @@ public interface INodeFactory {
      * @param pData
      *            byte representation.
      * @return the created node.
+     * @throws TTIOException
+     *             if any weird happens
      */
     INode deserializeNode(final DataInput pData) throws TTIOException;
 

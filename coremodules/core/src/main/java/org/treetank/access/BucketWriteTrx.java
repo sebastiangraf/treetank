@@ -62,6 +62,10 @@ import org.treetank.io.IBackendWriter;
 import org.treetank.io.LogKey;
 import org.treetank.io.LogValue;
 
+import com.google.common.io.ByteArrayDataInput;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
+
 /**
  * <h1>BucketWriteTrx</h1>
  * 
@@ -191,10 +195,10 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
             if (container.getModified() != null) {
                 // ..check if the real node was touched and set it or..
                 if (((NodeBucket)container.getModified()).getNode(nodeBucketOffset) == null) {
-                    item = ((NodeBucket)container.getComplete()).getNode(nodeBucketOffset);
+                    item = clone(((NodeBucket)container.getComplete()).getNode(nodeBucketOffset));
                 }// ..take the node from the complete status of the page.
                 else {
-                    item = ((NodeBucket)container.getComplete()).getNode(nodeBucketOffset);
+                    item = clone(((NodeBucket)container.getComplete()).getNode(nodeBucketOffset));
                 }
                 checkNotNull(item, "Item must be set!");
                 item = mDelegate.checkItemIfDeleted(item);
@@ -235,7 +239,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
             }
         }));
         // Comment here to enabled blocked behaviour
-         mDelegate.mSession.waitForRunningCommit();
+        mDelegate.mSession.waitForRunningCommit();
 
         setUpTransaction(uber, rev, meta, mDelegate.mSession, uber.getRevisionNumber(), mBucketWriter);
 
@@ -365,25 +369,25 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
                     mDelegate.mSession.getConfig().mRevision.combineBucketsForModification(revToRestore,
                         newBucketKey, buckets, mNewRoot.getRevision() % revToRestore == 0);
 
-//                // // DEBUG CODE!!!!!
-//                INode[] toCheck = ((NodeBucket)container.getComplete()).getNodes();
-//                boolean nullFound = false;
-//                for (int i = 0; i < toCheck.length && !nullFound; i++) {
-//                    if ((i < toCheck.length - 1 && i > 0)
-//                        && (toCheck[i + 1] != null && toCheck[i] == null && toCheck[i - 1] != null)) {
-//                        nullFound = true;
-//                    }
-//                }
-//                if (nullFound) {
-//                    System.out.println("-----FAILURE------");
-//                    for (int i = 0; i < buckets.length; i++) {
-//                        System.out.println("+++++++++++++++");
-//                        System.out.println(buckets[i].toString());
-//                        System.out.println("+++++++++++++++");
-//                    }
-//                    System.out.println("-----------");
-//                    System.exit(-1);
-//                }
+                // // // DEBUG CODE!!!!!
+                // INode[] toCheck = ((NodeBucket)container.getComplete()).getNodes();
+                // boolean nullFound = false;
+                // for (int i = 0; i < toCheck.length && !nullFound; i++) {
+                // if ((i < toCheck.length - 1 && i > 0)
+                // && (toCheck[i + 1] != null && toCheck[i] == null && toCheck[i - 1] != null)) {
+                // nullFound = true;
+                // }
+                // }
+                // if (nullFound) {
+                // System.out.println("-----FAILURE------");
+                // for (int i = 0; i < buckets.length; i++) {
+                // System.out.println("+++++++++++++++");
+                // System.out.println(buckets[i].toString());
+                // System.out.println("+++++++++++++++");
+                // }
+                // System.out.println("-----------");
+                // System.exit(-1);
+                // }
 
             }// ...if no bucket is existing, create an entirely new one.
             else {
@@ -543,6 +547,17 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
     public String toString() {
         return toStringHelper(this).add("mDelegate", mDelegate).add("mBucketWriterProxy", mBucketWriter).add(
             "mRootBucket", mNewRoot).add("mDelegate", mDelegate).toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     */
+    private INode clone(final INode pToClone) throws TTIOException {
+        final ByteArrayDataOutput output = ByteStreams.newDataOutput();
+        pToClone.serialize(output);
+        final ByteArrayDataInput input = ByteStreams.newDataInput(output.toByteArray());
+        return mDelegate.mSession.getConfig().mNodeFac.deserializeNode(input);
     }
 
 }
