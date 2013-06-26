@@ -493,7 +493,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
         final int nameKey = NamePageHash.generateHashForString(string);
         NodeMetaPageFactory.MetaKey key = new NodeMetaPageFactory.MetaKey(nameKey);
         NodeMetaPageFactory.MetaValue value = new NodeMetaPageFactory.MetaValue(string);
-        getPageWtx().getMetaBucket().setEntry(key, value);
+        getPageWtx().getMetaBucket().put(key, value);
         return nameKey;
     }
 

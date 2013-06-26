@@ -27,6 +27,7 @@
 
 package org.treetank;
 
+import static com.google.common.base.Objects.toStringHelper;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.AssertJUnit.assertEquals;
@@ -39,6 +40,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import org.treetank.access.Session;
 import org.treetank.access.Storage;
@@ -46,16 +48,17 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.StorageConfiguration;
-import org.treetank.api.IMetaEntry;
 import org.treetank.api.IBucketReadTrx;
 import org.treetank.api.IBucketWriteTrx;
+import org.treetank.api.IMetaEntry;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
-import org.treetank.bucket.IndirectBucket;
-import org.treetank.bucket.NodeBucket;
 import org.treetank.bucket.DumbMetaEntryFactory.DumbKey;
 import org.treetank.bucket.DumbMetaEntryFactory.DumbValue;
 import org.treetank.bucket.DumbNodeFactory.DumbNode;
+import org.treetank.bucket.IndirectBucket;
+import org.treetank.bucket.MetaBucket;
+import org.treetank.bucket.NodeBucket;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
@@ -270,6 +273,7 @@ public final class CoreTestHelper {
             returnVal.add(dataPerVersion);
             wtx.close();
         }
+
         return returnVal;
     }
 
@@ -336,7 +340,7 @@ public final class CoreTestHelper {
         assertTrue(pAlreadyExistingEntries.isEmpty() != toCheck.addAll(pAlreadyExistingEntries));
         for (Map.Entry<DumbKey, DumbValue> entry : returnVal) {
             assertTrue(toCheck.add(entry));
-            assertNull(pWtx.getMetaBucket().getMetaMap().put(entry.getKey(), entry.getValue()));
+            assertNull(pWtx.getMetaBucket().put(entry.getKey(), entry.getValue()));
             checkStructure(toCheck, pWtx, true);
         }
         assertTrue(pAlreadyExistingEntries.isEmpty() != returnVal.addAll(pAlreadyExistingEntries));
@@ -370,6 +374,14 @@ public final class CoreTestHelper {
                 @Override
                 public DumbValue setValue(DumbValue value) {
                     throw new UnsupportedOperationException();
+                }
+
+                /**
+                 * {@inheritDoc}
+                 */
+                @Override
+                public String toString() {
+                    return toStringHelper(this).add("key", key).add("value", value).toString();
                 }
 
             });
@@ -410,15 +422,33 @@ public final class CoreTestHelper {
      */
     public static final void checkStructure(final List<Map.Entry<DumbKey, DumbValue>> pEntries,
         final IBucketReadTrx pRtx, final boolean pWorkOnClone) throws TTIOException {
-        Map<IMetaEntry, IMetaEntry> map;
+        final Map<IMetaEntry, IMetaEntry> map = Maps.newHashMap();
+
+        final MetaBucket formerBucket = pRtx.getMetaBucket();
         if (pWorkOnClone) {
-            map = Maps.newHashMap();
-            map.putAll(pRtx.getMetaBucket().getMetaMap());
-        } else {
-            map = pRtx.getMetaBucket().getMetaMap();
+            final Set<Map.Entry<IMetaEntry, IMetaEntry>> keys = formerBucket.entrySet();
+            for (Map.Entry<IMetaEntry, IMetaEntry> key : keys) {
+                map.put(key.getKey(), key.getValue());
+            }
         }
         for (Map.Entry<DumbKey, DumbValue> entry : pEntries) {
-            IMetaEntry value = map.remove(entry.getKey());
+            IMetaEntry value =
+                pWorkOnClone ? map.remove(entry.getKey()) : formerBucket.remove(entry.getKey());
+
+            // DEBUG CODE!
+            if (value == null) {
+                System.out.println("ERROR!");
+                System.out.println(pWorkOnClone);
+                System.out.println("-------");
+                System.out.println(pEntries);
+                System.out.println("-------");
+                System.out.println(entry);
+                System.out.println("-------");
+                System.out.println(map);
+                System.out.println("-------");
+                System.out.println(pRtx.getRevision());
+            }
+
             assertNotNull(value);
             assertEquals(entry.getValue(), value);
         }

@@ -107,13 +107,13 @@ public class DumbNodeFactory implements INodeFactory {
             return mHash;
         }
 
-
         /**
          * {@inheritDoc}
          */
         @Override
         public String toString() {
-            return toStringHelper(this).add("mNodeKey", mNodeKey).add("mHash", mHash).add("values", Objects.hash(mValue)).toString();
+            return toStringHelper(this).add("mNodeKey", mNodeKey).add("mHash", mHash).add("values",
+                Objects.hash(mValue)).toString();
         }
 
         /**

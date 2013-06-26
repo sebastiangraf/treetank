@@ -101,7 +101,7 @@ public class TreeNodeFactory implements INodeFactory {
                 nameDel = new NameNodeDelegate(nodeDel, input.readInt(), input.readInt());
                 returnVal = new NamespaceNode(nodeDel, nameDel);
                 break;
-            case org.treetank.bucket.IConstants.NULL_NODE:
+            case org.treetank.bucket.IConstants.DELETEDNODE:
                 returnVal = new DeletedNode(input.readLong());
                 break;
             default:

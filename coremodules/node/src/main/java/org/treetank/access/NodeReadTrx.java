@@ -172,7 +172,7 @@ public class NodeReadTrx implements INodeReadTrx {
     public final String nameForKey(final int mKey) {
         checkState(!mPageReadTrx.isClosed(), "Transaction is already closed.");
         NodeMetaPageFactory.MetaKey key = new NodeMetaPageFactory.MetaKey(mKey);
-        NodeMetaPageFactory.MetaValue value = (MetaValue)mPageReadTrx.getMetaBucket().getMetaMap().get(key);
+        NodeMetaPageFactory.MetaValue value = (MetaValue)mPageReadTrx.getMetaBucket().get(key);
         return value == null ? null : value.getData();
     }
 

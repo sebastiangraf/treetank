@@ -31,9 +31,10 @@ import static com.google.common.base.Objects.toStringHelper;
 
 import java.io.DataOutput;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.treetank.api.IMetaEntry;
 import org.treetank.bucket.interfaces.IBucket;
@@ -52,7 +53,7 @@ import org.treetank.exception.TTIOException;
 public final class MetaBucket implements IBucket {
 
     /** Map the hash of a name to its name. */
-    private final Map<IMetaEntry, IMetaEntry> mMetaMap;
+    private final ConcurrentHashMap<IMetaEntry, IMetaEntry> mMetaMap;
 
     /** Key of this bucket. */
     private final long mBucketKey;
@@ -64,29 +65,37 @@ public final class MetaBucket implements IBucket {
      *            key of this bucket
      */
     public MetaBucket(final long pBucketKey) {
-        mMetaMap = new HashMap<IMetaEntry, IMetaEntry>();
+        mMetaMap = new ConcurrentHashMap<IMetaEntry, IMetaEntry>();
         mBucketKey = pBucketKey;
     }
 
-    /**
-     * Create name key given a name.
-     * 
-     * @param pKey
-     *            Key to be set
-     * @param pValue
-     *            related value to be set
-     */
-    public void setEntry(final IMetaEntry pKey, final IMetaEntry pValue) {
-        mMetaMap.put(pKey, pValue);
+    // /**
+    // * Get name map.
+    // *
+    // * @return name map
+    // */
+    // public Map<IMetaEntry, IMetaEntry> getMetaMap() {
+    // return mMetaMap;
+    // }
+
+    public IMetaEntry put(final IMetaEntry pKey, final IMetaEntry pVal) {
+        return mMetaMap.put(pKey, pVal);
     }
 
-    /**
-     * Get name map.
-     * 
-     * @return name map
-     */
-    public Map<IMetaEntry, IMetaEntry> getMetaMap() {
-        return mMetaMap;
+    public IMetaEntry get(final IMetaEntry pKey) {
+        return mMetaMap.get(pKey);
+    }
+
+    public int size() {
+        return mMetaMap.size();
+    }
+
+    public Set<Map.Entry<IMetaEntry, IMetaEntry>> entrySet() {
+        return mMetaMap.entrySet();
+    }
+
+    public IMetaEntry remove(final IMetaEntry pKey) {
+        return mMetaMap.remove(pKey);
     }
 
     /**
@@ -98,9 +107,9 @@ public final class MetaBucket implements IBucket {
             pOutput.writeInt(IConstants.METABUCKET);
             pOutput.writeLong(mBucketKey);
             pOutput.writeInt(mMetaMap.size());
-            for (final IMetaEntry key : mMetaMap.keySet()) {
-                key.serialize(pOutput);
-                mMetaMap.get(key).serialize(pOutput);
+            for (final Map.Entry<IMetaEntry, IMetaEntry> key : mMetaMap.entrySet()) {
+                key.getKey().serialize(pOutput);
+                key.getValue().serialize(pOutput);
             }
         } catch (final IOException exc) {
             throw new TTIOException(exc);
@@ -137,19 +146,6 @@ public final class MetaBucket implements IBucket {
     @Override
     public boolean equals(Object obj) {
         return this.hashCode() == obj.hashCode();
-    }
-
-    /**
-     * Copying a bucket into a new one.
-     * 
-     * @param pBucket
-     *            to be copied
-     * @return new copy
-     */
-    public static final MetaBucket copy(final MetaBucket pBucket) {
-        final MetaBucket copy = new MetaBucket(pBucket.mBucketKey);
-        copy.mMetaMap.putAll(pBucket.mMetaMap);
-        return copy;
     }
 
 }
