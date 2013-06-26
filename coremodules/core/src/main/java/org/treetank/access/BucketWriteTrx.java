@@ -203,10 +203,10 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
             if (container.getModified() != null) {
                 // ..check if the real node was touched and set it or..
                 if (((NodeBucket)container.getModified()).getNode(nodeBucketOffset) == null) {
-                    item = clone(((NodeBucket)container.getComplete()).getNode(nodeBucketOffset));
+                    item = clone(((NodeBucket)container.getComplete())).getNode(nodeBucketOffset);
                 }// ..take the node from the complete status of the page.
                 else {
-                    item = clone(((NodeBucket)container.getComplete()).getNode(nodeBucketOffset));
+                    item = clone(((NodeBucket)container.getComplete())).getNode(nodeBucketOffset);
                 }
                 checkNotNull(item, "Item must be set!");
                 item = mDelegate.checkItemIfDeleted(item);
@@ -247,7 +247,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
             }
         }));
         // Comment here to enabled blocked behaviour
-        mDelegate.mSession.waitForRunningCommit();
+         mDelegate.mSession.waitForRunningCommit();
 
         setUpTransaction(uber, rev, meta, mDelegate.mSession, uber.getRevisionNumber(), mBucketWriter);
 
@@ -563,13 +563,6 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         pToClone.serialize(output);
         final ByteArrayDataInput input = ByteStreams.newDataInput(output.toByteArray());
         return mDelegate.mSession.getConfig().mMetaFac.deserializeEntry(input);
-    }
-
-    private INode clone(final INode pToClone) throws TTIOException {
-        final ByteArrayDataOutput output = ByteStreams.newDataOutput();
-        pToClone.serialize(output);
-        final ByteArrayDataInput input = ByteStreams.newDataInput(output.toByteArray());
-        return mDelegate.mSession.getConfig().mNodeFac.deserializeNode(input);
     }
 
     @SuppressWarnings("unchecked")
