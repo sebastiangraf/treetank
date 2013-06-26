@@ -3,9 +3,12 @@ package org.treetank.access;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Map;
+import java.util.Set;
 
-import org.treetank.api.IFilelistenerReadTrx;
 import org.treetank.api.IBucketReadTrx;
+import org.treetank.api.IFilelistenerReadTrx;
+import org.treetank.api.IMetaEntry;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.filelistener.file.node.FileNode;
@@ -48,12 +51,14 @@ public class FilelistenerReadTrx implements IFilelistenerReadTrx {
      */
     @Override
     public String[] getFilePaths() {
-        Object[] metaKeys = mPageReadTrx.getMetaBucket().keySet().toArray();
+        Set<Map.Entry<IMetaEntry, IMetaEntry>> metaKeys = mPageReadTrx.getMetaBucket().entrySet();
 
-        String[] filePaths = new String[metaKeys.length];
+        String[] filePaths = new String[metaKeys.size()];
 
-        for (int i = 0; i < metaKeys.length; i++) {
-            filePaths[i] = ((MetaKey)metaKeys[i]).getKey();
+        int i = 0;
+        for (Map.Entry<IMetaEntry, IMetaEntry> entry : metaKeys) {
+            filePaths[i] = entry.getKey().toString();
+            i++;
         }
 
         return filePaths;

@@ -53,7 +53,7 @@ import org.treetank.exception.TTIOException;
 public final class MetaBucket implements IBucket {
 
     /** Map the hash of a name to its name. */
-    private final Map<IMetaEntry, IMetaEntry> mMetaMap;
+    private final ConcurrentHashMap<IMetaEntry, IMetaEntry> mMetaMap;
 
     /** Key of this bucket. */
     private final long mBucketKey;
@@ -78,23 +78,23 @@ public final class MetaBucket implements IBucket {
     // return mMetaMap;
     // }
 
-    public synchronized IMetaEntry put(final IMetaEntry pKey, final IMetaEntry pVal) {
+    public IMetaEntry put(final IMetaEntry pKey, final IMetaEntry pVal) {
         return mMetaMap.put(pKey, pVal);
     }
 
-    public synchronized IMetaEntry get(final IMetaEntry pKey) {
+    public IMetaEntry get(final IMetaEntry pKey) {
         return mMetaMap.get(pKey);
     }
 
-    public synchronized int size() {
+    public int size() {
         return mMetaMap.size();
     }
 
-    public synchronized Set<IMetaEntry> keySet() {
-        return mMetaMap.keySet();
+    public Set<Map.Entry<IMetaEntry, IMetaEntry>> entrySet() {
+        return mMetaMap.entrySet();
     }
 
-    public synchronized IMetaEntry remove(final IMetaEntry pKey) {
+    public IMetaEntry remove(final IMetaEntry pKey) {
         return mMetaMap.remove(pKey);
     }
 
@@ -107,9 +107,9 @@ public final class MetaBucket implements IBucket {
             pOutput.writeInt(IConstants.METABUCKET);
             pOutput.writeLong(mBucketKey);
             pOutput.writeInt(mMetaMap.size());
-            for (final IMetaEntry key : mMetaMap.keySet()) {
-                key.serialize(pOutput);
-                mMetaMap.get(key).serialize(pOutput);
+            for (final Map.Entry<IMetaEntry, IMetaEntry> key : mMetaMap.entrySet()) {
+                key.getKey().serialize(pOutput);
+                key.getValue().serialize(pOutput);
             }
         } catch (final IOException exc) {
             throw new TTIOException(exc);

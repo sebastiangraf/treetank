@@ -426,9 +426,9 @@ public final class CoreTestHelper {
 
         final MetaBucket formerBucket = pRtx.getMetaBucket();
         if (pWorkOnClone) {
-            final Set<IMetaEntry> keys = formerBucket.keySet();
-            for (IMetaEntry key : keys) {
-                map.put(key, formerBucket.get(key));
+            final Set<Map.Entry<IMetaEntry, IMetaEntry>> keys = formerBucket.entrySet();
+            for (Map.Entry<IMetaEntry, IMetaEntry> key : keys) {
+                map.put(key.getKey(), key.getValue());
             }
         }
         for (Map.Entry<DumbKey, DumbValue> entry : pEntries) {

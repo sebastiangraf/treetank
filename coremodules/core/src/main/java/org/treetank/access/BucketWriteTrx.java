@@ -35,6 +35,7 @@ import static org.treetank.access.BucketReadTrx.nodeBucketOffset;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -537,10 +538,10 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         mBucketWriter.put(indirectKey, indirectContainer);
 
         // Setting up a new metabucket and link it to the new root
-        final Set<IMetaEntry> keySet = pMetaOld.keySet();
+        final Set<Map.Entry<IMetaEntry, IMetaEntry>> keySet = pMetaOld.entrySet();
         mNewMeta = new MetaBucket(mNewUber.incrementBucketCounter());
-        for (IMetaEntry key : keySet) {
-            mNewMeta.put(clone(key), clone(pMetaOld.get(key)));
+        for (final Map.Entry<IMetaEntry, IMetaEntry> key : keySet) {
+            mNewMeta.put(clone(key.getKey()), clone(key.getValue()));
         }
         mNewRoot.setReferenceKey(RevisionRootBucket.META_REFERENCE_OFFSET, mNewMeta.getBucketKey());
 
