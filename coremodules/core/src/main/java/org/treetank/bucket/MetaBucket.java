@@ -139,17 +139,4 @@ public final class MetaBucket implements IBucket {
         return this.hashCode() == obj.hashCode();
     }
 
-    /**
-     * Copying a bucket into a new one.
-     * 
-     * @param pBucket
-     *            to be copied
-     * @return new copy
-     */
-    public static final MetaBucket copy(final MetaBucket pBucket) {
-        final MetaBucket copy = new MetaBucket(pBucket.mBucketKey);
-        copy.mMetaMap.putAll(pBucket.mMetaMap);
-        return copy;
-    }
-
 }

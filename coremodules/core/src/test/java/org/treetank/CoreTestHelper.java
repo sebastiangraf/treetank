@@ -27,6 +27,7 @@
 
 package org.treetank;
 
+import static com.google.common.base.Objects.toStringHelper;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.AssertJUnit.assertEquals;
@@ -270,6 +271,7 @@ public final class CoreTestHelper {
             returnVal.add(dataPerVersion);
             wtx.close();
         }
+
         return returnVal;
     }
 
@@ -372,6 +374,14 @@ public final class CoreTestHelper {
                     throw new UnsupportedOperationException();
                 }
 
+                /**
+                 * {@inheritDoc}
+                 */
+                @Override
+                public String toString() {
+                    return toStringHelper(this).add("key", key).add("value", value).toString();
+                }
+
             });
 
         }
@@ -419,6 +429,17 @@ public final class CoreTestHelper {
         }
         for (Map.Entry<DumbKey, DumbValue> entry : pEntries) {
             IMetaEntry value = map.remove(entry.getKey());
+
+            // DEBUG CODE!
+            if (value == null) {
+                System.out.println("ERROR!");
+                System.out.println(entry);
+                System.out.println("-------");
+                System.out.println(map);
+                System.out.println("-------");
+                System.out.println(pRtx.getRevision());
+            }
+
             assertNotNull(value);
             assertEquals(entry.getValue(), value);
         }

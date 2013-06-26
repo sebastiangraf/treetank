@@ -454,8 +454,6 @@ public class NodeWriteTrx implements INodeWriteTrx {
         checkState(!mDelegate.isClosed(), "Transaction is already closed.");
         // ICommitStrategy uber page.
         getPtx().commit();
-//        mDelegate.setCurrentNode((org.treetank.node.interfaces.INode)getPageWtx().getNode(
-//            IConstants.ROOT_NODE));
     }
 
     /**

@@ -47,6 +47,7 @@ import org.treetank.api.IBucketWriteTrx;
 import org.treetank.api.IMetaEntry;
 import org.treetank.api.INode;
 import org.treetank.api.ISession;
+import org.treetank.bucket.BucketFactory;
 import org.treetank.bucket.IConstants;
 import org.treetank.bucket.IndirectBucket;
 import org.treetank.bucket.MetaBucket;
@@ -93,6 +94,9 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
     /** Executor for tracing commit in progress. */
     private final ExecutorService mCommitInProgress;
 
+    /** Bucket-Factory to clone buckets. */
+    private final BucketFactory mBucketFac;
+
     /**
      * Standard constructor.
      * 
@@ -124,6 +128,8 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
 
         mCommitInProgress = Executors.newSingleThreadExecutor();
         mDelegate = new BucketReadTrx(pSession, pUberBucket, revBucket, metaBucket, pWriter);
+        mBucketFac = new BucketFactory(pSession.getConfig().mNodeFac, pSession.getConfig().mMetaFac);
+
         setUpTransaction(pUberBucket, revBucket, metaBucket, pSession, pRepresentRev, mBucketWriter);
     }
 
@@ -224,7 +230,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         mDelegate.mSession.waitForRunningCommit();
 
         final UberBucket uber = UberBucket.copy(mNewUber);
-        final MetaBucket meta = MetaBucket.copy(mNewMeta);
+        final MetaBucket meta = clone(mNewMeta);
         final RevisionRootBucket rev = RevisionRootBucket.copy(mNewRoot);
         final Future<Void> commitInProgress = mBucketWriter.commit(uber, meta, rev);
         mDelegate.mSession.setRunningCommit(mCommitInProgress.submit(new Callable<Void>() {
@@ -239,7 +245,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
             }
         }));
         // Comment here to enabled blocked behaviour
-        mDelegate.mSession.waitForRunningCommit();
+         mDelegate.mSession.waitForRunningCommit();
 
         setUpTransaction(uber, rev, meta, mDelegate.mSession, uber.getRevisionNumber(), mBucketWriter);
 
@@ -346,7 +352,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
                     // ... is the same one than recently written (to avoid race conditions).
                     if (formerBuckets.isEmpty()
                         || formerBuckets.get(0).getBucketKey() < currentlyInProgress.getBucketKey()) {
-                        bucketList.add(currentlyInProgress);
+                        bucketList.add(clone(currentlyInProgress));
                     }
                 }
 
@@ -534,7 +540,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         Map<IMetaEntry, IMetaEntry> oldMap = pMetaOld.getMetaMap();
         mNewMeta = new MetaBucket(mNewUber.incrementBucketCounter());
         for (IMetaEntry key : oldMap.keySet()) {
-            mNewMeta.setEntry(key, oldMap.get(key));
+            mNewMeta.setEntry(clone(key), clone(oldMap.get(key)));
         }
         mNewRoot.setReferenceKey(RevisionRootBucket.META_REFERENCE_OFFSET, mNewMeta.getBucketKey());
 
@@ -549,15 +555,32 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
             "mRootBucket", mNewRoot).add("mDelegate", mDelegate).toString();
     }
 
-    /**
-     * {@inheritDoc}
-     * 
-     */
+    private IMetaEntry clone(final IMetaEntry pToClone) throws TTIOException {
+        final ByteArrayDataOutput output = ByteStreams.newDataOutput();
+        pToClone.serialize(output);
+        final ByteArrayDataInput input = ByteStreams.newDataInput(output.toByteArray());
+        return mDelegate.mSession.getConfig().mMetaFac.deserializeEntry(input);
+    }
+
     private INode clone(final INode pToClone) throws TTIOException {
         final ByteArrayDataOutput output = ByteStreams.newDataOutput();
         pToClone.serialize(output);
         final ByteArrayDataInput input = ByteStreams.newDataInput(output.toByteArray());
         return mDelegate.mSession.getConfig().mNodeFac.deserializeNode(input);
+    }
+
+    private NodeBucket clone(final NodeBucket pToClone) throws TTIOException {
+        final ByteArrayDataOutput output = ByteStreams.newDataOutput();
+        pToClone.serialize(output);
+        final ByteArrayDataInput input = ByteStreams.newDataInput(output.toByteArray());
+        return (NodeBucket)mBucketFac.deserializeBucket(input);
+    }
+
+    private MetaBucket clone(final MetaBucket pToClone) throws TTIOException {
+        final ByteArrayDataOutput output = ByteStreams.newDataOutput();
+        pToClone.serialize(output);
+        final ByteArrayDataInput input = ByteStreams.newDataInput(output.toByteArray());
+        return (MetaBucket)mBucketFac.deserializeBucket(input);
     }
 
 }
