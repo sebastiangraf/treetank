@@ -34,7 +34,7 @@ public class ModuleSetter {
     /** Class for Revision. */
     private Class<? extends IRevisioning> mRevisioningClass = SlidingSnapshot.class;
     /** Class for IBackend. */
-    private Class<? extends IBackend> mBackend = JCloudsStorage.class;
+    private Class<? extends IBackend> mBackend = BerkeleyStorage.class;
     /** Instance for ByteHandler. */
     private IByteHandlerPipeline mByteHandler = new ByteHandlerPipeline();
     /** Instance for Key. */
