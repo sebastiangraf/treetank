@@ -36,7 +36,7 @@ public class InsertBench {
     private final ResourceConfiguration mConfig;
     private ISession mSession;
     private DumbNode[] mNodesToInsert = BenchUtils.createNodes(new int[] {
-        262144
+        1048576
     })[0];
     private IBucketWriteTrx mTrx;
 
@@ -74,76 +74,81 @@ public class InsertBench {
     }
 
     @Bench
-    public void bench16384Blocked() throws TTException {
-        insert(16384 / 2);
-        mTrx.commit();
-        mTrx.close();
-        mTrx = mSession.beginBucketWtx();
-        insert(16384 / 2);
-        mTrx.commit();
-    }
-    
-    @Bench
     public void bench16384() throws TTException {
-        insert(16384 / 2);
-        mTrx.commit();
-        insert(16384 / 2);
-        mTrx.commit();
-    }
-
-    @Bench
-    public void bench16384Direct() throws TTException {
         insert(16384);
         mTrx.commit();
+        System.out.println("16384");
     }
 
-    @Bench
-    public void bench32768Blocked() throws TTException {
-        insert(32768 / 2);
-        mTrx.commit();
-        mTrx.close();
-        mTrx = mSession.beginBucketWtx();
-        insert(32768 / 2);
-        mTrx.commit();
-    }
-    
     @Bench
     public void bench32768() throws TTException {
-        insert(32768 / 2);
-        mTrx.commit();
-        insert(32768 / 2);
-        mTrx.commit();
-    }
-
-    @Bench
-    public void bench32768Direct() throws TTException {
         insert(32768);
         mTrx.commit();
+        System.out.println("32768");
     }
 
-    @Bench
-    public void bench65536Blocked() throws TTException {
-        insert(65536 / 2);
-        mTrx.commit();
-        mTrx.close();
-        mTrx = mSession.beginBucketWtx();
-        insert(65536 / 2);
-        mTrx.commit();
-    }
-    
     @Bench
     public void bench65536() throws TTException {
-        insert(65536 / 2);
+        insert(65536);
         mTrx.commit();
-        insert(65536 / 2);
-        mTrx.commit();
+        System.out.println("65536");
     }
 
     @Bench
-    public void bench65536Direct() throws TTException {
-        insert(65536);
+    public void bench131072() throws TTException {
+        insert(131072);
         mTrx.commit();
+        System.out.println("131072");
     }
+
+    @Bench
+    public void bench262144() throws TTException {
+        insert(262144);
+        mTrx.commit();
+        System.out.println("262144");
+    }
+
+    @Bench
+    public void bench524288() throws TTException {
+        insert(524288);
+        mTrx.commit();
+        System.out.println("524288");
+    }
+
+    @Bench
+    public void bench1048576() throws TTException {
+        insert(1048576);
+        mTrx.commit();
+        System.out.println("1048576");
+    }
+
+    // @Bench
+    // public void bench2097152() throws TTException {
+    // insert(2097152);
+    // mTrx.commit();
+    // System.out.println("2097152");
+    // }
+    //
+    // @Bench
+    // public void bench4194304() throws TTException {
+    // insert(4194304);
+    // mTrx.commit();
+    // System.out.println("4194304");
+    // }
+    //
+    // @Bench
+    // public void bench8388608() throws TTException {
+    // insert(8388608);
+    // mTrx.commit();
+    // System.out.println("8388608");
+    // }
+    //
+    // @Bench
+    // public void bench16777216() throws TTException {
+    // insert(16777216);
+    // mTrx.commit();
+    // System.out.println("16777216");
+    // }
 
     @AfterEachRun
     public void tearDown() throws TTException {
