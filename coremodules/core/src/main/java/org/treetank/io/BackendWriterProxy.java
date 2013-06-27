@@ -96,23 +96,7 @@ public class BackendWriterProxy implements IBackendReader {
         // new log
         mLog = new LRULog(mPathToLog, mNodeFac, mMetaFac);
         // starting the persistence-process.
-        final Future<Void> runningTask = mExec.submit(new Callable<Void>() {
-            @Override
-            public Void call() throws Exception {
-                // iterating over all data
-                final Iterator<LogValue> entries = mFormerLog.getIterator();
-                while (entries.hasNext()) {
-                    LogValue next = entries.next();
-                    mWriter.write(next.getModified());
-                }
-                // writing the important pages
-                mWriter.write(pMeta);
-                mWriter.write(pRev);
-                mWriter.writeUberBucket(pUber);
-                return null;
-            }
-        });
-        return runningTask;
+        return mExec.submit(new CommitCallable(pUber, pRev, pMeta));
     }
 
     /**
@@ -201,6 +185,49 @@ public class BackendWriterProxy implements IBackendReader {
             throw new TTIOException(exc);
         }
         mWriter.close();
+    }
+
+    /**
+     * Persistence-task to be performed within a commit.
+     * @author Sebasitan Graf, University of Konstanz
+     *
+     */
+    class CommitCallable implements Callable<Void> {
+
+        final MetaBucket mMeta;
+        final RevisionRootBucket mRoot;
+        final UberBucket mUber;
+
+        /**
+         * Constructor.
+         * @param pUber to persist
+         * @param pRoot to persist
+         * @param pMeta to persist
+         */
+        CommitCallable(final UberBucket pUber, final RevisionRootBucket pRoot, final MetaBucket pMeta) {
+            mUber = pUber;
+            mRoot = pRoot;
+            mMeta = pMeta;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Void call() throws Exception {
+            // iterating over all data
+            final Iterator<LogValue> entries = mFormerLog.getIterator();
+            while (entries.hasNext()) {
+                LogValue next = entries.next();
+                mWriter.write(next.getModified());
+            }
+            // writing the important pages
+            mWriter.write(mMeta);
+            mWriter.write(mRoot);
+            mWriter.writeUberBucket(mUber);
+            return null;
+        }
+
     }
 
 }
