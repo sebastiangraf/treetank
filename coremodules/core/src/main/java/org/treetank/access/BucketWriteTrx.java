@@ -247,7 +247,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
             }
         }));
         // Comment here to enabled blocked behaviour
-         mDelegate.mSession.waitForRunningCommit();
+//         mDelegate.mSession.waitForRunningCommit();
 
         setUpTransaction(uber, rev, meta, mDelegate.mSession, uber.getRevisionNumber(), mBucketWriter);
 
