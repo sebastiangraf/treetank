@@ -12,7 +12,6 @@ import org.treetank.io.berkeley.BerkeleyStorage;
 import org.treetank.io.bytepipe.ByteHandlerPipeline;
 import org.treetank.io.bytepipe.IByteHandler;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
-import org.treetank.io.jclouds.JCloudsStorage;
 import org.treetank.revisioning.IRevisioning;
 import org.treetank.revisioning.SlidingSnapshot;
 
@@ -34,7 +33,7 @@ public class ModuleSetter {
     /** Class for Revision. */
     private Class<? extends IRevisioning> mRevisioningClass = SlidingSnapshot.class;
     /** Class for IBackend. */
-    private Class<? extends IBackend> mBackend = JCloudsStorage.class;
+    private Class<? extends IBackend> mBackend = BerkeleyStorage.class;
     /** Instance for ByteHandler. */
     private IByteHandlerPipeline mByteHandler = new ByteHandlerPipeline();
     /** Instance for Key. */

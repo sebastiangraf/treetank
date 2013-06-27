@@ -44,7 +44,6 @@ import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFact
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.StorageConfiguration;
-import org.treetank.api.INodeFactory;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
 import org.treetank.io.IBackend;
@@ -79,6 +78,7 @@ public class TreetankTargetServer {
      *            Argument 2 = path to a customized target configuration xml file
      * @throws Exception
      */
+    @SuppressWarnings("unchecked")
     public static void main(String[] args) throws Exception {
         Map<String, String> argsMap = new HashMap<>();
         
