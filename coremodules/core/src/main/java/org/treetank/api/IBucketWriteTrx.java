@@ -52,4 +52,12 @@ public interface IBucketWriteTrx extends IBucketReadTrx {
      */
     void commit() throws TTException;
 
+    /**
+     * Simple commit blocked of this bucket transaction to store the newest version.
+     * 
+     * @throws if
+     *             anything weird happens
+     */
+    void commitBlocked() throws TTException;
+    
 }

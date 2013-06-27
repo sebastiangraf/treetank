@@ -38,7 +38,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -219,11 +218,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
     }
 
     /**
-     * 
      * {@inheritDoc}
-     * 
-     * @throws ExecutionException
-     * @throws InterruptedException
      */
     @Override
     public void commit() throws TTException {
@@ -247,10 +242,19 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
             }
         }));
         // Comment here to enabled blocked behaviour
-//         mDelegate.mSession.waitForRunningCommit();
+        // mDelegate.mSession.waitForRunningCommit();
 
         setUpTransaction(uber, rev, meta, mDelegate.mSession, uber.getRevisionNumber(), mBucketWriter);
 
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void commitBlocked() throws TTException {
+        commit();
+        mDelegate.mSession.waitForRunningCommit();
     }
 
     public void clearLog() throws TTIOException {

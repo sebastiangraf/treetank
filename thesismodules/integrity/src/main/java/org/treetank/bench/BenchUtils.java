@@ -14,7 +14,7 @@ import org.treetank.bucket.DumbNodeFactory.DumbNode;
 public class BenchUtils {
 
     /** Common random instance for generating common tag names. */
-    private final static Random random = new Random(123l);
+    public final static Random random = new Random(123l);
 
     /**
      * Generating one single {@link DumbNode} with random values.
