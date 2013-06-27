@@ -82,7 +82,6 @@
         <module>interfacemodules/xml</module>
         <module>interfacemodules/iscsi</module>
         <module>interfacemodules/filelistener</module>
-        <module>integrity</module>
     </modules>
 
     <prerequisites>
@@ -298,11 +297,6 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>1.7.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.perfidix</groupId>
-            <artifactId>perfidix</artifactId>
-            <version>3.6.7</version>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
