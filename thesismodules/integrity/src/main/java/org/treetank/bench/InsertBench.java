@@ -9,7 +9,6 @@ import org.perfidix.annotation.BeforeEachRun;
 import org.perfidix.annotation.Bench;
 import org.perfidix.ouput.TabularSummaryOutput;
 import org.perfidix.result.BenchmarkResult;
-import org.treetank.CoreTestHelper;
 import org.treetank.access.Storage;
 import org.treetank.access.conf.ModuleSetter;
 import org.treetank.access.conf.ResourceConfiguration;
@@ -36,7 +35,7 @@ public class InsertBench {
     private final IStorage mStorage;
     private final ResourceConfiguration mConfig;
     private ISession mSession;
-    private DumbNode[] mNodesToInsert = CoreTestHelper.createNodes(new int[] {
+    private DumbNode[] mNodesToInsert = BenchUtils.createNodes(new int[] {
         262144
     })[0];
     private IBucketWriteTrx mTrx;
@@ -59,6 +58,14 @@ public class InsertBench {
 
     }
 
+    private void insert(int numbersToInsert) throws TTException {
+        for (int i = 0; i < numbersToInsert; i++) {
+            final long nodeKey = mTrx.incrementNodeKey();
+            mNodesToInsert[i].setNodeKey(nodeKey);
+            mTrx.setNode(mNodesToInsert[i]);
+        }
+    }
+
     @BeforeEachRun
     public void setUp() throws TTException {
         mStorage.createResource(mConfig);
@@ -67,56 +74,75 @@ public class InsertBench {
     }
 
     @Bench
-    public void bench16384() throws TTException {
-        insert(16384);
+    public void bench16384Blocked() throws TTException {
+        insert(16384 / 2);
         mTrx.commit();
-        insert(16384);
+        mTrx.close();
+        mTrx = mSession.beginBucketWtx();
+        insert(16384 / 2);
+        mTrx.commit();
+    }
+    
+    @Bench
+    public void bench16384() throws TTException {
+        insert(16384 / 2);
+        mTrx.commit();
+        insert(16384 / 2);
         mTrx.commit();
     }
 
     @Bench
     public void bench16384Direct() throws TTException {
         insert(16384);
-        insert(16384);
         mTrx.commit();
     }
 
     @Bench
-    public void bench32768() throws TTException {
-        insert(32768);
+    public void bench32768Blocked() throws TTException {
+        insert(32768 / 2);
         mTrx.commit();
-        insert(32768);
+        mTrx.close();
+        mTrx = mSession.beginBucketWtx();
+        insert(32768 / 2);
+        mTrx.commit();
+    }
+    
+    @Bench
+    public void bench32768() throws TTException {
+        insert(32768 / 2);
+        mTrx.commit();
+        insert(32768 / 2);
         mTrx.commit();
     }
 
     @Bench
     public void bench32768Direct() throws TTException {
         insert(32768);
-        insert(32768);
         mTrx.commit();
     }
 
     @Bench
-    public void bench65536() throws TTException {
-        insert(65536);
+    public void bench65536Blocked() throws TTException {
+        insert(65536 / 2);
         mTrx.commit();
-        insert(65536);
+        mTrx.close();
+        mTrx = mSession.beginBucketWtx();
+        insert(65536 / 2);
+        mTrx.commit();
+    }
+    
+    @Bench
+    public void bench65536() throws TTException {
+        insert(65536 / 2);
+        mTrx.commit();
+        insert(65536 / 2);
         mTrx.commit();
     }
 
     @Bench
     public void bench65536Direct() throws TTException {
         insert(65536);
-        insert(65536);
         mTrx.commit();
-    }
-
-    private void insert(int numbersToInsert) throws TTException {
-        for (int i = 0; i < numbersToInsert; i++) {
-            final long nodeKey = mTrx.incrementNodeKey();
-            mNodesToInsert[i].setNodeKey(nodeKey);
-            mTrx.setNode(mNodesToInsert[i]);
-        }
     }
 
     @AfterEachRun
