@@ -60,4 +60,8 @@ public interface IConstants {
         4 * 7, 3 * 7, 2 * 7, 1 * 7, 0 * 7
     };
 
+    public static final byte[] NON_HASHED = new byte[] {
+        -55
+    };
+
 }

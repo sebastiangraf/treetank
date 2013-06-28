@@ -221,6 +221,8 @@ public class BackendWriterProxy implements IBackendReader {
         @Override
         public Void call() throws Exception {
 
+            
+            
             // Manuel dereferencation starts here...
             LogKey current = new LogKey(true, 0, 0);
             
