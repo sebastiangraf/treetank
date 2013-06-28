@@ -16,6 +16,8 @@ import org.jclouds.Constants;
 import org.jclouds.filesystem.reference.FilesystemConstants;
 import org.treetank.exception.TTIOException;
 
+import com.google.common.hash.HashFunction;
+import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
 
 /**
@@ -30,6 +32,8 @@ public class StandardSettings {
         'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k', 'k'
     };
     public static final Key KEY = new SecretKeySpec(keyValue, "AES");
+    public static final HashFunction HASHFUNC = Hashing.sha512();
+    
 
     public static Properties getProps(final String pathToStorage, final String resource) throws TTIOException {
         Properties properties = new Properties();

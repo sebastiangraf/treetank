@@ -18,8 +18,6 @@ import org.treetank.bucket.interfaces.IBucket;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 
-import com.google.common.hash.Hashing;
-
 /**
  * This class encapsulates the access to the persistent backend for writing purposes and combines it with a
  * transaction log.
@@ -223,7 +221,12 @@ public class BackendWriterProxy implements IBackendReader {
         @Override
         public Void call() throws Exception {
 
-            Hashing.md5();
+            // Manuel dereferencation starts here...
+            LogKey current = new LogKey(true, 0, 0);
+            
+            
+            
+            
 
             // iterating over all data
             final Iterator<LogValue> entries = mFormerLog.getIterator();

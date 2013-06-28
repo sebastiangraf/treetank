@@ -66,8 +66,6 @@ import org.treetank.io.IBackendReader;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.hash.HashCode;
-import com.google.common.hash.HashFunction;
-import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
 
 /**
@@ -83,7 +81,6 @@ import com.google.common.io.Files;
 public final class CoreTestHelper {
 
     public static final String RESOURCENAME = "grave928134589762";
-    public static final HashFunction HASHFUNC = Hashing.sha512();
 
     /** Paths where the data is stored to. */
     public enum PATHS {
@@ -494,7 +491,8 @@ public final class CoreTestHelper {
     }
 
     public static final HashCode generateRandomHash() {
-        HashCode code = CoreTestHelper.HASHFUNC.newHasher().putLong(CoreTestHelper.random.nextLong()).hash();
+        HashCode code =
+            StandardSettings.HASHFUNC.newHasher().putLong(CoreTestHelper.random.nextLong()).hash();
         return code;
     }
 
