@@ -408,6 +408,9 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
                 container = new LogValue(newBucket, newBucket);
             }
             ((IndirectBucket)indirectContainer.getModified()).setReferenceKey(nodeOffset, newBucketKey);
+            ((IndirectBucket)indirectContainer.getModified()).setReferenceHash(nodeOffset, new byte[] {
+                IConstants.NULL_NODE
+            });
             mBucketWriter.put(indirectKey, indirectContainer);
             mBucketWriter.put(key, container);
         }
@@ -486,6 +489,9 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
                 if (oldBucket != null) {
                     for (int i = 0; i < oldBucket.getReferenceKeys().length; i++) {
                         bucket.setReferenceKey(i, oldBucket.getReferenceKeys()[i]);
+                        bucket.setReferenceHash(i, new byte[] {
+                            IConstants.NULL_NODE
+                        });
                     }
                 }
 
@@ -524,6 +530,9 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
                 .getBucketCounter() + 1);
         mNewUber.setReferenceKey(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET,
             pUberOld.getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET]);
+        mNewUber.setReferenceHash(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET, new byte[] {
+            IConstants.NULL_NODE
+        });
 
         // Prepare indirect tree to hold reference to prepared revision root
         // nodeBucketReference.
@@ -538,9 +547,17 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
                 .getMaxNodeKey());
         mNewRoot.setReferenceKey(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET, pRootToRepresent
             .getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET]);
+        mNewRoot.setReferenceHash(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET, new byte[] {
+            IConstants.NULL_NODE
+        });
 
         // setting the new revRoot to the correct offset
         ((IndirectBucket)indirectContainer.getModified()).setReferenceKey(offset, mNewRoot.getBucketKey());
+        ((IndirectBucket)indirectContainer.getModified()).setReferenceHash(
+            IReferenceBucket.GUARANTEED_INDIRECT_OFFSET, new byte[] {
+                IConstants.NULL_NODE
+            });
+
         mBucketWriter.put(indirectKey, indirectContainer);
 
         // Setting up a new metabucket and link it to the new root
@@ -550,6 +567,9 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
             mNewMeta.put(clone(key.getKey()), clone(key.getValue()));
         }
         mNewRoot.setReferenceKey(RevisionRootBucket.META_REFERENCE_OFFSET, mNewMeta.getBucketKey());
+        mNewRoot.setReferenceHash(RevisionRootBucket.META_REFERENCE_OFFSET, new byte[] {
+            IConstants.NULL_NODE
+        });
 
     }
 
