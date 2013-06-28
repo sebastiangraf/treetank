@@ -32,7 +32,6 @@ import static com.google.common.base.Objects.toStringHelper;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -69,31 +68,60 @@ public final class MetaBucket implements IBucket {
         mBucketKey = pBucketKey;
     }
 
-    // /**
-    // * Get name map.
-    // *
-    // * @return name map
-    // */
-    // public Map<IMetaEntry, IMetaEntry> getMetaMap() {
-    // return mMetaMap;
-    // }
-
+    /**
+     * Putting an entry to the map.
+     * 
+     * @param pKey
+     *            to be stored.
+     * @param pVal
+     *            to be stored.
+     * @return if entry already existing, return that one.
+     * @see ConcurrentHashMap#put(Object, Object)
+     */
     public IMetaEntry put(final IMetaEntry pKey, final IMetaEntry pVal) {
         return mMetaMap.put(pKey, pVal);
     }
 
+    /**
+     * Getting an entry.
+     * 
+     * @param pKey
+     *            to be retrieved
+     * @return the suitable value, if present. Null otherwise
+     * @see ConcurrentHashMap#get(Object)
+     */
     public IMetaEntry get(final IMetaEntry pKey) {
         return mMetaMap.get(pKey);
     }
 
+    /**
+     * Getting the size.
+     * 
+     * @return the number of entries in this bucket
+     * @see ConcurrentHashMap#size()
+     */
     public int size() {
         return mMetaMap.size();
     }
 
+    /**
+     * Getting the entry set of the bucket.
+     * 
+     * @return the entry set of this bucket
+     * @see ConcurrentHashMap#entrySet()
+     */
     public Set<Map.Entry<IMetaEntry, IMetaEntry>> entrySet() {
         return mMetaMap.entrySet();
     }
 
+    /**
+     * Removing an element within this bucket
+     * 
+     * @param pKey
+     *            to be removed
+     * @return the element removed, null otherwise
+     * @see ConcurrentHashMap#remove(Object)
+     */
     public IMetaEntry remove(final IMetaEntry pKey) {
         return mMetaMap.remove(pKey);
     }
@@ -137,7 +165,11 @@ public final class MetaBucket implements IBucket {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(mBucketKey, mMetaMap);
+        final int prime = 42677;
+        int result = 1;
+        result = prime * result + (int)(mBucketKey ^ (mBucketKey >>> 32));
+        result = prime * result + ((mMetaMap == null) ? 0 : mMetaMap.hashCode());
+        return result;
     }
 
     /**
@@ -145,7 +177,7 @@ public final class MetaBucket implements IBucket {
      */
     @Override
     public boolean equals(Object obj) {
-        return this.hashCode() == obj.hashCode();
+      return obj.hashCode()==this.hashCode();
     }
 
 }

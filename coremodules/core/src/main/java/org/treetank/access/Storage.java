@@ -351,6 +351,7 @@ public final class Storage implements IStorage {
         UberBucket uberBucket = new UberBucket(1, 0, 1);
         long newBucketKey = uberBucket.incrementBucketCounter();
         uberBucket.setReferenceKey(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET, newBucketKey);
+        uberBucket.setReferenceHash(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET, IConstants.NON_HASHED);
 
         // --- Create revision tree
         // ------------------------------------------------
@@ -363,6 +364,7 @@ public final class Storage implements IStorage {
             bucket = new IndirectBucket(newBucketKey);
             newBucketKey = uberBucket.incrementBucketCounter();
             bucket.setReferenceKey(0, newBucketKey);
+            bucket.setReferenceHash(0, IConstants.NON_HASHED);
             key = new LogKey(true, i, 0);
             writer.put(key, new LogValue(bucket, bucket));
         }
@@ -373,10 +375,12 @@ public final class Storage implements IStorage {
         // establishing fresh MetaBucket
         MetaBucket metaBucker = new MetaBucket(newBucketKey);
         revBucket.setReferenceKey(RevisionRootBucket.META_REFERENCE_OFFSET, newBucketKey);
+        revBucket.setReferenceHash(RevisionRootBucket.META_REFERENCE_OFFSET, IConstants.NON_HASHED);
 
         newBucketKey = uberBucket.incrementBucketCounter();
         IndirectBucket indirectBucket = new IndirectBucket(newBucketKey);
         revBucket.setReferenceKey(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET, newBucketKey);
+        revBucket.setReferenceHash(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET, IConstants.NON_HASHED);
 
         // --- Create node tree
         // ----------------------------------------------------
@@ -389,6 +393,7 @@ public final class Storage implements IStorage {
         for (int i = 0; i < IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length; i++) {
             newBucketKey = uberBucket.incrementBucketCounter();
             bucket.setReferenceKey(0, newBucketKey);
+            bucket.setReferenceHash(0, IConstants.NON_HASHED);
             key = new LogKey(false, i, 0);
             writer.put(key, new LogValue(bucket, bucket));
             bucket = new IndirectBucket(newBucketKey);

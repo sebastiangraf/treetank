@@ -189,8 +189,9 @@ public class BackendWriterProxy implements IBackendReader {
 
     /**
      * Persistence-task to be performed within a commit.
+     * 
      * @author Sebasitan Graf, University of Konstanz
-     *
+     * 
      */
     class CommitCallable implements Callable<Void> {
 
@@ -200,9 +201,13 @@ public class BackendWriterProxy implements IBackendReader {
 
         /**
          * Constructor.
-         * @param pUber to persist
-         * @param pRoot to persist
-         * @param pMeta to persist
+         * 
+         * @param pUber
+         *            to persist
+         * @param pRoot
+         *            to persist
+         * @param pMeta
+         *            to persist
          */
         CommitCallable(final UberBucket pUber, final RevisionRootBucket pRoot, final MetaBucket pMeta) {
             mUber = pUber;
@@ -215,6 +220,16 @@ public class BackendWriterProxy implements IBackendReader {
          */
         @Override
         public Void call() throws Exception {
+
+            
+            
+            // Manuel dereferencation starts here...
+            LogKey current = new LogKey(true, 0, 0);
+            
+            
+            
+            
+
             // iterating over all data
             final Iterator<LogValue> entries = mFormerLog.getIterator();
             while (entries.hasNext()) {

@@ -63,7 +63,7 @@ public class IBackendTest {
             backendWriter.writeUberBucket(bucket1);
             final UberBucket bucket2 = backendWriter.readUber();
             assertEquals(new StringBuilder("Check for ").append(backend.getClass()).append(" failed.")
-                .toString(), bucket1, bucket2);
+                .toString(), bucket1.hashCode(), bucket2.hashCode());
             backendWriter.close();
 
             // new instance check
@@ -224,6 +224,7 @@ public class IBackendTest {
             IndirectBucket returnVal = new IndirectBucket(pKey);
             for (int i = 0; i < IConstants.CONTENT_COUNT; i++) {
                 returnVal.setReferenceKey(i, CoreTestHelper.random.nextLong());
+                returnVal.setReferenceHash(i, CoreTestHelper.generateRandomHash().asBytes());
             }
             return returnVal;
         } else if (whichBucketPage < 0.4) {
@@ -244,12 +245,15 @@ public class IBackendTest {
                 new RevisionRootBucket(pKey, CoreTestHelper.random.nextLong(), CoreTestHelper.random
                     .nextLong());
             returnVal.setReferenceKey(0, CoreTestHelper.random.nextLong());
+            returnVal.setReferenceHash(0, CoreTestHelper.generateRandomHash().asBytes());
             returnVal.setReferenceKey(1, CoreTestHelper.random.nextLong());
+            returnVal.setReferenceHash(1, CoreTestHelper.generateRandomHash().asBytes());
             return returnVal;
         } else {
             UberBucket returnVal =
                 new UberBucket(pKey, CoreTestHelper.random.nextLong(), CoreTestHelper.random.nextLong());
             returnVal.setReferenceKey(0, CoreTestHelper.random.nextLong());
+            returnVal.setReferenceHash(0, CoreTestHelper.generateRandomHash().asBytes());
             return returnVal;
         }
 
