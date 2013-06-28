@@ -234,19 +234,6 @@ public final class NodeBucket implements IBucket {
      */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        NodeBucket other = (NodeBucket)obj;
-        if (mLastBucketKey != other.mLastBucketKey)
-            return false;
-        if (!Arrays.equals(mNodes, other.mNodes))
-            return false;
-        if (mBucketKey != other.mBucketKey)
-            return false;
-        return true;
+      return obj.hashCode()==this.hashCode();
     }
 }

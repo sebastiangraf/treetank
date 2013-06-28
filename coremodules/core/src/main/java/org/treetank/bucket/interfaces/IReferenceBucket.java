@@ -3,8 +3,6 @@
  */
 package org.treetank.bucket.interfaces;
 
-import com.google.common.hash.HashCode;
-
 /**
  * Interface denoting all buckets holding references to other buckets.
  * The references are represented by the keys of the serialized storage.
@@ -39,7 +37,7 @@ public interface IReferenceBucket extends IBucket {
      * 
      * @return an array of checksums from the referenced buckets
      */
-    HashCode[] getReferenceHashs();
+    byte[][] getReferenceHashs();
 
     /**
      * Setting the hash of a referenced bucket to this bucket.
@@ -49,6 +47,6 @@ public interface IReferenceBucket extends IBucket {
      * @param pHash
      *            to be stored in
      */
-    void setReferenceHash(int pIndex, HashCode pHash);
+    void setReferenceHash(int pIndex, byte[] pHash);
 
 }

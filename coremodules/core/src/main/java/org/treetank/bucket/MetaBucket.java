@@ -177,21 +177,7 @@ public final class MetaBucket implements IBucket {
      */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        MetaBucket other = (MetaBucket)obj;
-        if (mBucketKey != other.mBucketKey)
-            return false;
-        if (mMetaMap == null) {
-            if (other.mMetaMap != null)
-                return false;
-        } else if (!mMetaMap.equals(other.mMetaMap))
-            return false;
-        return true;
+      return obj.hashCode()==this.hashCode();
     }
 
 }

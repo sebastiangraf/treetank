@@ -81,6 +81,7 @@ public final class BucketFactory {
     public IBucket deserializeBucket(final DataInput pInput) throws TTIOException {
         try {
             final int kind = pInput.readInt();
+            byte[] hash;
             switch (kind) {
             case IConstants.NODEBUCKET:
                 NodeBucket nodeBucket = new NodeBucket(pInput.readLong(), pInput.readLong());
@@ -110,11 +111,19 @@ public final class BucketFactory {
                 UberBucket uberBucket =
                     new UberBucket(pInput.readLong(), pInput.readLong(), pInput.readLong());
                 uberBucket.setReferenceKey(0, pInput.readLong());
+                hash = new byte[pInput.readInt()];
+                pInput.readFully(hash);
+                uberBucket.setReferenceHash(0, hash);
                 return uberBucket;
             case IConstants.INDIRCTBUCKET:
                 IndirectBucket indirectBucket = new IndirectBucket(pInput.readLong());
                 for (int offset = 0; offset < indirectBucket.getReferenceKeys().length; offset++) {
                     indirectBucket.setReferenceKey(offset, pInput.readLong());
+                }
+                for (int offset = 0; offset < indirectBucket.getReferenceHashs().length; offset++) {
+                    hash = new byte[pInput.readInt()];
+                    pInput.readFully(hash);
+                    indirectBucket.setReferenceHash(offset, hash);
                 }
                 return indirectBucket;
             case IConstants.REVISIONROOTBUCKET:
@@ -122,6 +131,11 @@ public final class BucketFactory {
                     new RevisionRootBucket(pInput.readLong(), pInput.readLong(), pInput.readLong());
                 for (int offset = 0; offset < revRootBucket.getReferenceKeys().length; offset++) {
                     revRootBucket.setReferenceKey(offset, pInput.readLong());
+                }
+                for (int offset = 0; offset < revRootBucket.getReferenceHashs().length; offset++) {
+                    hash = new byte[pInput.readInt()];
+                    pInput.readFully(hash);
+                    revRootBucket.setReferenceHash(offset, hash);
                 }
                 return revRootBucket;
             default:

@@ -35,10 +35,17 @@ import org.treetank.io.bytepipe.Zipper;
 import org.treetank.io.combined.CombinedStorage;
 import org.treetank.io.jclouds.JCloudsStorage;
 
+import com.google.common.base.Objects;
+import com.google.common.hash.HashCode;
+import com.google.common.hash.HashFunction;
+import com.google.common.hash.Hashing;
+
 public class IBackendTest {
 
     private ByteHandlerPipeline handler = new ByteHandlerPipeline(new Encryptor(StandardSettings.KEY),
         new Zipper());
+
+    private final static HashFunction hashFunc = Hashing.sha512();
 
     @AfterMethod
     public void tearDown() {
@@ -63,7 +70,7 @@ public class IBackendTest {
             backendWriter.writeUberBucket(bucket1);
             final UberBucket bucket2 = backendWriter.readUber();
             assertEquals(new StringBuilder("Check for ").append(backend.getClass()).append(" failed.")
-                .toString(), bucket1, bucket2);
+                .toString(), bucket1.hashCode(), bucket2.hashCode());
             backendWriter.close();
 
             // new instance check
@@ -224,6 +231,7 @@ public class IBackendTest {
             IndirectBucket returnVal = new IndirectBucket(pKey);
             for (int i = 0; i < IConstants.CONTENT_COUNT; i++) {
                 returnVal.setReferenceKey(i, CoreTestHelper.random.nextLong());
+                returnVal.setReferenceHash(i, generateRandomHash().asBytes());
             }
             return returnVal;
         } else if (whichBucketPage < 0.4) {
@@ -244,15 +252,23 @@ public class IBackendTest {
                 new RevisionRootBucket(pKey, CoreTestHelper.random.nextLong(), CoreTestHelper.random
                     .nextLong());
             returnVal.setReferenceKey(0, CoreTestHelper.random.nextLong());
+            returnVal.setReferenceHash(0, generateRandomHash().asBytes());
             returnVal.setReferenceKey(1, CoreTestHelper.random.nextLong());
+            returnVal.setReferenceHash(1, generateRandomHash().asBytes());
             return returnVal;
         } else {
             UberBucket returnVal =
                 new UberBucket(pKey, CoreTestHelper.random.nextLong(), CoreTestHelper.random.nextLong());
             returnVal.setReferenceKey(0, CoreTestHelper.random.nextLong());
+            returnVal.setReferenceHash(0, generateRandomHash().asBytes());
             return returnVal;
         }
 
+    }
+
+    private static HashCode generateRandomHash() {
+        HashCode code = hashFunc.newHasher().putLong(CoreTestHelper.random.nextLong()).hash();
+        return code;
     }
 
     interface IBackendCreator {

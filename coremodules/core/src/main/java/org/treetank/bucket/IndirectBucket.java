@@ -36,8 +36,6 @@ import java.util.Arrays;
 import org.treetank.bucket.interfaces.IReferenceBucket;
 import org.treetank.exception.TTIOException;
 
-import com.google.common.hash.HashCode;
-
 /**
  * <h1>IndirectBucket</h1>
  * 
@@ -53,7 +51,7 @@ public final class IndirectBucket implements IReferenceBucket {
     /** Reference keys. */
     private final long[] mReferenceKeys;
 
-    private final HashCode[] mReferenceHashs;
+    private final byte[][] mReferenceHashs;
 
     /** Key of this bucket. */
     private final long mBucketKey;
@@ -67,7 +65,8 @@ public final class IndirectBucket implements IReferenceBucket {
     public IndirectBucket(final long pBucketKey) {
         mBucketKey = pBucketKey;
         mReferenceKeys = new long[IConstants.CONTENT_COUNT];
-        mReferenceHashs = new HashCode[IConstants.CONTENT_COUNT];
+        mReferenceHashs = new byte[IConstants.CONTENT_COUNT][];
+        Arrays.fill(mReferenceHashs, new byte[0]);
     }
 
     /**
@@ -80,6 +79,10 @@ public final class IndirectBucket implements IReferenceBucket {
             pOutput.writeLong(mBucketKey);
             for (long key : mReferenceKeys) {
                 pOutput.writeLong(key);
+            }
+            for (byte[] hash : mReferenceHashs) {
+                pOutput.writeInt(hash.length);
+                pOutput.write(hash);
             }
         } catch (final IOException exc) {
             throw new TTIOException(exc);
@@ -116,14 +119,15 @@ public final class IndirectBucket implements IReferenceBucket {
     @Override
     public String toString() {
         return toStringHelper(this).add("mBucketKey", mBucketKey).add("mReferenceKeys",
-            Arrays.toString(mReferenceKeys)).toString();
+            Arrays.toString(mReferenceKeys)).add("mReferenceHashs", Arrays.toString(mReferenceHashs))
+            .toString();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public HashCode[] getReferenceHashs() {
+    public byte[][] getReferenceHashs() {
         return mReferenceHashs;
     }
 
@@ -131,7 +135,7 @@ public final class IndirectBucket implements IReferenceBucket {
      * {@inheritDoc}
      */
     @Override
-    public void setReferenceHash(int pIndex, HashCode pHash) {
+    public void setReferenceHash(int pIndex, byte[] pHash) {
         mReferenceHashs[pIndex] = pHash;
     }
 
@@ -143,8 +147,10 @@ public final class IndirectBucket implements IReferenceBucket {
         final int prime = 81551;
         int result = 1;
         result = prime * result + (int)(mBucketKey ^ (mBucketKey >>> 32));
-        result = prime * result + Arrays.hashCode(mReferenceHashs);
         result = prime * result + Arrays.hashCode(mReferenceKeys);
+        for(byte[] hash : mReferenceHashs) {
+            result = prime * result + Arrays.hashCode(hash);    
+        }
         return result;
     }
 
@@ -153,20 +159,7 @@ public final class IndirectBucket implements IReferenceBucket {
      */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        IndirectBucket other = (IndirectBucket)obj;
-        if (mBucketKey != other.mBucketKey)
-            return false;
-        if (!Arrays.equals(mReferenceHashs, other.mReferenceHashs))
-            return false;
-        if (!Arrays.equals(mReferenceKeys, other.mReferenceKeys))
-            return false;
-        return true;
+      return obj.hashCode()==this.hashCode();
     }
 
 }

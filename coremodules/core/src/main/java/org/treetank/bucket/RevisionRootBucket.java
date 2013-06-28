@@ -37,8 +37,6 @@ import org.treetank.bucket.interfaces.IReferenceBucket;
 import org.treetank.bucket.interfaces.IRevisionBucket;
 import org.treetank.exception.TTIOException;
 
-import com.google.common.hash.HashCode;
-
 /**
  * <h1>RevisionRootBucket</h1>
  * 
@@ -64,7 +62,7 @@ public final class RevisionRootBucket implements IRevisionBucket, IReferenceBuck
     private final long[] mReferenceKeys;
 
     /** Hashcode of keys. */
-    private final HashCode[] mReferenceHashs;
+    private final byte[][] mReferenceHashs;
 
     /** Key of this bucket. */
     private final long mBucketKey;
@@ -82,7 +80,8 @@ public final class RevisionRootBucket implements IRevisionBucket, IReferenceBuck
     public RevisionRootBucket(final long pBucketKey, final long pRevision, final long pMaxNodeKey) {
         mRevision = pRevision;
         mReferenceKeys = new long[2];
-        mReferenceHashs = new HashCode[2];
+        mReferenceHashs = new byte[2][];
+        Arrays.fill(mReferenceHashs, new byte[0]);
         mMaxNodeKey = pMaxNodeKey;
         mBucketKey = pBucketKey;
     }
@@ -124,6 +123,10 @@ public final class RevisionRootBucket implements IRevisionBucket, IReferenceBuck
             for (long key : mReferenceKeys) {
                 pOutput.writeLong(key);
             }
+            for (byte[] hash : mReferenceHashs) {
+                pOutput.writeInt(hash.length);
+                pOutput.write(hash);
+            }
         } catch (final IOException exc) {
             throw new TTIOException(exc);
         }
@@ -159,14 +162,15 @@ public final class RevisionRootBucket implements IRevisionBucket, IReferenceBuck
     @Override
     public String toString() {
         return toStringHelper(this).add("mBucketKey", mBucketKey).add("mRevision", mRevision).add(
-            "mMaxNodeKey", mMaxNodeKey).add("mReferenceKeys", Arrays.toString(mReferenceKeys)).toString();
+            "mMaxNodeKey", mMaxNodeKey).add("mReferenceKeys", Arrays.toString(mReferenceKeys)).add(
+            "mReferenceHashs", Arrays.toString(mReferenceHashs)).toString();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public HashCode[] getReferenceHashs() {
+    public byte[][] getReferenceHashs() {
         return mReferenceHashs;
     }
 
@@ -174,7 +178,7 @@ public final class RevisionRootBucket implements IRevisionBucket, IReferenceBuck
      * {@inheritDoc}
      */
     @Override
-    public void setReferenceHash(int pIndex, HashCode pHash) {
+    public void setReferenceHash(int pIndex, byte[] pHash) {
         mReferenceHashs[pIndex] = pHash;
     }
 
@@ -187,8 +191,10 @@ public final class RevisionRootBucket implements IRevisionBucket, IReferenceBuck
         int result = 1;
         result = prime * result + (int)(mBucketKey ^ (mBucketKey >>> 32));
         result = prime * result + (int)(mMaxNodeKey ^ (mMaxNodeKey >>> 32));
-        result = prime * result + Arrays.hashCode(mReferenceHashs);
         result = prime * result + Arrays.hashCode(mReferenceKeys);
+        for (byte[] hash : mReferenceHashs) {
+            result = prime * result + Arrays.hashCode(hash);
+        }
         result = prime * result + (int)(mRevision ^ (mRevision >>> 32));
         return result;
     }
@@ -198,24 +204,7 @@ public final class RevisionRootBucket implements IRevisionBucket, IReferenceBuck
      */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        RevisionRootBucket other = (RevisionRootBucket)obj;
-        if (mBucketKey != other.mBucketKey)
-            return false;
-        if (mMaxNodeKey != other.mMaxNodeKey)
-            return false;
-        if (!Arrays.equals(mReferenceHashs, other.mReferenceHashs))
-            return false;
-        if (!Arrays.equals(mReferenceKeys, other.mReferenceKeys))
-            return false;
-        if (mRevision != other.mRevision)
-            return false;
-        return true;
+      return obj.hashCode()==this.hashCode();
     }
 
 }
