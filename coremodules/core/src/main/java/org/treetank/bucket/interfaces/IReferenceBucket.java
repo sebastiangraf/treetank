@@ -32,4 +32,21 @@ public interface IReferenceBucket extends IBucket {
      */
     void setReferenceKey(int pIndex, long pKey);
 
+    /**
+     * Getting the HashValues mapped to the references guarding the integrity of the referenced buckets.
+     * 
+     * @return an array of checksums from the referenced buckets
+     */
+//    int[] getReferenceHashs();
+
+    /**
+     * Setting the hash of a referenced bucket to this bucket.
+     * 
+     * @param pIndex
+     *            where the hash should be applied to
+     * @param pHash
+     *            to be stored in
+     */
+//    void setReferenceHash(int pIndex, int pHash);
+
 }

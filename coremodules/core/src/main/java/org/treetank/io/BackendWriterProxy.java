@@ -18,6 +18,8 @@ import org.treetank.bucket.interfaces.IBucket;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 
+import com.google.common.hash.Hashing;
+
 /**
  * This class encapsulates the access to the persistent backend for writing purposes and combines it with a
  * transaction log.
@@ -189,8 +191,9 @@ public class BackendWriterProxy implements IBackendReader {
 
     /**
      * Persistence-task to be performed within a commit.
+     * 
      * @author Sebasitan Graf, University of Konstanz
-     *
+     * 
      */
     class CommitCallable implements Callable<Void> {
 
@@ -200,9 +203,13 @@ public class BackendWriterProxy implements IBackendReader {
 
         /**
          * Constructor.
-         * @param pUber to persist
-         * @param pRoot to persist
-         * @param pMeta to persist
+         * 
+         * @param pUber
+         *            to persist
+         * @param pRoot
+         *            to persist
+         * @param pMeta
+         *            to persist
          */
         CommitCallable(final UberBucket pUber, final RevisionRootBucket pRoot, final MetaBucket pMeta) {
             mUber = pUber;
@@ -215,6 +222,9 @@ public class BackendWriterProxy implements IBackendReader {
          */
         @Override
         public Void call() throws Exception {
+
+            Hashing.md5();
+
             // iterating over all data
             final Iterator<LogValue> entries = mFormerLog.getIterator();
             while (entries.hasNext()) {
