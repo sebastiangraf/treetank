@@ -35,7 +35,6 @@ import org.treetank.io.bytepipe.Zipper;
 import org.treetank.io.combined.CombinedStorage;
 import org.treetank.io.jclouds.JCloudsStorage;
 
-import com.google.common.base.Objects;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
@@ -103,7 +102,6 @@ public class IBackendTest {
             final IBackendWriter backendWriter = backend.getWriter();
             for (Long i : buckets.keySet()) {
                 // same instance check
-                backendWriter.write(buckets.get(i));
                 final IBucket bucket2 = backendWriter.read(i);
                 assertEquals(new StringBuilder("Check for ").append(backend.getClass()).append(
                     " failed on index ").append(i).toString(), buckets.get(i), bucket2);
