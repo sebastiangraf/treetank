@@ -32,11 +32,12 @@ import static com.google.common.base.Objects.toStringHelper;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Objects;
 
 import org.treetank.bucket.interfaces.IReferenceBucket;
 import org.treetank.bucket.interfaces.IRevisionBucket;
 import org.treetank.exception.TTIOException;
+
+import com.google.common.hash.HashCode;
 
 /**
  * <h1>RevisionRootBucket</h1>
@@ -62,6 +63,9 @@ public final class RevisionRootBucket implements IRevisionBucket, IReferenceBuck
     /** Reference keys. */
     private final long[] mReferenceKeys;
 
+    /** Hashcode of keys. */
+    private final HashCode[] mReferenceHashs;
+
     /** Key of this bucket. */
     private final long mBucketKey;
 
@@ -78,6 +82,7 @@ public final class RevisionRootBucket implements IRevisionBucket, IReferenceBuck
     public RevisionRootBucket(final long pBucketKey, final long pRevision, final long pMaxNodeKey) {
         mRevision = pRevision;
         mReferenceKeys = new long[2];
+        mReferenceHashs = new HashCode[2];
         mMaxNodeKey = pMaxNodeKey;
         mBucketKey = pBucketKey;
     }
@@ -161,8 +166,31 @@ public final class RevisionRootBucket implements IRevisionBucket, IReferenceBuck
      * {@inheritDoc}
      */
     @Override
+    public HashCode[] getReferenceHashs() {
+        return mReferenceHashs;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setReferenceHash(int pIndex, HashCode pHash) {
+        mReferenceHashs[pIndex] = pHash;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public int hashCode() {
-        return Objects.hash(mBucketKey, mRevision, Arrays.hashCode(mReferenceKeys), mMaxNodeKey);
+        final int prime = 53623;
+        int result = 1;
+        result = prime * result + (int)(mBucketKey ^ (mBucketKey >>> 32));
+        result = prime * result + (int)(mMaxNodeKey ^ (mMaxNodeKey >>> 32));
+        result = prime * result + Arrays.hashCode(mReferenceHashs);
+        result = prime * result + Arrays.hashCode(mReferenceKeys);
+        result = prime * result + (int)(mRevision ^ (mRevision >>> 32));
+        return result;
     }
 
     /**
@@ -170,7 +198,24 @@ public final class RevisionRootBucket implements IRevisionBucket, IReferenceBuck
      */
     @Override
     public boolean equals(Object obj) {
-        return this.hashCode() == obj.hashCode();
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        RevisionRootBucket other = (RevisionRootBucket)obj;
+        if (mBucketKey != other.mBucketKey)
+            return false;
+        if (mMaxNodeKey != other.mMaxNodeKey)
+            return false;
+        if (!Arrays.equals(mReferenceHashs, other.mReferenceHashs))
+            return false;
+        if (!Arrays.equals(mReferenceKeys, other.mReferenceKeys))
+            return false;
+        if (mRevision != other.mRevision)
+            return false;
+        return true;
     }
 
 }

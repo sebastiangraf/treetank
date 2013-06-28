@@ -221,7 +221,7 @@ public final class NodeBucket implements IBucket {
      */
     @Override
     public int hashCode() {
-        final int prime = 31;
+        final int prime = 26267;
         int result = 1;
         result = prime * result + (int)(mLastBucketKey ^ (mLastBucketKey >>> 32));
         result = prime * result + Arrays.hashCode(mNodes);

@@ -32,10 +32,11 @@ import static com.google.common.base.Objects.toStringHelper;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Objects;
 
 import org.treetank.bucket.interfaces.IReferenceBucket;
 import org.treetank.exception.TTIOException;
+
+import com.google.common.hash.HashCode;
 
 /**
  * <h1>UberBucket</h1>
@@ -54,6 +55,9 @@ public final class UberBucket implements IReferenceBucket {
 
     /** Reference key for first indirect bucket. */
     private final long mReferenceKeys[];
+
+    /** Referenced hashcodes for keys. */
+    private final HashCode mReferenceHashs[];
 
     /** Key of this UberBucket. */
     private final long mBucketKey;
@@ -74,6 +78,7 @@ public final class UberBucket implements IReferenceBucket {
     public UberBucket(final long pBucketKey, final long pRevisionCount, final long pBucketCounter) {
         mRevisionCount = pRevisionCount;
         mReferenceKeys = new long[1];
+        mReferenceHashs = new HashCode[1];
         mBucketKey = pBucketKey;
         mBucketCounter = pBucketCounter;
     }
@@ -160,8 +165,31 @@ public final class UberBucket implements IReferenceBucket {
      * {@inheritDoc}
      */
     @Override
+    public HashCode[] getReferenceHashs() {
+        return mReferenceHashs;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setReferenceHash(int pIndex, HashCode pHash) {
+        mReferenceHashs[pIndex] = pHash;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public int hashCode() {
-        return Objects.hash(mBucketKey, mBucketCounter, Arrays.hashCode(mReferenceKeys));
+        final int prime = 17207;
+        int result = 1;
+        result = prime * result + (int)(mBucketCounter ^ (mBucketCounter >>> 32));
+        result = prime * result + (int)(mBucketKey ^ (mBucketKey >>> 32));
+        result = prime * result + Arrays.hashCode(mReferenceHashs);
+        result = prime * result + Arrays.hashCode(mReferenceKeys);
+        result = prime * result + (int)(mRevisionCount ^ (mRevisionCount >>> 32));
+        return result;
     }
 
     /**
@@ -169,7 +197,24 @@ public final class UberBucket implements IReferenceBucket {
      */
     @Override
     public boolean equals(Object obj) {
-        return this.hashCode() == obj.hashCode();
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        UberBucket other = (UberBucket)obj;
+        if (mBucketCounter != other.mBucketCounter)
+            return false;
+        if (mBucketKey != other.mBucketKey)
+            return false;
+        if (!Arrays.equals(mReferenceHashs, other.mReferenceHashs))
+            return false;
+        if (!Arrays.equals(mReferenceKeys, other.mReferenceKeys))
+            return false;
+        if (mRevisionCount != other.mRevisionCount)
+            return false;
+        return true;
     }
 
 }

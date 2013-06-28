@@ -32,10 +32,11 @@ import static com.google.common.base.Objects.toStringHelper;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Objects;
 
 import org.treetank.bucket.interfaces.IReferenceBucket;
 import org.treetank.exception.TTIOException;
+
+import com.google.common.hash.HashCode;
 
 /**
  * <h1>IndirectBucket</h1>
@@ -52,6 +53,8 @@ public final class IndirectBucket implements IReferenceBucket {
     /** Reference keys. */
     private final long[] mReferenceKeys;
 
+    private final HashCode[] mReferenceHashs;
+
     /** Key of this bucket. */
     private final long mBucketKey;
 
@@ -64,6 +67,7 @@ public final class IndirectBucket implements IReferenceBucket {
     public IndirectBucket(final long pBucketKey) {
         mBucketKey = pBucketKey;
         mReferenceKeys = new long[IConstants.CONTENT_COUNT];
+        mReferenceHashs = new HashCode[IConstants.CONTENT_COUNT];
     }
 
     /**
@@ -119,8 +123,29 @@ public final class IndirectBucket implements IReferenceBucket {
      * {@inheritDoc}
      */
     @Override
+    public HashCode[] getReferenceHashs() {
+        return mReferenceHashs;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setReferenceHash(int pIndex, HashCode pHash) {
+        mReferenceHashs[pIndex] = pHash;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public int hashCode() {
-        return Objects.hash(mBucketKey, Arrays.hashCode(mReferenceKeys));
+        final int prime = 81551;
+        int result = 1;
+        result = prime * result + (int)(mBucketKey ^ (mBucketKey >>> 32));
+        result = prime * result + Arrays.hashCode(mReferenceHashs);
+        result = prime * result + Arrays.hashCode(mReferenceKeys);
+        return result;
     }
 
     /**
@@ -128,7 +153,20 @@ public final class IndirectBucket implements IReferenceBucket {
      */
     @Override
     public boolean equals(Object obj) {
-        return this.hashCode() == obj.hashCode();
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        IndirectBucket other = (IndirectBucket)obj;
+        if (mBucketKey != other.mBucketKey)
+            return false;
+        if (!Arrays.equals(mReferenceHashs, other.mReferenceHashs))
+            return false;
+        if (!Arrays.equals(mReferenceKeys, other.mReferenceKeys))
+            return false;
+        return true;
     }
 
 }
