@@ -2,6 +2,7 @@ package org.treetank.io;
 
 import java.io.File;
 import java.util.Iterator;
+import java.util.Stack;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -11,10 +12,12 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.javax.annotation.Nullable;
 import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;
+import org.treetank.bucket.IConstants;
 import org.treetank.bucket.MetaBucket;
 import org.treetank.bucket.RevisionRootBucket;
 import org.treetank.bucket.UberBucket;
 import org.treetank.bucket.interfaces.IBucket;
+import org.treetank.bucket.interfaces.IReferenceBucket;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 
@@ -221,14 +224,21 @@ public class BackendWriterProxy implements IBackendReader {
         @Override
         public Void call() throws Exception {
 
-            
-            
+            IReferenceBucket currentBuck = mRoot;
+
+            final Stack<LogKey> mRightSiblings = new Stack<LogKey>();
+            int currentSeqKey = -1;
+            // Starting with RevRootBucket
+            for (int i = 0; i < IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length; i++) {
+                for (byte[] hashes : currentBuck.getReferenceHashs()) {
+                    if (hashes == IConstants.NON_HASHED) {
+                        // mRightSiblings.push(new LogKey(false, ));
+                    }
+                }
+            }
+
             // Manuel dereferencation starts here...
             LogKey current = new LogKey(true, 0, 0);
-            
-            
-            
-            
 
             // iterating over all data
             final Iterator<LogValue> entries = mFormerLog.getIterator();
@@ -242,7 +252,6 @@ public class BackendWriterProxy implements IBackendReader {
             mWriter.writeUberBucket(mUber);
             return null;
         }
-
     }
 
 }
