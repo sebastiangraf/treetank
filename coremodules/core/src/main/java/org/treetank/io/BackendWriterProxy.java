@@ -1,5 +1,7 @@
 package org.treetank.io;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import java.io.File;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -15,6 +17,7 @@ import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;
 import org.treetank.bucket.IConstants;
 import org.treetank.bucket.MetaBucket;
+import org.treetank.bucket.NodeBucket;
 import org.treetank.bucket.RevisionRootBucket;
 import org.treetank.bucket.UberBucket;
 import org.treetank.bucket.interfaces.IBucket;
@@ -229,27 +232,38 @@ public class BackendWriterProxy implements IBackendReader {
 
 //            IReferenceBucket currentRefBuck;
 //            final Stack<LogKey> childAndRightSib = new Stack<LogKey>();
+//            // final Stack<IReferenceBucket> pathToRoot = new Stack<IReferenceBucket>();
 //            childAndRightSib.push(new LogKey(false, 0, 0));
 //
 //            int level = 1;
+//            boolean right = false;
 //            while (!childAndRightSib.isEmpty()) {
 //                final LogKey key = childAndRightSib.pop();
 //                final IBucket val = mFormerLog.get(key).getModified();
+//
+//                if (!right && level < IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length) {
+//                    level++;
+//                }
+//
 //                if (val instanceof IReferenceBucket) {
 //                    currentRefBuck = (IReferenceBucket)val;
 //                    for (int i = currentRefBuck.getReferenceHashs().length - 1; i >= 0; i--) {
 //                        final byte[] hash = currentRefBuck.getReferenceHashs()[i];
 //                        if (Arrays.equals(hash, IConstants.NON_HASHED)) {
-//                            final LogKey toPush = new LogKey(false, level, i);
+//                            final LogKey toPush = new LogKey(false, level, i>>IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[key.getLevel()]);
 //                            childAndRightSib.push(toPush);
 //                        }
 //                    }
-//                    level++;
+//
 //                } // ended at nodepage, leaf level
 //                else {
+//                    if (level == IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length) {
+//                        level--;
+//                        right = true;
+//                    }
 //
-//                    System.out.println(key.toString());
-//                    System.out.println(val == null ? "Val not found" : val.toString());
+//                    checkState(val instanceof NodeBucket);
+//                    System.out.println(val.toString());
 //                    // NodePageStuff goes here!
 //                }
 //            }
@@ -259,7 +273,7 @@ public class BackendWriterProxy implements IBackendReader {
             while (entries.hasNext()) {
                 LogValue next = entries.next();
                 IBucket bucket = next.getModified();
-                //debug code for marking hashes as written
+                // debug code for marking hashes as written
                 if (bucket instanceof IReferenceBucket) {
                     IReferenceBucket refBucket = (IReferenceBucket)bucket;
                     for (int i = 0; i < refBucket.getReferenceHashs().length; i++) {
