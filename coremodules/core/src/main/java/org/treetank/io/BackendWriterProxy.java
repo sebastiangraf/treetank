@@ -1,6 +1,7 @@
 package org.treetank.io;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Stack;
 import java.util.concurrent.Callable;
@@ -193,7 +194,7 @@ public class BackendWriterProxy implements IBackendReader {
     /**
      * Persistence-task to be performed within a commit.
      * 
-     * @author Sebasitan Graf, University of Konstanz
+     * @author Sebastian Graf, University of Konstanz
      * 
      */
     class CommitCallable implements Callable<Void> {
@@ -224,25 +225,23 @@ public class BackendWriterProxy implements IBackendReader {
         @Override
         public Void call() throws Exception {
 
-            final Stack<LogKey> rightAndChildSiblings = new Stack<LogKey>();
-            // final Stack<Integer> rightSiblingOffsets = new Stack<Integer>();
-            int level = -1;
-            rightAndChildSiblings.push(new LogKey(true, level, 0));
+//            IReferenceBucket currentRefBuck =
+//                (IReferenceBucket)mFormerLog.get(new LogKey(true, 0, 0)).getModified();
+//            final Stack<LogKey> childAndRightSib = new Stack<LogKey>();
+//
+//            int level = 1;
+            // do {
+            // for (int i = currentRefBuck.getReferenceHashs().length - 1; i >= 0; i--) {
+            // final byte[] hash = currentRefBuck.getReferenceHashs()[i];
+            // if (hash != null && Arrays.equals(hash, IConstants.NON_HASHED)) {
+            // final LogKey toPush = new LogKey(true, level, i);
+            // childAndRightSib.push(toPush);
+            // }
+            // }
 
-            while (!rightAndChildSiblings.isEmpty()) {
-                final LogKey currentKey = rightAndChildSiblings.pop();
-                final IBucket currentBuck = mFormerLog.get(currentKey).getModified();
-                if (currentBuck instanceof IReferenceBucket) {
-                    final IReferenceBucket currentRefBuck = (IReferenceBucket)currentBuck;
-                    for (int i = currentRefBuck.getReferenceHashs().length - 1; i >= 0; i--) {
-                        final byte[] hashes = currentRefBuck.getReferenceHashs()[i];
-                        if (hashes == IConstants.NON_HASHED) {
-                            
-                        }
-                    }
-                }
+//            final IBucket val = mFormerLog.get(childAndRightSib.pop()).getModified();
 
-            }
+            // } while (!childAndRightSib.isEmpty());
 
             // iterating over all data
             final Iterator<LogValue> entries = mFormerLog.getIterator();

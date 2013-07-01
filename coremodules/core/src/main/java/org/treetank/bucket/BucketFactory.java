@@ -37,6 +37,7 @@ import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;
 import org.treetank.bucket.NodeBucket.DeletedNode;
 import org.treetank.bucket.interfaces.IBucket;
+import org.treetank.bucket.interfaces.IReferenceBucket;
 import org.treetank.exception.TTIOException;
 
 import com.google.inject.Inject;
@@ -113,7 +114,7 @@ public final class BucketFactory {
                 uberBucket.setReferenceKey(0, pInput.readLong());
                 hash = new byte[pInput.readInt()];
                 pInput.readFully(hash);
-                uberBucket.setReferenceHash(0, hash);
+                uberBucket.setReferenceHash(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET, hash);
                 return uberBucket;
             case IConstants.INDIRCTBUCKET:
                 IndirectBucket indirectBucket = new IndirectBucket(pInput.readLong());

@@ -488,7 +488,10 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
                 if (oldBucket != null) {
                     for (int i = 0; i < oldBucket.getReferenceKeys().length; i++) {
                         bucket.setReferenceKey(i, oldBucket.getReferenceKeys()[i]);
-                        bucket.setReferenceHash(i, IConstants.NON_HASHED);
+                        //Mark hashes to be computed only for non-null values related to the references
+                        if (oldBucket.getReferenceKeys()[i] > 0) {
+                            bucket.setReferenceHash(i, IConstants.NON_HASHED);
+                        }
                     }
                 }
 
