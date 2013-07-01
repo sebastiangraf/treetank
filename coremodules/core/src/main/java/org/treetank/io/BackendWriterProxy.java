@@ -224,21 +224,25 @@ public class BackendWriterProxy implements IBackendReader {
         @Override
         public Void call() throws Exception {
 
-            IReferenceBucket currentBuck = mRoot;
+            final Stack<LogKey> rightAndChildSiblings = new Stack<LogKey>();
+            // final Stack<Integer> rightSiblingOffsets = new Stack<Integer>();
+            int level = -1;
+            rightAndChildSiblings.push(new LogKey(true, level, 0));
 
-            final Stack<LogKey> mRightSiblings = new Stack<LogKey>();
-            int currentSeqKey = -1;
-            // Starting with RevRootBucket
-            for (int i = 0; i < IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length; i++) {
-                for (byte[] hashes : currentBuck.getReferenceHashs()) {
-                    if (hashes == IConstants.NON_HASHED) {
-                        // mRightSiblings.push(new LogKey(false, ));
+            while (!rightAndChildSiblings.isEmpty()) {
+                final LogKey currentKey = rightAndChildSiblings.pop();
+                final IBucket currentBuck = mFormerLog.get(currentKey).getModified();
+                if (currentBuck instanceof IReferenceBucket) {
+                    final IReferenceBucket currentRefBuck = (IReferenceBucket)currentBuck;
+                    for (int i = currentRefBuck.getReferenceHashs().length - 1; i >= 0; i--) {
+                        final byte[] hashes = currentRefBuck.getReferenceHashs()[i];
+                        if (hashes == IConstants.NON_HASHED) {
+                            
+                        }
                     }
                 }
-            }
 
-            // Manuel dereferencation starts here...
-            LogKey current = new LogKey(true, 0, 0);
+            }
 
             // iterating over all data
             final Iterator<LogValue> entries = mFormerLog.getIterator();
