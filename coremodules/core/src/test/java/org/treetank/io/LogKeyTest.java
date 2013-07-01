@@ -29,7 +29,7 @@ public class LogKeyTest {
         LogKeyBinding binding = new LogKeyBinding();
         for (int i = 0; i < NUMBEROFELEMENTS; i++) {
             LogKey key =
-                new LogKey(CoreTestHelper.random.nextBoolean(), CoreTestHelper.random.nextLong(),
+                new LogKey(CoreTestHelper.random.nextBoolean(), CoreTestHelper.random.nextInt(),
                     CoreTestHelper.random.nextLong());
             TupleOutput output = new TupleOutput();
             binding.objectToEntry(key, output);

@@ -7,6 +7,8 @@ import java.io.DataOutput;
 
 import org.treetank.exception.TTIOException;
 
+import com.google.common.hash.Funnel;
+
 /**
  * Overall {@link INode}-Interface for the interaction with the bucket-layer. All
  * persistence functionality must be handled over this interface while all
@@ -28,7 +30,8 @@ public interface INode {
 
     /**
      * Gets unique {@link INode} key.
-     * This key should be set over the <code>IBucketWriteTrx.incrementNodeKey</code> for getting the correct offset
+     * This key should be set over the <code>IBucketWriteTrx.incrementNodeKey</code> for getting the correct
+     * offset
      * within retrievals.
      * 
      * @return node key
@@ -36,10 +39,10 @@ public interface INode {
     long getNodeKey();
 
     /**
-     * Getting the persistent stored hash.
+     * Getting a Funnel for computing guava-based hashes.
      * 
-     * @return the hash of this {@link INode}
+     * @return a Funnel for this {@link INode}
      */
-    long getHash();
+    Funnel<INode> getFunnel();
 
 }

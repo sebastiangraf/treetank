@@ -213,7 +213,7 @@ public final class CoreTestHelper {
     public static final DumbNode generateOne() {
         byte[] data = new byte[0];
         CoreTestHelper.random.nextBytes(data);
-        return new DumbNode(CoreTestHelper.random.nextLong(), CoreTestHelper.random.nextLong(), data);
+        return new DumbNode(CoreTestHelper.random.nextLong(), data);
     }
 
     /**

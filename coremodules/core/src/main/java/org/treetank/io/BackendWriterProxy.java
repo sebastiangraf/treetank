@@ -1,6 +1,9 @@
 package org.treetank.io;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import java.io.File;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Stack;
 import java.util.concurrent.Callable;
@@ -14,12 +17,15 @@ import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.INodeFactory;
 import org.treetank.bucket.IConstants;
 import org.treetank.bucket.MetaBucket;
+import org.treetank.bucket.NodeBucket;
 import org.treetank.bucket.RevisionRootBucket;
 import org.treetank.bucket.UberBucket;
 import org.treetank.bucket.interfaces.IBucket;
 import org.treetank.bucket.interfaces.IReferenceBucket;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
+
+import com.sleepycat.je.tree.ChildReference;
 
 /**
  * This class encapsulates the access to the persistent backend for writing purposes and combines it with a
@@ -193,7 +199,7 @@ public class BackendWriterProxy implements IBackendReader {
     /**
      * Persistence-task to be performed within a commit.
      * 
-     * @author Sebasitan Graf, University of Konstanz
+     * @author Sebastian Graf, University of Konstanz
      * 
      */
     class CommitCallable implements Callable<Void> {
@@ -224,27 +230,65 @@ public class BackendWriterProxy implements IBackendReader {
         @Override
         public Void call() throws Exception {
 
-            IReferenceBucket currentBuck = mRoot;
-
-            final Stack<LogKey> mRightSiblings = new Stack<LogKey>();
-            int currentSeqKey = -1;
-            // Starting with RevRootBucket
-            for (int i = 0; i < IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length; i++) {
-                for (byte[] hashes : currentBuck.getReferenceHashs()) {
-                    if (hashes == IConstants.NON_HASHED) {
-                        // mRightSiblings.push(new LogKey(false, ));
-                    }
-                }
-            }
-
-            // Manuel dereferencation starts here...
-            LogKey current = new LogKey(true, 0, 0);
+            // IReferenceBucket currentRefBuck;
+            // final Stack<LogKey> childAndRightSib = new Stack<LogKey>();
+            // final Stack<LogKey> pathToRoot = new Stack<LogKey>();
+            // childAndRightSib.push(new LogKey(false, 0, 0));
+            //
+            // while (!childAndRightSib.isEmpty()) {
+            // final LogKey key = childAndRightSib.pop();
+            // final IBucket val = mFormerLog.get(key).getModified();
+            //
+            // if (val instanceof IReferenceBucket) {
+            // currentRefBuck = (IReferenceBucket)val;
+            //
+            // if (pathToRoot.isEmpty() || !key.equals(pathToRoot.peek())) {
+            // pathToRoot.push(key);
+            // }
+            //
+            // for (int i = currentRefBuck.getReferenceHashs().length - 1; i >= 0; i--) {
+            // final byte[] hash = currentRefBuck.getReferenceHashs()[i];
+            // if (Arrays.equals(hash, IConstants.NON_HASHED)) {
+            // final LogKey toPush =
+            // new LogKey(false, key.getLevel() + 1,
+            // (key.getSeq() << IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3]) + i);
+            // childAndRightSib.push(toPush);
+            // }
+            // }
+            //
+            // } // ended at nodepage, leaf level
+            // else {
+            // checkState(val instanceof NodeBucket);
+            // final int hash = val.hashCode();
+            // LogKey parentKey = pathToRoot.peek();
+            // LogValue parentVal = mFormerLog.get(parentKey);
+            //
+            //
+            // }
+            // System.out.println(key.toString());
+            // }
+            //
+            // while (!pathToRoot.isEmpty()) {
+            // LogKey refBucket = pathToRoot.pop();
+            // System.out.println(refBucket.toString());
+            //
+            // }
 
             // iterating over all data
             final Iterator<LogValue> entries = mFormerLog.getIterator();
             while (entries.hasNext()) {
                 LogValue next = entries.next();
-                mWriter.write(next.getModified());
+                IBucket bucket = next.getModified();
+                // debug code for marking hashes as written
+                if (bucket instanceof IReferenceBucket) {
+                    IReferenceBucket refBucket = (IReferenceBucket)bucket;
+                    for (int i = 0; i < refBucket.getReferenceHashs().length; i++) {
+                        refBucket.setReferenceHash(i, new byte[] {
+                            0
+                        });
+                    }
+                }
+                mWriter.write(bucket);
             }
             // writing the important pages
             mWriter.write(mMeta);

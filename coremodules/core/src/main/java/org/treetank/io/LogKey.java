@@ -8,7 +8,8 @@ import com.sleepycat.bind.tuple.TupleOutput;
 
 /**
  * Container for Key-Entry in the log determining the level and the the sequence in the level.
- * Needed for the WriteTrx for getting inserting any modified buckets in the right order since the bucket-key can
+ * Needed for the WriteTrx for getting inserting any modified buckets in the right order since the bucket-key
+ * can
  * not be computed from the nodekeys due to the relative position of the nodes in the subtree of the related
  * RevisionRootBucket.
  * 
@@ -21,11 +22,11 @@ public class LogKey {
     private final boolean mRootLevel;
 
     /** Level Key. */
-    private final long mLevel;
+    private final int mLevel;
 
     /** Sequence Key. */
     private final long mSeq;
-    
+
     /**
      * Constructor.
      * 
@@ -38,7 +39,7 @@ public class LogKey {
      * @param pSeq
      *            to be set.
      */
-    public LogKey(final boolean pRootLevel, final long pLevel, final long pSeq) {
+    public LogKey(final boolean pRootLevel, final int pLevel, final long pSeq) {
         mRootLevel = pRootLevel;
         mLevel = pLevel;
         mSeq = pSeq;
@@ -50,7 +51,7 @@ public class LogKey {
      * 
      * @return the mLevel
      */
-    public long getLevel() {
+    public int getLevel() {
         return mLevel;
     }
 
@@ -128,7 +129,7 @@ public class LogKey {
          */
         @Override
         public LogKey entryToObject(TupleInput arg0) {
-            final LogKey key = new LogKey(arg0.readBoolean(), arg0.readLong(), arg0.readLong());
+            final LogKey key = new LogKey(arg0.readBoolean(), arg0.readInt(), arg0.readLong());
             return key;
         }
 
@@ -138,7 +139,7 @@ public class LogKey {
         @Override
         public void objectToEntry(LogKey arg0, TupleOutput arg1) {
             arg1.writeBoolean(arg0.isRootLevel());
-            arg1.writeLong(arg0.getLevel());
+            arg1.writeInt(arg0.getLevel());
             arg1.writeLong(arg0.getSeq());
         }
 

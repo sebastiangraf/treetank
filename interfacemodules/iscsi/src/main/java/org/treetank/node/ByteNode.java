@@ -26,10 +26,12 @@ package org.treetank.node;
 
 import java.io.DataOutput;
 import java.io.IOException;
-import java.util.Objects;
 
 import org.treetank.api.INode;
 import org.treetank.exception.TTIOException;
+
+import com.google.common.hash.Funnel;
+import com.google.common.hash.PrimitiveSink;
 
 /**
  * This implementation of {@link INode} is used to store byte arrays in nodes.
@@ -37,6 +39,20 @@ import org.treetank.exception.TTIOException;
  * @author Andreas Rain
  */
 public class ByteNode implements INode {
+    /**
+     * Enum for ByteNodeFunnel.
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
+    enum ByteNodeFunnel implements Funnel<INode> {
+        INSTANCE;
+        public void funnel(INode node, PrimitiveSink into) {
+            final ByteNode from = (ByteNode)node;
+            into.putLong(from.nodeKey).putLong(from.nextNodeKey).putLong(from.previousNodeKey).putLong(
+                from.index).putBytes(from.val).putInt(from.size);
+        }
+    }
 
     /**
      * The nodes key value, which is equal with it's position in the list.
@@ -72,8 +88,9 @@ public class ByteNode implements INode {
 
     /**
      * Creates a ByteNode with given bytes
-     * @param pNodeKey 
-     * @param pContent 
+     * 
+     * @param pNodeKey
+     * @param pContent
      */
     public ByteNode(long pNodeKey, byte[] pContent) {
         nodeKey = pNodeKey;
@@ -108,14 +125,6 @@ public class ByteNode implements INode {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public long getHash() {
-        return Objects.hash(nodeKey,nextNodeKey,previousNodeKey,index);
-    }
-
-    /**
      * Getting the byte array contained by this node.
      * 
      * @return returns the byte array
@@ -126,7 +135,8 @@ public class ByteNode implements INode {
 
     /**
      * Replace the existing byte array with another byte array.
-     * @param pVal 
+     * 
+     * @param pVal
      */
     public void setVal(byte[] pVal) {
 
@@ -271,6 +281,14 @@ public class ByteNode implements INode {
         if (size != other.size)
             return false;
         return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Funnel<INode> getFunnel() {
+        return ByteNodeFunnel.INSTANCE;
     }
 
 }
