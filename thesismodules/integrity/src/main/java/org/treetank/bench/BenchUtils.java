@@ -24,7 +24,7 @@ public class BenchUtils {
     public static final DumbNode generateOne() {
         byte[] data = new byte[1024];
         random.nextBytes(data);
-        return new DumbNode(random.nextLong(), random.nextLong(), data);
+        return new DumbNode(random.nextLong(), data);
     }
 
     /**

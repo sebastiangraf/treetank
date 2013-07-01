@@ -7,6 +7,9 @@ import org.treetank.api.INode;
 import org.treetank.exception.TTIOException;
 import org.treetank.filelistener.exceptions.WrongFilenodeDataLengthException;
 
+import com.google.common.hash.Funnel;
+import com.google.common.hash.PrimitiveSink;
+
 /**
  * A sequence of Filenodes represents a full file. A Filnode has a content size
  * of 512 bytes and has a reference to the following node if such a node exists.
@@ -18,6 +21,21 @@ import org.treetank.filelistener.exceptions.WrongFilenodeDataLengthException;
  * 
  */
 public class FileNode implements INode {
+
+    /**
+     * Enum for FileNodeFunnel.
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
+    enum FileNodeFunnel implements Funnel<INode> {
+        INSTANCE;
+        public void funnel(INode node, PrimitiveSink into) {
+            final FileNode from = (FileNode)node;
+            into.putLong(from.nodeKey).putLong(from.nextNodeKey).putBytes(from.val).putBoolean(from.header)
+                .putBoolean(from.eof);
+        }
+    }
 
     /**
      * The nodes key value, which is equal with it's position in the list.
@@ -92,11 +110,6 @@ public class FileNode implements INode {
         return this.nodeKey;
     }
 
-    @Override
-    public long getHash() {
-        return this.nodeKey * nextNodeKey * 31;
-    }
-
     /**
      * Check whether or not this filenode is the first in the sequence.
      * 
@@ -157,6 +170,14 @@ public class FileNode implements INode {
 
     public void setVal(byte[] val) {
         this.val = val;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Funnel<INode> getFunnel() {
+        return FileNodeFunnel.INSTANCE;
     }
 
 }

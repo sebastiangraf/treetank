@@ -38,6 +38,8 @@ import org.treetank.bucket.interfaces.IBucket;
 import org.treetank.exception.TTIOException;
 
 import com.google.common.hash.Funnel;
+import com.google.common.hash.Hasher;
+import com.google.common.hash.PrimitiveSink;
 
 /**
  * <h1>NodeBucket</h1>
@@ -163,8 +165,18 @@ public final class NodeBucket implements IBucket {
      * 
      */
     public static class DeletedNode implements INode {
-        /** Hash for this node. */
-        private long mHash;
+        /**
+         * Enum for DeletedNodeFunnel.
+         * 
+         * @author Sebastian Graf, University of Konstanz
+         * 
+         */
+        enum DeletedNodeFunnel implements Funnel<INode> {
+            INSTANCE;
+            public void funnel(INode from, PrimitiveSink into) {
+                into.putLong(from.getNodeKey());
+            }
+        }
 
         /**
          * Node key of the deleted node.
@@ -205,23 +217,28 @@ public final class NodeBucket implements IBucket {
          * {@inheritDoc}
          */
         @Override
-        public long getHash() {
-            return mHash;
+        public String toString() {
+            return toStringHelper(this).add("mNodeKey", mNodeKey).toString();
         }
 
         /**
          * {@inheritDoc}
          */
         @Override
-        public String toString() {
-            return toStringHelper(this).add("mNodeKey", mNodeKey).add("mHash", mHash).toString();
-        }
+        public Funnel<INode> getFunnel() {
+            return (Funnel<INode>)DeletedNodeFunnel.INSTANCE;
 
+        }
     }
 
     public byte[] secureHash() {
-        return StandardSettings.HASHFUNC.newHasher().putLong(mBucketKey).putLong(mLastBucketKey).hash()
-            .asBytes();
+        final Hasher code = StandardSettings.HASHFUNC.newHasher().putLong(mBucketKey).putLong(mLastBucketKey);
+        for (int i = 0; i < mNodes.length; i++) {
+            if (mNodes[i] != null) {
+                code.putObject(mNodes[i], mNodes[i].getFunnel());
+            }
+        }
+        return code.hash().asBytes();
     }
 
     /**
