@@ -22,6 +22,8 @@ import org.treetank.bucket.interfaces.IReferenceBucket;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 
+import com.sleepycat.je.tree.ChildReference;
+
 /**
  * This class encapsulates the access to the persistent backend for writing purposes and combines it with a
  * transaction log.
@@ -225,29 +227,48 @@ public class BackendWriterProxy implements IBackendReader {
         @Override
         public Void call() throws Exception {
 
-//            IReferenceBucket currentRefBuck =
-//                (IReferenceBucket)mFormerLog.get(new LogKey(true, 0, 0)).getModified();
+//            IReferenceBucket currentRefBuck;
 //            final Stack<LogKey> childAndRightSib = new Stack<LogKey>();
+//            childAndRightSib.push(new LogKey(false, 0, 0));
 //
 //            int level = 1;
-            // do {
-            // for (int i = currentRefBuck.getReferenceHashs().length - 1; i >= 0; i--) {
-            // final byte[] hash = currentRefBuck.getReferenceHashs()[i];
-            // if (hash != null && Arrays.equals(hash, IConstants.NON_HASHED)) {
-            // final LogKey toPush = new LogKey(true, level, i);
-            // childAndRightSib.push(toPush);
-            // }
-            // }
-
-//            final IBucket val = mFormerLog.get(childAndRightSib.pop()).getModified();
-
-            // } while (!childAndRightSib.isEmpty());
+//            while (!childAndRightSib.isEmpty()) {
+//                final LogKey key = childAndRightSib.pop();
+//                final IBucket val = mFormerLog.get(key).getModified();
+//                if (val instanceof IReferenceBucket) {
+//                    currentRefBuck = (IReferenceBucket)val;
+//                    for (int i = currentRefBuck.getReferenceHashs().length - 1; i >= 0; i--) {
+//                        final byte[] hash = currentRefBuck.getReferenceHashs()[i];
+//                        if (Arrays.equals(hash, IConstants.NON_HASHED)) {
+//                            final LogKey toPush = new LogKey(false, level, i);
+//                            childAndRightSib.push(toPush);
+//                        }
+//                    }
+//                    level++;
+//                } // ended at nodepage, leaf level
+//                else {
+//
+//                    System.out.println(key.toString());
+//                    System.out.println(val == null ? "Val not found" : val.toString());
+//                    // NodePageStuff goes here!
+//                }
+//            }
 
             // iterating over all data
             final Iterator<LogValue> entries = mFormerLog.getIterator();
             while (entries.hasNext()) {
                 LogValue next = entries.next();
-                mWriter.write(next.getModified());
+                IBucket bucket = next.getModified();
+                //debug code for marking hashes as written
+                if (bucket instanceof IReferenceBucket) {
+                    IReferenceBucket refBucket = (IReferenceBucket)bucket;
+                    for (int i = 0; i < refBucket.getReferenceHashs().length; i++) {
+                        refBucket.setReferenceHash(i, new byte[] {
+                            0
+                        });
+                    }
+                }
+                mWriter.write(bucket);
             }
             // writing the important pages
             mWriter.write(mMeta);
