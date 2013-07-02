@@ -229,49 +229,8 @@ public class BackendWriterProxy implements IBackendReader {
          */
         @Override
         public Void call() throws Exception {
-//
-//            IReferenceBucket currentRefBuck;
-//            final Stack<LogKey> childAndRightSib = new Stack<LogKey>();
-//            final Stack<LogKey> pathToRoot = new Stack<LogKey>();
-//            childAndRightSib.push(new LogKey(false, 0, 0));
-//
-//            while (!childAndRightSib.isEmpty()) {
-//                final LogKey key = childAndRightSib.pop();
-//                final IBucket val = mFormerLog.get(key).getModified();
-//
-//                if (val instanceof IReferenceBucket) {
-//                    currentRefBuck = (IReferenceBucket)val;
-//
-//                    if (pathToRoot.isEmpty() || !key.equals(pathToRoot.peek())) {
-//                        pathToRoot.push(key);
-//                    }
-//
-//                    for (int i = currentRefBuck.getReferenceHashs().length - 1; i >= 0; i--) {
-//                        final byte[] hash = currentRefBuck.getReferenceHashs()[i];
-//                        if (Arrays.equals(hash, IConstants.NON_HASHED)) {
-//                            final LogKey toPush =
-//                                new LogKey(false, key.getLevel() + 1,
-//                                    (key.getSeq() << IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3]) + i);
-//                            childAndRightSib.push(toPush);
-//                        }
-//                    }
-//
-//                } // ended at nodepage, leaf level
-//                else {
-//                    checkState(val instanceof NodeBucket);
-//                    final int hash = val.secureHash().asInt();
-//                    LogKey parentKey = pathToRoot.peek();
-//                    LogValue parentVal = mFormerLog.get(parentKey);
-//
-//                }
-//                System.out.println(key.toString());
-//            }
-//
-//            while (!pathToRoot.isEmpty()) {
-//                LogKey refBucket = pathToRoot.pop();
-//                System.out.println(refBucket.toString());
-//
-//            }
+
+//            iterateSubtree(false);
 
             // iterating over all data
             final Iterator<LogValue> entries = mFormerLog.getIterator();
@@ -295,6 +254,104 @@ public class BackendWriterProxy implements IBackendReader {
             mWriter.writeUberBucket(mUber);
             return null;
         }
+
+        /**
+         * Iterating through the subtree preorder-wise and adapting hashes recursively
+         * 
+         * @param pRootLevel
+         *            if level is rootlevel or not
+         * @throws TTIOException
+         */
+        private void iterateSubtree(final boolean pRootLevel) throws TTIOException {
+            IReferenceBucket currentRefBuck;
+            // Stack for caching the next elements (namely the right siblings and die childs)
+            final Stack<LogKey> childAndRightSib = new Stack<LogKey>();
+            // Stack to cache the path to the root
+            final Stack<LogKey> pathToRoot = new Stack<LogKey>();
+            // Push the first Indirect under the RevRoot to the stack
+            childAndRightSib.push(new LogKey(pRootLevel, 0, 0));
+
+            // if there are children or right sibling left...
+            while (!childAndRightSib.isEmpty()) {
+                // ...get the next element including the modified bucket.
+                final LogKey key = childAndRightSib.pop();
+                final IBucket val = mFormerLog.get(key).getModified();
+
+                // if the bucket is an instance of a ReferenceBucket, it is not a leaf and..
+                if (val instanceof IReferenceBucket) {
+                    currentRefBuck = (IReferenceBucket)val;
+
+                    // ..represents either a new child in the tree (if the level of the new node is bigger
+                    // than the last one on the pat the root
+                    if (pathToRoot.isEmpty() || key.getLevel() > pathToRoot.peek().getLevel()) {
+                        // in this case, push the new child to the path to the root.
+                        pathToRoot.push(key);
+                    }// else, it is any right sibling whereas the entire subtree left of the current node must
+                     // be handled
+                    else {
+                        LogKey childKey;
+                        // for all elements on the stack
+                        do {
+                            // ..compute the checksum recursively until..
+                            final LogKey parentKey = pathToRoot.peek();
+                            childKey = pathToRoot.pop();
+                            adaptHash(parentKey, childKey);
+                        }// the left part of the subtree of the parent is done.
+                        while (childKey.getLevel() > key.getLevel());
+                        // Push the own key to the path since we are going one step down now/
+                        pathToRoot.push(key);
+                    }
+
+                    // Iterate through all reference hashes from behind,..
+                    for (int i = currentRefBuck.getReferenceHashs().length - 1; i >= 0; i--) {
+                        // ..read the hashes and check..
+                        final byte[] hash = currentRefBuck.getReferenceHashs()[i];
+                        // ..if one offset is marked as fresh.
+                        if (Arrays.equals(hash, IConstants.NON_HASHED)) {
+                            // This offset marks the childs to go down.
+                            final LogKey toPush =
+                                new LogKey(pRootLevel, key.getLevel() + 1,
+                                    (key.getSeq() << IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3]) + i);
+                            childAndRightSib.push(toPush);
+                        }
+                    }
+
+                } // if we are on the leaf level...
+                else {
+                    // ..we need to have a NodeBucket and...
+                    checkState(val instanceof NodeBucket);
+                    // ...we adapt the parent with the own hash.
+                    final LogKey parentKey = pathToRoot.peek();
+                    adaptHash(parentKey, key);
+                }
+            }
+
+            // After the preorder-traversal, we need to adapt the path to the root with the missing checksums.
+            do {
+                final LogKey child = pathToRoot.pop();
+                final LogKey parent = pathToRoot.peek();
+                adaptHash(child, parent);
+            } while (pathToRoot.size() > 1);
+        }
+
+        /**
+         * Adapting hash and storing it in a parent-bucket
+         * 
+         * @param pParentKey
+         *            the {@link LogKey} for the parent bucket
+         * @param pChildKey
+         *            the {@link LogKey} for the own bucket
+         * @throws TTIOException
+         */
+        private void adaptHash(final LogKey pParentKey, final LogKey pChildKey) throws TTIOException {
+            final IBucket val = mFormerLog.get(pChildKey).getModified();
+            final byte[] hash = val.secureHash().asBytes();
+            final IReferenceBucket parentVal = (IReferenceBucket)mFormerLog.get(pParentKey).getModified();
+            final int parentOffset =
+                (int)(pChildKey.getSeq() - ((pChildKey.getSeq() >> IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3]) << IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3]));
+            parentVal.setReferenceHash(parentOffset, hash);
+        }
+
     }
 
 }
