@@ -37,6 +37,7 @@ import org.treetank.access.conf.StandardSettings;
 import org.treetank.bucket.interfaces.IReferenceBucket;
 import org.treetank.exception.TTIOException;
 
+import com.google.common.hash.HashCode;
 import com.google.common.hash.Hasher;
 
 /**
@@ -210,7 +211,7 @@ public final class UberBucket implements IReferenceBucket {
      * {@inheritDoc}
      */
     @Override
-    public byte[] secureHash() {
+    public HashCode secureHash() {
         final Hasher code =
             StandardSettings.HASHFUNC.newHasher().putLong(mBucketKey).putLong(mRevisionCount).putLong(
                 mBucketCounter);
@@ -218,6 +219,6 @@ public final class UberBucket implements IReferenceBucket {
             code.putLong(mReferenceKeys[i]);
             code.putBytes(mReferenceHashs[i]);
         }
-        return code.hash().asBytes();
+        return code.hash();
     }
 }

@@ -40,6 +40,7 @@ import org.treetank.api.IMetaEntry;
 import org.treetank.bucket.interfaces.IBucket;
 import org.treetank.exception.TTIOException;
 
+import com.google.common.hash.HashCode;
 import com.google.common.hash.Hasher;
 
 /**
@@ -187,14 +188,14 @@ public final class MetaBucket implements IBucket {
      * {@inheritDoc}
      */
     @Override
-    public byte[] secureHash() {
+    public HashCode  secureHash() {
         final Hasher code = StandardSettings.HASHFUNC.newHasher().putLong(mBucketKey);
         for (final IMetaEntry key : mMetaMap.keySet()) {
             final IMetaEntry val = mMetaMap.get(key);
             code.putObject(key, key.getFunnel());
             code.putObject(val, val.getFunnel());
         }
-        return code.hash().asBytes();
+        return code.hash();
     }
 
 }

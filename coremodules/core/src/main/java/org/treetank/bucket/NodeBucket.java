@@ -38,6 +38,7 @@ import org.treetank.bucket.interfaces.IBucket;
 import org.treetank.exception.TTIOException;
 
 import com.google.common.hash.Funnel;
+import com.google.common.hash.HashCode;
 import com.google.common.hash.Hasher;
 import com.google.common.hash.PrimitiveSink;
 
@@ -235,14 +236,14 @@ public final class NodeBucket implements IBucket {
      * {@inheritDoc}
      */
     @Override
-    public byte[] secureHash() {
+    public HashCode secureHash() {
         final Hasher code = StandardSettings.HASHFUNC.newHasher().putLong(mBucketKey).putLong(mLastBucketKey);
         for (int i = 0; i < mNodes.length; i++) {
             if (mNodes[i] != null) {
                 code.putObject(mNodes[i], mNodes[i].getFunnel());
             }
         }
-        return code.hash().asBytes();
+        return code.hash();
     }
 
     /**

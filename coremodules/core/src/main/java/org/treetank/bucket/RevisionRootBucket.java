@@ -38,6 +38,7 @@ import org.treetank.bucket.interfaces.IReferenceBucket;
 import org.treetank.bucket.interfaces.IRevisionBucket;
 import org.treetank.exception.TTIOException;
 
+import com.google.common.hash.HashCode;
 import com.google.common.hash.Hasher;
 
 /**
@@ -214,14 +215,14 @@ public final class RevisionRootBucket implements IRevisionBucket, IReferenceBuck
      * {@inheritDoc}
      */
     @Override
-    public byte[] secureHash() {
+    public HashCode secureHash() {
         final Hasher code =
             StandardSettings.HASHFUNC.newHasher().putLong(mBucketKey).putLong(mMaxNodeKey).putLong(mRevision);
         for (int i = 0; i < mReferenceKeys.length; i++) {
             code.putLong(mReferenceKeys[i]);
             code.putBytes(mReferenceHashs[i]);
         }
-        return code.hash().asBytes();
+        return code.hash();
     }
 
 }
