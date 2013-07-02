@@ -94,9 +94,6 @@ public class NodeWriteTrx implements INodeWriteTrx {
         None;
     }
 
-    /** Prime for computing the hash. */
-    private static final int PRIME = 77081;
-
     /** Hash kind of Structure. */
     private final HashKind mHashKind;
 
@@ -143,7 +140,6 @@ public class NodeWriteTrx implements INodeWriteTrx {
 
         mDelegate.setCurrentNode(node);
         adaptForInsert(node, true);
-        adaptHashesWithAdd();
 
         return node.getNodeKey();
     }
@@ -167,7 +163,6 @@ public class NodeWriteTrx implements INodeWriteTrx {
 
         mDelegate.setCurrentNode(node);
         adaptForInsert(node, false);
-        adaptHashesWithAdd();
 
         return node.getNodeKey();
     }
@@ -192,7 +187,6 @@ public class NodeWriteTrx implements INodeWriteTrx {
 
         mDelegate.setCurrentNode(node);
         adaptForInsert(node, true);
-        adaptHashesWithAdd();
 
         return node.getNodeKey();
     }
@@ -216,7 +210,6 @@ public class NodeWriteTrx implements INodeWriteTrx {
 
         mDelegate.setCurrentNode(node);
         adaptForInsert(node, false);
-        adaptHashesWithAdd();
 
         return node.getNodeKey();
 
@@ -237,7 +230,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
 
         final int nameKey = insertName(buildName(pQName));
         final int namespaceKey = insertName(pQName.getNamespaceURI());
-        final NodeDelegate nodeDel = new NodeDelegate(getPtx().incrementNodeKey(), elementKey, 0);
+        final NodeDelegate nodeDel = new NodeDelegate(getPtx().incrementNodeKey(), elementKey);
         final NameNodeDelegate nameDel = new NameNodeDelegate(nodeDel, nameKey, namespaceKey);
         final ValNodeDelegate valDel = new ValNodeDelegate(nodeDel, value);
 
@@ -251,7 +244,6 @@ public class NodeWriteTrx implements INodeWriteTrx {
         mDelegate.setCurrentNode(node);
         adaptForInsert(node, false);
 
-        adaptHashesWithAdd();
         return node.getNodeKey();
 
     }
@@ -271,7 +263,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
         final int prefixKey = insertName(pQName.getPrefix());
         final long elementKey = mDelegate.getCurrentNode().getNodeKey();
 
-        final NodeDelegate nodeDel = new NodeDelegate(getPtx().incrementNodeKey(), elementKey, 0);
+        final NodeDelegate nodeDel = new NodeDelegate(getPtx().incrementNodeKey(), elementKey);
         final NameNodeDelegate nameDel = new NameNodeDelegate(nodeDel, prefixKey, uriKey);
 
         final NamespaceNode node = new NamespaceNode(nodeDel, nameDel);
@@ -283,7 +275,6 @@ public class NodeWriteTrx implements INodeWriteTrx {
 
         mDelegate.setCurrentNode(node);
         adaptForInsert(node, false);
-        adaptHashesWithAdd();
         return node.getNodeKey();
     }
 
@@ -293,7 +284,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
         final int nameKey = insertName(buildName(mName));
         final int namespaceKey = insertName(mName.getNamespaceURI());
 
-        final NodeDelegate nodeDel = new NodeDelegate(getPtx().incrementNodeKey(), parentKey, 0);
+        final NodeDelegate nodeDel = new NodeDelegate(getPtx().incrementNodeKey(), parentKey);
         final StructNodeDelegate structDel =
             new StructNodeDelegate(nodeDel, NULL_NODE, rightSibKey, mLeftSibKey, 0);
         final NameNodeDelegate nameDel = new NameNodeDelegate(nodeDel, nameKey, namespaceKey);
@@ -305,7 +296,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
 
     private TextNode createTextNode(final long mParentKey, final long mLeftSibKey, final long rightSibKey,
         final byte[] mValue) throws TTException {
-        final NodeDelegate nodeDel = new NodeDelegate(getPtx().incrementNodeKey(), mParentKey, 0);
+        final NodeDelegate nodeDel = new NodeDelegate(getPtx().incrementNodeKey(), mParentKey);
         final ValNodeDelegate valDel = new ValNodeDelegate(nodeDel, mValue);
         final StructNodeDelegate structDel =
             new StructNodeDelegate(nodeDel, NULL_NODE, rightSibKey, mLeftSibKey, 0);
@@ -339,7 +330,6 @@ public class NodeWriteTrx implements INodeWriteTrx {
             }
             moveTo(node.getNodeKey());
             adaptForRemove(node);
-            adaptHashesWithRemove();
 
             // Set current node.
             if (node.hasRightSibling()) {
@@ -355,14 +345,12 @@ public class NodeWriteTrx implements INodeWriteTrx {
             final ElementNode parentNode = (ElementNode)getPtx().getNode(node.getParentKey());
             parentNode.removeAttribute(node.getNodeKey());
             getPtx().setNode(parentNode);
-            adaptHashesWithRemove();
             moveTo(mDelegate.getCurrentNode().getParentKey());
         } else if (mDelegate.getCurrentNode().getKind() == IConstants.NAMESPACE) {
             final INode node = mDelegate.getCurrentNode();
             final ElementNode parentNode = (ElementNode)getPtx().getNode(node.getParentKey());
             parentNode.removeNamespace(node.getNodeKey());
             getPtx().setNode(parentNode);
-            adaptHashesWithRemove();
             moveTo(mDelegate.getCurrentNode().getParentKey());
         }
     }
@@ -377,14 +365,11 @@ public class NodeWriteTrx implements INodeWriteTrx {
             "setQName is not allowed if current node is not an INameNode implementation, but was %s",
             mDelegate.getCurrentNode());
 
-        final long oldHash = mDelegate.getCurrentNode().hashCode();
-
         final INameNode node = (INameNode)getPtx().getNode(mDelegate.getCurrentNode().getNodeKey());
         node.setNameKey(insertName(buildName(paramName)));
         getPtx().setNode(node);
 
         mDelegate.setCurrentNode((INode)node);
-        adaptHashedWithUpdate(oldHash);
     }
 
     /**
@@ -397,14 +382,11 @@ public class NodeWriteTrx implements INodeWriteTrx {
             "setURI is not allowed if current node is not an INameNode implementation, but was %s", mDelegate
                 .getCurrentNode());
 
-        final long oldHash = mDelegate.getCurrentNode().hashCode();
-
         final INameNode node = (INameNode)getPtx().getNode(mDelegate.getCurrentNode().getNodeKey());
         node.setURIKey(insertName(paramUri));
         getPtx().setNode(node);
 
         mDelegate.setCurrentNode((INode)node);
-        adaptHashedWithUpdate(oldHash);
     }
 
     /**
@@ -417,14 +399,11 @@ public class NodeWriteTrx implements INodeWriteTrx {
             "setValue is not allowed if current node is not an IValNode implementation, but was %s",
             mDelegate.getCurrentNode());
 
-        final long oldHash = mDelegate.getCurrentNode().hashCode();
-
         final IValNode node = (IValNode)getPtx().getNode(mDelegate.getCurrentNode().getNodeKey());
         node.setValue(TypedValue.getBytes(pValue));
         getPtx().setNode(node);
 
         mDelegate.setCurrentNode((INode)node);
-        adaptHashedWithUpdate(oldHash);
     }
 
     /**
@@ -609,243 +588,6 @@ public class NodeWriteTrx implements INodeWriteTrx {
      */
     private BucketWriteTrx getPtx() {
         return (BucketWriteTrx)mDelegate.mPageReadTrx;
-    }
-
-    /**
-     * Adapting the structure with a hash for all ancestors only with insert.
-     * 
-     * @throws TTIOException
-     *             of anything weird happened.
-     */
-    private void adaptHashesWithAdd() throws TTException {
-        switch (mHashKind) {
-        case Rolling:
-            rollingAdd();
-            break;
-        case Postorder:
-            postorderAdd();
-            break;
-        default:
-        }
-
-    }
-
-    /**
-     * Adapting the structure with a hash for all ancestors only with remove.
-     * 
-     * @throws TTIOException
-     *             of anything weird happened.
-     */
-    private void adaptHashesWithRemove() throws TTException {
-        switch (mHashKind) {
-        case Rolling:
-            rollingRemove();
-            break;
-        case Postorder:
-            postorderRemove();
-            break;
-        default:
-        }
-    }
-
-    /**
-     * Adapting the structure with a hash for all ancestors only with update.
-     * 
-     * @param paramOldHash
-     *            paramOldHash to be removed
-     * @throws TTIOException
-     *             of anything weird happened.
-     */
-    private void adaptHashedWithUpdate(final long paramOldHash) throws TTException {
-        switch (mHashKind) {
-        case Rolling:
-            rollingUpdate(paramOldHash);
-            break;
-        case Postorder:
-            postorderAdd();
-            break;
-        default:
-        }
-    }
-
-    /**
-     * Removal operation for postorder hash computation.
-     * 
-     * @throws TTIOException
-     *             if anything weird happens
-     */
-    private void postorderRemove() throws TTException {
-        moveTo(mDelegate.getCurrentNode().getParentKey());
-        postorderAdd();
-    }
-
-    /**
-     * Adapting the structure with a rolling hash for all ancestors only with
-     * insert.
-     * 
-     * @throws TTIOException
-     *             if anything weird happened
-     */
-    private void postorderAdd() throws TTException {
-        // start with hash to add
-        final long startKey = mDelegate.getCurrentNode().getNodeKey();
-        // long for adapting the hash of the parent
-        long hashCodeForParent = 0;
-        // adapting the parent if the current node is no structural one.
-        if (!(mDelegate.getCurrentNode() instanceof IStructNode)) {
-            getPtx().getNode(mDelegate.getCurrentNode().getNodeKey());
-            mDelegate.getCurrentNode().setHash(mDelegate.getCurrentNode().hashCode());
-            getPtx().setNode(mDelegate.getCurrentNode());
-            moveTo(mDelegate.getCurrentNode().getParentKey());
-        }
-        // Cursor to root
-        IStructNode cursorToRoot;
-        do {
-            synchronized (mDelegate.getCurrentNode()) {
-                cursorToRoot = (IStructNode)getPtx().getNode(mDelegate.getCurrentNode().getNodeKey());
-                hashCodeForParent = mDelegate.getCurrentNode().hashCode() + hashCodeForParent * PRIME;
-                // Caring about attributes and namespaces if node is an element.
-                if (cursorToRoot.getKind() == IConstants.ELEMENT) {
-                    final ElementNode currentElement = (ElementNode)cursorToRoot;
-                    // setting the attributes and namespaces
-                    for (int i = 0; i < ((ElementNode)cursorToRoot).getAttributeCount(); i++) {
-                        moveTo(currentElement.getAttributeKey(i));
-                        hashCodeForParent = mDelegate.getCurrentNode().hashCode() + hashCodeForParent * PRIME;
-                    }
-                    for (int i = 0; i < ((ElementNode)cursorToRoot).getNamespaceCount(); i++) {
-                        moveTo(currentElement.getNamespaceKey(i));
-                        hashCodeForParent = mDelegate.getCurrentNode().hashCode() + hashCodeForParent * PRIME;
-                    }
-                    moveTo(cursorToRoot.getNodeKey());
-                }
-
-                // Caring about the children of a node
-                if (moveTo(((IStructNode)getNode()).getFirstChildKey())) {
-                    do {
-                        hashCodeForParent = mDelegate.getCurrentNode().getHash() + hashCodeForParent * PRIME;
-                    } while (moveTo(((IStructNode)getNode()).getRightSiblingKey()));
-                    moveTo(((IStructNode)getNode()).getParentKey());
-                }
-
-                // setting hash and resetting hash
-                cursorToRoot.setHash(hashCodeForParent);
-                getPtx().setNode(cursorToRoot);
-                hashCodeForParent = 0;
-            }
-        } while (moveTo(cursorToRoot.getParentKey()));
-
-        moveTo(startKey);
-    }
-
-    /**
-     * Adapting the structure with a rolling hash for all ancestors only with
-     * update.
-     * 
-     * @param paramOldHash
-     *            paramOldHash to be removed
-     * @throws TTIOException
-     *             if anything weird happened
-     */
-    private void rollingUpdate(final long paramOldHash) throws TTException {
-        final INode newNode = mDelegate.getCurrentNode();
-        final long newNodeHash = newNode.hashCode();
-        long resultNew = newNode.hashCode();
-
-        // go the path to the root
-        do {
-            synchronized (mDelegate.getCurrentNode()) {
-                getPtx().getNode(mDelegate.getCurrentNode().getNodeKey());
-                if (mDelegate.getCurrentNode().getNodeKey() == newNode.getNodeKey()) {
-                    resultNew = mDelegate.getCurrentNode().getHash() - paramOldHash;
-                    resultNew = resultNew + newNodeHash;
-                } else {
-                    resultNew = mDelegate.getCurrentNode().getHash() - (paramOldHash * PRIME);
-                    resultNew = resultNew + newNodeHash * PRIME;
-                }
-                mDelegate.getCurrentNode().setHash(resultNew);
-                getPtx().setNode(mDelegate.getCurrentNode());
-            }
-        } while (moveTo(mDelegate.getCurrentNode().getParentKey()));
-
-        mDelegate.setCurrentNode(newNode);
-    }
-
-    /**
-     * Adapting the structure with a rolling hash for all ancestors only with
-     * remove.
-     * 
-     * @throws TTIOException
-     *             if anything weird happened
-     */
-    private void rollingRemove() throws TTException {
-        final INode startNode = mDelegate.getCurrentNode();
-        long hashToRemove = startNode.getHash();
-        long hashToAdd = 0;
-        long newHash = 0;
-        // go the path to the root
-        do {
-            synchronized (mDelegate.getCurrentNode()) {
-                getPtx().getNode(mDelegate.getCurrentNode().getNodeKey());
-                if (mDelegate.getCurrentNode().getNodeKey() == startNode.getNodeKey()) {
-                    // the begin node is always null
-                    newHash = 0;
-                } else if (mDelegate.getCurrentNode().getNodeKey() == startNode.getParentKey()) {
-                    // the parent node is just removed
-                    newHash = mDelegate.getCurrentNode().getHash() - (hashToRemove * PRIME);
-                    hashToRemove = mDelegate.getCurrentNode().getHash();
-                } else {
-                    // the ancestors are all touched regarding the modification
-                    newHash = mDelegate.getCurrentNode().getHash() - (hashToRemove * PRIME);
-                    newHash = newHash + hashToAdd * PRIME;
-                    hashToRemove = mDelegate.getCurrentNode().getHash();
-                }
-                mDelegate.getCurrentNode().setHash(newHash);
-                hashToAdd = newHash;
-                getPtx().setNode(mDelegate.getCurrentNode());
-            }
-        } while (moveTo(mDelegate.getCurrentNode().getParentKey()));
-
-        mDelegate.setCurrentNode(startNode);
-    }
-
-    /**
-     * Adapting the structure with a rolling hash for all ancestors only with
-     * insert.
-     * 
-     * @throws TTIOException
-     *             if anything weird happened
-     */
-    private void rollingAdd() throws TTException {
-        // start with hash to add
-        final INode startNode = mDelegate.getCurrentNode();
-        long hashToAdd = startNode.hashCode();
-        long newHash = 0;
-        long possibleOldHash = 0;
-        // go the path to the root
-        do {
-            synchronized (mDelegate.getCurrentNode()) {
-                getPtx().getNode(mDelegate.getCurrentNode().getNodeKey());
-                if (mDelegate.getCurrentNode().getNodeKey() == startNode.getNodeKey()) {
-                    // at the beginning, take the hashcode of the node only
-                    newHash = hashToAdd;
-                } else if (mDelegate.getCurrentNode().getNodeKey() == startNode.getParentKey()) {
-                    // at the parent level, just add the node
-                    possibleOldHash = mDelegate.getCurrentNode().getHash();
-                    newHash = possibleOldHash + hashToAdd * PRIME;
-                    hashToAdd = newHash;
-                } else {
-                    // at the rest, remove the existing old key for this element
-                    // and add the new one
-                    newHash = mDelegate.getCurrentNode().getHash() - (possibleOldHash * PRIME);
-                    newHash = newHash + hashToAdd * PRIME;
-                    hashToAdd = newHash;
-                    possibleOldHash = mDelegate.getCurrentNode().getHash();
-                }
-                mDelegate.getCurrentNode().setHash(newHash);
-                getPtx().setNode(mDelegate.getCurrentNode());
-            }
-        } while (moveTo(mDelegate.getCurrentNode().getParentKey()));
-        mDelegate.setCurrentNode(startNode);
     }
 
     /**

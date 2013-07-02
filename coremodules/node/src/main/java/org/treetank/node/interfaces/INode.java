@@ -80,12 +80,4 @@ public interface INode extends org.treetank.api.INode {
      */
     void setTypeKey(int pTypeKey);
 
-    /**
-     * Setting the hash of this node including substructure.
-     * 
-     * @param pHash
-     *            to be set
-     */
-    void setHash(long pHash);
-
 }

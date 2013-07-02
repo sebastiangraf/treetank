@@ -39,7 +39,9 @@ import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.INode;
 
+import com.google.common.hash.Funnel;
 import com.google.common.hash.Hasher;
+import com.google.common.hash.PrimitiveSink;
 
 /**
  * Delegate method for all nodes containing \"naming\"-data. That means that
@@ -51,6 +53,20 @@ import com.google.common.hash.Hasher;
  * 
  */
 public class NameNodeDelegate implements INode, INameNode {
+    /**
+     * Enum for AtomicValueFunnel.
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
+    enum NameNodeDelegateFunnel implements Funnel<org.treetank.api.INode> {
+        INSTANCE;
+        public void funnel(org.treetank.api.INode node, PrimitiveSink into) {
+            final NameNodeDelegate from = (NameNodeDelegate)node;
+            into.putInt(from.mNameKey).putInt(from.mUriKey);
+            from.mDelegate.getFunnel().funnel(from.mDelegate, into);
+        }
+    }
 
     /** Node delegate, containing basic node information. */
     private final NodeDelegate mDelegate;
@@ -73,26 +89,6 @@ public class NameNodeDelegate implements INode, INameNode {
         mDelegate = pDel;
         mNameKey = pNameKey;
         mUriKey = pUriKey;
-    }
-
-    /**
-     * Delegate method for setHash.
-     * 
-     * @param pHash
-     * @see org.treetank.node.delegates.NodeDelegate#setHash(long)
-     */
-    public void setHash(final long pHash) {
-        mDelegate.setHash(pHash);
-    }
-
-    /**
-     * Delegate method for getHash.
-     * 
-     * @return the hash
-     * @see org.treetank.node.delegates.NodeDelegate#getHash()
-     */
-    public long getHash() {
-        return mDelegate.getHash();
     }
 
     /**
@@ -237,6 +233,11 @@ public class NameNodeDelegate implements INode, INameNode {
         } catch (final IOException exc) {
             throw new TTIOException(exc);
         }
+    }
+
+    @Override
+    public Funnel<org.treetank.api.INode> getFunnel() {
+        return NameNodeDelegateFunnel.INSTANCE;
     }
 
 }

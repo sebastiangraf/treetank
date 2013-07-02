@@ -31,11 +31,14 @@ import static com.google.common.base.Objects.toStringHelper;
 import java.io.DataOutput;
 import java.io.IOException;
 
+import org.treetank.api.INode;
 import org.treetank.exception.TTIOException;
 import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.IValNode;
 
+import com.google.common.hash.Funnel;
 import com.google.common.hash.Hasher;
+import com.google.common.hash.PrimitiveSink;
 
 /**
  * Delegate method for all nodes containing \"value\"-data. That means that
@@ -46,6 +49,21 @@ import com.google.common.hash.Hasher;
  * 
  */
 public class ValNodeDelegate implements IValNode {
+
+    /**
+     * Enum for ValNodeFunnel.
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
+    enum ValNodeDelegateFunnel implements Funnel<org.treetank.api.INode> {
+        INSTANCE;
+        public void funnel(org.treetank.api.INode node, PrimitiveSink into) {
+            final ValNodeDelegate from = (ValNodeDelegate)node;
+            into.putBytes(from.mVal);
+            from.mDelegate.getFunnel().funnel(from.mDelegate, into);
+        }
+    }
 
     /** Delegate for common node information. */
     private NodeDelegate mDelegate;
@@ -103,26 +121,6 @@ public class ValNodeDelegate implements IValNode {
      */
     public void setParentKey(long pParentKey) {
         mDelegate.setParentKey(pParentKey);
-    }
-
-    /**
-     * Delegate method for getHash.
-     * 
-     * @return the hash
-     * @see org.treetank.node.delegates.NodeDelegate#getHash()
-     */
-    public long getHash() {
-        return mDelegate.getHash();
-    }
-
-    /**
-     * Delegate method for setHash.
-     * 
-     * @param pHash
-     * @see org.treetank.node.delegates.NodeDelegate#setHash(long)
-     */
-    public void setHash(long pHash) {
-        mDelegate.setHash(pHash);
     }
 
     /**
@@ -212,5 +210,10 @@ public class ValNodeDelegate implements IValNode {
         } catch (final IOException exc) {
             throw new TTIOException(exc);
         }
+    }
+
+    @Override
+    public Funnel<INode> getFunnel() {
+        return ValNodeDelegateFunnel.INSTANCE;
     }
 }

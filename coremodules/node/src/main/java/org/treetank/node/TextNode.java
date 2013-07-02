@@ -40,7 +40,9 @@ import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IStructNode;
 import org.treetank.node.interfaces.IValNode;
 
+import com.google.common.hash.Funnel;
 import com.google.common.hash.Hasher;
+import com.google.common.hash.PrimitiveSink;
 
 /**
  * <h1>TextNode</h1>
@@ -50,6 +52,22 @@ import com.google.common.hash.Hasher;
  * </p>
  */
 public final class TextNode implements IStructNode, IValNode, INode {
+
+    /**
+     * Enum for TextNodeFunnel.
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
+    enum TextNodeFunnel implements Funnel<org.treetank.api.INode> {
+        INSTANCE;
+        public void funnel(org.treetank.api.INode node, PrimitiveSink into) {
+            final TextNode from = (TextNode)node;
+            from.mDel.getFunnel().funnel(from, into);
+            from.mStrucDel.getFunnel().funnel(from, into);
+            from.mValDel.getFunnel().funnel(from, into);
+        }
+    }
 
     /** Delegate for common node information. */
     private final NodeDelegate mDel;
@@ -104,22 +122,6 @@ public final class TextNode implements IStructNode, IValNode, INode {
     @Override
     public long getFirstChildKey() {
         return mStrucDel.getFirstChildKey();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setHash(final long pHash) {
-        mDel.setHash(pHash);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public long getHash() {
-        return mDel.getHash();
     }
 
     /**
@@ -298,6 +300,11 @@ public final class TextNode implements IStructNode, IValNode, INode {
         } catch (final IOException exc) {
             throw new TTIOException(exc);
         }
+    }
+
+    @Override
+    public Funnel<org.treetank.api.INode> getFunnel() {
+        return TextNodeFunnel.INSTANCE;
     }
 
 }

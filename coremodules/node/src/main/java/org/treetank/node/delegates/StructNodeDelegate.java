@@ -32,11 +32,14 @@ import static org.treetank.node.IConstants.NULL_NODE;
 import java.io.DataOutput;
 import java.io.IOException;
 
+import org.treetank.api.INode;
 import org.treetank.exception.TTIOException;
 import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.IStructNode;
 
+import com.google.common.hash.Funnel;
 import com.google.common.hash.Hasher;
+import com.google.common.hash.PrimitiveSink;
 
 /**
  * Delegate method for all nodes building up the structure. That means that all
@@ -48,6 +51,24 @@ import com.google.common.hash.Hasher;
  * 
  */
 public class StructNodeDelegate implements IStructNode {
+
+    /**
+     * Enum for AtomicValueFunnel.
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
+    enum StructNodeDelegateFunnel implements Funnel<org.treetank.api.INode> {
+        INSTANCE;
+        public void funnel(org.treetank.api.INode node, PrimitiveSink into) {
+            final StructNodeDelegate from = (StructNodeDelegate)node;
+            into.putLong(from.mFirstChild);
+            into.putLong(from.mRightSibling);
+            into.putLong(from.mLeftSibling);
+            into.putLong(from.mChildCount);
+            from.mDelegate.getFunnel().funnel(from.mDelegate, into);
+        }
+    }
 
     /** Pointer to the first child of the current node. */
     private long mFirstChild;
@@ -218,26 +239,6 @@ public class StructNodeDelegate implements IStructNode {
     }
 
     /**
-     * Delegate method for getHash.
-     * 
-     * @return the hash
-     * @see org.treetank.node.delegates.NodeDelegate#getHash()
-     */
-    public long getHash() {
-        return mDelegate.getHash();
-    }
-
-    /**
-     * Delegate method for setHash.
-     * 
-     * @param pHash
-     * @see org.treetank.node.delegates.NodeDelegate#setHash(long)
-     */
-    public void setHash(long pHash) {
-        mDelegate.setHash(pHash);
-    }
-
-    /**
      * Delegate method for getTypeKey.
      * 
      * @return the type of the node
@@ -315,6 +316,11 @@ public class StructNodeDelegate implements IStructNode {
         } catch (final IOException exc) {
             throw new TTIOException(exc);
         }
+    }
+
+    @Override
+    public Funnel<INode> getFunnel() {
+        return StructNodeDelegateFunnel.INSTANCE;
     }
 
 }

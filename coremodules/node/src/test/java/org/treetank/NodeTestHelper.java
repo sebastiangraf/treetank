@@ -89,7 +89,7 @@ public final class NodeTestHelper {
      * @throws TTException
      */
     public static final void createDocumentRootNode(final INodeWriteTrx pWtx) throws TTException {
-        final NodeDelegate nodeDel = new NodeDelegate(pWtx.getPageWtx().incrementNodeKey(), NULL_NODE, 0);
+        final NodeDelegate nodeDel = new NodeDelegate(pWtx.getPageWtx().incrementNodeKey(), NULL_NODE);
         pWtx.getPageWtx()
             .setNode(
                 new DocumentRootNode(nodeDel, new StructNodeDelegate(nodeDel, NULL_NODE, NULL_NODE,

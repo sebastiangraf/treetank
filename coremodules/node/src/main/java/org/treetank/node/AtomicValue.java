@@ -38,6 +38,9 @@ import org.treetank.node.interfaces.IValNode;
 import org.treetank.utils.NamePageHash;
 import org.treetank.utils.TypedValue;
 
+import com.google.common.hash.Funnel;
+import com.google.common.hash.PrimitiveSink;
+
 /**
  * <h1>AtomicValue</h1>
  * <p>
@@ -47,6 +50,20 @@ import org.treetank.utils.TypedValue;
  * </p>
  */
 public class AtomicValue implements INode, IValNode {
+
+    /**
+     * Enum for AtomicValueFunnel.
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
+    enum AtomicValueFunnel implements Funnel<org.treetank.api.INode> {
+        INSTANCE;
+        public void funnel(org.treetank.api.INode node, PrimitiveSink into) {
+            final AtomicValue from = (AtomicValue)node;
+            into.putLong(from.mItemKey).putBytes(from.mValue).putInt(from.mType);
+        }
+    }
 
     /** Value of the item as byte array. */
     private byte[] mValue;
@@ -244,16 +261,6 @@ public class AtomicValue implements INode, IValNode {
     }
 
     @Override
-    public void setHash(long hash) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public long getHash() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public void setParentKey(long paramKey) {
         throw new UnsupportedOperationException();
 
@@ -297,6 +304,14 @@ public class AtomicValue implements INode, IValNode {
      * @throws TTIOException
      */
     public void serialize(final DataOutput pOutput) throws TTIOException {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Funnel<org.treetank.api.INode> getFunnel() {
+        return AtomicValueFunnel.INSTANCE;
     }
 
 }

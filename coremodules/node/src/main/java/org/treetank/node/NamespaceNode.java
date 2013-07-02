@@ -38,7 +38,9 @@ import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.INode;
 
+import com.google.common.hash.Funnel;
 import com.google.common.hash.Hasher;
+import com.google.common.hash.PrimitiveSink;
 
 /**
  * <h1>NamespaceNode</h1>
@@ -48,6 +50,22 @@ import com.google.common.hash.Hasher;
  * </p>
  */
 public final class NamespaceNode implements INode, INameNode {
+
+    /**
+     * Enum for NamespaceFunnel.
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
+    enum NamespaceFunnel implements Funnel<org.treetank.api.INode> {
+        INSTANCE;
+        public void funnel(org.treetank.api.INode node, PrimitiveSink into) {
+            final NamespaceNode from = (NamespaceNode)node;
+            from.mDel.getFunnel().funnel(from, into);
+            from.mNameDel.getFunnel().funnel(from, into);
+        }
+    }
+
     /** Delegate for common node information. */
     private final NodeDelegate mDel;
 
@@ -105,22 +123,6 @@ public final class NamespaceNode implements INode, INameNode {
     @Override
     public void setURIKey(final int pUriKey) {
         mNameDel.setURIKey(pUriKey);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setHash(final long pHash) {
-        mDel.setHash(pHash);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public long getHash() {
-        return mDel.getHash();
     }
 
     /**
@@ -210,6 +212,11 @@ public final class NamespaceNode implements INode, INameNode {
         } catch (final IOException exc) {
             throw new TTIOException(exc);
         }
+    }
+
+    @Override
+    public Funnel<org.treetank.api.INode> getFunnel() {
+        return NamespaceFunnel.INSTANCE;
     }
 
 }

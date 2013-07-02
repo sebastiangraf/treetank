@@ -37,7 +37,8 @@ import org.treetank.exception.TTIOException;
 import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.INode;
 
-import com.google.common.hash.Hasher;
+import com.google.common.hash.Funnel;
+import com.google.common.hash.PrimitiveSink;
 
 /**
  * Delegate method for all nodes. That means that all nodes stored in Treetank
@@ -50,12 +51,24 @@ import com.google.common.hash.Hasher;
  */
 public class NodeDelegate implements INode {
 
+    /**
+     * Enum for AtomicValueFunnel.
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
+    enum NodeDelegateFunnel implements Funnel<org.treetank.api.INode> {
+        INSTANCE;
+        public void funnel(org.treetank.api.INode node, PrimitiveSink into) {
+            final NodeDelegate from = (NodeDelegate)node;
+            into.putLong(from.mNodeKey).putLong(from.mParentKey);
+        }
+    }
+
     /** Key of the current node. Must be unique for all nodes. */
     private long mNodeKey;
     /** Key of the parent node. */
     private long mParentKey;
-    /** Hash of the parent node. */
-    private long mHash;
     /**
      * TypeKey of the parent node. Can be referenced later on over special
      * pages.
@@ -69,13 +82,10 @@ public class NodeDelegate implements INode {
      *            to be represented by this delegate.
      * @param pParentKey
      *            to be represented by this delegate
-     * @param pHash
-     *            to be represented by this delegate
      */
-    public NodeDelegate(final long pNodeKey, final long pParentKey, final long pHash) {
+    public NodeDelegate(final long pNodeKey, final long pParentKey) {
         mNodeKey = pNodeKey;
         mParentKey = pParentKey;
-        mHash = pHash;
         mTypeKey = TYPE_KEY;
     }
 
@@ -115,35 +125,6 @@ public class NodeDelegate implements INode {
      * {@inheritDoc}
      */
     @Override
-    public long getHash() {
-        return mHash;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setHash(final long pHash) {
-        this.mHash = pHash;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        Hasher hc = IConstants.HF.newHasher();
-        hc.putLong(mHash);
-        hc.putLong(mNodeKey);
-        hc.putLong(mParentKey);
-        hc.putInt(mTypeKey);
-        return hc.hash().asInt();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public boolean equals(Object obj) {
         return hashCode() == obj.hashCode();
     }
@@ -153,8 +134,8 @@ public class NodeDelegate implements INode {
      */
     @Override
     public String toString() {
-        return toStringHelper(this).add("mNodeKey", mNodeKey).add("mParentKey", mParentKey).add("mHash", mHash)
-            .add("mTypeKey", mTypeKey).toString();
+        return toStringHelper(this).add("mNodeKey", mNodeKey).add("mParentKey", mParentKey).add("mTypeKey",
+            mTypeKey).toString();
     }
 
     /**
@@ -192,10 +173,14 @@ public class NodeDelegate implements INode {
         try {
             pOutput.writeLong(getNodeKey());
             pOutput.writeLong(getParentKey());
-            pOutput.writeLong(getHash());
         } catch (final IOException exc) {
             throw new TTIOException(exc);
         }
+    }
+
+    @Override
+    public Funnel<org.treetank.api.INode> getFunnel() {
+        return NodeDelegateFunnel.INSTANCE;
     }
 
 }

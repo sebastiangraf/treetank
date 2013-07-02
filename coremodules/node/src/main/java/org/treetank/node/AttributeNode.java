@@ -41,7 +41,9 @@ import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IValNode;
 
+import com.google.common.hash.Funnel;
 import com.google.common.hash.Hasher;
+import com.google.common.hash.PrimitiveSink;
 
 /**
  * <h1>AttributeNode</h1>
@@ -51,6 +53,22 @@ import com.google.common.hash.Hasher;
  * </p>
  */
 public final class AttributeNode implements INode, IValNode, INameNode {
+
+    /**
+     * Enum for AtomicValueFunnel.
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
+    enum AttributeNodeFunnel implements Funnel<org.treetank.api.INode> {
+        INSTANCE;
+        public void funnel(org.treetank.api.INode node, PrimitiveSink into) {
+            final AttributeNode from = (AttributeNode)node;
+            from.mDel.getFunnel().funnel(from, into);
+            from.mNameDel.getFunnel().funnel(from, into);
+            from.mValDel.getFunnel().funnel(from, into);
+        }
+    }
 
     /** Delegate for common node information. */
     private final NodeDelegate mDel;
@@ -113,26 +131,6 @@ public final class AttributeNode implements INode, IValNode, INameNode {
      */
     public void setParentKey(final long pParentKey) {
         mDel.setParentKey(pParentKey);
-    }
-
-    /**
-     * Delegate method for getHash.
-     * 
-     * @return the current hash
-     * @see org.treetank.node.delegates.NodeDelegate#getHash()
-     */
-    public long getHash() {
-        return mDel.getHash();
-    }
-
-    /**
-     * Delegate method for setHash.
-     * 
-     * @param pHash
-     * @see org.treetank.node.delegates.NodeDelegate#setHash(long)
-     */
-    public void setHash(final long pHash) {
-        mDel.setHash(pHash);
     }
 
     /**
@@ -296,6 +294,11 @@ public final class AttributeNode implements INode, IValNode, INameNode {
         } catch (final IOException exc) {
             throw new TTIOException(exc);
         }
+    }
+
+    @Override
+    public Funnel<org.treetank.api.INode> getFunnel() {
+        return AttributeNodeFunnel.INSTANCE;
     }
 
 }
