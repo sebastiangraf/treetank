@@ -165,7 +165,7 @@ public class XMLShredder implements Callable<Void> {
         mCommit = paramCommit;
         mLatch = new CountDownLatch(1);
         if (mWtx.getNode() == null) {
-            final NodeDelegate nodeDel = new NodeDelegate(paramWtx.getPageWtx().incrementNodeKey(), 0);
+            final NodeDelegate nodeDel = new NodeDelegate(paramWtx.getPageWtx().incrementNodeKey(), NULL_NODE);
             DocumentRootNode node =
                 new DocumentRootNode(nodeDel, new StructNodeDelegate(nodeDel, NULL_NODE, NULL_NODE,
                     NULL_NODE, 0));
@@ -366,7 +366,7 @@ public class XMLShredder implements Callable<Void> {
         final ISession session = db.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
         final INodeWriteTrx wtx = new NodeWriteTrx(session, session.beginBucketWtx(), HashKind.Rolling);
         // generating root node
-        final NodeDelegate nodeDel = new NodeDelegate(wtx.getPageWtx().incrementNodeKey(), 0);
+        final NodeDelegate nodeDel = new NodeDelegate(wtx.getPageWtx().incrementNodeKey(), NULL_NODE);
         DocumentRootNode node =
             new DocumentRootNode(nodeDel, new StructNodeDelegate(nodeDel, NULL_NODE, NULL_NODE, NULL_NODE, 0));
         wtx.getPageWtx().setNode(node);
