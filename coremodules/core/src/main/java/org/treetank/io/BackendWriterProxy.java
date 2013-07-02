@@ -229,49 +229,49 @@ public class BackendWriterProxy implements IBackendReader {
          */
         @Override
         public Void call() throws Exception {
-
-            IReferenceBucket currentRefBuck;
-            final Stack<LogKey> childAndRightSib = new Stack<LogKey>();
-            final Stack<LogKey> pathToRoot = new Stack<LogKey>();
-            childAndRightSib.push(new LogKey(false, 0, 0));
-
-            while (!childAndRightSib.isEmpty()) {
-                final LogKey key = childAndRightSib.pop();
-                final IBucket val = mFormerLog.get(key).getModified();
-
-                if (val instanceof IReferenceBucket) {
-                    currentRefBuck = (IReferenceBucket)val;
-
-                    if (pathToRoot.isEmpty() || !key.equals(pathToRoot.peek())) {
-                        pathToRoot.push(key);
-                    }
-
-                    for (int i = currentRefBuck.getReferenceHashs().length - 1; i >= 0; i--) {
-                        final byte[] hash = currentRefBuck.getReferenceHashs()[i];
-                        if (Arrays.equals(hash, IConstants.NON_HASHED)) {
-                            final LogKey toPush =
-                                new LogKey(false, key.getLevel() + 1,
-                                    (key.getSeq() << IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3]) + i);
-                            childAndRightSib.push(toPush);
-                        }
-                    }
-
-                } // ended at nodepage, leaf level
-                else {
-                    checkState(val instanceof NodeBucket);
-                    final int hash = val.secureHash().asInt();
-                    LogKey parentKey = pathToRoot.peek();
-                    LogValue parentVal = mFormerLog.get(parentKey);
-
-                }
-                System.out.println(key.toString());
-            }
-
-            while (!pathToRoot.isEmpty()) {
-                LogKey refBucket = pathToRoot.pop();
-                System.out.println(refBucket.toString());
-
-            }
+//
+//            IReferenceBucket currentRefBuck;
+//            final Stack<LogKey> childAndRightSib = new Stack<LogKey>();
+//            final Stack<LogKey> pathToRoot = new Stack<LogKey>();
+//            childAndRightSib.push(new LogKey(false, 0, 0));
+//
+//            while (!childAndRightSib.isEmpty()) {
+//                final LogKey key = childAndRightSib.pop();
+//                final IBucket val = mFormerLog.get(key).getModified();
+//
+//                if (val instanceof IReferenceBucket) {
+//                    currentRefBuck = (IReferenceBucket)val;
+//
+//                    if (pathToRoot.isEmpty() || !key.equals(pathToRoot.peek())) {
+//                        pathToRoot.push(key);
+//                    }
+//
+//                    for (int i = currentRefBuck.getReferenceHashs().length - 1; i >= 0; i--) {
+//                        final byte[] hash = currentRefBuck.getReferenceHashs()[i];
+//                        if (Arrays.equals(hash, IConstants.NON_HASHED)) {
+//                            final LogKey toPush =
+//                                new LogKey(false, key.getLevel() + 1,
+//                                    (key.getSeq() << IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3]) + i);
+//                            childAndRightSib.push(toPush);
+//                        }
+//                    }
+//
+//                } // ended at nodepage, leaf level
+//                else {
+//                    checkState(val instanceof NodeBucket);
+//                    final int hash = val.secureHash().asInt();
+//                    LogKey parentKey = pathToRoot.peek();
+//                    LogValue parentVal = mFormerLog.get(parentKey);
+//
+//                }
+//                System.out.println(key.toString());
+//            }
+//
+//            while (!pathToRoot.isEmpty()) {
+//                LogKey refBucket = pathToRoot.pop();
+//                System.out.println(refBucket.toString());
+//
+//            }
 
             // iterating over all data
             final Iterator<LogValue> entries = mFormerLog.getIterator();
