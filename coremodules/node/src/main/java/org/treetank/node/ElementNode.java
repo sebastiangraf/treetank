@@ -75,7 +75,6 @@ public final class ElementNode implements INode, IStructNode, INameNode {
             }
         }
     }
-
     /** Delegate for common node information. */
     private final NodeDelegate mDel;
     /** Delegate for struct node information. */
@@ -220,6 +219,22 @@ public final class ElementNode implements INode, IStructNode, INameNode {
     @Override
     public void setParentKey(final long pParentKey) {
         mDel.setParentKey(pParentKey);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long getHash() {
+        return mDel.getHash();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setHash(final long pHash) {
+        mDel.setHash(pHash);
     }
 
     /**

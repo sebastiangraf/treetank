@@ -9,6 +9,9 @@ import org.treetank.api.IMetaEntry;
 import org.treetank.api.IMetaEntryFactory;
 import org.treetank.exception.TTIOException;
 
+import com.google.common.hash.Funnel;
+import com.google.common.hash.PrimitiveSink;
+
 /**
  * Meta page for node layer mainly representing a hashmap mapping hashes to tagnames.
  * 
@@ -55,6 +58,21 @@ public class NodeMetaPageFactory implements IMetaEntryFactory {
      * 
      */
     public static class MetaKey implements IMetaEntry {
+
+        /**
+         * Enum for MetaKeyFunnel.
+         * 
+         * @author Sebastian Graf, University of Konstanz
+         * 
+         */
+        enum MetaKeyFunnel implements Funnel<IMetaEntry> {
+            INSTANCE;
+            public void funnel(IMetaEntry from, PrimitiveSink into) {
+                MetaKey node = (MetaKey)from;
+                into.putInt(node.mKey);
+            }
+        }
+
         /** Key Variable. */
         private final int mKey;
 
@@ -96,6 +114,14 @@ public class NodeMetaPageFactory implements IMetaEntryFactory {
         public final boolean equals(final Object pObj) {
             return this.hashCode() == pObj.hashCode();
         }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Funnel<IMetaEntry> getFunnel() {
+            return MetaKeyFunnel.INSTANCE;
+        }
     }
 
     /**
@@ -105,6 +131,20 @@ public class NodeMetaPageFactory implements IMetaEntryFactory {
      * 
      */
     public static class MetaValue implements IMetaEntry {
+        /**
+         * Enum for MetaValueFunnel.
+         * 
+         * @author Sebastian Graf, University of Konstanz
+         * 
+         */
+        enum MetaValueFunnel implements Funnel<IMetaEntry> {
+            INSTANCE;
+            public void funnel(IMetaEntry from, PrimitiveSink into) {
+                MetaValue node = (MetaValue)from;
+                into.putString(node.mData);
+            }
+        }
+
         /** Value Variable. */
         private final String mData;
 
@@ -151,6 +191,14 @@ public class NodeMetaPageFactory implements IMetaEntryFactory {
 
         public String getData() {
             return mData;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Funnel<IMetaEntry> getFunnel() {
+            return MetaValueFunnel.INSTANCE;
         }
 
     }

@@ -138,18 +138,7 @@ public class DumbNodeFactory implements INodeFactory {
          */
         @Override
         public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            if (getClass() != obj.getClass())
-                return false;
-            DumbNode other = (DumbNode)obj;
-            if (mNodeKey != other.mNodeKey)
-                return false;
-            if (!Arrays.equals(mValue, other.mValue))
-                return false;
-            return true;
+            return obj.hashCode() == this.hashCode();
         }
 
         /**

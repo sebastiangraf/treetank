@@ -42,7 +42,7 @@ public class TreeNodeFactory implements INodeFactory {
             INode returnVal = null;
             switch (kind) {
             case IConstants.ELEMENT:
-                nodeDel = new NodeDelegate(input.readLong(), input.readLong());
+                nodeDel = new NodeDelegate(input.readLong(), input.readLong(), input.readLong());
                 strucDel =
                     new StructNodeDelegate(nodeDel, input.readLong(), input.readLong(), input.readLong(),
                         input.readLong());
@@ -66,7 +66,7 @@ public class TreeNodeFactory implements INodeFactory {
                 returnVal = new ElementNode(nodeDel, strucDel, nameDel, attrKeys, namespKeys);
                 break;
             case IConstants.TEXT:
-                nodeDel = new NodeDelegate(input.readLong(), input.readLong());
+                nodeDel = new NodeDelegate(input.readLong(), input.readLong(), input.readLong());
                 // Struct Node are 4*8 bytes (+4 (kind) + 24 (nodedel))
                 strucDel =
                     new StructNodeDelegate(nodeDel, input.readLong(), input.readLong(), input.readLong(),
@@ -78,7 +78,7 @@ public class TreeNodeFactory implements INodeFactory {
                 returnVal = new TextNode(nodeDel, strucDel, valDel);
                 break;
             case IConstants.ROOT:
-                nodeDel = new NodeDelegate(input.readLong(), input.readLong());
+                nodeDel = new NodeDelegate(input.readLong(), input.readLong(), input.readLong());
                 // Struct Node are 4*8 bytes
                 strucDel =
                     new StructNodeDelegate(nodeDel, input.readLong(), input.readLong(), input.readLong(),
@@ -86,7 +86,7 @@ public class TreeNodeFactory implements INodeFactory {
                 returnVal = new DocumentRootNode(nodeDel, strucDel);
                 break;
             case IConstants.ATTRIBUTE:
-                nodeDel = new NodeDelegate(input.readLong(), input.readLong());
+                nodeDel = new NodeDelegate(input.readLong(), input.readLong(), input.readLong());
                 // Name Node are 2*4 bytes (+4 (kind) + 24 (nodedel))
                 nameDel = new NameNodeDelegate(nodeDel, input.readInt(), input.readInt());
                 // Val is the rest
@@ -96,7 +96,7 @@ public class TreeNodeFactory implements INodeFactory {
                 returnVal = new AttributeNode(nodeDel, nameDel, valDel);
                 break;
             case IConstants.NAMESPACE:
-                nodeDel = new NodeDelegate(input.readLong(), input.readLong());
+                nodeDel = new NodeDelegate(input.readLong(), input.readLong(), input.readLong());
                 // Name Node are 2*4 bytes
                 nameDel = new NameNodeDelegate(nodeDel, input.readInt(), input.readInt());
                 returnVal = new NamespaceNode(nodeDel, nameDel);

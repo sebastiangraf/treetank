@@ -35,12 +35,10 @@ import java.io.DataOutput;
 import java.io.IOException;
 
 import org.treetank.exception.TTIOException;
-import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.INode;
 
 import com.google.common.hash.Funnel;
-import com.google.common.hash.Hasher;
 import com.google.common.hash.PrimitiveSink;
 
 /**
@@ -89,6 +87,26 @@ public class NameNodeDelegate implements INode, INameNode {
         mDelegate = pDel;
         mNameKey = pNameKey;
         mUriKey = pUriKey;
+    }
+
+    /**
+     * Delegate method for setHash.
+     * 
+     * @param pHash
+     * @see org.treetank.node.delegates.NodeDelegate#setHash(long)
+     */
+    public void setHash(final long pHash) {
+        mDelegate.setHash(pHash);
+    }
+
+    /**
+     * Delegate method for getHash.
+     * 
+     * @return the hash
+     * @see org.treetank.node.delegates.NodeDelegate#getHash()
+     */
+    public long getHash() {
+        return mDelegate.getHash();
     }
 
     /**
@@ -195,25 +213,6 @@ public class NameNodeDelegate implements INode, INameNode {
      * {@inheritDoc}
      */
     @Override
-    public int hashCode() {
-        Hasher hc = IConstants.HF.newHasher();
-        hc.putInt(mNameKey);
-        hc.putInt(mUriKey);
-        return hc.hash().asInt();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(Object obj) {
-        return hashCode() == obj.hashCode();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public String toString() {
         return toStringHelper(this).add("mDelegate", mDelegate).add("mNameKey", mNameKey).add("mUriKey",
             mUriKey).toString();
@@ -238,6 +237,21 @@ public class NameNodeDelegate implements INode, INameNode {
     @Override
     public Funnel<org.treetank.api.INode> getFunnel() {
         return NameNodeDelegateFunnel.INSTANCE;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((mDelegate == null) ? 0 : mDelegate.hashCode());
+        result = prime * result + mNameKey;
+        result = prime * result + mUriKey;
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj.hashCode() == this.hashCode();
     }
 
 }

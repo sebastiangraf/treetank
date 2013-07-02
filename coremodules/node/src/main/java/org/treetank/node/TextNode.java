@@ -41,7 +41,6 @@ import org.treetank.node.interfaces.IStructNode;
 import org.treetank.node.interfaces.IValNode;
 
 import com.google.common.hash.Funnel;
-import com.google.common.hash.Hasher;
 import com.google.common.hash.PrimitiveSink;
 
 /**
@@ -122,6 +121,22 @@ public final class TextNode implements IStructNode, IValNode, INode {
     @Override
     public long getFirstChildKey() {
         return mStrucDel.getFirstChildKey();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setHash(final long pHash) {
+        mDel.setHash(pHash);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long getHash() {
+        return mDel.getHash();
     }
 
     /**
@@ -264,24 +279,6 @@ public final class TextNode implements IStructNode, IValNode, INode {
      * {@inheritDoc}
      */
     @Override
-    public int hashCode() {
-        Hasher hc = IConstants.HF.newHasher();
-        hc.putInt(mValDel.hashCode());
-        return hc.hash().asInt();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(Object obj) {
-        return hashCode() == obj.hashCode();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public String toString() {
         return toStringHelper(this).add("mDel", mDel).add("mValDel", mValDel).add("mStrucDel", mStrucDel)
             .toString();
@@ -305,6 +302,21 @@ public final class TextNode implements IStructNode, IValNode, INode {
     @Override
     public Funnel<org.treetank.api.INode> getFunnel() {
         return TextNodeFunnel.INSTANCE;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((mDel == null) ? 0 : mDel.hashCode());
+        result = prime * result + ((mStrucDel == null) ? 0 : mStrucDel.hashCode());
+        result = prime * result + ((mValDel == null) ? 0 : mValDel.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return this.hashCode() == obj.hashCode();
     }
 
 }

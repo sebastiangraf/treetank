@@ -261,6 +261,16 @@ public class AtomicValue implements INode, IValNode {
     }
 
     @Override
+    public void setHash(long hash) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public long getHash() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void setParentKey(long paramKey) {
         throw new UnsupportedOperationException();
 
@@ -305,6 +315,7 @@ public class AtomicValue implements INode, IValNode {
      */
     public void serialize(final DataOutput pOutput) throws TTIOException {
     }
+
 
     /**
      * {@inheritDoc}

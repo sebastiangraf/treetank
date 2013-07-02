@@ -53,7 +53,8 @@ public class INodeTest {
     }
 
     /**
-     * Test method for {@link org.treetank.api.INode#getHash()}, {@link org.treetank.api.INode#getNodeKey()},
+     * Test method for {@link org.treetank.api.INode#getHash()},
+     * {@link org.treetank.api.INode#getNodeKey()},
      * {@link org.treetank.api.INode#serialize(java.io.DataOutput)},
      * 
      * @param pNodeClass
@@ -107,7 +108,7 @@ public class INodeTest {
         };
 
         // generating delegates
-        final NodeDelegate del = new NodeDelegate(99, 13);
+        final NodeDelegate del = new NodeDelegate(99, 13, 0);
         final NameNodeDelegate nameDel = new NameNodeDelegate(del, 14, 15);
         final ValNodeDelegate valDel = new ValNodeDelegate(del, value);
         final StructNodeDelegate strucDel = new StructNodeDelegate(del, 24, 36, 48, 77);

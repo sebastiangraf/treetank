@@ -34,11 +34,9 @@ import java.io.IOException;
 
 import org.treetank.api.INode;
 import org.treetank.exception.TTIOException;
-import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.IStructNode;
 
 import com.google.common.hash.Funnel;
-import com.google.common.hash.Hasher;
 import com.google.common.hash.PrimitiveSink;
 
 /**
@@ -53,7 +51,7 @@ import com.google.common.hash.PrimitiveSink;
 public class StructNodeDelegate implements IStructNode {
 
     /**
-     * Enum for AtomicValueFunnel.
+     * Enum for StructValueFunnel.
      * 
      * @author Sebastian Graf, University of Konstanz
      * 
@@ -239,6 +237,26 @@ public class StructNodeDelegate implements IStructNode {
     }
 
     /**
+     * Delegate method for getHash.
+     * 
+     * @return the hash
+     * @see org.treetank.node.delegates.NodeDelegate#getHash()
+     */
+    public long getHash() {
+        return mDelegate.getHash();
+    }
+
+    /**
+     * Delegate method for setHash.
+     * 
+     * @param pHash
+     * @see org.treetank.node.delegates.NodeDelegate#setHash(long)
+     */
+    public void setHash(long pHash) {
+        mDelegate.setHash(pHash);
+    }
+
+    /**
      * Delegate method for getTypeKey.
      * 
      * @return the type of the node
@@ -266,28 +284,6 @@ public class StructNodeDelegate implements IStructNode {
      */
     public boolean hasParent() {
         return mDelegate.hasParent();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        Hasher hc = IConstants.HF.newHasher();
-        hc.putLong(mChildCount);
-        hc.putInt(mDelegate.hashCode());
-        hc.putLong(mFirstChild);
-        hc.putLong(mLeftSibling);
-        hc.putLong(mLeftSibling);
-        return hc.hash().asInt();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(Object obj) {
-        return hashCode() == obj.hashCode();
     }
 
     /**
@@ -323,4 +319,20 @@ public class StructNodeDelegate implements IStructNode {
         return StructNodeDelegateFunnel.INSTANCE;
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (int)(mChildCount ^ (mChildCount >>> 32));
+        result = prime * result + ((mDelegate == null) ? 0 : mDelegate.hashCode());
+        result = prime * result + (int)(mFirstChild ^ (mFirstChild >>> 32));
+        result = prime * result + (int)(mLeftSibling ^ (mLeftSibling >>> 32));
+        result = prime * result + (int)(mRightSibling ^ (mRightSibling >>> 32));
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return this.hashCode() == obj.hashCode();
+    }
 }

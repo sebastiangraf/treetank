@@ -103,7 +103,7 @@ public class XMLShredderTest {
         CoreTestHelper.deleteEverything();
     }
 
-    @Test(enabled=false)
+    @Test
     public void testSTAXShredder() throws Exception {
 
         // Setup parsed session.
@@ -147,7 +147,7 @@ public class XMLShredderTest {
         session.close();
     }
 
-    @Test(enabled=false)
+    @Test
     public void testShredIntoExisting() throws Exception {
 
         final INodeWriteTrx wtx = holder.getNWtx();
@@ -204,7 +204,7 @@ public class XMLShredderTest {
 
     }
 
-    @Test(enabled=false)
+    @Test
     public void testAttributesNSPrefix() throws Exception {
         // Setup expected session.
         XMLTestHelper.DocumentCreater.createWithoutNamespace(holder.getNWtx());
@@ -251,7 +251,7 @@ public class XMLShredderTest {
         AssertJUnit.assertEquals(expectedAttributes.hasNext(), attributes.hasNext());
     }
 
-    @Test(enabled=false)
+    @Test
     public void testShreddingLargeText() throws Exception {
         final IStorage storage = CoreTestHelper.getStorage(PATHS.PATH2.getFile());
         Properties props =

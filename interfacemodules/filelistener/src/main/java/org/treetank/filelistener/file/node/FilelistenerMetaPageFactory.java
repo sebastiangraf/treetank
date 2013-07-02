@@ -9,6 +9,9 @@ import org.treetank.api.IMetaEntry;
 import org.treetank.api.IMetaEntryFactory;
 import org.treetank.exception.TTIOException;
 
+import com.google.common.hash.Funnel;
+import com.google.common.hash.PrimitiveSink;
+
 /**
  * This factory is used to give the treetank
  * system knowledge of the MetaEntries this interface module
@@ -50,6 +53,20 @@ public class FilelistenerMetaPageFactory implements IMetaEntryFactory {
      * 
      */
     public static class MetaKey implements IMetaEntry {
+        /**
+         * Enum for MetaKeyFunnel.
+         * 
+         * @author Sebastian Graf, University of Konstanz
+         * 
+         */
+        enum MetaKeyFunnel implements Funnel<IMetaEntry> {
+            INSTANCE;
+            public void funnel(IMetaEntry from, PrimitiveSink into) {
+                MetaKey node = (MetaKey)from;
+                into.putString(node.mKey);
+            }
+        }
+        
         /** Key Variable. */
         private final String mKey;
 
@@ -96,6 +113,14 @@ public class FilelistenerMetaPageFactory implements IMetaEntryFactory {
         public final boolean equals(final Object pObj) {
             return this.hashCode() == pObj.hashCode();
         }
+        
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Funnel<IMetaEntry> getFunnel() {
+            return MetaKeyFunnel.INSTANCE;
+        }
     }
 
     /**
@@ -106,6 +131,20 @@ public class FilelistenerMetaPageFactory implements IMetaEntryFactory {
      * 
      */
     public static class MetaValue implements IMetaEntry {
+        /**
+         * Enum for MetaValueFunnel.
+         * 
+         * @author Sebastian Graf, University of Konstanz
+         * 
+         */
+        enum MetaValueFunnel implements Funnel<IMetaEntry> {
+            INSTANCE;
+            public void funnel(IMetaEntry from, PrimitiveSink into) {
+                MetaValue node = (MetaValue)from;
+                into.putLong(node.mData);
+            }
+        }
+        
         /** Value Variable. */
         private final long mData;
 
@@ -150,6 +189,14 @@ public class FilelistenerMetaPageFactory implements IMetaEntryFactory {
 
         public long getData() {
             return mData;
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Funnel<IMetaEntry> getFunnel() {
+            return MetaValueFunnel.INSTANCE;
         }
 
     }

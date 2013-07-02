@@ -340,7 +340,7 @@ abstract class AbsDiff extends AbsDiffObservable {
         case TEXT:
         case ELEMENT:
             if (paramNewRtx.getNode().getNodeKey() != paramOldRtx.getNode().getNodeKey()
-                || paramNewRtx.getNode().hashCode() != paramOldRtx.getNode().hashCode()) {
+                || paramNewRtx.getNode().getHash() != paramOldRtx.getNode().getHash()) {
                 // Check if nodes are the same (even if subtrees may vary).
                 if (checkNodes(paramNewRtx, paramOldRtx)) {
                     diff = EDiff.SAME;

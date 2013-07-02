@@ -52,7 +52,7 @@ import com.google.common.hash.PrimitiveSink;
 public class NodeDelegate implements INode {
 
     /**
-     * Enum for AtomicValueFunnel.
+     * Enum for NodeValueFunnel.
      * 
      * @author Sebastian Graf, University of Konstanz
      * 
@@ -69,6 +69,8 @@ public class NodeDelegate implements INode {
     private long mNodeKey;
     /** Key of the parent node. */
     private long mParentKey;
+    /** Hash of the parent node. */
+    private long mHash;
     /**
      * TypeKey of the parent node. Can be referenced later on over special
      * pages.
@@ -82,10 +84,13 @@ public class NodeDelegate implements INode {
      *            to be represented by this delegate.
      * @param pParentKey
      *            to be represented by this delegate
+     * @param pHash
+     *            to be represented by this delegate
      */
-    public NodeDelegate(final long pNodeKey, final long pParentKey) {
+    public NodeDelegate(final long pNodeKey, final long pParentKey, final long pHash) {
         mNodeKey = pNodeKey;
         mParentKey = pParentKey;
+        mHash = pHash;
         mTypeKey = TYPE_KEY;
     }
 
@@ -125,8 +130,32 @@ public class NodeDelegate implements INode {
      * {@inheritDoc}
      */
     @Override
+    public long getHash() {
+        return mHash;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setHash(final long pHash) {
+        this.mHash = pHash;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (int)(mHash ^ (mHash >>> 32));
+        result = prime * result + (int)(mNodeKey ^ (mNodeKey >>> 32));
+        result = prime * result + (int)(mParentKey ^ (mParentKey >>> 32));
+        result = prime * result + mTypeKey;
+        return result;
+    }
+
+    @Override
     public boolean equals(Object obj) {
-        return hashCode() == obj.hashCode();
+        return obj.hashCode() == this.hashCode();
     }
 
     /**
@@ -134,8 +163,8 @@ public class NodeDelegate implements INode {
      */
     @Override
     public String toString() {
-        return toStringHelper(this).add("mNodeKey", mNodeKey).add("mParentKey", mParentKey).add("mTypeKey",
-            mTypeKey).toString();
+        return toStringHelper(this).add("mNodeKey", mNodeKey).add("mParentKey", mParentKey).add("mHash",
+            mHash).add("mTypeKey", mTypeKey).toString();
     }
 
     /**
@@ -173,6 +202,7 @@ public class NodeDelegate implements INode {
         try {
             pOutput.writeLong(getNodeKey());
             pOutput.writeLong(getParentKey());
+            pOutput.writeLong(getHash());
         } catch (final IOException exc) {
             throw new TTIOException(exc);
         }

@@ -39,7 +39,6 @@ import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.INode;
 
 import com.google.common.hash.Funnel;
-import com.google.common.hash.Hasher;
 import com.google.common.hash.PrimitiveSink;
 
 /**
@@ -129,6 +128,22 @@ public final class NamespaceNode implements INode, INameNode {
      * {@inheritDoc}
      */
     @Override
+    public void setHash(final long pHash) {
+        mDel.setHash(pHash);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long getHash() {
+        return mDel.getHash();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public long getNodeKey() {
         return mDel.getNodeKey();
     }
@@ -177,25 +192,6 @@ public final class NamespaceNode implements INode, INameNode {
      * {@inheritDoc}
      */
     @Override
-    public int hashCode() {
-        Hasher hc = IConstants.HF.newHasher();
-        hc.putInt(mDel.hashCode());
-        hc.putInt(mNameDel.hashCode());
-        return hc.hash().asInt();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(Object obj) {
-        return hashCode() == obj.hashCode();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public String toString() {
         return toStringHelper(this).add("mDel", mDel).add("mNameDel", mNameDel).toString();
     }
@@ -217,6 +213,20 @@ public final class NamespaceNode implements INode, INameNode {
     @Override
     public Funnel<org.treetank.api.INode> getFunnel() {
         return NamespaceFunnel.INSTANCE;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((mDel == null) ? 0 : mDel.hashCode());
+        result = prime * result + ((mNameDel == null) ? 0 : mNameDel.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return this.hashCode() == obj.hashCode();
     }
 
 }

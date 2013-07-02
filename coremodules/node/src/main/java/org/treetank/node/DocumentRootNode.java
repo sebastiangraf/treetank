@@ -113,6 +113,22 @@ public final class DocumentRootNode implements INode, IStructNode {
      * {@inheritDoc}
      */
     @Override
+    public long getHash() {
+        return mDel.getHash();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setHash(final long pHash) {
+        mDel.setHash(pHash);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public int hashCode() {
         return mDel.hashCode();
     }
