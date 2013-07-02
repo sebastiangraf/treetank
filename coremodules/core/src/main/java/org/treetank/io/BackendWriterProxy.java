@@ -25,8 +25,6 @@ import org.treetank.bucket.interfaces.IReferenceBucket;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 
-import com.sleepycat.je.tree.ChildReference;
-
 /**
  * This class encapsulates the access to the persistent backend for writing purposes and combines it with a
  * transaction log.
@@ -229,8 +227,28 @@ public class BackendWriterProxy implements IBackendReader {
          */
         @Override
         public Void call() throws Exception {
-
+            
+//            //iterate data tree
 //            iterateSubtree(false);
+//            //get last IndirectBucket referenced from the RevRoot.
+//            final LogKey dataKey = new LogKey(false, 0, 0);
+//            final IReferenceBucket dataBuck = (IReferenceBucket)mFormerLog.get(dataKey).getModified();
+//            final byte[] dataHash = dataBuck.secureHash().asBytes();
+//            mWriter.write(dataBuck);
+//            mRoot.setReferenceHash(RevisionRootBucket.GUARANTEED_INDIRECT_OFFSET, dataHash);
+//            final byte[] metaHash = mMeta.secureHash().asBytes();
+//            mWriter.write(mMeta);
+//            mRoot.setReferenceHash(RevisionRootBucket.META_REFERENCE_OFFSET, metaHash);
+//                 
+//            //iterate data tree
+//            iterateSubtree(true);
+//            
+//            final LogKey revKey = new LogKey(true, 0, 0);
+//            final IReferenceBucket revBuck = (IReferenceBucket)mFormerLog.get(revKey).getModified();
+//            final byte[] revHash = revBuck.secureHash().asBytes();
+//            mWriter.write(revBuck);
+//            mUber.setReferenceHash(UberBucket.GUARANTEED_INDIRECT_OFFSET, revHash);
+//            mWriter.write(mUber);
 
             // iterating over all data
             final Iterator<LogValue> entries = mFormerLog.getIterator();
@@ -260,9 +278,9 @@ public class BackendWriterProxy implements IBackendReader {
          * 
          * @param pRootLevel
          *            if level is rootlevel or not
-         * @throws TTIOException
+         * @throws TTException 
          */
-        private void iterateSubtree(final boolean pRootLevel) throws TTIOException {
+        private void iterateSubtree(final boolean pRootLevel) throws TTException {
             IReferenceBucket currentRefBuck;
             // Stack for caching the next elements (namely the right siblings and die childs)
             final Stack<LogKey> childAndRightSib = new Stack<LogKey>();
@@ -318,11 +336,25 @@ public class BackendWriterProxy implements IBackendReader {
 
                 } // if we are on the leaf level...
                 else {
-                    // ..we need to have a NodeBucket and...
-                    checkState(val instanceof NodeBucket);
-                    // ...we adapt the parent with the own hash.
-                    final LogKey parentKey = pathToRoot.peek();
-                    adaptHash(parentKey, key);
+                    //if we are over the revroot, take the revroot directly..  
+                    if(pRootLevel) {
+                        final byte[] hash = mRoot.secureHash().asBytes();
+                        mWriter.write(mRoot);
+                        final LogKey parentKey = pathToRoot.peek();
+                        final IReferenceBucket parentVal = (IReferenceBucket)mFormerLog.get(parentKey).getModified();
+                        final int parentOffset =
+                            (int)(key.getSeq() - ((key.getSeq() >> IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3]) << IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3]));
+                        parentVal.setReferenceHash(parentOffset, hash);
+                        
+                    } //otherwise, retrieve the bucket from the log.
+                    else {
+                        // ..we need to have a NodeBucket and...
+                        checkState(val instanceof NodeBucket);
+                        // ...we adapt the parent with the own hash.
+                        final LogKey parentKey = pathToRoot.peek();
+                        adaptHash(parentKey, key);                        
+                    }
+
                 }
             }
 
@@ -330,7 +362,7 @@ public class BackendWriterProxy implements IBackendReader {
             do {
                 final LogKey child = pathToRoot.pop();
                 final LogKey parent = pathToRoot.peek();
-                adaptHash(child, parent);
+                adaptHash(parent, child);
             } while (pathToRoot.size() > 1);
         }
 
@@ -341,11 +373,12 @@ public class BackendWriterProxy implements IBackendReader {
          *            the {@link LogKey} for the parent bucket
          * @param pChildKey
          *            the {@link LogKey} for the own bucket
-         * @throws TTIOException
+         * @throws TTException 
          */
-        private void adaptHash(final LogKey pParentKey, final LogKey pChildKey) throws TTIOException {
+        private void adaptHash(final LogKey pParentKey, final LogKey pChildKey) throws TTException {
             final IBucket val = mFormerLog.get(pChildKey).getModified();
             final byte[] hash = val.secureHash().asBytes();
+            mWriter.write(val);
             final IReferenceBucket parentVal = (IReferenceBucket)mFormerLog.get(pParentKey).getModified();
             final int parentOffset =
                 (int)(pChildKey.getSeq() - ((pChildKey.getSeq() >> IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3]) << IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3]));
