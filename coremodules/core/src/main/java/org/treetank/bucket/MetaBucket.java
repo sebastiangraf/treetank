@@ -35,9 +35,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.IMetaEntry;
 import org.treetank.bucket.interfaces.IBucket;
 import org.treetank.exception.TTIOException;
+
+import com.google.common.hash.Hasher;
 
 /**
  * <h1>MetaBucket</h1>
@@ -178,6 +181,20 @@ public final class MetaBucket implements IBucket {
     @Override
     public boolean equals(Object obj) {
       return obj.hashCode()==this.hashCode();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] secureHash() {
+        final Hasher code = StandardSettings.HASHFUNC.newHasher().putLong(mBucketKey);
+        for (final IMetaEntry key : mMetaMap.keySet()) {
+            final IMetaEntry val = mMetaMap.get(key);
+            code.putObject(key, key.getFunnel());
+            code.putObject(val, val.getFunnel());
+        }
+        return code.hash().asBytes();
     }
 
 }

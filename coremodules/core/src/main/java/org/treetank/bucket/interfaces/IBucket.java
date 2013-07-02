@@ -57,4 +57,11 @@ public interface IBucket {
      */
     void serialize(final DataOutput pOutput) throws TTIOException;
 
+    /**
+     * Getting a secure hash for a bucket.
+     * 
+     * @return the bytes representing a secure hash
+     */
+    byte[] secureHash();
+
 }

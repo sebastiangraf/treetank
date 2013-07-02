@@ -231,6 +231,10 @@ public final class NodeBucket implements IBucket {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public byte[] secureHash() {
         final Hasher code = StandardSettings.HASHFUNC.newHasher().putLong(mBucketKey).putLong(mLastBucketKey);
         for (int i = 0; i < mNodes.length; i++) {
