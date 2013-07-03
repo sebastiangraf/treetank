@@ -33,8 +33,12 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.treetank.access.conf.StandardSettings;
 import org.treetank.bucket.interfaces.IReferenceBucket;
 import org.treetank.exception.TTIOException;
+
+import com.google.common.hash.HashCode;
+import com.google.common.hash.Hasher;
 
 /**
  * <h1>IndirectBucket</h1>
@@ -148,8 +152,8 @@ public final class IndirectBucket implements IReferenceBucket {
         int result = 1;
         result = prime * result + (int)(mBucketKey ^ (mBucketKey >>> 32));
         result = prime * result + Arrays.hashCode(mReferenceKeys);
-        for(byte[] hash : mReferenceHashs) {
-            result = prime * result + Arrays.hashCode(hash);    
+        for (byte[] hash : mReferenceHashs) {
+            result = prime * result + Arrays.hashCode(hash);
         }
         return result;
     }
@@ -159,7 +163,20 @@ public final class IndirectBucket implements IReferenceBucket {
      */
     @Override
     public boolean equals(Object obj) {
-      return obj.hashCode()==this.hashCode();
+        return obj.hashCode() == this.hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HashCode  secureHash() {
+        final Hasher code = StandardSettings.HASHFUNC.newHasher().putLong(mBucketKey);
+        for (int i = 0; i < mReferenceKeys.length; i++) {
+            code.putLong(mReferenceKeys[i]);
+            code.putBytes(mReferenceHashs[i]);
+        }
+        return code.hash();
     }
 
 }

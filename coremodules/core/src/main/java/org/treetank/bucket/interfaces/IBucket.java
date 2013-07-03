@@ -30,6 +30,8 @@ import java.io.DataOutput;
 
 import org.treetank.exception.TTIOException;
 
+import com.google.common.hash.HashCode;
+
 /**
  * Interface to represent one bucket.
  * A bucket is the atomic unique to be serializible and represents one bucket when stored.
@@ -56,5 +58,12 @@ public interface IBucket {
      * @throws TTIOException
      */
     void serialize(final DataOutput pOutput) throws TTIOException;
+
+    /**
+     * Getting a secure hash for a bucket.
+     * 
+     * @return the bytes representing a secure hash
+     */
+    HashCode secureHash();
 
 }

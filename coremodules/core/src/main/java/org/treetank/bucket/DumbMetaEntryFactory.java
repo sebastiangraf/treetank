@@ -11,6 +11,9 @@ import org.treetank.api.IMetaEntry;
 import org.treetank.api.IMetaEntryFactory;
 import org.treetank.exception.TTIOException;
 
+import com.google.common.hash.Funnel;
+import com.google.common.hash.PrimitiveSink;
+
 /**
  * 
  * Dumb MetaEntryFactory mainly for testing the core.
@@ -53,6 +56,20 @@ public class DumbMetaEntryFactory implements IMetaEntryFactory {
      */
     public static class DumbKey implements IMetaEntry {
 
+        /**
+         * Enum for DumbKeyFunnel.
+         * 
+         * @author Sebastian Graf, University of Konstanz
+         * 
+         */
+        enum DumbKeyFunnel implements Funnel<IMetaEntry> {
+            INSTANCE;
+            public void funnel(IMetaEntry from, PrimitiveSink into) {
+                DumbKey node = (DumbKey)from;
+                into.putLong(node.mData);
+            }
+        }
+        
         /** The data itself. */
         private final long mData;
 
@@ -102,6 +119,14 @@ public class DumbMetaEntryFactory implements IMetaEntryFactory {
         public String toString() {
             return toStringHelper(this).add("mData", mData).toString();
         }
+        
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Funnel<IMetaEntry> getFunnel() {
+            return DumbKeyFunnel.INSTANCE;
+        }
     }
 
     /**
@@ -112,6 +137,20 @@ public class DumbMetaEntryFactory implements IMetaEntryFactory {
      */
     public static class DumbValue implements IMetaEntry {
 
+        /**
+         * Enum for DumbValueFunnel.
+         * 
+         * @author Sebastian Graf, University of Konstanz
+         * 
+         */
+        enum DumbValueFunnel implements Funnel<IMetaEntry> {
+            INSTANCE;
+            public void funnel(IMetaEntry from, PrimitiveSink into) {
+                DumbValue node = (DumbValue)from;
+                into.putLong(node.mData);
+            }
+        }
+        
         /** The data itself. */
         private final long mData;
 
@@ -161,7 +200,13 @@ public class DumbMetaEntryFactory implements IMetaEntryFactory {
         public String toString() {
             return toStringHelper(this).add("mData", mData).toString();
         }
-
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Funnel<IMetaEntry> getFunnel() {
+            return DumbValueFunnel.INSTANCE;
+        }
     }
 
 }

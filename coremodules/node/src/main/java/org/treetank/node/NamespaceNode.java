@@ -38,7 +38,8 @@ import org.treetank.node.delegates.NodeDelegate;
 import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.INode;
 
-import com.google.common.hash.Hasher;
+import com.google.common.hash.Funnel;
+import com.google.common.hash.PrimitiveSink;
 
 /**
  * <h1>NamespaceNode</h1>
@@ -48,6 +49,22 @@ import com.google.common.hash.Hasher;
  * </p>
  */
 public final class NamespaceNode implements INode, INameNode {
+
+    /**
+     * Enum for NamespaceFunnel.
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
+    enum NamespaceFunnel implements Funnel<org.treetank.api.INode> {
+        INSTANCE;
+        public void funnel(org.treetank.api.INode node, PrimitiveSink into) {
+            final NamespaceNode from = (NamespaceNode)node;
+            from.mDel.getFunnel().funnel(from, into);
+            from.mNameDel.getFunnel().funnel(from, into);
+        }
+    }
+
     /** Delegate for common node information. */
     private final NodeDelegate mDel;
 
@@ -175,25 +192,6 @@ public final class NamespaceNode implements INode, INameNode {
      * {@inheritDoc}
      */
     @Override
-    public int hashCode() {
-        Hasher hc = IConstants.HF.newHasher();
-        hc.putInt(mDel.hashCode());
-        hc.putInt(mNameDel.hashCode());
-        return hc.hash().asInt();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(Object obj) {
-        return hashCode() == obj.hashCode();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public String toString() {
         return toStringHelper(this).add("mDel", mDel).add("mNameDel", mNameDel).toString();
     }
@@ -210,6 +208,25 @@ public final class NamespaceNode implements INode, INameNode {
         } catch (final IOException exc) {
             throw new TTIOException(exc);
         }
+    }
+
+    @Override
+    public Funnel<org.treetank.api.INode> getFunnel() {
+        return NamespaceFunnel.INSTANCE;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((mDel == null) ? 0 : mDel.hashCode());
+        result = prime * result + ((mNameDel == null) ? 0 : mNameDel.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return this.hashCode() == obj.hashCode();
     }
 
 }

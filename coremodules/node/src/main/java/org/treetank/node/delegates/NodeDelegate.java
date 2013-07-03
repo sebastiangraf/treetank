@@ -37,7 +37,8 @@ import org.treetank.exception.TTIOException;
 import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.INode;
 
-import com.google.common.hash.Hasher;
+import com.google.common.hash.Funnel;
+import com.google.common.hash.PrimitiveSink;
 
 /**
  * Delegate method for all nodes. That means that all nodes stored in Treetank
@@ -49,6 +50,20 @@ import com.google.common.hash.Hasher;
  * 
  */
 public class NodeDelegate implements INode {
+
+    /**
+     * Enum for NodeValueFunnel.
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
+    enum NodeDelegateFunnel implements Funnel<org.treetank.api.INode> {
+        INSTANCE;
+        public void funnel(org.treetank.api.INode node, PrimitiveSink into) {
+            final NodeDelegate from = (NodeDelegate)node;
+            into.putLong(from.mNodeKey).putLong(from.mParentKey);
+        }
+    }
 
     /** Key of the current node. Must be unique for all nodes. */
     private long mNodeKey;
@@ -127,25 +142,20 @@ public class NodeDelegate implements INode {
         this.mHash = pHash;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int hashCode() {
-        Hasher hc = IConstants.HF.newHasher();
-        hc.putLong(mHash);
-        hc.putLong(mNodeKey);
-        hc.putLong(mParentKey);
-        hc.putInt(mTypeKey);
-        return hc.hash().asInt();
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (int)(mHash ^ (mHash >>> 32));
+        result = prime * result + (int)(mNodeKey ^ (mNodeKey >>> 32));
+        result = prime * result + (int)(mParentKey ^ (mParentKey >>> 32));
+        result = prime * result + mTypeKey;
+        return result;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean equals(Object obj) {
-        return hashCode() == obj.hashCode();
+        return obj.hashCode() == this.hashCode();
     }
 
     /**
@@ -153,8 +163,8 @@ public class NodeDelegate implements INode {
      */
     @Override
     public String toString() {
-        return toStringHelper(this).add("mNodeKey", mNodeKey).add("mParentKey", mParentKey).add("mHash", mHash)
-            .add("mTypeKey", mTypeKey).toString();
+        return toStringHelper(this).add("mNodeKey", mNodeKey).add("mParentKey", mParentKey).add("mHash",
+            mHash).add("mTypeKey", mTypeKey).toString();
     }
 
     /**
@@ -196,6 +206,11 @@ public class NodeDelegate implements INode {
         } catch (final IOException exc) {
             throw new TTIOException(exc);
         }
+    }
+
+    @Override
+    public Funnel<org.treetank.api.INode> getFunnel() {
+        return NodeDelegateFunnel.INSTANCE;
     }
 
 }

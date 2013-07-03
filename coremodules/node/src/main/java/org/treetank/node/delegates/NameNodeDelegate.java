@@ -35,11 +35,11 @@ import java.io.DataOutput;
 import java.io.IOException;
 
 import org.treetank.exception.TTIOException;
-import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.INode;
 
-import com.google.common.hash.Hasher;
+import com.google.common.hash.Funnel;
+import com.google.common.hash.PrimitiveSink;
 
 /**
  * Delegate method for all nodes containing \"naming\"-data. That means that
@@ -51,6 +51,20 @@ import com.google.common.hash.Hasher;
  * 
  */
 public class NameNodeDelegate implements INode, INameNode {
+    /**
+     * Enum for AtomicValueFunnel.
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
+    enum NameNodeDelegateFunnel implements Funnel<org.treetank.api.INode> {
+        INSTANCE;
+        public void funnel(org.treetank.api.INode node, PrimitiveSink into) {
+            final NameNodeDelegate from = (NameNodeDelegate)node;
+            into.putInt(from.mNameKey).putInt(from.mUriKey);
+            from.mDelegate.getFunnel().funnel(from.mDelegate, into);
+        }
+    }
 
     /** Node delegate, containing basic node information. */
     private final NodeDelegate mDelegate;
@@ -199,25 +213,6 @@ public class NameNodeDelegate implements INode, INameNode {
      * {@inheritDoc}
      */
     @Override
-    public int hashCode() {
-        Hasher hc = IConstants.HF.newHasher();
-        hc.putInt(mNameKey);
-        hc.putInt(mUriKey);
-        return hc.hash().asInt();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(Object obj) {
-        return hashCode() == obj.hashCode();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public String toString() {
         return toStringHelper(this).add("mDelegate", mDelegate).add("mNameKey", mNameKey).add("mUriKey",
             mUriKey).toString();
@@ -237,6 +232,26 @@ public class NameNodeDelegate implements INode, INameNode {
         } catch (final IOException exc) {
             throw new TTIOException(exc);
         }
+    }
+
+    @Override
+    public Funnel<org.treetank.api.INode> getFunnel() {
+        return NameNodeDelegateFunnel.INSTANCE;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((mDelegate == null) ? 0 : mDelegate.hashCode());
+        result = prime * result + mNameKey;
+        result = prime * result + mUriKey;
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj.hashCode() == this.hashCode();
     }
 
 }

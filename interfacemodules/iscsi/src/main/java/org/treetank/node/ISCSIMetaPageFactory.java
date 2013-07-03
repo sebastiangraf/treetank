@@ -7,6 +7,8 @@ import org.treetank.api.IMetaEntry;
 import org.treetank.api.IMetaEntryFactory;
 import org.treetank.exception.TTIOException;
 
+import com.google.common.hash.Funnel;
+
 /**
  * Implementation for iSCSI Meta information, at the moment not really used.
  * 
@@ -20,6 +22,11 @@ public class ISCSIMetaPageFactory implements IMetaEntryFactory {
         return new IMetaEntry() {
             @Override
             public void serialize(DataOutput pOutput) throws TTIOException {
+            }
+
+            @Override
+            public Funnel<IMetaEntry> getFunnel() {
+                return null;
             }
         };
     }

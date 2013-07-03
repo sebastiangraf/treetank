@@ -32,11 +32,12 @@ import static org.treetank.node.IConstants.NULL_NODE;
 import java.io.DataOutput;
 import java.io.IOException;
 
+import org.treetank.api.INode;
 import org.treetank.exception.TTIOException;
-import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.IStructNode;
 
-import com.google.common.hash.Hasher;
+import com.google.common.hash.Funnel;
+import com.google.common.hash.PrimitiveSink;
 
 /**
  * Delegate method for all nodes building up the structure. That means that all
@@ -48,6 +49,24 @@ import com.google.common.hash.Hasher;
  * 
  */
 public class StructNodeDelegate implements IStructNode {
+
+    /**
+     * Enum for StructValueFunnel.
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
+    enum StructNodeDelegateFunnel implements Funnel<org.treetank.api.INode> {
+        INSTANCE;
+        public void funnel(org.treetank.api.INode node, PrimitiveSink into) {
+            final StructNodeDelegate from = (StructNodeDelegate)node;
+            into.putLong(from.mFirstChild);
+            into.putLong(from.mRightSibling);
+            into.putLong(from.mLeftSibling);
+            into.putLong(from.mChildCount);
+            from.mDelegate.getFunnel().funnel(from.mDelegate, into);
+        }
+    }
 
     /** Pointer to the first child of the current node. */
     private long mFirstChild;
@@ -271,28 +290,6 @@ public class StructNodeDelegate implements IStructNode {
      * {@inheritDoc}
      */
     @Override
-    public int hashCode() {
-        Hasher hc = IConstants.HF.newHasher();
-        hc.putLong(mChildCount);
-        hc.putInt(mDelegate.hashCode());
-        hc.putLong(mFirstChild);
-        hc.putLong(mLeftSibling);
-        hc.putLong(mLeftSibling);
-        return hc.hash().asInt();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(Object obj) {
-        return hashCode() == obj.hashCode();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public String toString() {
         return toStringHelper(this).add("mFirstChild", mFirstChild).add("mRightSibling", mRightSibling).add(
             "mLeftSibling", mLeftSibling).add("mChildCount", mChildCount).add("mDelegate", mDelegate)
@@ -317,4 +314,25 @@ public class StructNodeDelegate implements IStructNode {
         }
     }
 
+    @Override
+    public Funnel<INode> getFunnel() {
+        return StructNodeDelegateFunnel.INSTANCE;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (int)(mChildCount ^ (mChildCount >>> 32));
+        result = prime * result + ((mDelegate == null) ? 0 : mDelegate.hashCode());
+        result = prime * result + (int)(mFirstChild ^ (mFirstChild >>> 32));
+        result = prime * result + (int)(mLeftSibling ^ (mLeftSibling >>> 32));
+        result = prime * result + (int)(mRightSibling ^ (mRightSibling >>> 32));
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return this.hashCode() == obj.hashCode();
+    }
 }

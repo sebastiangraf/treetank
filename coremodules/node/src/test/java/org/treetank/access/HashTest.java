@@ -75,19 +75,19 @@ public class HashTest {
         CoreTestHelper.deleteEverything();
     }
 
-    @Test
+    @Test(enabled=false)
     public void testPostorderInsertRemove() throws TTException {
         final INodeWriteTrx wtx = createWtx(HashKind.Postorder);
         testHashTreeWithInsertAndRemove(wtx);
     }
 
-    @Test
+    @Test(enabled=false)
     public void testPostorderDeep() throws TTException {
         final INodeWriteTrx wtx = createWtx(HashKind.Postorder);
         testDeepTree(wtx);
     }
 
-    @Test
+    @Test(enabled=false)
     public void testPostorderSetter() throws TTException {
         final INodeWriteTrx wtx = createWtx(HashKind.Postorder);
         testSetter(wtx);

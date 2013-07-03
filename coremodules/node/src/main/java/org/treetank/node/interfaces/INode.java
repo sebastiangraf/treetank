@@ -81,11 +81,19 @@ public interface INode extends org.treetank.api.INode {
     void setTypeKey(int pTypeKey);
 
     /**
+     * Getting the persisted hash value for this node.
+     * 
+     * @return the hash stored in this node
+     */
+    long getHash();
+    
+    /**
      * Setting the hash of this node including substructure.
      * 
      * @param pHash
      *            to be set
      */
     void setHash(long pHash);
+
 
 }

@@ -38,6 +38,9 @@ import org.treetank.node.delegates.StructNodeDelegate;
 import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IStructNode;
 
+import com.google.common.hash.Funnel;
+import com.google.common.hash.PrimitiveSink;
+
 /**
  * <h1>DocumentNode</h1>
  * 
@@ -47,6 +50,21 @@ import org.treetank.node.interfaces.IStructNode;
  * </p>
  */
 public final class DocumentRootNode implements INode, IStructNode {
+
+    /**
+     * Enum for DocRootFunnel.
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
+    enum DocumentNodeFunnel implements Funnel<org.treetank.api.INode> {
+        INSTANCE;
+        public void funnel(org.treetank.api.INode node, PrimitiveSink into) {
+            final DocumentRootNode from = (DocumentRootNode)node;
+            from.mDel.getFunnel().funnel(from, into);
+            from.mStrucDel.getFunnel().funnel(from, into);
+        }
+    }
 
     /** Delegate for common node information. */
     private final NodeDelegate mDel;
@@ -271,6 +289,11 @@ public final class DocumentRootNode implements INode, IStructNode {
         } catch (final IOException exc) {
             throw new TTIOException(exc);
         }
+    }
+
+    @Override
+    public Funnel<org.treetank.api.INode> getFunnel() {
+        return DocumentNodeFunnel.INSTANCE;
     }
 
 }

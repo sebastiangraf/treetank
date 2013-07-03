@@ -84,21 +84,21 @@ public class FullDiffTest {
         CoreTestHelper.deleteEverything();
     }
 
-    @Test
+    @Test(enabled=false)
     public void testFullDiffFirst() throws TTException, InterruptedException {
         DiffTestHelper.setUpFirst(holder);
         DiffTestHelper.check(holder, mObserver, EDiffOptimized.NO);
         DiffTestHelper.verifyDiffFirst(mObserver);
     }
 
-    @Test
+    @Test(enabled=false)
     public void testOptimizedFirst() throws InterruptedException, TTException {
         DiffTestHelper.setUpFirst(holder);
         DiffTestHelper.check(holder, mObserver, EDiffOptimized.NO);
         DiffTestHelper.verifyDiffFirst(mObserver);
     }
 
-    @Test
+    @Test(enabled=false)
     public void testFullDiffSecond() throws TTException, InterruptedException, IOException,
         XMLStreamException {
         DiffTestHelper.setUpSecond(holder);
@@ -106,28 +106,28 @@ public class FullDiffTest {
         DiffTestHelper.verifyDiffSecond(mObserver);
     }
 
-    @Test
+    @Test(enabled=false)
     public void testFullDiffThird() throws TTException, IOException, XMLStreamException, InterruptedException {
         DiffTestHelper.setUpThird(holder);
         DiffTestHelper.check(holder, mObserver, EDiffOptimized.NO);
         DiffTestHelper.verifyDiffThird(mObserver);
     }
 
-    @Test
+    @Test(enabled=false)
     public void testFullDiffFourth() throws Exception {
         DiffTestHelper.setUpFourth(holder);
         DiffTestHelper.check(holder, mObserver, EDiffOptimized.NO);
         DiffTestHelper.verifyDiffFourth(mObserver);
     }
 
-    @Test
+    @Test(enabled=false)
     public void testFullDiffFifth() throws Exception {
         DiffTestHelper.setUpFifth(holder);
         DiffTestHelper.check(holder, mObserver, EDiffOptimized.NO);
         DiffTestHelper.verifyDiffFifth(mObserver);
     }
 
-    @Test
+    @Test(enabled=false)
     public void testFullDiffSixth() throws Exception {
         DiffTestHelper.setUpSixth(holder);
         DiffTestHelper.check(holder, mObserver, EDiffOptimized.NO);

@@ -42,6 +42,9 @@ import org.treetank.node.interfaces.INameNode;
 import org.treetank.node.interfaces.INode;
 import org.treetank.node.interfaces.IStructNode;
 
+import com.google.common.hash.Funnel;
+import com.google.common.hash.PrimitiveSink;
+
 /**
  * <h1>ElementNode</h1>
  * 
@@ -51,6 +54,27 @@ import org.treetank.node.interfaces.IStructNode;
  */
 public final class ElementNode implements INode, IStructNode, INameNode {
 
+    /**
+     * Enum for ElementFunnel.
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
+    enum ElementNodeFunnel implements Funnel<org.treetank.api.INode> {
+        INSTANCE;
+        public void funnel(org.treetank.api.INode node, PrimitiveSink into) {
+            final ElementNode from = (ElementNode)node;
+            from.mDel.getFunnel().funnel(from, into);
+            from.mStrucDel.getFunnel().funnel(from, into);
+            from.mNameDel.getFunnel().funnel(from, into);
+            for (long key : from.mAttributeKeys) {
+                into.putLong(key);
+            }
+            for (long key : from.mNamespaceKeys) {
+                into.putLong(key);
+            }
+        }
+    }
     /** Delegate for common node information. */
     private final NodeDelegate mDel;
     /** Delegate for struct node information. */
@@ -419,6 +443,11 @@ public final class ElementNode implements INode, IStructNode, INameNode {
         } catch (final IOException exc) {
             throw new TTIOException(exc);
         }
+    }
+
+    @Override
+    public Funnel<org.treetank.api.INode> getFunnel() {
+        return ElementNodeFunnel.INSTANCE;
     }
 
 }

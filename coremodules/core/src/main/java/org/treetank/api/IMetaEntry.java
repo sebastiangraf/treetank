@@ -7,6 +7,8 @@ import java.io.DataOutput;
 
 import org.treetank.exception.TTIOException;
 
+import com.google.common.hash.Funnel;
+
 /**
  * All entries in the MetaBucket must implement this interface for guaranteeing serialization.
  * This applies to Keys as well as to values.
@@ -24,4 +26,12 @@ public interface IMetaEntry {
      * @throws TTIOException
      */
     void serialize(final DataOutput pOutput) throws TTIOException;
+    
+    /**
+     * Getting a Funnel for computing guava-based hashes.
+     * 
+     * @return a Funnel for this {@link IMetaEntry}
+     */
+    Funnel<IMetaEntry> getFunnel();
+
 }
