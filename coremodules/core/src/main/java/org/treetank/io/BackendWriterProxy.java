@@ -227,7 +227,9 @@ public class BackendWriterProxy implements IBackendReader {
          */
         @Override
         public Void call() throws Exception {
-
+//
+//            Thread.sleep(1000);
+//
 //            // iterate data tree
 //            iterateSubtree(false);
 //            // get last IndirectBucket referenced from the RevRoot.
