@@ -93,9 +93,11 @@ public class UpdateBench {
             node.setNodeKey(keyToAdapt);
 
             mTrx.setNode(node);
-
+            if (i % 512 == 0) {
+                mTrx.commit();
+            }
         }
-        mTrx.commit();
+
         mTrx.close();
     }
 

@@ -228,27 +228,31 @@ public class BackendWriterProxy implements IBackendReader {
         @Override
         public Void call() throws Exception {
 
-            // // iterate data tree
-            // iterateSubtree(false);
-            // // get last IndirectBucket referenced from the RevRoot.
-            // final LogKey dataKey = new LogKey(false, 0, 0);
-            // final IReferenceBucket dataBuck = (IReferenceBucket)mFormerLog.get(dataKey).getModified();
-            // final byte[] dataHash = dataBuck.secureHash().asBytes();
-            // mWriter.write(dataBuck);
-            // mRoot.setReferenceHash(RevisionRootBucket.GUARANTEED_INDIRECT_OFFSET, dataHash);
-            // final byte[] metaHash = mMeta.secureHash().asBytes();
-            // mWriter.write(mMeta);
-            // mRoot.setReferenceHash(RevisionRootBucket.META_REFERENCE_OFFSET, metaHash);
-            //
-            // // iterate data tree
-            // iterateSubtree(true);
-            //
-            // final LogKey revKey = new LogKey(true, 0, 0);
-            // final IReferenceBucket revBuck = (IReferenceBucket)mFormerLog.get(revKey).getModified();
-            // final byte[] revHash = revBuck.secureHash().asBytes();
-            // mWriter.write(revBuck);
-            // mUber.setReferenceHash(UberBucket.GUARANTEED_INDIRECT_OFFSET, revHash);
-            // mWriter.writeUberBucket(mUber);
+//            // iterate data tree
+//            iterateSubtree(false);
+//            // get last IndirectBucket referenced from the RevRoot.
+//            final LogKey dataKey = new LogKey(false, 0, 0);
+//            final IReferenceBucket dataBuck = (IReferenceBucket)mFormerLog.get(dataKey).getModified();
+//            // Check if there are any modifications and if so, set the hash for the indirect buckets.
+//            if (dataBuck != null) {
+//                final byte[] dataHash = dataBuck.secureHash().asBytes();
+//                mWriter.write(dataBuck);
+//                mRoot.setReferenceHash(RevisionRootBucket.GUARANTEED_INDIRECT_OFFSET, dataHash);
+//            }
+//            // Make the same for the meta bucket which is always written.
+//            final byte[] metaHash = mMeta.secureHash().asBytes();
+//            mWriter.write(mMeta);
+//            mRoot.setReferenceHash(RevisionRootBucket.META_REFERENCE_OFFSET, metaHash);
+//
+//            // iterate revision tree
+//            iterateSubtree(true);
+//
+//            final LogKey revKey = new LogKey(true, 0, 0);
+//            final IReferenceBucket revBuck = (IReferenceBucket)mFormerLog.get(revKey).getModified();
+//            final byte[] revHash = revBuck.secureHash().asBytes();
+//            mWriter.write(revBuck);
+//            mUber.setReferenceHash(UberBucket.GUARANTEED_INDIRECT_OFFSET, revHash);
+//            mWriter.writeUberBucket(mUber);
 
             // iterating over all data
             final Iterator<LogValue> entries = mFormerLog.getIterator();
@@ -295,6 +299,10 @@ public class BackendWriterProxy implements IBackendReader {
                 final LogKey key = childAndRightSib.pop();
                 final IBucket val = mFormerLog.get(key).getModified();
 
+                // if there is no modification occurring, just return.
+                if (!pRootLevel && val == null) {
+                    break;
+                } else
                 // if the bucket is an instance of a ReferenceBucket, it is not a leaf and..
                 if (val instanceof IReferenceBucket) {
                     currentRefBuck = (IReferenceBucket)val;
@@ -359,12 +367,15 @@ public class BackendWriterProxy implements IBackendReader {
                 }
             }
 
-            // After the preorder-traversal, we need to adapt the path to the root with the missing checksums.
-            do {
-                final LogKey child = pathToRoot.pop();
-                final LogKey parent = pathToRoot.peek();
-                adaptHash(parent, child);
-            } while (pathToRoot.size() > 1);
+            // After the preorder-traversal, we need to adapt the path to the root with the missing checksums,
+            // but only if there are any modifications.
+            if (!pathToRoot.isEmpty()) {
+                do {
+                    final LogKey child = pathToRoot.pop();
+                    final LogKey parent = pathToRoot.peek();
+                    adaptHash(parent, child);
+                } while (pathToRoot.size() > 1);
+            }
         }
 
         /**
