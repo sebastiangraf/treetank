@@ -59,12 +59,11 @@ public class StructNodeDelegate implements IStructNode {
     enum StructNodeDelegateFunnel implements Funnel<org.treetank.api.INode> {
         INSTANCE;
         public void funnel(org.treetank.api.INode node, PrimitiveSink into) {
-            final StructNodeDelegate from = (StructNodeDelegate)node;
-            into.putLong(from.mFirstChild);
-            into.putLong(from.mRightSibling);
-            into.putLong(from.mLeftSibling);
-            into.putLong(from.mChildCount);
-            from.mDelegate.getFunnel().funnel(from.mDelegate, into);
+            final IStructNode from = (IStructNode)node;
+            into.putLong(from.getFirstChildKey());
+            into.putLong(from.getRightSiblingKey());
+            into.putLong(from.getLeftSiblingKey());
+            into.putLong(from.getChildCount());
         }
     }
 

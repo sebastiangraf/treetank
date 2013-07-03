@@ -289,7 +289,7 @@ public final class CoreTestHelper {
      */
     public static final DumbNode[][] createTestData(Holder pHolder) throws TTException {
         IBucketWriteTrx wtx = pHolder.getSession().beginBucketWtx();
-        int[] nodesPerRevision = new int[2];
+        int[] nodesPerRevision = new int[10];
         Arrays.fill(nodesPerRevision, 128);
         DumbNode[][] nodes = CoreTestHelper.insertNodesWithTransaction(nodesPerRevision, wtx);
         checkStructure(combineNodes(nodes), wtx, 0);

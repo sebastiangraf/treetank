@@ -494,15 +494,15 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
 
                 // Set the newKey on the computed offset...
                 parentBucket.setReferenceKey(offset, newKey);
-                //...and mark the hashoffset as not written
+                // ...and mark the hashoffset as not written
                 parentBucket.setReferenceHash(offset, IConstants.NON_HASHED);
                 // .. and put the parent-reference to the log...
                 container = new LogValue(parentBucket, parentBucket);
                 // ..if the parent is not referenced as UberBucket or RevisionRootBucket within the Wtx
                 // itself...
-                // if (level > 0) {
-                mBucketWriter.put(parentKey, container);
-                // }
+                if (level > 0) {
+                    mBucketWriter.put(parentKey, container);
+                }
                 // ..but set the reference of the current bucket in every case.
                 container = new LogValue(bucket, bucket);
                 mBucketWriter.put(key, container);

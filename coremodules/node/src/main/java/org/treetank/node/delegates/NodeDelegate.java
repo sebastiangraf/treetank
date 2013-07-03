@@ -60,8 +60,8 @@ public class NodeDelegate implements INode {
     enum NodeDelegateFunnel implements Funnel<org.treetank.api.INode> {
         INSTANCE;
         public void funnel(org.treetank.api.INode node, PrimitiveSink into) {
-            final NodeDelegate from = (NodeDelegate)node;
-            into.putLong(from.mNodeKey).putLong(from.mParentKey);
+            final INode from = (INode)node;
+            into.putLong(from.getNodeKey()).putLong(from.getParentKey());
         }
     }
 
