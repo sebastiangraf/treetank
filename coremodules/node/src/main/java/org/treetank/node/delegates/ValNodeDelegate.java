@@ -59,9 +59,8 @@ public class ValNodeDelegate implements IValNode {
     enum ValNodeDelegateFunnel implements Funnel<org.treetank.api.INode> {
         INSTANCE;
         public void funnel(org.treetank.api.INode node, PrimitiveSink into) {
-            final ValNodeDelegate from = (ValNodeDelegate)node;
-            into.putBytes(from.mVal);
-            from.mDelegate.getFunnel().funnel(from.mDelegate, into);
+            final IValNode from = (IValNode)node;
+            into.putBytes(from.getRawValue());
         }
     }
 

@@ -3,10 +3,7 @@ package org.treetank.io;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Stack;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -196,8 +193,6 @@ public class BackendWriterProxy implements IBackendReader {
         mWriter.close();
     }
 
-    static List<Long> keys = new ArrayList<Long>();
-
     /**
      * Persistence-task to be performed within a commit.
      * 
@@ -231,64 +226,52 @@ public class BackendWriterProxy implements IBackendReader {
          */
         @Override
         public Void call() throws Exception {
-            keys.clear();
-            // Thread.sleep(1000);
-
             // // iterate data tree
-            // iterateSubtree(false);
-            // // get last IndirectBucket referenced from the RevRoot.
-            // final LogKey dataKey = new LogKey(false, 0, 0);
-            // final IReferenceBucket dataBuck = (IReferenceBucket)mFormerLog.get(dataKey).getModified();
-            // // Check if there are any modifications and if so, set the hash for the indirect buckets.
-            // if (dataBuck != null) {
-            // final byte[] dataHash = dataBuck.secureHash().asBytes();
-            // mWriter.write(dataBuck);
-            // keys.add(dataBuck.getBucketKey());
-            // mRoot.setReferenceHash(RevisionRootBucket.GUARANTEED_INDIRECT_OFFSET, dataHash);
-            // }
-            // // Make the same for the meta bucket which is always written.
-            // final byte[] metaHash = mMeta.secureHash().asBytes();
-            // mWriter.write(mMeta);
-            // keys.add(mMeta.getBucketKey());
-            // mRoot.setReferenceHash(RevisionRootBucket.META_REFERENCE_OFFSET, metaHash);
-            //
-            // // iterate revision tree
-            // iterateSubtree(true);
-            //
-            // final LogKey revKey = new LogKey(true, 0, 0);
-            // final IReferenceBucket revBuck = (IReferenceBucket)mFormerLog.get(revKey).getModified();
-            // final byte[] revHash = revBuck.secureHash().asBytes();
-            // mWriter.write(revBuck);
-            // keys.add(revBuck.getBucketKey());
-            // mUber.setReferenceHash(UberBucket.GUARANTEED_INDIRECT_OFFSET, revHash);
-            // mWriter.writeUberBucket(mUber);
-            // keys.add(mUber.getBucketKey());
-
-            // iterating over all data
-            final Iterator<LogValue> entries = mFormerLog.getIterator();
-            while (entries.hasNext()) {
-                LogValue next = entries.next();
-                IBucket bucket = next.getModified();
-                // debug code for marking hashes as written
-                if (bucket instanceof IReferenceBucket) {
-                    IReferenceBucket refBucket = (IReferenceBucket)bucket;
-                    for (int i = 0; i < refBucket.getReferenceHashs().length; i++) {
-                        refBucket.setReferenceHash(i, new byte[] {
-                            0
-                        });
-                    }
-                }
-                mWriter.write(bucket);
-                keys.add(bucket.getBucketKey());
+            iterateSubtree(false);
+            // get last IndirectBucket referenced from the RevRoot.
+            final LogKey dataKey = new LogKey(false, 0, 0);
+            final IReferenceBucket dataBuck = (IReferenceBucket)mFormerLog.get(dataKey).getModified();
+            // Check if there are any modifications and if so, set the hash for the indirect buckets.
+            if (dataBuck != null) {
+                final byte[] dataHash = dataBuck.secureHash().asBytes();
+                mWriter.write(dataBuck);
+                mRoot.setReferenceHash(RevisionRootBucket.GUARANTEED_INDIRECT_OFFSET, dataHash);
             }
-            // writing the important pages
+            // Make the same for the meta bucket which is always written.
+            final byte[] metaHash = mMeta.secureHash().asBytes();
             mWriter.write(mMeta);
-            keys.add(mMeta.getBucketKey());
-            mWriter.write(mRoot);
-            keys.add(mRoot.getBucketKey());
+            mRoot.setReferenceHash(RevisionRootBucket.META_REFERENCE_OFFSET, metaHash);
+
+            // iterate revision tree
+            iterateSubtree(true);
+
+            final LogKey revKey = new LogKey(true, 0, 0);
+            final IReferenceBucket revBuck = (IReferenceBucket)mFormerLog.get(revKey).getModified();
+            final byte[] revHash = revBuck.secureHash().asBytes();
+            mWriter.write(revBuck);
+            mUber.setReferenceHash(UberBucket.GUARANTEED_INDIRECT_OFFSET, revHash);
             mWriter.writeUberBucket(mUber);
-            keys.add(mUber.getBucketKey());
-//            System.out.println(keys.toString());
+
+            // // iterating over all data
+            // final Iterator<LogValue> entries = mFormerLog.getIterator();
+            // while (entries.hasNext()) {
+            // LogValue next = entries.next();
+            // IBucket bucket = next.getModified();
+            // // debug code for marking hashes as written
+            // if (bucket instanceof IReferenceBucket) {
+            // IReferenceBucket refBucket = (IReferenceBucket)bucket;
+            // for (int i = 0; i < refBucket.getReferenceHashs().length; i++) {
+            // refBucket.setReferenceHash(i, new byte[] {
+            // 0
+            // });
+            // }
+            // }
+            // mWriter.write(bucket);
+            // }
+            // // writing the important pages
+            // mWriter.write(mMeta);
+            // mWriter.write(mRoot);
+            // mWriter.writeUberBucket(mUber);
             return null;
         }
 
@@ -308,16 +291,17 @@ public class BackendWriterProxy implements IBackendReader {
             // Push the first Indirect under the RevRoot to the stack
             childAndRightSib.push(new LogKey(pRootLevel, 0, 0));
 
+            // if in the version is no data written, an intermediate return can occur.
+            if (mFormerLog.get(childAndRightSib.peek()).getModified() == null) {
+                return;
+            }
+
             // if there are children or right sibling left...
             while (!childAndRightSib.isEmpty()) {
                 // ...get the next element including the modified bucket.
                 final LogKey key = childAndRightSib.pop();
                 final IBucket val = mFormerLog.get(key).getModified();
 
-                // if there is no modification occurring, just return.
-                if (!pRootLevel && val == null) {
-                    break;
-                } else
                 // if the bucket is an instance of a ReferenceBucket, it is not a leaf and..
                 if (val instanceof IReferenceBucket) {
                     currentRefBuck = (IReferenceBucket)val;
@@ -363,7 +347,6 @@ public class BackendWriterProxy implements IBackendReader {
                     if (pRootLevel) {
                         final byte[] hash = mRoot.secureHash().asBytes();
                         mWriter.write(mRoot);
-                        keys.add(mRoot.getBucketKey());
                         final LogKey parentKey = pathToRoot.peek();
                         final IReferenceBucket parentVal =
                             (IReferenceBucket)mFormerLog.get(parentKey).getModified();
@@ -373,11 +356,26 @@ public class BackendWriterProxy implements IBackendReader {
 
                     } // otherwise, retrieve the bucket from the log.
                     else {
-                        // ..we need to have a NodeBucket and...
-                        checkState(val instanceof NodeBucket);
-                        // ...we adapt the parent with the own hash.
-                        final LogKey parentKey = pathToRoot.peek();
-                        adaptHash(parentKey, key);
+                        // if there is a hash marked as "toset" but no suitable bucket available, a former
+                        // commit is currently in progess whereas the bucket must be retrieved from the
+                        // backend.
+                        if (val == null) {
+                            final IReferenceBucket parent =
+                                (IReferenceBucket)mFormerLog.get(pathToRoot.peek()).getModified();
+                            final int parentOffset =
+                                (int)(key.getSeq() - ((key.getSeq() >> IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3]) << IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3]));
+                            final IBucket persistedBucket =
+                                mWriter.read(parent.getReferenceKeys()[parentOffset]);
+                            final byte[] persistedHash = persistedBucket.secureHash().asBytes();
+                            parent.setReferenceHash(parentOffset, persistedHash);
+                        }// otherwise construct it over the log.
+                        else {
+                            // ..we need to have a NodeBucket and...
+                            checkState(val instanceof NodeBucket);
+                            // ...we adapt the parent with the own hash.
+                            final LogKey parentKey = pathToRoot.peek();
+                            adaptHash(parentKey, key);
+                        }
                     }
 
                 }
@@ -407,11 +405,10 @@ public class BackendWriterProxy implements IBackendReader {
             final IBucket val = mFormerLog.get(pChildKey).getModified();
             final byte[] hash = val.secureHash().asBytes();
             mWriter.write(val);
-            keys.add(val.getBucketKey());
-            final IReferenceBucket parentVal = (IReferenceBucket)mFormerLog.get(pParentKey).getModified();
+            final IReferenceBucket parent = (IReferenceBucket)mFormerLog.get(pParentKey).getModified();
             final int parentOffset =
                 (int)(pChildKey.getSeq() - ((pChildKey.getSeq() >> IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3]) << IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3]));
-            parentVal.setReferenceHash(parentOffset, hash);
+            parent.setReferenceHash(parentOffset, hash);
         }
 
     }
