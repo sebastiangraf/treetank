@@ -122,13 +122,13 @@ public class InsertBench {
         System.out.println("1048576");
     }
 
-    // @Bench
-    // public void bench2097152() throws TTException {
-    // insert(2097152);
-    // mTrx.commit();
-    // System.out.println("2097152");
-    // }
-    //
+    @Bench
+    public void bench2097152() throws TTException {
+        insert(2097152);
+        mTrx.commit();
+        System.out.println("2097152");
+    }
+
     // @Bench
     // public void bench4194304() throws TTException {
     // insert(4194304);

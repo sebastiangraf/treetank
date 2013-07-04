@@ -65,7 +65,7 @@ public class TreetankStorageModule implements IStorageModule {
      * the blocks per node is considerably high (e.g. 256kb per node) you might have to increase
      * the ram for the jvm.
      */
-    public static final int BLOCKS_IN_NODE = 64;
+    public static final int BLOCKS_IN_NODE = 32;
 
     /** Number of Bytes in Bucket. */
     public final static int BYTES_IN_NODE = BLOCKS_IN_NODE * VIRTUAL_BLOCK_SIZE;
@@ -309,7 +309,7 @@ public class TreetankStorageModule implements IStorageModule {
             BYTE_WRITER_COUNTER += bytesWritten;
             
             //If 1024 nodes have been fully written.
-            if(BYTE_WRITER_COUNTER >= 1073741824){
+            if(BYTE_WRITER_COUNTER >= 268435456){
                 this.mRtx.commit();
 
                 LOGGER.debug("Commited changes to treetank.");

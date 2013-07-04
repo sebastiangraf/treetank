@@ -47,6 +47,7 @@ import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
 import org.treetank.io.IBackend;
+import org.treetank.io.IOUtils;
 import org.treetank.io.combined.CombinedStorage;
 import org.treetank.node.ByteNodeFactory;
 import org.treetank.node.ISCSIMetaPageFactory;
@@ -74,31 +75,37 @@ public class TreetankTargetServer {
      * in the resources of the target.
      * 
      * @param args
-     *            Argument 1 = the storage path
-     *            Argument 2 = path to a customized target configuration xml file
+     *            storagePath=<PathToStorage> | If using an existing storage, make sure not to pass a backend
+     *            implementation or revisioning implementation again.
+     *            targetConfiguration=<PathToTargetConfigurationFile> | This usually is an .xml-File that
+     *            corresponds to the one that can be found in the sources.
+     *            backendImplementation=<FullyQualifiedPath> | E.g.: org.treetank.io.combined.CombinedStorage
+     *            (which also is default)
+     *            revisioningImplementation=<FullyQualifiedPath> | E.g.:
+     *            org.treetank.revisioning.SlidingSnapshot (which also is default)
+     * 
      * @throws Exception
      */
     @SuppressWarnings("unchecked")
     public static void main(String[] args) throws Exception {
         Map<String, String> argsMap = new HashMap<>();
-        
+
         for (int i = 0; i < args.length; i++) {
-            if(args[i].equals("help")){
+            if (args[i].equals("help")) {
                 printHelp();
             }
-            
+
             System.out.print("Argument: " + args[i]);
             String[] splitArg = args[i].split("=");
-            
-            if(splitArg.length == 2){
+
+            if (splitArg.length == 2) {
                 System.out.println(" is valid");
                 argsMap.put(splitArg[0], splitArg[1]);
-            }
-            else{
+            } else {
                 System.out.println(" is invalid");
             }
         }
-        
+
         StorageConfiguration config;
         File configFile;
         Class<? extends IBackend> backendClass;
@@ -143,46 +150,44 @@ public class TreetankTargetServer {
 
         String targetAddress = addresses.get(chosenIndex).getHostAddress();
         System.out.println("Using ip address " + addresses.get(chosenIndex).getHostAddress());
-        
-        if(argsMap.get("storagePath") != null){
+
+        if (argsMap.get("storagePath") != null) {
             File file = new File(argsMap.get("storagePath"));
             config = new StorageConfiguration(file);
-        }
-        else{
+        } else {
             String file = Files.createTempDir().getAbsolutePath();
             config =
-            new StorageConfiguration(new File(new StringBuilder(file).append(File.separator)
-                .append("tnk").append(File.separator).append("path1").toString()));
+                new StorageConfiguration(new File(new StringBuilder(file).append(File.separator)
+                    .append("tnk").append(File.separator).append("path1").toString()));
         }
-        
-        if(argsMap.get("targetConfiguration") != null){
+
+        if (argsMap.get("targetConfiguration") != null) {
             configFile = new File(argsMap.get("targetConfiguration"));
-        }
-        else{
+        } else {
             configFile = TreetankConfiguration.CONFIGURATION_CONFIG_FILE;
         }
-        
-        if(argsMap.get("backendImplementation") != null){
+
+        if (argsMap.get("backendImplementation") != null) {
             backendClass = (Class<? extends IBackend>)Class.forName(argsMap.get("backendImplementation"));
-        }
-        else{
+        } else {
             backendClass = CombinedStorage.class;
         }
 
-        if(argsMap.get("revisioningImplementation") != null){
-            revisioningClass = (Class<? extends IRevisioning>)Class.forName(argsMap.get("revisioningImplementation"));
-        }
-        else{
+        if (argsMap.get("revisioningImplementation") != null) {
+            revisioningClass =
+                (Class<? extends IRevisioning>)Class.forName(argsMap.get("revisioningImplementation"));
+        } else {
             revisioningClass = SlidingSnapshot.class;
         }
-
-        // Storage.truncateStorage(config);
+        
+        IOUtils.recursiveDelete(config.mFile);
         Storage.createStorage(config);
 
         // Guice Stuff for building the module
         final Injector injector =
             Guice.createInjector(new ModuleSetter().setNodeFacClass(ByteNodeFactory.class).setMetaFacClass(
-                ISCSIMetaPageFactory.class).setBackendClass(backendClass).setRevisioningClass(revisioningClass).createModule());
+                ISCSIMetaPageFactory.class).setBackendClass(backendClass).setRevisioningClass(
+                revisioningClass).createModule());
         final IResourceConfigurationFactory resFac =
             injector.getInstance(IResourceConfigurationFactory.class);
         final Properties props = StandardSettings.getProps(config.mFile.getAbsolutePath(), "iscsi");
@@ -201,21 +206,40 @@ public class TreetankTargetServer {
 
     private static void printHelp() {
         StringBuilder helpStringBuilder = new StringBuilder();
-        helpStringBuilder.append("Treetank Target Server Help").append("\n__________________________________\n\n")
-            .append("Usage: java jar TreetankTargetServer-<version>.jar").append("\n\n")
-            .append("Arguments:").append("\n\n")
-            .append("\t").append("storagePath=<PathToStorage>")
-            .append("\t\t\t\t| ").append("If using an existing storage, make sure not to pass a backend implementation or revisioning implementation again.").append("\n")
-            .append("\t").append("targetConfiguration=<PathToTargetConfigurationFile>")
-            .append("\t| ").append("This usually is an .xml-File that corresponds to the one that can be found in the sources.").append("\n")
-            .append("\t").append("backendImplementation=<FullyQualifiedPath>")
-            .append("\t\t| ").append("E.g.: org.treetank.io.combined.CombinedStorage (which also is default)").append("\n")
-            .append("\t").append("revisioningImplementation=<FullyQualifiedPath>")
-            .append("\t\t| ").append("E.g.: org.treetank.revisioning.SlidingSnapshot (which also is default)").append("\n\n")
-            .append("You can leave out all arguments to test the system, in which case default settings are used.");
-        
+        helpStringBuilder
+            .append("Treetank Target Server Help")
+            .append("\n__________________________________\n\n")
+            .append("Usage: java jar TreetankTargetServer-<version>.jar")
+            .append("\n\n")
+            .append("Arguments:")
+            .append("\n\n")
+            .append("\t")
+            .append("storagePath=<PathToStorage>")
+            .append("\t\t\t\t| ")
+            .append(
+                "If using an existing storage, make sure not to pass a backend implementation or revisioning implementation again.")
+            .append("\n")
+            .append("\t")
+            .append("targetConfiguration=<PathToTargetConfigurationFile>")
+            .append("\t| ")
+            .append(
+                "This usually is an .xml-File that corresponds to the one that can be found in the sources.")
+            .append("\n")
+            .append("\t")
+            .append("backendImplementation=<FullyQualifiedPath>")
+            .append("\t\t| ")
+            .append("E.g.: org.treetank.io.combined.CombinedStorage (which also is default)")
+            .append("\n")
+            .append("\t")
+            .append("revisioningImplementation=<FullyQualifiedPath>")
+            .append("\t\t| ")
+            .append("E.g.: org.treetank.revisioning.SlidingSnapshot (which also is default)")
+            .append("\n\n")
+            .append(
+                "You can leave out all arguments to test the system, in which case default settings are used.");
+
         System.out.println(helpStringBuilder.toString());
-        
+
         System.exit(0);
     }
 }
