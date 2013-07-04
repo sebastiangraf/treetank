@@ -309,7 +309,7 @@ public class TreetankStorageModule implements IStorageModule {
             BYTE_WRITER_COUNTER += bytesWritten;
             
             //If 1024 nodes have been fully written.
-            if(BYTE_WRITER_COUNTER >= 1073741824){
+            if(BYTE_WRITER_COUNTER >= 268435456){
                 this.mRtx.commit();
 
                 LOGGER.debug("Commited changes to treetank.");
