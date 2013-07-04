@@ -74,8 +74,11 @@ public class TreetankTargetServer {
      * in the resources of the target.
      * 
      * @param args
-     *            Argument 1 = the storage path
-     *            Argument 2 = path to a customized target configuration xml file
+     *  storagePath=<PathToStorage>                             | If using an existing storage, make sure not to pass a backend implementation or revisioning implementation again.
+     *  targetConfiguration=<PathToTargetConfigurationFile>     | This usually is an .xml-File that corresponds to the one that can be found in the sources.
+     *  backendImplementation=<FullyQualifiedPath>              | E.g.: org.treetank.io.combined.CombinedStorage (which also is default)
+     *  revisioningImplementation=<FullyQualifiedPath>          | E.g.: org.treetank.revisioning.SlidingSnapshot (which also is default)
+     *
      * @throws Exception
      */
     @SuppressWarnings("unchecked")
