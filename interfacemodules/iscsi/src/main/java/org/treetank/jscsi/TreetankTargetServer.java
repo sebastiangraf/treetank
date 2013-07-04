@@ -47,6 +47,7 @@ import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
 import org.treetank.io.IBackend;
+import org.treetank.io.IOUtils;
 import org.treetank.io.combined.CombinedStorage;
 import org.treetank.node.ByteNodeFactory;
 import org.treetank.node.ISCSIMetaPageFactory;
@@ -178,8 +179,8 @@ public class TreetankTargetServer {
         } else {
             revisioningClass = SlidingSnapshot.class;
         }
-
-        // Storage.truncateStorage(config);
+        
+        IOUtils.recursiveDelete(config.mFile);
         Storage.createStorage(config);
 
         // Guice Stuff for building the module

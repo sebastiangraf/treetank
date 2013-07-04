@@ -65,7 +65,7 @@ public class TreetankStorageModule implements IStorageModule {
      * the blocks per node is considerably high (e.g. 256kb per node) you might have to increase
      * the ram for the jvm.
      */
-    public static final int BLOCKS_IN_NODE = 64;
+    public static final int BLOCKS_IN_NODE = 32;
 
     /** Number of Bytes in Bucket. */
     public final static int BYTES_IN_NODE = BLOCKS_IN_NODE * VIRTUAL_BLOCK_SIZE;
