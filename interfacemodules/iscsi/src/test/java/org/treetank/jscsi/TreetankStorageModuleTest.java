@@ -67,7 +67,7 @@ public class TreetankStorageModuleTest {
      * Setup method for this test.
      * 
      * @throws TTException
-     * @throws InterruptedException 
+     * @throws InterruptedException
      */
     @BeforeMethod
     public void setUp() throws TTException, InterruptedException {
@@ -80,10 +80,7 @@ public class TreetankStorageModuleTest {
         CoreTestHelper.Holder holder = CoreTestHelper.Holder.generateStorage();
         CoreTestHelper.Holder.generateSession(holder, mResource);
         storageModule = new TreetankStorageModule(NODENUMBER, holder.getSession());
-        
-        while(!storageModule.isReady()){
-            Thread.sleep(500);
-        }
+
     }
 
     /**
