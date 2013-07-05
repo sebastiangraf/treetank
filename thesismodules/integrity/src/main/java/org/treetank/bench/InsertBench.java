@@ -2,11 +2,21 @@ package org.treetank.bench;
 
 import java.io.File;
 import java.nio.file.FileSystems;
+import java.util.HashSet;
+import java.util.Set;
 
+import org.perfidix.AbstractConfig;
 import org.perfidix.Benchmark;
 import org.perfidix.annotation.AfterEachRun;
 import org.perfidix.annotation.BeforeEachRun;
 import org.perfidix.annotation.Bench;
+import org.perfidix.element.KindOfArrangement;
+import org.perfidix.meter.AbstractMeter;
+import org.perfidix.meter.MemMeter;
+import org.perfidix.meter.Memory;
+import org.perfidix.meter.Time;
+import org.perfidix.meter.TimeMeter;
+import org.perfidix.ouput.AbstractOutput;
 import org.perfidix.ouput.TabularSummaryOutput;
 import org.perfidix.result.BenchmarkResult;
 import org.treetank.access.Storage;
@@ -36,7 +46,7 @@ public class InsertBench {
     private final ResourceConfiguration mConfig;
     private ISession mSession;
     private DumbNode[] mNodesToInsert = BenchUtils.createNodes(new int[] {
-        1048576
+        1048576/2
     })[0];
     private IBucketWriteTrx mTrx;
 
@@ -101,53 +111,25 @@ public class InsertBench {
         System.out.println("131072");
     }
 
-    @Bench
-    public void bench262144() throws TTException {
-        insert(262144);
-        mTrx.commit();
-        System.out.println("262144");
-    }
-
-    @Bench
-    public void bench524288() throws TTException {
-        insert(524288);
-        mTrx.commit();
-        System.out.println("524288");
-    }
-
-    @Bench
-    public void bench1048576() throws TTException {
-        insert(1048576);
-        mTrx.commit();
-        System.out.println("1048576");
-    }
-
-    @Bench
-    public void bench2097152() throws TTException {
-        insert(2097152);
-        mTrx.commit();
-        System.out.println("2097152");
-    }
-
     // @Bench
-    // public void bench4194304() throws TTException {
-    // insert(4194304);
+    // public void bench262144() throws TTException {
+    // insert(262144);
     // mTrx.commit();
-    // System.out.println("4194304");
+    // System.out.println("262144");
     // }
     //
     // @Bench
-    // public void bench8388608() throws TTException {
-    // insert(8388608);
+    // public void bench524288() throws TTException {
+    // insert(524288);
     // mTrx.commit();
-    // System.out.println("8388608");
+    // System.out.println("524288");
     // }
     //
     // @Bench
-    // public void bench16777216() throws TTException {
-    // insert(16777216);
+    // public void bench1048576() throws TTException {
+    // insert(1048576);
     // mTrx.commit();
-    // System.out.println("16777216");
+    // System.out.println("1048576");
     // }
 
     @AfterEachRun
@@ -158,10 +140,36 @@ public class InsertBench {
     }
 
     public static void main(String[] args) {
-        Benchmark bench = new Benchmark();
+        Benchmark bench = new Benchmark(new Config());
         bench.add(InsertBench.class);
         BenchmarkResult res = bench.run();
         new TabularSummaryOutput().visitBenchmark(res);
+    }
+
+    static class Config extends AbstractConfig {
+
+        private final static int RUNS = 10;
+        private final static Set<AbstractMeter> METERS = new HashSet<AbstractMeter>();
+        private final static Set<AbstractOutput> OUTPUT = new HashSet<AbstractOutput>();
+
+        private final static KindOfArrangement ARRAN = KindOfArrangement.SequentialMethodArrangement;
+        private final static double GCPROB = 1.0d;
+
+        static {
+            METERS.add(new TimeMeter(Time.MilliSeconds));
+            METERS.add(new MemMeter(Memory.Byte));
+
+            // OUTPUT.add(new TabularSummaryOutput());
+        }
+
+        /**
+         * Public constructor.
+         */
+        public Config() {
+            super(RUNS, METERS.toArray(new AbstractMeter[METERS.size()]), OUTPUT
+                .toArray(new AbstractOutput[OUTPUT.size()]), ARRAN, GCPROB);
+        }
+
     }
 
 }
