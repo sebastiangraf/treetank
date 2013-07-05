@@ -63,9 +63,6 @@ public class StorageModuleBenchmarkSpecificBackend {
         CoreTestHelper.Holder.generateSession(holder, resConf);
         storageModule = new TreetankStorageModule(NODENUMBER, holder.getSession());
 
-        while (!storageModule.isReady()) {
-            Thread.sleep(500);
-        }
     }
 
     /**

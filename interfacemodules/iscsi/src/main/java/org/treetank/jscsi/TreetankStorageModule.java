@@ -27,9 +27,6 @@ package org.treetank.jscsi;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.io.IOException;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.jscsi.target.storage.IStorageModule;
 import org.slf4j.Logger;
@@ -49,13 +46,10 @@ import org.treetank.exception.TTException;
  * @author Andreas Rain
  */
 public class TreetankStorageModule implements IStorageModule {
-    
-    /** Bytewriter counter
-     *  - If a certain amount of bytes have been written, a commit is made to treetank. */
-    private static long BYTE_WRITER_COUNTER = 0;
 
-    /** Number of Blocks in one Cluster.
-     *  8 equals 4KB nodes
+    /**
+     * Number of Blocks in one Cluster.
+     * 8 equals 4KB nodes
      * 16 equals 8KB nodes
      * ...
      * 
@@ -66,6 +60,10 @@ public class TreetankStorageModule implements IStorageModule {
      * the ram for the jvm.
      */
     public static final int BLOCKS_IN_NODE = 32;
+    
+    /**Threshold when commit should occur in number of bytes.*/
+//    private static final int COMMIT_THRESHOLD = 268435456;
+    private static final int COMMIT_THRESHOLD = 268435456/4;
 
     /** Number of Bytes in Bucket. */
     public final static int BYTES_IN_NODE = BLOCKS_IN_NODE * VIRTUAL_BLOCK_SIZE;
@@ -89,11 +87,12 @@ public class TreetankStorageModule implements IStorageModule {
      * {@link IIscsiWriteTrx} that is used to write/read from treetank.
      */
     private final IIscsiWriteTrx mRtx;
-    
+
     /**
-     * Determine whether or not the device has been bootstraped and is readable.
+     * Bytewriter counter
+     * - If a certain amount of bytes have been written, a commit is made to treetank.
      */
-    private boolean mDeviceReady = true;
+    private int mByteCounter;
 
     /**
      * Creates a storage module that is used by the target to handle I/O.
@@ -106,39 +105,17 @@ public class TreetankStorageModule implements IStorageModule {
      *             will be thrown if there are problems creating this storage.
      */
     public TreetankStorageModule(final long pNodeNumber, final ISession pSession) throws TTException {
-        
-        mDeviceReady = false;
-        
+
+        mByteCounter = 0;
         mNodeNumbers = pNodeNumber;
-        
+
         LOGGER.debug("Initializing storagemodule with: number of nodes=" + mNodeNumbers + ", blockSize="
             + IStorageModule.VIRTUAL_BLOCK_SIZE);
-        
+
         mSession = pSession;
         mRtx = new IscsiWriteTrx(mSession.beginBucketWtx(), mSession);
-        
-        ExecutorService service = Executors.newSingleThreadExecutor();
-        
-        service.submit(new CreateStorageCallable());
 
-    }
-
-    /**
-     * A callable to bootstrap the storage device in the background
-     * so the target is available for discovery immdiately.
-     * 
-     * @author Andreas Rain
-     * 
-     */
-    class CreateStorageCallable implements Callable<Void> {
-
-        @Override
-        public Void call() throws Exception {
-            createStorage();
-            LOGGER.info("Device is ready");
-            mDeviceReady = true;
-            return null;
-        }
+        createStorage();
 
     }
 
@@ -149,43 +126,32 @@ public class TreetankStorageModule implements IStorageModule {
      * @throws IOException
      *             is thrown if a node couldn't be created due to errors in the backend.
      */
-    private void createStorage() throws IOException {
+    private void createStorage() throws TTException {
 
         LOGGER.debug("Creating storage with " + mNodeNumbers + " nodes containing " + BLOCKS_IN_NODE
             + " blocks with " + IStorageModule.VIRTUAL_BLOCK_SIZE + " bytes each.");
 
-        try {
+        INode node = this.mRtx.getCurrentNode();
 
-            INode node = this.mRtx.getCurrentNode();
-
-            if (node != null) {
-                return;
-            }
-            boolean hasNextNode = true;
-
-            for (int i = 0; i < mNodeNumbers; i++) {
-                if (i == mNodeNumbers - 1) {
-                    hasNextNode = false;
-                }
-
-                try {
-                    // Bootstrapping nodes containing clusterSize -many blocks/sectors.
-                    LOGGER.debug("Bootstraping node " + i + "\tof " + (mNodeNumbers - 1));
-                    this.mRtx.bootstrap(new byte[TreetankStorageModule.BYTES_IN_NODE], hasNextNode);
-                } catch (TTException e) {
-                    throw new IOException(e);
-                }
-
-//                if (i % 10000 == 0) {
-//                    this.mRtx.commit();
-//                }
-            }
-
-            this.mRtx.commit();
-
-        } catch (TTException exc) {
-            throw new IOException(exc);
+        if (node != null) {
+            return;
         }
+        boolean hasNextNode = true;
+
+        for (int i = 0; i < mNodeNumbers; i++) {
+            if (i == mNodeNumbers - 1) {
+                hasNextNode = false;
+            }
+
+            // Bootstrapping nodes containing clusterSize -many blocks/sectors.
+            LOGGER.debug("Bootstraping node " + i + "\tof " + (mNodeNumbers - 1));
+            this.mRtx.bootstrap(new byte[TreetankStorageModule.BYTES_IN_NODE], hasNextNode);
+            // if (i % 10000 == 0) {
+            // this.mRtx.commit();
+            // }
+        }
+
+        this.mRtx.commit();
 
     }
 
@@ -219,7 +185,8 @@ public class TreetankStorageModule implements IStorageModule {
      */
     public void read(byte[] bytes, long storageIndex) throws IOException {
 
-        LOGGER.debug("Starting to read with param: " + "\nstorageIndex = " + storageIndex + "\nbytes.length = " + bytes.length);
+        LOGGER.debug("Starting to read with param: " + "\nstorageIndex = " + storageIndex
+            + "\nbytes.length = " + bytes.length);
 
         long startIndex = storageIndex / BYTES_IN_NODE;
         int startIndexOffset = (int)(storageIndex % BYTES_IN_NODE);
@@ -266,8 +233,9 @@ public class TreetankStorageModule implements IStorageModule {
      */
     public void write(byte[] bytes, long storageIndex) throws IOException {
 
-        LOGGER.debug("Starting to write with param: " + "\nstorageIndex = " + storageIndex + "\nbytes.length = " + bytes.length);
-        
+        LOGGER.debug("Starting to write with param: " + "\nstorageIndex = " + storageIndex
+            + "\nbytes.length = " + bytes.length);
+
         long startIndex = storageIndex / BYTES_IN_NODE;
         int startIndexOffset = (int)(storageIndex % BYTES_IN_NODE);
 
@@ -304,28 +272,20 @@ public class TreetankStorageModule implements IStorageModule {
             // Bytes written is the actual number of bytes that have been written.
             // The two lengths have to match, otherwise not enough bytes have been written (or too much?).
             checkState(bytesWritten == bytes.length);
-            
+
             // Incrementing bytewriter counter
-            BYTE_WRITER_COUNTER += bytesWritten;
-            
-            //If 1024 nodes have been fully written.
-            if(BYTE_WRITER_COUNTER >= 268435456){
+            mByteCounter += bytesWritten;
+
+            // If 1024 nodes have been fully written.
+            if (mByteCounter >= COMMIT_THRESHOLD) {
                 this.mRtx.commit();
 
                 LOGGER.debug("Commited changes to treetank.");
-                BYTE_WRITER_COUNTER = 0;
+                mByteCounter = 0;
             }
         } catch (TTException exc) {
             throw new IOException(exc);
         }
-    }
-    
-    /**
-     * @return  true, if device is bootstraped
-     *          false, if bootstraping is still in process
-     */
-    public boolean isReady(){
-        return mDeviceReady;
     }
 
     /**
