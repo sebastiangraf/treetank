@@ -46,7 +46,7 @@ public class UpdateBench {
 
     private final String RESOURCENAME = "benchResourcegrave9283";
 
-    private final int ELEMENTS = 262144;
+    private final int ELEMENTS = 524288;
 
     private final IStorage mStorage;
     private final ResourceConfiguration mConfig;
