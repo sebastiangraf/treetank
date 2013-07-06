@@ -17,6 +17,7 @@ import org.perfidix.meter.Memory;
 import org.perfidix.meter.Time;
 import org.perfidix.meter.TimeMeter;
 import org.perfidix.ouput.AbstractOutput;
+import org.perfidix.ouput.CSVOutput;
 import org.perfidix.ouput.TabularSummaryOutput;
 import org.perfidix.result.BenchmarkResult;
 import org.treetank.access.Storage;
@@ -46,9 +47,11 @@ public class InsertBench {
     private final ResourceConfiguration mConfig;
     private ISession mSession;
     private DumbNode[] mNodesToInsert = BenchUtils.createNodes(new int[] {
-        1048576/2
+        524288
     })[0];
     private IBucketWriteTrx mTrx;
+
+    private static final int FACTOR = 8;
 
     public InsertBench() throws TTException {
         final File storageFile = FileSystems.getDefault().getPath("tmp", "bench").toFile();
@@ -85,52 +88,57 @@ public class InsertBench {
 
     @Bench
     public void bench16384() throws TTException {
-        insert(16384);
-        mTrx.commit();
+        for (int i = 0; i < FACTOR; i++) {
+            insert(16384 / FACTOR);
+            mTrx.commit();
+        }
         System.out.println("16384");
     }
 
     @Bench
     public void bench32768() throws TTException {
-        insert(32768);
-        mTrx.commit();
+        for (int i = 0; i < FACTOR; i++) {
+            insert(32768 / FACTOR);
+            mTrx.commit();
+        }
         System.out.println("32768");
     }
 
     @Bench
     public void bench65536() throws TTException {
-        insert(65536);
-        mTrx.commit();
+        for (int i = 0; i < FACTOR; i++) {
+            insert(65536 / FACTOR);
+            mTrx.commit();
+        }
         System.out.println("65536");
     }
 
     @Bench
     public void bench131072() throws TTException {
-        insert(131072);
-        mTrx.commit();
+        for (int i = 0; i < FACTOR; i++) {
+            insert(131072 / FACTOR);
+            mTrx.commit();
+        }
         System.out.println("131072");
     }
 
-    // @Bench
-    // public void bench262144() throws TTException {
-    // insert(262144);
-    // mTrx.commit();
-    // System.out.println("262144");
-    // }
-    //
-    // @Bench
-    // public void bench524288() throws TTException {
-    // insert(524288);
-    // mTrx.commit();
-    // System.out.println("524288");
-    // }
-    //
-    // @Bench
-    // public void bench1048576() throws TTException {
-    // insert(1048576);
-    // mTrx.commit();
-    // System.out.println("1048576");
-    // }
+    @Bench
+    public void bench262144() throws TTException {
+        for (int i = 0; i < FACTOR; i++) {
+            insert(262144 / FACTOR);
+            mTrx.commit();
+        }
+        System.out.println("262144");
+    }
+
+    @Bench
+    public void bench524288() throws TTException {
+        for (int i = 0; i < FACTOR; i++) {
+            insert(524288 / FACTOR);
+            mTrx.commit();
+        }
+        System.out.println("524288");
+    }
 
     @AfterEachRun
     public void tearDown() throws TTException {
@@ -144,11 +152,17 @@ public class InsertBench {
         bench.add(InsertBench.class);
         BenchmarkResult res = bench.run();
         new TabularSummaryOutput().visitBenchmark(res);
+
+        final File outputFold = new File("/Users/sebi/insertBench");
+        IOUtils.recursiveDelete(outputFold);
+        outputFold.mkdirs();
+        new CSVOutput(outputFold).visitBenchmark(res);
+
     }
 
     static class Config extends AbstractConfig {
 
-        private final static int RUNS = 10;
+        private final static int RUNS = 100;
         private final static Set<AbstractMeter> METERS = new HashSet<AbstractMeter>();
         private final static Set<AbstractOutput> OUTPUT = new HashSet<AbstractOutput>();
 
@@ -160,6 +174,7 @@ public class InsertBench {
             METERS.add(new MemMeter(Memory.Byte));
 
             // OUTPUT.add(new TabularSummaryOutput());
+            // OUTPU
         }
 
         /**

@@ -166,7 +166,7 @@ final class LRULog {
         }
 
         mCache =
-            CacheBuilder.newBuilder().maximumSize(100).removalListener(
+            CacheBuilder.newBuilder().maximumSize(50).removalListener(
                 new RemovalListener<LogKey, LogValue>() {
                     @Override
                     public void onRemoval(RemovalNotification<LogKey, LogValue> notification) {
