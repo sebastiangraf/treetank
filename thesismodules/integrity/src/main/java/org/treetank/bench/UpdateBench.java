@@ -10,13 +10,17 @@ import java.util.Set;
 
 import org.perfidix.AbstractConfig;
 import org.perfidix.Benchmark;
+import org.perfidix.annotation.AfterEachRun;
 import org.perfidix.annotation.BeforeEachRun;
 import org.perfidix.annotation.Bench;
 import org.perfidix.element.KindOfArrangement;
 import org.perfidix.meter.AbstractMeter;
+import org.perfidix.meter.MemMeter;
+import org.perfidix.meter.Memory;
 import org.perfidix.meter.Time;
 import org.perfidix.meter.TimeMeter;
 import org.perfidix.ouput.AbstractOutput;
+import org.perfidix.ouput.CSVOutput;
 import org.perfidix.ouput.TabularSummaryOutput;
 import org.perfidix.result.BenchmarkResult;
 import org.treetank.access.Storage;
@@ -45,6 +49,8 @@ import com.google.inject.Injector;
 public class UpdateBench {
 
     private final String RESOURCENAME = "benchResourcegrave9283";
+
+    private static final int FACTOR = 1;
 
     private final int ELEMENTS = 524288;
 
@@ -82,7 +88,7 @@ public class UpdateBench {
         }
     }
 
-    private void toModify(int numbersToModify, int commitAfterNodes) throws TTException {
+    private void toModify(int numbersToModify) throws TTException {
         for (int i = 0; i < numbersToModify; i++) {
             final long keyToAdapt = Math.abs(BenchUtils.random.nextLong()) % ELEMENTS;
 
@@ -90,10 +96,11 @@ public class UpdateBench {
             node.setNodeKey(keyToAdapt);
 
             mTrx.setNode(node);
-            if (i % commitAfterNodes == 0) {
+            if (i % (numbersToModify / FACTOR) == 0) {
                 mTrx.commit();
             }
         }
+        mTrx.commit();
         mTrx.close();
     }
 
@@ -106,30 +113,47 @@ public class UpdateBench {
         mTrx.commitBlocked();
     }
 
-    private static final int COMMITAFTER = 512;
-
     @Bench
     public void bench16384() throws TTException {
-        toModify(16384, COMMITAFTER);
+        toModify(16384);
         System.out.println("163842");
     }
 
     @Bench
     public void bench32768() throws TTException {
-        toModify(32768, COMMITAFTER);
+        toModify(32768);
         System.out.println("32768");
     }
 
     @Bench
     public void bench65536() throws TTException {
-        toModify(65536, COMMITAFTER);
+        toModify(65536);
         System.out.println("65536");
     }
 
     @Bench
     public void bench131072() throws TTException {
-        toModify(131072, COMMITAFTER);
+        toModify(131072);
         System.out.println("131072");
+    }
+
+    @Bench
+    public void bench262144() throws TTException {
+        toModify(262144);
+        System.out.println("262144");
+    }
+
+    @Bench
+    public void bench524288() throws TTException {
+        toModify(524288);
+        System.out.println("524288");
+    }
+
+    @AfterEachRun
+    public void tearDown() throws TTException {
+        mTrx.close();
+        mSession.close();
+        mStorage.truncateResource(new SessionConfiguration(RESOURCENAME, StandardSettings.KEY));
     }
 
     public static void main(String[] args) {
@@ -137,6 +161,11 @@ public class UpdateBench {
         bench.add(UpdateBench.class);
         BenchmarkResult res = bench.run();
         new TabularSummaryOutput().visitBenchmark(res);
+
+        final File outputFold = new File("/Users/sebi/updateBench");
+        IOUtils.recursiveDelete(outputFold);
+        outputFold.mkdirs();
+        new CSVOutput(outputFold).visitBenchmark(res);
     }
 
     static class Config extends AbstractConfig {
@@ -150,9 +179,10 @@ public class UpdateBench {
 
         static {
             METERS.add(new TimeMeter(Time.MilliSeconds));
-            // METERS.add(new MemMeter(Memory.Byte));
+            METERS.add(new MemMeter(Memory.Byte));
 
             // OUTPUT.add(new TabularSummaryOutput());
+            // OUTPU
         }
 
         /**
