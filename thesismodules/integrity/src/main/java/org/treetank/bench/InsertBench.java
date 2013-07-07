@@ -87,28 +87,28 @@ public class InsertBench {
     }
 
     @Bench
-    public void bench16384() throws TTException {
+    public void bench016384() throws TTException {
         for (int i = 0; i < FACTOR; i++) {
             insert(16384 / FACTOR);
-            mTrx.commit();
+            mTrx.commitBlocked();
         }
         System.out.println("16384");
     }
 
     @Bench
-    public void bench32768() throws TTException {
+    public void bench032768() throws TTException {
         for (int i = 0; i < FACTOR; i++) {
             insert(32768 / FACTOR);
-            mTrx.commit();
+            mTrx.commitBlocked();
         }
         System.out.println("32768");
     }
 
     @Bench
-    public void bench65536() throws TTException {
+    public void bench065536() throws TTException {
         for (int i = 0; i < FACTOR; i++) {
             insert(65536 / FACTOR);
-            mTrx.commit();
+            mTrx.commitBlocked();
         }
         System.out.println("65536");
     }
@@ -117,7 +117,7 @@ public class InsertBench {
     public void bench131072() throws TTException {
         for (int i = 0; i < FACTOR; i++) {
             insert(131072 / FACTOR);
-            mTrx.commit();
+            mTrx.commitBlocked();
         }
         System.out.println("131072");
     }
@@ -126,7 +126,7 @@ public class InsertBench {
     public void bench262144() throws TTException {
         for (int i = 0; i < FACTOR; i++) {
             insert(262144 / FACTOR);
-            mTrx.commit();
+            mTrx.commitBlocked();
         }
         System.out.println("262144");
     }
@@ -135,7 +135,7 @@ public class InsertBench {
     public void bench524288() throws TTException {
         for (int i = 0; i < FACTOR; i++) {
             insert(524288 / FACTOR);
-            mTrx.commit();
+            mTrx.commitBlocked();
         }
         System.out.println("524288");
     }
