@@ -87,7 +87,7 @@ public class InsertBench {
     }
 
     @Bench
-    public void bench16384() throws TTException {
+    public void bench016384() throws TTException {
         for (int i = 0; i < FACTOR; i++) {
             insert(16384 / FACTOR);
             mTrx.commit();
@@ -96,7 +96,7 @@ public class InsertBench {
     }
 
     @Bench
-    public void bench32768() throws TTException {
+    public void bench032768() throws TTException {
         for (int i = 0; i < FACTOR; i++) {
             insert(32768 / FACTOR);
             mTrx.commit();
@@ -105,7 +105,7 @@ public class InsertBench {
     }
 
     @Bench
-    public void bench65536() throws TTException {
+    public void bench065536() throws TTException {
         for (int i = 0; i < FACTOR; i++) {
             insert(65536 / FACTOR);
             mTrx.commit();
