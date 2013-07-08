@@ -27,6 +27,9 @@ package org.treetank.jscsi;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.io.IOException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.jscsi.target.storage.IStorageModule;
 import org.slf4j.Logger;
@@ -60,10 +63,10 @@ public class TreetankStorageModule implements IStorageModule {
      * the ram for the jvm.
      */
     public static final int BLOCKS_IN_NODE = 32;
-    
-    /**Threshold when commit should occur in number of bytes.*/
-//    private static final int COMMIT_THRESHOLD = 268435456;
-    private static final int COMMIT_THRESHOLD = 268435456/4;
+
+    /** Threshold when commit should occur in number of bytes. */
+     private static final int COMMIT_THRESHOLD = 268435456;
+    // private static final int COMMIT_THRESHOLD = 2097152;
 
     /** Number of Bytes in Bucket. */
     public final static int BYTES_IN_NODE = BLOCKS_IN_NODE * VIRTUAL_BLOCK_SIZE;
@@ -92,7 +95,8 @@ public class TreetankStorageModule implements IStorageModule {
      * Bytewriter counter
      * - If a certain amount of bytes have been written, a commit is made to treetank.
      */
-    private int mByteCounter;
+    private volatile int mByteCounter;
+//    private final ScheduledExecutorService mCommitExec;
 
     /**
      * Creates a storage module that is used by the target to handle I/O.
@@ -106,7 +110,7 @@ public class TreetankStorageModule implements IStorageModule {
      */
     public TreetankStorageModule(final long pNodeNumber, final ISession pSession) throws TTException {
 
-        mByteCounter = 0;
+        // mByteCounter = 0;
         mNodeNumbers = pNodeNumber;
 
         LOGGER.debug("Initializing storagemodule with: number of nodes=" + mNodeNumbers + ", blockSize="
@@ -114,9 +118,22 @@ public class TreetankStorageModule implements IStorageModule {
 
         mSession = pSession;
         mRtx = new IscsiWriteTrx(mSession.beginBucketWtx(), mSession);
+//
+//        mCommitExec = Executors.newScheduledThreadPool(1);
+//        mCommitExec.scheduleAtFixedRate(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    mByteCounter = 0;
+//                    mRtx.commit();
+//                } catch (TTException e) {
+//                    throw new RuntimeException(e);
+//                }
+//            }
+//        }, 2, 2, TimeUnit.MINUTES);
 
         createStorage();
-
+        System.out.println("Device ready");
     }
 
     /**

@@ -26,8 +26,11 @@ package org.treetank.access;
 
 import static com.google.common.base.Preconditions.checkState;
 
-import org.treetank.api.IIscsiWriteTrx;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.treetank.api.IBucketWriteTrx;
+import org.treetank.api.IIscsiWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
@@ -101,8 +104,18 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
     public void commit() throws TTException {
         checkState(!mDelegate.isClosed(), "Transaction is already closed.");
 
+        final long time = System.currentTimeMillis();
+
+        System.out.println("++++++++++++++++++++++++++++++++++++++");
+        System.out.println("Commit starting " + new Date());
+        System.out.println("++++++++++++++++++++++++++++++++++++++");
+
         // ICommitStrategy uber page.
         getPageTransaction().commit();
+
+        System.out.println("++++++++++++++++++++++++++++++++++++++");
+        System.out.println("Commit took = " + (System.currentTimeMillis() - time));
+        System.out.println("++++++++++++++++++++++++++++++++++++++");
 
     }
 
