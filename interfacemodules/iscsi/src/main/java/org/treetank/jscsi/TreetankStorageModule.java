@@ -65,8 +65,8 @@ public class TreetankStorageModule implements IStorageModule {
     public static final int BLOCKS_IN_NODE = 32;
 
     /** Threshold when commit should occur in number of bytes. */
-     private static final int COMMIT_THRESHOLD = 268435456;
-    // private static final int COMMIT_THRESHOLD = 2097152;
+//     private static final int COMMIT_THRESHOLD = 268435456;
+     private static final int COMMIT_THRESHOLD = 33554432;
 
     /** Number of Bytes in Bucket. */
     public final static int BYTES_IN_NODE = BLOCKS_IN_NODE * VIRTUAL_BLOCK_SIZE;
