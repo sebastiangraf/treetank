@@ -336,7 +336,7 @@ public class BackendWriterProxy implements IBackendReader {
                             // This offset marks the childs to go down.
                             final LogKey toPush =
                                 new LogKey(pRootLevel, key.getLevel() + 1,
-                                    (key.getSeq() << IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3]) + i);
+                                    (key.getSeq() << IConstants.INDIRECT_BUCKET_COUNT[3]) + i);
                             childAndRightSib.push(toPush);
                         }
                     }
@@ -351,7 +351,7 @@ public class BackendWriterProxy implements IBackendReader {
                         final IReferenceBucket parentVal =
                             (IReferenceBucket)mFormerLog.get(parentKey).getModified();
                         final int parentOffset =
-                            (int)(key.getSeq() - ((key.getSeq() >> IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3]) << IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3]));
+                            (int)(key.getSeq() - ((key.getSeq() >> IConstants.INDIRECT_BUCKET_COUNT[3]) << IConstants.INDIRECT_BUCKET_COUNT[3]));
                         parentVal.setReferenceHash(parentOffset, hash);
 
                     } // otherwise, retrieve the bucket from the log.
@@ -363,7 +363,7 @@ public class BackendWriterProxy implements IBackendReader {
                             final IReferenceBucket parent =
                                 (IReferenceBucket)mFormerLog.get(pathToRoot.peek()).getModified();
                             final int parentOffset =
-                                (int)(key.getSeq() - ((key.getSeq() >> IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3]) << IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3]));
+                                (int)(key.getSeq() - ((key.getSeq() >> IConstants.INDIRECT_BUCKET_COUNT[3]) << IConstants.INDIRECT_BUCKET_COUNT[3]));
                             final IBucket persistedBucket =
                                 mWriter.read(parent.getReferenceKeys()[parentOffset]);
                             final byte[] persistedHash = persistedBucket.secureHash().asBytes();
@@ -407,7 +407,7 @@ public class BackendWriterProxy implements IBackendReader {
             mWriter.write(val);
             final IReferenceBucket parent = (IReferenceBucket)mFormerLog.get(pParentKey).getModified();
             final int parentOffset =
-                (int)(pChildKey.getSeq() - ((pChildKey.getSeq() >> IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3]) << IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3]));
+                (int)(pChildKey.getSeq() - ((pChildKey.getSeq() >> IConstants.INDIRECT_BUCKET_COUNT[3]) << IConstants.INDIRECT_BUCKET_COUNT[3]));
             parent.setReferenceHash(parentOffset, hash);
         }
 

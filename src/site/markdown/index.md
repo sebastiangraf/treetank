@@ -68,3 +68,5 @@ Concluded subprojects were:
 * Lukas Lewandowski (Jax-RX binding)
 * Tina Scherer (native XPath2 engine)
 * Marc Kramis (first draft1 of Treetank core)
+
+<script type="text/javascript" src="http://www.ohloh.net/p/623278/widgets/project_factoids_stats.js"></script>

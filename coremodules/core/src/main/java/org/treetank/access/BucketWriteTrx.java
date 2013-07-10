@@ -141,14 +141,14 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         checkState(!mDelegate.isClosed(), "Transaction already closed");
         // Allocate node key and increment node count.
         final long nodeKey = pNode.getNodeKey();
-        final long seqBucketKey = nodeKey >> IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3];
+        final long seqBucketKey = nodeKey >> IConstants.INDIRECT_BUCKET_COUNT[3];
         final int nodeBucketOffset = nodeBucketOffset(nodeKey);
         final LogValue container = prepareNodeBucket(nodeKey);
         final NodeBucket modified = ((NodeBucket)container.getModified());
         final NodeBucket complete = ((NodeBucket)container.getComplete());
         modified.setNode(nodeBucketOffset, pNode);
         complete.setNode(nodeBucketOffset, pNode);
-        mBucketWriter.put(new LogKey(false, IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length, seqBucketKey),
+        mBucketWriter.put(new LogKey(false, IConstants.INDIRECT_BUCKET_COUNT.length, seqBucketKey),
             container);
         return nodeKey;
     }
@@ -160,14 +160,14 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
     public void removeNode(final INode pNode) throws TTException {
         checkState(!mDelegate.isClosed(), "Transaction already closed");
         checkNotNull(pNode);
-        final long nodeBucketKey = pNode.getNodeKey() >> IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3];
+        final long nodeBucketKey = pNode.getNodeKey() >> IConstants.INDIRECT_BUCKET_COUNT[3];
         LogValue container = prepareNodeBucket(pNode.getNodeKey());
         final INode delNode = new DeletedNode(pNode.getNodeKey());
         ((NodeBucket)container.getComplete()).setNode(nodeBucketOffset(pNode.getNodeKey()), delNode);
         ((NodeBucket)container.getModified()).setNode(nodeBucketOffset(pNode.getNodeKey()), delNode);
 
         mBucketWriter.put(
-            new LogKey(false, IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length, nodeBucketKey), container);
+            new LogKey(false, IConstants.INDIRECT_BUCKET_COUNT.length, nodeBucketKey), container);
     }
 
     /**
@@ -176,11 +176,11 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
     public INode getNode(final long pNodeKey) throws TTIOException {
         checkState(!mDelegate.isClosed(), "Transaction already closed");
         // Calculate bucket and node part for given nodeKey.
-        final long nodeBucketKey = pNodeKey >> IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3];
+        final long nodeBucketKey = pNodeKey >> IConstants.INDIRECT_BUCKET_COUNT[3];
         final int nodeBucketOffset = nodeBucketOffset(pNodeKey);
 
         final LogKey key =
-            new LogKey(false, IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length, nodeBucketKey);
+            new LogKey(false, IConstants.INDIRECT_BUCKET_COUNT.length, nodeBucketKey);
         LogValue container = mBucketWriter.get(key);
         INode item = null;
         // Bucket was modified...
@@ -323,10 +323,10 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
 
     private LogValue prepareNodeBucket(final long pNodeKey) throws TTException {
 
-        final long seqNodeBucketKey = pNodeKey >> IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3];
+        final long seqNodeBucketKey = pNodeKey >> IConstants.INDIRECT_BUCKET_COUNT[3];
 
         final LogKey key =
-            new LogKey(false, IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length, seqNodeBucketKey);
+            new LogKey(false, IConstants.INDIRECT_BUCKET_COUNT.length, seqNodeBucketKey);
         // See if on nodeBucketLevel, there are any buckets.
         LogValue container = mBucketWriter.get(key);
         // if not,...
@@ -442,16 +442,16 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         // since the revision points to a bucket, the sequence-key bases on the last indirect-layer directly
         // within the search after a revision,...
         if (pIsRootLevel) {
-            seqBucketKey = pElementKey >> IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3];
+            seqBucketKey = pElementKey >> IConstants.INDIRECT_BUCKET_COUNT[3];
         } // ...whereas one layer above is used for the nodes based on the offsets pointing to nodes
           // instead of buckets.
         else {
-            seqBucketKey = pElementKey >> IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[2];
+            seqBucketKey = pElementKey >> IConstants.INDIRECT_BUCKET_COUNT[2];
         }
 
-        long[] orderNumber = new long[IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length];
+        long[] orderNumber = new long[IConstants.INDIRECT_BUCKET_COUNT.length];
         for (int level = 0; level < orderNumber.length; level++) {
-            orderNumber[level] = seqBucketKey >> IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[level];
+            orderNumber[level] = seqBucketKey >> IConstants.INDIRECT_BUCKET_COUNT[level];
         }
 
         IReferenceBucket bucket = null;
