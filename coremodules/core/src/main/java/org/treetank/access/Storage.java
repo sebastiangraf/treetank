@@ -360,7 +360,7 @@ public final class Storage implements IStorage {
 
         IReferenceBucket bucket;
         LogKey key;
-        for (int i = 0; i < IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length; i++) {
+        for (int i = 0; i < IConstants.INDIRECT_BUCKET_COUNT.length; i++) {
             bucket = new IndirectBucket(newBucketKey);
             newBucketKey = uberBucket.incrementBucketCounter();
             bucket.setReferenceKey(0, newBucketKey);
@@ -390,7 +390,7 @@ public final class Storage implements IStorage {
 
         bucket = indirectBucket;
 
-        for (int i = 0; i < IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length; i++) {
+        for (int i = 0; i < IConstants.INDIRECT_BUCKET_COUNT.length; i++) {
             newBucketKey = uberBucket.incrementBucketCounter();
             bucket.setReferenceKey(0, newBucketKey);
             bucket.setReferenceHash(0, IConstants.NON_HASHED);
@@ -400,7 +400,7 @@ public final class Storage implements IStorage {
         }
 
         final NodeBucket ndp = new NodeBucket(newBucketKey, IConstants.NULL_NODE);
-        key = new LogKey(false, IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length, 0);
+        key = new LogKey(false, IConstants.INDIRECT_BUCKET_COUNT.length, 0);
         writer.put(key, new LogValue(ndp, ndp));
 
         try {

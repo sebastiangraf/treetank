@@ -124,7 +124,7 @@ public class BucketReadTrx implements IBucketReadTrx {
         checkArgument(pNodeKey >= 0);
         checkState(!mClose, "Transaction already closed");
         // Calculate bucket and node part for given nodeKey.
-        final long seqBucketKey = pNodeKey >> IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3];
+        final long seqBucketKey = pNodeKey >> IConstants.INDIRECT_BUCKET_COUNT[3];
         final int nodeBucketOffset = nodeBucketOffset(pNodeKey);
         final List<NodeBucket> listRevs = getSnapshotBuckets(seqBucketKey);
         final NodeBucket[] revs = listRevs.toArray(new NodeBucket[listRevs.size()]);
@@ -251,10 +251,10 @@ public class BucketReadTrx implements IBucketReadTrx {
      * @return Offset into node bucket.
      */
     protected static final int nodeBucketOffset(final long pNodeKey) {
-        // INP_LEVEL_BUCKET_COUNT_EXPONENT[3] is only taken to get the difference between 2^7 and the actual
+        // INDIRECT_BUCKET_COUNT[3] is only taken to get the difference between 2^7 and the actual
         // nodekey as offset. It has nothing to do with the levels.
         final long nodeBucketOffset =
-            (pNodeKey - ((pNodeKey >> IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3]) << IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[3]));
+            (pNodeKey - ((pNodeKey >> IConstants.INDIRECT_BUCKET_COUNT[3]) << IConstants.INDIRECT_BUCKET_COUNT[3]));
         return (int)nodeBucketOffset;
     }
 
@@ -276,9 +276,9 @@ public class BucketReadTrx implements IBucketReadTrx {
         // all buckets within the same level.
         // ranges are for level 0: 0-127; level 1: 0-16383; level 2: 0-2097151; level 3: 0-268435455; ;level
         // 4: 0-34359738367
-        long[] orderNumber = new long[IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT.length];
+        long[] orderNumber = new long[IConstants.INDIRECT_BUCKET_COUNT.length];
         for (int level = 0; level < orderNumber.length; level++) {
-            orderNumber[level] = pSeqBucketKey >> IConstants.INP_LEVEL_BUCKET_COUNT_EXPONENT[level];
+            orderNumber[level] = pSeqBucketKey >> IConstants.INDIRECT_BUCKET_COUNT[level];
         }
 
         // Initial state pointing to the indirect bucket of level 0.
