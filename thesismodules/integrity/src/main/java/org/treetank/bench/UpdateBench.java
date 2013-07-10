@@ -4,6 +4,11 @@
 package org.treetank.bench;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.FileSystems;
 import java.util.HashSet;
 import java.util.Set;
@@ -37,6 +42,7 @@ import org.treetank.bucket.DumbMetaEntryFactory;
 import org.treetank.bucket.DumbNodeFactory;
 import org.treetank.bucket.DumbNodeFactory.DumbNode;
 import org.treetank.exception.TTException;
+import org.treetank.exception.TTIOException;
 import org.treetank.io.IOUtils;
 
 import com.google.inject.Guice;
@@ -50,12 +56,14 @@ public class UpdateBench {
 
     private final String RESOURCENAME = "benchResourcegrave9283";
 
-    private static final int FACTOR = 1;
+    private final File bootstrappedFile = FileSystems.getDefault().getPath("tmp", "bootstrapped").toFile();
+    private final File benchedFile = FileSystems.getDefault().getPath("tmp", "bench").toFile();
+
+    private static final int FACTOR = 8;
 
     private final int ELEMENTS = 524288;
 
-    private final IStorage mStorage;
-    private final ResourceConfiguration mConfig;
+    private IStorage mStorage;
     private ISession mSession;
     private DumbNode[] mNodesToInsert = BenchUtils.createNodes(new int[] {
         ELEMENTS
@@ -63,33 +71,45 @@ public class UpdateBench {
     private IBucketWriteTrx mTrx;
 
     public UpdateBench() throws TTException {
-        final File storageFile = FileSystems.getDefault().getPath("tmp", "bench").toFile();
-        IOUtils.recursiveDelete(storageFile);
-        Injector inj =
+        final Injector inj =
             Guice.createInjector(new ModuleSetter().setNodeFacClass(DumbNodeFactory.class).setMetaFacClass(
                 DumbMetaEntryFactory.class).createModule());
 
-        mConfig =
+        final ResourceConfiguration resConfig =
             inj.getInstance(IResourceConfigurationFactory.class).create(
-                StandardSettings.getProps(storageFile.getAbsolutePath(), RESOURCENAME));
-
-        IOUtils.recursiveDelete(storageFile);
-        final StorageConfiguration config = new StorageConfiguration(storageFile);
-        Storage.createStorage(config);
-        mStorage = Storage.openStorage(storageFile);
-
-    }
-
-    private void insert(int numbersToInsert) throws TTException {
-        for (int i = 0; i < numbersToInsert; i++) {
-            final long nodeKey = mTrx.incrementNodeKey();
+                StandardSettings.getProps(benchedFile.getAbsolutePath(), RESOURCENAME));
+        IOUtils.recursiveDelete(benchedFile);
+        final StorageConfiguration storConfig = new StorageConfiguration(benchedFile);
+        Storage.createStorage(storConfig);
+        final IStorage storage = Storage.openStorage(benchedFile);
+        storage.createResource(resConfig);
+        final ISession session =
+            storage.getSession(new SessionConfiguration(RESOURCENAME, StandardSettings.KEY));
+        final IBucketWriteTrx trx = session.beginBucketWtx();
+        long time = System.currentTimeMillis();
+        for (int i = 0; i < ELEMENTS; i++) {
+            final long nodeKey = trx.incrementNodeKey();
             mNodesToInsert[i].setNodeKey(nodeKey);
-            mTrx.setNode(mNodesToInsert[i]);
+            trx.setNode(mNodesToInsert[i]);
         }
+        trx.commitBlocked();
+        long endtime = System.currentTimeMillis();
+        System.out.println("Generating nodes took " + (endtime - time) + "ms");
+        trx.close();
+        session.close();
+        storage.close();
+
+        IOUtils.recursiveDelete(bootstrappedFile);
+        try {
+            copyDirectory(benchedFile, bootstrappedFile);
+        } catch (IOException e) {
+            throw new TTIOException(e);
+        }
+
     }
 
     private void toModify(int numbersToModify) throws TTException {
-        for (int i = 0; i < numbersToModify; i++) {
+        for (int i = 1; i <= numbersToModify; i++) {
             final long keyToAdapt = Math.abs(BenchUtils.random.nextLong()) % ELEMENTS;
 
             final DumbNode node = BenchUtils.generateOne();
@@ -100,17 +120,20 @@ public class UpdateBench {
                 mTrx.commit();
             }
         }
-        mTrx.commit();
         mTrx.close();
     }
 
     @BeforeEachRun
     public void setUp() throws TTException {
-        mStorage.createResource(mConfig);
-        mSession = mStorage.getSession(new SessionConfiguration(RESOURCENAME, StandardSettings.KEY));
-        mTrx = mSession.beginBucketWtx();
-        insert(ELEMENTS);
-        mTrx.commitBlocked();
+        try {
+            IOUtils.recursiveDelete(benchedFile);
+            copyDirectory(bootstrappedFile, benchedFile);
+            mStorage = Storage.openStorage(benchedFile);
+            mSession = mStorage.getSession(new SessionConfiguration(RESOURCENAME, StandardSettings.KEY));
+            mTrx = mSession.beginBucketWtx();
+        } catch (IOException e) {
+            throw new TTIOException(e);
+        }
     }
 
     @Bench
@@ -153,24 +176,57 @@ public class UpdateBench {
     public void tearDown() throws TTException {
         mTrx.close();
         mSession.close();
-        mStorage.truncateResource(new SessionConfiguration(RESOURCENAME, StandardSettings.KEY));
+        mStorage.close();
+        // mStorage.truncateResource(new SessionConfiguration(RESOURCENAME, StandardSettings.KEY));
     }
 
+    final static File outputFold = new File("/Users/sebi/listenerBench");
+
     public static void main(String[] args) {
+
+        final File resultFold = new File("/Users/sebi/resBench");
+        IOUtils.recursiveDelete(outputFold);
+        IOUtils.recursiveDelete(resultFold);
+        outputFold.mkdirs();
+        resultFold.mkdirs();
+
         Benchmark bench = new Benchmark(new Config());
         bench.add(UpdateBench.class);
         BenchmarkResult res = bench.run();
         new TabularSummaryOutput().visitBenchmark(res);
 
-        final File outputFold = new File("/Users/sebi/updateBench");
-        IOUtils.recursiveDelete(outputFold);
-        outputFold.mkdirs();
-        new CSVOutput(outputFold).visitBenchmark(res);
+        new CSVOutput(resultFold).visitBenchmark(res);
+    }
+
+    private void copyDirectory(File sourceLocation, File targetLocation) throws IOException {
+        if (sourceLocation.isDirectory()) {
+            if (!targetLocation.exists()) {
+                targetLocation.mkdir();
+            }
+
+            String[] children = sourceLocation.list();
+            for (int i = 0; i < children.length; i++) {
+                copyDirectory(new File(sourceLocation, children[i]), new File(targetLocation, children[i]));
+            }
+        } else {
+
+            InputStream in = new FileInputStream(sourceLocation);
+            OutputStream out = new FileOutputStream(targetLocation);
+
+            // Copy the bits from instream to outstream
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = in.read(buf)) > 0) {
+                out.write(buf, 0, len);
+            }
+            in.close();
+            out.close();
+        }
     }
 
     static class Config extends AbstractConfig {
 
-        private final static int RUNS = 1;
+        private final static int RUNS = 10;
         private final static Set<AbstractMeter> METERS = new HashSet<AbstractMeter>();
         private final static Set<AbstractOutput> OUTPUT = new HashSet<AbstractOutput>();
 
@@ -181,8 +237,8 @@ public class UpdateBench {
             METERS.add(new TimeMeter(Time.MilliSeconds));
             METERS.add(new MemMeter(Memory.Byte));
 
-            // OUTPUT.add(new TabularSummaryOutput());
-            // OUTPU
+            OUTPUT.add(new CSVOutput(outputFold));
+            OUTPUT.add(new TabularSummaryOutput());
         }
 
         /**

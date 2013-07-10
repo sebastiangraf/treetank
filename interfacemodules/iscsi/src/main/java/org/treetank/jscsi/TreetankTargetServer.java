@@ -48,6 +48,7 @@ import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
 import org.treetank.io.IBackend;
 import org.treetank.io.IOUtils;
+import org.treetank.io.berkeley.BerkeleyStorage;
 import org.treetank.io.combined.CombinedStorage;
 import org.treetank.node.ByteNodeFactory;
 import org.treetank.node.ISCSIMetaPageFactory;
@@ -135,21 +136,21 @@ public class TreetankTargetServer {
          * You can't automatically make sure to always use the correct
          * host address.
          */
-        System.out.print("\nWhich one should be used?\nType in the number: ");
-        Integer chosenIndex = null;
+//        System.out.print("\nWhich one should be used?\nType in the number: ");
+//        Integer chosenIndex = null;
+//
+//        while (chosenIndex == null) {
+//            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+//            String line = br.readLine();
+//            try {
+//                chosenIndex = Integer.parseInt(line);
+//            } catch (NumberFormatException nfe) {
+//                chosenIndex = null;
+//            }
+//        }
 
-        while (chosenIndex == null) {
-            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-            String line = br.readLine();
-            try {
-                chosenIndex = Integer.parseInt(line);
-            } catch (NumberFormatException nfe) {
-                chosenIndex = null;
-            }
-        }
-
-        String targetAddress = addresses.get(chosenIndex).getHostAddress();
-        System.out.println("Using ip address " + addresses.get(chosenIndex).getHostAddress());
+        String targetAddress = addresses.get(1).getHostAddress();
+        System.out.println("Using ip address " + addresses.get(1).getHostAddress());
 
         if (argsMap.get("storagePath") != null) {
             File file = new File(argsMap.get("storagePath"));
@@ -170,7 +171,7 @@ public class TreetankTargetServer {
         if (argsMap.get("backendImplementation") != null) {
             backendClass = (Class<? extends IBackend>)Class.forName(argsMap.get("backendImplementation"));
         } else {
-            backendClass = CombinedStorage.class;
+            backendClass = BerkeleyStorage.class;
         }
 
         if (argsMap.get("revisioningImplementation") != null) {
