@@ -1,10 +1,16 @@
 package org.treetank.bench;
 
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 
+import org.jclouds.ContextBuilder;
+import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.filesystem.reference.FilesystemConstants;
 import org.perfidix.AbstractConfig;
 import org.perfidix.Benchmark;
 import org.perfidix.annotation.AfterEachRun;
@@ -12,8 +18,6 @@ import org.perfidix.annotation.BeforeEachRun;
 import org.perfidix.annotation.Bench;
 import org.perfidix.element.KindOfArrangement;
 import org.perfidix.meter.AbstractMeter;
-import org.perfidix.meter.MemMeter;
-import org.perfidix.meter.Memory;
 import org.perfidix.meter.Time;
 import org.perfidix.meter.TimeMeter;
 import org.perfidix.ouput.AbstractOutput;
@@ -35,6 +39,7 @@ import org.treetank.bucket.DumbNodeFactory;
 import org.treetank.bucket.DumbNodeFactory.DumbNode;
 import org.treetank.exception.TTException;
 import org.treetank.io.IOUtils;
+import org.treetank.io.jclouds.JCloudsStorage;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -47,18 +52,19 @@ public class InsertBench {
     private final ResourceConfiguration mConfig;
     private ISession mSession;
     private DumbNode[] mNodesToInsert = BenchUtils.createNodes(new int[] {
-        524288
+        262144
     })[0];
     private IBucketWriteTrx mTrx;
 
     private static final int FACTOR = 8;
 
     public InsertBench() throws TTException {
-        final File storageFile = FileSystems.getDefault().getPath("tmp", "bench").toFile();
+        final File storageFile = FileSystems.getDefault().getPath("/Users/sebi/bla").toFile();
         IOUtils.recursiveDelete(storageFile);
+
         Injector inj =
             Guice.createInjector(new ModuleSetter().setNodeFacClass(DumbNodeFactory.class).setMetaFacClass(
-                DumbMetaEntryFactory.class).createModule());
+                DumbMetaEntryFactory.class).setBackendClass(JCloudsStorage.class).createModule());
 
         mConfig =
             inj.getInstance(IResourceConfigurationFactory.class).create(
@@ -130,12 +136,13 @@ public class InsertBench {
         System.out.println("262144");
     }
 
-    @Bench
-    public void blocked524288() throws TTException {
-        insert(524288, true);
-        mTrx.close();
-        System.out.println("524288");
-    }
+    //
+    // @Bench
+    // public void blocked524288() throws TTException {
+    // insert(524288, true);
+    // mTrx.close();
+    // System.out.println("524288");
+    // }
 
     @Bench
     public void nonblocked016384() throws TTException {
@@ -172,13 +179,14 @@ public class InsertBench {
         System.out.println("262144");
     }
 
-    @Bench
-    public void nonblocked524288() throws TTException {
-        insert(524288, false);
-        mTrx.close();
-        System.out.println("524288");
-    }
-    
+    //
+    // @Bench
+    // public void nonblocked524288() throws TTException {
+    // insert(524288, false);
+    // mTrx.close();
+    // System.out.println("524288");
+    // }
+
     @AfterEachRun
     public void tearDown() throws TTException {
         mTrx.close();
@@ -223,6 +231,32 @@ public class InsertBench {
                 .toArray(new AbstractOutput[OUTPUT.size()]), ARRAN, GCPROB);
         }
 
+    }
+
+    /**
+     * Getting credentials for aws from homedir/.credentials
+     * 
+     * @return a two-dimensional String[] with login and password
+     */
+    private static String[] getCredentials() {
+
+        File userStore =
+            new File(System.getProperty("user.home"), new StringBuilder(".credentials")
+                .append(File.separator).append("aws.properties").toString());
+        if (!userStore.exists()) {
+            return new String[0];
+        } else {
+            Properties props = new Properties();
+            try {
+                props.load(new FileReader(userStore));
+                return new String[] {
+                    props.getProperty("access"), props.getProperty("secret")
+                };
+
+            } catch (IOException exc) {
+                throw new RuntimeException(exc);
+            }
+        }
     }
 
 }
