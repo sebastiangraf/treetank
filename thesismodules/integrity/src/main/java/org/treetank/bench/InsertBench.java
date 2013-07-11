@@ -71,7 +71,7 @@ public class InsertBench {
 
     }
 
-    private void insert(int numbersToInsert) throws TTException {
+    private void insert(int numbersToInsert, boolean blocked) throws TTException {
         final int offset = numbersToInsert / FACTOR;
         for (int i = 0; i < FACTOR; i++) {
             for (int j = 0; j < offset; j++) {
@@ -79,7 +79,11 @@ public class InsertBench {
                 mNodesToInsert[i * offset + j].setNodeKey(nodeKey);
                 mTrx.setNode(mNodesToInsert[i * offset + j]);
             }
-            mTrx.commitBlocked();
+            if (blocked) {
+                mTrx.commitBlocked();
+            } else {
+                mTrx.commit();
+            }
         }
 
     }
@@ -91,48 +95,90 @@ public class InsertBench {
         mTrx = mSession.beginBucketWtx();
     }
 
-//    @Bench
-//    public void bench016384() throws TTException {
-//        insert(16384);
-//        mTrx.close();
-//        System.out.println("16384");
-//    }
-//
-//    @Bench
-//    public void bench032768() throws TTException {
-//        insert(32768);
-//        mTrx.close();
-//        System.out.println("32768");
-//    }
-//
-//    @Bench
-//    public void bench065536() throws TTException {
-//        insert(65536);
-//        mTrx.close();
-//        System.out.println("65536");
-//    }
-//
-//    @Bench
-//    public void bench131072() throws TTException {
-//        insert(131072);
-//        mTrx.close();
-//        System.out.println("131072");
-//    }
-//
-//    @Bench
-//    public void bench262144() throws TTException {
-//        insert(262144);
-//        mTrx.close();
-//        System.out.println("262144");
-//    }
+    @Bench
+    public void blocked016384() throws TTException {
+        insert(16384, true);
+        mTrx.close();
+        System.out.println("16384");
+    }
 
     @Bench
-    public void bench524288() throws TTException {
-        insert(524288);
+    public void blocked032768() throws TTException {
+        insert(32768, true);
+        mTrx.close();
+        System.out.println("32768");
+    }
+
+    @Bench
+    public void blocked065536() throws TTException {
+        insert(65536, true);
+        mTrx.close();
+        System.out.println("65536");
+    }
+
+    @Bench
+    public void blocked131072() throws TTException {
+        insert(131072, true);
+        mTrx.close();
+        System.out.println("131072");
+    }
+
+    @Bench
+    public void blocked262144() throws TTException {
+        insert(262144, true);
+        mTrx.close();
+        System.out.println("262144");
+    }
+
+    @Bench
+    public void blocked524288() throws TTException {
+        insert(524288, true);
         mTrx.close();
         System.out.println("524288");
     }
 
+    @Bench
+    public void nonblocked016384() throws TTException {
+        insert(16384, false);
+        mTrx.close();
+        System.out.println("16384");
+    }
+
+    @Bench
+    public void nonblocked032768() throws TTException {
+        insert(32768, false);
+        mTrx.close();
+        System.out.println("32768");
+    }
+
+    @Bench
+    public void nonblocked065536() throws TTException {
+        insert(65536, false);
+        mTrx.close();
+        System.out.println("65536");
+    }
+
+    @Bench
+    public void nonblocked131072() throws TTException {
+        insert(131072, false);
+        mTrx.close();
+        System.out.println("131072");
+    }
+
+    @Bench
+    public void nonblocked262144() throws TTException {
+        insert(262144, false);
+        mTrx.close();
+        System.out.println("262144");
+    }
+
+    @Bench
+    public void nonblocked524288() throws TTException {
+        insert(524288, false);
+        mTrx.close();
+        System.out.println("524288");
+    }
+    
     @AfterEachRun
     public void tearDown() throws TTException {
         mTrx.close();
