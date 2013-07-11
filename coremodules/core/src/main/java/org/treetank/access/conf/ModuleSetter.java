@@ -10,6 +10,7 @@ import org.treetank.io.IBackend;
 import org.treetank.io.IBackend.IBackendFactory;
 import org.treetank.io.berkeley.BerkeleyStorage;
 import org.treetank.io.bytepipe.ByteHandlerPipeline;
+import org.treetank.io.bytepipe.Encryptor;
 import org.treetank.io.bytepipe.IByteHandler;
 import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.revisioning.IRevisioning;
@@ -34,10 +35,10 @@ public class ModuleSetter {
     private Class<? extends IRevisioning> mRevisioningClass = SlidingSnapshot.class;
     /** Class for IBackend. */
     private Class<? extends IBackend> mBackend = BerkeleyStorage.class;
-    /** Instance for ByteHandler. */
-    private IByteHandlerPipeline mByteHandler = new ByteHandlerPipeline();
     /** Instance for Key. */
     private Key mKey = StandardSettings.KEY;
+    /** Instance for ByteHandler. */
+    private IByteHandlerPipeline mByteHandler = new ByteHandlerPipeline(new Encryptor(mKey));
 
     /**
      * Setting an {@link INodeFactory}-class
