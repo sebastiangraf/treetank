@@ -72,11 +72,16 @@ public class InsertBench {
     }
 
     private void insert(int numbersToInsert) throws TTException {
-        for (int i = 0; i < numbersToInsert; i++) {
-            final long nodeKey = mTrx.incrementNodeKey();
-            mNodesToInsert[i].setNodeKey(nodeKey);
-            mTrx.setNode(mNodesToInsert[i]);
+        final int offset = numbersToInsert / FACTOR;
+        for (int i = 0; i < FACTOR; i++) {
+            for (int j = 0; j < offset; j++) {
+                final long nodeKey = mTrx.incrementNodeKey();
+                mNodesToInsert[i * offset + j].setNodeKey(nodeKey);
+                mTrx.setNode(mNodesToInsert[i * offset + j]);
+            }
+            mTrx.commitBlocked();
         }
+
     }
 
     @BeforeEachRun
@@ -86,57 +91,45 @@ public class InsertBench {
         mTrx = mSession.beginBucketWtx();
     }
 
-    @Bench
-    public void bench016384() throws TTException {
-        for (int i = 0; i < FACTOR; i++) {
-            insert(16384 / FACTOR);
-            mTrx.commitBlocked();
-        }
-        System.out.println("16384");
-    }
-
-    @Bench
-    public void bench032768() throws TTException {
-        for (int i = 0; i < FACTOR; i++) {
-            insert(32768 / FACTOR);
-            mTrx.commitBlocked();
-        }
-        System.out.println("32768");
-    }
-
-    @Bench
-    public void bench065536() throws TTException {
-        for (int i = 0; i < FACTOR; i++) {
-            insert(65536 / FACTOR);
-            mTrx.commitBlocked();
-        }
-        System.out.println("65536");
-    }
-
-    @Bench
-    public void bench131072() throws TTException {
-        for (int i = 0; i < FACTOR; i++) {
-            insert(131072 / FACTOR);
-            mTrx.commitBlocked();
-        }
-        System.out.println("131072");
-    }
-
-    @Bench
-    public void bench262144() throws TTException {
-        for (int i = 0; i < FACTOR; i++) {
-            insert(262144 / FACTOR);
-            mTrx.commitBlocked();
-        }
-        System.out.println("262144");
-    }
+//    @Bench
+//    public void bench016384() throws TTException {
+//        insert(16384);
+//        mTrx.close();
+//        System.out.println("16384");
+//    }
+//
+//    @Bench
+//    public void bench032768() throws TTException {
+//        insert(32768);
+//        mTrx.close();
+//        System.out.println("32768");
+//    }
+//
+//    @Bench
+//    public void bench065536() throws TTException {
+//        insert(65536);
+//        mTrx.close();
+//        System.out.println("65536");
+//    }
+//
+//    @Bench
+//    public void bench131072() throws TTException {
+//        insert(131072);
+//        mTrx.close();
+//        System.out.println("131072");
+//    }
+//
+//    @Bench
+//    public void bench262144() throws TTException {
+//        insert(262144);
+//        mTrx.close();
+//        System.out.println("262144");
+//    }
 
     @Bench
     public void bench524288() throws TTException {
-        for (int i = 0; i < FACTOR; i++) {
-            insert(524288 / FACTOR);
-            mTrx.commitBlocked();
-        }
+        insert(524288);
+        mTrx.close();
         System.out.println("524288");
     }
 
@@ -162,7 +155,7 @@ public class InsertBench {
 
     static class Config extends AbstractConfig {
 
-        private final static int RUNS = 100;
+        private final static int RUNS = 10;
         private final static Set<AbstractMeter> METERS = new HashSet<AbstractMeter>();
         private final static Set<AbstractOutput> OUTPUT = new HashSet<AbstractOutput>();
 
@@ -171,7 +164,6 @@ public class InsertBench {
 
         static {
             METERS.add(new TimeMeter(Time.MilliSeconds));
-            METERS.add(new MemMeter(Memory.Byte));
 
             // OUTPUT.add(new TabularSummaryOutput());
             // OUTPU
