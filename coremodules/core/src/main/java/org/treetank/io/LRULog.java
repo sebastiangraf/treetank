@@ -63,7 +63,7 @@ import com.sleepycat.je.OperationStatus;
  * 
  * @author Sebastian Graf, University of Konstanz
  */
-final class LRULog {
+public final class LRULog {
     //
     // // START DEBUG CODE
     // private final static File insertFile = new File("/Users/sebi/Desktop/runtimeResults/insert.txt");
@@ -130,7 +130,7 @@ final class LRULog {
      * @throws TTIOException
      * 
      */
-    LRULog(final File pFile, final INodeFactory pNodeFac, final IMetaEntryFactory pMetaFac)
+    public LRULog(final File pFile, final INodeFactory pNodeFac, final IMetaEntryFactory pMetaFac)
         throws TTIOException {
         mClosed = false;
         mKeyBinding = new LogKeyBinding();
@@ -176,7 +176,6 @@ final class LRULog {
 
                     }
                 }).build();
-
     }
 
     /**

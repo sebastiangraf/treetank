@@ -76,11 +76,6 @@ public class JCloudsStorage implements IBackend {
      */
     @Override
     public IBackendWriter getWriter() throws TTException {
-        // setup the container name used by the provider (like bucket in S3)
-        String containerName = mProperties.getProperty(ConstructorProps.RESOURCE);
-        if (!mBlobStore.containerExists(containerName)) {
-            mBlobStore.createContainerInLocation(null, containerName);
-        }
         return new JCloudsWriter(mBlobStore, mFac, mByteHandler, mProperties
             .getProperty(ConstructorProps.RESOURCE));
     }
@@ -124,6 +119,12 @@ public class JCloudsStorage implements IBackend {
 
     @Override
     public void initialize() throws TTIOException {
-        // not needed over here
+        // setup the container name used by the provider (like bucket in S3)
+        final String containerName = mProperties.getProperty(ConstructorProps.RESOURCE);
+        if (!mBlobStore.containerExists(containerName)) {
+            mBlobStore.createContainerInLocation(null, containerName);
+        }
+
     }
+
 }

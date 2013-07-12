@@ -19,7 +19,7 @@ import org.jclouds.blobstore.BlobStoreContext;
  */
 public class BucketCleaner {
 
-    private static final String CONTAINER = "grave9283712";
+    private static final String CONTAINER = "benchResourcegrave92838";
 
     /**
      * 

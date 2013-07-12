@@ -1,16 +1,10 @@
 package org.treetank.bench;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.util.HashSet;
-import java.util.Properties;
 import java.util.Set;
 
-import org.jclouds.ContextBuilder;
-import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.filesystem.reference.FilesystemConstants;
 import org.perfidix.AbstractConfig;
 import org.perfidix.Benchmark;
 import org.perfidix.annotation.AfterEachRun;
@@ -39,6 +33,8 @@ import org.treetank.bucket.DumbNodeFactory;
 import org.treetank.bucket.DumbNodeFactory.DumbNode;
 import org.treetank.exception.TTException;
 import org.treetank.io.IOUtils;
+import org.treetank.io.berkeley.BerkeleyReader;
+import org.treetank.io.berkeley.BerkeleyStorage;
 import org.treetank.io.jclouds.JCloudsStorage;
 
 import com.google.inject.Guice;
@@ -48,29 +44,26 @@ public class InsertBench {
 
     private final String RESOURCENAME = "benchResourcegrave9283";
 
-    private final IStorage mStorage;
-    private final ResourceConfiguration mConfig;
+    private int counter = 0;
+
+    private IStorage mStorage;
+    private final Injector mInject;
     private ISession mSession;
     private DumbNode[] mNodesToInsert = BenchUtils.createNodes(new int[] {
         262144
     })[0];
     private IBucketWriteTrx mTrx;
 
-    private static final int FACTOR = 8;
+    private static final int FACTOR = 2;
 
     public InsertBench() throws TTException {
         final File storageFile = FileSystems.getDefault().getPath("/Users/sebi/bla").toFile();
         IOUtils.recursiveDelete(storageFile);
 
-        Injector inj =
+        mInject =
             Guice.createInjector(new ModuleSetter().setNodeFacClass(DumbNodeFactory.class).setMetaFacClass(
                 DumbMetaEntryFactory.class).setBackendClass(JCloudsStorage.class).createModule());
 
-        mConfig =
-            inj.getInstance(IResourceConfigurationFactory.class).create(
-                StandardSettings.getProps(storageFile.getAbsolutePath(), RESOURCENAME));
-
-        IOUtils.recursiveDelete(storageFile);
         final StorageConfiguration config = new StorageConfiguration(storageFile);
         Storage.createStorage(config);
         mStorage = Storage.openStorage(storageFile);
@@ -80,62 +73,77 @@ public class InsertBench {
     private void insert(int numbersToInsert, boolean blocked) throws TTException {
         final int offset = numbersToInsert / FACTOR;
         for (int i = 0; i < FACTOR; i++) {
+            long time1 = System.currentTimeMillis();
             for (int j = 0; j < offset; j++) {
                 final long nodeKey = mTrx.incrementNodeKey();
                 mNodesToInsert[i * offset + j].setNodeKey(nodeKey);
                 mTrx.setNode(mNodesToInsert[i * offset + j]);
             }
+            long time2 = System.currentTimeMillis();
             if (blocked) {
                 mTrx.commitBlocked();
             } else {
                 mTrx.commit();
             }
+            long time3 = System.currentTimeMillis();
+            System.out.println("Time to insert: " + (time2 - time1));
+            System.out.println("Time to commit: " + (time3 - time2));
         }
 
     }
 
     @BeforeEachRun
     public void setUp() throws TTException {
-        mStorage.createResource(mConfig);
-        mSession = mStorage.getSession(new SessionConfiguration(RESOURCENAME, StandardSettings.KEY));
+
+        final ResourceConfiguration config =
+            mInject.getInstance(IResourceConfigurationFactory.class).create(
+                StandardSettings.getProps(mStorage.getLocation().getAbsolutePath(), new StringBuilder(
+                    RESOURCENAME).append(counter).toString()));
+
+        mStorage.truncateResource(new SessionConfiguration(new StringBuilder(RESOURCENAME).append(counter)
+            .toString(), StandardSettings.KEY));
+        mStorage.createResource(config);
+        mSession =
+            mStorage.getSession(new SessionConfiguration(new StringBuilder(RESOURCENAME).append(counter)
+                .toString(), StandardSettings.KEY));
         mTrx = mSession.beginBucketWtx();
     }
 
-    @Bench
-    public void blocked016384() throws TTException {
-        insert(16384, true);
-        mTrx.close();
-        System.out.println("16384");
-    }
-
-    @Bench
-    public void blocked032768() throws TTException {
-        insert(32768, true);
-        mTrx.close();
-        System.out.println("32768");
-    }
-
-    @Bench
-    public void blocked065536() throws TTException {
-        insert(65536, true);
-        mTrx.close();
-        System.out.println("65536");
-    }
-
-    @Bench
-    public void blocked131072() throws TTException {
-        insert(131072, true);
-        mTrx.close();
-        System.out.println("131072");
-    }
-
-    @Bench
-    public void blocked262144() throws TTException {
-        insert(262144, true);
-        mTrx.close();
-        System.out.println("262144");
-    }
-
+    // @Bench
+    // public void blocked016384() throws TTException {
+    // insert(16384, true);
+    // mTrx.close();
+    // System.out.println("16384");
+    // }
+    //
+    // @Bench
+    // public void blocked032768() throws TTException {
+    // insert(32768, true);
+    // mTrx.close();
+    // System.out.println("32768");
+    // }
+    //
+    // @Bench
+    // public void blocked065536() throws TTException {
+    // insert(65536, true);
+    // mTrx.close();
+    // System.out.println("65536");
+    // }
+    //
+    // @Bench
+    // public void blocked131072() throws TTException {
+    // insert(131072, true);
+    // mTrx.close();
+    // System.out.println("131072");
+    // }
+//
+//    @Bench
+//    public void blocked262144() throws TTException {
+//        insert(262144, true);
+//        mTrx.close();
+//        System.out.println("262144");
+//    }
+//
     //
     // @Bench
     // public void blocked524288() throws TTException {
@@ -143,35 +151,35 @@ public class InsertBench {
     // mTrx.close();
     // System.out.println("524288");
     // }
+    //
+    // @Bench
+    // public void nonblocked016384() throws TTException {
+    // insert(16384, false);
+    // mTrx.close();
+    // System.out.println("16384");
+    // }
+    //
+    // @Bench
+    // public void nonblocked032768() throws TTException {
+    // insert(32768, false);
+    // mTrx.close();
+    // System.out.println("32768");
+    // }
+    //
+    // @Bench
+    // public void nonblocked065536() throws TTException {
+    // insert(65536, false);
+    // mTrx.close();
+    // System.out.println("65536");
+    // }
 
-    @Bench
-    public void nonblocked016384() throws TTException {
-        insert(16384, false);
-        mTrx.close();
-        System.out.println("16384");
-    }
-
-    @Bench
-    public void nonblocked032768() throws TTException {
-        insert(32768, false);
-        mTrx.close();
-        System.out.println("32768");
-    }
-
-    @Bench
-    public void nonblocked065536() throws TTException {
-        insert(65536, false);
-        mTrx.close();
-        System.out.println("65536");
-    }
-
-    @Bench
-    public void nonblocked131072() throws TTException {
-        insert(131072, false);
-        mTrx.close();
-        System.out.println("131072");
-    }
-
+    // @Bench
+    // public void nonblocked131072() throws TTException {
+    // insert(131072, false);
+    // mTrx.close();
+    // System.out.println("131072");
+    // }
+    //
     @Bench
     public void nonblocked262144() throws TTException {
         insert(262144, false);
@@ -191,25 +199,32 @@ public class InsertBench {
     public void tearDown() throws TTException {
         mTrx.close();
         mSession.close();
-        mStorage.truncateResource(new SessionConfiguration(RESOURCENAME, StandardSettings.KEY));
+        mStorage.truncateResource(new SessionConfiguration(new StringBuilder(RESOURCENAME).append(counter)
+            .toString(), StandardSettings.KEY));
+        counter++;
     }
 
+    final static File outputFold = new File("/Users/sebi/listenerBench");
+
     public static void main(String[] args) {
+        final File resultFold = new File("/Users/sebi/resBench");
+        // IOUtils.recursiveDelete(outputFold);
+        IOUtils.recursiveDelete(resultFold);
+        outputFold.mkdirs();
+        resultFold.mkdirs();
+
         Benchmark bench = new Benchmark(new Config());
         bench.add(InsertBench.class);
         BenchmarkResult res = bench.run();
         new TabularSummaryOutput().visitBenchmark(res);
 
-        final File outputFold = new File("/Users/sebi/insertBench");
-        IOUtils.recursiveDelete(outputFold);
-        outputFold.mkdirs();
-        new CSVOutput(outputFold).visitBenchmark(res);
+        new CSVOutput(resultFold).visitBenchmark(res);
 
     }
 
     static class Config extends AbstractConfig {
 
-        private final static int RUNS = 10;
+        private final static int RUNS = 2;
         private final static Set<AbstractMeter> METERS = new HashSet<AbstractMeter>();
         private final static Set<AbstractOutput> OUTPUT = new HashSet<AbstractOutput>();
 
@@ -219,8 +234,8 @@ public class InsertBench {
         static {
             METERS.add(new TimeMeter(Time.MilliSeconds));
 
-            // OUTPUT.add(new TabularSummaryOutput());
-            // OUTPU
+            OUTPUT.add(new CSVOutput(outputFold));
+            OUTPUT.add(new TabularSummaryOutput());
         }
 
         /**
@@ -231,32 +246,6 @@ public class InsertBench {
                 .toArray(new AbstractOutput[OUTPUT.size()]), ARRAN, GCPROB);
         }
 
-    }
-
-    /**
-     * Getting credentials for aws from homedir/.credentials
-     * 
-     * @return a two-dimensional String[] with login and password
-     */
-    private static String[] getCredentials() {
-
-        File userStore =
-            new File(System.getProperty("user.home"), new StringBuilder(".credentials")
-                .append(File.separator).append("aws.properties").toString());
-        if (!userStore.exists()) {
-            return new String[0];
-        } else {
-            Properties props = new Properties();
-            try {
-                props.load(new FileReader(userStore));
-                return new String[] {
-                    props.getProperty("access"), props.getProperty("secret")
-                };
-
-            } catch (IOException exc) {
-                throw new RuntimeException(exc);
-            }
-        }
     }
 
 }
