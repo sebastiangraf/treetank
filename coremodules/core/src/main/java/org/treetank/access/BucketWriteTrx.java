@@ -34,14 +34,16 @@ import static org.treetank.access.BucketReadTrx.nodeBucketOffset;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
+import org.jclouds.javax.annotation.Nullable;
 import org.treetank.access.conf.ConstructorProps;
 import org.treetank.api.IBucketWriteTrx;
 import org.treetank.api.IMetaEntry;
@@ -59,11 +61,13 @@ import org.treetank.bucket.interfaces.IBucket;
 import org.treetank.bucket.interfaces.IReferenceBucket;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.io.BackendWriterProxy;
 import org.treetank.io.IBackendWriter;
+import org.treetank.io.LRULog;
 import org.treetank.io.LogKey;
 import org.treetank.io.LogValue;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
@@ -77,8 +81,8 @@ import com.google.common.io.ByteStreams;
  */
 public final class BucketWriteTrx implements IBucketWriteTrx {
 
-    /** Bucket writer to serialize. */
-    private final BackendWriterProxy mBucketWriter;
+    /** BackendWriter to serialize. */
+    private final IBackendWriter mBackendWriter;
 
     /** Reference to the actual uberBucket. */
     private UberBucket mNewUber;
@@ -98,6 +102,16 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
     /** Bucket-Factory to clone buckets. */
     private final BucketFactory mBucketFac;
 
+    /** Current LRULog instance to write currently to. */
+    private LRULog mLog;
+
+    /** Former log instance utilizing while commit is in process. */
+    @Nullable
+    private LRULog mFormerLog;
+
+    /** Transient cache for buffering former node-bucket hashes */
+    private final Cache<Long, byte[]> mFormerNodeBucketHashes;
+
     /**
      * Standard constructor.
      * 
@@ -115,10 +129,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
      */
     protected BucketWriteTrx(final ISession pSession, final UberBucket pUberBucket,
         final IBackendWriter pWriter, final long pRepresentRev) throws TTException {
-        mBucketWriter =
-            new BackendWriterProxy(pWriter, new File(pSession.getConfig().mProperties
-                .getProperty(org.treetank.access.conf.ConstructorProps.RESOURCEPATH)),
-                pSession.getConfig().mNodeFac, pSession.getConfig().mMetaFac);
+        mBackendWriter = pWriter;
 
         final long revkey =
             BucketReadTrx.dereferenceLeafOfTree(pWriter,
@@ -131,7 +142,13 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         mDelegate = new BucketReadTrx(pSession, pUberBucket, revBucket, metaBucket, pWriter);
         mBucketFac = new BucketFactory(pSession.getConfig().mNodeFac, pSession.getConfig().mMetaFac);
 
-        setUpTransaction(pUberBucket, revBucket, metaBucket, pSession, pRepresentRev, mBucketWriter);
+        mLog =
+            new LRULog(new File(pSession.getConfig().mProperties
+                .getProperty(org.treetank.access.conf.ConstructorProps.RESOURCEPATH)),
+                pSession.getConfig().mNodeFac, pSession.getConfig().mMetaFac);
+        mFormerLog = mLog;
+        mFormerNodeBucketHashes = CacheBuilder.newBuilder().maximumSize(16384).build();
+        setUpTransaction(pUberBucket, revBucket, metaBucket, pSession, pRepresentRev);
     }
 
     /**
@@ -148,8 +165,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         final NodeBucket complete = ((NodeBucket)container.getComplete());
         modified.setNode(nodeBucketOffset, pNode);
         complete.setNode(nodeBucketOffset, pNode);
-        mBucketWriter.put(new LogKey(false, IConstants.INDIRECT_BUCKET_COUNT.length, seqBucketKey),
-            container);
+        mLog.put(new LogKey(false, IConstants.INDIRECT_BUCKET_COUNT.length, seqBucketKey), container);
         return nodeKey;
     }
 
@@ -166,8 +182,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         ((NodeBucket)container.getComplete()).setNode(nodeBucketOffset(pNode.getNodeKey()), delNode);
         ((NodeBucket)container.getModified()).setNode(nodeBucketOffset(pNode.getNodeKey()), delNode);
 
-        mBucketWriter.put(
-            new LogKey(false, IConstants.INDIRECT_BUCKET_COUNT.length, nodeBucketKey), container);
+        mLog.put(new LogKey(false, IConstants.INDIRECT_BUCKET_COUNT.length, nodeBucketKey), container);
     }
 
     /**
@@ -179,9 +194,8 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         final long nodeBucketKey = pNodeKey >> IConstants.INDIRECT_BUCKET_COUNT[3];
         final int nodeBucketOffset = nodeBucketOffset(pNodeKey);
 
-        final LogKey key =
-            new LogKey(false, IConstants.INDIRECT_BUCKET_COUNT.length, nodeBucketKey);
-        LogValue container = mBucketWriter.get(key);
+        final LogKey key = new LogKey(false, IConstants.INDIRECT_BUCKET_COUNT.length, nodeBucketKey);
+        LogValue container = mLog.get(key);
         INode item = null;
         // Bucket was modified...
         if (container.getModified() != null) {
@@ -197,7 +211,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         }// ...bucket was modified within a former version,...
         else {
             // check the former version as..
-            container = mBucketWriter.getFormer(key);
+            container = mFormerLog.get(key);
             // ..modified element within this version or...
             if (container.getModified() != null) {
                 // ..check if the real node was touched and set it or..
@@ -229,22 +243,20 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         final UberBucket uber = clone(mNewUber);
         final MetaBucket meta = clone(mNewMeta);
         final RevisionRootBucket rev = clone(mNewRoot);
-        final Future<Void> commitInProgress = mBucketWriter.commit(uber, meta, rev);
-        mDelegate.mSession.setRunningCommit(mCommitInProgress.submit(new Callable<Void>() {
-            @Override
-            public Void call() throws Exception {
-                // serializing of new UberPage including its Subtree is concluded.
-                commitInProgress.get();
-                ((Session)mDelegate.mSession).setLastCommittedUberBucket(uber);
-                mDelegate = new BucketReadTrx(mDelegate.mSession, uber, rev, meta, mBucketWriter);
-                mBucketWriter.closeFormerLog();
-                return null;
-            }
-        }));
-        // Comment here to enabled blocked behaviour
-//         mDelegate.mSession.waitForRunningCommit();
+        // storing the reference to the former log.
+        mFormerLog = mLog;
+        // new log
+        mLog =
+            new LRULog(new File(mDelegate.mSession.getConfig().mProperties
+                .getProperty(org.treetank.access.conf.ConstructorProps.RESOURCEPATH)), mDelegate.mSession
+                .getConfig().mNodeFac, mDelegate.mSession.getConfig().mMetaFac);
 
-        setUpTransaction(uber, rev, meta, mDelegate.mSession, uber.getRevisionNumber(), mBucketWriter);
+        mDelegate.mSession.setRunningCommit(mCommitInProgress.submit(new CommitCallable(uber, rev, meta)));
+
+        // Comment here to enabled blocked behaviour
+        // mDelegate.mSession.waitForRunningCommit();
+
+        setUpTransaction(uber, rev, meta, mDelegate.mSession, uber.getRevisionNumber());
 
     }
 
@@ -258,7 +270,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
     }
 
     public void clearLog() throws TTIOException {
-        mBucketWriter.close();
+        mLog.close();
     }
 
     /**
@@ -266,8 +278,8 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
      */
     @Override
     public boolean close() throws TTIOException {
-        mDelegate.mSession.waitForRunningCommit();
         mCommitInProgress.shutdown();
+        mDelegate.mSession.waitForRunningCommit();
         if (!mDelegate.isClosed()) {
             mDelegate.close();
 
@@ -275,7 +287,8 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
                 // Try to close the log.
                 // It may already be closed if a commit
                 // was the last operation.
-                mBucketWriter.close();
+                mLog.close();
+                mBackendWriter.close();
             } catch (IllegalStateException e) {
                 // Do nothing
             }
@@ -325,15 +338,14 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
 
         final long seqNodeBucketKey = pNodeKey >> IConstants.INDIRECT_BUCKET_COUNT[3];
 
-        final LogKey key =
-            new LogKey(false, IConstants.INDIRECT_BUCKET_COUNT.length, seqNodeBucketKey);
+        final LogKey key = new LogKey(false, IConstants.INDIRECT_BUCKET_COUNT.length, seqNodeBucketKey);
         // See if on nodeBucketLevel, there are any buckets.
-        LogValue container = mBucketWriter.get(key);
+        LogValue container = mLog.get(key);
         // if not,...
         if (container.getModified() == null) {
             // ..start preparing a new container to be logged
             final LogKey indirectKey = preparePathToLeaf(false, mNewRoot, pNodeKey);
-            final LogValue indirectContainer = mBucketWriter.get(indirectKey);
+            final LogValue indirectContainer = mLog.get(indirectKey);
             final int nodeOffset = nodeBucketOffset(seqNodeBucketKey);
             final long bucketKey =
                 ((IndirectBucket)indirectContainer.getModified()).getReferenceKeys()[nodeOffset];
@@ -346,7 +358,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
                         .getProperty(ConstructorProps.NUMBERTORESTORE));
 
                 // Gather all data, from the former log..
-                final LogValue formerModified = mBucketWriter.getFormer(key);
+                final LogValue formerModified = mFormerLog.get(key);
                 // ..and from the former revision.
                 final List<NodeBucket> formerBuckets = mDelegate.getSnapshotBuckets(seqNodeBucketKey);
                 // declare summarized buckets.
@@ -410,8 +422,8 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
             ((IndirectBucket)indirectContainer.getModified()).setReferenceKey(nodeOffset, newBucketKey);
             ((IndirectBucket)indirectContainer.getModified()).setReferenceHash(nodeOffset,
                 IConstants.NON_HASHED);
-            mBucketWriter.put(indirectKey, indirectContainer);
-            mBucketWriter.put(key, container);
+            mLog.put(indirectKey, indirectContainer);
+            mLog.put(key, container);
         }
         return container;
     }
@@ -463,7 +475,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         for (int level = 0; level < orderNumber.length; level++) {
             // ...see if the actual bucket requested is already in the log
             key = new LogKey(pIsRootLevel, level, orderNumber[level]);
-            LogValue container = mBucketWriter.get(key);
+            LogValue container = mLog.get(key);
             // if the bucket is not existing,..
             if (container.getModified() == null) {
                 // ..create a new bucket
@@ -474,7 +486,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
                 int offset = nodeBucketOffset(orderNumber[level]);
 
                 // if there existed the same bucket in former versions in a former log or
-                container = mBucketWriter.getFormer(key);
+                container = mFormerLog.get(key);
                 IReferenceBucket oldBucket = null;
                 if (container.getModified() != null) {
                     oldBucket = (IReferenceBucket)container.getModified();
@@ -482,7 +494,8 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
                 // over the former log or the offset within
                 // the parent...
                 else if (parentBucket.getReferenceKeys()[offset] != 0) {
-                    oldBucket = (IReferenceBucket)mBucketWriter.read(parentBucket.getReferenceKeys()[offset]);
+                    oldBucket =
+                        (IReferenceBucket)mBackendWriter.read(parentBucket.getReferenceKeys()[offset]);
                 }
                 // ..copy all references to the new log.
                 if (oldBucket != null) {
@@ -501,11 +514,11 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
                 // ..if the parent is not referenced as UberBucket or RevisionRootBucket within the Wtx
                 // itself...
                 if (level > 0) {
-                    mBucketWriter.put(parentKey, container);
+                    mLog.put(parentKey, container);
                 }
                 // ..but set the reference of the current bucket in every case.
                 container = new LogValue(bucket, bucket);
-                mBucketWriter.put(key, container);
+                mLog.put(key, container);
 
             } // if the bucket is already in the log, get it simply from the log.
             else {
@@ -521,8 +534,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
     }
 
     private void setUpTransaction(final UberBucket pUberOld, final RevisionRootBucket pRootToRepresent,
-        final MetaBucket pMetaOld, final ISession pSession, final long pRepresentRev,
-        final BackendWriterProxy pWriter) throws TTException {
+        final MetaBucket pMetaOld, final ISession pSession, final long pRepresentRev) throws TTException {
 
         mNewUber =
             new UberBucket(pUberOld.getBucketCounter() + 1, pUberOld.getRevisionNumber() + 1, pUberOld
@@ -534,7 +546,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         // Prepare indirect tree to hold reference to prepared revision root
         // nodeBucketReference.
         final LogKey indirectKey = preparePathToLeaf(true, mNewUber, mNewUber.getRevisionNumber());
-        final LogValue indirectContainer = mBucketWriter.get(indirectKey);
+        final LogValue indirectContainer = mLog.get(indirectKey);
         final int offset = nodeBucketOffset(mNewUber.getRevisionNumber());
 
         // Get previous revision root bucket and using this data to initialize a fresh revision root including
@@ -551,7 +563,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         ((IndirectBucket)indirectContainer.getModified()).setReferenceHash(
             IReferenceBucket.GUARANTEED_INDIRECT_OFFSET, IConstants.NON_HASHED);
 
-        mBucketWriter.put(indirectKey, indirectContainer);
+        mLog.put(indirectKey, indirectContainer);
 
         // Setting up a new metabucket and link it to the new root
         final Set<Map.Entry<IMetaEntry, IMetaEntry>> keySet = pMetaOld.entrySet();
@@ -569,7 +581,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
      */
     @Override
     public String toString() {
-        return toStringHelper(this).add("mDelegate", mDelegate).add("mBucketWriterProxy", mBucketWriter).add(
+        return toStringHelper(this).add("mDelegate", mDelegate).add("mBackendWriter", mBackendWriter).add(
             "mRootBucket", mNewRoot).add("mDelegate", mDelegate).toString();
     }
 
@@ -588,4 +600,249 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         return (E)mBucketFac.deserializeBucket(input);
     }
 
+    /**
+     * Closing the former log if not needed any more
+     * 
+     * @throws TTIOException
+     *             if any weird happens
+     */
+    private void closeFormerLog() throws TTIOException {
+        if (mFormerLog != null && !mFormerLog.isClosed()) {
+            mFormerLog.close();
+        }
+    }
+
+    /**
+     * Persistence-task to be performed within a commit.
+     * 
+     * @author Sebastian Graf, University of Konstanz
+     * 
+     */
+    class CommitCallable implements Callable<Void> {
+
+        final MetaBucket mMeta;
+        final RevisionRootBucket mRoot;
+        final UberBucket mUber;
+
+        /**
+         * Constructor.
+         * 
+         * @param pUber
+         *            to persist
+         * @param pRoot
+         *            to persist
+         * @param pMeta
+         *            to persist
+         */
+        CommitCallable(final UberBucket pUber, final RevisionRootBucket pRoot, final MetaBucket pMeta) {
+            mUber = pUber;
+            mRoot = pRoot;
+            mMeta = pMeta;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Void call() throws Exception {
+            final long time = System.currentTimeMillis();
+            // iterate data tree
+            iterateSubtree(false);
+            // get last IndirectBucket referenced from the RevRoot.
+            final LogKey dataKey = new LogKey(false, 0, 0);
+            final IReferenceBucket dataBuck = (IReferenceBucket)mFormerLog.get(dataKey).getModified();
+            // Check if there are any modifications and if so, set the hash for the indirect buckets.
+            if (dataBuck != null) {
+                final byte[] dataHash = dataBuck.secureHash().asBytes();
+                mBackendWriter.write(dataBuck);
+                mRoot.setReferenceHash(RevisionRootBucket.GUARANTEED_INDIRECT_OFFSET, dataHash);
+            }
+            // Make the same for the meta bucket which is always written.
+            final byte[] metaHash = mMeta.secureHash().asBytes();
+            mBackendWriter.write(mMeta);
+            mRoot.setReferenceHash(RevisionRootBucket.META_REFERENCE_OFFSET, metaHash);
+
+            // iterate revision tree
+            iterateSubtree(true);
+
+            final LogKey revKey = new LogKey(true, 0, 0);
+            final IReferenceBucket revBuck = (IReferenceBucket)mFormerLog.get(revKey).getModified();
+            final byte[] revHash = revBuck.secureHash().asBytes();
+            mBackendWriter.write(revBuck);
+            mUber.setReferenceHash(UberBucket.GUARANTEED_INDIRECT_OFFSET, revHash);
+            mBackendWriter.writeUberBucket(mUber);
+
+            // // iterating over all data
+            // final Iterator<LogValue> entries = mFormerLog.getIterator();
+            // while (entries.hasNext()) {
+            // LogValue next = entries.next();
+            // IBucket bucket = next.getModified();
+            // // debug code for marking hashes as written
+            // if (bucket instanceof IReferenceBucket) {
+            // IReferenceBucket refBucket = (IReferenceBucket)bucket;
+            // for (int i = 0; i < refBucket.getReferenceHashs().length; i++) {
+            // refBucket.setReferenceHash(i, new byte[] {
+            // 0
+            // });
+            // }
+            // }
+            // mWriter.write(bucket);
+            // }
+            // // writing the important pages
+            // mWriter.write(mMeta);
+            // mWriter.write(mRoot);
+            // mWriter.writeUberBucket(mUber);
+            ((Session)mDelegate.mSession).setLastCommittedUberBucket(mUber);
+            mDelegate = new BucketReadTrx(mDelegate.mSession, mUber, mRoot, mMeta, mBackendWriter);
+            closeFormerLog();
+
+//            System.out.println("Commit finished: " + (System.currentTimeMillis() - time));
+            return null;
+        }
+
+        /**
+         * Iterating through the subtree preorder-wise and adapting hashes recursively
+         * 
+         * @param pRootLevel
+         *            if level is rootlevel or not
+         * @throws TTException
+         */
+        private void iterateSubtree(final boolean pRootLevel) throws TTException {
+            IReferenceBucket currentRefBuck;
+            // Stack for caching the next elements (namely the right siblings and die childs)
+            final Stack<LogKey> childAndRightSib = new Stack<LogKey>();
+            // Stack to cache the path to the root
+            final Stack<LogKey> pathToRoot = new Stack<LogKey>();
+            // Push the first Indirect under the RevRoot to the stack
+            childAndRightSib.push(new LogKey(pRootLevel, 0, 0));
+
+            // if in the version is no data written, an intermediate return can occur.
+            if (mFormerLog.get(childAndRightSib.peek()).getModified() == null) {
+                return;
+            }
+
+            // if there are children or right sibling left...
+            while (!childAndRightSib.isEmpty()) {
+                // ...get the next element including the modified bucket.
+                final LogKey key = childAndRightSib.pop();
+                final IBucket val = mFormerLog.get(key).getModified();
+
+                // if the bucket is an instance of a ReferenceBucket, it is not a leaf and..
+                if (val instanceof IReferenceBucket) {
+                    currentRefBuck = (IReferenceBucket)val;
+
+                    // ..represents either a new child in the tree (if the level of the new node is bigger
+                    // than the last one on the pat the root
+                    if (pathToRoot.isEmpty() || key.getLevel() > pathToRoot.peek().getLevel()) {
+                        // in this case, push the new child to the path to the root.
+                        pathToRoot.push(key);
+                    }// else, it is any right sibling whereas the entire subtree left of the current node must
+                     // be handled
+                    else {
+                        LogKey childKey;
+                        // for all elements on the stack
+                        do {
+                            // ..compute the checksum recursively until..
+                            final LogKey parentKey = pathToRoot.peek();
+                            childKey = pathToRoot.pop();
+                            adaptHash(parentKey, childKey);
+                        }// the left part of the subtree of the parent is done.
+                        while (childKey.getLevel() > key.getLevel());
+                        // Push the own key to the path since we are going one step down now/
+                        pathToRoot.push(key);
+                    }
+
+                    // Iterate through all reference hashes from behind,..
+                    for (int i = currentRefBuck.getReferenceHashs().length - 1; i >= 0; i--) {
+                        // ..read the hashes and check..
+                        final byte[] hash = currentRefBuck.getReferenceHashs()[i];
+                        // ..if one offset is marked as fresh.
+                        if (Arrays.equals(hash, IConstants.NON_HASHED)) {
+                            // This offset marks the childs to go down.
+                            final LogKey toPush =
+                                new LogKey(pRootLevel, key.getLevel() + 1,
+                                    (key.getSeq() << IConstants.INDIRECT_BUCKET_COUNT[3]) + i);
+                            childAndRightSib.push(toPush);
+                        }
+                    }
+
+                } // if we are on the leaf level...
+                else {
+                    // if we are over the revroot, take the revroot directly..
+                    if (pRootLevel) {
+                        final byte[] hash = mRoot.secureHash().asBytes();
+                        mBackendWriter.write(mRoot);
+                        final LogKey parentKey = pathToRoot.peek();
+                        final IReferenceBucket parentVal =
+                            (IReferenceBucket)mFormerLog.get(parentKey).getModified();
+                        final int parentOffset =
+                            (int)(key.getSeq() - ((key.getSeq() >> IConstants.INDIRECT_BUCKET_COUNT[3]) << IConstants.INDIRECT_BUCKET_COUNT[3]));
+                        parentVal.setReferenceHash(parentOffset, hash);
+
+                    } // otherwise, retrieve the bucket from the log.
+                    else {
+                        // if there is a hash marked as "toset" but no suitable bucket available, a former
+                        // commit is currently in progess whereas the bucket must be retrieved from the
+                        // backend.
+                        if (val == null) {
+                            final IReferenceBucket parent =
+                                (IReferenceBucket)mFormerLog.get(pathToRoot.peek()).getModified();
+                            final int parentOffset =
+                                (int)(key.getSeq() - ((key.getSeq() >> IConstants.INDIRECT_BUCKET_COUNT[3]) << IConstants.INDIRECT_BUCKET_COUNT[3]));
+                            byte[] persistedHash = mFormerNodeBucketHashes.getIfPresent(key.getSeq());
+                            if (persistedHash == null) {
+                                final IBucket persistedBucket =
+                                    mBackendWriter.read(parent.getReferenceKeys()[parentOffset]);
+                                persistedHash = persistedBucket.secureHash().asBytes();
+                                mFormerNodeBucketHashes.put(key.getSeq(), persistedHash);
+                            }
+                            parent.setReferenceHash(parentOffset, persistedHash);
+                        }// otherwise construct it over the log.
+                        else {
+                            // ..we need to have a NodeBucket and...
+                            checkState(val instanceof NodeBucket);
+                            // ...we adapt the parent with the own hash.
+                            final LogKey parentKey = pathToRoot.peek();
+                            adaptHash(parentKey, key);
+                        }
+                    }
+
+                }
+            }
+
+            // After the preorder-traversal, we need to adapt the path to the root with the missing checksums,
+            // but only if there are any modifications.
+            if (!pathToRoot.isEmpty()) {
+                do {
+                    final LogKey child = pathToRoot.pop();
+                    final LogKey parent = pathToRoot.peek();
+                    adaptHash(parent, child);
+                } while (pathToRoot.size() > 1);
+            }
+
+        }
+
+        /**
+         * Adapting hash and storing it in a parent-bucket
+         * 
+         * @param pParentKey
+         *            the {@link LogKey} for the parent bucket
+         * @param pChildKey
+         *            the {@link LogKey} for the own bucket
+         * @throws TTException
+         */
+        private void adaptHash(final LogKey pParentKey, final LogKey pChildKey) throws TTException {
+            final IBucket val = mFormerLog.get(pChildKey).getModified();
+            final byte[] hash = val.secureHash().asBytes();
+            mBackendWriter.write(val);
+            if (val instanceof NodeBucket) {
+                mFormerNodeBucketHashes.put(pChildKey.getSeq(), hash);
+            }
+
+            final IReferenceBucket parent = (IReferenceBucket)mFormerLog.get(pParentKey).getModified();
+            final int parentOffset =
+                (int)(pChildKey.getSeq() - ((pChildKey.getSeq() >> IConstants.INDIRECT_BUCKET_COUNT[3]) << IConstants.INDIRECT_BUCKET_COUNT[3]));
+            parent.setReferenceHash(parentOffset, hash);
+        }
+    }
 }
