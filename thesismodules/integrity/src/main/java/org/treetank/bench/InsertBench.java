@@ -33,6 +33,8 @@ import org.treetank.bucket.DumbNodeFactory;
 import org.treetank.bucket.DumbNodeFactory.DumbNode;
 import org.treetank.exception.TTException;
 import org.treetank.io.IOUtils;
+import org.treetank.io.berkeley.BerkeleyReader;
+import org.treetank.io.berkeley.BerkeleyStorage;
 import org.treetank.io.jclouds.JCloudsStorage;
 
 import com.google.inject.Guice;
@@ -42,8 +44,10 @@ public class InsertBench {
 
     private final String RESOURCENAME = "benchResourcegrave9283";
 
-    private final IStorage mStorage;
-    private final ResourceConfiguration mConfig;
+    private int counter = 0;
+
+    private IStorage mStorage;
+    private final Injector mInject;
     private ISession mSession;
     private DumbNode[] mNodesToInsert = BenchUtils.createNodes(new int[] {
         262144
@@ -53,16 +57,12 @@ public class InsertBench {
     private static final int FACTOR = 8;
 
     public InsertBench() throws TTException {
-        final File storageFile = FileSystems.getDefault().getPath("/Users/sebi/bla").toFile();
+        final File storageFile = FileSystems.getDefault().getPath("/Volumes/ramdisk/bla").toFile();
         IOUtils.recursiveDelete(storageFile);
 
-        Injector inj =
+        mInject =
             Guice.createInjector(new ModuleSetter().setNodeFacClass(DumbNodeFactory.class).setMetaFacClass(
                 DumbMetaEntryFactory.class).setBackendClass(JCloudsStorage.class).createModule());
-
-        mConfig =
-            inj.getInstance(IResourceConfigurationFactory.class).create(
-                StandardSettings.getProps(storageFile.getAbsolutePath(), RESOURCENAME));
 
         final StorageConfiguration config = new StorageConfiguration(storageFile);
         Storage.createStorage(config);
@@ -89,25 +89,35 @@ public class InsertBench {
 
     @BeforeEachRun
     public void setUp() throws TTException {
-        mStorage.truncateResource(new SessionConfiguration(RESOURCENAME, StandardSettings.KEY));
-        mStorage.createResource(mConfig);
-        mSession = mStorage.getSession(new SessionConfiguration(RESOURCENAME, StandardSettings.KEY));
+
+        final ResourceConfiguration config =
+            mInject.getInstance(IResourceConfigurationFactory.class).create(
+                StandardSettings.getProps(mStorage.getLocation().getAbsolutePath(), new StringBuilder(
+                    RESOURCENAME).append(counter).toString()));
+
+        mStorage.truncateResource(new SessionConfiguration(new StringBuilder(RESOURCENAME).append(counter)
+            .toString(), StandardSettings.KEY));
+        mStorage.createResource(config);
+        mSession =
+            mStorage.getSession(new SessionConfiguration(new StringBuilder(RESOURCENAME).append(counter)
+                .toString(), StandardSettings.KEY));
         mTrx = mSession.beginBucketWtx();
     }
 
-    @Bench
-    public void blocked016384() throws TTException {
-        insert(16384, true);
-        mTrx.close();
-        System.out.println("16384");
-    }
-
-    // @Bench(runs = 9)
-    // public void blocked032768() throws TTException {
-    // insert(32768, true);
+    //
+    // @Bench
+    // public void blocked016384() throws TTException {
+    // insert(16384, true);
     // mTrx.close();
-    // System.out.println("32768");
+    // System.out.println("16384");
     // }
+//
+//    @Bench
+//    public void blocked032768() throws TTException {
+//        insert(32768, true);
+//        mTrx.close();
+//        System.out.println("32768");
+//    }
     //
     // @Bench
     // public void blocked065536() throws TTException {
@@ -123,55 +133,55 @@ public class InsertBench {
     // System.out.println("131072");
     // }
     //
-    // @Bench(runs = 9)
+    // @Bench
     // public void blocked262144() throws TTException {
     // insert(262144, true);
     // mTrx.close();
     // System.out.println("262144");
     // }
-    //
-    // //
-    // // @Bench
-    // // public void blocked524288() throws TTException {
-    // // insert(524288, true);
-    // // mTrx.close();
-    // // System.out.println("524288");
-    // // }
+
     //
     // @Bench
-    // public void nonblocked016384() throws TTException {
-    // insert(16384, false);
+    // public void blocked524288() throws TTException {
+    // insert(524288, true);
     // mTrx.close();
-    // System.out.println("16384");
+    // System.out.println("524288");
     // }
-    //
-    // @Bench
-    // public void nonblocked032768() throws TTException {
-    // insert(32768, false);
-    // mTrx.close();
-    // System.out.println("32768");
-    // }
-    //
-    // @Bench
-    // public void nonblocked065536() throws TTException {
-    // insert(65536, false);
-    // mTrx.close();
-    // System.out.println("65536");
-    // }
-    //
-    // @Bench
-    // public void nonblocked131072() throws TTException {
-    // insert(131072, false);
-    // mTrx.close();
-    // System.out.println("131072");
-    // }
-    //
-    // @Bench
-    // public void nonblocked262144() throws TTException {
-    // insert(262144, false);
-    // mTrx.close();
-    // System.out.println("262144");
-    // }
+
+    @Bench
+    public void nonblocked016384() throws TTException {
+        insert(16384, false);
+        mTrx.close();
+        System.out.println("16384");
+    }
+//
+//    @Bench
+//    public void nonblocked032768() throws TTException {
+//        insert(32768, false);
+//        mTrx.close();
+//        System.out.println("32768");
+//    }
+
+//    @Bench
+//    public void nonblocked065536() throws TTException {
+//        insert(65536, false);
+//        mTrx.close();
+//        System.out.println("65536");
+//    }
+//
+//    @Bench
+//    public void nonblocked131072() throws TTException {
+//        insert(131072, false);
+//        mTrx.close();
+//        System.out.println("131072");
+//    }
+//
+//    @Bench
+//    public void nonblocked262144() throws TTException {
+//        insert(262144, false);
+//        mTrx.close();
+//        System.out.println("262144");
+//    }
 
     //
     // @Bench
@@ -185,7 +195,9 @@ public class InsertBench {
     public void tearDown() throws TTException {
         mTrx.close();
         mSession.close();
-        mStorage.truncateResource(new SessionConfiguration(RESOURCENAME, StandardSettings.KEY));
+        mStorage.truncateResource(new SessionConfiguration(new StringBuilder(RESOURCENAME).append(counter)
+            .toString(), StandardSettings.KEY));
+        counter++;
     }
 
     final static File outputFold = new File("/Users/sebi/listenerBench");
@@ -208,7 +220,7 @@ public class InsertBench {
 
     static class Config extends AbstractConfig {
 
-        private final static int RUNS = 10;
+        private final static int RUNS = 1;
         private final static Set<AbstractMeter> METERS = new HashSet<AbstractMeter>();
         private final static Set<AbstractOutput> OUTPUT = new HashSet<AbstractOutput>();
 

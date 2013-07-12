@@ -9,10 +9,8 @@ import java.io.IOException;
 import java.util.concurrent.Callable;
 
 import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobBuilder;
-import org.treetank.access.conf.ConstructorProps;
 import org.treetank.bucket.BucketFactory;
 import org.treetank.bucket.UberBucket;
 import org.treetank.bucket.interfaces.IBucket;
@@ -49,6 +47,11 @@ public class JCloudsWriter implements IBackendWriter {
     /** Delegate for reader. */
     private final JCloudsReader mReader;
 
+    // static long readTime = 0;
+    // static int readCounter = 0;
+    // static long writeTime = 0;
+    // static int writeCounter = 0;
+
     // private final ConcurrentHashMap<Long, Future<Long>> mRunningWriteTasks;
     // private final CompletionService<Long> mWriterCompletion;
     // /** Executing read requests. */
@@ -82,7 +85,11 @@ public class JCloudsWriter implements IBackendWriter {
         // throw new TTIOException(exc);
         // }
         // }
-        return mReader.read(pKey);
+        // readCounter++;
+        // long time = System.currentTimeMillis();
+        final IBucket bucket = mReader.read(pKey);
+        // readTime = readTime + System.currentTimeMillis() - time;
+        return bucket;
     }
 
     /**
@@ -93,8 +100,11 @@ public class JCloudsWriter implements IBackendWriter {
         try {
             // writer.write(pBucket.getBucketKey() + "," + pBucket.getClass().getName() + "\n");
             // writer.flush();
-
+            //
+            // writeCounter++;
+            // long time = System.currentTimeMillis();
             new WriteTask(pBucket).call();
+            // writeTime = writeTime + System.currentTimeMillis() - time;
             // Future<Long> task = mWriterCompletion.submit(new WriteTask(pBucket));
             // mRunningWriteTasks.put(pBucket.getBucketKey(), task);
             // mReader.mCache.put(pBucket.getBucketKey(), pBucket);
@@ -116,6 +126,15 @@ public class JCloudsWriter implements IBackendWriter {
         // throw new TTIOException(exc);
         // }
         // checkState(mWriterService.isTerminated());
+        // System.out.println("Read time: " + readTime);
+        // System.out.println("Write time: " + writeTime);
+        // System.out.println("Read counter: " + readCounter);
+        // System.out.println("Write counter: " + writeCounter);
+
+        // readTime = 0;
+        // writeTime = 0;
+        // readCounter = 0;
+        // writeCounter = 0;
         mReader.close();
     }
 
@@ -179,15 +198,7 @@ public class JCloudsWriter implements IBackendWriter {
                     mReader.mBlobStore.blobBuilder(Long.toString(mBucket.getBucketKey()));
                 Blob blob = blobbuilder.build();
                 blob.setPayload(byteOut.toByteArray());
-                try {
-                    mReader.mBlobStore.putBlob(mReader.mResourceName, blob);
-                } catch (ContainerNotFoundException exc) {
-                    System.out.println("Bla");
-                    do {
-                        mReader.mBlobStore.createContainerInLocation(null, mReader.mResourceName);
-                        Thread.sleep(1);
-                    } while (!mReader.mBlobStore.containerExists(mReader.mResourceName));
-                }
+                mReader.mBlobStore.putBlob(mReader.mResourceName, blob);
                 finished = true;
 
                 // upload.write(mBucket.getBucketKey() + "," + mBucket.getClass().getName() + "\n");

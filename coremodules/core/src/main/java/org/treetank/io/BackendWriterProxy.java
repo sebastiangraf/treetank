@@ -226,7 +226,8 @@ public class BackendWriterProxy implements IBackendReader {
          */
         @Override
         public Void call() throws Exception {
-            // // iterate data tree
+//            final long time = System.currentTimeMillis();
+            // iterate data tree
             iterateSubtree(false);
             // get last IndirectBucket referenced from the RevRoot.
             final LogKey dataKey = new LogKey(false, 0, 0);
@@ -252,7 +253,7 @@ public class BackendWriterProxy implements IBackendReader {
             mUber.setReferenceHash(UberBucket.GUARANTEED_INDIRECT_OFFSET, revHash);
             mWriter.writeUberBucket(mUber);
 
-            // // iterating over all data
+            // //iterating over all data
             // final Iterator<LogValue> entries = mFormerLog.getIterator();
             // while (entries.hasNext()) {
             // LogValue next = entries.next();
@@ -272,6 +273,7 @@ public class BackendWriterProxy implements IBackendReader {
             // mWriter.write(mMeta);
             // mWriter.write(mRoot);
             // mWriter.writeUberBucket(mUber);
+//            System.out.println("Commit finished: " + (System.currentTimeMillis() - time));
             return null;
         }
 
