@@ -76,11 +76,6 @@ public class JCloudsStorage implements IBackend {
      */
     @Override
     public IBackendWriter getWriter() throws TTException {
-        // setup the container name used by the provider (like bucket in S3)
-        String containerName = mProperties.getProperty(ConstructorProps.RESOURCE);
-        if (!mBlobStore.containerExists(containerName)) {
-            mBlobStore.createContainerInLocation(null, containerName);
-        }
         return new JCloudsWriter(mBlobStore, mFac, mByteHandler, mProperties
             .getProperty(ConstructorProps.RESOURCE));
     }
@@ -116,6 +111,15 @@ public class JCloudsStorage implements IBackend {
         boolean returnVal = false;
         if (mBlobStore.containerExists(mProperties.getProperty(ConstructorProps.RESOURCE))) {
             mBlobStore.deleteContainer(mProperties.getProperty(ConstructorProps.RESOURCE));
+
+            // Necessary to perform deletion in a guaranteed manner.
+            while (mBlobStore.containerExists(mProperties.getProperty(ConstructorProps.RESOURCE))) {
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException e) {
+                    throw new TTIOException(e);
+                }
+            }
             returnVal = true;
         }
         mContext.close();
@@ -124,6 +128,20 @@ public class JCloudsStorage implements IBackend {
 
     @Override
     public void initialize() throws TTIOException {
-        // not needed over here
+        // setup the container name used by the provider (like bucket in S3)
+        final String containerName = mProperties.getProperty(ConstructorProps.RESOURCE);
+        if (!mBlobStore.containerExists(containerName)) {
+            mBlobStore.createContainerInLocation(null, containerName);
+        }
+
+        // Necessary since creation is triggered but guaranteed performed
+        while (!mBlobStore.containerExists(containerName)) {
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                throw new TTIOException(e);
+            }
+        }
     }
+
 }

@@ -9,8 +9,10 @@ import java.io.IOException;
 import java.util.concurrent.Callable;
 
 import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobBuilder;
+import org.treetank.access.conf.ConstructorProps;
 import org.treetank.bucket.BucketFactory;
 import org.treetank.bucket.UberBucket;
 import org.treetank.bucket.interfaces.IBucket;
@@ -26,23 +28,23 @@ import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
  */
 public class JCloudsWriter implements IBackendWriter {
 
-//    // START DEBUG CODE
-//    private final static File writeFile = new File("/Users/sebi/Desktop/runtimeResults/writeaccess.txt");
-//    private final static File uploadFile = new File("/Users/sebi/Desktop/runtimeResults/uploadaccess.txt");
-//
-//    static final FileWriter writer;
-//    static final FileWriter upload;
-//
-//    static {
-//        try {
-//            writer = new FileWriter(writeFile);
-//            upload = new FileWriter(uploadFile);
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
+    // // START DEBUG CODE
+    // private final static File writeFile = new File("/Users/sebi/Desktop/runtimeResults/writeaccess.txt");
+    // private final static File uploadFile = new File("/Users/sebi/Desktop/runtimeResults/uploadaccess.txt");
+    //
+    // static final FileWriter writer;
+    // static final FileWriter upload;
+    //
+    // static {
+    // try {
+    // writer = new FileWriter(writeFile);
+    // upload = new FileWriter(uploadFile);
+    // } catch (IOException e) {
+    // throw new RuntimeException(e);
+    // }
+    // }
 
-//    private final static long POISONNUMBER = -15;
+    // private final static long POISONNUMBER = -15;
 
     /** Delegate for reader. */
     private final JCloudsReader mReader;
@@ -89,8 +91,8 @@ public class JCloudsWriter implements IBackendWriter {
     @Override
     public void write(final IBucket pBucket) throws TTIOException, TTByteHandleException {
         try {
-//            writer.write(pBucket.getBucketKey() + "," + pBucket.getClass().getName() + "\n");
-//            writer.flush();
+            // writer.write(pBucket.getBucketKey() + "," + pBucket.getClass().getName() + "\n");
+            // writer.flush();
 
             new WriteTask(pBucket).call();
             // Future<Long> task = mWriterCompletion.submit(new WriteTask(pBucket));
@@ -173,11 +175,19 @@ public class JCloudsWriter implements IBackendWriter {
                 mBucket.serialize(dataOut);
                 dataOut.close();
 
-                BlobBuilder blobbuilder = mReader.mBlobStore.blobBuilder(Long.toString(mBucket.getBucketKey()));
+                BlobBuilder blobbuilder =
+                    mReader.mBlobStore.blobBuilder(Long.toString(mBucket.getBucketKey()));
                 Blob blob = blobbuilder.build();
                 blob.setPayload(byteOut.toByteArray());
-
-                mReader.mBlobStore.putBlob(mReader.mResourceName, blob);
+                try {
+                    mReader.mBlobStore.putBlob(mReader.mResourceName, blob);
+                } catch (ContainerNotFoundException exc) {
+                    System.out.println("Bla");
+                    do {
+                        mReader.mBlobStore.createContainerInLocation(null, mReader.mResourceName);
+                        Thread.sleep(1);
+                    } while (!mReader.mBlobStore.containerExists(mReader.mResourceName));
+                }
                 finished = true;
 
                 // upload.write(mBucket.getBucketKey() + "," + mBucket.getClass().getName() + "\n");

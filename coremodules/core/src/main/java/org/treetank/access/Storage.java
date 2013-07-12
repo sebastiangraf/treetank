@@ -347,7 +347,9 @@ public final class Storage implements IStorage {
             new BackendWriterProxy(storage.getWriter(), new File(pResourceConf.mProperties
                 .getProperty(org.treetank.access.conf.ConstructorProps.RESOURCEPATH)),
                 pResourceConf.mNodeFac, pResourceConf.mMetaFac);
-
+        
+        
+        
         UberBucket uberBucket = new UberBucket(1, 0, 1);
         long newBucketKey = uberBucket.incrementBucketCounter();
         uberBucket.setReferenceKey(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET, newBucketKey);
@@ -407,7 +409,7 @@ public final class Storage implements IStorage {
             writer.commit(uberBucket, metaBucker, revBucket).get();
             writer.closeFormerLog();
         } catch (InterruptedException | ExecutionException exc) {
-            throw new RuntimeException(exc);
+            throw new TTIOException(exc);
         }
         writer.close();
         storage.close();
