@@ -111,15 +111,6 @@ public class JCloudsStorage implements IBackend {
         boolean returnVal = false;
         if (mBlobStore.containerExists(mProperties.getProperty(ConstructorProps.RESOURCE))) {
             mBlobStore.deleteContainer(mProperties.getProperty(ConstructorProps.RESOURCE));
-
-            // Necessary to perform deletion in a guaranteed manner.
-            while (mBlobStore.containerExists(mProperties.getProperty(ConstructorProps.RESOURCE))) {
-                try {
-                    Thread.sleep(1);
-                } catch (InterruptedException e) {
-                    throw new TTIOException(e);
-                }
-            }
             returnVal = true;
         }
         mContext.close();
@@ -134,14 +125,6 @@ public class JCloudsStorage implements IBackend {
             mBlobStore.createContainerInLocation(null, containerName);
         }
 
-        // Necessary since creation is triggered but guaranteed performed
-        while (!mBlobStore.containerExists(containerName)) {
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException e) {
-                throw new TTIOException(e);
-            }
-        }
     }
 
 }
