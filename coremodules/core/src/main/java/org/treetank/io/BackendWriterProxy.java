@@ -24,6 +24,9 @@ import org.treetank.bucket.interfaces.IReferenceBucket;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+
 /**
  * This class encapsulates the access to the persistent backend for writing purposes and combines it with a
  * transaction log.
@@ -55,6 +58,9 @@ public class BackendWriterProxy implements IBackendReader {
     /** Executor for performing non-blocking commits. */
     private final ExecutorService mExec;
 
+    /** Transient cache for buffering former node-bucket hashes */
+    private final Cache<Long, byte[]> mFormerNodeBucketHashes;
+
     /**
      * 
      * Constructor.
@@ -79,6 +85,8 @@ public class BackendWriterProxy implements IBackendReader {
         mLog = new LRULog(mPathToLog, mNodeFac, mMetaFac);
         mExec = Executors.newSingleThreadExecutor();
         mFormerLog = mLog;
+        mFormerNodeBucketHashes = CacheBuilder.newBuilder().maximumSize(16384).build();
+
     }
 
     /**
@@ -226,7 +234,7 @@ public class BackendWriterProxy implements IBackendReader {
          */
         @Override
         public Void call() throws Exception {
-//            final long time = System.currentTimeMillis();
+            // final long time = System.currentTimeMillis();
             // iterate data tree
             iterateSubtree(false);
             // get last IndirectBucket referenced from the RevRoot.
@@ -273,7 +281,7 @@ public class BackendWriterProxy implements IBackendReader {
             // mWriter.write(mMeta);
             // mWriter.write(mRoot);
             // mWriter.writeUberBucket(mUber);
-//            System.out.println("Commit finished: " + (System.currentTimeMillis() - time));
+            // System.out.println("Commit finished: " + (System.currentTimeMillis() - time));
             return null;
         }
 
@@ -366,9 +374,13 @@ public class BackendWriterProxy implements IBackendReader {
                                 (IReferenceBucket)mFormerLog.get(pathToRoot.peek()).getModified();
                             final int parentOffset =
                                 (int)(key.getSeq() - ((key.getSeq() >> IConstants.INDIRECT_BUCKET_COUNT[3]) << IConstants.INDIRECT_BUCKET_COUNT[3]));
-                            final IBucket persistedBucket =
-                                mWriter.read(parent.getReferenceKeys()[parentOffset]);
-                            final byte[] persistedHash = persistedBucket.secureHash().asBytes();
+                            byte[] persistedHash = mFormerNodeBucketHashes.getIfPresent(key.getSeq());
+                            if (persistedHash == null) {
+                                final IBucket persistedBucket =
+                                    mWriter.read(parent.getReferenceKeys()[parentOffset]);
+                                persistedHash = persistedBucket.secureHash().asBytes();
+                                mFormerNodeBucketHashes.put(key.getSeq(), persistedHash);
+                            }
                             parent.setReferenceHash(parentOffset, persistedHash);
                         }// otherwise construct it over the log.
                         else {
@@ -407,6 +419,10 @@ public class BackendWriterProxy implements IBackendReader {
             final IBucket val = mFormerLog.get(pChildKey).getModified();
             final byte[] hash = val.secureHash().asBytes();
             mWriter.write(val);
+            if (val instanceof NodeBucket) {
+                mFormerNodeBucketHashes.put(pChildKey.getSeq(), hash);
+            }
+
             final IReferenceBucket parent = (IReferenceBucket)mFormerLog.get(pParentKey).getModified();
             final int parentOffset =
                 (int)(pChildKey.getSeq() - ((pChildKey.getSeq() >> IConstants.INDIRECT_BUCKET_COUNT[3]) << IConstants.INDIRECT_BUCKET_COUNT[3]));

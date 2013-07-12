@@ -47,10 +47,10 @@ public class JCloudsWriter implements IBackendWriter {
     /** Delegate for reader. */
     private final JCloudsReader mReader;
 
-    // static long readTime = 0;
-    // static int readCounter = 0;
-    // static long writeTime = 0;
-    // static int writeCounter = 0;
+//    static long readTime = 0;
+//    static int readCounter = 0;
+//    static long writeTime = 0;
+//    static int writeCounter = 0;
 
     // private final ConcurrentHashMap<Long, Future<Long>> mRunningWriteTasks;
     // private final CompletionService<Long> mWriterCompletion;
@@ -85,10 +85,10 @@ public class JCloudsWriter implements IBackendWriter {
         // throw new TTIOException(exc);
         // }
         // }
-        // readCounter++;
-        // long time = System.currentTimeMillis();
+//        readCounter++;
+//        long time = System.currentTimeMillis();
         final IBucket bucket = mReader.read(pKey);
-        // readTime = readTime + System.currentTimeMillis() - time;
+//        readTime = readTime + System.currentTimeMillis() - time;
         return bucket;
     }
 
@@ -101,10 +101,10 @@ public class JCloudsWriter implements IBackendWriter {
             // writer.write(pBucket.getBucketKey() + "," + pBucket.getClass().getName() + "\n");
             // writer.flush();
             //
-            // writeCounter++;
-            // long time = System.currentTimeMillis();
+//            writeCounter++;
+//            long time = System.currentTimeMillis();
             new WriteTask(pBucket).call();
-            // writeTime = writeTime + System.currentTimeMillis() - time;
+//            writeTime = writeTime + System.currentTimeMillis() - time;
             // Future<Long> task = mWriterCompletion.submit(new WriteTask(pBucket));
             // mRunningWriteTasks.put(pBucket.getBucketKey(), task);
             // mReader.mCache.put(pBucket.getBucketKey(), pBucket);
@@ -130,7 +130,7 @@ public class JCloudsWriter implements IBackendWriter {
         // System.out.println("Write time: " + writeTime);
         // System.out.println("Read counter: " + readCounter);
         // System.out.println("Write counter: " + writeCounter);
-
+        //
         // readTime = 0;
         // writeTime = 0;
         // readCounter = 0;

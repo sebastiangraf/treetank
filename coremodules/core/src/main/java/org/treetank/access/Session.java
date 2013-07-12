@@ -258,7 +258,9 @@ public final class Session implements ISession {
     public void waitForRunningCommit() throws TTIOException {
         if (mCommitRunning != null) {
             try {
+                // long time = System.currentTimeMillis();
                 mCommitRunning.get();
+                // System.out.println(System.currentTimeMillis() - time);
                 mCommitRunning = null;
             } catch (InterruptedException | ExecutionException exc) {
                 throw new TTIOException(exc);

@@ -57,7 +57,7 @@ public class InsertBench {
     private static final int FACTOR = 8;
 
     public InsertBench() throws TTException {
-        final File storageFile = FileSystems.getDefault().getPath("/Volumes/ramdisk/bla").toFile();
+        final File storageFile = FileSystems.getDefault().getPath("/Users/sebi/bla").toFile();
         IOUtils.recursiveDelete(storageFile);
 
         mInject =
@@ -104,27 +104,26 @@ public class InsertBench {
         mTrx = mSession.beginBucketWtx();
     }
 
-    //
     // @Bench
     // public void blocked016384() throws TTException {
     // insert(16384, true);
     // mTrx.close();
     // System.out.println("16384");
     // }
-//
-//    @Bench
-//    public void blocked032768() throws TTException {
-//        insert(32768, true);
-//        mTrx.close();
-//        System.out.println("32768");
-//    }
     //
     // @Bench
-    // public void blocked065536() throws TTException {
-    // insert(65536, true);
+    // public void blocked032768() throws TTException {
+    // insert(32768, true);
     // mTrx.close();
-    // System.out.println("65536");
+    // System.out.println("32768");
     // }
+//
+//    @Bench
+//    public void blocked065536() throws TTException {
+//        insert(65536, true);
+//        mTrx.close();
+//        System.out.println("65536");
+//    }
     //
     // @Bench
     // public void blocked131072() throws TTException {
@@ -132,13 +131,13 @@ public class InsertBench {
     // mTrx.close();
     // System.out.println("131072");
     // }
-    //
-    // @Bench
-    // public void blocked262144() throws TTException {
-    // insert(262144, true);
-    // mTrx.close();
-    // System.out.println("262144");
-    // }
+
+    @Bench
+    public void blocked262144() throws TTException {
+        insert(262144, true);
+        mTrx.close();
+        System.out.println("262144");
+    }
 
     //
     // @Bench
@@ -147,41 +146,41 @@ public class InsertBench {
     // mTrx.close();
     // System.out.println("524288");
     // }
-
-    @Bench
-    public void nonblocked016384() throws TTException {
-        insert(16384, false);
-        mTrx.close();
-        System.out.println("16384");
-    }
 //
+//    @Bench
+//    public void nonblocked016384() throws TTException {
+//        insert(16384, false);
+//        mTrx.close();
+//        System.out.println("16384");
+//    }
+    //
 //    @Bench
 //    public void nonblocked032768() throws TTException {
 //        insert(32768, false);
 //        mTrx.close();
 //        System.out.println("32768");
 //    }
-
+//
 //    @Bench
 //    public void nonblocked065536() throws TTException {
 //        insert(65536, false);
 //        mTrx.close();
 //        System.out.println("65536");
 //    }
-//
-//    @Bench
-//    public void nonblocked131072() throws TTException {
-//        insert(131072, false);
-//        mTrx.close();
-//        System.out.println("131072");
-//    }
-//
-//    @Bench
-//    public void nonblocked262144() throws TTException {
-//        insert(262144, false);
-//        mTrx.close();
-//        System.out.println("262144");
-//    }
+
+    // @Bench
+    // public void nonblocked131072() throws TTException {
+    // insert(131072, false);
+    // mTrx.close();
+    // System.out.println("131072");
+    // }
+    //
+    @Bench
+    public void nonblocked262144() throws TTException {
+        insert(262144, false);
+        mTrx.close();
+        System.out.println("262144");
+    }
 
     //
     // @Bench
@@ -220,7 +219,7 @@ public class InsertBench {
 
     static class Config extends AbstractConfig {
 
-        private final static int RUNS = 1;
+        private final static int RUNS = 10;
         private final static Set<AbstractMeter> METERS = new HashSet<AbstractMeter>();
         private final static Set<AbstractOutput> OUTPUT = new HashSet<AbstractOutput>();
 
