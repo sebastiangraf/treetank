@@ -33,8 +33,6 @@ import org.treetank.bucket.DumbNodeFactory;
 import org.treetank.bucket.DumbNodeFactory.DumbNode;
 import org.treetank.exception.TTException;
 import org.treetank.io.IOUtils;
-import org.treetank.io.berkeley.BerkeleyReader;
-import org.treetank.io.berkeley.BerkeleyStorage;
 import org.treetank.io.jclouds.JCloudsStorage;
 
 import com.google.inject.Guice;
@@ -54,10 +52,10 @@ public class InsertBench {
     })[0];
     private IBucketWriteTrx mTrx;
 
-    private static final int FACTOR = 2;
+    private static final int FACTOR = 8;
 
     public InsertBench() throws TTException {
-        final File storageFile = FileSystems.getDefault().getPath("/Users/sebi/bla").toFile();
+        final File storageFile = FileSystems.getDefault().getPath("/Volumes/ramdisk/tt").toFile();
         IOUtils.recursiveDelete(storageFile);
 
         mInject =
@@ -72,6 +70,7 @@ public class InsertBench {
 
     private void insert(int numbersToInsert, boolean blocked) throws TTException {
         final int offset = numbersToInsert / FACTOR;
+        long lastTime = 0;
         for (int i = 0; i < FACTOR; i++) {
             long time1 = System.currentTimeMillis();
             for (int j = 0; j < offset; j++) {
@@ -88,8 +87,11 @@ public class InsertBench {
             long time3 = System.currentTimeMillis();
             System.out.println("Time to insert: " + (time2 - time1));
             System.out.println("Time to commit: " + (time3 - time2));
+            lastTime = time3;
         }
-
+        mTrx.close();
+        long time4 = System.currentTimeMillis();
+        System.out.println("Time to end: " + (time4 - lastTime));
     }
 
     @BeforeEachRun
@@ -119,7 +121,6 @@ public class InsertBench {
     // @Bench
     // public void blocked032768() throws TTException {
     // insert(32768, true);
-    // mTrx.close();
     // System.out.println("32768");
     // }
     //
@@ -136,14 +137,14 @@ public class InsertBench {
     // mTrx.close();
     // System.out.println("131072");
     // }
-//
-//    @Bench
-//    public void blocked262144() throws TTException {
-//        insert(262144, true);
-//        mTrx.close();
-//        System.out.println("262144");
-//    }
-//
+
+    @Bench
+    public void blocked262144() throws TTException {
+        insert(262144, true);
+        mTrx.close();
+        System.out.println("262144");
+    }
+
     //
     // @Bench
     // public void blocked524288() throws TTException {
@@ -162,16 +163,15 @@ public class InsertBench {
     // @Bench
     // public void nonblocked032768() throws TTException {
     // insert(32768, false);
-    // mTrx.close();
     // System.out.println("32768");
     // }
-    //
-    // @Bench
-    // public void nonblocked065536() throws TTException {
-    // insert(65536, false);
-    // mTrx.close();
-    // System.out.println("65536");
-    // }
+//
+//    @Bench
+//    public void nonblocked065536() throws TTException {
+//        insert(65536, false);
+//        mTrx.close();
+//        System.out.println("65536");
+//    }
 
     // @Bench
     // public void nonblocked131072() throws TTException {
@@ -179,7 +179,7 @@ public class InsertBench {
     // mTrx.close();
     // System.out.println("131072");
     // }
-    //
+
     @Bench
     public void nonblocked262144() throws TTException {
         insert(262144, false);
@@ -224,7 +224,7 @@ public class InsertBench {
 
     static class Config extends AbstractConfig {
 
-        private final static int RUNS = 2;
+        private final static int RUNS = 5;
         private final static Set<AbstractMeter> METERS = new HashSet<AbstractMeter>();
         private final static Set<AbstractOutput> OUTPUT = new HashSet<AbstractOutput>();
 
