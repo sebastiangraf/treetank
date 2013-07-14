@@ -62,6 +62,7 @@ import org.treetank.bucket.interfaces.IReferenceBucket;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendWriter;
+import org.treetank.io.ILog;
 import org.treetank.io.LRULog;
 import org.treetank.io.LogKey;
 import org.treetank.io.LogValue;
@@ -103,11 +104,11 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
     private final BucketFactory mBucketFac;
 
     /** Current LRULog instance to write currently to. */
-    private LRULog mLog;
+    private ILog mLog;
 
     /** Former log instance utilizing while commit is in process. */
     @Nullable
-    private LRULog mFormerLog;
+    private ILog mFormerLog;
 
     /** Transient cache for buffering former node-bucket hashes */
     private final Cache<Long, byte[]> mFormerNodeBucketHashes;
@@ -645,7 +646,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
          */
         @Override
         public Void call() throws Exception {
-            final long time = System.currentTimeMillis();
+            // final long time = System.currentTimeMillis();
             // iterate data tree
             iterateSubtree(false);
             // get last IndirectBucket referenced from the RevRoot.
@@ -696,7 +697,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
             mDelegate = new BucketReadTrx(mDelegate.mSession, mUber, mRoot, mMeta, mBackendWriter);
             closeFormerLog();
 
-//            System.out.println("Commit finished: " + (System.currentTimeMillis() - time));
+            // System.out.println("Commit finished: " + (System.currentTimeMillis() - time));
             return null;
         }
 

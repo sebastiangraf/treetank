@@ -63,7 +63,7 @@ import com.sleepycat.je.OperationStatus;
  * 
  * @author Sebastian Graf, University of Konstanz
  */
-public final class LRULog {
+public final class LRULog implements ILog {
     //
     // // START DEBUG CODE
     // private final static File insertFile = new File("/Users/sebi/Desktop/runtimeResults/insert.txt");
@@ -179,12 +179,7 @@ public final class LRULog {
     }
 
     /**
-     * Getting a {@link LogValue} for a given key
-     * 
-     * @param pKey
-     *            the key
-     * @return a suitable {@link LogValue} if present, false otherwise
-     * @throws TTIOException
+     * {@inheritDoc}
      */
     public synchronized LogValue get(final LogKey pKey) throws TTIOException {
         if (isClosed()) {
@@ -214,22 +209,14 @@ public final class LRULog {
     }
 
     /**
-     * Putting a new entry to the log, overriding already existing entries.
-     * 
-     * @param pKey
-     *            to be set
-     * @param pValue
-     *            to be set
-     * @throws TTIOException
+     * {@inheritDoc}
      */
     public void put(final LogKey pKey, final LogValue pValue) throws TTIOException {
         mCache.put(pKey, pValue);
     }
 
     /**
-     * Closing the log.
-     * 
-     * @throws TTIOException
+     * {@inheritDoc}
      */
     public synchronized void close() throws TTIOException {
         try {
@@ -246,9 +233,7 @@ public final class LRULog {
     }
 
     /**
-     * Check if log is closed or not.
-     * 
-     * @return if log is closed.
+     * {@inheritDoc}
      */
     public synchronized boolean isClosed() {
         return mClosed;
