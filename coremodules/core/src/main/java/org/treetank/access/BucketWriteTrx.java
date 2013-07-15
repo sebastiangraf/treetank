@@ -143,10 +143,12 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         mDelegate = new BucketReadTrx(pSession, pUberBucket, revBucket, metaBucket, pWriter);
         mBucketFac = new BucketFactory(pSession.getConfig().mNodeFac, pSession.getConfig().mMetaFac);
 
+        // mLog = new MemoryLog();
         mLog =
             new LRULog(new File(pSession.getConfig().mProperties
                 .getProperty(org.treetank.access.conf.ConstructorProps.RESOURCEPATH)),
                 pSession.getConfig().mNodeFac, pSession.getConfig().mMetaFac);
+
         mFormerLog = mLog;
         mFormerNodeBucketHashes = CacheBuilder.newBuilder().maximumSize(16384).build();
         setUpTransaction(pUberBucket, revBucket, metaBucket, pSession, pRepresentRev);
@@ -156,6 +158,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
      * {@inheritDoc}
      */
     public long setNode(final INode pNode) throws TTException {
+
         checkState(!mDelegate.isClosed(), "Transaction already closed");
         // Allocate node key and increment node count.
         final long nodeKey = pNode.getNodeKey();
@@ -247,6 +250,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         // storing the reference to the former log.
         mFormerLog = mLog;
         // new log
+        // mLog = new MemoryLog();
         mLog =
             new LRULog(new File(mDelegate.mSession.getConfig().mProperties
                 .getProperty(org.treetank.access.conf.ConstructorProps.RESOURCEPATH)), mDelegate.mSession

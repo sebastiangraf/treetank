@@ -4,11 +4,6 @@
 package org.treetank.bench;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.file.FileSystems;
 import java.util.HashSet;
 import java.util.Set;
@@ -20,8 +15,6 @@ import org.perfidix.annotation.BeforeEachRun;
 import org.perfidix.annotation.Bench;
 import org.perfidix.element.KindOfArrangement;
 import org.perfidix.meter.AbstractMeter;
-import org.perfidix.meter.MemMeter;
-import org.perfidix.meter.Memory;
 import org.perfidix.meter.Time;
 import org.perfidix.meter.TimeMeter;
 import org.perfidix.ouput.AbstractOutput;
@@ -42,8 +35,8 @@ import org.treetank.bucket.DumbMetaEntryFactory;
 import org.treetank.bucket.DumbNodeFactory;
 import org.treetank.bucket.DumbNodeFactory.DumbNode;
 import org.treetank.exception.TTException;
-import org.treetank.exception.TTIOException;
 import org.treetank.io.IOUtils;
+import org.treetank.io.jclouds.JCloudsStorage;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -55,121 +48,211 @@ import com.google.inject.Injector;
 public class UpdateBench {
 
     private final String RESOURCENAME = "benchResourcegrave9283";
+    private final int ELEMENTS = 262144;
+    // private final int ELEMENTS = 32768;
 
-    private final File bootstrappedFile = FileSystems.getDefault().getPath("tmp", "bootstrapped").toFile();
-    private final File benchedFile = FileSystems.getDefault().getPath("tmp", "bench").toFile();
-
-    private static final int FACTOR = 8;
-
-    private final int ELEMENTS = 524288;
+    private int counter = 0;
 
     private IStorage mStorage;
+    private final Injector mInject;
     private ISession mSession;
     private DumbNode[] mNodesToInsert = BenchUtils.createNodes(new int[] {
         ELEMENTS
     })[0];
     private IBucketWriteTrx mTrx;
 
+    private static final int FACTOR = 8;
+
     public UpdateBench() throws TTException {
-        final Injector inj =
+        final File storageFile = FileSystems.getDefault().getPath("/Users/sebi/bla").toFile();
+        // final File storageFile = FileSystems.getDefault().getPath("/Volumes/ramdisk/tt").toFile();
+        IOUtils.recursiveDelete(storageFile);
+
+        mInject =
             Guice.createInjector(new ModuleSetter().setNodeFacClass(DumbNodeFactory.class).setMetaFacClass(
-                DumbMetaEntryFactory.class).createModule());
+                DumbMetaEntryFactory.class).setBackendClass(JCloudsStorage.class).createModule());
 
-        final ResourceConfiguration resConfig =
-            inj.getInstance(IResourceConfigurationFactory.class).create(
-                StandardSettings.getProps(benchedFile.getAbsolutePath(), RESOURCENAME));
-        IOUtils.recursiveDelete(benchedFile);
-        final StorageConfiguration storConfig = new StorageConfiguration(benchedFile);
-        Storage.createStorage(storConfig);
-        final IStorage storage = Storage.openStorage(benchedFile);
-        storage.createResource(resConfig);
-        final ISession session =
-            storage.getSession(new SessionConfiguration(RESOURCENAME, StandardSettings.KEY));
-        final IBucketWriteTrx trx = session.beginBucketWtx();
-        long time = System.currentTimeMillis();
-        for (int i = 0; i < ELEMENTS; i++) {
-            final long nodeKey = trx.incrementNodeKey();
-            mNodesToInsert[i].setNodeKey(nodeKey);
-            trx.setNode(mNodesToInsert[i]);
-        }
-        trx.commitBlocked();
-        long endtime = System.currentTimeMillis();
-        System.out.println("Generating nodes took " + (endtime - time) + "ms");
-        trx.close();
-        session.close();
-        storage.close();
-
-        IOUtils.recursiveDelete(bootstrappedFile);
-        try {
-            copyDirectory(benchedFile, bootstrappedFile);
-        } catch (IOException e) {
-            throw new TTIOException(e);
-        }
+        final StorageConfiguration config = new StorageConfiguration(storageFile);
+        Storage.createStorage(config);
+        mStorage = Storage.openStorage(storageFile);
 
     }
 
-    private void toModify(int numbersToModify) throws TTException {
-        for (int i = 1; i <= numbersToModify; i++) {
-            final long keyToAdapt = Math.abs(BenchUtils.random.nextLong()) % ELEMENTS;
+    private void modify(int numbersToModify, boolean blocked, boolean seq) throws TTException {
+        final int offset = numbersToModify / FACTOR;
+        // long lastTime = 0;
+        for (int i = 0; i < FACTOR; i++) {
+            // long time1 = System.currentTimeMillis();
+            for (int j = 0; j < offset; j++) {
+                long keyToAdapt;
+                if (seq) {
+                    keyToAdapt = (i * offset) + j;
+                } else {
+                    keyToAdapt = Math.abs(BenchUtils.random.nextLong()) % ELEMENTS;
+                }
 
-            final DumbNode node = BenchUtils.generateOne();
-            node.setNodeKey(keyToAdapt);
-
-            mTrx.setNode(node);
-            if (i % (numbersToModify / FACTOR) == 0) {
+                final DumbNode node = BenchUtils.generateOne();
+                node.setNodeKey(keyToAdapt);
+                mTrx.setNode(node);
+            }
+            // long time2 = System.currentTimeMillis();
+            if (blocked) {
+                mTrx.commitBlocked();
+            } else {
                 mTrx.commit();
             }
+            // long time3 = System.currentTimeMillis();
+            // System.out.println("Time to insert: " + (time2 - time1));
+            // System.out.println("Time to commit: " + (time3 - time2));
+            // lastTime = time3;
         }
         mTrx.close();
+        // long time4 = System.currentTimeMillis();
+        // System.out.println("Time to end: " + (time4 - lastTime));
     }
 
     @BeforeEachRun
     public void setUp() throws TTException {
-        try {
-            IOUtils.recursiveDelete(benchedFile);
-            copyDirectory(bootstrappedFile, benchedFile);
-            mStorage = Storage.openStorage(benchedFile);
-            mSession = mStorage.getSession(new SessionConfiguration(RESOURCENAME, StandardSettings.KEY));
-            mTrx = mSession.beginBucketWtx();
-        } catch (IOException e) {
-            throw new TTIOException(e);
+
+        final ResourceConfiguration config =
+            mInject.getInstance(IResourceConfigurationFactory.class).create(
+                StandardSettings.getProps(mStorage.getLocation().getAbsolutePath(), new StringBuilder(
+                    RESOURCENAME).append(counter).toString()));
+
+        mStorage.truncateResource(new SessionConfiguration(new StringBuilder(RESOURCENAME).append(counter)
+            .toString(), StandardSettings.KEY));
+        mStorage.createResource(config);
+        mSession =
+            mStorage.getSession(new SessionConfiguration(new StringBuilder(RESOURCENAME).append(counter)
+                .toString(), StandardSettings.KEY));
+        mTrx = mSession.beginBucketWtx();
+
+        for (int i = 0; i < ELEMENTS; i++) {
+            final long nodeKey = mTrx.incrementNodeKey();
+            mNodesToInsert[i].setNodeKey(nodeKey);
+            mTrx.setNode(mNodesToInsert[i]);
         }
+        mTrx.commitBlocked();
     }
 
     @Bench
-    public void bench16384() throws TTException {
-        toModify(16384);
+    public void blockedRan016384() throws TTException {
+        modify(16384, true, false);
         System.out.println("163842");
     }
 
     @Bench
-    public void bench32768() throws TTException {
-        toModify(32768);
+    public void blockedRan032768() throws TTException {
+        modify(32768, true, false);
         System.out.println("32768");
     }
 
     @Bench
-    public void bench65536() throws TTException {
-        toModify(65536);
+    public void blockedRan065536() throws TTException {
+        modify(65536, true, false);
         System.out.println("65536");
     }
 
     @Bench
-    public void bench131072() throws TTException {
-        toModify(131072);
+    public void blockedRan131072() throws TTException {
+        modify(131072, true, false);
         System.out.println("131072");
     }
 
     @Bench
-    public void bench262144() throws TTException {
-        toModify(262144);
+    public void blockedRan262144() throws TTException {
+        modify(262144, true, false);
         System.out.println("262144");
     }
 
     @Bench
-    public void bench524288() throws TTException {
-        toModify(524288);
-        System.out.println("524288");
+    public void nonblockedRan016384() throws TTException {
+        modify(16384, false, false);
+        System.out.println("163842");
+    }
+
+    @Bench
+    public void nonblockedRan032768() throws TTException {
+        modify(32768, false, false);
+        System.out.println("32768");
+    }
+
+    @Bench
+    public void nonblockedRan065536() throws TTException {
+        modify(65536, false, false);
+        System.out.println("65536");
+    }
+
+    @Bench
+    public void nonblockedRan131072() throws TTException {
+        modify(131072, false, false);
+        System.out.println("131072");
+    }
+
+    @Bench
+    public void nonblockedRan262144() throws TTException {
+        modify(262144, false, false);
+        System.out.println("262144");
+    }
+
+    @Bench
+    public void blockedSeq016384() throws TTException {
+        modify(16384, true, true);
+        System.out.println("163842");
+    }
+
+    @Bench
+    public void blockedSeq032768() throws TTException {
+        modify(32768, true, true);
+        System.out.println("32768");
+    }
+
+    @Bench
+    public void blockedSeq065536() throws TTException {
+        modify(65536, true, true);
+        System.out.println("65536");
+    }
+
+    @Bench
+    public void blockedSeq131072() throws TTException {
+        modify(131072, true, true);
+        System.out.println("131072");
+    }
+
+    @Bench
+    public void blockedSeq262144() throws TTException {
+        modify(262144, true, true);
+        System.out.println("262144");
+    }
+
+    @Bench
+    public void nonblockedSeq016384() throws TTException {
+        modify(16384, false, true);
+        System.out.println("163842");
+    }
+
+    @Bench
+    public void nonblockedSeq032768() throws TTException {
+        modify(32768, false, true);
+        System.out.println("32768");
+    }
+
+    @Bench
+    public void nonblockedSeq065536() throws TTException {
+        modify(65536, false, true);
+        System.out.println("65536");
+    }
+
+    @Bench
+    public void nonblockedSeq131072() throws TTException {
+        modify(131072, false, true);
+        System.out.println("131072");
+    }
+
+    @Bench
+    public void nonblockedSeq262144() throws TTException {
+        modify(262144, false, true);
+        System.out.println("262144");
     }
 
     @AfterEachRun
@@ -198,35 +281,9 @@ public class UpdateBench {
         new CSVOutput(resultFold).visitBenchmark(res);
     }
 
-    private void copyDirectory(File sourceLocation, File targetLocation) throws IOException {
-        if (sourceLocation.isDirectory()) {
-            if (!targetLocation.exists()) {
-                targetLocation.mkdir();
-            }
-
-            String[] children = sourceLocation.list();
-            for (int i = 0; i < children.length; i++) {
-                copyDirectory(new File(sourceLocation, children[i]), new File(targetLocation, children[i]));
-            }
-        } else {
-
-            InputStream in = new FileInputStream(sourceLocation);
-            OutputStream out = new FileOutputStream(targetLocation);
-
-            // Copy the bits from instream to outstream
-            byte[] buf = new byte[1024];
-            int len;
-            while ((len = in.read(buf)) > 0) {
-                out.write(buf, 0, len);
-            }
-            in.close();
-            out.close();
-        }
-    }
-
     static class Config extends AbstractConfig {
 
-        private final static int RUNS = 10;
+        private final static int RUNS = 1;
         private final static Set<AbstractMeter> METERS = new HashSet<AbstractMeter>();
         private final static Set<AbstractOutput> OUTPUT = new HashSet<AbstractOutput>();
 
@@ -235,7 +292,7 @@ public class UpdateBench {
 
         static {
             METERS.add(new TimeMeter(Time.MilliSeconds));
-            METERS.add(new MemMeter(Memory.Byte));
+            // METERS.add(new MemMeter(Memory.Byte));
 
             OUTPUT.add(new CSVOutput(outputFold));
             OUTPUT.add(new TabularSummaryOutput());

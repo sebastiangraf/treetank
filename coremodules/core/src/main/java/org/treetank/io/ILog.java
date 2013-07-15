@@ -44,4 +44,5 @@ public interface ILog {
      * @return if log is closed.
      */
     boolean isClosed();
+    
 }

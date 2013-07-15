@@ -46,6 +46,7 @@ public class StandardSettings {
         properties.setProperty(ConstructorProps.JCLOUDSTYPE, "filesystem");
         // Path not to main storage but to any to simulate remote cloud location.
         properties.setProperty(FilesystemConstants.PROPERTY_BASEDIR, Files.createTempDir().getAbsolutePath());
+        // properties.setProperty(FilesystemConstants.PROPERTY_BASEDIR, "/Volumes/ramdisk/data");
         String[] awsCredentials = getCredentials();
         if (awsCredentials.length == 0) {
             properties.setProperty(Constants.PROPERTY_CREDENTIAL, "test");
