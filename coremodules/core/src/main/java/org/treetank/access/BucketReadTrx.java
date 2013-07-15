@@ -35,21 +35,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.treetank.access.conf.ConstructorProps;
-import org.treetank.api.INode;
 import org.treetank.api.IBucketReadTrx;
+import org.treetank.api.INode;
 import org.treetank.api.ISession;
 import org.treetank.bucket.IConstants;
 import org.treetank.bucket.IndirectBucket;
 import org.treetank.bucket.MetaBucket;
 import org.treetank.bucket.NodeBucket;
+import org.treetank.bucket.NodeBucket.DeletedNode;
 import org.treetank.bucket.RevisionRootBucket;
 import org.treetank.bucket.UberBucket;
-import org.treetank.bucket.NodeBucket.DeletedNode;
 import org.treetank.bucket.interfaces.IReferenceBucket;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
 import org.treetank.revisioning.IRevisioning;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 
 /**
  * <h1>BucketReadTrx</h1>
@@ -84,6 +87,9 @@ public class BucketReadTrx implements IBucketReadTrx {
     /** Boolean for determinc close. */
     private boolean mClose;
 
+    /** Cache for reading data. */
+    protected final Cache<Long, NodeBucket> mCache;
+
     /**
      * Standard constructor.
      * 
@@ -109,6 +115,7 @@ public class BucketReadTrx implements IBucketReadTrx {
         mRootBucket = pRevBucket;
         mMetaBucket = pMetaBucket;
         mClose = false;
+        mCache = CacheBuilder.newBuilder().maximumSize(100).build();
     }
 
     /**
@@ -126,12 +133,16 @@ public class BucketReadTrx implements IBucketReadTrx {
         // Calculate bucket and node part for given nodeKey.
         final long seqBucketKey = pNodeKey >> IConstants.INDIRECT_BUCKET_COUNT[3];
         final int nodeBucketOffset = nodeBucketOffset(pNodeKey);
-        final List<NodeBucket> listRevs = getSnapshotBuckets(seqBucketKey);
-        final NodeBucket[] revs = listRevs.toArray(new NodeBucket[listRevs.size()]);
-        checkState(revs.length > 0, "Number of Buckets to reconstruct must be larger than 0");
-        // Build up the complete bucket.
-        final IRevisioning revision = mSession.getConfig().mRevision;
-        NodeBucket bucket = revision.combineBuckets(revs);
+        NodeBucket bucket = mCache.getIfPresent(seqBucketKey);
+        if (bucket == null) {
+            final List<NodeBucket> listRevs = getSnapshotBuckets(seqBucketKey);
+            final NodeBucket[] revs = listRevs.toArray(new NodeBucket[listRevs.size()]);
+            checkState(revs.length > 0, "Number of Buckets to reconstruct must be larger than 0");
+            // Build up the complete bucket.
+            final IRevisioning revision = mSession.getConfig().mRevision;
+            bucket = revision.combineBuckets(revs);
+            mCache.put(seqBucketKey, bucket);
+        }
         final INode returnVal = bucket.getNode(nodeBucketOffset);
         // root-node is excluded from the checkagainst deletion based on the necesssity of the node-layer to
         // reference against this node while creation of the transaction

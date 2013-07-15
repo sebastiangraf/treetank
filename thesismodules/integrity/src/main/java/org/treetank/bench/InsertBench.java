@@ -38,6 +38,14 @@ import org.treetank.io.jclouds.JCloudsStorage;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
+/**
+ * Inserting sequentially (what else) different powers of 2-nodes to the storage and making FACTOR
+ * intermediate commits. The commits occur once unblocked and once blocked to determine the impact of
+ * blocking.
+ * 
+ * @author Sebastian Graf, University of Konstanz
+ * 
+ */
 public class InsertBench {
 
     private final String RESOURCENAME = "benchResourcegrave9283";

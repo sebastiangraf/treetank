@@ -32,6 +32,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.treetank.access.BucketReadTrx.nodeBucketOffset;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -62,9 +63,9 @@ import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendWriter;
 import org.treetank.io.ILog;
+import org.treetank.io.LRULog;
 import org.treetank.io.LogKey;
 import org.treetank.io.LogValue;
-import org.treetank.io.MemoryLog;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -142,10 +143,11 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         mDelegate = new BucketReadTrx(pSession, pUberBucket, revBucket, metaBucket, pWriter);
         mBucketFac = new BucketFactory(pSession.getConfig().mNodeFac, pSession.getConfig().mMetaFac);
 
-        mLog = new MemoryLog();
-        // new LRULog(new File(pSession.getConfig().mProperties
-        // .getProperty(org.treetank.access.conf.ConstructorProps.RESOURCEPATH)),
-        // pSession.getConfig().mNodeFac, pSession.getConfig().mMetaFac);
+//         mLog = new MemoryLog();
+        mLog =
+            new LRULog(new File(pSession.getConfig().mProperties
+                .getProperty(org.treetank.access.conf.ConstructorProps.RESOURCEPATH)),
+                pSession.getConfig().mNodeFac, pSession.getConfig().mMetaFac);
         mFormerLog = mLog;
         mFormerNodeBucketHashes = CacheBuilder.newBuilder().maximumSize(16384).build();
         setUpTransaction(pUberBucket, revBucket, metaBucket, pSession, pRepresentRev);
@@ -247,10 +249,11 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         // storing the reference to the former log.
         mFormerLog = mLog;
         // new log
-        mLog = new MemoryLog();
-        // new LRULog(new File(mDelegate.mSession.getConfig().mProperties
-        // .getProperty(org.treetank.access.conf.ConstructorProps.RESOURCEPATH)), mDelegate.mSession
-        // .getConfig().mNodeFac, mDelegate.mSession.getConfig().mMetaFac);
+//        mLog = new MemoryLog();
+        mLog =
+            new LRULog(new File(mDelegate.mSession.getConfig().mProperties
+                .getProperty(org.treetank.access.conf.ConstructorProps.RESOURCEPATH)), mDelegate.mSession
+  .getConfig().mNodeFac, mDelegate.mSession.getConfig().mMetaFac);
 
         mDelegate.mSession.setRunningCommit(mCommitInProgress.submit(new CommitCallable(uber, rev, meta)));
 
