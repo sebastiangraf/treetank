@@ -38,6 +38,7 @@ import org.treetank.bucket.DumbNodeFactory.DumbNode;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IOUtils;
+import org.treetank.io.jclouds.JCloudsStorage;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -53,12 +54,13 @@ import com.google.inject.Injector;
 public class GetBench {
     private final String RESOURCENAME = "benchResourcegrave9283";
 
-    // private final File bootstrappedFile = FileSystems.getDefault().getPath("tmp", "bootstrapped").toFile();
-    private final File benchedFile = FileSystems.getDefault().getPath("tmp", "bench").toFile();
+    private static final File benchedFile = FileSystems.getDefault().getPath("tmp", "bench").toFile();
+    // private static final File benchedFile =
+    // FileSystems.getDefault().getPath("/Volumes/ramdisk/tt").toFile();
 
-    private static final int FACTOR = 256;
+    private static final int FACTOR = 8;
 
-    private final int ELEMENTS = 262144;
+    private final int ELEMENTS = 16;
     // private final int ELEMENTS = 32768;
 
     private IStorage mStorage;
@@ -71,7 +73,7 @@ public class GetBench {
     public GetBench() throws TTException {
         final Injector inj =
             Guice.createInjector(new ModuleSetter().setNodeFacClass(DumbNodeFactory.class).setMetaFacClass(
-                DumbMetaEntryFactory.class).createModule());
+                DumbMetaEntryFactory.class).setBackendClass(JCloudsStorage.class).createModule());
 
         final ResourceConfiguration resConfig =
             inj.getInstance(IResourceConfigurationFactory.class).create(
@@ -85,29 +87,50 @@ public class GetBench {
         storage.createResource(resConfig);
         final ISession session =
             storage.getSession(new SessionConfiguration(RESOURCENAME, StandardSettings.KEY));
-        final IBucketWriteTrx trx = session.beginBucketWtx();
+        IBucketWriteTrx trx = session.beginBucketWtx();
         long time = System.currentTimeMillis();
         // Creating FACTOR versions with ELEMENTS\FACTOR elements
         for (int j = 0; j < FACTOR; j++) {
+            System.out.println("Inserting revision " + j + " and " + (ELEMENTS / FACTOR) + " elements");
             for (int i = 0; i < ELEMENTS / FACTOR; i++) {
                 final long nodeKey = trx.incrementNodeKey();
                 mNodesToInsert[i].setNodeKey(nodeKey);
                 trx.setNode(mNodesToInsert[i]);
             }
-            trx.commitBlocked();
+            trx.commit();
         }
+        trx.close();
+        trx = session.beginBucketWtx();
         long endtime = System.currentTimeMillis();
         System.out.println("Generating nodes in " + FACTOR + " versions took " + (endtime - time) + "ms");
 
         // Modifying ELEMENT nodes in FACTOR revisions.
         for (int i = 0; i < FACTOR; i++) {
-            for (int j = 0; j < ELEMENTS / FACTOR; j++) {
-                final long keyToAdapt = Math.abs(BenchUtils.random.nextLong()) % ELEMENTS;
-                final DumbNode node = BenchUtils.generateOne();
-                node.setNodeKey(keyToAdapt);
-                trx.setNode(node);
+            System.out.println("Modifying revision " + i + " and " + (ELEMENTS / FACTOR) + " elements");
+            boolean continueFlag = true;
+            for (int j = 0; j < ELEMENTS / FACTOR && continueFlag; j++) {
+                try {
+                    final long keyToAdapt = Math.abs(BenchUtils.random.nextLong()) % ELEMENTS;
+                    final DumbNode node = BenchUtils.generateOne();
+                    node.setNodeKey(keyToAdapt);
+                    trx.setNode(node);
+                } catch (Exception e) {
+                    System.err.println("Exception " + e + " thrown in factor " + i + "  and Elements " + j);
+                    continueFlag = false;
+                }
             }
-            trx.commitBlocked();
+            if (continueFlag) {
+                long commitstart = System.currentTimeMillis();
+                System.out.println("Revision " + i + " before commit");
+                trx.commit();
+                System.out.println("Commit of revision " + i + " finished in "
+                    + (System.currentTimeMillis() - commitstart) + "ms");
+            } else {
+                System.out.println("Revision " + i + " skipped");
+                i--;
+                trx.close();
+                trx = session.beginBucketWtx();
+            }
         }
         long endtimeMod = System.currentTimeMillis();
         System.out
@@ -233,7 +256,7 @@ public class GetBench {
 
         static {
             METERS.add(new TimeMeter(Time.MilliSeconds));
-//            METERS.add(new MemMeter(Memory.Byte));
+            // METERS.add(new MemMeter(Memory.Byte));
 
             OUTPUT.add(new CSVOutput(outputFold));
             OUTPUT.add(new TabularSummaryOutput());
