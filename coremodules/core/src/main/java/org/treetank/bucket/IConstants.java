@@ -64,4 +64,8 @@ public interface IConstants {
         -55
     };
 
+    public static final byte[] BOOTSTRAP_HASHED = new byte[] {
+        -11
+    };
+    
 }

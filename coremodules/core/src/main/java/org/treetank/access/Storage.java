@@ -345,7 +345,7 @@ public final class Storage implements IStorage {
         final UberBucket uberBucket = new UberBucket(1, 0, 1);
         long newBucketKey = uberBucket.incrementBucketCounter();
         uberBucket.setReferenceKey(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET, newBucketKey);
-        uberBucket.setReferenceHash(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET, IConstants.NON_HASHED);
+        uberBucket.setReferenceHash(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET, IConstants.BOOTSTRAP_HASHED);
         writer.write(uberBucket);
 
         // --- Create revision tree
@@ -358,7 +358,7 @@ public final class Storage implements IStorage {
             bucket = new IndirectBucket(newBucketKey);
             newBucketKey = uberBucket.incrementBucketCounter();
             bucket.setReferenceKey(0, newBucketKey);
-            bucket.setReferenceHash(0, IConstants.NON_HASHED);
+            bucket.setReferenceHash(0, IConstants.BOOTSTRAP_HASHED);
             writer.write(bucket);
         }
 
@@ -368,12 +368,12 @@ public final class Storage implements IStorage {
         // establishing fresh MetaBucket
         MetaBucket metaBucker = new MetaBucket(newBucketKey);
         revBucket.setReferenceKey(RevisionRootBucket.META_REFERENCE_OFFSET, newBucketKey);
-        revBucket.setReferenceHash(RevisionRootBucket.META_REFERENCE_OFFSET, IConstants.NON_HASHED);
+        revBucket.setReferenceHash(RevisionRootBucket.META_REFERENCE_OFFSET, IConstants.BOOTSTRAP_HASHED);
 
         newBucketKey = uberBucket.incrementBucketCounter();
         bucket = new IndirectBucket(newBucketKey);
         revBucket.setReferenceKey(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET, newBucketKey);
-        revBucket.setReferenceHash(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET, IConstants.NON_HASHED);
+        revBucket.setReferenceHash(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET, IConstants.BOOTSTRAP_HASHED);
         writer.write(revBucket);
         writer.write(metaBucker);
 
@@ -386,7 +386,7 @@ public final class Storage implements IStorage {
         for (int i = 0; i < IConstants.INDIRECT_BUCKET_COUNT.length; i++) {
             newBucketKey = uberBucket.incrementBucketCounter();
             bucket.setReferenceKey(0, newBucketKey);
-            bucket.setReferenceHash(0, IConstants.NON_HASHED);
+            bucket.setReferenceHash(0, IConstants.BOOTSTRAP_HASHED);
             writer.write(bucket);
             bucket = new IndirectBucket(newBucketKey);
         }

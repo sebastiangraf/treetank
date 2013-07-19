@@ -15,7 +15,6 @@ import org.perfidix.meter.AbstractMeter;
 import org.perfidix.meter.Time;
 import org.perfidix.meter.TimeMeter;
 import org.perfidix.ouput.AbstractOutput;
-import org.perfidix.ouput.CSVOutput;
 import org.perfidix.ouput.TabularSummaryOutput;
 import org.perfidix.result.BenchmarkResult;
 import org.treetank.access.Storage;
@@ -119,33 +118,33 @@ public class InsertBench {
                 .toString(), StandardSettings.KEY));
         mTrx = mSession.beginBucketWtx();
     }
-
-    @Bench
-    public void blocked016384() throws TTException {
-        insert(16384, true);
-        mTrx.close();
-        System.out.println("16384");
-    }
-
-    @Bench
-    public void blocked032768() throws TTException {
-        insert(32768, true);
-        System.out.println("32768");
-    }
-
-    @Bench
-    public void blocked065536() throws TTException {
-        insert(65536, true);
-        mTrx.close();
-        System.out.println("65536");
-    }
-
-    @Bench
-    public void blocked131072() throws TTException {
-        insert(131072, true);
-        mTrx.close();
-        System.out.println("131072");
-    }
+//
+//    @Bench
+//    public void blocked016384() throws TTException {
+//        insert(16384, true);
+//        mTrx.close();
+//        System.out.println("16384");
+//    }
+//
+//    @Bench
+//    public void blocked032768() throws TTException {
+//        insert(32768, true);
+//        System.out.println("32768");
+//    }
+//
+//    @Bench
+//    public void blocked065536() throws TTException {
+//        insert(65536, true);
+//        mTrx.close();
+//        System.out.println("65536");
+//    }
+//
+//    @Bench
+//    public void blocked131072() throws TTException {
+//        insert(131072, true);
+//        mTrx.close();
+//        System.out.println("131072");
+//    }
 
     @Bench
     public void blocked262144() throws TTException {
@@ -153,40 +152,40 @@ public class InsertBench {
         mTrx.close();
         System.out.println("262144");
     }
-
-    @Bench
-    public void nonblocked016384() throws TTException {
-        insert(16384, false);
-        mTrx.close();
-        System.out.println("16384");
-    }
-
-    @Bench
-    public void nonblocked032768() throws TTException {
-        insert(32768, false);
-        System.out.println("32768");
-    }
-
-    @Bench
-    public void nonblocked065536() throws TTException {
-        insert(65536, false);
-        mTrx.close();
-        System.out.println("65536");
-    }
-
-    @Bench
-    public void nonblocked131072() throws TTException {
-        insert(131072, false);
-        mTrx.close();
-        System.out.println("131072");
-    }
-
-    @Bench
-    public void nonblocked262144() throws TTException {
-        insert(262144, false);
-        mTrx.close();
-        System.out.println("262144");
-    }
+//
+//    @Bench
+//    public void nonblocked016384() throws TTException {
+//        insert(16384, false);
+//        mTrx.close();
+//        System.out.println("16384");
+//    }
+//
+//    @Bench
+//    public void nonblocked032768() throws TTException {
+//        insert(32768, false);
+//        System.out.println("32768");
+//    }
+//
+//    @Bench
+//    public void nonblocked065536() throws TTException {
+//        insert(65536, false);
+//        mTrx.close();
+//        System.out.println("65536");
+//    }
+//
+//    @Bench
+//    public void nonblocked131072() throws TTException {
+//        insert(131072, false);
+//        mTrx.close();
+//        System.out.println("131072");
+//    }
+//
+//    @Bench
+//    public void nonblocked262144() throws TTException {
+//        insert(262144, false);
+//        mTrx.close();
+//        System.out.println("262144");
+//    }
 
     @AfterEachRun
     public void tearDown() throws TTException {
@@ -197,27 +196,27 @@ public class InsertBench {
         counter++;
     }
 
-    final static File outputFold = new File("/Users/sebi/listenerBench");
+//    final static File outputFold = new File("/Users/sebi/listenerBench");
 
     public static void main(String[] args) {
-        final File resultFold = new File("/Users/sebi/resBench");
+//        final File resultFold = new File("/Users/sebi/resBench");
         // IOUtils.recursiveDelete(outputFold);
-        IOUtils.recursiveDelete(resultFold);
-        outputFold.mkdirs();
-        resultFold.mkdirs();
+//        IOUtils.recursiveDelete(resultFold);
+//        outputFold.mkdirs();
+//        resultFold.mkdirs();
 
         Benchmark bench = new Benchmark(new Config());
         bench.add(InsertBench.class);
         BenchmarkResult res = bench.run();
         new TabularSummaryOutput().visitBenchmark(res);
 
-        new CSVOutput(resultFold).visitBenchmark(res);
+//        new CSVOutput(resultFold).visitBenchmark(res);
 
     }
 
     static class Config extends AbstractConfig {
 
-        private final static int RUNS = 10;
+        private final static int RUNS = 1;
         private final static Set<AbstractMeter> METERS = new HashSet<AbstractMeter>();
         private final static Set<AbstractOutput> OUTPUT = new HashSet<AbstractOutput>();
 
@@ -227,8 +226,8 @@ public class InsertBench {
         static {
             METERS.add(new TimeMeter(Time.MilliSeconds));
 
-            OUTPUT.add(new CSVOutput(outputFold));
-            OUTPUT.add(new TabularSummaryOutput());
+//            OUTPUT.add(new CSVOutput(outputFold));
+//            OUTPUT.add(new TabularSummaryOutput());
         }
 
         /**

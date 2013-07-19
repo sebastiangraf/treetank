@@ -22,26 +22,15 @@ import org.perfidix.ouput.CSVOutput;
 import org.perfidix.ouput.TabularSummaryOutput;
 import org.perfidix.result.BenchmarkResult;
 import org.treetank.access.Storage;
-import org.treetank.access.conf.ModuleSetter;
-import org.treetank.access.conf.ResourceConfiguration;
-import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
-import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.api.IBucketReadTrx;
-import org.treetank.api.IBucketWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
-import org.treetank.bucket.DumbMetaEntryFactory;
-import org.treetank.bucket.DumbNodeFactory;
 import org.treetank.bucket.DumbNodeFactory.DumbNode;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IOUtils;
-import org.treetank.io.jclouds.JCloudsStorage;
-
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 
 /**
  * Benchmarking the getting of data. ELEMENTS nodes are inserted within FACTOR revisions. Afterwards within
@@ -164,17 +153,17 @@ public class GetBench {
         mTrx = mSession.beginBucketRtx(mSession.getMostRecentVersion());
     }
 
-    @Bench
-    public void random016384() throws TTException {
-        get(16384, true);
-        System.out.println("163842");
-    }
+    // @Bench
+    // public void random016384() throws TTException {
+    // get(16384, true);
+    // System.out.println("163842");
+    // }
 
-    @Bench
-    public void random032768() throws TTException {
-        get(32768, true);
-        System.out.println("32768");
-    }
+    // @Bench
+    // public void random032768() throws TTException {
+    // get(32768, true);
+    // System.out.println("32768");
+    // }
 
     // @Bench
     // public void random065536() throws TTException {
@@ -187,24 +176,25 @@ public class GetBench {
     // get(131072, true);
     // System.out.println("131072");
     // }
+
+    @Bench
+    public void random262144() throws TTException {
+        get(262144, true);
+        System.out.println("262144");
+    }
+
     //
     // @Bench
-    // public void random262144() throws TTException {
-    // get(262144, true);
-    // System.out.println("262144");
+    // public void seq016384() throws TTException {
+    // get(16384, false);
+    // System.out.println("163842");
     // }
-
-    @Bench
-    public void seq016384() throws TTException {
-        get(16384, false);
-        System.out.println("163842");
-    }
-
-    @Bench
-    public void seq032768() throws TTException {
-        get(32768, false);
-        System.out.println("32768");
-    }
+    //
+    // @Bench
+    // public void seq032768() throws TTException {
+    // get(32768, false);
+    // System.out.println("32768");
+    // }
 
     // @Bench
     // public void seq065536() throws TTException {
@@ -251,7 +241,7 @@ public class GetBench {
 
     static class Config extends AbstractConfig {
 
-        private final static int RUNS = 10;
+        private final static int RUNS = 1;
         private final static Set<AbstractMeter> METERS = new HashSet<AbstractMeter>();
         private final static Set<AbstractOutput> OUTPUT = new HashSet<AbstractOutput>();
 

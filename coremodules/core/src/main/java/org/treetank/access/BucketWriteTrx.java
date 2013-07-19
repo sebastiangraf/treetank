@@ -134,7 +134,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
 
         final long revkey =
             BucketReadTrx.dereferenceLeafOfTree(pWriter,
-                pUberBucket.getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET], pRepresentRev);
+                pUberBucket.getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET], pRepresentRev)[IConstants.INDIRECT_BUCKET_COUNT.length];
         final RevisionRootBucket revBucket = (RevisionRootBucket)pWriter.read(revkey);
         final MetaBucket metaBucket =
             (MetaBucket)pWriter.read(revBucket.getReferenceKeys()[RevisionRootBucket.META_REFERENCE_OFFSET]);
@@ -257,7 +257,6 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
                 .getConfig().mNodeFac, mDelegate.mSession.getConfig().mMetaFac);
 
         mDelegate.mSession.setRunningCommit(mCommitInProgress.submit(new CommitCallable(uber, rev, meta)));
-
         // Comment here to enabled blocked behaviour
         // mDelegate.mSession.waitForRunningCommit();
 
@@ -565,8 +564,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
 
         // setting the new revRoot to the correct offset
         ((IndirectBucket)indirectContainer.getModified()).setReferenceKey(offset, mNewRoot.getBucketKey());
-        ((IndirectBucket)indirectContainer.getModified()).setReferenceHash(
-            IReferenceBucket.GUARANTEED_INDIRECT_OFFSET, IConstants.NON_HASHED);
+        ((IndirectBucket)indirectContainer.getModified()).setReferenceHash(offset, IConstants.NON_HASHED);
 
         mLog.put(indirectKey, indirectContainer);
 
