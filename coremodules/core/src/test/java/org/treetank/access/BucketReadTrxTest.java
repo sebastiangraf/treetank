@@ -26,6 +26,7 @@ import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.IBucketReadTrx;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
+import org.treetank.bucket.IConstants;
 import org.treetank.bucket.DumbMetaEntryFactory.DumbKey;
 import org.treetank.bucket.DumbMetaEntryFactory.DumbValue;
 import org.treetank.bucket.DumbNodeFactory.DumbNode;
@@ -90,8 +91,7 @@ public class BucketReadTrxTest {
      */
     @Test
     public void testCloseAndIsClosed() throws TTException {
-        IBucketReadTrx rtx =
-            mHolder.getSession().beginBucketRtx(mHolder.getSession().getMostRecentVersion());
+        IBucketReadTrx rtx = mHolder.getSession().beginBucketRtx(mHolder.getSession().getMostRecentVersion());
         testClose(mHolder.getStorage(), mHolder.getSession(), rtx);
     }
 
@@ -128,27 +128,27 @@ public class BucketReadTrxTest {
 
         IBackendReader reader = getFakedStructure(offsets);
 
-        long key = BucketReadTrx.dereferenceLeafOfTree(reader, 1, 0);
+        long key = BucketReadTrx.dereferenceLeafOfTree(reader, 1, 0)[IConstants.INDIRECT_BUCKET_COUNT.length];
         // 6 is base key because of 5 layers plus the 1 as start key
         assertEquals(6, key);
 
         offsets[4] = 127;
         reader = getFakedStructure(offsets);
-        key = BucketReadTrx.dereferenceLeafOfTree(reader, 1, 127);
+        key = BucketReadTrx.dereferenceLeafOfTree(reader, 1, 127)[IConstants.INDIRECT_BUCKET_COUNT.length];
         // 6 as base plus 127 as offset on last bucket
         assertEquals(133, key);
 
         offsets[3] = 1;
         offsets[4] = 0;
         reader = getFakedStructure(offsets);
-        key = BucketReadTrx.dereferenceLeafOfTree(reader, 1, 128);
+        key = BucketReadTrx.dereferenceLeafOfTree(reader, 1, 128)[IConstants.INDIRECT_BUCKET_COUNT.length];
         // 6 as base plus one additional offset on one level above
         assertEquals(7, key);
 
         offsets[3] = 127;
         offsets[4] = 127;
         reader = getFakedStructure(offsets);
-        key = BucketReadTrx.dereferenceLeafOfTree(reader, 1, 16383);
+        key = BucketReadTrx.dereferenceLeafOfTree(reader, 1, 16383)[IConstants.INDIRECT_BUCKET_COUNT.length];
         // 6 as base plus two times 127 as offsets on level above
         assertEquals(260, key);
 
@@ -156,7 +156,7 @@ public class BucketReadTrxTest {
         offsets[3] = 0;
         offsets[4] = 0;
         reader = getFakedStructure(offsets);
-        key = BucketReadTrx.dereferenceLeafOfTree(reader, 1, 16384);
+        key = BucketReadTrx.dereferenceLeafOfTree(reader, 1, 16384)[IConstants.INDIRECT_BUCKET_COUNT.length];
         // 6 as base plus one additional offset on two levels above
         assertEquals(7, key);
 
@@ -164,7 +164,8 @@ public class BucketReadTrxTest {
         offsets[3] = 127;
         offsets[4] = 127;
         reader = getFakedStructure(offsets);
-        key = BucketReadTrx.dereferenceLeafOfTree(reader, 1, 2097151);
+        key =
+            BucketReadTrx.dereferenceLeafOfTree(reader, 1, 2097151)[IConstants.INDIRECT_BUCKET_COUNT.length];
         // 6 as base plus three times 127 as offsets on levels above
         assertEquals(387, key);
 
@@ -173,7 +174,8 @@ public class BucketReadTrxTest {
         offsets[3] = 0;
         offsets[4] = 0;
         reader = getFakedStructure(offsets);
-        key = BucketReadTrx.dereferenceLeafOfTree(reader, 1, 2097152);
+        key =
+            BucketReadTrx.dereferenceLeafOfTree(reader, 1, 2097152)[IConstants.INDIRECT_BUCKET_COUNT.length];
         // 6 as base plus one additional offset on three levels above
         assertEquals(7, key);
 
@@ -182,7 +184,8 @@ public class BucketReadTrxTest {
         offsets[3] = 127;
         offsets[4] = 127;
         reader = getFakedStructure(offsets);
-        key = BucketReadTrx.dereferenceLeafOfTree(reader, 1, 268435455);
+        key =
+            BucketReadTrx.dereferenceLeafOfTree(reader, 1, 268435455)[IConstants.INDIRECT_BUCKET_COUNT.length];
         // 6 as base plus four times 127 as offsets on levels above
         assertEquals(514, key);
 
@@ -192,7 +195,8 @@ public class BucketReadTrxTest {
         offsets[3] = 0;
         offsets[4] = 0;
         reader = getFakedStructure(offsets);
-        key = BucketReadTrx.dereferenceLeafOfTree(reader, 1, 268435456);
+        key =
+            BucketReadTrx.dereferenceLeafOfTree(reader, 1, 268435456)[IConstants.INDIRECT_BUCKET_COUNT.length];
         // 6 as base plus one additional offset on three levels above
         assertEquals(7, key);
 
@@ -202,14 +206,16 @@ public class BucketReadTrxTest {
         offsets[3] = 127;
         offsets[4] = 127;
         reader = getFakedStructure(offsets);
-        key = BucketReadTrx.dereferenceLeafOfTree(reader, 1, 34359738367l);
+        key =
+            BucketReadTrx.dereferenceLeafOfTree(reader, 1, 34359738367l)[IConstants.INDIRECT_BUCKET_COUNT.length];
         // 6 as base plus five times 127 as offsets on levels above
         assertEquals(641, key);
 
         // false offset, not existing
         offsets[0] = 0;
         reader = getFakedStructure(offsets);
-        key = BucketReadTrx.dereferenceLeafOfTree(reader, 1, 34359738367l);
+        key =
+            BucketReadTrx.dereferenceLeafOfTree(reader, 1, 34359738367l)[IConstants.INDIRECT_BUCKET_COUNT.length];
         assertEquals(-1, key);
     }
 
@@ -267,9 +273,8 @@ public class BucketReadTrxTest {
         }
     }
 
-    protected static void
-        testClose(final IStorage pStorage, final ISession pSession, final IBucketReadTrx pRtx)
-            throws TTException {
+    protected static void testClose(final IStorage pStorage, final ISession pSession,
+        final IBucketReadTrx pRtx) throws TTException {
 
         IBucketReadTrx rtx = pRtx;
 

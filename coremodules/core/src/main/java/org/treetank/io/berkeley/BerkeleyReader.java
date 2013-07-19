@@ -60,19 +60,21 @@ public final class BerkeleyReader implements IBackendReader {
 
     /** Cache for reading data. */
     protected final Cache<Long, IBucket> mCache;
-    
+
     protected final Environment mEnv;
 
     /**
      * Constructor.
-     * @param pEnv 
+     * 
+     * @param pEnv
      * 
      * @param pDatabase
      *            {@link Storage} reference to be connected to
      * @param pBucketBinding
      *            {@link TupleBinding} for de/-serializing buckets
      */
-    public BerkeleyReader(Environment pEnv, final Database pDatabase, final TupleBinding<IBucket> pBucketBinding) {
+    public BerkeleyReader(Environment pEnv, final Database pDatabase,
+        final TupleBinding<IBucket> pBucketBinding) {
         mDatabase = pDatabase;
         mBucketBinding = pBucketBinding;
         mCache = CacheBuilder.newBuilder().maximumSize(100).build();
@@ -84,6 +86,7 @@ public final class BerkeleyReader implements IBackendReader {
      */
     @Override
     public IBucket read(final long pKey) throws TTIOException {
+        // IBucket returnval = null;
         IBucket returnval = mCache.getIfPresent(pKey);
         if (returnval == null) {
 

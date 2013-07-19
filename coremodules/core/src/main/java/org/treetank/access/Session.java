@@ -45,6 +45,7 @@ import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.api.IBucketReadTrx;
 import org.treetank.api.IBucketWriteTrx;
 import org.treetank.api.ISession;
+import org.treetank.bucket.IConstants;
 import org.treetank.bucket.MetaBucket;
 import org.treetank.bucket.RevisionRootBucket;
 import org.treetank.bucket.UberBucket;
@@ -120,7 +121,7 @@ public final class Session implements ISession {
         final RevisionRootBucket revBucket =
             (RevisionRootBucket)bucketReader
                 .read(BucketReadTrx.dereferenceLeafOfTree(bucketReader, mLastCommittedUberBucket.get()
-                    .getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET], pRevKey));
+                    .getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET], pRevKey)[IConstants.INDIRECT_BUCKET_COUNT.length]);
         final MetaBucket metaBucket =
             (MetaBucket)bucketReader
                 .read(revBucket.getReferenceKeys()[RevisionRootBucket.META_REFERENCE_OFFSET]);

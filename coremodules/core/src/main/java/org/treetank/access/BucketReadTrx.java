@@ -32,6 +32,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.treetank.access.conf.ConstructorProps;
@@ -45,6 +46,7 @@ import org.treetank.bucket.NodeBucket;
 import org.treetank.bucket.NodeBucket.DeletedNode;
 import org.treetank.bucket.RevisionRootBucket;
 import org.treetank.bucket.UberBucket;
+import org.treetank.bucket.interfaces.IBucket;
 import org.treetank.bucket.interfaces.IReferenceBucket;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
@@ -231,23 +233,33 @@ public class BucketReadTrx implements IBucketReadTrx {
         final List<NodeBucket> nodeBuckets = new ArrayList<NodeBucket>();
 
         // Getting the keys for the revRoots
-        final long currentRevKey =
+        final long[] pathToRoot =
             BucketReadTrx.dereferenceLeafOfTree(mBucketReader,
                 mUberBucket.getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET], mRootBucket
                     .getRevision());
-        final RevisionRootBucket rootBucket = (RevisionRootBucket)mBucketReader.read(currentRevKey);
+        final RevisionRootBucket rootBucket =
+            (RevisionRootBucket)mBucketReader.read(pathToRoot[IConstants.INDIRECT_BUCKET_COUNT.length]);
+
         final int numbersToRestore =
             Integer.parseInt(mSession.getConfig().mProperties.getProperty(ConstructorProps.NUMBERTORESTORE));
         // starting from the current nodebucket
-        long nodeBucketKey =
+        final long[] pathToRecentBucket =
             dereferenceLeafOfTree(mBucketReader,
                 rootBucket.getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET], pSeqNodeBucketKey);
+
         NodeBucket bucket;
+        long bucketKey = pathToRecentBucket[IConstants.INDIRECT_BUCKET_COUNT.length];
         // jumping through the nodebuckets based on the pointers
-        while (nodeBuckets.size() < numbersToRestore && nodeBucketKey > -1) {
-            bucket = (NodeBucket)mBucketReader.read(nodeBucketKey);
+        while (nodeBuckets.size() < numbersToRestore && bucketKey > -1) {
+            bucket = (NodeBucket)mBucketReader.read(bucketKey);
             nodeBuckets.add(bucket);
-            nodeBucketKey = bucket.getLastBucketPointer();
+            bucketKey = bucket.getLastBucketPointer();
+        }
+
+        // check if bucket was ever written before to perform check
+        if (bucketKey > -1) {
+            checkStructure(mBucketReader, pathToRecentBucket, rootBucket, pSeqNodeBucketKey);
+            checkStructure(mBucketReader, pathToRoot, mUberBucket, mRootBucket.getRevision());
         }
 
         return nodeBuckets;
@@ -281,35 +293,111 @@ public class BucketReadTrx implements IBucketReadTrx {
      * @throws TTIOException
      *             if something odd happens within the creation process.
      */
-    protected static final long dereferenceLeafOfTree(final IBackendReader pReader, final long pStartKey,
+    protected static final long[] dereferenceLeafOfTree(final IBackendReader pReader, final long pStartKey,
         final long pSeqBucketKey) throws TTIOException {
-        // computing the ordernumbers within all level. The ordernumbers are the position in the sequence of
-        // all buckets within the same level.
-        // ranges are for level 0: 0-127; level 1: 0-16383; level 2: 0-2097151; level 3: 0-268435455; ;level
-        // 4: 0-34359738367
-        long[] orderNumber = new long[IConstants.INDIRECT_BUCKET_COUNT.length];
-        for (int level = 0; level < orderNumber.length; level++) {
-            orderNumber[level] = pSeqBucketKey >> IConstants.INDIRECT_BUCKET_COUNT[level];
-        }
+
+        final long[] orderNumber = getOrderNumbers(pSeqBucketKey);
 
         // Initial state pointing to the indirect bucket of level 0.
-        long bucketKey = pStartKey;
+        final long[] keys = new long[IConstants.INDIRECT_BUCKET_COUNT.length + 1];
         IndirectBucket bucket = null;
+        keys[0] = pStartKey;
         // Iterate through all levels...
-
         for (int level = 0; level < orderNumber.length; level++) {
             // ..read the buckets and..
-            bucket = (IndirectBucket)pReader.read(bucketKey);
-            // ..compute the offsets out of the order-numbers pre-computed before.
-            bucketKey = bucket.getReferenceKeys()[nodeBucketOffset(orderNumber[level])];
+            bucket = (IndirectBucket)pReader.read(keys[level]);
+            // ..compute the offsets out of the order-numbers pre-computed before and store it in the
+            // key-array.
+            keys[level + 1] = bucket.getReferenceKeys()[nodeBucketOffset(orderNumber[level])];
             // if the bucketKey is 0, return -1 to distinguish mark non-written buckets explicitly.
-            if (bucketKey == 0) {
-                return -1;
+            if (keys[level + 1] == 0) {
+                Arrays.fill(keys, -1);
+                return keys;
             }
         }
 
         // Return reference to leaf of indirect tree.
-        return bucketKey;
+        return keys;
+    }
+
+    /**
+     * Checking the structure based on a long array denoting the path to a leaf (either node or revrootbucket)
+     * and their super-bucket.
+     * 
+     * The check is performed but no feedback is given because of the side-effects because of caching. This
+     * can easily be covered by flag, etc. but not in the scope of this prototype.
+     * 
+     * @param pReader
+     *            reader for getting the data from the backend
+     * @param pKeys
+     *            long array denoting the path to the leaf starting from top to bottom
+     * @param mRootOfSubtree
+     *            referencebucket representing the root
+     * @param pSeqBucketKey
+     *            order key for getting the offsets on each level
+     * @throws TTIOException
+     */
+    private static final void checkStructure(final IBackendReader pReader, final long[] pKeys,
+        final IReferenceBucket mRootOfSubtree, final long pSeqBucketKey) throws TTIOException {
+
+        // getting the offsets on each level, globally
+        final long[] orderNumbers = getOrderNumbers(pSeqBucketKey);
+        // starting from the bottong...
+        IBucket currentBucket = pReader.read(pKeys[pKeys.length - 1]);
+        // ...all data is reconstructed bottom up (meaning from behind to the begin of the path...
+        for (int i = orderNumbers.length - 1; i >= 0; i--) {
+            // ..for each element, compute the hash and..
+            // final byte[] currentHash = currentBucket.secureHash().asBytes();
+            // just for benchmarking, since the hash is atm not checked to to side-effekts in caching
+            // resolvable
+            // over flags within this retrieval
+            currentBucket.secureHash().asBytes();
+            // ..retrieve the parent and.
+            currentBucket = pReader.read(pKeys[i]);
+            // ..retrieve the hash form the storage.
+            final byte[] storedHash =
+                ((IReferenceBucket)currentBucket).getReferenceHashs()[nodeBucketOffset(orderNumbers[i])];
+            // if the hash was either bootstrapped or the bucket is currently in progress,
+            if (Arrays.equals(storedHash, IConstants.NON_HASHED)
+                || Arrays.equals(storedHash, IConstants.BOOTSTRAP_HASHED)) {
+                // ..just return.
+                return;
+            }// ...otherwise compare and print the error.
+             // else {
+             // if (!Arrays.equals(currentHash, storedHash)) {
+             // System.err.println("Hashes differ!");
+             // }
+             // }
+        }
+        // for the last level, the top (either revrootbucket or uberbucket, do the same.
+        // final byte[] currentHash = currentBucket.secureHash().asBytes();
+        // just for benchmarking, since the hash is atm not checked to to side-effekts in caching resolvable
+        // over flags within this retrieval
+        currentBucket.secureHash().asBytes();
+        final byte[] storedHash =
+            mRootOfSubtree.getReferenceHashs()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET];
+        // since the revroot currently in progress is linked to former substructure but has no actual hash,
+        // ignore it in that case.
+        if (Arrays.equals(storedHash, IConstants.NON_HASHED)
+            || Arrays.equals(storedHash, IConstants.BOOTSTRAP_HASHED)) {
+            return;
+            // } else {
+            // if (!Arrays.equals(currentHash, storedHash)) {
+            // System.err.println("Hashes differ!");
+            // }
+        }
+    }
+
+    private static final long[] getOrderNumbers(final long pSeqBucketKey) {
+        // computing the ordernumbers within all level. The ordernumbers are the position in the sequence of
+        // all buckets within the same level.
+        // ranges are for level 0: 0-127; level 1: 0-16383; level 2: 0-2097151; level 3: 0-268435455; ;level
+        // 4: 0-34359738367
+        final long[] orderNumber = new long[IConstants.INDIRECT_BUCKET_COUNT.length];
+        for (int level = 0; level < orderNumber.length; level++) {
+            orderNumber[level] = pSeqBucketKey >> IConstants.INDIRECT_BUCKET_COUNT[level];
+        }
+        return orderNumber;
     }
 
     /**

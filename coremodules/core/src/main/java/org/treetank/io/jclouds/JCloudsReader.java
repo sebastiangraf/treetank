@@ -32,25 +32,25 @@ import com.google.common.cache.CacheBuilder;
  */
 public class JCloudsReader implements IBackendReader {
 
-//    private final static File readFile = new File("/Users/sebi/Desktop/runtimeResults/readaccess.txt");
-//    private final static File downloadFile =
-//        new File("/Users/sebi/Desktop/runtimeResults/downloadaccess.txt");
-//
-//    static final FileWriter reader;
-//    static final FileWriter download;
-//
-//    static {
-//        try {
-//            reader = new FileWriter(readFile);
-//            download = new FileWriter(downloadFile);
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
+    // private final static File readFile = new File("/Users/sebi/Desktop/runtimeResults/readaccess.txt");
+    // private final static File downloadFile =
+    // new File("/Users/sebi/Desktop/runtimeResults/downloadaccess.txt");
+    //
+    // static final FileWriter reader;
+    // static final FileWriter download;
+    //
+    // static {
+    // try {
+    // reader = new FileWriter(readFile);
+    // download = new FileWriter(downloadFile);
+    // } catch (IOException e) {
+    // throw new RuntimeException(e);
+    // }
+    // }
 
     private final static long POISONNUMBER = -15;
 
-//    private final static int BUCKETS_TO_PREFETCH = 3;
+    // private final static int BUCKETS_TO_PREFETCH = 3;
 
     /** Blob Store for Reading the data. */
     protected final BlobStore mBlobStore;
@@ -117,12 +117,13 @@ public class JCloudsReader implements IBackendReader {
      */
     @Override
     public IBucket read(long pKey) throws TTIOException {
+        // IBucket returnval = null;
         IBucket returnval = mCache.getIfPresent(pKey);
         if (returnval == null) {
             try {
                 returnval = getAndprefetchBuckets(pKey);
-//                reader.write(returnval.getBucketKey() + "," + returnval.getClass().getName() + "\n");
-//                reader.flush();
+                // reader.write(returnval.getBucketKey() + "," + returnval.getClass().getName() + "\n");
+                // reader.flush();
             } catch (Exception exc) {
                 throw new TTIOException(exc);
             }
@@ -131,7 +132,8 @@ public class JCloudsReader implements IBackendReader {
 
     }
 
-    private final IBucket getAndprefetchBuckets(final long pId) throws InterruptedException, ExecutionException {
+    private final IBucket getAndprefetchBuckets(final long pId) throws InterruptedException,
+        ExecutionException {
         IBucket returnVal = null;
         // // Future<Map.Entry<Long, IBucket>> startTask = null;
         // for (long i = pId; i < pId + BUCKETS_TO_PREFETCH; i++) {
@@ -160,7 +162,7 @@ public class JCloudsReader implements IBackendReader {
     @Override
     public void close() throws TTIOException {
         // mReaderCompletion.submit(new PoisonTask());
-        // mCache.invalidateAll();
+        mCache.invalidateAll();
         // mReaderService.shutdown();
         // try {
         // mReaderService.awaitTermination(100, TimeUnit.SECONDS);
