@@ -33,7 +33,7 @@ package org.treetank.node.interfaces;
  * Common interface for all item kinds. An item can be a node or an atomic value.
  * </p>
  */
-public interface INode extends org.treetank.api.INode {
+public interface INode extends org.treetank.api.IData {
 
     /**
      * Gets key of the context item's parent.

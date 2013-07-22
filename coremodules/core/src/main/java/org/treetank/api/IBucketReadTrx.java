@@ -19,7 +19,7 @@ import org.treetank.exception.TTIOException;
  *      final IBucketReadTrx pRtx = session.beginBucketRtx(REVISION);
  * </code>
  * 
- * Each {@link IBucketReadTrx} can afterwards get nodes from the bucket-layer and the underlaying backend.
+ * Each {@link IBucketReadTrx} can afterwards get datas from the bucket-layer and the underlaying backend.
  * Note that each session furthermore has access to a centralized store of common strings referencable over a
  * key.
  * 
@@ -29,15 +29,15 @@ import org.treetank.exception.TTIOException;
 public interface IBucketReadTrx {
 
     /**
-     * Getting the node related to a key.
+     * Getting the data related to a key.
      * 
      * @param pKey
-     *            the key of the node
-     * @return a suitable {@link INode}
+     *            the key of the data
+     * @return a suitable {@link IData}
      * @throws TTException
      *             if anything weird happens
      */
-    INode getNode(final long pKey) throws TTIOException;
+    IData getData(final long pKey) throws TTIOException;
 
     /**
      * Getting the revision number of this transaction

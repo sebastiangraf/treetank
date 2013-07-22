@@ -79,7 +79,7 @@ public final class LevelOrderAxis extends AbsAxis {
         super.reset(paramNodeKey);
         mFirstChildKeyList = new LinkedList<Long>();
         if (isSelfIncluded()) {
-            mNextKey = getNode().getNodeKey();
+            mNextKey = getNode().getDataKey();
         } else {
             if (((IStructNode)getNode()).hasRightSibling()) {
                 mNextKey = ((IStructNode)getNode()).getRightSiblingKey();

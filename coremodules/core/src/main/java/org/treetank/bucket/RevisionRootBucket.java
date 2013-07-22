@@ -45,7 +45,7 @@ import com.google.common.hash.Hasher;
  * <h1>RevisionRootBucket</h1>
  * 
  * <p>
- * Revision root bucket holds a reference to the name bucket as well as the static node-bucket tree.
+ * Revision root bucket holds a reference to the name bucket as well as the static data-bucket tree.
  * </p>
  * 
  * @author Sebastian Graf, University of Konstanz
@@ -56,8 +56,8 @@ public final class RevisionRootBucket implements IRevisionBucket, IReferenceBuck
     /** Offset of name bucket reference. */
     public static final int META_REFERENCE_OFFSET = 1;
 
-    /** Last allocated node key. */
-    private long mMaxNodeKey;
+    /** Last allocated data key. */
+    private long mMaxDataKey;
 
     /** Revision of this bucket. */
     private final long mRevision;
@@ -78,32 +78,32 @@ public final class RevisionRootBucket implements IRevisionBucket, IReferenceBuck
      *            Key of this bucket
      * @param pRevision
      *            to be created
-     * @param pMaxNodeKey
-     *            maximal node key given
+     * @param pMaxDataKey
+     *            maximal data key given
      */
-    public RevisionRootBucket(final long pBucketKey, final long pRevision, final long pMaxNodeKey) {
+    public RevisionRootBucket(final long pBucketKey, final long pRevision, final long pMaxDataKey) {
         mRevision = pRevision;
         mReferenceKeys = new long[2];
         mReferenceHashs = new byte[2][];
         Arrays.fill(mReferenceHashs, new byte[0]);
-        mMaxNodeKey = pMaxNodeKey;
+        mMaxDataKey = pMaxDataKey;
         mBucketKey = pBucketKey;
     }
 
     /**
-     * Get last allocated node key.
+     * Get last allocated data key.
      * 
-     * @return Last allocated node key.
+     * @return Last allocated data key.
      */
-    public long getMaxNodeKey() {
-        return mMaxNodeKey;
+    public long getMaxDataKey() {
+        return mMaxDataKey;
     }
 
     /**
-     * Increment number of nodes by one while allocating another key.
+     * Increment number of datas by one while allocating another key.
      */
-    public long incrementMaxNodeKey() {
-        return mMaxNodeKey++;
+    public long incrementMaxDataKey() {
+        return mMaxDataKey++;
     }
 
     /**
@@ -123,7 +123,7 @@ public final class RevisionRootBucket implements IRevisionBucket, IReferenceBuck
             pOutput.writeInt(IConstants.REVISIONROOTBUCKET);
             pOutput.writeLong(mBucketKey);
             pOutput.writeLong(mRevision);
-            pOutput.writeLong(mMaxNodeKey);
+            pOutput.writeLong(mMaxDataKey);
             for (long key : mReferenceKeys) {
                 pOutput.writeLong(key);
             }
@@ -166,7 +166,7 @@ public final class RevisionRootBucket implements IRevisionBucket, IReferenceBuck
     @Override
     public String toString() {
         return toStringHelper(this).add("mBucketKey", mBucketKey).add("mRevision", mRevision).add(
-            "mMaxNodeKey", mMaxNodeKey).add("mReferenceKeys", Arrays.toString(mReferenceKeys)).add(
+            "mMaxDataKey", mMaxDataKey).add("mReferenceKeys", Arrays.toString(mReferenceKeys)).add(
             "mReferenceHashs", Arrays.toString(mReferenceHashs)).toString();
     }
 
@@ -194,7 +194,7 @@ public final class RevisionRootBucket implements IRevisionBucket, IReferenceBuck
         final int prime = 53623;
         int result = 1;
         result = prime * result + (int)(mBucketKey ^ (mBucketKey >>> 32));
-        result = prime * result + (int)(mMaxNodeKey ^ (mMaxNodeKey >>> 32));
+        result = prime * result + (int)(mMaxDataKey ^ (mMaxDataKey >>> 32));
         result = prime * result + Arrays.hashCode(mReferenceKeys);
         for (byte[] hash : mReferenceHashs) {
             result = prime * result + Arrays.hashCode(hash);
@@ -217,7 +217,7 @@ public final class RevisionRootBucket implements IRevisionBucket, IReferenceBuck
     @Override
     public HashCode secureHash() {
         final Hasher code =
-            StandardSettings.HASHFUNC.newHasher().putLong(mBucketKey).putLong(mMaxNodeKey).putLong(mRevision);
+            StandardSettings.HASHFUNC.newHasher().putLong(mBucketKey).putLong(mMaxDataKey).putLong(mRevision);
         for (int i = 0; i < mReferenceKeys.length; i++) {
             code.putLong(mReferenceKeys[i]);
             code.putBytes(mReferenceHashs[i]);

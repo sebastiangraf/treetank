@@ -41,7 +41,7 @@ import java.util.Properties;
 
 import org.treetank.access.Session;
 import org.treetank.api.IMetaEntryFactory;
-import org.treetank.api.INodeFactory;
+import org.treetank.api.IDataFactory;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackend;
 import org.treetank.io.IBackend.IBackendFactory;
@@ -130,8 +130,8 @@ public final class ResourceConfiguration {
     /** Path for the resource to be associated. */
     public final Properties mProperties;
 
-    /** Node Factory for deserializing nodes. */
-    public final INodeFactory mNodeFac;
+    /** Data Factory for deserializing data. */
+    public final IDataFactory mDataFac;
 
     /** MetaEntry Factory for deserializing meta-entries. */
     public final IMetaEntryFactory mMetaFac;
@@ -144,13 +144,13 @@ public final class ResourceConfiguration {
      * @param pProperties
      * @param pBackend
      * @param pRevision
-     * @param pNodeFac
+     * @param pDataFac
      */
     @Inject
     public ResourceConfiguration(@Assisted Properties pProperties, IBackendFactory pBackend,
-        IRevisioning pRevision, INodeFactory pNodeFac, IMetaEntryFactory pMetaFac) {
+        IRevisioning pRevision, IDataFactory pDataFac, IMetaEntryFactory pMetaFac) {
 
-        this(pProperties, pBackend.create(pProperties), pRevision, pNodeFac, pMetaFac);
+        this(pProperties, pBackend.create(pProperties), pRevision, pDataFac, pMetaFac);
     }
 
     /**
@@ -159,14 +159,14 @@ public final class ResourceConfiguration {
      * @param pResourceFile
      * @param pStorage
      * @param pRevisioning
-     * @param pNodeFac
+     * @param pDataFac
      */
     public ResourceConfiguration(Properties pProperties, IBackend pStorage, IRevisioning pRevisioning,
-        INodeFactory pNodeFac, IMetaEntryFactory pMetaFac) {
+        IDataFactory pDataFac, IMetaEntryFactory pMetaFac) {
         mProperties = pProperties;
         mBackend = pStorage;
         mRevision = pRevisioning;
-        mNodeFac = pNodeFac;
+        mDataFac = pDataFac;
         mMetaFac = pMetaFac;
     }
 
@@ -192,7 +192,7 @@ public final class ResourceConfiguration {
     }
 
     private static final String[] JSONNAMES = {
-        "metaentryClass", "revisioningClass", "nodeFactoryClass", "byteHandlerClasses", "storageClass",
+        "metaentryClass", "revisioningClass", "DataFactoryClass", "byteHandlerClasses", "storageClass",
         "properties"
     };
 
@@ -211,8 +211,8 @@ public final class ResourceConfiguration {
             jsonWriter.name(JSONNAMES[0]).value(pConfig.mMetaFac.getClass().getName());
             // caring about the versioning
             jsonWriter.name(JSONNAMES[1]).value(pConfig.mRevision.getClass().getName());
-            // caring about the NodeFactory
-            jsonWriter.name(JSONNAMES[2]).value(pConfig.mNodeFac.getClass().getName());
+            // caring about the DataFactory
+            jsonWriter.name(JSONNAMES[2]).value(pConfig.mDataFac.getClass().getName());
             // caring about the ByteHandlers
             IByteHandlerPipeline byteHandler = pConfig.mBackend.getByteHandler();
             jsonWriter.name(JSONNAMES[3]);
@@ -263,9 +263,9 @@ public final class ResourceConfiguration {
             // caring about the versioning
             jsonReader.nextName().equals(JSONNAMES[1]);
             Class<?> revClazz = Class.forName(jsonReader.nextString());
-            // caring about the NodeFactory
+            // caring about the DataFactory
             jsonReader.nextName().equals(JSONNAMES[2]);
-            Class<?> nodeFacClazz = Class.forName(jsonReader.nextString());
+            Class<?> dataFacClazz = Class.forName(jsonReader.nextString());
 
             // caring about the ByteHandlers
             List<IByteHandler> handlerList = new ArrayList<IByteHandler>();
@@ -302,16 +302,16 @@ public final class ResourceConfiguration {
             Constructor<?> metaBucketCons = metaBucketClazz.getConstructors()[0];
             IMetaEntryFactory metaFac = (IMetaEntryFactory)metaBucketCons.newInstance();
 
-            Constructor<?> nodeFacCons = nodeFacClazz.getConstructors()[0];
-            INodeFactory nodeFactory = (INodeFactory)nodeFacCons.newInstance();
+            Constructor<?> dataFacCons = dataFacClazz.getConstructors()[0];
+            IDataFactory dataFactory = (IDataFactory)dataFacCons.newInstance();
 
             Constructor<?> revCons = revClazz.getConstructors()[0];
             IRevisioning revObject = (IRevisioning)revCons.newInstance();
 
             Constructor<?> storageCons = storageClazz.getConstructors()[0];
-            IBackend backend = (IBackend)storageCons.newInstance(props, nodeFactory, metaFac, pipeline);
+            IBackend backend = (IBackend)storageCons.newInstance(props, dataFactory, metaFac, pipeline);
 
-            return new ResourceConfiguration(props, backend, revObject, nodeFactory, metaFac);
+            return new ResourceConfiguration(props, backend, revObject, dataFactory, metaFac);
 
         } catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException
         | InvocationTargetException exc) {
@@ -324,7 +324,7 @@ public final class ResourceConfiguration {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(mBackend, mRevision, mProperties, mNodeFac);
+        return Objects.hash(mBackend, mRevision, mProperties, mDataFac);
     }
 
     /**
@@ -341,6 +341,6 @@ public final class ResourceConfiguration {
     @Override
     public String toString() {
         return toStringHelper(this).add("mBackend", mBackend.getClass()).add("mRevision", mRevision).add(
-            "mProperties", mProperties).add("mNodeFac", mNodeFac.getClass().getName()).toString();
+            "mProperties", mProperties).add("mDataFac", mDataFac.getClass().getName()).toString();
     }
 }

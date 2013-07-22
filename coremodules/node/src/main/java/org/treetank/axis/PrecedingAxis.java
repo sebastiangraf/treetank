@@ -134,21 +134,21 @@ public class PrecedingAxis extends AbsAxis {
     private void getLastChild() {
 
         // nodekey of the root of the current subtree
-        final long parent = getNode().getNodeKey();
+        final long parent = getNode().getDataKey();
 
         // traverse tree in pre order to the leftmost leaf of the subtree and
         // push
         // all nodes to the stack
         if (((IStructNode)getNode()).hasFirstChild()) {
             while (((IStructNode)getNode()).hasFirstChild()) {
-                mStack.push(getNode().getNodeKey());
+                mStack.push(getNode().getDataKey());
                 moveTo(((IStructNode)getNode()).getFirstChildKey());
             }
 
             // traverse all the siblings of the leftmost leave and all their
             // descendants and push all of them to the stack
             while (((IStructNode)getNode()).hasRightSibling()) {
-                mStack.push(getNode().getNodeKey());
+                mStack.push(getNode().getDataKey());
                 moveTo(((IStructNode)getNode()).getRightSiblingKey());
                 getLastChild();
             }
@@ -158,7 +158,7 @@ public class PrecedingAxis extends AbsAxis {
             // right siblings and their descendants on each step
             if (getNode().hasParent() && (getNode().getParentKey() != parent)) {
 
-                mStack.push(getNode().getNodeKey());
+                mStack.push(getNode().getDataKey());
                 while (getNode().hasParent() && (getNode().getParentKey() != parent)) {
 
                     moveTo(getNode().getParentKey());
@@ -170,7 +170,7 @@ public class PrecedingAxis extends AbsAxis {
 
                         moveTo(((IStructNode)getNode()).getRightSiblingKey());
                         getLastChild();
-                        mStack.push(getNode().getNodeKey());
+                        mStack.push(getNode().getDataKey());
                     }
                 }
 

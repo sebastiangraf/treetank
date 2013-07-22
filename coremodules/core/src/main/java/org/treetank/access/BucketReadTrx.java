@@ -37,13 +37,13 @@ import java.util.List;
 
 import org.treetank.access.conf.ConstructorProps;
 import org.treetank.api.IBucketReadTrx;
-import org.treetank.api.INode;
+import org.treetank.api.IData;
 import org.treetank.api.ISession;
 import org.treetank.bucket.IConstants;
 import org.treetank.bucket.IndirectBucket;
 import org.treetank.bucket.MetaBucket;
-import org.treetank.bucket.NodeBucket;
-import org.treetank.bucket.NodeBucket.DeletedNode;
+import org.treetank.bucket.DataBucket;
+import org.treetank.bucket.DataBucket.DeletedData;
 import org.treetank.bucket.RevisionRootBucket;
 import org.treetank.bucket.UberBucket;
 import org.treetank.bucket.interfaces.IBucket;
@@ -90,7 +90,7 @@ public class BucketReadTrx implements IBucketReadTrx {
     private boolean mClose;
 
     /** Cache for reading data. */
-    protected final Cache<Long, NodeBucket> mCache;
+    protected final Cache<Long, DataBucket> mCache;
 
     /**
      * Standard constructor.
@@ -121,34 +121,34 @@ public class BucketReadTrx implements IBucketReadTrx {
     }
 
     /**
-     * Getting the node related to the given node key.
+     * Getting the data related to the given data key.
      * 
-     * @param pNodeKey
+     * @param pDataKey
      *            searched for
-     * @return the related Node
+     * @return the related data
      * @throws TTIOException
      *             if the read to the persistent storage fails
      */
-    public INode getNode(final long pNodeKey) throws TTIOException {
-        checkArgument(pNodeKey >= 0);
+    public IData getData(final long pDataKey) throws TTIOException {
+        checkArgument(pDataKey >= 0);
         checkState(!mClose, "Transaction already closed");
-        // Calculate bucket and node part for given nodeKey.
-        final long seqBucketKey = pNodeKey >> IConstants.INDIRECT_BUCKET_COUNT[3];
-        final int nodeBucketOffset = nodeBucketOffset(pNodeKey);
-        NodeBucket bucket = mCache.getIfPresent(seqBucketKey);
+        // Calculate bucket and data part for given datakey.
+        final long seqBucketKey = pDataKey >> IConstants.INDIRECT_BUCKET_COUNT[3];
+        final int dataBucketOffset = dataBucketOffset(pDataKey);
+        DataBucket bucket = mCache.getIfPresent(seqBucketKey);
         if (bucket == null) {
-            final List<NodeBucket> listRevs = getSnapshotBuckets(seqBucketKey);
-            final NodeBucket[] revs = listRevs.toArray(new NodeBucket[listRevs.size()]);
+            final List<DataBucket> listRevs = getSnapshotBuckets(seqBucketKey);
+            final DataBucket[] revs = listRevs.toArray(new DataBucket[listRevs.size()]);
             checkState(revs.length > 0, "Number of Buckets to reconstruct must be larger than 0");
             // Build up the complete bucket.
             final IRevisioning revision = mSession.getConfig().mRevision;
             bucket = revision.combineBuckets(revs);
             mCache.put(seqBucketKey, bucket);
         }
-        final INode returnVal = bucket.getNode(nodeBucketOffset);
-        // root-node is excluded from the checkagainst deletion based on the necesssity of the node-layer to
-        // reference against this node while creation of the transaction
-        if (pNodeKey == 0) {
+        final IData returnVal = bucket.getData(dataBucketOffset);
+        // root-fsys is excluded from the checkagainst deletion based on the necesssity of the data-layer to
+        // reference against this data while creation of the transaction
+        if (pDataKey == 0) {
             return returnVal;
         } else {
             return checkItemIfDeleted(returnVal);
@@ -200,16 +200,16 @@ public class BucketReadTrx implements IBucketReadTrx {
     }
 
     /**
-     * Method to check if an {@link INode} is a deleted one.
+     * Method to check if an {@link IData} is a deleted one.
      * 
      * @param pToCheck
      *            of the IItem
      * @return the item if it is valid, null otherwise
      */
-    protected final INode checkItemIfDeleted(final INode pToCheck) {
+    protected final IData checkItemIfDeleted(final IData pToCheck) {
         if (pToCheck == null) {
-            throw new IllegalStateException(new StringBuilder("Node not existing.").toString());
-        } else if (pToCheck instanceof DeletedNode) {
+            throw new IllegalStateException(new StringBuilder("Data not existing.").toString());
+        } else if (pToCheck instanceof DeletedData) {
             return null;
         } else {
             return pToCheck;
@@ -217,20 +217,20 @@ public class BucketReadTrx implements IBucketReadTrx {
     }
 
     /**
-     * Dereference node bucket reference.
+     * Dereference data bucket reference.
      * 
-     * @param pSeqNodeBucketKey
-     *            Key of node bucket.
+     * @param pSeqDataBucketKey
+     *            Key of data bucket.
      * @return Dereferenced bucket.
      * 
      * @throws TTIOException
      *             if something odd happens within the creation process.
      */
-    protected final List<NodeBucket> getSnapshotBuckets(final long pSeqNodeBucketKey) throws TTIOException {
+    protected final List<DataBucket> getSnapshotBuckets(final long pSeqDataBucketKey) throws TTIOException {
 
         // Return Value, since the revision iterates a flexible number of version, this has to be a list
         // first.
-        final List<NodeBucket> nodeBuckets = new ArrayList<NodeBucket>();
+        final List<DataBucket> dataBuckets = new ArrayList<DataBucket>();
 
         // Getting the keys for the revRoots
         final long[] pathToRoot =
@@ -242,43 +242,43 @@ public class BucketReadTrx implements IBucketReadTrx {
 
         final int numbersToRestore =
             Integer.parseInt(mSession.getConfig().mProperties.getProperty(ConstructorProps.NUMBERTORESTORE));
-        // starting from the current nodebucket
+        // starting from the current databucket
         final long[] pathToRecentBucket =
             dereferenceLeafOfTree(mBucketReader,
-                rootBucket.getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET], pSeqNodeBucketKey);
+                rootBucket.getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET], pSeqDataBucketKey);
 
-        NodeBucket bucket;
+        DataBucket bucket;
         long bucketKey = pathToRecentBucket[IConstants.INDIRECT_BUCKET_COUNT.length];
-        // jumping through the nodebuckets based on the pointers
-        while (nodeBuckets.size() < numbersToRestore && bucketKey > -1) {
-            bucket = (NodeBucket)mBucketReader.read(bucketKey);
-            nodeBuckets.add(bucket);
+        // jumping through the databuckets based on the pointers
+        while (dataBuckets.size() < numbersToRestore && bucketKey > -1) {
+            bucket = (DataBucket)mBucketReader.read(bucketKey);
+            dataBuckets.add(bucket);
             bucketKey = bucket.getLastBucketPointer();
         }
 
         // check if bucket was ever written before to perform check
         if (bucketKey > -1) {
-            checkStructure(mBucketReader, pathToRecentBucket, rootBucket, pSeqNodeBucketKey);
+            checkStructure(mBucketReader, pathToRecentBucket, rootBucket, pSeqDataBucketKey);
             checkStructure(mBucketReader, pathToRoot, mUberBucket, mRootBucket.getRevision());
         }
 
-        return nodeBuckets;
+        return dataBuckets;
 
     }
 
     /**
-     * Calculate node bucket offset for a given node key.
+     * Calculate data bucket offset for a given data key.
      * 
-     * @param pNodeKey
-     *            Node key to find offset for.
-     * @return Offset into node bucket.
+     * @param pDataKey
+     *            data key to find offset for.
+     * @return Offset into data bucket.
      */
-    protected static final int nodeBucketOffset(final long pNodeKey) {
+    protected static final int dataBucketOffset(final long pDataKey) {
         // INDIRECT_BUCKET_COUNT[3] is only taken to get the difference between 2^7 and the actual
-        // nodekey as offset. It has nothing to do with the levels.
-        final long nodeBucketOffset =
-            (pNodeKey - ((pNodeKey >> IConstants.INDIRECT_BUCKET_COUNT[3]) << IConstants.INDIRECT_BUCKET_COUNT[3]));
-        return (int)nodeBucketOffset;
+        // datakey as offset. It has nothing to do with the levels.
+        final long dataBucketOffset =
+            (pDataKey - ((pDataKey >> IConstants.INDIRECT_BUCKET_COUNT[3]) << IConstants.INDIRECT_BUCKET_COUNT[3]));
+        return (int)dataBucketOffset;
     }
 
     /**
@@ -308,7 +308,7 @@ public class BucketReadTrx implements IBucketReadTrx {
             bucket = (IndirectBucket)pReader.read(keys[level]);
             // ..compute the offsets out of the order-numbers pre-computed before and store it in the
             // key-array.
-            keys[level + 1] = bucket.getReferenceKeys()[nodeBucketOffset(orderNumber[level])];
+            keys[level + 1] = bucket.getReferenceKeys()[dataBucketOffset(orderNumber[level])];
             // if the bucketKey is 0, return -1 to distinguish mark non-written buckets explicitly.
             if (keys[level + 1] == 0) {
                 Arrays.fill(keys, -1);
@@ -321,7 +321,7 @@ public class BucketReadTrx implements IBucketReadTrx {
     }
 
     /**
-     * Checking the structure based on a long array denoting the path to a leaf (either node or revrootbucket)
+     * Checking the structure based on a long array denoting the path to a leaf (either data or revrootbucket)
      * and their super-bucket.
      * 
      * The check is performed but no feedback is given because of the side-effects because of caching. This
@@ -356,7 +356,7 @@ public class BucketReadTrx implements IBucketReadTrx {
             currentBucket = pReader.read(pKeys[i]);
             // ..retrieve the hash form the storage.
             final byte[] storedHash =
-                ((IReferenceBucket)currentBucket).getReferenceHashs()[nodeBucketOffset(orderNumbers[i])];
+                ((IReferenceBucket)currentBucket).getReferenceHashs()[dataBucketOffset(orderNumbers[i])];
             // if the hash was either bootstrapped or the bucket is currently in progress,
             if (Arrays.equals(storedHash, IConstants.NON_HASHED)
                 || Arrays.equals(storedHash, IConstants.BOOTSTRAP_HASHED)) {

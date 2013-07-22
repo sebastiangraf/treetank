@@ -35,7 +35,7 @@ import com.google.common.hash.HashCode;
 /**
  * Interface to represent one bucket.
  * A bucket is the atomic unique to be serializible and represents one bucket when stored.
- * Pointers as well as any nodes may be stored within one bucket.
+ * Pointers as well as any datas may be stored within one bucket.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 

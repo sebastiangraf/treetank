@@ -141,7 +141,7 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
             return;
         }
 
-        long newKey = getBucketTransaction().incrementNodeKey();
+        long newKey = getBucketTransaction().incrementDataKey();
 
         if (fileExists(pRelativePath)) {
             removeFile(pRelativePath);
@@ -162,7 +162,7 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
 
         headerNode.setVal(buffer.array());
 
-        getBucketTransaction().setNode(headerNode);
+        getBucketTransaction().setData(headerNode);
 
         // Creating and setting following nodes based on the file size.
         FileNode node;
@@ -173,14 +173,14 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
             LOGGER.info("" + currentReadingAmount);
             byte[] slice = Arrays.copyOf(buffer.array(), currentReadingAmount);
 
-            node = new FileNode(getBucketTransaction().incrementNodeKey(), slice);
+            node = new FileNode(getBucketTransaction().incrementDataKey(), slice);
             node.setHeader(false);
             node.setEof(false);
 
-            lastNode = (FileNode)getBucketTransaction().getNode(node.getNodeKey() - 1);
-            lastNode.setNextNodeKey(node.getNodeKey());
-            getBucketTransaction().setNode(lastNode);
-            getBucketTransaction().setNode(node);
+            lastNode = (FileNode)getBucketTransaction().getData(node.getDataKey() - 1);
+            lastNode.setNextNodeKey(node.getDataKey());
+            getBucketTransaction().setData(lastNode);
+            getBucketTransaction().setData(node);
 
             readingAmount += currentReadingAmount;
         }
@@ -188,20 +188,20 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
         ByteArrayDataOutput size = ByteStreams.newDataOutput();
         size.writeInt(readingAmount);
 
-        node = new FileNode(getBucketTransaction().incrementNodeKey(), size.toByteArray());
+        node = new FileNode(getBucketTransaction().incrementDataKey(), size.toByteArray());
 
         node.setHeader(false);
         node.setEof(true);
 
-        lastNode = (FileNode)getBucketTransaction().getNode(node.getNodeKey() - 1);
+        lastNode = (FileNode)getBucketTransaction().getData(node.getDataKey() - 1);
 
-        lastNode.setNextNodeKey(node.getNodeKey());
+        lastNode.setNextNodeKey(node.getDataKey());
 
-        getBucketTransaction().setNode(lastNode);
+        getBucketTransaction().setData(lastNode);
 
-        getBucketTransaction().setNode(node);
+        getBucketTransaction().setData(node);
 
-        Preconditions.checkArgument(getBucketTransaction().getNode(newKey) != null);
+        Preconditions.checkArgument(getBucketTransaction().getData(newKey) != null);
         lock.release();
         ch.close();
 

@@ -140,7 +140,7 @@ public final class OverallTest {
                 }
             }
         }
-        final long key = holder.getNWtx().getNode().getNodeKey();
+        final long key = holder.getNWtx().getNode().getDataKey();
         holder.getNWtx().remove();
         holder.getNWtx().insertElementAsFirstChild(new QName(getString()));
         holder.getNWtx().moveTo(key);
@@ -173,7 +173,7 @@ public final class OverallTest {
     // final CoreTestHelper.Holder holder = CoreTestHelper.Holder.generateStorage();
     //
     // final IRevisioning revision = new SlidingSnapshot();
-    // final INodeFactory nodeFac = new TreeNodeFactory();
+    // final IDataFactory nodeFac = new TreeNodeFactory();
     // final IMetaEntryFactory metaFac = new NodeMetaPageFactory();
     // final Properties props =
     // StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),

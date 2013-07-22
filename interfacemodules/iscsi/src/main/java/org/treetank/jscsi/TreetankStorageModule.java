@@ -36,7 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.treetank.access.IscsiWriteTrx;
 import org.treetank.api.IIscsiWriteTrx;
-import org.treetank.api.INode;
+import org.treetank.api.IData;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
 
@@ -148,9 +148,9 @@ public class TreetankStorageModule implements IStorageModule {
         LOGGER.debug("Creating storage with " + mNodeNumbers + " nodes containing " + BLOCKS_IN_NODE
             + " blocks with " + IStorageModule.VIRTUAL_BLOCK_SIZE + " bytes each.");
 
-        INode node = this.mRtx.getCurrentNode();
+        IData data = this.mRtx.getCurrentNode();
 
-        if (node != null) {
+        if (data != null) {
             return;
         }
         boolean hasNextNode = true;

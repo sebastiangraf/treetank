@@ -10,14 +10,14 @@ import org.treetank.exception.TTIOException;
 import com.google.common.hash.Funnel;
 
 /**
- * Overall {@link INode}-Interface for the interaction with the bucket-layer. All
+ * Overall {@link IData}-Interface for the interaction with the bucket-layer. All
  * persistence functionality must be handled over this interface while all
- * node-layers interfaces inherit from this interface.
+ * data-layers interfaces inherit from this interface.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public interface INode {
+public interface IData {
 
     /**
      * Serializing to given dataput
@@ -29,20 +29,20 @@ public interface INode {
     void serialize(final DataOutput pOutput) throws TTIOException;
 
     /**
-     * Gets unique {@link INode} key.
-     * This key should be set over the <code>IBucketWriteTrx.incrementNodeKey</code> for getting the correct
+     * Gets unique {@link IData} key.
+     * This key should be set over the <code>IBucketWriteTrx.incrementDataKey</code> for getting the correct
      * offset
      * within retrievals.
      * 
-     * @return node key
+     * @return datakey
      */
-    long getNodeKey();
+    long getDataKey();
 
     /**
      * Getting a Funnel for computing guava-based hashes.
      * 
-     * @return a Funnel for this {@link INode}
+     * @return a Funnel for this {@link IData}
      */
-    Funnel<INode> getFunnel();
+    Funnel<IData> getFunnel();
 
 }

@@ -27,7 +27,7 @@ import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.IBucketReadTrx;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
-import org.treetank.bucket.DumbNodeFactory.DumbNode;
+import org.treetank.bucket.DumbDataFactory.DumbData;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IOUtils;
@@ -54,14 +54,14 @@ public class GetBench {
 
     private IStorage mStorage;
     private ISession mSession;
-    private DumbNode[] mNodesToInsert = BenchUtils.createNodes(new int[] {
+    private DumbData[] mNodesToInsert = BenchUtils.createNodes(new int[] {
         ELEMENTS
     })[0];
     private IBucketReadTrx mTrx;
 
     public GetBench() throws TTException {
         // final Injector inj =
-        // Guice.createInjector(new ModuleSetter().setNodeFacClass(DumbNodeFactory.class).setMetaFacClass(
+        // Guice.createInjector(new ModuleSetter().setNodeFacClass(DumbDataFactory.class).setMetaFacClass(
         // DumbMetaEntryFactory.class).setBackendClass(JCloudsStorage.class).createModule());
         //
         // final ResourceConfiguration resConfig =
@@ -100,7 +100,7 @@ public class GetBench {
         // for (int j = 0; j < ELEMENTS / FACTOR && continueFlag; j++) {
         // try {
         // final long keyToAdapt = Math.abs(BenchUtils.random.nextLong()) % ELEMENTS;
-        // final DumbNode node = BenchUtils.generateOne();
+        // final DumbData node = BenchUtils.generateOne();
         // node.setNodeKey(keyToAdapt);
         // trx.setNode(node);
         // } catch (Exception e) {
@@ -135,9 +135,9 @@ public class GetBench {
         for (int i = 0; i < numbersToGet; i++) {
             if (random) {
                 long nextKey = Math.abs(BenchUtils.random.nextLong()) % ELEMENTS;
-                mTrx.getNode(nextKey);
+                mTrx.getData(nextKey);
             } else {
-                mTrx.getNode(i % ELEMENTS);
+                mTrx.getData(i % ELEMENTS);
             }
             if (i % 1024 == 0) {
                 System.out.println(i + " elements read of " + numbersToGet + " with random=" + random);

@@ -79,7 +79,7 @@ public final class LabelFMESVisitor {
      * @throws TTIOException
      */
     public void visit(final ElementNode pNode) throws TTIOException {
-        final long nodeKey = pNode.getNodeKey();
+        final long nodeKey = pNode.getDataKey();
         mRtx.moveTo(nodeKey);
         for (int i = 0; i < pNode.getAttributeCount(); i++) {
             mRtx.moveToAttribute(i);
@@ -108,7 +108,7 @@ public final class LabelFMESVisitor {
      * @throws TTIOException
      */
     public void visit(final TextNode pNode) throws TTIOException {
-        mRtx.moveTo(pNode.getNodeKey());
+        mRtx.moveTo(pNode.getDataKey());
         addLeafLabel();
     }
 

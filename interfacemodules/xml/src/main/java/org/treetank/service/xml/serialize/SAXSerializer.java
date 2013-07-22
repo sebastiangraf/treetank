@@ -165,7 +165,7 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
      */
     private void generateElement(final INodeReadTrx paramRtx) throws TTIOException {
         final AttributesImpl atts = new AttributesImpl();
-        final long key = paramRtx.getNode().getNodeKey();
+        final long key = paramRtx.getNode().getDataKey();
 
         try {
             // Process namespace nodes.
@@ -238,7 +238,7 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
         Storage.createStorage(config);
         final IStorage storage = Storage.openStorage(new File(args[0]));
 
-        Injector injector = Guice.createInjector(new ModuleSetter().setNodeFacClass(TreeNodeFactory.class).setMetaFacClass(NodeMetaPageFactory.class).createModule());
+        Injector injector = Guice.createInjector(new ModuleSetter().setDataFacClass(TreeNodeFactory.class).setMetaFacClass(NodeMetaPageFactory.class).createModule());
         IBackendFactory backend = injector.getInstance(IBackendFactory.class);
         IRevisioning revision = injector.getInstance(IRevisioning.class);
         Properties props = new Properties();

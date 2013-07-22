@@ -56,39 +56,16 @@
  * final SessionConfiguration sessionConfig = new SessionConfiguration(&quot;coolResource&quot;);
  * final ISession someSession = Session.beginSession(sessionConfig);
  *  
- * final INodeWriteTrx someWTX = someSession.beginWriteTransaction();
- * final INodeReadTrx someRTX = someSession.beginReadTransaction();
- * final INodeReadTrx someConcurrentRTX = someSession.beginReadTransaction();
+ * final IBucketWriteTrx someWTX = someSession.beginWriteTransaction();
  * 
  * someWTX.abort();
  * someWTX.close();
- * someRTX.close();
- * someConcurrentRTX.close();
  * someSession.close();
  * database.close();
  * </pre>
  * 
  * </p>
- * <p>
- * Best practice to safely manipulate a TreeTank resource within a database if everything exists:
  * 
- * <pre>
- *         final IStorage database = Storage.openDatabase(new File(&quot;/path/to/db/location&quot;);
- *         final ISession session = Session.beginSession(new SessionConfiguration(&quot;existingResource&quot;);
- *         final INodeWriteTrx wtx = session.beginWriteTransaction();
- *         try {
- *           wtx.insertElementAsFirstChild("foo", "", "");
- *           ...
- *           wtx.commit();
- *         } catch (final TTException exc) {
- *           wtx.abort();
- *           throw new RuntimeException(exc);
- *         } finally {
- *           wtx.close();
- *         }
- *         session.close(); // Might also stand in the finally...
- *         database.close();
- * </pre>
  * 
  * </p>
  * 

@@ -31,7 +31,7 @@ import static com.google.common.base.Objects.toStringHelper;
 import java.io.DataOutput;
 import java.io.IOException;
 
-import org.treetank.api.INode;
+import org.treetank.api.IData;
 import org.treetank.exception.TTIOException;
 import org.treetank.node.IConstants;
 import org.treetank.node.interfaces.IValNode;
@@ -56,10 +56,10 @@ public class ValNodeDelegate implements IValNode {
      * @author Sebastian Graf, University of Konstanz
      * 
      */
-    enum ValNodeDelegateFunnel implements Funnel<org.treetank.api.INode> {
+    enum ValNodeDelegateFunnel implements Funnel<org.treetank.api.IData> {
         INSTANCE;
-        public void funnel(org.treetank.api.INode node, PrimitiveSink into) {
-            final IValNode from = (IValNode)node;
+        public void funnel(org.treetank.api.IData data, PrimitiveSink into) {
+            final IValNode from = (IValNode)data;
             into.putBytes(from.getRawValue());
         }
     }
@@ -96,10 +96,10 @@ public class ValNodeDelegate implements IValNode {
      * Delegate method for getNodeKey.
      * 
      * @return the node of the key
-     * @see org.treetank.node.delegates.NodeDelegate#getNodeKey()
+     * @see org.treetank.node.delegates.NodeDelegate#getDataKey()
      */
-    public long getNodeKey() {
-        return mDelegate.getNodeKey();
+    public long getDataKey() {
+        return mDelegate.getDataKey();
     }
 
     /**
@@ -212,7 +212,7 @@ public class ValNodeDelegate implements IValNode {
     }
 
     @Override
-    public Funnel<INode> getFunnel() {
+    public Funnel<IData> getFunnel() {
         return ValNodeDelegateFunnel.INSTANCE;
     }
 }

@@ -43,7 +43,7 @@ import org.treetank.access.conf.ConstructorProps;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.api.IMetaEntryFactory;
-import org.treetank.api.INodeFactory;
+import org.treetank.api.IDataFactory;
 import org.treetank.bucket.BucketFactory;
 import org.treetank.bucket.interfaces.IBucket;
 import org.treetank.exception.TTException;
@@ -103,8 +103,8 @@ public final class BerkeleyStorage implements IBackend {
      * 
      * @param pProperties
      *            not only the file associated with the database
-     * @param pNodeFac
-     *            factory for the nodes
+     * @param pDataFac
+     *            factory for the datas
      * @param pMetaFac
      *            factory for meta bucket
      * @param pByteHandler
@@ -113,7 +113,7 @@ public final class BerkeleyStorage implements IBackend {
      *             of something odd happens while database-connection
      */
     @Inject
-    public BerkeleyStorage(@Assisted Properties pProperties, INodeFactory pNodeFac,
+    public BerkeleyStorage(@Assisted Properties pProperties, IDataFactory pDataFac,
         IMetaEntryFactory pMetaFac, IByteHandlerPipeline pByteHandler) throws TTIOException {
 
         mFile =
@@ -122,7 +122,7 @@ public final class BerkeleyStorage implements IBackend {
 
         mBucketBinding = new BucketBinding();
         mByteHandler = pByteHandler;
-        mFac = new BucketFactory(pNodeFac, pMetaFac);
+        mFac = new BucketFactory(pDataFac, pMetaFac);
 
     }
 

@@ -47,7 +47,7 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.bucket.IConstants;
-import org.treetank.bucket.NodeBucket;
+import org.treetank.bucket.DataBucket;
 import org.treetank.bucket.interfaces.IBucket;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
@@ -71,9 +71,9 @@ public class LRULogTest {
 
     private ResourceConfiguration mResource;
 
-    private NodeBucket[][] mBucket;
+    private DataBucket[][] mBucket;
     private LRULog mCache;
-    private Set<NodeBucket> mBucketSet;
+    private Set<DataBucket> mBucketSet;
 
     private static final int LEVEL = 100;
     private static final int ELEMENTS = 100;
@@ -89,9 +89,9 @@ public class LRULogTest {
         props.setProperty(ConstructorProps.RESOURCEPATH, CoreTestHelper.PATHS.PATH1.getFile()
             .getAbsolutePath());
         mResource = mResourceConfig.create(props);
-        mCache = new LRULog(CoreTestHelper.PATHS.PATH1.getFile(), mResource.mNodeFac, mResource.mMetaFac);
+        mCache = new LRULog(CoreTestHelper.PATHS.PATH1.getFile(), mResource.mDataFac, mResource.mMetaFac);
 
-        mBucket = new NodeBucket[LEVEL][ELEMENTS];
+        mBucket = new DataBucket[LEVEL][ELEMENTS];
         insertData();
     }
 
@@ -114,7 +114,7 @@ public class LRULogTest {
         LogValue value = mCache.get(new LogKey(true, 0, 0));
         assertNotNull(value);
         mCache.close();
-        mCache = new LRULog(CoreTestHelper.PATHS.PATH1.getFile(), mResource.mNodeFac, mResource.mMetaFac);
+        mCache = new LRULog(CoreTestHelper.PATHS.PATH1.getFile(), mResource.mDataFac, mResource.mMetaFac);
         checkNull();
     }
 
@@ -122,7 +122,7 @@ public class LRULogTest {
     public void testClearAndReInsert() throws TTIOException {
         // testing for clear
         mCache.close();
-        mCache = new LRULog(CoreTestHelper.PATHS.PATH1.getFile(), mResource.mNodeFac, mResource.mMetaFac);
+        mCache = new LRULog(CoreTestHelper.PATHS.PATH1.getFile(), mResource.mDataFac, mResource.mMetaFac);
         checkNull();
 
         // inserting data again
@@ -157,12 +157,12 @@ public class LRULogTest {
     }
 
     private void insertData() throws TTIOException {
-        mBucketSet = new HashSet<NodeBucket>();
+        mBucketSet = new HashSet<DataBucket>();
         long key = 0;
         for (int i = 0; i < mBucket.length; i++) {
             for (int j = 0; j < mBucket[i].length; j++) {
                 LogKey toStore = new LogKey(true, i, j);
-                mBucket[i][j] = CoreTestHelper.getNodeBucket(0, IConstants.CONTENT_COUNT, key, key - 1);
+                mBucket[i][j] = CoreTestHelper.getDataBucket(0, IConstants.CONTENT_COUNT, key, key - 1);
                 mCache.put(toStore, new LogValue(mBucket[i][j], mBucket[i][j]));
                 mBucketSet.add(mBucket[i][j]);
                 key++;

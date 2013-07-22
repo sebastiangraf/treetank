@@ -56,7 +56,7 @@ public class IscsiReadTrx implements IIscsiReadTrx {
      */
     public IscsiReadTrx(final IBucketReadTrx pPageTrx) throws TTException {
         mPageReadTrx = pPageTrx;
-        mCurrentNode = (ByteNode)mPageReadTrx.getNode(0);
+        mCurrentNode = (ByteNode)mPageReadTrx.getData(0);
     }
 
     /**
@@ -65,7 +65,7 @@ public class IscsiReadTrx implements IIscsiReadTrx {
     @Override
     public boolean moveTo(long pKey) {
         try {
-            this.mCurrentNode = (ByteNode)mPageReadTrx.getNode(pKey);
+            this.mCurrentNode = (ByteNode)mPageReadTrx.getData(pKey);
             return true;
         } catch (TTException e) {
             return false;
@@ -79,7 +79,7 @@ public class IscsiReadTrx implements IIscsiReadTrx {
     public boolean nextNode() {
         try {
             if (mCurrentNode != null) {
-                this.mCurrentNode = (ByteNode)mPageReadTrx.getNode((mCurrentNode).getNextNodeKey());
+                this.mCurrentNode = (ByteNode)mPageReadTrx.getData((mCurrentNode).getNextNodeKey());
             } else {
                 return false;
             }
@@ -96,7 +96,7 @@ public class IscsiReadTrx implements IIscsiReadTrx {
     public boolean previousNode() {
         try {
             if (mCurrentNode != null) {
-                this.mCurrentNode = (ByteNode)mPageReadTrx.getNode((mCurrentNode).getPreviousNodeKey());
+                this.mCurrentNode = (ByteNode)mPageReadTrx.getData((mCurrentNode).getPreviousNodeKey());
             } else {
                 return false;
             }

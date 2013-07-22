@@ -220,7 +220,7 @@ abstract class AbsDiff extends AbsDiffObservable {
                 }
             }
         } else if (node.hasRightSibling()) {
-            if (paramRtx.getNode().getNodeKey() == mRootKey) {
+            if (paramRtx.getNode().getDataKey() == mRootKey) {
                 paramRtx.moveTo(ROOT_NODE);
             } else {
                 moved = paramRtx.moveTo(((IStructNode)paramRtx.getNode()).getRightSiblingKey());
@@ -246,7 +246,7 @@ abstract class AbsDiff extends AbsDiffObservable {
         throws TTIOException {
         boolean moved = false;
         while (!((IStructNode)paramRtx.getNode()).hasRightSibling()
-            && ((IStructNode)paramRtx.getNode()).hasParent() && paramRtx.getNode().getNodeKey() != mRootKey) {
+            && ((IStructNode)paramRtx.getNode()).hasParent() && paramRtx.getNode().getDataKey() != mRootKey) {
             moved = paramRtx.moveTo(paramRtx.getNode().getParentKey());
             if (moved) {
                 switch (paramRevision) {
@@ -260,7 +260,7 @@ abstract class AbsDiff extends AbsDiffObservable {
             }
         }
 
-        if (paramRtx.getNode().getNodeKey() == mRootKey) {
+        if (paramRtx.getNode().getDataKey() == mRootKey) {
             paramRtx.moveTo(ROOT_NODE);
         }
 
@@ -339,7 +339,7 @@ abstract class AbsDiff extends AbsDiffObservable {
         case ROOT:
         case TEXT:
         case ELEMENT:
-            if (paramNewRtx.getNode().getNodeKey() != paramOldRtx.getNode().getNodeKey()
+            if (paramNewRtx.getNode().getDataKey() != paramOldRtx.getNode().getDataKey()
                 || paramNewRtx.getNode().getHash() != paramOldRtx.getNode().getHash()) {
                 // Check if nodes are the same (even if subtrees may vary).
                 if (checkNodes(paramNewRtx, paramOldRtx)) {
@@ -391,7 +391,7 @@ abstract class AbsDiff extends AbsDiffObservable {
         } else {
             // See if one of the right sibling matches.
             EFoundEqualNode found = EFoundEqualNode.FALSE;
-            final long key = paramOldRtx.getNode().getNodeKey();
+            final long key = paramOldRtx.getNode().getDataKey();
 
             while (((IStructNode)paramOldRtx.getNode()).hasRightSibling()
                 && paramOldRtx.moveTo(((IStructNode)paramOldRtx.getNode()).getRightSiblingKey())
@@ -467,9 +467,9 @@ abstract class AbsDiff extends AbsDiffObservable {
         assert paramNewRtx != null;
         assert paramOldRtx != null;
         boolean updated = false;
-        final long newKey = paramNewRtx.getNode().getNodeKey();
+        final long newKey = paramNewRtx.getNode().getDataKey();
         boolean movedNewRtx = paramNewRtx.moveTo(((IStructNode)paramNewRtx.getNode()).getRightSiblingKey());
-        final long oldKey = paramOldRtx.getNode().getNodeKey();
+        final long oldKey = paramOldRtx.getNode().getDataKey();
         boolean movedOldRtx = paramOldRtx.moveTo(((IStructNode)paramOldRtx.getNode()).getRightSiblingKey());
         if (movedNewRtx && movedOldRtx && checkNodes(paramNewRtx, paramOldRtx)) {
             updated = true;
@@ -484,7 +484,7 @@ abstract class AbsDiff extends AbsDiffObservable {
         paramNewRtx.moveTo(newKey);
         paramOldRtx.moveTo(oldKey);
         if (!updated) {
-            updated = paramNewRtx.getNode().getNodeKey() == paramOldRtx.getNode().getNodeKey();
+            updated = paramNewRtx.getNode().getDataKey() == paramOldRtx.getNode().getDataKey();
         }
         return updated;
     }

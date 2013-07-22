@@ -175,7 +175,7 @@ public final class TestNodeWrapperXPath {
                 for (int j = 0; j < test.size(); j++) {
                     final INode item = test.get(j);
 
-                    holder.getNRtx().moveTo(item.getNodeKey());
+                    holder.getNRtx().moveTo(item.getDataKey());
 
                     final QName qName = holder.getNRtx().getQNameOfCurrentNode();
 
@@ -394,11 +394,11 @@ public final class TestNodeWrapperXPath {
         final INodeReadTrx rtx =
             new NodeReadTrx(holder.getSession().beginBucketRtx(
                 holder.getSession().getMostRecentVersion()));
-        rtx.moveTo(result.get(0).getNodeKey());
+        rtx.moveTo(result.get(0).getDataKey());
         assertEquals("oops1", rtx.getValueOfCurrentNode());
-        rtx.moveTo(result.get(1).getNodeKey());
+        rtx.moveTo(result.get(1).getDataKey());
         assertEquals("oops2", rtx.getValueOfCurrentNode());
-        rtx.moveTo(result.get(2).getNodeKey());
+        rtx.moveTo(result.get(2).getDataKey());
         assertEquals("oops3", rtx.getValueOfCurrentNode());
         rtx.close();
     }
@@ -440,16 +440,16 @@ public final class TestNodeWrapperXPath {
         final ArrayList<INode> result = (ArrayList<INode>)findLine.evaluate(doc, XPathConstants.NODESET);
 
         assertNotNull(result);
-        assertEquals(5, result.get(0).getNodeKey());
-        assertEquals(9, result.get(1).getNodeKey());
+        assertEquals(5, result.get(0).getDataKey());
+        assertEquals(9, result.get(1).getDataKey());
 
         final INodeReadTrx rtx =
             new NodeReadTrx(holder.getSession().beginBucketRtx(
                 holder.getSession().getMostRecentVersion()));
-        rtx.moveTo(result.get(0).getNodeKey());
+        rtx.moveTo(result.get(0).getDataKey());
         assertEquals("b", rtx.getQNameOfCurrentNode().getLocalPart());
 
-        rtx.moveTo(result.get(1).getNodeKey());
+        rtx.moveTo(result.get(1).getDataKey());
         assertEquals("b", rtx.getQNameOfCurrentNode().getLocalPart());
     }
 

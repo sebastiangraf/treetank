@@ -247,7 +247,7 @@ public final class XMLSerializer extends AbsSerializer {
                 final INameNode namenode = (INameNode)paramRTX.getNode();
                 mOut.write(ECharsForSerializing.OPEN.getBytes());
                 mOut.write(paramRTX.nameForKey(namenode.getNameKey()).getBytes());
-                final long key = paramRTX.getNode().getNodeKey();
+                final long key = paramRTX.getNode().getDataKey();
                 // Emit namespace declarations.
                 for (int index = 0, length = ((ElementNode)namenode).getNamespaceCount(); index < length; index++) {
                     paramRTX.moveToNamespace(index);
@@ -274,7 +274,7 @@ public final class XMLSerializer extends AbsSerializer {
                     }
                     mOut.write(ECharsForSerializing.ID.getBytes());
                     mOut.write(ECharsForSerializing.EQUAL_QUOTE.getBytes());
-                    write(paramRTX.getNode().getNodeKey());
+                    write(paramRTX.getNode().getDataKey());
                     mOut.write(ECharsForSerializing.QUOTE.getBytes());
                 }
 
@@ -448,7 +448,7 @@ public final class XMLSerializer extends AbsSerializer {
         System.out.print("Serializing '" + args[0] + "' to '" + args[1] + "' ... ");
         final long time = System.currentTimeMillis();
 
-        Injector injector = Guice.createInjector(new ModuleSetter().setNodeFacClass(TreeNodeFactory.class).setMetaFacClass(NodeMetaPageFactory.class).createModule());
+        Injector injector = Guice.createInjector(new ModuleSetter().setDataFacClass(TreeNodeFactory.class).setMetaFacClass(NodeMetaPageFactory.class).createModule());
         IBackendFactory storage = injector.getInstance(IBackendFactory.class);
         IRevisioning revision = injector.getInstance(IRevisioning.class);
 

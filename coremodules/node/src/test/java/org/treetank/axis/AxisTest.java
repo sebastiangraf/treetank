@@ -584,7 +584,7 @@ public class AxisTest {
     public static void testIAxisConventions(final AbsAxis axis, final long[] expectedKeys) {
 
         // IAxis Convention 1.
-        final long startKey = axis.getNode().getNodeKey();
+        final long startKey = axis.getNode().getDataKey();
 
         final long[] keys = new long[expectedKeys.length];
         int offset = 0;
@@ -593,7 +593,7 @@ public class AxisTest {
             // IAxis results.
             assertTrue(new StringBuilder("Test for: ").append(axis.getClass().getName()).toString(),
                 offset < expectedKeys.length);
-            keys[offset++] = axis.getNode().getNodeKey();
+            keys[offset++] = axis.getNode().getDataKey();
 
             // IAxis Convention 2.
             try {
@@ -611,7 +611,7 @@ public class AxisTest {
 
         // IAxis Convention 5.
         assertEquals(new StringBuilder("Test for: ").append(axis.getClass().getName()).toString(), startKey,
-            axis.getNode().getNodeKey());
+            axis.getNode().getDataKey());
 
         // IAxis results.
         assertArrayEquals(new StringBuilder("Test for: ").append(axis.getClass().getName()).toString(),

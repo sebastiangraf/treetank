@@ -34,7 +34,7 @@ import java.io.IOException;
 
 import org.testng.annotations.Test;
 import org.treetank.CoreTestHelper;
-import org.treetank.api.INode;
+import org.treetank.api.IData;
 import org.treetank.exception.TTIOException;
 import org.treetank.jscsi.TreetankStorageModule;
 
@@ -73,12 +73,12 @@ public class ByteNodeTest {
 
         final ByteNodeFactory factory = new ByteNodeFactory();
         final ByteArrayDataInput in = ByteStreams.newDataInput(out.toByteArray());
-        final INode node = factory.deserializeNode((DataInput)in);
-        assertTrue(node instanceof ByteNode);
+        final IData data = factory.deserializeData((DataInput)in);
+        assertTrue(data instanceof ByteNode);
 
-        final ByteNode newNode = (ByteNode)node;
+        final ByteNode newNode = (ByteNode)data;
 
-        assertEquals(newNode.getNodeKey(), byteNode.getNodeKey());
+        assertEquals(newNode.getDataKey(), byteNode.getDataKey());
         assertEquals(newNode.getPreviousNodeKey(), byteNode.getPreviousNodeKey());
         assertEquals(newNode.getNextNodeKey(), byteNode.getNextNodeKey());
         assertEquals(newNode.getIndex(), byteNode.getIndex());

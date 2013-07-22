@@ -32,8 +32,8 @@ import org.treetank.api.IBucketWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
 import org.treetank.bucket.DumbMetaEntryFactory;
-import org.treetank.bucket.DumbNodeFactory;
-import org.treetank.bucket.DumbNodeFactory.DumbNode;
+import org.treetank.bucket.DumbDataFactory;
+import org.treetank.bucket.DumbDataFactory.DumbData;
 import org.treetank.exception.TTException;
 import org.treetank.io.IOUtils;
 import org.treetank.io.jclouds.JCloudsStorage;
@@ -56,7 +56,7 @@ public class UpdateBench {
     private IStorage mStorage;
     private final Injector mInject;
     private ISession mSession;
-    private DumbNode[] mNodesToInsert = BenchUtils.createNodes(new int[] {
+    private DumbData[] mNodesToInsert = BenchUtils.createNodes(new int[] {
         ELEMENTS
     })[0];
     private IBucketWriteTrx mTrx;
@@ -69,7 +69,7 @@ public class UpdateBench {
         IOUtils.recursiveDelete(storageFile);
 
         mInject =
-            Guice.createInjector(new ModuleSetter().setNodeFacClass(DumbNodeFactory.class).setMetaFacClass(
+            Guice.createInjector(new ModuleSetter().setDataFacClass(DumbDataFactory.class).setMetaFacClass(
                 DumbMetaEntryFactory.class).setBackendClass(JCloudsStorage.class).createModule());
 
         final StorageConfiguration config = new StorageConfiguration(storageFile);
@@ -91,9 +91,9 @@ public class UpdateBench {
                     keyToAdapt = Math.abs(BenchUtils.random.nextLong()) % ELEMENTS;
                 }
 
-                final DumbNode node = BenchUtils.generateOne();
-                node.setNodeKey(keyToAdapt);
-                mTrx.setNode(node);
+                final DumbData node = BenchUtils.generateOne();
+                node.setDataKey(keyToAdapt);
+                mTrx.setData(node);
             }
             // long time2 = System.currentTimeMillis();
             if (blocked) {
@@ -128,9 +128,9 @@ public class UpdateBench {
         mTrx = mSession.beginBucketWtx();
 
         for (int i = 0; i < ELEMENTS; i++) {
-            final long nodeKey = mTrx.incrementNodeKey();
-            mNodesToInsert[i].setNodeKey(nodeKey);
-            mTrx.setNode(mNodesToInsert[i]);
+            final long nodeKey = mTrx.incrementDataKey();
+            mNodesToInsert[i].setDataKey(nodeKey);
+            mTrx.setData(mNodesToInsert[i]);
         }
         mTrx.commitBlocked();
     }

@@ -30,7 +30,7 @@
  * 
  * <p>
  * This module represents the core functionality of Treetank with the ability to be included as library and
- * extended by application-specific nodes.
+ * extended by application-specific datas.
  * </p>
  * <p>
  * The root package for all packages include:
@@ -39,7 +39,7 @@
  * <li>api: Interfaces for offering abstract implementations</li>
  * <li>io: classes for writing data to the disk or in the cloud</li>
  * <li>log: transaction log for buffering data between two versions relying on a Berkeley DB</li>
- * <li>bucket: Bucketlayer, all revisions which are storing nodes are represented by these classes</li>
+ * <li>bucket: Bucketlayer, all revisions which are storing data are represented by these classes</li>
  * <li>revision: revisioning algorithms</li>
  * </ul>
  * </p>

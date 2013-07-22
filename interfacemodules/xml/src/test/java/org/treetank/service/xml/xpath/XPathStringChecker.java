@@ -56,7 +56,7 @@ public class XPathStringChecker {
         final String[] expectedValues) {
 
         // IAxis Convention 1.
-        final long startKey = axis.getNode().getNodeKey();
+        final long startKey = axis.getNode().getDataKey();
 
         final String[] strValues = new String[expectedValues.length];
         int offset = 0;
@@ -87,7 +87,7 @@ public class XPathStringChecker {
         }
 
         // IAxis Convention 5.
-        assertEquals(startKey, axis.getNode().getNodeKey());
+        assertEquals(startKey, axis.getNode().getDataKey());
 
         // IAxis results.
         assertArrayEquals(expectedValues, strValues);

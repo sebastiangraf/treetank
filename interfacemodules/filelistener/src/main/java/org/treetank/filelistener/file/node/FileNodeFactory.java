@@ -3,8 +3,8 @@ package org.treetank.filelistener.file.node;
 import java.io.DataInput;
 import java.io.IOException;
 
-import org.treetank.api.INode;
-import org.treetank.api.INodeFactory;
+import org.treetank.api.IData;
+import org.treetank.api.IDataFactory;
 import org.treetank.exception.TTIOException;
 
 /**
@@ -12,14 +12,14 @@ import org.treetank.exception.TTIOException;
  * @author Andreas Rain
  * 
  */
-public class FileNodeFactory implements INodeFactory {
+public class FileNodeFactory implements IDataFactory {
 
     /**
      * {@inheritDoc}
      * 
      */
     @Override
-    public INode deserializeNode(DataInput input) throws TTIOException {
+    public IData deserializeData(DataInput input) throws TTIOException {
         try {
             long nodeKey = input.readLong();
             long nextNodeKey = input.readLong();

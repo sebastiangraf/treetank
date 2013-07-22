@@ -1,6 +1,6 @@
 name: CoreSuite
 threadCount: 4
-parameters: { NodeFactory: org.treetank.bucket.DumbNodeFactory, MetaFactory: org.treetank.bucket.DumbMetaEntryFactory }
+parameters: { NodeFactory: org.treetank.bucket.DumbDataFactory, MetaFactory: org.treetank.bucket.DumbMetaEntryFactory }
 
 tests:
   - name: Sliding Berkeley

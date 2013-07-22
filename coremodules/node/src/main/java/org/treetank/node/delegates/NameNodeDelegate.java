@@ -57,10 +57,10 @@ public class NameNodeDelegate implements INode, INameNode {
      * @author Sebastian Graf, University of Konstanz
      * 
      */
-    enum NameNodeDelegateFunnel implements Funnel<org.treetank.api.INode> {
+    enum NameNodeDelegateFunnel implements Funnel<org.treetank.api.IData> {
         INSTANCE;
-        public void funnel(org.treetank.api.INode node, PrimitiveSink into) {
-            final INameNode from = (INameNode)node;
+        public void funnel(org.treetank.api.IData data, PrimitiveSink into) {
+            final INameNode from = (INameNode)data;
             into.putInt(from.getNameKey()).putInt(from.getURIKey());
         }
     }
@@ -112,10 +112,10 @@ public class NameNodeDelegate implements INode, INameNode {
      * Delegate method for getNodeKey.
      * 
      * @return the key of the node
-     * @see org.treetank.node.delegates.NodeDelegate#getNodeKey()
+     * @see org.treetank.node.delegates.NodeDelegate#getDataKey()
      */
-    public long getNodeKey() {
-        return mDelegate.getNodeKey();
+    public long getDataKey() {
+        return mDelegate.getDataKey();
     }
 
     /**
@@ -234,7 +234,7 @@ public class NameNodeDelegate implements INode, INameNode {
     }
 
     @Override
-    public Funnel<org.treetank.api.INode> getFunnel() {
+    public Funnel<org.treetank.api.IData> getFunnel() {
         return NameNodeDelegateFunnel.INSTANCE;
     }
 

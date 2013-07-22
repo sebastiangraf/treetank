@@ -67,21 +67,21 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
      */
     @Override
     public void bootstrap(byte[] bytes, boolean hasNextNode) throws TTException {
-        ByteNode node = new ByteNode(getPageTransaction().incrementNodeKey(), bytes);
+        ByteNode node = new ByteNode(getPageTransaction().incrementDataKey(), bytes);
         if (hasNextNode) {
-            node.setNextNodeKey(node.getNodeKey() + 1);
+            node.setNextNodeKey(node.getDataKey() + 1);
         }
 
         if (mDelegate.getCurrentNode() != null) {
-            node.setIndex(node.getNodeKey());
-            node.setPreviousNodeKey(node.getNodeKey() - 1);
-            getPageTransaction().setNode(node);
+            node.setIndex(node.getDataKey());
+            node.setPreviousNodeKey(node.getDataKey() - 1);
+            getPageTransaction().setData(node);
 
-            mDelegate.moveTo(node.getNodeKey());
+            mDelegate.moveTo(node.getDataKey());
         } else {
             node.setIndex(0);
-            getPageTransaction().setNode(node);
-            mDelegate.moveTo(node.getNodeKey());
+            getPageTransaction().setData(node);
+            mDelegate.moveTo(node.getDataKey());
         }
 
     }
@@ -92,9 +92,9 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
     @Override
     public void setValue(byte[] val) throws TTException {
 
-        ByteNode node = (ByteNode)getPageTransaction().getNode(mDelegate.getCurrentNode().getNodeKey());
+        ByteNode node = (ByteNode)getPageTransaction().getData(mDelegate.getCurrentNode().getDataKey());
         node.setVal(val);
-        getPageTransaction().setNode(node);
+        getPageTransaction().setData(node);
     }
 
     /**

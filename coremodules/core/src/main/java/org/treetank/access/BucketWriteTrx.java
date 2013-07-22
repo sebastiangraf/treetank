@@ -30,7 +30,7 @@ package org.treetank.access;
 import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.treetank.access.BucketReadTrx.nodeBucketOffset;
+import static org.treetank.access.BucketReadTrx.dataBucketOffset;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -47,14 +47,14 @@ import org.jclouds.javax.annotation.Nullable;
 import org.treetank.access.conf.ConstructorProps;
 import org.treetank.api.IBucketWriteTrx;
 import org.treetank.api.IMetaEntry;
-import org.treetank.api.INode;
+import org.treetank.api.IData;
 import org.treetank.api.ISession;
 import org.treetank.bucket.BucketFactory;
 import org.treetank.bucket.IConstants;
 import org.treetank.bucket.IndirectBucket;
 import org.treetank.bucket.MetaBucket;
-import org.treetank.bucket.NodeBucket;
-import org.treetank.bucket.NodeBucket.DeletedNode;
+import org.treetank.bucket.DataBucket;
+import org.treetank.bucket.DataBucket.DeletedData;
 import org.treetank.bucket.RevisionRootBucket;
 import org.treetank.bucket.UberBucket;
 import org.treetank.bucket.interfaces.IBucket;
@@ -110,8 +110,8 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
     @Nullable
     private ILog mFormerLog;
 
-    /** Transient cache for buffering former node-bucket hashes */
-    private final Cache<Long, byte[]> mFormerNodeBucketHashes;
+    /** Transient cache for buffering former data-bucket hashes */
+    private final Cache<Long, byte[]> mFormerDataBucketHashes;
 
     /**
      * Standard constructor.
@@ -141,74 +141,74 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
 
         mCommitInProgress = Executors.newSingleThreadExecutor();
         mDelegate = new BucketReadTrx(pSession, pUberBucket, revBucket, metaBucket, pWriter);
-        mBucketFac = new BucketFactory(pSession.getConfig().mNodeFac, pSession.getConfig().mMetaFac);
+        mBucketFac = new BucketFactory(pSession.getConfig().mDataFac, pSession.getConfig().mMetaFac);
 
         // mLog = new MemoryLog();
         mLog =
             new LRULog(new File(pSession.getConfig().mProperties
                 .getProperty(org.treetank.access.conf.ConstructorProps.RESOURCEPATH)),
-                pSession.getConfig().mNodeFac, pSession.getConfig().mMetaFac);
+                pSession.getConfig().mDataFac, pSession.getConfig().mMetaFac);
 
         mFormerLog = mLog;
-        mFormerNodeBucketHashes = CacheBuilder.newBuilder().maximumSize(16384).build();
+        mFormerDataBucketHashes = CacheBuilder.newBuilder().maximumSize(16384).build();
         setUpTransaction(pUberBucket, revBucket, metaBucket, pSession, pRepresentRev);
     }
 
     /**
      * {@inheritDoc}
      */
-    public long setNode(final INode pNode) throws TTException {
+    public long setData(final IData pData) throws TTException {
 
         checkState(!mDelegate.isClosed(), "Transaction already closed");
-        // Allocate node key and increment node count.
-        final long nodeKey = pNode.getNodeKey();
-        final long seqBucketKey = nodeKey >> IConstants.INDIRECT_BUCKET_COUNT[3];
-        final int nodeBucketOffset = nodeBucketOffset(nodeKey);
-        final LogValue container = prepareNodeBucket(nodeKey);
-        final NodeBucket modified = ((NodeBucket)container.getModified());
-        final NodeBucket complete = ((NodeBucket)container.getComplete());
-        modified.setNode(nodeBucketOffset, pNode);
-        complete.setNode(nodeBucketOffset, pNode);
+        // Allocate data key and increment data count.
+        final long dataKey = pData.getDataKey();
+        final long seqBucketKey = dataKey >> IConstants.INDIRECT_BUCKET_COUNT[3];
+        final int dataBucketOffset = dataBucketOffset(dataKey);
+        final LogValue container = prepareDataBucket(dataKey);
+        final DataBucket modified = ((DataBucket)container.getModified());
+        final DataBucket complete = ((DataBucket)container.getComplete());
+        modified.setData(dataBucketOffset, pData);
+        complete.setData(dataBucketOffset, pData);
         mLog.put(new LogKey(false, IConstants.INDIRECT_BUCKET_COUNT.length, seqBucketKey), container);
-        return nodeKey;
+        return dataKey;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void removeNode(final INode pNode) throws TTException {
+    public void removeData(final IData pData) throws TTException {
         checkState(!mDelegate.isClosed(), "Transaction already closed");
-        checkNotNull(pNode);
-        final long nodeBucketKey = pNode.getNodeKey() >> IConstants.INDIRECT_BUCKET_COUNT[3];
-        LogValue container = prepareNodeBucket(pNode.getNodeKey());
-        final INode delNode = new DeletedNode(pNode.getNodeKey());
-        ((NodeBucket)container.getComplete()).setNode(nodeBucketOffset(pNode.getNodeKey()), delNode);
-        ((NodeBucket)container.getModified()).setNode(nodeBucketOffset(pNode.getNodeKey()), delNode);
+        checkNotNull(pData);
+        final long dataBucketKey = pData.getDataKey() >> IConstants.INDIRECT_BUCKET_COUNT[3];
+        LogValue container = prepareDataBucket(pData.getDataKey());
+        final IData delData = new DeletedData(pData.getDataKey());
+        ((DataBucket)container.getComplete()).setData(dataBucketOffset(pData.getDataKey()), delData);
+        ((DataBucket)container.getModified()).setData(dataBucketOffset(pData.getDataKey()), delData);
 
-        mLog.put(new LogKey(false, IConstants.INDIRECT_BUCKET_COUNT.length, nodeBucketKey), container);
+        mLog.put(new LogKey(false, IConstants.INDIRECT_BUCKET_COUNT.length, dataBucketKey), container);
     }
 
     /**
      * {@inheritDoc}
      */
-    public INode getNode(final long pNodeKey) throws TTIOException {
+    public IData getData(final long pDataKey) throws TTIOException {
         checkState(!mDelegate.isClosed(), "Transaction already closed");
-        // Calculate bucket and node part for given nodeKey.
-        final long nodeBucketKey = pNodeKey >> IConstants.INDIRECT_BUCKET_COUNT[3];
-        final int nodeBucketOffset = nodeBucketOffset(pNodeKey);
+        // Calculate bucket and data part for given dataKey.
+        final long dataBucketKey = pDataKey >> IConstants.INDIRECT_BUCKET_COUNT[3];
+        final int dataBucketOffset = dataBucketOffset(pDataKey);
 
-        final LogKey key = new LogKey(false, IConstants.INDIRECT_BUCKET_COUNT.length, nodeBucketKey);
+        final LogKey key = new LogKey(false, IConstants.INDIRECT_BUCKET_COUNT.length, dataBucketKey);
         LogValue container = mLog.get(key);
-        INode item = null;
+        IData item = null;
         // Bucket was modified...
         if (container.getModified() != null) {
-            // ..check if the real node was touched and set it or..
-            if (((NodeBucket)container.getModified()).getNode(nodeBucketOffset) == null) {
-                item = ((NodeBucket)container.getComplete()).getNode(nodeBucketOffset);
-            }// ..take the node from the complete status of the page.
+            // ..check if the real data was touched and set it or..
+            if (((DataBucket)container.getModified()).getData(dataBucketOffset) == null) {
+                item = ((DataBucket)container.getComplete()).getData(dataBucketOffset);
+            }// ..take the data from the complete status of the page.
             else {
-                item = ((NodeBucket)container.getModified()).getNode(nodeBucketOffset);
+                item = ((DataBucket)container.getModified()).getData(dataBucketOffset);
             }
             checkNotNull(item, "Item must be set!");
             item = mDelegate.checkItemIfDeleted(item);
@@ -218,18 +218,18 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
             container = mFormerLog.get(key);
             // ..modified element within this version or...
             if (container.getModified() != null) {
-                // ..check if the real node was touched and set it or..
-                if (((NodeBucket)container.getModified()).getNode(nodeBucketOffset) == null) {
-                    item = clone(((NodeBucket)container.getComplete())).getNode(nodeBucketOffset);
-                }// ..take the node from the complete status of the page.
+                // ..check if the real data was touched and set it or..
+                if (((DataBucket)container.getModified()).getData(dataBucketOffset) == null) {
+                    item = clone(((DataBucket)container.getComplete())).getData(dataBucketOffset);
+                }// ..take the data from the complete status of the page.
                 else {
-                    item = clone(((NodeBucket)container.getComplete())).getNode(nodeBucketOffset);
+                    item = clone(((DataBucket)container.getComplete())).getData(dataBucketOffset);
                 }
                 checkNotNull(item, "Item must be set!");
                 item = mDelegate.checkItemIfDeleted(item);
             }// bucket was modified long long before, read it normally.
             else {
-                item = mDelegate.getNode(pNodeKey);
+                item = mDelegate.getData(pDataKey);
             }
         }
         return item;
@@ -254,7 +254,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         mLog =
             new LRULog(new File(mDelegate.mSession.getConfig().mProperties
                 .getProperty(org.treetank.access.conf.ConstructorProps.RESOURCEPATH)), mDelegate.mSession
-                .getConfig().mNodeFac, mDelegate.mSession.getConfig().mMetaFac);
+                .getConfig().mDataFac, mDelegate.mSession.getConfig().mMetaFac);
 
         mDelegate.mSession.setRunningCommit(mCommitInProgress.submit(new CommitCallable(uber, rev, meta)));
         // Comment here to enabled blocked behaviour
@@ -307,9 +307,9 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
      * {@inheritDoc}
      */
     @Override
-    public long incrementNodeKey() {
+    public long incrementDataKey() {
         checkState(!mDelegate.isClosed(), "Transaction already closed");
-        return mNewRoot.incrementMaxNodeKey();
+        return mNewRoot.incrementMaxDataKey();
     }
 
     /**
@@ -338,21 +338,21 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         return mNewMeta;
     }
 
-    private LogValue prepareNodeBucket(final long pNodeKey) throws TTException {
+    private LogValue prepareDataBucket(final long pDataKey) throws TTException {
 
-        final long seqNodeBucketKey = pNodeKey >> IConstants.INDIRECT_BUCKET_COUNT[3];
+        final long seqDataBucketKey = pDataKey >> IConstants.INDIRECT_BUCKET_COUNT[3];
 
-        final LogKey key = new LogKey(false, IConstants.INDIRECT_BUCKET_COUNT.length, seqNodeBucketKey);
-        // See if on nodeBucketLevel, there are any buckets.
+        final LogKey key = new LogKey(false, IConstants.INDIRECT_BUCKET_COUNT.length, seqDataBucketKey);
+        // See if on dataBucketLevel, there are any buckets.
         LogValue container = mLog.get(key);
         // if not,...
         if (container.getModified() == null) {
             // ..start preparing a new container to be logged
-            final LogKey indirectKey = preparePathToLeaf(false, mNewRoot, pNodeKey);
+            final LogKey indirectKey = preparePathToLeaf(false, mNewRoot, pDataKey);
             final LogValue indirectContainer = mLog.get(indirectKey);
-            final int nodeOffset = nodeBucketOffset(seqNodeBucketKey);
+            final int dataOffset = dataBucketOffset(seqDataBucketKey);
             final long bucketKey =
-                ((IndirectBucket)indirectContainer.getModified()).getReferenceKeys()[nodeOffset];
+                ((IndirectBucket)indirectContainer.getModified()).getReferenceKeys()[dataOffset];
             final long newBucketKey = mNewUber.incrementBucketCounter();
             // if there is not any bucket already existing...
             if (bucketKey != 0) {
@@ -364,18 +364,18 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
                 // Gather all data, from the former log..
                 final LogValue formerModified = mFormerLog.get(key);
                 // ..and from the former revision.
-                final List<NodeBucket> formerBuckets = mDelegate.getSnapshotBuckets(seqNodeBucketKey);
+                final List<DataBucket> formerBuckets = mDelegate.getSnapshotBuckets(seqDataBucketKey);
                 // declare summarized buckets.
-                final List<NodeBucket> bucketList = new ArrayList<NodeBucket>();
+                final List<DataBucket> bucketList = new ArrayList<DataBucket>();
 
                 // Look, if a former log is currently in process to be written...
                 if (formerModified.getModified() != null) {
                     // ..if so, check if the modified one...
-                    final NodeBucket currentlyInProgress = (NodeBucket)formerModified.getModified();
+                    final DataBucket currentlyInProgress = (DataBucket)formerModified.getModified();
                     // ... is the same one than recently written (to avoid race conditions).
                     if (formerBuckets.isEmpty()
                         || formerBuckets.get(0).getBucketKey() < currentlyInProgress.getBucketKey()) {
-                        bucketList.add((NodeBucket)clone(currentlyInProgress));
+                        bucketList.add((DataBucket)clone(currentlyInProgress));
                     }
                 }
 
@@ -391,7 +391,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
                 }
 
                 // Transform into array..
-                final NodeBucket[] buckets = bucketList.toArray(new NodeBucket[bucketList.size()]);
+                final DataBucket[] buckets = bucketList.toArray(new DataBucket[bucketList.size()]);
                 // ..and check that the number of buckets are valid and return the entire bucket.
                 checkState(buckets.length > 0);
                 container =
@@ -399,7 +399,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
                         newBucketKey, buckets, mNewRoot.getRevision() % revToRestore == 0);
 
                 // // // DEBUG CODE!!!!!
-                // INode[] toCheck = ((NodeBucket)container.getComplete()).getNodes();
+                // IData[] toCheck = ((DataBucket)container.getComplete()).getDatas();
                 // boolean nullFound = false;
                 // for (int i = 0; i < toCheck.length && !nullFound; i++) {
                 // if ((i < toCheck.length - 1 && i > 0)
@@ -420,11 +420,11 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
 
             }// ...if no bucket is existing, create an entirely new one.
             else {
-                final NodeBucket newBucket = new NodeBucket(newBucketKey, IConstants.NULL_NODE);
+                final DataBucket newBucket = new DataBucket(newBucketKey, IConstants.NULLDATA);
                 container = new LogValue(newBucket, newBucket);
             }
-            ((IndirectBucket)indirectContainer.getModified()).setReferenceKey(nodeOffset, newBucketKey);
-            ((IndirectBucket)indirectContainer.getModified()).setReferenceHash(nodeOffset,
+            ((IndirectBucket)indirectContainer.getModified()).setReferenceKey(dataOffset, newBucketKey);
+            ((IndirectBucket)indirectContainer.getModified()).setReferenceHash(dataOffset,
                 IConstants.NON_HASHED);
             mLog.put(indirectKey, indirectContainer);
             mLog.put(key, container);
@@ -437,11 +437,11 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
      * bucket.
      * 
      * @param pIsRootLevel
-     *            is this dereferencing walk based on the the search after a RevRoot or a NodeBucket. Needed
+     *            is this dereferencing walk based on the the search after a RevRoot or a DataBucket. Needed
      *            because of the same keys in both subtrees.
      * @param pBucket
      *            where to start the tree-walk: either from an UberBucket (related to new
-     *            RevisionRootBuckets) or from a RevisionRootBucket (related to new NodeBuckets).
+     *            RevisionRootBuckets) or from a RevisionRootBucket (related to new DataBuckets).
      * @param pElementKey
      *            key to be dereferenced
      * @return the key the container representing the last level
@@ -459,7 +459,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         // within the search after a revision,...
         if (pIsRootLevel) {
             seqBucketKey = pElementKey >> IConstants.INDIRECT_BUCKET_COUNT[3];
-        } // ...whereas one layer above is used for the nodes based on the offsets pointing to nodes
+        } // ...whereas one layer above is used for the datas based on the offsets pointing to datas
           // instead of buckets.
         else {
             seqBucketKey = pElementKey >> IConstants.INDIRECT_BUCKET_COUNT[2];
@@ -487,7 +487,7 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
                 bucket = new IndirectBucket(newKey);
 
                 // compute the offset of the new bucket
-                int offset = nodeBucketOffset(orderNumber[level]);
+                int offset = dataBucketOffset(orderNumber[level]);
 
                 // if there existed the same bucket in former versions in a former log or
                 container = mFormerLog.get(key);
@@ -548,16 +548,16 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
         mNewUber.setReferenceHash(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET, IConstants.NON_HASHED);
 
         // Prepare indirect tree to hold reference to prepared revision root
-        // nodeBucketReference.
+        // dataBucketReference.
         final LogKey indirectKey = preparePathToLeaf(true, mNewUber, mNewUber.getRevisionNumber());
         final LogValue indirectContainer = mLog.get(indirectKey);
-        final int offset = nodeBucketOffset(mNewUber.getRevisionNumber());
+        final int offset = dataBucketOffset(mNewUber.getRevisionNumber());
 
         // Get previous revision root bucket and using this data to initialize a fresh revision root including
         // the pointers.
         mNewRoot =
             new RevisionRootBucket(mNewUber.incrementBucketCounter(), pRepresentRev + 1, pRootToRepresent
-                .getMaxNodeKey());
+                .getMaxDataKey());
         mNewRoot.setReferenceKey(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET, pRootToRepresent
             .getReferenceKeys()[IReferenceBucket.GUARANTEED_INDIRECT_OFFSET]);
         mNewRoot.setReferenceHash(IReferenceBucket.GUARANTEED_INDIRECT_OFFSET, IConstants.NON_HASHED);
@@ -734,12 +734,12 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
                 if (val instanceof IReferenceBucket) {
                     currentRefBuck = (IReferenceBucket)val;
 
-                    // ..represents either a new child in the tree (if the level of the new node is bigger
+                    // ..represents either a new child in the tree (if the level of the new data is bigger
                     // than the last one on the pat the root
                     if (pathToRoot.isEmpty() || key.getLevel() > pathToRoot.peek().getLevel()) {
                         // in this case, push the new child to the path to the root.
                         pathToRoot.push(key);
-                    }// else, it is any right sibling whereas the entire subtree left of the current node must
+                    }// else, it is any right sibling whereas the entire subtree left of the current data must
                      // be handled
                     else {
                         LogKey childKey;
@@ -792,18 +792,18 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
                                 (IReferenceBucket)mFormerLog.get(pathToRoot.peek()).getModified();
                             final int parentOffset =
                                 (int)(key.getSeq() - ((key.getSeq() >> IConstants.INDIRECT_BUCKET_COUNT[3]) << IConstants.INDIRECT_BUCKET_COUNT[3]));
-                            byte[] persistedHash = mFormerNodeBucketHashes.getIfPresent(key.getSeq());
+                            byte[] persistedHash = mFormerDataBucketHashes.getIfPresent(key.getSeq());
                             if (persistedHash == null) {
                                 final IBucket persistedBucket =
                                     mBackendWriter.read(parent.getReferenceKeys()[parentOffset]);
                                 persistedHash = persistedBucket.secureHash().asBytes();
-                                mFormerNodeBucketHashes.put(key.getSeq(), persistedHash);
+                                mFormerDataBucketHashes.put(key.getSeq(), persistedHash);
                             }
                             parent.setReferenceHash(parentOffset, persistedHash);
                         }// otherwise construct it over the log.
                         else {
-                            // ..we need to have a NodeBucket and...
-                            checkState(val instanceof NodeBucket);
+                            // ..we need to have a DataBucket and...
+                            checkState(val instanceof DataBucket);
                             // ...we adapt the parent with the own hash.
                             final LogKey parentKey = pathToRoot.peek();
                             adaptHash(parentKey, key);
@@ -838,8 +838,8 @@ public final class BucketWriteTrx implements IBucketWriteTrx {
             final IBucket val = mFormerLog.get(pChildKey).getModified();
             final byte[] hash = val.secureHash().asBytes();
             mBackendWriter.write(val);
-            if (val instanceof NodeBucket) {
-                mFormerNodeBucketHashes.put(pChildKey.getSeq(), hash);
+            if (val instanceof DataBucket) {
+                mFormerDataBucketHashes.put(pChildKey.getSeq(), hash);
             }
 
             final IReferenceBucket parent = (IReferenceBucket)mFormerLog.get(pParentKey).getModified();

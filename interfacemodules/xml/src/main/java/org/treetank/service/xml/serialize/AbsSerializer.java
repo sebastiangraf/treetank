@@ -145,7 +145,7 @@ abstract class AbsSerializer implements Callable<Void> {
 
             // Setup primitives.
             boolean closeElements = false;
-            long key = rtx.getNode().getNodeKey();
+            long key = rtx.getNode().getDataKey();
 
             // Iterate over all nodes of the subtree including self.
             while (descAxis.hasNext()) {
@@ -171,7 +171,7 @@ abstract class AbsSerializer implements Callable<Void> {
                 // Push end element to stack if we are a start element with
                 // children.
                 if (currentStruc.getKind() == IConstants.ELEMENT && currentStruc.hasFirstChild()) {
-                    mStack.push(rtx.getNode().getNodeKey());
+                    mStack.push(rtx.getNode().getDataKey());
                 }
 
                 // Remember to emit all pending end elements from stack if

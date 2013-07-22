@@ -29,7 +29,7 @@ import org.treetank.api.IStorage;
 import org.treetank.bucket.IConstants;
 import org.treetank.bucket.DumbMetaEntryFactory.DumbKey;
 import org.treetank.bucket.DumbMetaEntryFactory.DumbValue;
-import org.treetank.bucket.DumbNodeFactory.DumbNode;
+import org.treetank.bucket.DumbDataFactory.DumbData;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
@@ -73,14 +73,14 @@ public class BucketReadTrxTest {
     }
 
     /**
-     * Test method for {@link org.treetank.access.BucketReadTrx#getNode(long)}.
+     * Test method for {@link org.treetank.access.BucketReadTrx#getData(long)}.
      * 
      * @throws TTException
      */
     @Test
-    public void testGetNode() throws TTException {
-        DumbNode[][] nodes = CoreTestHelper.createTestData(mHolder);
-        testGet(mHolder.getSession(), nodes);
+    public void testGetData() throws TTException {
+        DumbData[][] datas = CoreTestHelper.createTestData(mHolder);
+        testGet(mHolder.getSession(), datas);
     }
 
     /**
@@ -220,17 +220,17 @@ public class BucketReadTrxTest {
     }
 
     /**
-     * Test method for {@link org.treetank.access.BucketReadTrx#nodeBucketOffset(long)}.
+     * Test method for {@link org.treetank.access.BucketReadTrx#dataBucketOffset(long)}.
      */
     @Test
-    public void testNodeBucketOffset() {
-        assertEquals(0, BucketReadTrx.nodeBucketOffset(0));
-        assertEquals(127, BucketReadTrx.nodeBucketOffset(127));
-        assertEquals(0, BucketReadTrx.nodeBucketOffset(128));
-        assertEquals(127, BucketReadTrx.nodeBucketOffset(16383));
-        assertEquals(0, BucketReadTrx.nodeBucketOffset(16384));
-        assertEquals(127, BucketReadTrx.nodeBucketOffset(2097151));
-        assertEquals(0, BucketReadTrx.nodeBucketOffset(2097152));
+    public void testDataBucketOffset() {
+        assertEquals(0, BucketReadTrx.dataBucketOffset(0));
+        assertEquals(127, BucketReadTrx.dataBucketOffset(127));
+        assertEquals(0, BucketReadTrx.dataBucketOffset(128));
+        assertEquals(127, BucketReadTrx.dataBucketOffset(16383));
+        assertEquals(0, BucketReadTrx.dataBucketOffset(16384));
+        assertEquals(127, BucketReadTrx.dataBucketOffset(2097151));
+        assertEquals(0, BucketReadTrx.dataBucketOffset(2097152));
     }
 
     protected static void testMeta(final ISession pSession,
@@ -243,23 +243,23 @@ public class BucketReadTrxTest {
         }
     }
 
-    protected static void testGet(final ISession pSession, final DumbNode[][] pNodes) throws TTException {
-        // check against invalid nodekey
+    protected static void testGet(final ISession pSession, final DumbData[][] pDatas) throws TTException {
+        // check against invalid datakey
         IBucketReadTrx rtx = pSession.beginBucketRtx(0);
         try {
-            rtx.getNode(-1);
+            rtx.getData(-1);
             fail();
         } catch (IllegalArgumentException exc) {
             // must be thrown
         }
         rtx.close();
         // check against stored structure
-        long nodeKey = 0;
-        for (int i = 0; i < pNodes.length; i++) {
+        long dataKey = 0;
+        for (int i = 0; i < pDatas.length; i++) {
             rtx = pSession.beginBucketRtx(i + 1);
-            for (DumbNode node : pNodes[i]) {
-                assertEquals(node, rtx.getNode(nodeKey));
-                nodeKey++;
+            for (DumbData data : pDatas[i]) {
+                assertEquals(data, rtx.getData(dataKey));
+                dataKey++;
             }
             rtx.close();
         }
@@ -295,7 +295,7 @@ public class BucketReadTrxTest {
             // must be thrown
         }
         try {
-            rtx.getNode(0);
+            rtx.getData(0);
             fail();
         } catch (IllegalStateException exc) {
             // must be thrown

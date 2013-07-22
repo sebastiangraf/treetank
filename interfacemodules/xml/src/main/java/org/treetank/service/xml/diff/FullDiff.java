@@ -64,9 +64,9 @@ final class FullDiff extends AbsDiff {
 
         boolean found = false;
 
-        if (paramFirstRtx.getNode().getNodeKey() == paramSecondRtx.getNode().getNodeKey()
+        if (paramFirstRtx.getNode().getDataKey() == paramSecondRtx.getNode().getDataKey()
             && paramFirstRtx.getNode().equals(paramSecondRtx.getNode())) {
-            final long nodeKey = paramFirstRtx.getNode().getNodeKey();
+            final long nodeKey = paramFirstRtx.getNode().getDataKey();
 
             if (paramFirstRtx.getNode().getKind() == IConstants.ELEMENT) {
                 if (((ElementNode)paramFirstRtx.getNode()).getNamespaceCount() == 0

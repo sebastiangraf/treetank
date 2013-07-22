@@ -123,7 +123,7 @@ public class FNString extends AbsFunction {
 
         final StringBuilder value = new StringBuilder();
 
-        if (getNode().getNodeKey() >= 0) { // is node
+        if (getNode().getDataKey() >= 0) { // is node
             if (getNode().getKind() == IConstants.ATTRIBUTE || getNode().getKind() == IConstants.TEXT) {
                 value.append(new String(((IValNode)getNode()).getRawValue()));
             } else if (getNode().getKind() == IConstants.ROOT || getNode().getKind() == IConstants.ELEMENT) {

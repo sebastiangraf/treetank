@@ -85,7 +85,7 @@ public final class FMESVisitor {
      * @throws TTIOException
      */
     public void visit(final ElementNode pNode) throws TTIOException {
-        final long nodeKey = pNode.getNodeKey();
+        final long nodeKey = pNode.getDataKey();
         mRtx.moveTo(nodeKey);
         for (int i = 0; i < pNode.getAttributeCount(); i++) {
             mRtx.moveToAttribute(i);
@@ -116,7 +116,7 @@ public final class FMESVisitor {
      */
     private void countDescendants() throws TTIOException {
         long descendants = 1;
-        final long nodeKey = mRtx.getNode().getNodeKey();
+        final long nodeKey = mRtx.getNode().getDataKey();
         if (((IStructNode)mRtx.getNode()).hasFirstChild()) {
             mRtx.moveTo(((IStructNode)mRtx.getNode()).getFirstChildKey());
             do {
@@ -136,7 +136,7 @@ public final class FMESVisitor {
      * @throws TTIOException
      */
     public void visit(final TextNode pNode) throws TTIOException {
-        final long nodeKey = pNode.getNodeKey();
+        final long nodeKey = pNode.getDataKey();
         mRtx.moveTo(nodeKey);
         mInOrder.put(mRtx.getNode(), false);
         mDescendants.put(mRtx.getNode(), 1L);

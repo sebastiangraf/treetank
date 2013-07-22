@@ -27,8 +27,8 @@ package org.treetank.node;
 import java.io.DataInput;
 import java.io.IOException;
 
-import org.treetank.api.INode;
-import org.treetank.api.INodeFactory;
+import org.treetank.api.IData;
+import org.treetank.api.IDataFactory;
 import org.treetank.exception.TTIOException;
 
 /**
@@ -36,14 +36,14 @@ import org.treetank.exception.TTIOException;
  * 
  * @author Andreas Rain, University of Konstanz
  */
-public class ByteNodeFactory implements INodeFactory {
+public class ByteNodeFactory implements IDataFactory {
 
     /**
      * {@inheritDoc}
      * 
      */
     @Override
-    public INode deserializeNode(DataInput input) throws TTIOException {
+    public IData deserializeData(DataInput input) throws TTIOException {
         try {
             int size = input.readInt();
             long index = input.readLong();

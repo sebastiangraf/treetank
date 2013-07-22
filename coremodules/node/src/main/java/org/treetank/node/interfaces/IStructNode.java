@@ -28,7 +28,7 @@
 package org.treetank.node.interfaces;
 
 /**
- * Class to denote that an {@link INode} has structural attributes. That means
+ * Class to denote that an {@link IData} has structural attributes. That means
  * that a class can have pointers to neighbours.
  */
 public interface IStructNode extends INode {

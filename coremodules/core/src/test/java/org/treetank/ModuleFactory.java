@@ -7,7 +7,7 @@ import org.testng.IModuleFactory;
 import org.testng.ITestContext;
 import org.treetank.access.conf.ModuleSetter;
 import org.treetank.api.IMetaEntryFactory;
-import org.treetank.api.INodeFactory;
+import org.treetank.api.IDataFactory;
 import org.treetank.io.IBackend;
 import org.treetank.io.jclouds.JCloudsStorage;
 import org.treetank.revisioning.IRevisioning;
@@ -25,7 +25,7 @@ import com.google.inject.Module;
  */
 public class ModuleFactory implements IModuleFactory {
 
-    private final static String NODEFACTORYPARAMETER = "NodeFactory";
+    private final static String DATAFACTORYPARAMETER = "DataFactory";
     private final static String METAFACTORYPARAMETER = "MetaFactory";
     private final static String REVISIONINGPARAMETER = "Revisioning";
     private final static String BACKENDPARAMETER = "Backend";
@@ -41,14 +41,14 @@ public class ModuleFactory implements IModuleFactory {
     @SuppressWarnings("unchecked")
     public Module createModule(ITestContext context, Class<?> testClass) {
         AbstractModule returnVal = null;
-        String nodeFacName;
+        String dataFacName;
         String metaFacName;
         String revisioningName = REVISIONING;
         String backendName = BACKEND;
         // getting the parameters over testng.xml and setting it directly or...
-        if (context.getSuite().getParameter(NODEFACTORYPARAMETER) != null) {
+        if (context.getSuite().getParameter(DATAFACTORYPARAMETER) != null) {
             final Map<String, String> params = context.getSuite().getXmlSuite().getAllParameters();
-            nodeFacName = params.get(NODEFACTORYPARAMETER);
+            dataFacName = params.get(DATAFACTORYPARAMETER);
             metaFacName = params.get(METAFACTORYPARAMETER);
             revisioningName = params.get(REVISIONINGPARAMETER);
             backendName = params.get(BACKENDPARAMETER);
@@ -60,22 +60,22 @@ public class ModuleFactory implements IModuleFactory {
             String module = elements[elements.length - 3];
             switch (module) {
             case "core":
-                nodeFacName = "org.treetank.bucket.DumbNodeFactory";
+                dataFacName = "org.treetank.bucket.DumbDataFactory";
                 metaFacName = "org.treetank.bucket.DumbMetaEntryFactory";
                 break;
             case "node":
             case "xml":
             case "saxon":
             case "jax-rx":
-                nodeFacName = "org.treetank.node.TreeNodeFactory";
+                dataFacName = "org.treetank.node.TreeNodeFactory";
                 metaFacName = "org.treetank.node.NodeMetaPageFactory";
                 break;
             case "iscsi":
-                nodeFacName = "org.treetank.node.ByteNodeFactory";
+                dataFacName = "org.treetank.node.ByteNodeFactory";
                 metaFacName = "org.treetank.node.ISCSIMetaPageFactory";
                 break;
             case "filelistener":
-                nodeFacName = "org.treetank.filelistener.file.node.FileNodeFactory";
+                dataFacName = "org.treetank.filelistener.file.node.FileNodeFactory";
                 metaFacName = "org.treetank.filelistener.file.node.FilelistenerMetaPageFactory";
                 break;
             default:
@@ -84,12 +84,12 @@ public class ModuleFactory implements IModuleFactory {
 
         }
         // ...invoking it over reflection and setting it to the ModuleSetter.
-        Class<INodeFactory> nodeFac;
+        Class<IDataFactory> dataFac;
         Class<IMetaEntryFactory> metaFac;
         Class<IRevisioning> revisioning;
         Class<IBackend> backend;
         try {
-            nodeFac = (Class<INodeFactory>)Class.forName(nodeFacName);
+            dataFac = (Class<IDataFactory>)Class.forName(dataFacName);
             metaFac = (Class<IMetaEntryFactory>)Class.forName(metaFacName);
             revisioning = (Class<IRevisioning>)Class.forName(revisioningName);
             backend = (Class<IBackend>)Class.forName(backendName);
@@ -98,7 +98,7 @@ public class ModuleFactory implements IModuleFactory {
         }
 
         returnVal =
-            new ModuleSetter().setNodeFacClass(nodeFac).setMetaFacClass(metaFac)
+            new ModuleSetter().setDataFacClass(dataFac).setMetaFacClass(metaFac)
                 .setRevisioningClass(revisioning).setBackendClass(backend).createModule();
         
         return returnVal;

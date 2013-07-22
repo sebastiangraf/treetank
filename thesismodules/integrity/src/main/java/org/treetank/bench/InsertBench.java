@@ -28,8 +28,8 @@ import org.treetank.api.IBucketWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
 import org.treetank.bucket.DumbMetaEntryFactory;
-import org.treetank.bucket.DumbNodeFactory;
-import org.treetank.bucket.DumbNodeFactory.DumbNode;
+import org.treetank.bucket.DumbDataFactory;
+import org.treetank.bucket.DumbDataFactory.DumbData;
 import org.treetank.exception.TTException;
 import org.treetank.io.IOUtils;
 import org.treetank.io.jclouds.JCloudsStorage;
@@ -54,7 +54,7 @@ public class InsertBench {
     private IStorage mStorage;
     private final Injector mInject;
     private ISession mSession;
-    private DumbNode[] mNodesToInsert = BenchUtils.createNodes(new int[] {
+    private DumbData[] mNodesToInsert = BenchUtils.createNodes(new int[] {
         262144
     })[0];
     private IBucketWriteTrx mTrx;
@@ -67,7 +67,7 @@ public class InsertBench {
         IOUtils.recursiveDelete(storageFile);
 
         mInject =
-            Guice.createInjector(new ModuleSetter().setNodeFacClass(DumbNodeFactory.class).setMetaFacClass(
+            Guice.createInjector(new ModuleSetter().setDataFacClass(DumbDataFactory.class).setMetaFacClass(
                 DumbMetaEntryFactory.class).setBackendClass(JCloudsStorage.class).createModule());
 
         final StorageConfiguration config = new StorageConfiguration(storageFile);
@@ -82,9 +82,9 @@ public class InsertBench {
         for (int i = 0; i < FACTOR; i++) {
             // long time1 = System.currentTimeMillis();
             for (int j = 0; j < offset; j++) {
-                final long nodeKey = mTrx.incrementNodeKey();
-                mNodesToInsert[i * offset + j].setNodeKey(nodeKey);
-                mTrx.setNode(mNodesToInsert[i * offset + j]);
+                final long nodeKey = mTrx.incrementDataKey();
+                mNodesToInsert[i * offset + j].setDataKey(nodeKey);
+                mTrx.setData(mNodesToInsert[i * offset + j]);
             }
             // long time2 = System.currentTimeMillis();
             if (blocked) {

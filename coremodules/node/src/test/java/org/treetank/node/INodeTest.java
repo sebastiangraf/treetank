@@ -11,7 +11,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.treetank.CoreTestHelper;
-import org.treetank.api.INodeFactory;
+import org.treetank.api.IDataFactory;
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.exception.TTIOException;
 import org.treetank.node.delegates.NameNodeDelegate;
@@ -53,9 +53,9 @@ public class INodeTest {
     }
 
     /**
-     * Test method for {@link org.treetank.api.INode#getHash()},
-     * {@link org.treetank.api.INode#getNodeKey()},
-     * {@link org.treetank.api.INode#serialize(java.io.DataOutput)},
+     * Test method for {@link org.treetank.api.IData#getHash()},
+     * {@link org.treetank.api.IData#getDataKey()},
+     * {@link org.treetank.api.IData#serialize(java.io.DataOutput)},
      * 
      * @param pNodeClass
      *            class for node to test
@@ -74,7 +74,7 @@ public class INodeTest {
 
         // be sure you have enough checkers for the revisioning to check
         assertEquals(pNodes.length, pNodeChecker.length);
-        INodeFactory fac = new TreeNodeFactory();
+        IDataFactory fac = new TreeNodeFactory();
 
         for (int i = 0; i < pNodes.length; i++) {
             pNodeChecker[i].checkNode(pNodes[i]);
@@ -83,7 +83,7 @@ public class INodeTest {
             final byte[] firstSerialized = output.toByteArray();
 
             ByteArrayDataInput input = ByteStreams.newDataInput(firstSerialized);
-            final INode serializedNode = (INode)fac.deserializeNode(input);
+            final INode serializedNode = (INode)fac.deserializeData(input);
             output = ByteStreams.newDataOutput();
             serializedNode.serialize(output);
             byte[] secondSerialized = output.toByteArray();
@@ -95,9 +95,9 @@ public class INodeTest {
     }
 
     /**
-     * Providing different implementations of the {@link INode} as Dataprovider to the test class.
+     * Providing different implementations of the {@link IData} as Dataprovider to the test class.
      * 
-     * @return different classes of the {@link INode} and <code>INodeChecker</code>
+     * @return different classes of the {@link IData} and <code>INodeChecker</code>
      * @throws TTByteHandleException
      */
     @DataProvider(name = "instantiateNode")
@@ -204,7 +204,7 @@ public class INodeTest {
 
     private static void checkPlainNode(INode node) {
         assertEquals(new StringBuilder("Check for ").append(node.getClass().getName()).append(" failed: ")
-            .toString(), 99L, node.getNodeKey());
+            .toString(), 99L, node.getDataKey());
         assertEquals(new StringBuilder("Check for ").append(node.getClass().getName()).append(" failed: ")
             .toString(), 13L, node.getParentKey());
         assertEquals(new StringBuilder("Check for ").append(node.getClass().getName()).append(" failed: ")

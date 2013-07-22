@@ -71,7 +71,7 @@ public final class ItemList {
     public int addItem(final AtomicValue pItem) {
         final int key = mList.size();
         pItem.setNodeKey(key);
-        // TODO: +2 is necessary, because key -1 is the NULL_NODE
+        // TODO: +2 is necessary, because key -1 is the NULLDATA
         final int itemKey = (key + 2) * (-1);
         pItem.setNodeKey(itemKey);
 
@@ -96,7 +96,7 @@ public final class ItemList {
             index = index * (-1);
         }
 
-        // TODO: This is necessary, because key -1 is the NULL_NODE
+        // TODO: This is necessary, because key -1 is the NULLDATA
         index = index - 2;
 
         return mList.get(index);

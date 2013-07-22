@@ -78,13 +78,13 @@ public class FNPosition extends AbsFunction {
     @Override
     protected byte[] computeResult() {
         Integer position = 0;
-        final long currentNode = getNode().getNodeKey();
+        final long currentNode = getNode().getDataKey();
         moveTo(getNode().getParentKey());
         moveTo(((IStructNode)getNode()).getFirstChildKey());
         do {
             position++;
             moveTo(((IStructNode)getNode()).getRightSiblingKey());
-        } while (getNode().getNodeKey() != currentNode);
+        } while (getNode().getDataKey() != currentNode);
 
         return TypedValue.getBytes(position.toString());
     }

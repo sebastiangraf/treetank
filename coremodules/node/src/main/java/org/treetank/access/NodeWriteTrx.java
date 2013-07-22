@@ -136,7 +136,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
             "Insert is not allowed if current node is not an ElementNode, but was %s", mDelegate
                 .getCurrentNode());
 
-        final long parentKey = mDelegate.getCurrentNode().getNodeKey();
+        final long parentKey = mDelegate.getCurrentNode().getDataKey();
         final long leftSibKey = NULL_NODE;
         final long rightSibKey = ((IStructNode)mDelegate.getCurrentNode()).getFirstChildKey();
         final ElementNode node = createElementNode(parentKey, leftSibKey, rightSibKey, 0, pQName);
@@ -145,7 +145,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
         adaptForInsert(node, true);
         adaptHashesWithAdd();
 
-        return node.getNodeKey();
+        return node.getDataKey();
     }
 
     /**
@@ -161,7 +161,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
             mDelegate.getCurrentNode());
 
         final long parentKey = mDelegate.getCurrentNode().getParentKey();
-        final long leftSibKey = mDelegate.getCurrentNode().getNodeKey();
+        final long leftSibKey = mDelegate.getCurrentNode().getDataKey();
         final long rightSibKey = ((IStructNode)mDelegate.getCurrentNode()).getRightSiblingKey();
         final ElementNode node = createElementNode(parentKey, leftSibKey, rightSibKey, 0, pQName);
 
@@ -169,7 +169,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
         adaptForInsert(node, false);
         adaptHashesWithAdd();
 
-        return node.getNodeKey();
+        return node.getDataKey();
     }
 
     /**
@@ -185,7 +185,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
                 .getCurrentNode());
 
         final byte[] value = TypedValue.getBytes(pValue);
-        final long parentKey = mDelegate.getCurrentNode().getNodeKey();
+        final long parentKey = mDelegate.getCurrentNode().getDataKey();
         final long leftSibKey = NULL_NODE;
         final long rightSibKey = ((IStructNode)mDelegate.getCurrentNode()).getFirstChildKey();
         final TextNode node = createTextNode(parentKey, leftSibKey, rightSibKey, value);
@@ -194,7 +194,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
         adaptForInsert(node, true);
         adaptHashesWithAdd();
 
-        return node.getNodeKey();
+        return node.getDataKey();
     }
 
     /**
@@ -210,7 +210,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
 
         final byte[] value = TypedValue.getBytes(pValue);
         final long parentKey = mDelegate.getCurrentNode().getParentKey();
-        final long leftSibKey = mDelegate.getCurrentNode().getNodeKey();
+        final long leftSibKey = mDelegate.getCurrentNode().getDataKey();
         final long rightSibKey = ((IStructNode)mDelegate.getCurrentNode()).getRightSiblingKey();
         final TextNode node = createTextNode(parentKey, leftSibKey, rightSibKey, value);
 
@@ -218,7 +218,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
         adaptForInsert(node, false);
         adaptHashesWithAdd();
 
-        return node.getNodeKey();
+        return node.getDataKey();
 
     }
 
@@ -233,26 +233,26 @@ public class NodeWriteTrx implements INodeWriteTrx {
                 .getCurrentNode());
 
         final byte[] value = TypedValue.getBytes(pValue);
-        final long elementKey = mDelegate.getCurrentNode().getNodeKey();
+        final long elementKey = mDelegate.getCurrentNode().getDataKey();
 
         final int nameKey = insertName(buildName(pQName));
         final int namespaceKey = insertName(pQName.getNamespaceURI());
-        final NodeDelegate nodeDel = new NodeDelegate(getPtx().incrementNodeKey(), elementKey, 0);
+        final NodeDelegate nodeDel = new NodeDelegate(getPtx().incrementDataKey(), elementKey, 0);
         final NameNodeDelegate nameDel = new NameNodeDelegate(nodeDel, nameKey, namespaceKey);
         final ValNodeDelegate valDel = new ValNodeDelegate(nodeDel, value);
 
         final AttributeNode node = new AttributeNode(nodeDel, nameDel, valDel);
-        getPtx().setNode(node);
+        getPtx().setData(node);
 
-        final INode parentNode = (org.treetank.node.interfaces.INode)getPtx().getNode(node.getParentKey());
-        ((ElementNode)parentNode).insertAttribute(node.getNodeKey());
-        getPtx().setNode(parentNode);
+        final INode parentNode = (org.treetank.node.interfaces.INode)getPtx().getData(node.getParentKey());
+        ((ElementNode)parentNode).insertAttribute(node.getDataKey());
+        getPtx().setData(parentNode);
 
         mDelegate.setCurrentNode(node);
         adaptForInsert(node, false);
 
         adaptHashesWithAdd();
-        return node.getNodeKey();
+        return node.getDataKey();
 
     }
 
@@ -269,22 +269,22 @@ public class NodeWriteTrx implements INodeWriteTrx {
 
         final int uriKey = insertName(pQName.getNamespaceURI());
         final int prefixKey = insertName(pQName.getPrefix());
-        final long elementKey = mDelegate.getCurrentNode().getNodeKey();
+        final long elementKey = mDelegate.getCurrentNode().getDataKey();
 
-        final NodeDelegate nodeDel = new NodeDelegate(getPtx().incrementNodeKey(), elementKey, 0);
+        final NodeDelegate nodeDel = new NodeDelegate(getPtx().incrementDataKey(), elementKey, 0);
         final NameNodeDelegate nameDel = new NameNodeDelegate(nodeDel, prefixKey, uriKey);
 
         final NamespaceNode node = new NamespaceNode(nodeDel, nameDel);
-        getPtx().setNode(node);
+        getPtx().setData(node);
 
-        final INode parentNode = (org.treetank.node.interfaces.INode)getPtx().getNode(node.getParentKey());
-        ((ElementNode)parentNode).insertNamespace(node.getNodeKey());
-        getPtx().setNode(parentNode);
+        final INode parentNode = (org.treetank.node.interfaces.INode)getPtx().getData(node.getParentKey());
+        ((ElementNode)parentNode).insertNamespace(node.getDataKey());
+        getPtx().setData(parentNode);
 
         mDelegate.setCurrentNode(node);
         adaptForInsert(node, false);
         adaptHashesWithAdd();
-        return node.getNodeKey();
+        return node.getDataKey();
     }
 
     private ElementNode createElementNode(final long parentKey, final long mLeftSibKey,
@@ -293,24 +293,24 @@ public class NodeWriteTrx implements INodeWriteTrx {
         final int nameKey = insertName(buildName(mName));
         final int namespaceKey = insertName(mName.getNamespaceURI());
 
-        final NodeDelegate nodeDel = new NodeDelegate(getPtx().incrementNodeKey(), parentKey, 0);
+        final NodeDelegate nodeDel = new NodeDelegate(getPtx().incrementDataKey(), parentKey, 0);
         final StructNodeDelegate structDel =
             new StructNodeDelegate(nodeDel, NULL_NODE, rightSibKey, mLeftSibKey, 0);
         final NameNodeDelegate nameDel = new NameNodeDelegate(nodeDel, nameKey, namespaceKey);
         final ElementNode node =
             new ElementNode(nodeDel, structDel, nameDel, new ArrayList<Long>(), new ArrayList<Long>());
-        getPtx().setNode(node);
+        getPtx().setData(node);
         return node;
     }
 
     private TextNode createTextNode(final long mParentKey, final long mLeftSibKey, final long rightSibKey,
         final byte[] mValue) throws TTException {
-        final NodeDelegate nodeDel = new NodeDelegate(getPtx().incrementNodeKey(), mParentKey, 0);
+        final NodeDelegate nodeDel = new NodeDelegate(getPtx().incrementDataKey(), mParentKey, 0);
         final ValNodeDelegate valDel = new ValNodeDelegate(nodeDel, mValue);
         final StructNodeDelegate structDel =
             new StructNodeDelegate(nodeDel, NULL_NODE, rightSibKey, mLeftSibKey, 0);
         final TextNode node = new TextNode(nodeDel, structDel, valDel);
-        getPtx().setNode(node);
+        getPtx().setData(node);
         return node;
     }
 
@@ -325,19 +325,19 @@ public class NodeWriteTrx implements INodeWriteTrx {
         if (mDelegate.getCurrentNode() instanceof IStructNode) {
             final IStructNode node = (IStructNode)mDelegate.getCurrentNode();
             if (node.getKind() == IConstants.ELEMENT) {
-                long currentKey = node.getNodeKey();
+                long currentKey = node.getDataKey();
                 ElementNode element = (ElementNode)node;
                 for (int i = 0; i < element.getAttributeCount(); i++) {
                     moveTo(element.getAttributeKey(i));
-                    getPtx().removeNode(mDelegate.getCurrentNode());
+                    getPtx().removeData(mDelegate.getCurrentNode());
                 }
                 for (int i = 0; i < element.getNamespaceCount(); i++) {
                     moveTo(element.getNamespaceKey(i));
-                    getPtx().removeNode(mDelegate.getCurrentNode());
+                    getPtx().removeData(mDelegate.getCurrentNode());
                 }
                 moveTo(currentKey);
             }
-            moveTo(node.getNodeKey());
+            moveTo(node.getDataKey());
             adaptForRemove(node);
             adaptHashesWithRemove();
 
@@ -352,16 +352,16 @@ public class NodeWriteTrx implements INodeWriteTrx {
         } else if (mDelegate.getCurrentNode().getKind() == IConstants.ATTRIBUTE) {
             final INode node = mDelegate.getCurrentNode();
 
-            final ElementNode parentNode = (ElementNode)getPtx().getNode(node.getParentKey());
-            parentNode.removeAttribute(node.getNodeKey());
-            getPtx().setNode(parentNode);
+            final ElementNode parentNode = (ElementNode)getPtx().getData(node.getParentKey());
+            parentNode.removeAttribute(node.getDataKey());
+            getPtx().setData(parentNode);
             adaptHashesWithRemove();
             moveTo(mDelegate.getCurrentNode().getParentKey());
         } else if (mDelegate.getCurrentNode().getKind() == IConstants.NAMESPACE) {
             final INode node = mDelegate.getCurrentNode();
-            final ElementNode parentNode = (ElementNode)getPtx().getNode(node.getParentKey());
-            parentNode.removeNamespace(node.getNodeKey());
-            getPtx().setNode(parentNode);
+            final ElementNode parentNode = (ElementNode)getPtx().getData(node.getParentKey());
+            parentNode.removeNamespace(node.getDataKey());
+            getPtx().setData(parentNode);
             adaptHashesWithRemove();
             moveTo(mDelegate.getCurrentNode().getParentKey());
         }
@@ -379,9 +379,9 @@ public class NodeWriteTrx implements INodeWriteTrx {
 
         final long oldHash = mDelegate.getCurrentNode().hashCode();
 
-        final INameNode node = (INameNode)getPtx().getNode(mDelegate.getCurrentNode().getNodeKey());
+        final INameNode node = (INameNode)getPtx().getData(mDelegate.getCurrentNode().getDataKey());
         node.setNameKey(insertName(buildName(paramName)));
-        getPtx().setNode(node);
+        getPtx().setData(node);
 
         mDelegate.setCurrentNode((INode)node);
         adaptHashedWithUpdate(oldHash);
@@ -399,9 +399,9 @@ public class NodeWriteTrx implements INodeWriteTrx {
 
         final long oldHash = mDelegate.getCurrentNode().hashCode();
 
-        final INameNode node = (INameNode)getPtx().getNode(mDelegate.getCurrentNode().getNodeKey());
+        final INameNode node = (INameNode)getPtx().getData(mDelegate.getCurrentNode().getDataKey());
         node.setURIKey(insertName(paramUri));
-        getPtx().setNode(node);
+        getPtx().setData(node);
 
         mDelegate.setCurrentNode((INode)node);
         adaptHashedWithUpdate(oldHash);
@@ -419,9 +419,9 @@ public class NodeWriteTrx implements INodeWriteTrx {
 
         final long oldHash = mDelegate.getCurrentNode().hashCode();
 
-        final IValNode node = (IValNode)getPtx().getNode(mDelegate.getCurrentNode().getNodeKey());
+        final IValNode node = (IValNode)getPtx().getData(mDelegate.getCurrentNode().getDataKey());
         node.setValue(TypedValue.getBytes(pValue));
-        getPtx().setNode(node);
+        getPtx().setData(node);
 
         mDelegate.setCurrentNode((INode)node);
         adaptHashedWithUpdate(oldHash);
@@ -516,24 +516,24 @@ public class NodeWriteTrx implements INodeWriteTrx {
 
         if (paramNewNode instanceof IStructNode) {
             final IStructNode strucNode = (IStructNode)paramNewNode;
-            final IStructNode parent = (IStructNode)getPtx().getNode(paramNewNode.getParentKey());
+            final IStructNode parent = (IStructNode)getPtx().getData(paramNewNode.getParentKey());
             parent.incrementChildCount();
             if (addAsFirstChild) {
-                parent.setFirstChildKey(paramNewNode.getNodeKey());
+                parent.setFirstChildKey(paramNewNode.getDataKey());
             }
-            getPtx().setNode(parent);
+            getPtx().setData(parent);
 
             if (strucNode.hasRightSibling()) {
                 final IStructNode rightSiblingNode =
-                    (IStructNode)getPtx().getNode(strucNode.getRightSiblingKey());
-                rightSiblingNode.setLeftSiblingKey(paramNewNode.getNodeKey());
-                getPtx().setNode(rightSiblingNode);
+                    (IStructNode)getPtx().getData(strucNode.getRightSiblingKey());
+                rightSiblingNode.setLeftSiblingKey(paramNewNode.getDataKey());
+                getPtx().setData(rightSiblingNode);
             }
             if (strucNode.hasLeftSibling()) {
                 final IStructNode leftSiblingNode =
-                    (IStructNode)getPtx().getNode(strucNode.getLeftSiblingKey());
-                leftSiblingNode.setRightSiblingKey(paramNewNode.getNodeKey());
-                getPtx().setNode(leftSiblingNode);
+                    (IStructNode)getPtx().getData(strucNode.getLeftSiblingKey());
+                leftSiblingNode.setRightSiblingKey(paramNewNode.getDataKey());
+                getPtx().setData(leftSiblingNode);
             }
         }
 
@@ -560,42 +560,42 @@ public class NodeWriteTrx implements INodeWriteTrx {
 
         // Adapt left sibling node if there is one.
         if (pOldNode.hasLeftSibling()) {
-            final IStructNode leftSibling = (IStructNode)getPtx().getNode(pOldNode.getLeftSiblingKey());
+            final IStructNode leftSibling = (IStructNode)getPtx().getData(pOldNode.getLeftSiblingKey());
             leftSibling.setRightSiblingKey(pOldNode.getRightSiblingKey());
-            getPtx().setNode(leftSibling);
+            getPtx().setData(leftSibling);
         }
 
         // Adapt right sibling node if there is one.
         if (pOldNode.hasRightSibling()) {
-            final IStructNode rightSibling = (IStructNode)getPtx().getNode(pOldNode.getRightSiblingKey());
+            final IStructNode rightSibling = (IStructNode)getPtx().getData(pOldNode.getRightSiblingKey());
             rightSibling.setLeftSiblingKey(pOldNode.getLeftSiblingKey());
-            getPtx().setNode(rightSibling);
+            getPtx().setData(rightSibling);
         }
 
         // Adapt parent, if node has now left sibling it is a first child.
-        final IStructNode parent = (IStructNode)getPtx().getNode(pOldNode.getParentKey());
+        final IStructNode parent = (IStructNode)getPtx().getData(pOldNode.getParentKey());
         if (!pOldNode.hasLeftSibling()) {
             parent.setFirstChildKey(pOldNode.getRightSiblingKey());
         }
         parent.decrementChildCount();
-        getPtx().setNode(parent);
+        getPtx().setData(parent);
 
         if (pOldNode.getKind() == IConstants.ELEMENT) {
             // removing attributes
             for (int i = 0; i < ((ElementNode)pOldNode).getAttributeCount(); i++) {
                 moveTo(((ElementNode)pOldNode).getAttributeKey(i));
-                getPtx().removeNode(mDelegate.getCurrentNode());
+                getPtx().removeData(mDelegate.getCurrentNode());
             }
             // removing namespaces
-            moveTo(pOldNode.getNodeKey());
+            moveTo(pOldNode.getDataKey());
             for (int i = 0; i < ((ElementNode)pOldNode).getNamespaceCount(); i++) {
                 moveTo(((ElementNode)pOldNode).getNamespaceKey(i));
-                getPtx().removeNode(mDelegate.getCurrentNode());
+                getPtx().removeData(mDelegate.getCurrentNode());
             }
         }
 
         // Remove old node.
-        getPtx().removeNode(pOldNode);
+        getPtx().removeData(pOldNode);
     }
 
     // ////////////////////////////////////////////////////////////
@@ -688,21 +688,21 @@ public class NodeWriteTrx implements INodeWriteTrx {
      */
     private void postorderAdd() throws TTException {
         // start with hash to add
-        final long startKey = mDelegate.getCurrentNode().getNodeKey();
+        final long startKey = mDelegate.getCurrentNode().getDataKey();
         // long for adapting the hash of the parent
         long hashCodeForParent = 0;
         // adapting the parent if the current node is no structural one.
         if (!(mDelegate.getCurrentNode() instanceof IStructNode)) {
-            getPtx().getNode(mDelegate.getCurrentNode().getNodeKey());
+            getPtx().getData(mDelegate.getCurrentNode().getDataKey());
             mDelegate.getCurrentNode().setHash(mDelegate.getCurrentNode().hashCode());
-            getPtx().setNode(mDelegate.getCurrentNode());
+            getPtx().setData(mDelegate.getCurrentNode());
             moveTo(mDelegate.getCurrentNode().getParentKey());
         }
         // Cursor to root
         IStructNode cursorToRoot;
         do {
             synchronized (mDelegate.getCurrentNode()) {
-                cursorToRoot = (IStructNode)getPtx().getNode(mDelegate.getCurrentNode().getNodeKey());
+                cursorToRoot = (IStructNode)getPtx().getData(mDelegate.getCurrentNode().getDataKey());
                 hashCodeForParent = mDelegate.getCurrentNode().hashCode() + hashCodeForParent * PRIME;
                 // Caring about attributes and namespaces if node is an element.
                 if (cursorToRoot.getKind() == IConstants.ELEMENT) {
@@ -716,7 +716,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
                         moveTo(currentElement.getNamespaceKey(i));
                         hashCodeForParent = mDelegate.getCurrentNode().hashCode() + hashCodeForParent * PRIME;
                     }
-                    moveTo(cursorToRoot.getNodeKey());
+                    moveTo(cursorToRoot.getDataKey());
                 }
 
                 // Caring about the children of a node
@@ -729,7 +729,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
 
                 // setting hash and resetting hash
                 cursorToRoot.setHash(hashCodeForParent);
-                getPtx().setNode(cursorToRoot);
+                getPtx().setData(cursorToRoot);
                 hashCodeForParent = 0;
             }
         } while (moveTo(cursorToRoot.getParentKey()));
@@ -754,8 +754,8 @@ public class NodeWriteTrx implements INodeWriteTrx {
         // go the path to the root
         do {
             synchronized (mDelegate.getCurrentNode()) {
-                getPtx().getNode(mDelegate.getCurrentNode().getNodeKey());
-                if (mDelegate.getCurrentNode().getNodeKey() == newNode.getNodeKey()) {
+                getPtx().getData(mDelegate.getCurrentNode().getDataKey());
+                if (mDelegate.getCurrentNode().getDataKey() == newNode.getDataKey()) {
                     resultNew = mDelegate.getCurrentNode().getHash() - paramOldHash;
                     resultNew = resultNew + newNodeHash;
                 } else {
@@ -763,7 +763,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
                     resultNew = resultNew + newNodeHash * PRIME;
                 }
                 mDelegate.getCurrentNode().setHash(resultNew);
-                getPtx().setNode(mDelegate.getCurrentNode());
+                getPtx().setData(mDelegate.getCurrentNode());
             }
         } while (moveTo(mDelegate.getCurrentNode().getParentKey()));
 
@@ -785,11 +785,11 @@ public class NodeWriteTrx implements INodeWriteTrx {
         // go the path to the root
         do {
             synchronized (mDelegate.getCurrentNode()) {
-                getPtx().getNode(mDelegate.getCurrentNode().getNodeKey());
-                if (mDelegate.getCurrentNode().getNodeKey() == startNode.getNodeKey()) {
+                getPtx().getData(mDelegate.getCurrentNode().getDataKey());
+                if (mDelegate.getCurrentNode().getDataKey() == startNode.getDataKey()) {
                     // the begin node is always null
                     newHash = 0;
-                } else if (mDelegate.getCurrentNode().getNodeKey() == startNode.getParentKey()) {
+                } else if (mDelegate.getCurrentNode().getDataKey() == startNode.getParentKey()) {
                     // the parent node is just removed
                     newHash = mDelegate.getCurrentNode().getHash() - (hashToRemove * PRIME);
                     hashToRemove = mDelegate.getCurrentNode().getHash();
@@ -801,7 +801,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
                 }
                 mDelegate.getCurrentNode().setHash(newHash);
                 hashToAdd = newHash;
-                getPtx().setNode(mDelegate.getCurrentNode());
+                getPtx().setData(mDelegate.getCurrentNode());
             }
         } while (moveTo(mDelegate.getCurrentNode().getParentKey()));
 
@@ -824,11 +824,11 @@ public class NodeWriteTrx implements INodeWriteTrx {
         // go the path to the root
         do {
             synchronized (mDelegate.getCurrentNode()) {
-                getPtx().getNode(mDelegate.getCurrentNode().getNodeKey());
-                if (mDelegate.getCurrentNode().getNodeKey() == startNode.getNodeKey()) {
+                getPtx().getData(mDelegate.getCurrentNode().getDataKey());
+                if (mDelegate.getCurrentNode().getDataKey() == startNode.getDataKey()) {
                     // at the beginning, take the hashcode of the node only
                     newHash = hashToAdd;
-                } else if (mDelegate.getCurrentNode().getNodeKey() == startNode.getParentKey()) {
+                } else if (mDelegate.getCurrentNode().getDataKey() == startNode.getParentKey()) {
                     // at the parent level, just add the node
                     possibleOldHash = mDelegate.getCurrentNode().getHash();
                     newHash = possibleOldHash + hashToAdd * PRIME;
@@ -842,7 +842,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
                     possibleOldHash = mDelegate.getCurrentNode().getHash();
                 }
                 mDelegate.getCurrentNode().setHash(newHash);
-                getPtx().setNode(mDelegate.getCurrentNode());
+                getPtx().setData(mDelegate.getCurrentNode());
             }
         } while (moveTo(mDelegate.getCurrentNode().getParentKey()));
         mDelegate.setCurrentNode(startNode);

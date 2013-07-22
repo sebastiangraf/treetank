@@ -79,7 +79,7 @@ public final class DescendantAxis extends AbsAxis {
         super.reset(mNodeKey);
         mRightSiblingKeyStack = new Stack<Long>();
         if (isSelfIncluded()) {
-            mNextKey = getNode().getNodeKey();
+            mNextKey = getNode().getDataKey();
         } else {
             mNextKey = ((IStructNode)getNode()).getFirstChildKey();
         }
