@@ -41,16 +41,16 @@ public interface IConstants {
 
     // --- Bucket Kinds
     // ----------------------------------------------------------
-    public final static int NODEBUCKET = 1;
+    public final static int DATABUCKET = 1;
     public final static int METABUCKET = 2;
     public final static int UBERBUCKET = 3;
     public final static int INDIRCTBUCKET = 4;
     public final static int REVISIONROOTBUCKET = 5;
 
-    /** ID for not existing nodes. */
-    public final static int NULL_NODE = -22;
-    public final static int DELETEDNODE = -44;
-    public final static int INTERFACENODE = -66;
+    /** ID for not existing datas. */
+    public final static int NULLDATA = -22;
+    public final static int DELETEDDATA = -44;
+    public final static int INTERFACEDATA = -66;
 
     /** Count of indirect references in indirect bucket. */
     public static final int CONTENT_COUNT = 128;

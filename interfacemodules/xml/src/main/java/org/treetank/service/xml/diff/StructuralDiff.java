@@ -56,7 +56,7 @@ final class StructuralDiff extends AbsDiff {
     @Override
     boolean checkNodes(final INodeReadTrx paramNewRtx, final INodeReadTrx paramOldRtx) {
         boolean found = false;
-        if (paramNewRtx.getNode().getNodeKey() == paramOldRtx.getNode().getNodeKey()) {
+        if (paramNewRtx.getNode().getDataKey() == paramOldRtx.getNode().getDataKey()) {
             if (paramNewRtx.getNode().getKind() == paramOldRtx.getNode().getKind()) {
                 switch (paramNewRtx.getNode().getKind()) {
                 case IConstants.ELEMENT:

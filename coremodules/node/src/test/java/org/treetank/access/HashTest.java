@@ -134,7 +134,7 @@ public class HashTest {
 
         // inserting a element as root
         wtx.insertElementAsFirstChild(new QName(NAME1));
-        final long rootKey = wtx.getNode().getNodeKey();
+        final long rootKey = wtx.getNode().getDataKey();
         final long firstRootHash = wtx.getNode().getHash();
 
         // inserting a text as second child of root

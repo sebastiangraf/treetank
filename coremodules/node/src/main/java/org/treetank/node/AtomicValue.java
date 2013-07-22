@@ -57,10 +57,10 @@ public class AtomicValue implements INode, IValNode {
      * @author Sebastian Graf, University of Konstanz
      * 
      */
-    enum AtomicValueFunnel implements Funnel<org.treetank.api.INode> {
+    enum AtomicValueFunnel implements Funnel<org.treetank.api.IData> {
         INSTANCE;
-        public void funnel(org.treetank.api.INode node, PrimitiveSink into) {
-            final AtomicValue from = (AtomicValue)node;
+        public void funnel(org.treetank.api.IData data, PrimitiveSink into) {
+            final AtomicValue from = (AtomicValue)data;
             into.putLong(from.mItemKey).putBytes(from.mValue).putInt(from.mType);
         }
     }
@@ -152,7 +152,7 @@ public class AtomicValue implements INode, IValNode {
      * {@inheritDoc}
      */
     @Override
-    public long getNodeKey() {
+    public long getDataKey() {
         return mItemKey;
     }
 
@@ -321,7 +321,7 @@ public class AtomicValue implements INode, IValNode {
      * {@inheritDoc}
      */
     @Override
-    public Funnel<org.treetank.api.INode> getFunnel() {
+    public Funnel<org.treetank.api.IData> getFunnel() {
         return AtomicValueFunnel.INSTANCE;
     }
 

@@ -186,7 +186,7 @@ public class TreetankTargetServer {
 
         // Guice Stuff for building the module
         final Injector injector =
-            Guice.createInjector(new ModuleSetter().setNodeFacClass(ByteNodeFactory.class).setMetaFacClass(
+            Guice.createInjector(new ModuleSetter().setDataFacClass(ByteNodeFactory.class).setMetaFacClass(
                 ISCSIMetaPageFactory.class).setBackendClass(backendClass).setRevisioningClass(
                 revisioningClass).createModule());
         final IResourceConfigurationFactory resFac =

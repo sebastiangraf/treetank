@@ -72,7 +72,7 @@ public class NodeReadTrx implements INodeReadTrx {
      */
     public NodeReadTrx(final IBucketReadTrx pPageTrx) throws TTException {
         mPageReadTrx = pPageTrx;
-        mCurrentNode = (org.treetank.node.interfaces.INode)mPageReadTrx.getNode(IConstants.ROOT_NODE);
+        mCurrentNode = (org.treetank.node.interfaces.INode)mPageReadTrx.getData(IConstants.ROOT_NODE);
     }
 
     /**
@@ -88,7 +88,7 @@ public class NodeReadTrx implements INodeReadTrx {
         } else {
             // Remember old node and fetch new one.
             final INode oldNode = mCurrentNode;
-            mCurrentNode = (org.treetank.node.interfaces.INode)mPageReadTrx.getNode(pNodeKey);
+            mCurrentNode = (org.treetank.node.interfaces.INode)mPageReadTrx.getData(pNodeKey);
 
             if (mCurrentNode == null) {
                 mCurrentNode = oldNode;

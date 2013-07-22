@@ -125,7 +125,7 @@ public final class Matching {
 
         mIsInSubtree.set(paramNode, paramNode, true);
         if (paramNode.hasParent()) {
-            paramRtx.moveTo(paramNode.getNodeKey());
+            paramRtx.moveTo(paramNode.getDataKey());
             while (((IStructNode)paramRtx.getNode()).hasParent()) {
                 paramRtx.moveTo(paramRtx.getNode().getParentKey());
                 mIsInSubtree.set(paramRtx.getNode(), paramNode, true);
@@ -162,7 +162,7 @@ public final class Matching {
         assert paramNodeY != null;
         long retVal = 0;
 
-        mRtxOld.moveTo(paramNodeX.getNodeKey());
+        mRtxOld.moveTo(paramNodeX.getDataKey());
         for (final AbsAxis axis = new DescendantAxis(mRtxOld, true); axis.hasNext(); axis.next()) {
             retVal += mIsInSubtree.get(paramNodeY, partner(mRtxOld.getNode())) ? 1 : 0;
         }

@@ -60,10 +60,10 @@ public final class ElementNode implements INode, IStructNode, INameNode {
      * @author Sebastian Graf, University of Konstanz
      * 
      */
-    enum ElementNodeFunnel implements Funnel<org.treetank.api.INode> {
+    enum ElementNodeFunnel implements Funnel<org.treetank.api.IData> {
         INSTANCE;
-        public void funnel(org.treetank.api.INode node, PrimitiveSink into) {
-            final ElementNode from = (ElementNode)node;
+        public void funnel(org.treetank.api.IData data, PrimitiveSink into) {
+            final ElementNode from = (ElementNode)data;
             from.mDel.getFunnel().funnel(from, into);
             from.mStrucDel.getFunnel().funnel(from, into);
             from.mNameDel.getFunnel().funnel(from, into);
@@ -201,8 +201,8 @@ public final class ElementNode implements INode, IStructNode, INameNode {
      * {@inheritDoc}
      */
     @Override
-    public long getNodeKey() {
-        return mDel.getNodeKey();
+    public long getDataKey() {
+        return mDel.getDataKey();
     }
 
     /**
@@ -446,7 +446,7 @@ public final class ElementNode implements INode, IStructNode, INameNode {
     }
 
     @Override
-    public Funnel<org.treetank.api.INode> getFunnel() {
+    public Funnel<org.treetank.api.IData> getFunnel() {
         return ElementNodeFunnel.INSTANCE;
     }
 

@@ -32,7 +32,7 @@ import static org.treetank.node.IConstants.NULL_NODE;
 import java.io.DataOutput;
 import java.io.IOException;
 
-import org.treetank.api.INode;
+import org.treetank.api.IData;
 import org.treetank.exception.TTIOException;
 import org.treetank.node.interfaces.IStructNode;
 
@@ -56,10 +56,10 @@ public class StructNodeDelegate implements IStructNode {
      * @author Sebastian Graf, University of Konstanz
      * 
      */
-    enum StructNodeDelegateFunnel implements Funnel<org.treetank.api.INode> {
+    enum StructNodeDelegateFunnel implements Funnel<org.treetank.api.IData> {
         INSTANCE;
-        public void funnel(org.treetank.api.INode node, PrimitiveSink into) {
-            final IStructNode from = (IStructNode)node;
+        public void funnel(org.treetank.api.IData data, PrimitiveSink into) {
+            final IStructNode from = (IStructNode)data;
             into.putLong(from.getFirstChildKey());
             into.putLong(from.getRightSiblingKey());
             into.putLong(from.getLeftSiblingKey());
@@ -209,10 +209,10 @@ public class StructNodeDelegate implements IStructNode {
      * Delegate method for getNodeKey.
      * 
      * @return the key of the node
-     * @see org.treetank.node.delegates.NodeDelegate#getNodeKey()
+     * @see org.treetank.node.delegates.NodeDelegate#getDataKey()
      */
-    public long getNodeKey() {
-        return mDelegate.getNodeKey();
+    public long getDataKey() {
+        return mDelegate.getDataKey();
     }
 
     /**
@@ -314,7 +314,7 @@ public class StructNodeDelegate implements IStructNode {
     }
 
     @Override
-    public Funnel<INode> getFunnel() {
+    public Funnel<IData> getFunnel() {
         return StructNodeDelegateFunnel.INSTANCE;
     }
 

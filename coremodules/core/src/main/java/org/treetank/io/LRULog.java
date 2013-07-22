@@ -36,7 +36,7 @@ import java.util.Set;
 
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.api.IMetaEntryFactory;
-import org.treetank.api.INodeFactory;
+import org.treetank.api.IDataFactory;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.LogKey.LogKeyBinding;
 import org.treetank.io.LogValue.LogValueBinding;
@@ -87,12 +87,12 @@ public final class LRULog implements ILog {
     private static final String NAME = "berkeleyCache";
 
     /**
-     * Binding for the key, which is the nodebucket.
+     * Binding for the key, which is the databucket.
      */
     private final transient LogKeyBinding mKeyBinding;
 
     /**
-     * Binding for the value which is a bucket with related Nodes.
+     * Binding for the value which is a bucket with related datas.
      */
     private final transient LogValueBinding mValueBinding;
 
@@ -123,18 +123,18 @@ public final class LRULog implements ILog {
      * 
      * @param pFile
      *            Location of the cache.
-     * @param pNodeFac
-     *            NodeFactory for generating nodes adhering to the used interface
+     * @param pDataFac
+     *            DataFactory for generating datas adhering to the used interface
      * @param pMetaFac
      *            MetaFactory for generating meta-entries adhering to the used interface
      * @throws TTIOException
      * 
      */
-    public LRULog(final File pFile, final INodeFactory pNodeFac, final IMetaEntryFactory pMetaFac)
+    public LRULog(final File pFile, final IDataFactory pDataFac, final IMetaEntryFactory pMetaFac)
         throws TTIOException {
         mClosed = false;
         mKeyBinding = new LogKeyBinding();
-        mValueBinding = new LogValueBinding(pNodeFac, pMetaFac);
+        mValueBinding = new LogValueBinding(pDataFac, pMetaFac);
         mSelected_db = 1;
 
         final File classicLogLocation =

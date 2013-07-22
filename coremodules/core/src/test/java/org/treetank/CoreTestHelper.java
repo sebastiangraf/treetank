@@ -55,10 +55,10 @@ import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
 import org.treetank.bucket.DumbMetaEntryFactory.DumbKey;
 import org.treetank.bucket.DumbMetaEntryFactory.DumbValue;
-import org.treetank.bucket.DumbNodeFactory.DumbNode;
+import org.treetank.bucket.DumbDataFactory.DumbData;
 import org.treetank.bucket.IndirectBucket;
 import org.treetank.bucket.MetaBucket;
-import org.treetank.bucket.NodeBucket;
+import org.treetank.bucket.DataBucket;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
@@ -184,42 +184,42 @@ public final class CoreTestHelper {
     }
 
     /**
-     * Getting a node buckets filled with nodes.
+     * Getting a data buckets filled with datas.
      * 
      * @param offset
      *            offset to start within the bucket
      * @param length
      *            length of the bucket
-     * @param nodebucketKey
-     *            key of the nodebucket
+     * @param databucketKey
+     *            key of the databucket
      * @param lastbucketKey
      *            key of the former bucket
-     * @return a {@link NodeBucket} filled
+     * @return a {@link DataBucket} filled
      */
-    public static final NodeBucket getNodeBucket(final int offset, final int length,
-        final long nodeBucketKey, final long lastBucketKey) {
-        final NodeBucket bucket = new NodeBucket(nodeBucketKey, lastBucketKey);
+    public static final DataBucket getDataBucket(final int offset, final int length,
+        final long databucketKey, final long lastBucketKey) {
+        final DataBucket bucket = new DataBucket(databucketKey, lastBucketKey);
         for (int i = offset; i < length; i++) {
-            bucket.setNode(i, generateOne());
+            bucket.setData(i, generateOne());
         }
         return bucket;
     }
 
     /**
-     * Generating one single {@link DumbNode} with random values.
+     * Generating one single {@link DumbData} with random values.
      * 
-     * @return one {@link DumbNode} with random values.
+     * @return one {@link DumbData} with random values.
      */
-    public static final DumbNode generateOne() {
+    public static final DumbData generateOne() {
         byte[] data = new byte[0];
         CoreTestHelper.random.nextBytes(data);
-        return new DumbNode(CoreTestHelper.random.nextLong(), data);
+        return new DumbData(CoreTestHelper.random.nextLong(), data);
     }
 
     /**
      * Getting a fake structure for testing consisting of different arranged buckets.
      * This structure starts with the key 1 and incrementally sets a new bucketkey for the defined offsets in
-     * the indirectbuckets to simulate different versions and node-offsets.
+     * the indirectbuckets to simulate different versions and data-offsets.
      * The key retrieved thereby has always the value 6 (1 (starting) + 5 (number of indirect layers)
      * 
      * @param offsets
@@ -252,11 +252,11 @@ public final class CoreTestHelper {
     }
 
     /**
-     * Create nodes in different versions in Treetank and check directly afterwards the structure.
+     * Create datas in different versions in Treetank and check directly afterwards the structure.
      * 
      * @param pHolder
      *            for getting the transaction
-     * @return a two-dimensional array of nodes.
+     * @return a two-dimensional array of datas.
      * @throws TTException
      */
     public static final List<List<Map.Entry<DumbKey, DumbValue>>> createTestMeta(Holder pHolder)
@@ -280,41 +280,41 @@ public final class CoreTestHelper {
     }
 
     /**
-     * Create nodes in different versions in Treetank and check directly afterwards the structure.
+     * Create datas in different versions in Treetank and check directly afterwards the structure.
      * 
      * @param pHolder
      *            for getting the transaction
-     * @return a two-dimensional array of nodes.
+     * @return a two-dimensional array of datas.
      * @throws TTException
      */
-    public static final DumbNode[][] createTestData(Holder pHolder) throws TTException {
+    public static final DumbData[][] createTestData(Holder pHolder) throws TTException {
         IBucketWriteTrx wtx = pHolder.getSession().beginBucketWtx();
-        int[] nodesPerRevision = new int[10];
-        Arrays.fill(nodesPerRevision, 128);
-        DumbNode[][] nodes = CoreTestHelper.insertNodesWithTransaction(nodesPerRevision, wtx);
-        checkStructure(combineNodes(nodes), wtx, 0);
+        int[] datasPerRevision = new int[10];
+        Arrays.fill(datasPerRevision, 128);
+        DumbData[][] datas = CoreTestHelper.insertDatasWithTransaction(datasPerRevision, wtx);
+        checkStructure(combineDatas(datas), wtx, 0);
         wtx.close();
-        return nodes;
+        return datas;
     }
 
     /**
-     * Utility method to create nodes per revision.
+     * Utility method to create datas per revision.
      * 
-     * @param pNodesPerRevision
+     * @param pDatasPerRevision
      *            to create
      * @param pWtx
      *            to store to.
      * @throws TTException
      */
-    public static final DumbNode[][] insertNodesWithTransaction(final int[] pNodesPerRevision,
+    public static final DumbData[][] insertDatasWithTransaction(final int[] pDatasPerRevision,
         final IBucketWriteTrx pWtx) throws TTException {
-        final DumbNode[][] returnVal = createNodes(pNodesPerRevision);
+        final DumbData[][] returnVal = createDatas(pDatasPerRevision);
         for (int i = 0; i < returnVal.length; i++) {
             for (int j = 0; j < returnVal[i].length; j++) {
-                final long nodeKey = pWtx.incrementNodeKey();
-                returnVal[i][j].setNodeKey(nodeKey);
-                pWtx.setNode(returnVal[i][j]);
-                assertEquals(returnVal[i][j], pWtx.getNode(nodeKey));
+                final long dataKey = pWtx.incrementDataKey();
+                returnVal[i][j].setDataKey(dataKey);
+                pWtx.setData(returnVal[i][j]);
+                assertEquals(returnVal[i][j], pWtx.getData(dataKey));
             }
             checkStructure(Arrays.asList(returnVal[i]), pWtx, i * returnVal[i].length);
             pWtx.commit();
@@ -323,7 +323,7 @@ public final class CoreTestHelper {
     }
 
     /**
-     * Utility method to create nodes per revision.
+     * Utility method to create datas per revision.
      * 
      * @param pNumbers
      *            number to create
@@ -394,17 +394,17 @@ public final class CoreTestHelper {
     }
 
     /**
-     * Generating new nodes passed on a given number of nodes within a revision
+     * Generating new atas passed on a given number of datas within a revision
      * 
-     * @param pNodesPerRevision
-     *            denote the number of nodes within all versions
-     * @return a two-dimensional array containing the nodes.
+     * @param pDatasPerRevision
+     *            denote the number of datas within all versions
+     * @return a two-dimensional array containing the datas.
      */
-    public static final DumbNode[][] createNodes(final int[] pNodesPerRevision) {
-        final DumbNode[][] returnVal = new DumbNode[pNodesPerRevision.length][];
-        for (int i = 0; i < pNodesPerRevision.length; i++) {
-            returnVal[i] = new DumbNode[pNodesPerRevision[i]];
-            for (int j = 0; j < pNodesPerRevision[i]; j++) {
+    public static final DumbData[][] createDatas(final int[] pDatasPerRevision) {
+        final DumbData[][] returnVal = new DumbData[pDatasPerRevision.length][];
+        for (int i = 0; i < pDatasPerRevision.length; i++) {
+            returnVal[i] = new DumbData[pDatasPerRevision[i]];
+            for (int j = 0; j < pDatasPerRevision[i]; j++) {
                 returnVal[i][j] = generateOne();
             }
         }
@@ -458,34 +458,34 @@ public final class CoreTestHelper {
     }
 
     /**
-     * Checking the transaction with nodes written sequentially.
+     * Checking the transaction with datas written sequentially.
      * 
-     * @param pNodes
+     * @param pDatas
      *            to be compared with
      * @param pRtx
      *            to check
      * @throws TTIOException
      */
-    public static final void checkStructure(final List<DumbNode> pNodes, final IBucketReadTrx pRtx,
+    public static final void checkStructure(final List<DumbData> pDatas, final IBucketReadTrx pRtx,
         final long startKey) throws TTIOException {
         long key = startKey;
-        for (DumbNode node : pNodes) {
-            assertEquals(node, pRtx.getNode(key));
+        for (DumbData data : pDatas) {
+            assertEquals(data, pRtx.getData(key));
             key++;
         }
     }
 
     /**
-     * Combining multiple nodes to one overall list.
+     * Combining multiple datas to one overall list.
      * 
-     * @param pNodes
+     * @param pDatas
      *            to be combined
      * @return a list of all data in one list.
      */
-    public static final List<DumbNode> combineNodes(final DumbNode[][] pNodes) {
-        List<DumbNode> list = Lists.newArrayList();
-        for (int i = 0; i < pNodes.length; i++) {
-            list.addAll(Arrays.asList(pNodes[i]));
+    public static final List<DumbData> combineDatas(final DumbData[][] pDatas) {
+        List<DumbData> list = Lists.newArrayList();
+        for (int i = 0; i < pDatas.length; i++) {
+            list.addAll(Arrays.asList(pDatas[i]));
         }
         return list;
     }

@@ -138,7 +138,7 @@ public final class DocumentWrapper implements DocumentInfo {
                     final int attCount = ((ElementNode)rtx.getNode()).getAttributeCount();
 
                     if (attCount > 0) {
-                        final long nodeKey = rtx.getNode().getNodeKey();
+                        final long nodeKey = rtx.getNode().getDataKey();
 
                         for (int index = 0; index < attCount; index++) {
                             rtx.moveToAttribute(index);
@@ -148,7 +148,7 @@ public final class DocumentWrapper implements DocumentInfo {
                                 if (getParent) {
                                     rtx.moveTo(rtx.getNode().getParentKey());
                                 }
-                                return new NodeWrapper(this, rtx.getNode().getNodeKey());
+                                return new NodeWrapper(this, rtx.getNode().getDataKey());
                             }
                             rtx.moveTo(nodeKey);
                         }

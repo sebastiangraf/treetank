@@ -149,7 +149,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
                 .getMostRecentVersion()));
         rtx.moveTo(pNodekeyToStart);
         this.nodeKind = rtx.getNode().getKind();
-        this.mKey = rtx.getNode().getNodeKey();
+        this.mKey = rtx.getNode().getDataKey();
         this.node = rtx.getNode();
 
         if (nodeKind == ELEMENT || nodeKind == ATTRIBUTE) {

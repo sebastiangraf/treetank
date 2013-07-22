@@ -65,8 +65,8 @@ public class DumbMetaEntryFactory implements IMetaEntryFactory {
         enum DumbKeyFunnel implements Funnel<IMetaEntry> {
             INSTANCE;
             public void funnel(IMetaEntry from, PrimitiveSink into) {
-                DumbKey node = (DumbKey)from;
-                into.putLong(node.mData);
+                DumbKey data = (DumbKey)from;
+                into.putLong(data.mData);
             }
         }
         
@@ -146,8 +146,8 @@ public class DumbMetaEntryFactory implements IMetaEntryFactory {
         enum DumbValueFunnel implements Funnel<IMetaEntry> {
             INSTANCE;
             public void funnel(IMetaEntry from, PrimitiveSink into) {
-                DumbValue node = (DumbValue)from;
-                into.putLong(node.mData);
+                DumbValue data = (DumbValue)from;
+                into.putLong(data.mData);
             }
         }
         

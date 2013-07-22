@@ -9,8 +9,8 @@ import com.sleepycat.bind.tuple.TupleOutput;
 /**
  * Container for Key-Entry in the log determining the level and the the sequence in the level.
  * Needed for the WriteTrx for getting inserting any modified buckets in the right order since the bucket-key
- * can
- * not be computed from the nodekeys due to the relative position of the nodes in the subtree of the related
+ * can not be computed from the datakeys due to the relative position of the datas in the subtree of the
+ * related
  * RevisionRootBucket.
  * 
  * @author Sebastian Graf, University of Konstanz
@@ -18,7 +18,7 @@ import com.sleepycat.bind.tuple.TupleOutput;
  */
 public class LogKey {
 
-    /** Is this key referencing to the root level or to the node level. */
+    /** Is this key referencing to the root level or to the data level. */
     private final boolean mRootLevel;
 
     /** Level Key. */
@@ -33,7 +33,7 @@ public class LogKey {
      * @param pRootLevel
      * 
      * 
-     *            is key part of the revision-part or the node-part
+     *            is key part of the revision-part or the data-part
      * @param pLevel
      *            to be set.
      * @param pSeq

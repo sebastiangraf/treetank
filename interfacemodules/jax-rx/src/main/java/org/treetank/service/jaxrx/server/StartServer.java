@@ -61,7 +61,7 @@ public final class StartServer {
      */
     public StartServer(final int sPort) throws Exception {
 
-        Guice.createInjector(new ModuleSetter().setNodeFacClass(TreeNodeFactory.class).setMetaFacClass(
+        Guice.createInjector(new ModuleSetter().setDataFacClass(TreeNodeFactory.class).setMetaFacClass(
             NodeMetaPageFactory.class).createModule());
         System.setProperty("org.jaxrx.systemPath",
             "org.treetank.service.jaxrx.implementation.TreeTankMediator");

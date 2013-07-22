@@ -44,9 +44,9 @@ public class FilelistenerTest {
     public void setUp() throws Exception {
         IOUtils.recursiveDelete(new File(StorageManager.ROOT_PATH));
         
-        StorageManager.createResource(RESOURCE_1, new ModuleSetter().setNodeFacClass(FileNodeFactory.class)
+        StorageManager.createResource(RESOURCE_1, new ModuleSetter().setDataFacClass(FileNodeFactory.class)
             .setMetaFacClass(FilelistenerMetaPageFactory.class).createModule());
-        StorageManager.createResource(RESOURCE_2, new ModuleSetter().setNodeFacClass(FileNodeFactory.class)
+        StorageManager.createResource(RESOURCE_2, new ModuleSetter().setDataFacClass(FileNodeFactory.class)
             .setMetaFacClass(FilelistenerMetaPageFactory.class).createModule());
         filelistener = new Filelistener();
     }

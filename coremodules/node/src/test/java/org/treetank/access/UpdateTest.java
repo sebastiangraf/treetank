@@ -113,9 +113,9 @@ public class UpdateTest {
      */
     private final static void nodeIsolation(final INodeReadTrx pRtx) throws TTException {
         assertTrue(pRtx.moveTo(ROOT_NODE));
-        assertEquals(0, pRtx.getNode().getNodeKey());
+        assertEquals(0, pRtx.getNode().getDataKey());
         assertTrue(pRtx.moveTo(((IStructNode)pRtx.getNode()).getFirstChildKey()));
-        assertEquals(1, pRtx.getNode().getNodeKey());
+        assertEquals(1, pRtx.getNode().getDataKey());
         assertEquals(5, ((IStructNode)pRtx.getNode()).getChildCount());
     }
 
@@ -206,18 +206,18 @@ public class UpdateTest {
         }
 
         assertTrue(wtx.moveTo(2L));
-        assertEquals(2L, wtx.getNode().getNodeKey());
+        assertEquals(2L, wtx.getNode().getDataKey());
         wtx.commit();
 
         assertTrue(wtx.moveTo(2L));
-        assertEquals(2L, wtx.getNode().getNodeKey());
+        assertEquals(2L, wtx.getNode().getDataKey());
         wtx.close();
         final INodeReadTrx rtx =
             new NodeReadTrx(holder.getSession().beginBucketRtx(
                 holder.getSession().getMostRecentVersion()));
 
         assertTrue(rtx.moveTo(2L));
-        assertEquals(2L, rtx.getNode().getNodeKey());
+        assertEquals(2L, rtx.getNode().getDataKey());
         rtx.close();
 
     }
@@ -262,18 +262,18 @@ public class UpdateTest {
      */
     private final static void removeDescendant(final INodeReadTrx pRtx) throws TTException {
         assertTrue(pRtx.moveTo(ROOT_NODE));
-        assertEquals(0, pRtx.getNode().getNodeKey());
+        assertEquals(0, pRtx.getNode().getDataKey());
         assertTrue(pRtx.moveTo(((IStructNode)pRtx.getNode()).getFirstChildKey()));
-        assertEquals(1, pRtx.getNode().getNodeKey());
+        assertEquals(1, pRtx.getNode().getDataKey());
         assertEquals(4, ((IStructNode)pRtx.getNode()).getChildCount());
         assertTrue(pRtx.moveTo(((IStructNode)pRtx.getNode()).getFirstChildKey()));
-        assertEquals(4, pRtx.getNode().getNodeKey());
+        assertEquals(4, pRtx.getNode().getDataKey());
         assertTrue(pRtx.moveTo(((IStructNode)pRtx.getNode()).getRightSiblingKey()));
-        assertEquals(8, pRtx.getNode().getNodeKey());
+        assertEquals(8, pRtx.getNode().getDataKey());
         assertTrue(pRtx.moveTo(((IStructNode)pRtx.getNode()).getRightSiblingKey()));
-        assertEquals(9, pRtx.getNode().getNodeKey());
+        assertEquals(9, pRtx.getNode().getDataKey());
         assertTrue(pRtx.moveTo(((IStructNode)pRtx.getNode()).getRightSiblingKey()));
-        assertEquals(13, pRtx.getNode().getNodeKey());
+        assertEquals(13, pRtx.getNode().getDataKey());
     }
 
 }

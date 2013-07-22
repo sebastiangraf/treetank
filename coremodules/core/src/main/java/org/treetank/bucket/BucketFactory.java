@@ -34,8 +34,8 @@ import java.io.IOException;
 
 import org.treetank.api.IMetaEntry;
 import org.treetank.api.IMetaEntryFactory;
-import org.treetank.api.INodeFactory;
-import org.treetank.bucket.NodeBucket.DeletedNode;
+import org.treetank.api.IDataFactory;
+import org.treetank.bucket.DataBucket.DeletedData;
 import org.treetank.bucket.interfaces.IBucket;
 import org.treetank.bucket.interfaces.IReferenceBucket;
 import org.treetank.exception.TTIOException;
@@ -45,7 +45,7 @@ import com.google.inject.Singleton;
 
 /**
  * Factory to deserialize buckets out of a chunk of bytes.
- * This factory needs a {@link INodeFactory}-reference to perform inlying node-serializations as well.
+ * This factory needs a {@link IDataFactory}-reference to perform inlying data-serializations as well.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
@@ -53,8 +53,8 @@ import com.google.inject.Singleton;
 @Singleton
 public final class BucketFactory {
 
-    /** Node Factory to be initialized. */
-    private final INodeFactory mNodeFac;
+    /** Data Factory to be initialized. */
+    private final IDataFactory mDataFac;
 
     /** MetaEntry Factory to be initialized. */
     private final IMetaEntryFactory mEntryFac;
@@ -62,12 +62,12 @@ public final class BucketFactory {
     /**
      * Constructor.
      * 
-     * @param pNodeFac
+     * @param pDataFac
      *            to be set
      */
     @Inject
-    public BucketFactory(final INodeFactory pNodeFac, final IMetaEntryFactory pMetaFac) {
-        mNodeFac = pNodeFac;
+    public BucketFactory(final IDataFactory pDataFac, final IMetaEntryFactory pMetaFac) {
+        mDataFac = pDataFac;
         mEntryFac = pMetaFac;
     }
 
@@ -84,19 +84,19 @@ public final class BucketFactory {
             final int kind = pInput.readInt();
             byte[] hash;
             switch (kind) {
-            case IConstants.NODEBUCKET:
-                NodeBucket nodeBucket = new NodeBucket(pInput.readLong(), pInput.readLong());
+            case IConstants.DATABUCKET:
+                DataBucket dataBucket = new DataBucket(pInput.readLong(), pInput.readLong());
                 for (int offset = 0; offset < IConstants.CONTENT_COUNT; offset++) {
-                    int nodeKind = pInput.readInt();
-                    if (nodeKind != IConstants.NULL_NODE) {
-                        if (nodeKind == IConstants.DELETEDNODE) {
-                            nodeBucket.getNodes()[offset] = new DeletedNode(pInput.readLong());
+                    int dataKind = pInput.readInt();
+                    if (dataKind != IConstants.NULLDATA) {
+                        if (dataKind == IConstants.DELETEDDATA) {
+                            dataBucket.getDatas()[offset] = new DeletedData(pInput.readLong());
                         } else {
-                            nodeBucket.getNodes()[offset] = mNodeFac.deserializeNode(pInput);
+                            dataBucket.getDatas()[offset] = mDataFac.deserializeData(pInput);
                         }
                     }
                 }
-                return nodeBucket;
+                return dataBucket;
             case IConstants.METABUCKET:
                 MetaBucket metaBucket = new MetaBucket(pInput.readLong());
                 final int mapSize = pInput.readInt();
@@ -153,7 +153,7 @@ public final class BucketFactory {
      */
     @Override
     public String toString() {
-        return toStringHelper(this).add("mNodeFac", mNodeFac).add("mEntryFac", mEntryFac).toString();
+        return toStringHelper(this).add("mDataFac", mDataFac).add("mEntryFac", mEntryFac).toString();
     }
 
 }

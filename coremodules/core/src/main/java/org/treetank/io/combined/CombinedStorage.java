@@ -6,7 +6,7 @@ package org.treetank.io.combined;
 import java.util.Properties;
 
 import org.treetank.api.IMetaEntryFactory;
-import org.treetank.api.INodeFactory;
+import org.treetank.api.IDataFactory;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackend;
@@ -38,8 +38,8 @@ public class CombinedStorage implements IBackend {
      * 
      * @param pProperties
      *            not only the file associated with the database
-     * @param pNodeFac
-     *            factory for the nodes
+     * @param pDataFac
+     *            factory for the datas
      * @param pMetaFac
      *            factory for meta bucket
      * @param pByteHandler
@@ -48,10 +48,10 @@ public class CombinedStorage implements IBackend {
      *             of something odd happens while database-connection
      */
     @Inject
-    public CombinedStorage(@Assisted Properties pProperties, INodeFactory pNodeFac,
+    public CombinedStorage(@Assisted Properties pProperties, IDataFactory pDataFac,
         IMetaEntryFactory pMetaFac, IByteHandlerPipeline pByteHandler) throws TTIOException {
-        mLocalBackend = new BerkeleyStorage(pProperties, pNodeFac, pMetaFac, pByteHandler);
-        mRemoteBackend = new JCloudsStorage(pProperties, pNodeFac, pMetaFac, pByteHandler.clone());
+        mLocalBackend = new BerkeleyStorage(pProperties, pDataFac, pMetaFac, pByteHandler);
+        mRemoteBackend = new JCloudsStorage(pProperties, pDataFac, pMetaFac, pByteHandler.clone());
     }
 
     /**

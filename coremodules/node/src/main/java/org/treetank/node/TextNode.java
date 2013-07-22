@@ -58,10 +58,10 @@ public final class TextNode implements IStructNode, IValNode, INode {
      * @author Sebastian Graf, University of Konstanz
      * 
      */
-    enum TextNodeFunnel implements Funnel<org.treetank.api.INode> {
+    enum TextNodeFunnel implements Funnel<org.treetank.api.IData> {
         INSTANCE;
-        public void funnel(org.treetank.api.INode node, PrimitiveSink into) {
-            final TextNode from = (TextNode)node;
+        public void funnel(org.treetank.api.IData data, PrimitiveSink into) {
+            final TextNode from = (TextNode)data;
             from.mDel.getFunnel().funnel(from, into);
             from.mStrucDel.getFunnel().funnel(from, into);
             from.mValDel.getFunnel().funnel(from, into);
@@ -81,7 +81,7 @@ public final class TextNode implements IStructNode, IValNode, INode {
      * Constructor for TextNode.
      * 
      * @param pDel
-     *            Delegate for <code>INode</code> implementation.
+     *            Delegate for <code>IData</code> implementation.
      * @param pValDel
      *            Delegate for {@link IValNode} implementation.
      * @param pStrucDel
@@ -143,8 +143,8 @@ public final class TextNode implements IStructNode, IValNode, INode {
      * {@inheritDoc}
      */
     @Override
-    public long getNodeKey() {
-        return mDel.getNodeKey();
+    public long getDataKey() {
+        return mDel.getDataKey();
     }
 
     /**
@@ -300,7 +300,7 @@ public final class TextNode implements IStructNode, IValNode, INode {
     }
 
     @Override
-    public Funnel<org.treetank.api.INode> getFunnel() {
+    public Funnel<org.treetank.api.IData> getFunnel() {
         return TextNodeFunnel.INSTANCE;
     }
 

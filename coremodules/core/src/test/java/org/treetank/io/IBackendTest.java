@@ -15,13 +15,13 @@ import org.treetank.access.conf.ConstructorProps;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.IMetaEntryFactory;
-import org.treetank.api.INodeFactory;
+import org.treetank.api.IDataFactory;
 import org.treetank.bucket.DumbMetaEntryFactory;
-import org.treetank.bucket.DumbNodeFactory;
+import org.treetank.bucket.DumbDataFactory;
 import org.treetank.bucket.IConstants;
 import org.treetank.bucket.IndirectBucket;
 import org.treetank.bucket.MetaBucket;
-import org.treetank.bucket.NodeBucket;
+import org.treetank.bucket.DataBucket;
 import org.treetank.bucket.RevisionRootBucket;
 import org.treetank.bucket.UberBucket;
 import org.treetank.bucket.interfaces.IBucket;
@@ -140,7 +140,7 @@ public class IBackendTest {
     @DataProvider(name = "instantiateBackend")
     public Object[][] instantiateBackend() throws TTException {
 
-        final INodeFactory nodeFac = new DumbNodeFactory();
+        final IDataFactory dataFac = new DumbDataFactory();
         final IMetaEntryFactory metaFac = new DumbMetaEntryFactory();
 
         Object[][] returnVal = {
@@ -149,17 +149,17 @@ public class IBackendTest {
                     new IBackendCreator() {
                         @Override
                         public IBackend getBackend() throws TTIOException {
-                            return createBerkeleyStorage(nodeFac, handler, metaFac);
+                            return createBerkeleyStorage(dataFac, handler, metaFac);
                         }
                     }, new IBackendCreator() {
                         @Override
                         public IBackend getBackend() throws TTIOException {
-                            return createLocalJCloudsStorage(nodeFac, handler, metaFac);
+                            return createLocalJCloudsStorage(dataFac, handler, metaFac);
                         }
                     }, new IBackendCreator() {
                         @Override
                         public IBackend getBackend() throws TTIOException {
-                            return createCombinedStorage(nodeFac, handler, metaFac);
+                            return createCombinedStorage(dataFac, handler, metaFac);
                         }
                     }
                 /*
@@ -167,7 +167,7 @@ public class IBackendTest {
                  * 
                  * @Override
                  * public IBackend getBackend() throws TTIOException {
-                 * return createAWSJCloudsStorage(nodeFac, handler, metaFac);
+                 * return createAWSJCloudsStorage(dataFac, handler, metaFac);
                  * }
                  * }
                  */
@@ -178,7 +178,7 @@ public class IBackendTest {
         return returnVal;
     }
 
-    private static IBackend createCombinedStorage(INodeFactory pNodeFac, IByteHandlerPipeline pHandler,
+    private static IBackend createCombinedStorage(IDataFactory pDataFac, IByteHandlerPipeline pHandler,
         IMetaEntryFactory pMetaFac) throws TTIOException {
         Properties props =
             StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
@@ -187,35 +187,35 @@ public class IBackendTest {
             .getAbsolutePath());
         props.setProperty(FilesystemConstants.PROPERTY_BASEDIR, CoreTestHelper.PATHS.PATH2.getFile()
             .getAbsolutePath());
-        return new CombinedStorage(props, pNodeFac, pMetaFac, pHandler);
+        return new CombinedStorage(props, pDataFac, pMetaFac, pHandler);
     }
 
-    private static IBackend createBerkeleyStorage(INodeFactory pNodeFac, IByteHandlerPipeline pHandler,
+    private static IBackend createBerkeleyStorage(IDataFactory pDataFac, IByteHandlerPipeline pHandler,
         IMetaEntryFactory pMetaFac) throws TTIOException {
         Properties props =
             StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
                 CoreTestHelper.RESOURCENAME);
         props.setProperty(ConstructorProps.RESOURCEPATH, CoreTestHelper.PATHS.PATH1.getFile()
             .getAbsolutePath());
-        return new BerkeleyStorage(props, pNodeFac, pMetaFac, pHandler);
+        return new BerkeleyStorage(props, pDataFac, pMetaFac, pHandler);
     }
 
     //
-    // private static IBackend createAWSJCloudsStorage(INodeFactory pNodeFac, IByteHandlerPipeline pHandler,
+    // private static IBackend createAWSJCloudsStorage(IDataFactory pDataFac, IByteHandlerPipeline pHandler,
     // IMetaEntryFactory pMetaFac) throws TTIOException {
     // Properties props =
     // StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
     // CoreTestHelper.RESOURCENAME);
     // props.setProperty(ConstructorProps.JCLOUDSTYPE, "aws-s3");
-    // return new JCloudsStorage(props, pNodeFac, pMetaFac, pHandler);
+    // return new JCloudsStorage(props, pDataFac, pMetaFac, pHandler);
     // }
 
-    private static IBackend createLocalJCloudsStorage(INodeFactory pNodeFac, IByteHandlerPipeline pHandler,
+    private static IBackend createLocalJCloudsStorage(IDataFactory pDataFac, IByteHandlerPipeline pHandler,
         IMetaEntryFactory pMetaFac) throws TTIOException {
         Properties props =
             StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
                 CoreTestHelper.RESOURCENAME);
-        return new JCloudsStorage(props, pNodeFac, pMetaFac, pHandler);
+        return new JCloudsStorage(props, pDataFac, pMetaFac, pHandler);
     }
 
     private static IBucket generateBucket(long pKey) {
@@ -235,9 +235,9 @@ public class IBackendTest {
             }
             return returnVal;
         } else if (whichBucketPage < 0.6) {
-            NodeBucket returnVal = new NodeBucket(pKey, pKey);
+            DataBucket returnVal = new DataBucket(pKey, pKey);
             for (int i = 0; i < IConstants.CONTENT_COUNT; i++) {
-                returnVal.setNode(i, CoreTestHelper.generateOne());
+                returnVal.setData(i, CoreTestHelper.generateOne());
             }
             return returnVal;
         } else if (whichBucketPage < 0.8) {

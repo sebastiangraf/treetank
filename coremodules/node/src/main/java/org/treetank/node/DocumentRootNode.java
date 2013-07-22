@@ -57,10 +57,10 @@ public final class DocumentRootNode implements INode, IStructNode {
      * @author Sebastian Graf, University of Konstanz
      * 
      */
-    enum DocumentNodeFunnel implements Funnel<org.treetank.api.INode> {
+    enum DocumentNodeFunnel implements Funnel<org.treetank.api.IData> {
         INSTANCE;
-        public void funnel(org.treetank.api.INode node, PrimitiveSink into) {
-            final DocumentRootNode from = (DocumentRootNode)node;
+        public void funnel(org.treetank.api.IData data, PrimitiveSink into) {
+            final DocumentRootNode from = (DocumentRootNode)data;
             from.mDel.getFunnel().funnel(from, into);
             from.mStrucDel.getFunnel().funnel(from, into);
         }
@@ -97,8 +97,8 @@ public final class DocumentRootNode implements INode, IStructNode {
      * {@inheritDoc}
      */
     @Override
-    public long getNodeKey() {
-        return mDel.getNodeKey();
+    public long getDataKey() {
+        return mDel.getDataKey();
     }
 
     /**
@@ -292,7 +292,7 @@ public final class DocumentRootNode implements INode, IStructNode {
     }
 
     @Override
-    public Funnel<org.treetank.api.INode> getFunnel() {
+    public Funnel<org.treetank.api.IData> getFunnel() {
         return DocumentNodeFunnel.INSTANCE;
     }
 

@@ -54,7 +54,7 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.IMetaEntryFactory;
-import org.treetank.api.INodeFactory;
+import org.treetank.api.IDataFactory;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.IBucketWriteTrx;
@@ -109,7 +109,7 @@ public class DatabaseRepresentation {
     /**
      * Factory to build pages and meta structures
      */
-    private final static INodeFactory NODEFACTORY = new TreeNodeFactory();
+    private final static IDataFactory NODEFACTORY = new TreeNodeFactory();
     private final static IMetaEntryFactory METAFAC = new NodeMetaPageFactory();
 
     private final IBackendFactory mStorageFac;
@@ -452,11 +452,11 @@ public class DatabaseRepresentation {
                 axis = new XPathAxis(rtx, ".//*");
 
                 while (axis.hasNext()) {
-                    if (rtx.getNode().getNodeKey() > maxRestidRev1) {
-                        maxRestidRev1 = rtx.getNode().getNodeKey();
+                    if (rtx.getNode().getDataKey() > maxRestidRev1) {
+                        maxRestidRev1 = rtx.getNode().getDataKey();
                     }
                     // stores all restids from revision 1 into a list
-                    restIdsRev1.add(rtx.getNode().getNodeKey());
+                    restIdsRev1.add(rtx.getNode().getDataKey());
                 }
                 rtx.moveTo(ROOT_NODE);
                 rtx.close();
@@ -466,9 +466,9 @@ public class DatabaseRepresentation {
                 axis = new XPathAxis(rtx, ".//*");
 
                 while (axis.hasNext()) {
-                    final Long nodeKey = rtx.getNode().getNodeKey();
+                    final Long nodeKey = rtx.getNode().getDataKey();
                     if (nodeKey > maxRestidRev2) {
-                        maxRestidRev2 = rtx.getNode().getNodeKey();
+                        maxRestidRev2 = rtx.getNode().getDataKey();
                     }
                     if (nodeKey > maxRestidRev1) {
                         /*

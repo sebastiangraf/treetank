@@ -520,7 +520,7 @@ public class ExprTest {
                             final AbsAxis axis1 = new LiteralExpr(pRtx, key1);
 
                             assertEquals(true, axis1.hasNext());
-                            assertEquals(key1, axis1.getNode().getNodeKey());
+                            assertEquals(key1, axis1.getNode().getDataKey());
                             assertEquals(NamePageHash.generateHashForString("xs:boolean"), axis1.getNode()
                                 .getTypeKey());
                             assertEquals(false, Boolean.parseBoolean(new String(((IValNode)axis1.getNode())
@@ -529,7 +529,7 @@ public class ExprTest {
 
                             final AbsAxis axis2 = new LiteralExpr(pRtx, key2);
                             assertEquals(true, axis2.hasNext());
-                            assertEquals(key2, axis2.getNode().getNodeKey());
+                            assertEquals(key2, axis2.getNode().getDataKey());
                             assertEquals(NamePageHash.generateHashForString("xs:integer"), axis2.getNode()
                                 .getTypeKey());
                             assertEquals(14, Integer.parseInt(new String(((IValNode)axis2.getNode())
@@ -706,24 +706,24 @@ public class ExprTest {
                             // assertEquals(false, axis1.hasNext());
                             axis1.update(5L);
                             assertEquals(true, axis1.hasNext());
-                            assertEquals(5L, pRtx.getNode().getNodeKey());
+                            assertEquals(5L, pRtx.getNode().getDataKey());
                             axis1.update(13L);
                             assertEquals(true, axis1.hasNext());
-                            assertEquals(13L, pRtx.getNode().getNodeKey());
+                            assertEquals(13L, pRtx.getNode().getDataKey());
                             axis1.update(1L);
                             assertEquals(true, axis1.hasNext());
-                            assertEquals(1L, pRtx.getNode().getNodeKey());
+                            assertEquals(1L, pRtx.getNode().getDataKey());
                             assertEquals(false, axis1.hasNext());
 
                             final VarRefExpr axis2 = new VarRefExpr(pRtx, variable);
                             // assertEquals(false, axis2.hasNext());
                             axis2.update(13L);
                             assertEquals(true, axis2.hasNext());
-                            assertEquals(13L, pRtx.getNode().getNodeKey());
+                            assertEquals(13L, pRtx.getNode().getDataKey());
                             assertEquals(false, axis2.hasNext());
                             axis2.update(12L);
                             assertEquals(true, axis2.hasNext());
-                            assertEquals(12L, pRtx.getNode().getNodeKey());
+                            assertEquals(12L, pRtx.getNode().getDataKey());
                             assertEquals(false, axis2.hasNext());
                         }
                     }

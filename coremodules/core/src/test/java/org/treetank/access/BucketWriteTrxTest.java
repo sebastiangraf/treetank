@@ -26,12 +26,12 @@ import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.IBucketReadTrx;
 import org.treetank.api.IBucketWriteTrx;
 import org.treetank.api.IMetaEntryFactory;
-import org.treetank.api.INodeFactory;
+import org.treetank.api.IDataFactory;
 import org.treetank.bucket.DumbMetaEntryFactory;
 import org.treetank.bucket.DumbMetaEntryFactory.DumbKey;
 import org.treetank.bucket.DumbMetaEntryFactory.DumbValue;
-import org.treetank.bucket.DumbNodeFactory;
-import org.treetank.bucket.DumbNodeFactory.DumbNode;
+import org.treetank.bucket.DumbDataFactory;
+import org.treetank.bucket.DumbDataFactory.DumbData;
 import org.treetank.exception.TTException;
 import org.treetank.io.IBackend;
 import org.treetank.io.bytepipe.ByteHandlerPipeline;
@@ -109,85 +109,85 @@ public class BucketWriteTrxTest {
     }
 
     /**
-     * Test method for {@link org.treetank.access.BucketWriteTrx#getNode(long)}.
+     * Test method for {@link org.treetank.access.BucketWriteTrx#getData(long)}.
      * 
      * @throws TTException
      */
     @Test
-    public void testGetNode() throws TTException {
-        DumbNode[][] nodes = CoreTestHelper.createTestData(mHolder);
-        BucketReadTrxTest.testGet(mHolder.getSession(), nodes);
-        List<DumbNode> list = CoreTestHelper.combineNodes(nodes);
+    public void testGetData() throws TTException {
+        DumbData[][] datas = CoreTestHelper.createTestData(mHolder);
+        BucketReadTrxTest.testGet(mHolder.getSession(), datas);
+        List<DumbData> list = CoreTestHelper.combineDatas(datas);
         final IBucketWriteTrx wtx = mHolder.getSession().beginBucketWtx();
         CoreTestHelper.checkStructure(list, wtx, 0);
     }
 
     /**
-     * Test method for {@link org.treetank.access.BucketWriteTrx#setNode(org.treetank.api.INode)}.
+     * Test method for {@link org.treetank.access.BucketWriteTrx#setData(org.treetank.api.IData)}.
      * 
      * @throws TTException
      */
     @Test
-    public void testSetNode() throws TTException {
+    public void testSetData() throws TTException {
         final IBucketWriteTrx wtx = mHolder.getSession().beginBucketWtx();
         final int elementsToSet = 16385;
         final int versionToWrite = 10;
         // int elementsToSet = 10;
-        final List<DumbNode> nodes = new ArrayList<DumbNode>();
+        final List<DumbData> datas = new ArrayList<DumbData>();
         for (int i = 0; i < elementsToSet; i++) {
-            long nodeKey = wtx.incrementNodeKey();
-            DumbNode node = CoreTestHelper.generateOne();
-            node.setNodeKey(nodeKey);
-            nodes.add(node);
+            long dataKey = wtx.incrementDataKey();
+            DumbData data = CoreTestHelper.generateOne();
+            data.setDataKey(dataKey);
+            datas.add(data);
             if (i == 0) {
-                assertNull(wtx.getNode(nodeKey));
+                assertNull(wtx.getData(dataKey));
             } else {
                 try {
-                    wtx.getNode(nodeKey);
+                    wtx.getData(dataKey);
                     fail();
                 } catch (NullPointerException | IllegalStateException exc) {
                 }
             }
-            wtx.setNode(nodes.get(i));
-            assertEquals(nodes.get(i), wtx.getNode(nodeKey));
+            wtx.setData(datas.get(i));
+            assertEquals(datas.get(i), wtx.getData(dataKey));
         }
         wtx.commit();
 
         int numbersToAdapt = 16;
         for (int j = 0; j < versionToWrite; j++) {
             for (int i = 0; i < elementsToSet; i++) {
-                assertEquals(new StringBuilder("Nodes differ in version ").append(j).append(" and node ")
-                    .append(i).toString(), nodes.get(i), wtx.getNode(i));
+                assertEquals(new StringBuilder("Datas differ in version ").append(j).append(" and data ")
+                    .append(i).toString(), datas.get(i), wtx.getData(i));
                 if (i % numbersToAdapt == 0) {
-                    DumbNode node = CoreTestHelper.generateOne();
-                    node.setNodeKey(i);
-                    nodes.set(i, node);
-                    wtx.setNode(nodes.get(i));
-                    assertEquals(nodes.get(i), wtx.getNode(i));
+                    DumbData data = CoreTestHelper.generateOne();
+                    data.setDataKey(i);
+                    datas.set(i, data);
+                    wtx.setData(datas.get(i));
+                    assertEquals(datas.get(i), wtx.getData(i));
                 }
             }
-            CoreTestHelper.checkStructure(nodes, wtx, 0);
+            CoreTestHelper.checkStructure(datas, wtx, 0);
             wtx.commit();
-            CoreTestHelper.checkStructure(nodes, wtx, 0);
+            CoreTestHelper.checkStructure(datas, wtx, 0);
             numbersToAdapt++;
         }
 
         final IBucketReadTrx rtx =
             mHolder.getSession().beginBucketRtx(mHolder.getSession().getMostRecentVersion());
-        CoreTestHelper.checkStructure(nodes, rtx, 0);
-        CoreTestHelper.checkStructure(nodes, wtx, 0);
+        CoreTestHelper.checkStructure(datas, rtx, 0);
+        CoreTestHelper.checkStructure(datas, wtx, 0);
 
     }
 
     /**
-     * Test method for {@link org.treetank.access.BucketWriteTrx#removeNode(org.treetank.api.INode)}.
+     * Test method for {@link org.treetank.access.BucketWriteTrx#removeData(org.treetank.api.IData)}.
      * 
      * @throws TTException
      */
     @Test
-    public void testRemoveNode() throws TTException {
-        DumbNode[][] nodes = CoreTestHelper.createTestData(mHolder);
-        List<DumbNode> list = CoreTestHelper.combineNodes(nodes);
+    public void testRemoveData() throws TTException {
+        DumbData[][] datas = CoreTestHelper.createTestData(mHolder);
+        List<DumbData> list = CoreTestHelper.combineDatas(datas);
         final IBucketWriteTrx wtx = mHolder.getSession().beginBucketWtx();
         int elementsDeleted = 10;
         int revisions = 1;
@@ -195,7 +195,7 @@ public class BucketWriteTrxTest {
             for (int j = 0; j < elementsDeleted; j++) {
                 int nextElementKey = (int)Math.abs((CoreTestHelper.random.nextLong() + 1) % list.size());
                 if (list.get(nextElementKey) != null) {
-                    wtx.removeNode(list.get(nextElementKey));
+                    wtx.removeData(list.get(nextElementKey));
                     list.set(nextElementKey, null);
                 }
             }
@@ -233,19 +233,19 @@ public class BucketWriteTrxTest {
             CoreTestHelper.deleteEverything();
 
             final IRevisioning revision = new SlidingSnapshot();
-            final INodeFactory nodeFac = new DumbNodeFactory();
+            final IDataFactory dataFac = new DumbDataFactory();
             final IMetaEntryFactory metaFac = new DumbMetaEntryFactory();
             final Properties props =
                 StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
                     CoreTestHelper.RESOURCENAME);
-            final IBackend backend = new JCloudsStorage(props, nodeFac, metaFac, new ByteHandlerPipeline());
+            final IBackend backend = new JCloudsStorage(props, dataFac, metaFac, new ByteHandlerPipeline());
 
             ResourceConfiguration config =
-                new ResourceConfiguration(props, backend, revision, nodeFac, metaFac);
+                new ResourceConfiguration(props, backend, revision, dataFac, metaFac);
             test.mHolder = CoreTestHelper.Holder.generateStorage();
             CoreTestHelper.Holder.generateSession(test.mHolder, config);
 
-            test.testGetNode();
+            test.testGetData();
 
             CoreTestHelper.closeEverything();
             System.out.println(System.currentTimeMillis() - time + "ms");

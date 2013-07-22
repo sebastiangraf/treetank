@@ -327,12 +327,12 @@ public class FilterTest {
     public static void testFilterConventions(final AbsFilter filter, final boolean expected) {
 
         // IFilter Convention 1.
-        final long startKey = filter.getNode().getNodeKey();
+        final long startKey = filter.getNode().getDataKey();
 
         assertEquals(expected, filter.filter());
 
         // IAxis Convention 2.
-        assertEquals(startKey, filter.getNode().getNodeKey());
+        assertEquals(startKey, filter.getNode().getDataKey());
 
     }
 

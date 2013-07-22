@@ -101,7 +101,7 @@ public abstract class AbsAxis implements Iterator<Long>, Iterable<Long> {
         checkNotNull(paramRtx);
         mRTX = paramRtx;
         mIncludeSelf = paramIncludeSelf;
-        reset(paramRtx.getNode().getNodeKey());
+        reset(paramRtx.getNode().getDataKey());
     }
 
     /**
@@ -118,7 +118,7 @@ public abstract class AbsAxis implements Iterator<Long>, Iterable<Long> {
     @Override
     public final Long next() {
         checkState(mNext, "IAxis.next() must be called exactely once after hasNext()" + " evaluated to true.");
-        mKey = mRTX.getNode().getNodeKey();
+        mKey = mRTX.getNode().getDataKey();
         mNext = false;
         return mKey;
     }

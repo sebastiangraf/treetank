@@ -42,7 +42,7 @@ import com.google.common.hash.PrimitiveSink;
 
 /**
  * Delegate method for all nodes. That means that all nodes stored in Treetank
- * are represented by an instance of the interface {@link INode} namely
+ * are represented by an instance of the interface {@link IData} namely
  * containing the position in the tree related to a parent-node, the related
  * type and the corresponding hash recursivly computed.
  * 
@@ -57,11 +57,11 @@ public class NodeDelegate implements INode {
      * @author Sebastian Graf, University of Konstanz
      * 
      */
-    enum NodeDelegateFunnel implements Funnel<org.treetank.api.INode> {
+    enum NodeDelegateFunnel implements Funnel<org.treetank.api.IData> {
         INSTANCE;
-        public void funnel(org.treetank.api.INode node, PrimitiveSink into) {
-            final INode from = (INode)node;
-            into.putLong(from.getNodeKey()).putLong(from.getParentKey());
+        public void funnel(org.treetank.api.IData data, PrimitiveSink into) {
+            final INode from = (INode)data;
+            into.putLong(from.getDataKey()).putLong(from.getParentKey());
         }
     }
 
@@ -106,7 +106,7 @@ public class NodeDelegate implements INode {
      * {@inheritDoc}
      */
     @Override
-    public long getNodeKey() {
+    public long getDataKey() {
         return mNodeKey;
     }
 
@@ -163,7 +163,7 @@ public class NodeDelegate implements INode {
      */
     @Override
     public String toString() {
-        return toStringHelper(this).add("mNodeKey", mNodeKey).add("mParentKey", mParentKey).add("mHash",
+        return toStringHelper(this).add("mDataKey", mNodeKey).add("mParentKey", mParentKey).add("mHash",
             mHash).add("mTypeKey", mTypeKey).toString();
     }
 
@@ -200,7 +200,7 @@ public class NodeDelegate implements INode {
      */
     public void serialize(final DataOutput pOutput) throws TTIOException {
         try {
-            pOutput.writeLong(getNodeKey());
+            pOutput.writeLong(getDataKey());
             pOutput.writeLong(getParentKey());
             pOutput.writeLong(getHash());
         } catch (final IOException exc) {
@@ -209,7 +209,7 @@ public class NodeDelegate implements INode {
     }
 
     @Override
-    public Funnel<org.treetank.api.INode> getFunnel() {
+    public Funnel<org.treetank.api.IData> getFunnel() {
         return NodeDelegateFunnel.INSTANCE;
     }
 

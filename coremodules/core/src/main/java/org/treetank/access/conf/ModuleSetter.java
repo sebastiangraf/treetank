@@ -5,7 +5,7 @@ import java.security.Key;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.SessionConfiguration.ISessionConfigurationFactory;
 import org.treetank.api.IMetaEntryFactory;
-import org.treetank.api.INodeFactory;
+import org.treetank.api.IDataFactory;
 import org.treetank.io.IBackend;
 import org.treetank.io.IBackend.IBackendFactory;
 import org.treetank.io.berkeley.BerkeleyStorage;
@@ -27,8 +27,8 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
  */
 public class ModuleSetter {
 
-    /** Class for NodeFactory. */
-    private Class<? extends INodeFactory> mNodeFacClass;
+    /** Class for DataFactory. */
+    private Class<? extends IDataFactory> mDataFacClass;
     /** Class for MetaFactory. */
     private Class<? extends IMetaEntryFactory> mMetaFacClass;
     /** Class for Revision. */
@@ -41,14 +41,14 @@ public class ModuleSetter {
     private IByteHandlerPipeline mByteHandler = new ByteHandlerPipeline(new Encryptor(mKey));
 
     /**
-     * Setting an {@link INodeFactory}-class
+     * Setting an {@link IDataFactory}-class
      * 
-     * @param pNodeFac
+     * @param pDataFac
      *            to be set
      * @return the current ModuleSetter
      */
-    public ModuleSetter setNodeFacClass(final Class<? extends INodeFactory> pNodeFac) {
-        this.mNodeFacClass = pNodeFac;
+    public ModuleSetter setDataFacClass(final Class<? extends IDataFactory> pDataFac) {
+        this.mDataFacClass = pDataFac;
         return this;
     }
 
@@ -121,7 +121,7 @@ public class ModuleSetter {
         return new AbstractModule() {
             @Override
             protected void configure() {
-                bind(INodeFactory.class).to(mNodeFacClass);
+                bind(IDataFactory.class).to(mDataFacClass);
                 bind(IMetaEntryFactory.class).to(mMetaFacClass);
                 bind(IRevisioning.class).to(mRevisioningClass);
                 bind(IByteHandlerPipeline.class).toInstance(mByteHandler);

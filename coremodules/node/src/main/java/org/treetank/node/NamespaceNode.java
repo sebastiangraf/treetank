@@ -56,10 +56,10 @@ public final class NamespaceNode implements INode, INameNode {
      * @author Sebastian Graf, University of Konstanz
      * 
      */
-    enum NamespaceFunnel implements Funnel<org.treetank.api.INode> {
+    enum NamespaceFunnel implements Funnel<org.treetank.api.IData> {
         INSTANCE;
-        public void funnel(org.treetank.api.INode node, PrimitiveSink into) {
-            final NamespaceNode from = (NamespaceNode)node;
+        public void funnel(org.treetank.api.IData data, PrimitiveSink into) {
+            final NamespaceNode from = (NamespaceNode)data;
             from.mDel.getFunnel().funnel(from, into);
             from.mNameDel.getFunnel().funnel(from, into);
         }
@@ -144,8 +144,8 @@ public final class NamespaceNode implements INode, INameNode {
      * {@inheritDoc}
      */
     @Override
-    public long getNodeKey() {
-        return mDel.getNodeKey();
+    public long getDataKey() {
+        return mDel.getDataKey();
     }
 
     /**
@@ -211,7 +211,7 @@ public final class NamespaceNode implements INode, INameNode {
     }
 
     @Override
-    public Funnel<org.treetank.api.INode> getFunnel() {
+    public Funnel<org.treetank.api.IData> getFunnel() {
         return NamespaceFunnel.INSTANCE;
     }
 

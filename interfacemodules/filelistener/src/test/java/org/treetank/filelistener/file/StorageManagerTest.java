@@ -36,7 +36,7 @@ public class StorageManagerTest {
     @BeforeMethod
     public void setUp() throws StorageAlreadyExistsException, TTException {
         IOUtils.recursiveDelete(new File(StorageManager.ROOT_PATH));
-        StorageManager.createResource(mStorageName, new ModuleSetter().setNodeFacClass(FileNodeFactory.class)
+        StorageManager.createResource(mStorageName, new ModuleSetter().setDataFacClass(FileNodeFactory.class)
             .setMetaFacClass(FilelistenerMetaPageFactory.class).createModule());
     }
 

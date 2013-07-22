@@ -36,8 +36,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import org.treetank.api.IMetaEntryFactory;
-import org.treetank.api.INodeFactory;
-import org.treetank.bucket.NodeBucket;
+import org.treetank.api.IDataFactory;
+import org.treetank.bucket.DataBucket;
 import org.treetank.bucket.BucketFactory;
 import org.treetank.bucket.interfaces.IBucket;
 import org.treetank.exception.TTIOException;
@@ -49,13 +49,13 @@ import com.sleepycat.bind.tuple.TupleOutput;
 /**
  * <h1>LogValue</h1> 
  * 
- * This class acts as a container for revisioned {@link NodeBucket}s. Each
- * {@link NodeBucket} is stored in a versioned manner. If
- * modifications occur, the versioned {@link NodeBucket}s are dereferenced and
- * reconstructed. Afterwards, this container is used to store a complete {@link NodeBucket} as well as one for
+ * This class acts as a container for revisioned {@link DataBucket}s. Each
+ * {@link DataBucket} is stored in a versioned manner. If
+ * modifications occur, the versioned {@link DataBucket}s are dereferenced and
+ * reconstructed. Afterwards, this container is used to store a complete {@link DataBucket} as well as one for
  * upcoming modifications.
  * 
- * Both {@link NodeBucket}s can differ since the complete one is mainly used for
+ * Both {@link DataBucket}s can differ since the complete one is mainly used for
  * read access and the modifying one for write access (and therefore mostly lazy
  * dereferenced).
  * 
@@ -124,13 +124,13 @@ public final class LogValue {
         /**
          * Constructor
          * 
-         * @param pNodeFac
-         *            for the deserialization of nodes
+         * @param pDataFac
+         *            for the deserialization of datas
          * @param pMetaFac
          *            for the deserialization of meta-entries
          */
-        public LogValueBinding(final INodeFactory pNodeFac, final IMetaEntryFactory pMetaFac) {
-            mFac = new BucketFactory(pNodeFac, pMetaFac);
+        public LogValueBinding(final IDataFactory pDataFac, final IMetaEntryFactory pMetaFac) {
+            mFac = new BucketFactory(pDataFac, pMetaFac);
         }
 
         /**

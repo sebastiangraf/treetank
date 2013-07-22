@@ -70,7 +70,7 @@ public class NodeComp extends AbsComparator {
 
         // store item key as atomic value
         final AtomicValue mAtomized =
-            new AtomicValue(TypedValue.getBytes(((Long)getNode().getNodeKey()).toString()), NamePageHash
+            new AtomicValue(TypedValue.getBytes(((Long)getNode().getDataKey()).toString()), NamePageHash
                 .generateHashForString("xs:integer"));
         final AtomicValue[] op = {
             mAtomized

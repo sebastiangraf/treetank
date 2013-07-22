@@ -59,10 +59,10 @@ public final class AttributeNode implements INode, IValNode, INameNode {
      * @author Sebastian Graf, University of Konstanz
      * 
      */
-    enum AttributeNodeFunnel implements Funnel<org.treetank.api.INode> {
+    enum AttributeNodeFunnel implements Funnel<org.treetank.api.IData> {
         INSTANCE;
-        public void funnel(org.treetank.api.INode node, PrimitiveSink into) {
-            final AttributeNode from = (AttributeNode)node;
+        public void funnel(org.treetank.api.IData data, PrimitiveSink into) {
+            final AttributeNode from = (AttributeNode)data;
             from.mDel.getFunnel().funnel(from, into);
             from.mNameDel.getFunnel().funnel(from, into);
             from.mValDel.getFunnel().funnel(from, into);
@@ -106,10 +106,10 @@ public final class AttributeNode implements INode, IValNode, INameNode {
      * Delegate method for getNodeKey.
      * 
      * @return the current key
-     * @see org.treetank.node.delegates.NodeDelegate#getNodeKey()
+     * @see org.treetank.node.delegates.NodeDelegate#getDataKey()
      */
-    public long getNodeKey() {
-        return mDel.getNodeKey();
+    public long getDataKey() {
+        return mDel.getDataKey();
     }
 
     /**
@@ -297,7 +297,7 @@ public final class AttributeNode implements INode, IValNode, INameNode {
     }
 
     @Override
-    public Funnel<org.treetank.api.INode> getFunnel() {
+    public Funnel<org.treetank.api.IData> getFunnel() {
         return AttributeNodeFunnel.INSTANCE;
     }
 

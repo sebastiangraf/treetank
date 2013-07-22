@@ -116,7 +116,7 @@ public class PredicateFilterAxis extends AbsAxis {
      */
     private boolean isBooleanFalse() {
 
-        if (getNode().getNodeKey() >= 0) {
+        if (getNode().getDataKey() >= 0) {
             return false;
         } else { // is AtomicValue
             if (getNode().getTypeKey() == NamePageHash.generateHashForString("xs:boolean")) {

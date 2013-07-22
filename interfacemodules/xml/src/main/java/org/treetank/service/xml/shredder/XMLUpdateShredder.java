@@ -514,7 +514,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Voi
         } else {
 
             // Move cursor to parent.
-            if (mWtx.getNode().getNodeKey() == mLastNodeKey) {
+            if (mWtx.getNode().getDataKey() == mLastNodeKey) {
                 /*
                  * An end tag must have been parsed immediately before and it
                  * must have been an empty element at the end of a subtree, thus
@@ -549,7 +549,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Voi
 
             }
 
-            mLastNodeKey = mWtx.getNode().getNodeKey();
+            mLastNodeKey = mWtx.getNode().getDataKey();
 
             // Move cursor to right sibling if it has one.
             if (((IStructNode)mWtx.getNode()).hasRightSibling()) {
@@ -598,11 +598,11 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Voi
             } else if (paramEvent.isCharacters()) {
                 mFound = checkText(paramEvent.asCharacters());
             }
-            if (mWtx.getNode().getNodeKey() != mNodeKey) {
+            if (mWtx.getNode().getDataKey() != mNodeKey) {
                 mIsRightSibling = true;
             }
 
-            mKeyMatches = mWtx.getNode().getNodeKey();
+            mKeyMatches = mWtx.getNode().getDataKey();
             //
             // if (mFound && mIsRightSibling) {
             // /*
@@ -1028,7 +1028,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Voi
         boolean isLast = false;
 
         do {
-            if (mWtx.getNode().getNodeKey() != mKeyMatches) {
+            if (mWtx.getNode().getDataKey() != mKeyMatches) {
                 final IStructNode node = (IStructNode)mWtx.getNode();
                 if (!node.hasRightSibling() && !node.hasLeftSibling()) {
                     // if (mDelete == EDelete.ATSTARTMIDDLE) {
@@ -1049,7 +1049,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Voi
 
                 mWtx.remove();
             }
-        } while (mWtx.getNode().getNodeKey() != mKeyMatches && !movedToParent && !isLast);
+        } while (mWtx.getNode().getDataKey() != mKeyMatches && !movedToParent && !isLast);
 
         if (movedToParent) {
             if (mDelete == EDelete.ATBOTTOM) {
@@ -1098,7 +1098,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Voi
      * Initialize variables needed for the main algorithm.
      */
     private void initializeVars() {
-        mNodeKey = mWtx.getNode().getNodeKey();
+        mNodeKey = mWtx.getNode().getDataKey();
         mFound = false;
         mIsRightSibling = false;
         mKeyMatches = -1;
@@ -1184,7 +1184,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Voi
         if (mWtx.getNode().getKind() == IConstants.ELEMENT
             && mWtx.getQNameOfCurrentNode().equals(mEvent.getName())) {
             // Check if atts and namespaces are the same.
-            final long nodeKey = mWtx.getNode().getNodeKey();
+            final long nodeKey = mWtx.getNode().getDataKey();
 
             // Check attributes.
             boolean foundAtts = false;
@@ -1265,7 +1265,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Voi
         final File target = new File(args[1]);
 
         Injector injector =
-            Guice.createInjector(new ModuleSetter().setNodeFacClass(TreeNodeFactory.class).setMetaFacClass(
+            Guice.createInjector(new ModuleSetter().setDataFacClass(TreeNodeFactory.class).setMetaFacClass(
                 NodeMetaPageFactory.class).createModule());
         IBackendFactory storage = injector.getInstance(IBackendFactory.class);
         IRevisioning revision = injector.getInstance(IRevisioning.class);

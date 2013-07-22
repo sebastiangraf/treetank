@@ -49,7 +49,7 @@ public class StorageModuleBenchmarkSpecificBackend {
         CoreTestHelper.deleteEverything();
 
         final Injector injector =
-            com.google.inject.Guice.createInjector(new ModuleSetter().setNodeFacClass(ByteNodeFactory.class)
+            com.google.inject.Guice.createInjector(new ModuleSetter().setDataFacClass(ByteNodeFactory.class)
                 .setMetaFacClass(ISCSIMetaPageFactory.class).createModule());
         final IResourceConfigurationFactory resFac =
             injector.getInstance(IResourceConfigurationFactory.class);

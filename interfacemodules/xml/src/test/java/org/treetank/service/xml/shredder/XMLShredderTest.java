@@ -124,7 +124,7 @@ public class XMLShredderTest {
         while (expectedDescendants.hasNext() && descendants.hasNext()) {
             final IStructNode expDesc = ((IStructNode)expectedTrx.getNode());
             final IStructNode desc = ((IStructNode)rtx.getNode());
-            AssertJUnit.assertEquals(expDesc.getNodeKey(), desc.getNodeKey());
+            AssertJUnit.assertEquals(expDesc.getDataKey(), desc.getDataKey());
             AssertJUnit.assertEquals(expDesc.getParentKey(), desc.getParentKey());
             AssertJUnit.assertEquals(expDesc.getFirstChildKey(), desc.getFirstChildKey());
             AssertJUnit.assertEquals(expDesc.getLeftSiblingKey(), desc.getLeftSiblingKey());

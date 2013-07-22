@@ -3,7 +3,7 @@ package org.treetank.filelistener.file.node;
 import java.io.DataOutput;
 import java.io.IOException;
 
-import org.treetank.api.INode;
+import org.treetank.api.IData;
 import org.treetank.exception.TTIOException;
 import org.treetank.filelistener.exceptions.WrongFilenodeDataLengthException;
 
@@ -20,7 +20,7 @@ import com.google.common.hash.PrimitiveSink;
  * @author andreas
  * 
  */
-public class FileNode implements INode {
+public class FileNode implements IData {
 
     /**
      * Enum for FileNodeFunnel.
@@ -28,10 +28,10 @@ public class FileNode implements INode {
      * @author Sebastian Graf, University of Konstanz
      * 
      */
-    enum FileNodeFunnel implements Funnel<INode> {
+    enum FileNodeFunnel implements Funnel<IData> {
         INSTANCE;
-        public void funnel(INode node, PrimitiveSink into) {
-            final FileNode from = (FileNode)node;
+        public void funnel(IData data, PrimitiveSink into) {
+            final FileNode from = (FileNode)data;
             into.putLong(from.nodeKey).putLong(from.nextNodeKey).putBytes(from.val).putBoolean(from.header)
                 .putBoolean(from.eof);
         }
@@ -106,7 +106,7 @@ public class FileNode implements INode {
     }
 
     @Override
-    public long getNodeKey() {
+    public long getDataKey() {
         return this.nodeKey;
     }
 
@@ -176,7 +176,7 @@ public class FileNode implements INode {
      * {@inheritDoc}
      */
     @Override
-    public Funnel<INode> getFunnel() {
+    public Funnel<IData> getFunnel() {
         return FileNodeFunnel.INSTANCE;
     }
 

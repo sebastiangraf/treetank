@@ -27,28 +27,28 @@ package org.treetank.node;
 import java.io.DataOutput;
 import java.io.IOException;
 
-import org.treetank.api.INode;
+import org.treetank.api.IData;
 import org.treetank.exception.TTIOException;
 
 import com.google.common.hash.Funnel;
 import com.google.common.hash.PrimitiveSink;
 
 /**
- * This implementation of {@link INode} is used to store byte arrays in nodes.
+ * This implementation of {@link IData} is used to store byte arrays in nodes.
  * 
  * @author Andreas Rain
  */
-public class ByteNode implements INode {
+public class ByteNode implements IData {
     /**
      * Enum for ByteNodeFunnel.
      * 
      * @author Sebastian Graf, University of Konstanz
      * 
      */
-    enum ByteNodeFunnel implements Funnel<INode> {
+    enum ByteNodeFunnel implements Funnel<IData> {
         INSTANCE;
-        public void funnel(INode node, PrimitiveSink into) {
-            final ByteNode from = (ByteNode)node;
+        public void funnel(IData data, PrimitiveSink into) {
+            final ByteNode from = (ByteNode)data;
             into.putLong(from.nodeKey).putLong(from.nextNodeKey).putLong(from.previousNodeKey).putLong(
                 from.index).putBytes(from.val).putInt(from.size);
         }
@@ -119,7 +119,7 @@ public class ByteNode implements INode {
     }
 
     @Override
-    public long getNodeKey() {
+    public long getDataKey() {
 
         return this.nodeKey;
     }
@@ -287,7 +287,7 @@ public class ByteNode implements INode {
      * {@inheritDoc}
      */
     @Override
-    public Funnel<INode> getFunnel() {
+    public Funnel<IData> getFunnel() {
         return ByteNodeFunnel.INSTANCE;
     }
 

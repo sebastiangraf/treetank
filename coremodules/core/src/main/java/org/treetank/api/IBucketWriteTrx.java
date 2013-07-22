@@ -9,8 +9,8 @@ import org.treetank.exception.TTException;
  * Write-Transaction of a bucket ensuring read- and write access to any buckets.
  * The transaction is bound on the very last revision and bases on a session.
  * 
- * Each {@link IBucketWriteTrx} can afterwards get nodes from the bucket-layer and the underlaying backend as well
- * as store new {@link INode}s in the backend.
+ * Each {@link IBucketWriteTrx} can afterwards get datas from the bucket-layer and the underlaying backend as well
+ * as store new {@link IData}s in the backend.
  * 
  * 
  * @author Sebastian Graf, University of Konstanz
@@ -19,30 +19,30 @@ import org.treetank.exception.TTException;
 public interface IBucketWriteTrx extends IBucketReadTrx {
 
     /**
-     * Getting most recent node key and incrementing it.
+     * Getting most recent data key and incrementing it.
      * 
-     * @return the most recent node key.
+     * @return the most recent data key.
      */
-    long incrementNodeKey();
+    long incrementDataKey();
 
     /**
-     * Setting a node and storing the node in the bucket-layer.
+     * Setting a data and storing the data in the bucket-layer.
      * 
-     * @param pNode
-     *            the node to be stored.
+     * @param pData
+     *            the data to be stored.
      * @throws TTException
      *             if anything weird happens.
      */
-    long setNode(INode pNode) throws TTException;
+    long setData(IData pData) throws TTException;
 
     /**
-     * Removing the node from the storage.
+     * Removing the data from the storage.
      * 
-     * @param pNode
+     * @param pData
      *            to be removed
      * @throws TTException
      */
-    void removeNode(final INode pNode) throws TTException;
+    void removeData(final IData pData) throws TTException;
 
     /**
      * Simple commit of this bucket transaction to store the newest version.

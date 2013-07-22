@@ -33,7 +33,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.treetank.access.conf.StandardSettings;
-import org.treetank.api.INode;
+import org.treetank.api.IData;
 import org.treetank.bucket.interfaces.IBucket;
 import org.treetank.exception.TTIOException;
 
@@ -43,36 +43,36 @@ import com.google.common.hash.Hasher;
 import com.google.common.hash.PrimitiveSink;
 
 /**
- * <h1>NodeBucket</h1>
+ * <h1>DataBucket</h1>
  * 
  * <p>
- * A node bucket stores a set of nodes.
+ * A data bucket stores a set of datas.
  * </p>
  * 
  * @author Sebastian Graf, University of Konstanz
  * @author Marc Kramis, University of Konstanz
  */
-public final class NodeBucket implements IBucket {
+public final class DataBucket implements IBucket {
 
-    /** Key of node bucket. This is the base key of all contained nodes. */
+    /** Key of data bucket. This is the base key of all contained datas. */
     private final long mBucketKey;
 
-    /** Array of nodes. This can have null nodes that were removed. */
-    private final INode[] mNodes;
+    /** Array of datas. This can have null datas that were removed. */
+    private final IData[] mDatas;
 
-    /** Pointer to last node bucket representing the same amount of data. */
+    /** Pointer to last data bucket representing the same amount of data. */
     private final long mLastBucketKey;
 
     /**
-     * Create node bucket.
+     * Create data bucket.
      * 
      * @param pBucketKey
-     *            Base key assigned to this node bucket.
+     *            Base key assigned to this data bucket.
      */
-    public NodeBucket(final long pBucketKey, final long pLastBucketKey) {
+    public DataBucket(final long pBucketKey, final long pLastBucketKey) {
         mBucketKey = pBucketKey;
         mLastBucketKey = pLastBucketKey;
-        mNodes = new INode[IConstants.CONTENT_COUNT];
+        mDatas = new IData[IConstants.CONTENT_COUNT];
     }
 
     /**
@@ -84,7 +84,7 @@ public final class NodeBucket implements IBucket {
     }
 
     /**
-     * Getting the pointer to the former representation of the same node-bucket.
+     * Getting the pointer to the former representation of the same data-bucket.
      * 
      * @return the pointer to the last bucket.
      */
@@ -93,35 +93,35 @@ public final class NodeBucket implements IBucket {
     }
 
     /**
-     * Get node at a given offset.
+     * Get data at a given offset.
      * 
      * @param pOffset
-     *            Offset of node within local node bucket.
-     * @return Node at given offset.
+     *            Offset of data within local data bucket.
+     * @return data at given offset.
      */
-    public INode getNode(final int pOffset) {
-        return getNodes()[pOffset];
+    public IData getData(final int pOffset) {
+        return getDatas()[pOffset];
     }
 
     /**
-     * Overwrite a single node at a given offset.
+     * Overwrite a single data at a given offset.
      * 
      * @param pOffset
-     *            Offset of node to overwrite in this node bucket.
-     * @param pNode
-     *            Node to store at given nodeOffset.
+     *            Offset of data to overwrite in this data bucket.
+     * @param pData
+     *            Data to store at given dataofffset.
      */
-    public void setNode(final int pOffset, final INode pNode) {
-        getNodes()[pOffset] = pNode;
+    public void setData(final int pOffset, final IData pData) {
+        getDatas()[pOffset] = pData;
     }
 
     /**
-     * Getter for nodes
+     * Getter for datas
      * 
-     * @return the mNodes
+     * @return the mDatas
      */
-    public INode[] getNodes() {
-        return mNodes;
+    public IData[] getDatas() {
+        return mDatas;
     }
 
     /**
@@ -130,19 +130,19 @@ public final class NodeBucket implements IBucket {
     @Override
     public void serialize(final DataOutput pOutput) throws TTIOException {
         try {
-            pOutput.writeInt(IConstants.NODEBUCKET);
+            pOutput.writeInt(IConstants.DATABUCKET);
             pOutput.writeLong(mBucketKey);
             pOutput.writeLong(mLastBucketKey);
-            for (final INode node : getNodes()) {
-                if (node == null) {
-                    pOutput.writeInt(IConstants.NULL_NODE);
+            for (final IData data : getDatas()) {
+                if (data == null) {
+                    pOutput.writeInt(IConstants.NULLDATA);
                 } else {
-                    if (node instanceof DeletedNode) {
-                        pOutput.writeInt(IConstants.DELETEDNODE);
+                    if (data instanceof DeletedData) {
+                        pOutput.writeInt(IConstants.DELETEDDATA);
                     } else {
-                        pOutput.writeInt(IConstants.INTERFACENODE);
+                        pOutput.writeInt(IConstants.INTERFACEDATA);
                     }
-                    node.serialize(pOutput);
+                    data.serialize(pOutput);
                 }
             }
         } catch (final IOException exc) {
@@ -155,7 +155,7 @@ public final class NodeBucket implements IBucket {
      */
     @Override
     public String toString() {
-        return toStringHelper(this).add("mBucketKey", mBucketKey).add("mNodes", Arrays.toString(mNodes))
+        return toStringHelper(this).add("mBucketKey", mBucketKey).add("mDatas", Arrays.toString(mDatas))
             .toString();
     }
 
@@ -165,41 +165,41 @@ public final class NodeBucket implements IBucket {
      * @author Sebastian Graf, University of Konstanz
      * 
      */
-    public static class DeletedNode implements INode {
+    public static class DeletedData implements IData {
         /**
-         * Enum for DeletedNodeFunnel.
+         * Enum for DeletedDataFunnel.
          * 
          * @author Sebastian Graf, University of Konstanz
          * 
          */
-        enum DeletedNodeFunnel implements Funnel<INode> {
+        enum DeletedDataFunnel implements Funnel<IData> {
             INSTANCE;
-            public void funnel(INode from, PrimitiveSink into) {
-                into.putLong(from.getNodeKey());
+            public void funnel(IData from, PrimitiveSink into) {
+                into.putLong(from.getDataKey());
             }
         }
 
         /**
-         * Node key of the deleted node.
+         * Data key of the deleted data.
          */
-        private long mNodeKey;
+        private long mDataKey;
 
         /**
          * Constructor.
          * 
-         * @param pNodeKey
-         *            nodekey to be replaced with a deletednode
+         * @param pDataKey
+         *            datakey to be replaced with a deleteddata
          */
-        public DeletedNode(final long pNodeKey) {
-            mNodeKey = pNodeKey;
+        public DeletedData(final long pDataKey) {
+            mDataKey = pDataKey;
         }
 
         /**
          * {@inheritDoc}
          */
         @Override
-        public long getNodeKey() {
-            return mNodeKey;
+        public long getDataKey() {
+            return mDataKey;
         }
 
         /**
@@ -208,7 +208,7 @@ public final class NodeBucket implements IBucket {
         @Override
         public void serialize(final DataOutput pOutput) throws TTIOException {
             try {
-                pOutput.writeLong(mNodeKey);
+                pOutput.writeLong(mDataKey);
             } catch (final IOException exc) {
                 throw new TTIOException(exc);
             }
@@ -219,15 +219,15 @@ public final class NodeBucket implements IBucket {
          */
         @Override
         public String toString() {
-            return toStringHelper(this).add("mNodeKey", mNodeKey).toString();
+            return toStringHelper(this).add("mDataKey", mDataKey).toString();
         }
 
         /**
          * {@inheritDoc}
          */
         @Override
-        public Funnel<INode> getFunnel() {
-            return (Funnel<INode>)DeletedNodeFunnel.INSTANCE;
+        public Funnel<IData> getFunnel() {
+            return (Funnel<IData>)DeletedDataFunnel.INSTANCE;
 
         }
     }
@@ -238,9 +238,9 @@ public final class NodeBucket implements IBucket {
     @Override
     public HashCode secureHash() {
         final Hasher code = StandardSettings.HASHFUNC.newHasher().putLong(mBucketKey).putLong(mLastBucketKey);
-        for (int i = 0; i < mNodes.length; i++) {
-            if (mNodes[i] != null) {
-                code.putObject(mNodes[i], mNodes[i].getFunnel());
+        for (int i = 0; i < mDatas.length; i++) {
+            if (mDatas[i] != null) {
+                code.putObject(mDatas[i], mDatas[i].getFunnel());
             }
         }
         return code.hash();
@@ -254,7 +254,7 @@ public final class NodeBucket implements IBucket {
         final int prime = 26267;
         int result = 1;
         result = prime * result + (int)(mLastBucketKey ^ (mLastBucketKey >>> 32));
-        result = prime * result + Arrays.deepHashCode(mNodes);
+        result = prime * result + Arrays.deepHashCode(mDatas);
         result = prime * result + (int)(mBucketKey ^ (mBucketKey >>> 32));
         return result;
     }

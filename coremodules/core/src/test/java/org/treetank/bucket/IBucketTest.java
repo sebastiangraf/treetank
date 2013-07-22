@@ -13,11 +13,11 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.treetank.CoreTestHelper;
 import org.treetank.bucket.DumbMetaEntryFactory;
-import org.treetank.bucket.DumbNodeFactory;
+import org.treetank.bucket.DumbDataFactory;
 import org.treetank.bucket.IConstants;
 import org.treetank.bucket.IndirectBucket;
 import org.treetank.bucket.MetaBucket;
-import org.treetank.bucket.NodeBucket;
+import org.treetank.bucket.DataBucket;
 import org.treetank.bucket.BucketFactory;
 import org.treetank.bucket.RevisionRootBucket;
 import org.treetank.bucket.UberBucket;
@@ -52,7 +52,7 @@ public class IBucketTest {
      */
     @Test(dataProvider = "instantiateBuckets")
     public void testByteRepresentation(Class<IBucket> clazz, IBucket[] pBuckets) throws TTIOException {
-        final BucketFactory fac = new BucketFactory(new DumbNodeFactory(), new DumbMetaEntryFactory());
+        final BucketFactory fac = new BucketFactory(new DumbDataFactory(), new DumbMetaEntryFactory());
 
         for (final IBucket bucket : pBuckets) {
             ByteArrayDataOutput output = ByteStreams.newDataOutput();
@@ -112,11 +112,11 @@ public class IBucketTest {
         RevisionRootBucket revRootBucket =
             new RevisionRootBucket(CoreTestHelper.random.nextLong(), CoreTestHelper.random.nextLong(),
                 CoreTestHelper.random.nextLong());
-        // NodeBucket setup
-        NodeBucket nodeBucket =
-            new NodeBucket(CoreTestHelper.random.nextLong(), CoreTestHelper.random.nextLong());
+        // DataBucket setup
+        DataBucket dataBucket =
+            new DataBucket(CoreTestHelper.random.nextLong(), CoreTestHelper.random.nextLong());
         for (int i = 0; i < IConstants.CONTENT_COUNT - 1; i++) {
-            nodeBucket.setNode(i, CoreTestHelper.generateOne());
+            dataBucket.setData(i, CoreTestHelper.generateOne());
         }
         // MetaBucket setup
         MetaBucket metaBucket = new MetaBucket(CoreTestHelper.random.nextLong());
@@ -126,7 +126,7 @@ public class IBucketTest {
         Object[][] returnVal = {
             {
                 IBucket.class, new IBucket[] {
-                    indirectBucket, revRootBucket, nodeBucket, metaBucket, uberBucket
+                    indirectBucket, revRootBucket, dataBucket, metaBucket, uberBucket
                 }
             }
         };

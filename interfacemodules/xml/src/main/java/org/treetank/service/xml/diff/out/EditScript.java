@@ -85,7 +85,7 @@ public final class EditScript implements Iterator<Diff>, Iterable<Diff> {
      * Checks if an item has been added(changed).
      * 
      * @param paramItem
-     *            {@link INode} implementation
+     *            {@link IData} implementation
      * @return true if the changes {@link List} already contains the node, false
      *         otherwise
      */

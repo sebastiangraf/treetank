@@ -51,7 +51,7 @@ public class Function {
             final boolean result =
                 Boolean.parseBoolean(new String(((IValNode)bAxis.getNode()).getRawValue()));
             if (!bAxis.hasNext()) {
-                bAxis.reset(axis.getNode().getNodeKey());
+                bAxis.reset(axis.getNode().getDataKey());
                 return result;
             }
         }

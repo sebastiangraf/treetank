@@ -102,7 +102,7 @@ public class FilelistenerReadTrx implements IFilelistenerReadTrx {
             return file;
         }
 
-        FileNode node = (FileNode)mPageReadTrx.getNode(value.getData());
+        FileNode node = (FileNode)mPageReadTrx.getData(value.getData());
 
         OutputSupplier<FileOutputStream> supplier = Files.newOutputStreamSupplier(file, true);
 
@@ -110,7 +110,7 @@ public class FilelistenerReadTrx implements IFilelistenerReadTrx {
         // and writing the bytes to a temporary file.
         do {
             supplier.getOutput().write(node.getVal());
-            node = (FileNode)mPageReadTrx.getNode(node.getNextNodeKey());
+            node = (FileNode)mPageReadTrx.getData(node.getNextNodeKey());
         } while (!node.isEof());
 
         supplier.getOutput().close();

@@ -11,72 +11,72 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Objects;
 
-import org.treetank.api.INode;
-import org.treetank.api.INodeFactory;
+import org.treetank.api.IData;
+import org.treetank.api.IDataFactory;
 import org.treetank.exception.TTIOException;
 
 import com.google.common.hash.Funnel;
 import com.google.common.hash.PrimitiveSink;
 
 /**
- * Simple Factory for generating {@link DumbNode}s mainly for testing the bucket-layer.
+ * Simple Factory for generating {@link DumbData}s mainly for testing the bucket-layer.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public class DumbNodeFactory implements INodeFactory {
+public class DumbDataFactory implements IDataFactory {
 
     /**
      * {@inheritDoc}
      * 
      */
     @Override
-    public INode deserializeNode(DataInput pSource) throws TTIOException {
+    public IData deserializeData(DataInput pSource) throws TTIOException {
         try {
             final long key = pSource.readLong();
             byte[] data = new byte[pSource.readInt()];
             pSource.readFully(data);
-            return new DumbNode(key, data);
+            return new DumbData(key, data);
         } catch (final IOException exc) {
             throw new TTIOException(exc);
         }
     }
 
     /**
-     * Simple DumbNode just for testing the {@link NodeBucket}s.
+     * Simple DumbData just for testing the {@link DataBucket}s.
      * 
      * @author Sebastian Graf, University of Konstanz
      * 
      */
-    public static class DumbNode implements INode {
+    public static class DumbData implements IData {
 
         /**
-         * Enum for DumbNodeFunnel.
+         * Enum for DumbDataFunnel.
          * 
          * @author Sebastian Graf, University of Konstanz
          * 
          */
-        enum DumbNodeFunnel implements Funnel<INode> {
+        enum DumbDataFunnel implements Funnel<IData> {
             INSTANCE;
-            public void funnel(INode from, PrimitiveSink into) {
-                DumbNode node = (DumbNode)from;
-                into.putLong(node.getNodeKey()).putBytes(node.mValue);
+            public void funnel(IData from, PrimitiveSink into) {
+                DumbData data = (DumbData)from;
+                into.putLong(data.getDataKey()).putBytes(data.mValue);
             }
         }
 
-        long mNodeKey;
+        long mDataKey;
         byte[] mValue;
 
         /**
          * Simple constructor.
          * 
-         * @param pNodeKey
+         * @param pDataKey
          *            to be set
          * @param pHash
          *            to be set
          */
-        public DumbNode(long pNodeKey, byte[] pValue) {
-            mNodeKey = pNodeKey;
+        public DumbData(long pDataKey, byte[] pValue) {
+            mDataKey = pDataKey;
             mValue = pValue;
         }
 
@@ -86,7 +86,7 @@ public class DumbNodeFactory implements INodeFactory {
         @Override
         public void serialize(final DataOutput pOutput) throws TTIOException {
             try {
-                pOutput.writeLong(mNodeKey);
+                pOutput.writeLong(mDataKey);
                 pOutput.writeInt(mValue.length);
                 pOutput.write(mValue);
             } catch (final IOException exc) {
@@ -98,18 +98,18 @@ public class DumbNodeFactory implements INodeFactory {
          * {@inheritDoc}
          */
         @Override
-        public long getNodeKey() {
-            return mNodeKey;
+        public long getDataKey() {
+            return mDataKey;
         }
 
         /**
-         * Setting a node key to this dumb node.
+         * Setting a data key to this dumb data.
          * 
          * @param pKey
          *            to be set
          */
-        public void setNodeKey(final long pKey) {
-            mNodeKey = pKey;
+        public void setDataKey(final long pKey) {
+            mDataKey = pKey;
         }
 
         /**
@@ -117,7 +117,7 @@ public class DumbNodeFactory implements INodeFactory {
          */
         @Override
         public String toString() {
-            return toStringHelper(this).add("mNodeKey", mNodeKey).add("values", Objects.hash(mValue))
+            return toStringHelper(this).add("mDataKey", mDataKey).add("values", Objects.hash(mValue))
                 .toString();
         }
 
@@ -128,7 +128,7 @@ public class DumbNodeFactory implements INodeFactory {
         public int hashCode() {
             final int prime = 94907;
             int result = 1;
-            result = prime * result + (int)(mNodeKey ^ (mNodeKey >>> 32));
+            result = prime * result + (int)(mDataKey ^ (mDataKey >>> 32));
             result = prime * result + Arrays.hashCode(mValue);
             return result;
         }
@@ -145,8 +145,8 @@ public class DumbNodeFactory implements INodeFactory {
          * {@inheritDoc}
          */
         @Override
-        public Funnel<INode> getFunnel() {
-            return DumbNodeFunnel.INSTANCE;
+        public Funnel<IData> getFunnel() {
+            return DumbDataFunnel.INSTANCE;
         }
     }
 

@@ -351,9 +351,9 @@ public class NodeIdRepresentation {
                             WorkerHelper.shredInputStream(wtx, input, EShredderInsert.ADDASRIGHTSIBLING);
                         } else if (type == EIdAccessType.LASTCHILD) {
                             if (wtx.moveTo(((IStructNode)wtx.getNode()).getFirstChildKey())) {
-                                long last = wtx.getNode().getNodeKey();
+                                long last = wtx.getNode().getDataKey();
                                 while (wtx.moveTo(((IStructNode)wtx.getNode()).getRightSiblingKey())) {
-                                    last = wtx.getNode().getNodeKey();
+                                    last = wtx.getNode().getDataKey();
                                 }
                                 wtx.moveTo(last);
                                 WorkerHelper.shredInputStream(wtx, input, EShredderInsert.ADDASRIGHTSIBLING);
@@ -506,9 +506,9 @@ public class NodeIdRepresentation {
                         break;
                     case LASTCHILD:
                         if (rtx.moveTo(((IStructNode)rtx.getNode()).getFirstChildKey())) {
-                            long last = rtx.getNode().getNodeKey();
+                            long last = rtx.getNode().getDataKey();
                             while (rtx.moveTo(((IStructNode)rtx.getNode()).getRightSiblingKey())) {
-                                last = rtx.getNode().getNodeKey();
+                                last = rtx.getNode().getDataKey();
                             }
                             rtx.moveTo(last);
                         } else {
@@ -529,7 +529,7 @@ public class NodeIdRepresentation {
                         output.write(BEGINRESULT);
                         final XMLSerializerProperties props = new XMLSerializerProperties();
                         final XMLSerializerBuilder builder =
-                            new XMLSerializerBuilder(session, rtx.getNode().getNodeKey(), output, props);
+                            new XMLSerializerBuilder(session, rtx.getNode().getDataKey(), output, props);
                         builder.setREST(doNodeId);
                         builder.setID(doNodeId);
                         builder.setDeclaration(false);
@@ -541,7 +541,7 @@ public class NodeIdRepresentation {
                     } else {
                         final XMLSerializerProperties props = new XMLSerializerProperties();
                         final XMLSerializerBuilder builder =
-                            new XMLSerializerBuilder(session, rtx.getNode().getNodeKey(), output, props);
+                            new XMLSerializerBuilder(session, rtx.getNode().getDataKey(), output, props);
                         builder.setREST(doNodeId);
                         builder.setID(doNodeId);
                         builder.setDeclaration(false);

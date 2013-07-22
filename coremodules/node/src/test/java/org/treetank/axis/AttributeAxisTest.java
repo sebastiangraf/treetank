@@ -134,19 +134,19 @@ public class AttributeAxisTest {
 
         AssertJUnit.assertEquals(true, axis.hasNext());
         axis.next();
-        AssertJUnit.assertEquals(nodeKey + 1, wtx.getNode().getNodeKey());
+        AssertJUnit.assertEquals(nodeKey + 1, wtx.getNode().getDataKey());
         AssertJUnit.assertEquals(new QName("foo0"), wtx.getQNameOfCurrentNode());
         AssertJUnit.assertEquals("0", wtx.getValueOfCurrentNode());
 
         AssertJUnit.assertEquals(true, axis.hasNext());
         axis.next();
-        AssertJUnit.assertEquals(nodeKey + 2, wtx.getNode().getNodeKey());
+        AssertJUnit.assertEquals(nodeKey + 2, wtx.getNode().getDataKey());
         AssertJUnit.assertEquals(new QName("foo1"), wtx.getQNameOfCurrentNode());
         AssertJUnit.assertEquals("1", wtx.getValueOfCurrentNode());
 
         AssertJUnit.assertEquals(true, axis.hasNext());
         axis.next();
-        AssertJUnit.assertEquals(nodeKey + 3, wtx.getNode().getNodeKey());
+        AssertJUnit.assertEquals(nodeKey + 3, wtx.getNode().getDataKey());
         AssertJUnit.assertEquals(new QName("foo2"), wtx.getQNameOfCurrentNode());
         AssertJUnit.assertEquals("2", wtx.getValueOfCurrentNode());
 

@@ -8,9 +8,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.treetank.api.INode;
-import org.treetank.api.INodeFactory;
-import org.treetank.bucket.NodeBucket.DeletedNode;
+import org.treetank.api.IData;
+import org.treetank.api.IDataFactory;
+import org.treetank.bucket.DataBucket.DeletedData;
 import org.treetank.exception.TTIOException;
 import org.treetank.node.delegates.NameNodeDelegate;
 import org.treetank.node.delegates.NodeDelegate;
@@ -23,14 +23,14 @@ import org.treetank.node.delegates.ValNodeDelegate;
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public class TreeNodeFactory implements INodeFactory {
+public class TreeNodeFactory implements IDataFactory {
 
     /**
      * {@inheritDoc}
      * 
      */
     @Override
-    public INode deserializeNode(DataInput input) throws TTIOException {
+    public IData deserializeData(DataInput input) throws TTIOException {
         try {
             final int kind = input.readInt();
 
@@ -39,7 +39,7 @@ public class TreeNodeFactory implements INodeFactory {
             NameNodeDelegate nameDel;
             ValNodeDelegate valDel;
 
-            INode returnVal = null;
+            IData returnVal = null;
             switch (kind) {
             case IConstants.ELEMENT:
                 nodeDel = new NodeDelegate(input.readLong(), input.readLong(), input.readLong());
@@ -101,8 +101,8 @@ public class TreeNodeFactory implements INodeFactory {
                 nameDel = new NameNodeDelegate(nodeDel, input.readInt(), input.readInt());
                 returnVal = new NamespaceNode(nodeDel, nameDel);
                 break;
-            case org.treetank.bucket.IConstants.DELETEDNODE:
-                returnVal = new DeletedNode(input.readLong());
+            case org.treetank.bucket.IConstants.DELETEDDATA:
+                returnVal = new DeletedData(input.readLong());
                 break;
             default:
                 throw new IllegalStateException(

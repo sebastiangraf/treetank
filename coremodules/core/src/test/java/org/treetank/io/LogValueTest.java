@@ -57,11 +57,11 @@ public class LogValueTest {
     @Test
     public void test() throws TTException {
 
-        LogValueBinding binding = new LogValueBinding(mConf.mNodeFac, mConf.mMetaFac);
+        LogValueBinding binding = new LogValueBinding(mConf.mDataFac, mConf.mMetaFac);
         for (int i = 0; i < NUMBEROFELEMENTS; i++) {
             LogValue value =
-                new LogValue(CoreTestHelper.getNodeBucket(0, IConstants.CONTENT_COUNT, 0, 0), CoreTestHelper
-                    .getNodeBucket(0, IConstants.CONTENT_COUNT, 0, 0));
+                new LogValue(CoreTestHelper.getDataBucket(0, IConstants.CONTENT_COUNT, 0, 0), CoreTestHelper
+                    .getDataBucket(0, IConstants.CONTENT_COUNT, 0, 0));
             TupleOutput output = new TupleOutput();
             binding.objectToEntry(value, output);
 

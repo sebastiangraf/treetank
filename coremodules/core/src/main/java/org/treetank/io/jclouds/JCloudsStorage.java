@@ -10,7 +10,7 @@ import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.treetank.access.conf.ConstructorProps;
 import org.treetank.api.IMetaEntryFactory;
-import org.treetank.api.INodeFactory;
+import org.treetank.api.IDataFactory;
 import org.treetank.bucket.BucketFactory;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
@@ -49,8 +49,8 @@ public class JCloudsStorage implements IBackend {
      * 
      * @param pProperties
      *            not only the location of the database
-     * @param pNodeFac
-     *            factory for the nodes
+     * @param pDataFac
+     *            factory for the datas
      * @param pMetaFac
      *            factory for meta bucket
      * @param pByteHandler
@@ -58,10 +58,10 @@ public class JCloudsStorage implements IBackend {
      * 
      */
     @Inject
-    public JCloudsStorage(@Assisted Properties pProperties, INodeFactory pNodeFac,
+    public JCloudsStorage(@Assisted Properties pProperties, IDataFactory pDataFac,
         IMetaEntryFactory pMetaFac, IByteHandlerPipeline pByteHandler) {
         mProperties = pProperties;
-        mFac = new BucketFactory(pNodeFac, pMetaFac);
+        mFac = new BucketFactory(pDataFac, pMetaFac);
         mByteHandler = (ByteHandlerPipeline)pByteHandler;
 
         mContext =

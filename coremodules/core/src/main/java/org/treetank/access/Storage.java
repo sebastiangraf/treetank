@@ -44,7 +44,7 @@ import org.treetank.api.IStorage;
 import org.treetank.bucket.IConstants;
 import org.treetank.bucket.IndirectBucket;
 import org.treetank.bucket.MetaBucket;
-import org.treetank.bucket.NodeBucket;
+import org.treetank.bucket.DataBucket;
 import org.treetank.bucket.RevisionRootBucket;
 import org.treetank.bucket.UberBucket;
 import org.treetank.bucket.interfaces.IReferenceBucket;
@@ -377,7 +377,7 @@ public final class Storage implements IStorage {
         writer.write(revBucket);
         writer.write(metaBucker);
 
-        // --- Create node tree
+        // --- Create data tree
         // ----------------------------------------------------
 
         // Initialize revision tree to guarantee that there is a revision root
@@ -391,7 +391,7 @@ public final class Storage implements IStorage {
             bucket = new IndirectBucket(newBucketKey);
         }
 
-        final NodeBucket ndp = new NodeBucket(newBucketKey, IConstants.NULL_NODE);
+        final DataBucket ndp = new DataBucket(newBucketKey, IConstants.NULLDATA);
         writer.write(ndp);
         writer.writeUberBucket(uberBucket);
         writer.close();

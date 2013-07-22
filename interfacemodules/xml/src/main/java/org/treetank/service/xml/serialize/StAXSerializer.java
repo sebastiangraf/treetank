@@ -163,7 +163,7 @@ public final class StAXSerializer implements XMLEventReader {
      * @throws TTIOException
      */
     private void emitEndTag() throws TTIOException {
-        final long nodeKey = mRtx.getNode().getNodeKey();
+        final long nodeKey = mRtx.getNode().getDataKey();
         mEvent = mFac.createEndElement(mRtx.getQNameOfCurrentNode(), new NamespaceIterator(mRtx));
         mRtx.moveTo(nodeKey);
     }
@@ -181,7 +181,7 @@ public final class StAXSerializer implements XMLEventReader {
             mEvent = mFac.createStartDocument();
             break;
         case ELEMENT:
-            final long key = mRtx.getNode().getNodeKey();
+            final long key = mRtx.getNode().getDataKey();
             final QName qName = mRtx.getQNameOfCurrentNode();
             mEvent = mFac.createStartElement(qName, new AttributeIterator(mRtx), new NamespaceIterator(mRtx));
             mRtx.moveTo(key);
@@ -210,7 +210,7 @@ public final class StAXSerializer implements XMLEventReader {
     @Override
     public String getElementText() throws XMLStreamException {
 
-        final long nodeKey = mAxis.getNode().getNodeKey();
+        final long nodeKey = mAxis.getNode().getDataKey();
 
         /*
          * The cursor has to move back (once) after determining, that a closing
@@ -305,7 +305,7 @@ public final class StAXSerializer implements XMLEventReader {
     /** {@inheritDoc} */
     @Override
     public XMLEvent peek() throws XMLStreamException {
-        final long currNodeKey = mAxis.getNode().getNodeKey();
+        final long currNodeKey = mAxis.getNode().getDataKey();
         try {
             if (mCloseElements) {
                 mRtx.moveTo(mStack.peek());
@@ -400,7 +400,7 @@ public final class StAXSerializer implements XMLEventReader {
             // Emit node.
             emitNode();
 
-            final long nodeKey = mRtx.getNode().getNodeKey();
+            final long nodeKey = mRtx.getNode().getDataKey();
             mLastKey = nodeKey;
 
             // Push end element to stack if we are a start element.
@@ -464,7 +464,7 @@ public final class StAXSerializer implements XMLEventReader {
          */
         public AttributeIterator(final INodeReadTrx rtx) {
             mRTX = rtx;
-            mNodeKey = mRTX.getNode().getNodeKey();
+            mNodeKey = mRTX.getNode().getDataKey();
             mIndex = 0;
 
             if (mRTX.getNode().getKind() == ELEMENT) {
@@ -540,7 +540,7 @@ public final class StAXSerializer implements XMLEventReader {
          */
         public NamespaceIterator(final INodeReadTrx rtx) {
             mRTX = rtx;
-            mNodeKey = mRTX.getNode().getNodeKey();
+            mNodeKey = mRTX.getNode().getDataKey();
             mIndex = 0;
 
             if (mRTX.getNode().getKind() == ELEMENT) {

@@ -153,7 +153,7 @@ public class CreateStorageConfigurationDialog extends Dialog {
                 revClass = SlidingSnapshot.class;
             }
             
-            StorageManager.createResource(this.name, new ModuleSetter().setNodeFacClass(FileNodeFactory.class).setMetaFacClass(FilelistenerMetaPageFactory.class)
+            StorageManager.createResource(this.name, new ModuleSetter().setDataFacClass(FileNodeFactory.class).setMetaFacClass(FilelistenerMetaPageFactory.class)
                 .setRevisioningClass(revClass).setBackendClass(backendClass).createModule());
             
         } catch (StorageAlreadyExistsException e1) {
