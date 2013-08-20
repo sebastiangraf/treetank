@@ -79,7 +79,10 @@ public class IscsiReadTrx implements IIscsiReadTrx {
     public boolean nextNode() {
         try {
             if (mCurrentNode != null) {
-                this.mCurrentNode = (ByteNode)mPageReadTrx.getData((mCurrentNode).getNextNodeKey());
+                long time = System.currentTimeMillis();
+                System.out.print("... Getting node ...");
+                this.mCurrentNode = (ByteNode)mPageReadTrx.getData(mCurrentNode.getNextNodeKey());
+                System.out.print("... Got node in " + (System.currentTimeMillis()-time) + "ms ...");
             } else {
                 return false;
             }
@@ -96,7 +99,7 @@ public class IscsiReadTrx implements IIscsiReadTrx {
     public boolean previousNode() {
         try {
             if (mCurrentNode != null) {
-                this.mCurrentNode = (ByteNode)mPageReadTrx.getData((mCurrentNode).getPreviousNodeKey());
+                this.mCurrentNode = (ByteNode)mPageReadTrx.getData(mCurrentNode.getPreviousNodeKey());
             } else {
                 return false;
             }

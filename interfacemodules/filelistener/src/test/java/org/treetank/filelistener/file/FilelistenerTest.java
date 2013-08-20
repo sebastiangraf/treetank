@@ -32,8 +32,8 @@ public class FilelistenerTest {
     private static final String RESOURCE_1 = "RESOURCE_1";
     private static final String RESOURCE_2 = "RESOURCE_2";
 
-    private static final File TMPDIR_1 = Files.createTempDir();
-    private static final File TMPDIR_2 = Files.createTempDir();
+    private final File TMPDIR_1 = Files.createTempDir();
+    private final File TMPDIR_2 = Files.createTempDir();
 
     private Filelistener filelistener;
 

@@ -92,7 +92,7 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
     @Override
     public void setValue(byte[] val) throws TTException {
 
-        ByteNode node = (ByteNode)getPageTransaction().getData(mDelegate.getCurrentNode().getDataKey());
+        ByteNode node = (ByteNode) mDelegate.getCurrentNode();
         node.setVal(val);
         getPageTransaction().setData(node);
     }
