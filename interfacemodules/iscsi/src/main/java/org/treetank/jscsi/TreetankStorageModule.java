@@ -27,16 +27,13 @@ package org.treetank.jscsi;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.io.IOException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import org.jscsi.target.storage.IStorageModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.treetank.access.IscsiWriteTrx;
-import org.treetank.api.IIscsiWriteTrx;
 import org.treetank.api.IData;
+import org.treetank.api.IIscsiWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
 
@@ -62,11 +59,11 @@ public class TreetankStorageModule implements IStorageModule {
      * the blocks per node is considerably high (e.g. 256kb per node) you might have to increase
      * the ram for the jvm.
      */
-    public static final int BLOCKS_IN_NODE = 32;
+    public static final int BLOCKS_IN_NODE = 8;
 
     /** Threshold when commit should occur in number of bytes. */
 //     private static final int COMMIT_THRESHOLD = 268435456;
-     private static final int COMMIT_THRESHOLD = 33554432;
+     private static final int COMMIT_THRESHOLD = 16777216;
 
     /** Number of Bytes in Bucket. */
     public final static int BYTES_IN_NODE = BLOCKS_IN_NODE * VIRTUAL_BLOCK_SIZE;
@@ -249,6 +246,8 @@ public class TreetankStorageModule implements IStorageModule {
      * {@inheritDoc}
      */
     public void write(byte[] bytes, long storageIndex) throws IOException {
+        
+        long time = System.currentTimeMillis();
 
         LOGGER.debug("Starting to write with param: " + "\nstorageIndex = " + storageIndex
             + "\nbytes.length = " + bytes.length);
@@ -263,28 +262,42 @@ public class TreetankStorageModule implements IStorageModule {
             bytes.length + startIndexOffset > BYTES_IN_NODE ? BYTES_IN_NODE - startIndexOffset : bytes.length;
 
         try {
+            System.out.println("A:Moving to index");
             checkState(mRtx.moveTo(startIndex));
+            System.out.println("B:Moving to index");
             byte[] data = mRtx.getValueOfCurrentNode();
             System.arraycopy(bytes, 0, data, startIndexOffset, bytesWritten);
             mRtx.setValue(data);
 
+            System.out.println("A:Writing data");
             for (long i = startIndex + 1; i < endIndex; i++) {
-                checkState(mRtx.moveTo(i));
+                System.out.print(" ... Moving to next node ..");
+                checkState(mRtx.nextNode());
+                System.out.print(". Getting value of next node ..");
                 data = mRtx.getValueOfCurrentNode();
+                System.out.print(". Copying value ..");
                 System.arraycopy(bytes, bytesWritten, data, 0, data.length);
+                System.out.print(". Setting value ..");
                 mRtx.setValue(data);
                 bytesWritten = bytesWritten + data.length;
 
             }
+            System.out.println("B:Writing data");
 
+            System.out.println("A:Writing last part");
             if (startIndex != endIndex && endIndex < mNodeNumbers) {
-                checkState(mRtx.moveTo(endIndex));
+                System.out.print(" ... Moving to next node ..");
+                checkState(mRtx.nextNode());
+                System.out.print(". Getting value of next node ..");
                 data = mRtx.getValueOfCurrentNode();
+                System.out.print(". Copying value ..");
                 System.arraycopy(bytes, bytesWritten, data, 0, endIndexMax);
+                System.out.print(". Setting value ..");
                 mRtx.setValue(data);
 
                 bytesWritten += endIndexMax;
             }
+            System.out.println("A:Writing last part");
 
             // Bytes written is the actual number of bytes that have been written.
             // The two lengths have to match, otherwise not enough bytes have been written (or too much?).
@@ -293,6 +306,7 @@ public class TreetankStorageModule implements IStorageModule {
             // Incrementing bytewriter counter
             mByteCounter += bytesWritten;
 
+            System.out.println("A:Commiting");
             // If 1024 nodes have been fully written.
             if (mByteCounter >= COMMIT_THRESHOLD) {
                 this.mRtx.commit();
@@ -300,9 +314,15 @@ public class TreetankStorageModule implements IStorageModule {
                 LOGGER.debug("Commited changes to treetank.");
                 mByteCounter = 0;
             }
+            System.out.println("B:Commiting");
         } catch (TTException exc) {
             throw new IOException(exc);
         }
+        
+        System.out.println("######################################################### \n\t\t Write took: " + (System.currentTimeMillis() - time) 
+            + "ms\n\t\t StorageIndex: " + storageIndex 
+            + "\n\t\t BytesLength: " + bytes.length 
+            + "\n#########################################################");
     }
 
     /**
