@@ -124,9 +124,9 @@ public class TreetankStorageModuleTest {
 
         final byte[] readArray = new byte[writeArray.length];
         // write
-        storageModule.write(writeArray, 1 * IStorageModule.VIRTUAL_BLOCK_SIZE);
+        storageModule.write(writeArray, 0);
         // read
-        storageModule.read(readArray, 1 * IStorageModule.VIRTUAL_BLOCK_SIZE);
+        storageModule.read(readArray, 0);
         // check for errors
         assertTrue(Arrays.equals(writeArray, readArray));
 
