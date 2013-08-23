@@ -26,16 +26,35 @@ package org.treetank.jscsi;
 
 import static com.google.common.base.Preconditions.checkState;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.file.FileSystems;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+import org.jclouds.ContextBuilder;
+import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.filesystem.reference.FilesystemConstants;
 import org.jscsi.target.storage.IStorageModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.treetank.access.IscsiWriteTrx;
+import org.treetank.access.conf.ConstructorProps;
 import org.treetank.api.IData;
 import org.treetank.api.IIscsiWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
+
+import com.google.common.io.Files;
 
 /**
  * <h1>TreetankStorageModule</h1>
@@ -62,8 +81,7 @@ public class TreetankStorageModule implements IStorageModule {
     public static final int BLOCKS_IN_NODE = 8;
 
     /** Threshold when commit should occur in number of bytes. */
-//     private static final int COMMIT_THRESHOLD = 268435456;
-     private static final int COMMIT_THRESHOLD = 16777216;
+    private static final int COMMIT_THRESHOLD = 268435456;
 
     /** Number of Bytes in Bucket. */
     public final static int BYTES_IN_NODE = BLOCKS_IN_NODE * VIRTUAL_BLOCK_SIZE;
@@ -93,7 +111,15 @@ public class TreetankStorageModule implements IStorageModule {
      * - If a certain amount of bytes have been written, a commit is made to treetank.
      */
     private volatile int mByteCounter;
-//    private final ScheduledExecutorService mCommitExec;
+
+    /** JClouds mirror for faster response times (filesystem backend) */
+    private BlobStore mMirrorStorage;
+    private byte[] mCurrentBlobBytes;
+    private long mCurrentBlobPos;
+    private Map<Integer, byte[]> mBlobCache;
+
+    /** ExecutorService to perform WriteTasks */
+    private ExecutorService mWriteTaskExecutor;
 
     /**
      * Creates a storage module that is used by the target to handle I/O.
@@ -101,13 +127,12 @@ public class TreetankStorageModule implements IStorageModule {
      * @param pNodeNumber
      *            Define how many nodes the storage holds.
      * @param pSession
-     *            Pass the sessiona associated to the location to this class.
+     *            Pass the session associated to the location to this class.
      * @throws TTException
      *             will be thrown if there are problems creating this storage.
      */
     public TreetankStorageModule(final long pNodeNumber, final ISession pSession) throws TTException {
 
-        // mByteCounter = 0;
         mNodeNumbers = pNodeNumber;
 
         LOGGER.debug("Initializing storagemodule with: number of nodes=" + mNodeNumbers + ", blockSize="
@@ -115,19 +140,8 @@ public class TreetankStorageModule implements IStorageModule {
 
         mSession = pSession;
         mRtx = new IscsiWriteTrx(mSession.beginBucketWtx(), mSession);
-//
-//        mCommitExec = Executors.newScheduledThreadPool(1);
-//        mCommitExec.scheduleAtFixedRate(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//                    mByteCounter = 0;
-//                    mRtx.commit();
-//                } catch (TTException e) {
-//                    throw new RuntimeException(e);
-//                }
-//            }
-//        }, 2, 2, TimeUnit.MINUTES);
+
+        mWriteTaskExecutor = Executors.newSingleThreadExecutor();
 
         createStorage();
         System.out.println("Device ready");
@@ -145,6 +159,18 @@ public class TreetankStorageModule implements IStorageModule {
         LOGGER.debug("Creating storage with " + mNodeNumbers + " nodes containing " + BLOCKS_IN_NODE
             + " blocks with " + IStorageModule.VIRTUAL_BLOCK_SIZE + " bytes each.");
 
+        long storageSize = mNodeNumbers * BLOCKS_IN_NODE * VIRTUAL_BLOCK_SIZE;
+
+        // Creating random access file as mirror
+        Properties properties = new Properties();
+        properties.setProperty(FilesystemConstants.PROPERTY_BASEDIR, Files.createTempDir().getAbsolutePath());
+
+        mMirrorStorage =
+            ContextBuilder.newBuilder("filesystem").credentials("iscsi", "iscsi").overrides(properties)
+                .buildView(BlobStoreContext.class).getBlobStore();
+        mMirrorStorage.createContainerInLocation(null, "mirror");
+        mBlobCache = new HashMap<Integer, byte[]>();
+
         IData data = this.mRtx.getCurrentNode();
 
         if (data != null) {
@@ -160,9 +186,6 @@ public class TreetankStorageModule implements IStorageModule {
             // Bootstrapping nodes containing clusterSize -many blocks/sectors.
             LOGGER.debug("Bootstraping node " + i + "\tof " + (mNodeNumbers - 1));
             this.mRtx.bootstrap(new byte[TreetankStorageModule.BYTES_IN_NODE], hasNextNode);
-            // if (i % 10000 == 0) {
-            // this.mRtx.commit();
-            // }
         }
 
         this.mRtx.commit();
@@ -202,127 +225,201 @@ public class TreetankStorageModule implements IStorageModule {
         LOGGER.debug("Starting to read with param: " + "\nstorageIndex = " + storageIndex
             + "\nbytes.length = " + bytes.length);
 
-        long startIndex = storageIndex / BYTES_IN_NODE;
-        int startIndexOffset = (int)(storageIndex % BYTES_IN_NODE);
+        long blobPos = storageIndex / (4 * bytes.length);
+        int size = (4 * bytes.length);
+        int storageOffset = (int)(storageIndex % size);
 
-        long endIndex = (storageIndex + bytes.length) / BYTES_IN_NODE;
+        Blob blob = mMirrorStorage.getBlob("mirror", String.valueOf(blobPos));
+        byte[] blobBytes = new byte[4 * bytes.length];
 
-        int endIndexMax = (int)((storageIndex + bytes.length) % BYTES_IN_NODE);
+        if (mCurrentBlobPos != blobPos) {
+            if (mBlobCache.containsKey(blobPos)) {
+                mCurrentBlobPos = blobPos;
+                mCurrentBlobBytes = mBlobCache.get(blobPos);
+            } else {
 
-        LOGGER.debug("startIndex: " + startIndex);
-        LOGGER.debug("startIndexOffset: " + startIndexOffset);
-        LOGGER.debug("endIndex: " + endIndex);
-        LOGGER.debug("endIndexMax: " + endIndexMax);
+                if (mBlobCache.entrySet().size() > 256) {
+                    mBlobCache.remove(mCurrentBlobPos);
+                }
 
-        int bytesRead =
-            bytes.length + startIndexOffset > BYTES_IN_NODE ? BYTES_IN_NODE - startIndexOffset : bytes.length;
+                blob.getPayload().getInput().read(blobBytes);
+                mCurrentBlobBytes = blobBytes;
+                mCurrentBlobPos = blobPos;
 
-        checkState(mRtx.moveTo(startIndex));
-        byte[] data = mRtx.getValueOfCurrentNode();
-        System.arraycopy(data, startIndexOffset, bytes, 0, bytesRead);
-
-        for (long i = startIndex + 1; i < endIndex; i++) {
-            checkState(mRtx.moveTo(i));
-            data = mRtx.getValueOfCurrentNode();
-            System.arraycopy(data, 0, bytes, bytesRead, data.length);
-            bytesRead = bytesRead + data.length;
-
+                mBlobCache.put((int)mCurrentBlobPos, mCurrentBlobBytes);
+            }
         }
 
-        if (startIndex != endIndex && endIndex < mNodeNumbers) {
-            checkState(mRtx.moveTo(endIndex));
-            data = mRtx.getValueOfCurrentNode();
-            System.arraycopy(data, 0, bytes, bytesRead, endIndexMax);
+        System.arraycopy(mCurrentBlobBytes, storageOffset, bytes, 0, bytes.length);
 
-            bytesRead += endIndexMax;
-        }
+        blob.getPayload().release();
+        blob.getPayload().close();
 
-        // Bytes read is the actual number of bytes that have been read.
-        // The two lengths have to match, otherwise not enough bytes have been read (or too much?).
-        checkState(bytesRead == bytes.length);
+        // long startIndex = storageIndex / BYTES_IN_NODE;
+        // int startIndexOffset = (int)(storageIndex % BYTES_IN_NODE);
+        //
+        // long endIndex = (storageIndex + bytes.length) / BYTES_IN_NODE;
+        //
+        // int endIndexMax = (int)((storageIndex + bytes.length) % BYTES_IN_NODE);
+        //
+        // LOGGER.debug("startIndex: " + startIndex);
+        // LOGGER.debug("startIndexOffset: " + startIndexOffset);
+        // LOGGER.debug("endIndex: " + endIndex);
+        // LOGGER.debug("endIndexMax: " + endIndexMax);
+        //
+        // int bytesRead =
+        // bytes.length + startIndexOffset > BYTES_IN_NODE ? BYTES_IN_NODE - startIndexOffset : bytes.length;
+        //
+        // checkState(mRtx.moveTo(startIndex));
+        // byte[] data = mRtx.getValueOfCurrentNode();
+        // System.arraycopy(data, startIndexOffset, bytes, 0, bytesRead);
+        //
+        // for (long i = startIndex + 1; i < endIndex; i++) {
+        // checkState(mRtx.moveTo(i));
+        // data = mRtx.getValueOfCurrentNode();
+        // System.arraycopy(data, 0, bytes, bytesRead, data.length);
+        // bytesRead = bytesRead + data.length;
+        //
+        // }
+        //
+        // if (startIndex != endIndex && endIndex < mNodeNumbers) {
+        // checkState(mRtx.moveTo(endIndex));
+        // data = mRtx.getValueOfCurrentNode();
+        // System.arraycopy(data, 0, bytes, bytesRead, endIndexMax);
+        //
+        // bytesRead += endIndexMax;
+        // }
+        //
+        // // Bytes read is the actual number of bytes that have been read.
+        // // The two lengths have to match, otherwise not enough bytes have been read (or too much?).
+        // checkState(bytesRead == bytes.length);
     }
 
     /**
      * {@inheritDoc}
      */
     public void write(byte[] bytes, long storageIndex) throws IOException {
-        
-        long time = System.currentTimeMillis();
 
         LOGGER.debug("Starting to write with param: " + "\nstorageIndex = " + storageIndex
             + "\nbytes.length = " + bytes.length);
 
-        long startIndex = storageIndex / BYTES_IN_NODE;
-        int startIndexOffset = (int)(storageIndex % BYTES_IN_NODE);
+        long blobPos = storageIndex / (4 * bytes.length);
+        int size = (4 * bytes.length);
+        int storageOffset = (int)(storageIndex % size);
 
-        long endIndex = (storageIndex + bytes.length) / BYTES_IN_NODE;
-        int endIndexMax = (int)((storageIndex + bytes.length) % BYTES_IN_NODE);
+        Blob blob = mMirrorStorage.getBlob("mirror", String.valueOf(blobPos));
+        byte[] blobBytes = new byte[4 * bytes.length];
 
-        int bytesWritten =
-            bytes.length + startIndexOffset > BYTES_IN_NODE ? BYTES_IN_NODE - startIndexOffset : bytes.length;
+        if (blob != null) {
+            if (mCurrentBlobPos == blobPos && mCurrentBlobBytes != null) {
+                blobBytes = mCurrentBlobBytes;
+            } else {
+                if (mBlobCache.containsKey(blobPos)) {
+                    mCurrentBlobBytes = mBlobCache.get(blobPos);
+                    mCurrentBlobPos = blobPos;
+                } else {
 
-        try {
-            System.out.println("A:Moving to index");
-            checkState(mRtx.moveTo(startIndex));
-            System.out.println("B:Moving to index");
-            byte[] data = mRtx.getValueOfCurrentNode();
-            System.arraycopy(bytes, 0, data, startIndexOffset, bytesWritten);
-            mRtx.setValue(data);
+                    if (mBlobCache.entrySet().size() > 256) {
+                        mBlobCache.remove(mCurrentBlobPos);
+                    }
 
-            System.out.println("A:Writing data");
-            for (long i = startIndex + 1; i < endIndex; i++) {
-                System.out.print(" ... Moving to next node ..");
-                checkState(mRtx.nextNode());
-                System.out.print(". Getting value of next node ..");
-                data = mRtx.getValueOfCurrentNode();
-                System.out.print(". Copying value ..");
-                System.arraycopy(bytes, bytesWritten, data, 0, data.length);
-                System.out.print(". Setting value ..");
-                mRtx.setValue(data);
-                bytesWritten = bytesWritten + data.length;
+                    blob.getPayload().getInput().read(blobBytes);
+                    mCurrentBlobBytes = blobBytes;
+                    mCurrentBlobPos = blobPos;
 
+                    mBlobCache.put((int)mCurrentBlobPos, mCurrentBlobBytes);
+                }
+                mCurrentBlobPos = blobPos;
             }
-            System.out.println("B:Writing data");
-
-            System.out.println("A:Writing last part");
-            if (startIndex != endIndex && endIndex < mNodeNumbers) {
-                System.out.print(" ... Moving to next node ..");
-                checkState(mRtx.nextNode());
-                System.out.print(". Getting value of next node ..");
-                data = mRtx.getValueOfCurrentNode();
-                System.out.print(". Copying value ..");
-                System.arraycopy(bytes, bytesWritten, data, 0, endIndexMax);
-                System.out.print(". Setting value ..");
-                mRtx.setValue(data);
-
-                bytesWritten += endIndexMax;
-            }
-            System.out.println("A:Writing last part");
-
-            // Bytes written is the actual number of bytes that have been written.
-            // The two lengths have to match, otherwise not enough bytes have been written (or too much?).
-            checkState(bytesWritten == bytes.length);
-
-            // Incrementing bytewriter counter
-            mByteCounter += bytesWritten;
-
-            System.out.println("A:Commiting");
-            // If 1024 nodes have been fully written.
-            if (mByteCounter >= COMMIT_THRESHOLD) {
-                this.mRtx.commit();
-
-                LOGGER.debug("Commited changes to treetank.");
-                mByteCounter = 0;
-            }
-            System.out.println("B:Commiting");
-        } catch (TTException exc) {
-            throw new IOException(exc);
         }
-        
-        System.out.println("######################################################### \n\t\t Write took: " + (System.currentTimeMillis() - time) 
-            + "ms\n\t\t StorageIndex: " + storageIndex 
-            + "\n\t\t BytesLength: " + bytes.length 
-            + "\n#########################################################");
+        else{
+            mCurrentBlobBytes = blobBytes;
+            mCurrentBlobPos = blobPos;
+        }
+
+        System.arraycopy(bytes, 0, mCurrentBlobBytes, storageOffset, bytes.length);
+        blob = mMirrorStorage.blobBuilder(String.valueOf(blobPos)).payload(mCurrentBlobBytes).build();
+        mMirrorStorage.putBlob("mirror", blob);
+
+        blob.getPayload().release();
+        blob.getPayload().close();
+
+        // Submitting into treetank
+         mWriteTaskExecutor.submit(new WriteTask(bytes, storageIndex));
+    }
+
+    /**
+     * WriteTask for writing data to treetank.
+     * 
+     * @author Andreas Rain
+     * 
+     */
+    private class WriteTask implements Callable<Void> {
+
+        private final byte[] mBytes;
+        private final long mStorageIndex;
+
+        public WriteTask(byte[] pBytes, long pStorageIndex) {
+            mBytes = pBytes;
+            mStorageIndex = pStorageIndex;
+        }
+
+        @Override
+        public Void call() throws Exception {
+            long startIndex = mStorageIndex / BYTES_IN_NODE;
+            int startIndexOffset = (int)(mStorageIndex % BYTES_IN_NODE);
+
+            long endIndex = (mStorageIndex + mBytes.length) / BYTES_IN_NODE;
+            int endIndexMax = (int)((mStorageIndex + mBytes.length) % BYTES_IN_NODE);
+
+            int bytesWritten =
+                mBytes.length + startIndexOffset > BYTES_IN_NODE ? BYTES_IN_NODE - startIndexOffset
+                    : mBytes.length;
+
+            try {
+                checkState(mRtx.moveTo(startIndex));
+                byte[] data = mRtx.getValueOfCurrentNode();
+                System.arraycopy(mBytes, 0, data, startIndexOffset, bytesWritten);
+                mRtx.setValue(data);
+
+                for (long i = startIndex + 1; i < endIndex; i++) {
+                    checkState(mRtx.nextNode());
+                    data = mRtx.getValueOfCurrentNode();
+                    System.arraycopy(mBytes, bytesWritten, data, 0, data.length);
+                    mRtx.setValue(data);
+                    bytesWritten = bytesWritten + data.length;
+
+                }
+
+                if (startIndex != endIndex && endIndex < mNodeNumbers) {
+                    checkState(mRtx.nextNode());
+                    data = mRtx.getValueOfCurrentNode();
+                    System.arraycopy(mBytes, bytesWritten, data, 0, endIndexMax);
+                    mRtx.setValue(data);
+
+                    bytesWritten += endIndexMax;
+                }
+
+                // Bytes written is the actual number of bytes that have been written.
+                // The two lengths have to match, otherwise not enough bytes have been written (or too much?).
+                checkState(bytesWritten == mBytes.length);
+
+                // Incrementing bytewriter counter
+                mByteCounter += bytesWritten;
+
+                // If 1024 nodes have been fully written.
+                if (mByteCounter >= COMMIT_THRESHOLD) {
+                    mRtx.commit();
+
+                    mByteCounter = 0;
+                }
+
+            } catch (TTException exc) {
+                throw new IOException(exc);
+            }
+            return null;
+        }
+
     }
 
     /**
@@ -331,6 +428,7 @@ public class TreetankStorageModule implements IStorageModule {
     public void close() throws IOException {
 
         try {
+            mMirrorStorage.getContext().close();
             mRtx.close();
 
         } catch (TTException exc) {

@@ -148,7 +148,7 @@ public class StorageModuleBenchmark {
     }
 
     private void printRunTimeTaken(int pRunNumber, long pTime) {
-        System.out.println("Run " + pRunNumber + " took " + (System.currentTimeMillis() - pTime));
+        System.out.println("Run " + pRunNumber + " took " + pTime);
     }
 
 }
