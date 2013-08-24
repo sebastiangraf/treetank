@@ -41,6 +41,7 @@ import org.jscsi.target.Configuration;
 import org.jscsi.target.Target;
 import org.jscsi.target.settings.TextKeyword;
 import org.jscsi.target.storage.IStorageModule;
+import org.jscsi.target.storage.RandomAccessStorageModule;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
 import org.w3c.dom.Document;
@@ -185,7 +186,7 @@ public class TreetankConfiguration extends Configuration {
                 Math.round(((Double.valueOf(sizeAttribute.getTextContent())) * Math.pow(1024, 3)));
         }
 
-        final IStorageModule module =
+        final IStorageModule module = 
             new TreetankStorageModule(storageLength / TreetankStorageModule.BYTES_IN_NODE, conf.mSession);
 
         return new Target(targetName, targetAlias, module);
