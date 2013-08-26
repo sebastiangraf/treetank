@@ -29,9 +29,9 @@ package org.treetank.access;
 
 import org.treetank.api.IIscsiReadTrx;
 import org.treetank.api.IBucketReadTrx;
+import org.treetank.data.BlockDataElement;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.node.ByteNode;
 
 /**
  * @author Andreas Rain
@@ -42,8 +42,8 @@ public class IscsiReadTrx implements IIscsiReadTrx {
     /** State of transaction including all cached stuff. */
     protected IBucketReadTrx mPageReadTrx;
 
-    /** Strong reference to currently selected node. */
-    private ByteNode mCurrentNode;
+    /** Strong reference to currently selected data. */
+    private BlockDataElement mCurrentData;
 
     /**
      * Constructor.
@@ -56,7 +56,7 @@ public class IscsiReadTrx implements IIscsiReadTrx {
      */
     public IscsiReadTrx(final IBucketReadTrx pPageTrx) throws TTException {
         mPageReadTrx = pPageTrx;
-        mCurrentNode = (ByteNode)mPageReadTrx.getData(0);
+        mCurrentData = (BlockDataElement)mPageReadTrx.getData(0);
     }
 
     /**
@@ -65,7 +65,7 @@ public class IscsiReadTrx implements IIscsiReadTrx {
     @Override
     public boolean moveTo(long pKey) {
         try {
-            this.mCurrentNode = (ByteNode)mPageReadTrx.getData(pKey);
+            this.mCurrentData = (BlockDataElement)mPageReadTrx.getData(pKey);
             return true;
         } catch (TTException e) {
             return false;
@@ -76,10 +76,10 @@ public class IscsiReadTrx implements IIscsiReadTrx {
      * {@inheritDoc}
      */
     @Override
-    public boolean nextNode() {
+    public boolean nextData() {
         try {
-            if (mCurrentNode != null) {
-                this.mCurrentNode = (ByteNode)mPageReadTrx.getData(mCurrentNode.getNextNodeKey());
+            if (mCurrentData != null) {
+                this.mCurrentData = (BlockDataElement)mPageReadTrx.getData(mCurrentData.getNextKey());
             } else {
                 return false;
             }
@@ -89,40 +89,40 @@ public class IscsiReadTrx implements IIscsiReadTrx {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean previousNode() {
-        try {
-            if (mCurrentNode != null) {
-                this.mCurrentNode = (ByteNode)mPageReadTrx.getData(mCurrentNode.getPreviousNodeKey());
-            } else {
-                return false;
-            }
-            return true;
-        } catch (TTException e) {
-            return false;
-        }
-    }
+    // /**
+    // * {@inheritDoc}
+    // */
+    // @Override
+    // public boolean previousNode() {
+    // try {
+    // if (mCurrentData != null) {
+    // this.mCurrentNode = (BlockDataElement)mPageReadTrx.getData((mCurrentData).getPreviousNodeKey());
+    // } else {
+    // return false;
+    // }
+    // return true;
+    // } catch (TTException e) {
+    // return false;
+    // }
+    // }
 
     /**
      * {@inheritDoc}
      */
     @Override
     public byte[] getValueOfCurrentNode() {
-        if (mCurrentNode == null)
+        if (mCurrentData == null)
             return null;
 
-        return ((ByteNode)mCurrentNode).getVal();
+        return ((BlockDataElement)mCurrentData).getVal();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ByteNode getCurrentNode() {
-        return mCurrentNode;
+    public BlockDataElement getCurrentData() {
+        return mCurrentData;
     }
 
     /**

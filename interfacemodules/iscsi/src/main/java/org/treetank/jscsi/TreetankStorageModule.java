@@ -156,7 +156,7 @@ public class TreetankStorageModule implements IStorageModule {
             };
         }
 
-        IData data = this.mRtx.getCurrentNode();
+        IData data = this.mRtx.getCurrentData();
 
         if (data != null) {
             return;
@@ -302,7 +302,7 @@ public class TreetankStorageModule implements IStorageModule {
                 mRtx.setValue(data);
 
                 for (long i = startIndex + 1; i < endIndex; i++) {
-                    checkState(mRtx.nextNode());
+                    checkState(mRtx.nextData());
                     data = mRtx.getValueOfCurrentNode();
                     System.arraycopy(mBytes, bytesWritten, data, 0, data.length);
                     mRtx.setValue(data);
@@ -311,7 +311,7 @@ public class TreetankStorageModule implements IStorageModule {
                 }
 
                 if (startIndex != endIndex && endIndex < mNodeNumbers) {
-                    checkState(mRtx.nextNode());
+                    checkState(mRtx.nextData());
                     data = mRtx.getValueOfCurrentNode();
                     System.arraycopy(mBytes, bytesWritten, data, 0, endIndexMax);
                     mRtx.setValue(data);

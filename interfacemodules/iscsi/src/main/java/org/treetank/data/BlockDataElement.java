@@ -22,7 +22,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.node;
+package org.treetank.data;
 
 import java.io.DataOutput;
 import java.io.IOException;
@@ -38,7 +38,7 @@ import com.google.common.hash.PrimitiveSink;
  * 
  * @author Andreas Rain
  */
-public class ByteNode implements IData {
+public class BlockDataElement implements IData {
     /**
      * Enum for ByteNodeFunnel.
      * 
@@ -48,9 +48,8 @@ public class ByteNode implements IData {
     enum ByteNodeFunnel implements Funnel<IData> {
         INSTANCE;
         public void funnel(IData data, PrimitiveSink into) {
-            final ByteNode from = (ByteNode)data;
-            into.putLong(from.nodeKey).putLong(from.nextNodeKey).putLong(from.previousNodeKey).putLong(
-                from.index).putBytes(from.val).putInt(from.size);
+            final BlockDataElement from = (BlockDataElement)data;
+            into.putLong(from.nodeKey).putBytes(from.val).putInt(from.size).putLong(from.nextNodeKey);//.putLong(from.previousNodeKey).putLong(from.index);
         }
     }
 
@@ -64,19 +63,19 @@ public class ByteNode implements IData {
      */
     private long nextNodeKey = 0;
 
-    /**
-     * The previous nodes key
-     */
-    private long previousNodeKey = -1;
-
-    /**
-     * The real index of this byte.
-     */
-    private long index = 0;
+    // /**
+    // * The previous nodes key
+    // */
+    // private long previousNodeKey = -1;
+    //
+    // /**
+    // * The real index of this byte.
+    // */
+    // private long index = 0;
 
     /**
      * The size of the byte array in the node. The maximum size of a byte array in
-     * a {@link ByteNode} is 2^32 - 1. This is because in the deserialization the
+     * a {@link BlockDataElement} is 2^32 - 1. This is because in the deserialization the
      * first 4 bytes determine the size of each node.
      */
     private int size = 0;
@@ -87,12 +86,12 @@ public class ByteNode implements IData {
     private byte[] val;
 
     /**
-     * Creates a ByteNode with given bytes
+     * Creates a BlockDataElement with given bytes
      * 
      * @param pNodeKey
      * @param pContent
      */
-    public ByteNode(long pNodeKey, byte[] pContent) {
+    public BlockDataElement(long pNodeKey, byte[] pContent) {
         nodeKey = pNodeKey;
         size = pContent.length;
         val = pContent;
@@ -108,10 +107,10 @@ public class ByteNode implements IData {
     public void serialize(final DataOutput output) throws TTIOException {
         try {
             output.writeInt(size);
-            output.writeLong(index);
+            // output.writeLong(index);
             output.writeLong(nodeKey);
-            output.writeLong(previousNodeKey);
-            output.writeLong(nextNodeKey);
+            // output.writeLong(previousNodeKey);
+             output.writeLong(nextNodeKey);
             output.write(val);
         } catch (final IOException exc) {
             throw new TTIOException(exc);
@@ -148,20 +147,20 @@ public class ByteNode implements IData {
      * 
      * @return returns the key as long
      */
-    public long getNextNodeKey() {
+    public long getNextKey() {
 
         return nextNodeKey;
     }
-
-    /**
-     * Determine if a node follows after this one.
-     * 
-     * @return returns true if a node follows
-     */
-    public boolean hasNext() {
-        return (this.nextNodeKey != 0);
-    }
-
+    //
+    // /**
+    // * Determine if a node follows after this one.
+    // *
+    // * @return returns true if a node follows
+    // */
+    // public boolean hasNext() {
+    // return (this.nextNodeKey != 0);
+    // }
+    //
     /**
      * Set the link to the next node. Use the nodekey of that node.
      * 
@@ -172,76 +171,76 @@ public class ByteNode implements IData {
 
         this.nextNodeKey = nextNodeKey;
     }
-
-    /**
-     * The node key of the previous node
-     * 
-     * @return returns the key as long
-     */
-    public long getPreviousNodeKey() {
-
-        return previousNodeKey;
-    }
-
-    /**
-     * Set the link to the previous node. Use the nodekey of that node.
-     * 
-     * @param previousNodeKey
-     *            as a long
-     */
-    public void setPreviousNodeKey(long previousNodeKey) {
-
-        this.previousNodeKey = previousNodeKey;
-    }
-
-    /**
-     * Determine if a node preceids this node.
-     * 
-     * @return returns true if a node follows
-     */
-    public boolean hasPrevious() {
-        return (this.previousNodeKey != -1);
-    }
-
-    /**
-     * Getting the index of the node.
-     * 
-     * @return returns the index as an int
-     */
-    public long getIndex() {
-
-        return index;
-    }
-
-    /**
-     * Reset the index of this node.
-     * 
-     * @param index
-     */
-    public void setIndex(long index) {
-
-        this.index = index;
-    }
-
-    /**
-     * Increment the index of this node
-     * 
-     * @return return the new index
-     */
-    public long incIndex() {
-        this.index++;
-        return this.index;
-    }
-
-    /**
-     * Decrement the index of this node
-     * 
-     * @return returns the new index of this node
-     */
-    public long decIndex() {
-        this.index--;
-        return this.index;
-    }
+    //
+    // /**
+    // * The node key of the previous node
+    // *
+    // * @return returns the key as long
+    // */
+    // public long getPreviousNodeKey() {
+    //
+    // return previousNodeKey;
+    // }
+    //
+    // /**
+    // * Set the link to the previous node. Use the nodekey of that node.
+    // *
+    // * @param previousNodeKey
+    // * as a long
+    // */
+    // public void setPreviousNodeKey(long previousNodeKey) {
+    //
+    // this.previousNodeKey = previousNodeKey;
+    // }
+    //
+    // /**
+    // * Determine if a node preceids this node.
+    // *
+    // * @return returns true if a node follows
+    // */
+    // public boolean hasPrevious() {
+    // return (this.previousNodeKey != -1);
+    // }
+    //
+    // /**
+    // * Getting the index of the node.
+    // *
+    // * @return returns the index as an int
+    // */
+    // public long getIndex() {
+    //
+    // return index;
+    // }
+    //
+    // /**
+    // * Reset the index of this node.
+    // *
+    // * @param index
+    // */
+    // public void setIndex(long index) {
+    //
+    // this.index = index;
+    // }
+    //
+    // /**
+    // * Increment the index of this node
+    // *
+    // * @return return the new index
+    // */
+    // public long incIndex() {
+    // this.index++;
+    // return this.index;
+    // }
+    //
+    // /**
+    // * Decrement the index of this node
+    // *
+    // * @return returns the new index of this node
+    // */
+    // public long decIndex() {
+    // this.index--;
+    // return this.index;
+    // }
 
     /**
      * {@inheritDoc}
@@ -250,10 +249,10 @@ public class ByteNode implements IData {
     public int hashCode() {
         final int prime = 36919;
         int result = 1;
-        result = prime * result + (int)(index ^ (index >>> 32));
-        result = prime * result + (int)(nextNodeKey ^ (nextNodeKey >>> 32));
+        // result = prime * result + (int)(index ^ (index >>> 32));
+         result = prime * result + (int)(nextNodeKey ^ (nextNodeKey >>> 32));
         result = prime * result + (int)(nodeKey ^ (nodeKey >>> 32));
-        result = prime * result + (int)(previousNodeKey ^ (previousNodeKey >>> 32));
+        // result = prime * result + (int)(previousNodeKey ^ (previousNodeKey >>> 32));
         result = prime * result + size;
         return result;
     }
@@ -269,15 +268,15 @@ public class ByteNode implements IData {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        ByteNode other = (ByteNode)obj;
-        if (index != other.index)
-            return false;
-        if (nextNodeKey != other.nextNodeKey)
-            return false;
+        BlockDataElement other = (BlockDataElement)obj;
+        // if (index != other.index)
+        // return false;
+         if (nextNodeKey != other.nextNodeKey)
+         return false;
         if (nodeKey != other.nodeKey)
             return false;
-        if (previousNodeKey != other.previousNodeKey)
-            return false;
+        // if (previousNodeKey != other.previousNodeKey)
+        // return false;
         if (size != other.size)
             return false;
         return true;

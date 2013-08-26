@@ -79,12 +79,12 @@ public final class StartServer {
      */
     public static void main(final String[] args) throws Exception {
         int port = 8093;
-        if (args != null && args.length > 0) {
-            port = Integer.parseInt(args[0]);
-        }
-        System.setProperty("org.jaxrx.systemPath",
-            "org.treetank.service.jaxrx.implementation.TreeTankMediator");
-        System.setProperty("org.jaxrx.systemName", "treetank");
+//        if (args != null && args.length > 0) {
+//            port = Integer.parseInt(args[0]);
+//        }
+//        System.setProperty("org.jaxrx.systemPath",
+//            "org.treetank.service.jaxrx.implementation.TreeTankMediator");
+//        System.setProperty("org.jaxrx.systemName", "treetank");
         new JettyServer(port);
     }
 

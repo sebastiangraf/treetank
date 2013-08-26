@@ -24,7 +24,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.treetank.node;
+package org.treetank.data;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
@@ -35,6 +35,8 @@ import java.io.IOException;
 import org.testng.annotations.Test;
 import org.treetank.CoreTestHelper;
 import org.treetank.api.IData;
+import org.treetank.data.BlockDataElement;
+import org.treetank.data.BlockDataElementFactory;
 import org.treetank.exception.TTIOException;
 import org.treetank.jscsi.TreetankStorageModule;
 
@@ -48,10 +50,10 @@ import com.google.common.io.ByteStreams;
  * @author Andreas Rain, University of Konstanz
  * @author Sebastian Graf, University of Konstanz
  */
-public class ByteNodeTest {
+public class BlockDataElementTest {
 
     /**
-     * Test method for {@link org.treetank.node.ByteNode#serialize(java.io.DataOutput)}.
+     * Test method for {@link org.treetank.data.BlockDataElement#serialize(java.io.DataOutput)}.
      * 
      * @throws IOException
      * @throws TTIOException
@@ -63,26 +65,26 @@ public class ByteNodeTest {
         byte[] bytes = new byte[TreetankStorageModule.BYTES_IN_NODE];
         CoreTestHelper.random.nextBytes(bytes);
 
-        final ByteNode byteNode = new ByteNode(CoreTestHelper.random.nextLong(), bytes);
-        byteNode.setIndex(CoreTestHelper.random.nextLong());
-        byteNode.setNextNodeKey(CoreTestHelper.random.nextLong());
-        byteNode.setPreviousNodeKey(CoreTestHelper.random.nextLong());
+        final BlockDataElement blockDataElement = new BlockDataElement(CoreTestHelper.random.nextLong(), bytes);
+//        byteNode.setIndex(CoreTestHelper.random.nextLong());
+        blockDataElement.setNextNodeKey(CoreTestHelper.random.nextLong());
+//        byteNode.setPreviousNodeKey(CoreTestHelper.random.nextLong());
 
         final ByteArrayDataOutput out = ByteStreams.newDataOutput();
-        byteNode.serialize(out);
+        blockDataElement.serialize(out);
 
-        final ByteNodeFactory factory = new ByteNodeFactory();
+        final BlockDataElementFactory factory = new BlockDataElementFactory();
         final ByteArrayDataInput in = ByteStreams.newDataInput(out.toByteArray());
         final IData data = factory.deserializeData((DataInput)in);
-        assertTrue(data instanceof ByteNode);
+        assertTrue(data instanceof BlockDataElement);
 
-        final ByteNode newNode = (ByteNode)data;
+        final BlockDataElement newNode = (BlockDataElement)data;
 
-        assertEquals(newNode.getDataKey(), byteNode.getDataKey());
-        assertEquals(newNode.getPreviousNodeKey(), byteNode.getPreviousNodeKey());
-        assertEquals(newNode.getNextNodeKey(), byteNode.getNextNodeKey());
-        assertEquals(newNode.getIndex(), byteNode.getIndex());
-        assertEquals(newNode.getVal(), byteNode.getVal());
+        assertEquals(newNode.getDataKey(), blockDataElement.getDataKey());
+//        assertEquals(newNode.getPreviousNodeKey(), byteNode.getPreviousNodeKey());
+        assertEquals(newNode.getNextKey(), blockDataElement.getNextKey());
+//        assertEquals(newNode.getIndex(), byteNode.getIndex());
+        assertEquals(newNode.getVal(), blockDataElement.getVal());
 
     }
 

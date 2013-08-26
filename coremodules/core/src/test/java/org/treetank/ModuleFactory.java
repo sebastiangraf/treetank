@@ -71,8 +71,8 @@ public class ModuleFactory implements IModuleFactory {
                 metaFacName = "org.treetank.node.NodeMetaPageFactory";
                 break;
             case "iscsi":
-                dataFacName = "org.treetank.node.ByteNodeFactory";
-                metaFacName = "org.treetank.node.ISCSIMetaPageFactory";
+                dataFacName = "org.treetank.data.BlockDataElementFactory";
+                metaFacName = "org.treetank.data.ISCSIMetaPageFactory";
                 break;
             case "filelistener":
                 dataFacName = "org.treetank.filelistener.file.node.FileNodeFactory";

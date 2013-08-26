@@ -13,9 +13,9 @@ import org.treetank.access.conf.ModuleSetter;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.StandardSettings;
+import org.treetank.data.BlockDataElementFactory;
+import org.treetank.data.ISCSIMetaPageFactory;
 import org.treetank.exception.TTException;
-import org.treetank.node.ByteNodeFactory;
-import org.treetank.node.ISCSIMetaPageFactory;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -49,7 +49,7 @@ public class StorageModuleBenchmarkSpecificBackend {
         CoreTestHelper.deleteEverything();
 
         final Injector injector =
-            com.google.inject.Guice.createInjector(new ModuleSetter().setDataFacClass(ByteNodeFactory.class)
+            com.google.inject.Guice.createInjector(new ModuleSetter().setDataFacClass(BlockDataElementFactory.class)
                 .setMetaFacClass(ISCSIMetaPageFactory.class).createModule());
         final IResourceConfigurationFactory resFac =
             injector.getInstance(IResourceConfigurationFactory.class);

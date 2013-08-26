@@ -46,11 +46,11 @@ import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
+import org.treetank.data.BlockDataElementFactory;
+import org.treetank.data.ISCSIMetaPageFactory;
 import org.treetank.io.IBackend;
 import org.treetank.io.IOUtils;
 import org.treetank.io.berkeley.BerkeleyStorage;
-import org.treetank.node.ByteNodeFactory;
-import org.treetank.node.ISCSIMetaPageFactory;
 import org.treetank.revisioning.IRevisioning;
 import org.treetank.revisioning.SlidingSnapshot;
 
@@ -185,7 +185,7 @@ public class TreetankTargetServer {
 
         // Guice Stuff for building the module
         final Injector injector =
-            Guice.createInjector(new ModuleSetter().setDataFacClass(ByteNodeFactory.class).setMetaFacClass(
+            Guice.createInjector(new ModuleSetter().setDataFacClass(BlockDataElementFactory.class).setMetaFacClass(
                 ISCSIMetaPageFactory.class).setBackendClass(backendClass).setRevisioningClass(
                 revisioningClass).createModule());
         final IResourceConfigurationFactory resFac =
