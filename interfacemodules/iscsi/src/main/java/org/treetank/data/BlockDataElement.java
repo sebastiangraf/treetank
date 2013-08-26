@@ -22,7 +22,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.node;
+package org.treetank.data;
 
 import java.io.DataOutput;
 import java.io.IOException;
@@ -38,7 +38,7 @@ import com.google.common.hash.PrimitiveSink;
  * 
  * @author Andreas Rain
  */
-public class ByteNode implements IData {
+public class BlockDataElement implements IData {
     /**
      * Enum for ByteNodeFunnel.
      * 
@@ -48,7 +48,7 @@ public class ByteNode implements IData {
     enum ByteNodeFunnel implements Funnel<IData> {
         INSTANCE;
         public void funnel(IData data, PrimitiveSink into) {
-            final ByteNode from = (ByteNode)data;
+            final BlockDataElement from = (BlockDataElement)data;
             into.putLong(from.nodeKey).putBytes(from.val).putInt(from.size).putLong(from.nextNodeKey);//.putLong(from.previousNodeKey).putLong(from.index);
         }
     }
@@ -75,7 +75,7 @@ public class ByteNode implements IData {
 
     /**
      * The size of the byte array in the node. The maximum size of a byte array in
-     * a {@link ByteNode} is 2^32 - 1. This is because in the deserialization the
+     * a {@link BlockDataElement} is 2^32 - 1. This is because in the deserialization the
      * first 4 bytes determine the size of each node.
      */
     private int size = 0;
@@ -86,12 +86,12 @@ public class ByteNode implements IData {
     private byte[] val;
 
     /**
-     * Creates a ByteNode with given bytes
+     * Creates a BlockDataElement with given bytes
      * 
      * @param pNodeKey
      * @param pContent
      */
-    public ByteNode(long pNodeKey, byte[] pContent) {
+    public BlockDataElement(long pNodeKey, byte[] pContent) {
         nodeKey = pNodeKey;
         size = pContent.length;
         val = pContent;
@@ -147,7 +147,7 @@ public class ByteNode implements IData {
      * 
      * @return returns the key as long
      */
-    public long getNextNodeKey() {
+    public long getNextKey() {
 
         return nextNodeKey;
     }
@@ -268,7 +268,7 @@ public class ByteNode implements IData {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        ByteNode other = (ByteNode)obj;
+        BlockDataElement other = (BlockDataElement)obj;
         // if (index != other.index)
         // return false;
          if (nextNodeKey != other.nextNodeKey)

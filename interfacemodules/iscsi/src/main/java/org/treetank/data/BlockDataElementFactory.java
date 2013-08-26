@@ -22,7 +22,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.node;
+package org.treetank.data;
 
 import java.io.DataInput;
 import java.io.IOException;
@@ -32,11 +32,11 @@ import org.treetank.api.IDataFactory;
 import org.treetank.exception.TTIOException;
 
 /**
- * This factory is used to deserialize {@link ByteNode}
+ * This factory is used to deserialize {@link BlockDataElement}
  * 
  * @author Andreas Rain, University of Konstanz
  */
-public class ByteNodeFactory implements IDataFactory {
+public class BlockDataElementFactory implements IDataFactory {
 
     /**
      * {@inheritDoc}
@@ -53,7 +53,7 @@ public class ByteNodeFactory implements IDataFactory {
             byte[] data = new byte[size];
             input.readFully(data);
 
-            ByteNode node = new ByteNode(nodeKey, data);
+            BlockDataElement node = new BlockDataElement(nodeKey, data);
             // node.setIndex(index);
             node.setNextNodeKey(nextNodeKey);
             // node.setPreviousNodeKey(previousNodeKey);

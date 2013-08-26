@@ -29,9 +29,9 @@ import static com.google.common.base.Preconditions.checkState;
 import org.treetank.api.IBucketWriteTrx;
 import org.treetank.api.IIscsiWriteTrx;
 import org.treetank.api.ISession;
+import org.treetank.data.BlockDataElement;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.node.ByteNode;
 
 /**
  * @author Andreas Rain
@@ -64,12 +64,12 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
      */
     @Override
     public void bootstrap(byte[] bytes, boolean hasNextNode) throws TTException {
-        ByteNode node = new ByteNode(getPageTransaction().incrementDataKey(), bytes);
+        BlockDataElement node = new BlockDataElement(getPageTransaction().incrementDataKey(), bytes);
         if (hasNextNode) {
             node.setNextNodeKey(node.getDataKey() + 1);
         }
 
-        if (mDelegate.getCurrentNode() != null) {
+        if (mDelegate.getCurrentData() != null) {
 //            node.setIndex(node.getDataKey());
 //            node.setPreviousNodeKey(node.getDataKey() - 1);
             getPageTransaction().setData(node);
@@ -89,7 +89,7 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
     @Override
     public void setValue(byte[] val) throws TTException {
 
-        ByteNode node = (ByteNode) mDelegate.getCurrentNode();
+        BlockDataElement node = (BlockDataElement) mDelegate.getCurrentData();
         node.setVal(val);
         getPageTransaction().setData(node);
     }
@@ -146,9 +146,9 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
      * {@inheritDoc}
      */
     @Override
-    public boolean nextNode() {
+    public boolean nextData() {
 
-        return mDelegate.nextNode();
+        return mDelegate.nextData();
     }
 
     /**
@@ -164,8 +164,8 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
      * {@inheritDoc}
      */
     @Override
-    public ByteNode getCurrentNode() {
-        return mDelegate.getCurrentNode();
+    public BlockDataElement getCurrentData() {
+        return mDelegate.getCurrentData();
     }
 
     /**

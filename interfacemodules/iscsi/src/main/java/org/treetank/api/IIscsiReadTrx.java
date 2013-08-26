@@ -27,8 +27,8 @@
 
 package org.treetank.api;
 
+import org.treetank.data.BlockDataElement;
 import org.treetank.exception.TTIOException;
-import org.treetank.node.ByteNode;
 
 /**
  * 
@@ -50,7 +50,7 @@ public interface IIscsiReadTrx {
      * 
      * @return true if successful, false otherwise
      */
-    public boolean nextNode();
+    public boolean nextData();
 
 //    /**
 //     * Move the cursor to the previous node in the list
@@ -71,7 +71,7 @@ public interface IIscsiReadTrx {
      * 
      * @return the current node
      */
-    public ByteNode getCurrentNode();
+    public BlockDataElement getCurrentData();
 
     /**
      * Close this transaction

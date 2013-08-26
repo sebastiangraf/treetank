@@ -1,6 +1,6 @@
 name: iSCSISuite
 threadCount: 4
-parameters: { NodeFactory: org.treetank.node.ByteNodeFactory, MetaFactory: org.treetank.node.ISCSIMetaPageFactory }
+parameters: { NodeFactory: org.treetank.data.BlockDataElementFactory, MetaFactory: org.treetank.data.ISCSIMetaPageFactory }
 
 tests:
   - name: Storage Benchmark Berkley
@@ -9,7 +9,7 @@ tests:
       - org.treetank.jscsi.StorageModuleBenchmark
   - name: Unit Tests
     classes:
-      - org.treetank.node.ByteNodeTest
+      - org.treetank.data.BlockDataElementTest
   - name: Sliding Berkeley
     parameters: { Revisioning: org.treetank.revisioning.SlidingSnapshot, Backend: org.treetank.io.berkeley.BerkeleyStorage }
     classes:
