@@ -46,17 +46,17 @@ public class ByteNodeFactory implements IDataFactory {
     public IData deserializeData(DataInput input) throws TTIOException {
         try {
             int size = input.readInt();
-            long index = input.readLong();
+            // long index = input.readLong();
             long nodeKey = input.readLong();
-            long previousNodeKey = input.readLong();
+            // long previousNodeKey = input.readLong();
             long nextNodeKey = input.readLong();
             byte[] data = new byte[size];
             input.readFully(data);
 
             ByteNode node = new ByteNode(nodeKey, data);
-            node.setIndex(index);
+            // node.setIndex(index);
             node.setNextNodeKey(nextNodeKey);
-            node.setPreviousNodeKey(previousNodeKey);
+            // node.setPreviousNodeKey(previousNodeKey);
             return node;
         } catch (final IOException exc) {
             throw new TTIOException(exc);

@@ -26,9 +26,6 @@ package org.treetank.access;
 
 import static com.google.common.base.Preconditions.checkState;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import org.treetank.api.IBucketWriteTrx;
 import org.treetank.api.IIscsiWriteTrx;
 import org.treetank.api.ISession;
@@ -73,13 +70,13 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
         }
 
         if (mDelegate.getCurrentNode() != null) {
-            node.setIndex(node.getDataKey());
-            node.setPreviousNodeKey(node.getDataKey() - 1);
+//            node.setIndex(node.getDataKey());
+//            node.setPreviousNodeKey(node.getDataKey() - 1);
             getPageTransaction().setData(node);
 
             mDelegate.moveTo(node.getDataKey());
         } else {
-            node.setIndex(0);
+//            node.setIndex(0);
             getPageTransaction().setData(node);
             mDelegate.moveTo(node.getDataKey());
         }
@@ -200,9 +197,9 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
         return (BucketWriteTrx)mDelegate.mPageReadTrx;
     }
 
-    @Override
-    public boolean previousNode() {
-        return mDelegate.previousNode();
-    }
+    // @Override
+    // public boolean previousNode() {
+    // return mDelegate.previousNode();
+    // }
 
 }

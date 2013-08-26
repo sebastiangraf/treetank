@@ -64,9 +64,9 @@ public class ByteNodeTest {
         CoreTestHelper.random.nextBytes(bytes);
 
         final ByteNode byteNode = new ByteNode(CoreTestHelper.random.nextLong(), bytes);
-        byteNode.setIndex(CoreTestHelper.random.nextLong());
+//        byteNode.setIndex(CoreTestHelper.random.nextLong());
         byteNode.setNextNodeKey(CoreTestHelper.random.nextLong());
-        byteNode.setPreviousNodeKey(CoreTestHelper.random.nextLong());
+//        byteNode.setPreviousNodeKey(CoreTestHelper.random.nextLong());
 
         final ByteArrayDataOutput out = ByteStreams.newDataOutput();
         byteNode.serialize(out);
@@ -79,9 +79,9 @@ public class ByteNodeTest {
         final ByteNode newNode = (ByteNode)data;
 
         assertEquals(newNode.getDataKey(), byteNode.getDataKey());
-        assertEquals(newNode.getPreviousNodeKey(), byteNode.getPreviousNodeKey());
+//        assertEquals(newNode.getPreviousNodeKey(), byteNode.getPreviousNodeKey());
         assertEquals(newNode.getNextNodeKey(), byteNode.getNextNodeKey());
-        assertEquals(newNode.getIndex(), byteNode.getIndex());
+//        assertEquals(newNode.getIndex(), byteNode.getIndex());
         assertEquals(newNode.getVal(), byteNode.getVal());
 
     }

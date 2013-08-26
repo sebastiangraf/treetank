@@ -52,12 +52,12 @@ public interface IIscsiReadTrx {
      */
     public boolean nextNode();
 
-    /**
-     * Move the cursor to the previous node in the list
-     * 
-     * @return true if successful, false otherwise
-     */
-    public boolean previousNode();
+//    /**
+//     * Move the cursor to the previous node in the list
+//     * 
+//     * @return true if successful, false otherwise
+//     */
+//    public boolean previousNode();
 
     /**
      * A quick get method to get the value of the current node

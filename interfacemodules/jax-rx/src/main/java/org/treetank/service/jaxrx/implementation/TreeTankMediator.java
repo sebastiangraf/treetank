@@ -47,6 +47,7 @@ import org.treetank.revisioning.IRevisioning;
 import org.treetank.service.jaxrx.enums.EIdAccessType;
 import org.treetank.service.jaxrx.util.WorkerHelper;
 
+import com.google.common.io.Files;
 import com.google.inject.Inject;
 
 /**
@@ -83,7 +84,9 @@ public final class TreeTankMediator implements JaxRx {
      *            where the data should be stored.
      * @throws TTException
      */
-    public TreeTankMediator(final File pStoragePath) throws TTException {
+    public TreeTankMediator() throws TTException {
+
+        final File pStoragePath = Files.createTempDir();
         if (!Storage.existsStorage(pStoragePath)) {
             Storage.createStorage(new StorageConfiguration(pStoragePath));
         }
