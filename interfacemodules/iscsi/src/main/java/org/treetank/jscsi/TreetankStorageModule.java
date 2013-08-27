@@ -32,6 +32,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
+import org.jscsi.target.storage.FileStorageModule;
 import org.jscsi.target.storage.IStorageModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,8 +98,8 @@ public class TreetankStorageModule implements IStorageModule {
      */
     private volatile int mByteCounter;
 
-    /** FileStorage mirror for faster response times (filesystem backend) */
-    private FileStorage mFileStorage;
+    /** FileStorageModule mirror for faster response times (filesystem backend) */
+    private FileStorageModule mFileStorageModule;
 
     /** ExecutorService to perform WriteTasks */
     private ExecutorService mWriteTaskExecutor;
@@ -145,8 +146,8 @@ public class TreetankStorageModule implements IStorageModule {
         // Creating mirror
 
         try {
-            mFileStorage =
-                new FileStorage(Files.createTempDir().getAbsolutePath(), BLOCKS_IN_NODE * VIRTUAL_BLOCK_SIZE);
+            mFileStorageModule =
+                new FileStorageModule(Files.createTempDir().getAbsolutePath(), BLOCKS_IN_NODE * VIRTUAL_BLOCK_SIZE, 8192);
         } catch (IOException e) {
             throw new TTException(e.getMessage()) {
                 private static final long serialVersionUID = 6736130138810572965L;
@@ -203,7 +204,7 @@ public class TreetankStorageModule implements IStorageModule {
         LOGGER.debug("Starting to read with param: " + "\nstorageIndex = " + storageIndex
             + "\nbytes.length = " + bytes.length);
 
-        mFileStorage.read(bytes, storageIndex);
+        mFileStorageModule.read(bytes, storageIndex);
     }
 
     /**
@@ -214,7 +215,7 @@ public class TreetankStorageModule implements IStorageModule {
         LOGGER.debug("Starting to write with param: " + "\nstorageIndex = " + storageIndex
             + "\nbytes.length = " + bytes.length);
 
-        mFileStorage.write(bytes, storageIndex);
+        mFileStorageModule.write(bytes, storageIndex);
 
         // Submitting into treetank
         mWriteTaskExecutor.submit(new WriteTask(bytes, storageIndex));
