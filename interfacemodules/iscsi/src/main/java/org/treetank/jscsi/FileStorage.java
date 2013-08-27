@@ -66,6 +66,7 @@ public class FileStorage {
         if(!fileAtPos.exists()){
             fileAtPos.createNewFile();
             cachedBytes = new byte[mFileSize];
+            Files.write(fileAtPos.toPath(), cachedBytes);
         }
         else if (cachedBytes == null) {
             cachedBytes = Files.readAllBytes(fileAtPos.toPath());

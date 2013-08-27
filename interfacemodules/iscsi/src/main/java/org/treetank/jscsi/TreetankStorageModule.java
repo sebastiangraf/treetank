@@ -27,13 +27,11 @@ package org.treetank.jscsi;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.io.IOException;
-import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
-import org.jclouds.filesystem.reference.FilesystemConstants;
 import org.jscsi.target.storage.IStorageModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -144,9 +142,7 @@ public class TreetankStorageModule implements IStorageModule {
         LOGGER.debug("Creating storage with " + mNodeNumbers + " nodes containing " + BLOCKS_IN_NODE
             + " blocks with " + IStorageModule.VIRTUAL_BLOCK_SIZE + " bytes each.");
 
-        // Creating random access file as mirror
-        Properties properties = new Properties();
-        properties.setProperty(FilesystemConstants.PROPERTY_BASEDIR, Files.createTempDir().getAbsolutePath());
+        // Creating mirror
 
         try {
             mFileStorage =
@@ -157,21 +153,24 @@ public class TreetankStorageModule implements IStorageModule {
             };
         }
 
-        IData data = this.mRtx.getCurrentData();
+        IData data = this.mRtx.getCurrentNode();
 
         if (data != null) {
             return;
         }
+        boolean hasNextNode = true;
 
         for (int i = 0; i < mNodeNumbers; i++) {
+            if (i == mNodeNumbers - 1) {
+                hasNextNode = false;
+            }
 
             // Bootstrapping nodes containing clusterSize -many blocks/sectors.
             LOGGER.debug("Bootstraping node " + i + "\tof " + (mNodeNumbers - 1));
-            this.mRtx.bootstrap(new byte[TreetankStorageModule.BYTES_IN_NODE]);
+            this.mRtx.bootstrap(new byte[TreetankStorageModule.BYTES_IN_NODE], hasNextNode);
         }
 
         this.mRtx.commit();
-
     }
 
     /**
@@ -209,45 +208,6 @@ public class TreetankStorageModule implements IStorageModule {
             + "\nbytes.length = " + bytes.length);
 
         mFileStorage.read(bytes, storageIndex);
-
-        // long startIndex = storageIndex / BYTES_IN_NODE;
-        // int startIndexOffset = (int)(storageIndex % BYTES_IN_NODE);
-        //
-        // long endIndex = (storageIndex + bytes.length) / BYTES_IN_NODE;
-        //
-        // int endIndexMax = (int)((storageIndex + bytes.length) % BYTES_IN_NODE);
-        //
-        // LOGGER.debug("startIndex: " + startIndex);
-        // LOGGER.debug("startIndexOffset: " + startIndexOffset);
-        // LOGGER.debug("endIndex: " + endIndex);
-        // LOGGER.debug("endIndexMax: " + endIndexMax);
-        //
-        // int bytesRead =
-        // bytes.length + startIndexOffset > BYTES_IN_NODE ? BYTES_IN_NODE - startIndexOffset : bytes.length;
-        //
-        // checkState(mRtx.moveTo(startIndex));
-        // byte[] data = mRtx.getValueOfCurrentNode();
-        // System.arraycopy(data, startIndexOffset, bytes, 0, bytesRead);
-        //
-        // for (long i = startIndex + 1; i < endIndex; i++) {
-        // checkState(mRtx.moveTo(i));
-        // data = mRtx.getValueOfCurrentNode();
-        // System.arraycopy(data, 0, bytes, bytesRead, data.length);
-        // bytesRead = bytesRead + data.length;
-        //
-        // }
-        //
-        // if (startIndex != endIndex && endIndex < mNodeNumbers) {
-        // checkState(mRtx.moveTo(endIndex));
-        // data = mRtx.getValueOfCurrentNode();
-        // System.arraycopy(data, 0, bytes, bytesRead, endIndexMax);
-        //
-        // bytesRead += endIndexMax;
-        // }
-        //
-        // // Bytes read is the actual number of bytes that have been read.
-        // // The two lengths have to match, otherwise not enough bytes have been read (or too much?).
-        // checkState(bytesRead == bytes.length);
     }
 
     /**
@@ -262,6 +222,7 @@ public class TreetankStorageModule implements IStorageModule {
 
         // Submitting into treetank
         mWriteTaskExecutor.submit(new WriteTask(bytes, storageIndex));
+
     }
 
     /**
