@@ -41,6 +41,7 @@ import org.treetank.api.IData;
 import org.treetank.api.IIscsiWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
+import org.treetank.exception.TTIOException;
 
 import com.google.common.io.Files;
 
@@ -149,9 +150,7 @@ public class TreetankStorageModule implements IStorageModule {
             mFileStorageModule =
                 new FileStorageModule(Files.createTempDir().getAbsolutePath(), BLOCKS_IN_NODE * VIRTUAL_BLOCK_SIZE, 8192);
         } catch (IOException e) {
-            throw new TTException(e.getMessage()) {
-                private static final long serialVersionUID = 6736130138810572965L;
-            };
+            throw new TTIOException(e.getMessage());
         }
 
         IData data = this.mRtx.getCurrentData();
