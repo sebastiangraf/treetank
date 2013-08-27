@@ -46,18 +46,11 @@ public class BlockDataElementFactory implements IDataFactory {
     public IData deserializeData(DataInput input) throws TTIOException {
         try {
             int size = input.readInt();
-            // long index = input.readLong();
             long nodeKey = input.readLong();
-            // long previousNodeKey = input.readLong();
-            long nextNodeKey = input.readLong();
             byte[] data = new byte[size];
             input.readFully(data);
 
-            BlockDataElement node = new BlockDataElement(nodeKey, data);
-            // node.setIndex(index);
-            node.setNextNodeKey(nextNodeKey);
-            // node.setPreviousNodeKey(previousNodeKey);
-            return node;
+            return new BlockDataElement(nodeKey, data);
         } catch (final IOException exc) {
             throw new TTIOException(exc);
         }

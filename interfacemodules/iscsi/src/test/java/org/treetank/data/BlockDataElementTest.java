@@ -66,9 +66,6 @@ public class BlockDataElementTest {
         CoreTestHelper.random.nextBytes(bytes);
 
         final BlockDataElement blockDataElement = new BlockDataElement(CoreTestHelper.random.nextLong(), bytes);
-//        byteNode.setIndex(CoreTestHelper.random.nextLong());
-        blockDataElement.setNextNodeKey(CoreTestHelper.random.nextLong());
-//        byteNode.setPreviousNodeKey(CoreTestHelper.random.nextLong());
 
         final ByteArrayDataOutput out = ByteStreams.newDataOutput();
         blockDataElement.serialize(out);
@@ -81,9 +78,6 @@ public class BlockDataElementTest {
         final BlockDataElement newNode = (BlockDataElement)data;
 
         assertEquals(newNode.getDataKey(), blockDataElement.getDataKey());
-//        assertEquals(newNode.getPreviousNodeKey(), byteNode.getPreviousNodeKey());
-        assertEquals(newNode.getNextKey(), blockDataElement.getNextKey());
-//        assertEquals(newNode.getIndex(), byteNode.getIndex());
         assertEquals(newNode.getVal(), blockDataElement.getVal());
 
     }
