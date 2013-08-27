@@ -41,11 +41,9 @@ public interface IIscsiWriteTrx extends IIscsiReadTrx {
      * This method inserts the given node into the database.
      * 
      * @param vals 
-     * @param hasNextNode
-     *            true if a node is following to this one.
      * @throws TTException
      */
-    public void bootstrap(byte[] vals, boolean hasNextNode) throws TTException;
+    public void bootstrap(byte[] vals) throws TTException;
 
     /**
      * Set value of node.

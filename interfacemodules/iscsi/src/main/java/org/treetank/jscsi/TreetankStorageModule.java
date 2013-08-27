@@ -149,7 +149,8 @@ public class TreetankStorageModule implements IStorageModule {
         properties.setProperty(FilesystemConstants.PROPERTY_BASEDIR, Files.createTempDir().getAbsolutePath());
 
         try {
-            mFileStorage = new FileStorage(Files.createTempDir().getAbsolutePath() , BLOCKS_IN_NODE * VIRTUAL_BLOCK_SIZE);
+            mFileStorage =
+                new FileStorage(Files.createTempDir().getAbsolutePath(), BLOCKS_IN_NODE * VIRTUAL_BLOCK_SIZE);
         } catch (IOException e) {
             throw new TTException(e.getMessage()) {
                 private static final long serialVersionUID = 6736130138810572965L;
@@ -161,16 +162,12 @@ public class TreetankStorageModule implements IStorageModule {
         if (data != null) {
             return;
         }
-        boolean hasNextNode = true;
 
         for (int i = 0; i < mNodeNumbers; i++) {
-            if (i == mNodeNumbers - 1) {
-                hasNextNode = false;
-            }
 
             // Bootstrapping nodes containing clusterSize -many blocks/sectors.
             LOGGER.debug("Bootstraping node " + i + "\tof " + (mNodeNumbers - 1));
-            this.mRtx.bootstrap(new byte[TreetankStorageModule.BYTES_IN_NODE], hasNextNode);
+            this.mRtx.bootstrap(new byte[TreetankStorageModule.BYTES_IN_NODE]);
         }
 
         this.mRtx.commit();
@@ -264,7 +261,7 @@ public class TreetankStorageModule implements IStorageModule {
         mFileStorage.write(bytes, storageIndex);
 
         // Submitting into treetank
-         mWriteTaskExecutor.submit(new WriteTask(bytes, storageIndex));
+        mWriteTaskExecutor.submit(new WriteTask(bytes, storageIndex));
     }
 
     /**
@@ -302,7 +299,7 @@ public class TreetankStorageModule implements IStorageModule {
                 mRtx.setValue(data);
 
                 for (long i = startIndex + 1; i < endIndex; i++) {
-                    checkState(mRtx.nextData());
+                    checkState(mRtx.moveTo(i));
                     data = mRtx.getValueOfCurrentNode();
                     System.arraycopy(mBytes, bytesWritten, data, 0, data.length);
                     mRtx.setValue(data);
@@ -311,7 +308,7 @@ public class TreetankStorageModule implements IStorageModule {
                 }
 
                 if (startIndex != endIndex && endIndex < mNodeNumbers) {
-                    checkState(mRtx.nextData());
+                    checkState(mRtx.moveTo(endIndex));
                     data = mRtx.getValueOfCurrentNode();
                     System.arraycopy(mBytes, bytesWritten, data, 0, endIndexMax);
                     mRtx.setValue(data);

@@ -63,20 +63,14 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
      * {@inheritDoc}
      */
     @Override
-    public void bootstrap(byte[] bytes, boolean hasNextNode) throws TTException {
+    public void bootstrap(byte[] bytes) throws TTException {
         BlockDataElement node = new BlockDataElement(getPageTransaction().incrementDataKey(), bytes);
-        if (hasNextNode) {
-            node.setNextNodeKey(node.getDataKey() + 1);
-        }
 
         if (mDelegate.getCurrentData() != null) {
-//            node.setIndex(node.getDataKey());
-//            node.setPreviousNodeKey(node.getDataKey() - 1);
             getPageTransaction().setData(node);
 
             mDelegate.moveTo(node.getDataKey());
         } else {
-//            node.setIndex(0);
             getPageTransaction().setData(node);
             mDelegate.moveTo(node.getDataKey());
         }
@@ -146,15 +140,6 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
      * {@inheritDoc}
      */
     @Override
-    public boolean nextData() {
-
-        return mDelegate.nextData();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public byte[] getValueOfCurrentNode() {
 
         return mDelegate.getValueOfCurrentNode();
@@ -196,10 +181,5 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
 
         return (BucketWriteTrx)mDelegate.mPageReadTrx;
     }
-
-    // @Override
-    // public boolean previousNode() {
-    // return mDelegate.previousNode();
-    // }
 
 }

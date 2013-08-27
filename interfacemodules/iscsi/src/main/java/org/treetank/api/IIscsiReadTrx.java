@@ -44,14 +44,14 @@ public interface IIscsiReadTrx {
      * @return true if successful, false otherwise
      */
     public boolean moveTo(long pKey);
-
-    /**
-     * Move the cursor to the next node in the list
-     * 
-     * @return true if successful, false otherwise
-     */
-    public boolean nextData();
-
+//
+//    /**
+//     * Move the cursor to the next node in the list
+//     * 
+//     * @return true if successful, false otherwise
+//     */
+//    public boolean nextData();
+//
 //    /**
 //     * Move the cursor to the previous node in the list
 //     * 

@@ -89,12 +89,12 @@ public final class TransactionTest {
 
         for (int i = 0; i < IConstants.CONTENT_COUNT; i++) {
             LOGGER.info("Bootstrapping node " + i);
-            this.holder.getIWtx().bootstrap(new byte[TreetankStorageModule.BYTES_IN_NODE], true);
+            this.holder.getIWtx().bootstrap(new byte[TreetankStorageModule.BYTES_IN_NODE]);
             this.holder.getIWtx().commit();
         }
 
         LOGGER.info("Bootstrapping node " + IConstants.CONTENT_COUNT + 1);
-        this.holder.getIWtx().bootstrap(new byte[TreetankStorageModule.BYTES_IN_NODE], false);
+        this.holder.getIWtx().bootstrap(new byte[TreetankStorageModule.BYTES_IN_NODE]);
         this.holder.getIWtx().commit();
     }
 
