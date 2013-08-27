@@ -153,21 +153,17 @@ public class TreetankStorageModule implements IStorageModule {
             };
         }
 
-        IData data = this.mRtx.getCurrentNode();
+        IData data = this.mRtx.getCurrentData();
 
         if (data != null) {
             return;
         }
-        boolean hasNextNode = true;
 
         for (int i = 0; i < mNodeNumbers; i++) {
-            if (i == mNodeNumbers - 1) {
-                hasNextNode = false;
-            }
 
             // Bootstrapping nodes containing clusterSize -many blocks/sectors.
             LOGGER.debug("Bootstraping node " + i + "\tof " + (mNodeNumbers - 1));
-            this.mRtx.bootstrap(new byte[TreetankStorageModule.BYTES_IN_NODE], hasNextNode);
+            this.mRtx.bootstrap(new byte[TreetankStorageModule.BYTES_IN_NODE]);
         }
 
         this.mRtx.commit();
