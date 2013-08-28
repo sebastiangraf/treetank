@@ -38,38 +38,24 @@ import org.treetank.exception.TTIOException;
 public interface IIscsiReadTrx {
 
     /**
-     * Move the cursor to the given node key
+     * Move the cursor to the given data key
      * 
      * @param pKey
      * @return true if successful, false otherwise
      */
     public boolean moveTo(long pKey);
-//
-//    /**
-//     * Move the cursor to the next node in the list
-//     * 
-//     * @return true if successful, false otherwise
-//     */
-//    public boolean nextData();
-//
-//    /**
-//     * Move the cursor to the previous node in the list
-//     * 
-//     * @return true if successful, false otherwise
-//     */
-//    public boolean previousNode();
 
     /**
-     * A quick get method to get the value of the current node
+     * A quick get method to get the value of the current data.
      * 
-     * @return the value of the current node
+     * @return the value of the current data
      */
-    public byte[] getValueOfCurrentNode();
+    public byte[] getValueOfCurrentData();
 
     /**
-     * The node that the cursor currently points on
+     * The data that the cursor currently points on
      * 
-     * @return the current node
+     * @return the current data
      */
     public BlockDataElement getCurrentData();
 

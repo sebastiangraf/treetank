@@ -187,7 +187,7 @@ public class TreetankConfiguration extends Configuration {
         }
 
         final IStorageModule module = 
-            new TreetankStorageModule(storageLength / TreetankStorageModule.BYTES_IN_NODE, conf.mSession);
+            new TreetankStorageModule(storageLength / TreetankStorageModule.BYTES_IN_DATA, conf.mSession);
 
         return new Target(targetName, targetAlias, module);
 

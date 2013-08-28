@@ -56,7 +56,7 @@ public class UpdateBench {
     private IStorage mStorage;
     private final Injector mInject;
     private ISession mSession;
-    private DumbData[] mNodesToInsert = BenchUtils.createNodes(new int[] {
+    private DumbData[] mNodesToInsert = BenchUtils.createDatas(new int[] {
         ELEMENTS
     })[0];
     private IBucketWriteTrx mTrx;
