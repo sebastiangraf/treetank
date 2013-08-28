@@ -101,13 +101,13 @@ public class TreetankStorageModuleTest {
         // invalid logical block address
         assertEquals(1, storageModule.checkBounds(-1, 1));
         // block addess out of range
-        assertEquals(1, storageModule.checkBounds(NODENUMBER * TreetankStorageModule.BLOCKS_IN_NODE, 1));
+        assertEquals(1, storageModule.checkBounds(NODENUMBER * TreetankStorageModule.BLOCKS_IN_DATA, 1));
         // length invalid
-        assertEquals(2, storageModule.checkBounds(NODENUMBER * TreetankStorageModule.BLOCKS_IN_NODE - 1, -1));
+        assertEquals(2, storageModule.checkBounds(NODENUMBER * TreetankStorageModule.BLOCKS_IN_DATA - 1, -1));
         // length out of range
-        assertEquals(2, storageModule.checkBounds(NODENUMBER * TreetankStorageModule.BLOCKS_IN_NODE - 1, 2));
+        assertEquals(2, storageModule.checkBounds(NODENUMBER * TreetankStorageModule.BLOCKS_IN_DATA - 1, 2));
         // correct check
-        assertEquals(0, storageModule.checkBounds(NODENUMBER * TreetankStorageModule.BLOCKS_IN_NODE - 1, 1));
+        assertEquals(0, storageModule.checkBounds(NODENUMBER * TreetankStorageModule.BLOCKS_IN_DATA - 1, 1));
     }
 
     /**
@@ -119,7 +119,7 @@ public class TreetankStorageModuleTest {
     @Test
     public void testReadAndWrite() throws TTException, IOException {
 
-        final byte[] writeArray = new byte[2 * TreetankStorageModule.BYTES_IN_NODE];
+        final byte[] writeArray = new byte[2 * TreetankStorageModule.BYTES_IN_DATA];
         CoreTestHelper.random.nextBytes(writeArray);
 
         final byte[] readArray = new byte[writeArray.length];

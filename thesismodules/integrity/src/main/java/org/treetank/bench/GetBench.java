@@ -65,7 +65,7 @@ public class GetBench {
 
     private IStorage mStorage;
     private ISession mSession;
-    private DumbData[] mNodesToInsert = BenchUtils.createNodes(new int[] {
+    private DumbData[] mNodesToInsert = BenchUtils.createDatas(new int[] {
         ELEMENTS
     })[0];
     private IBucketReadTrx mTrx;

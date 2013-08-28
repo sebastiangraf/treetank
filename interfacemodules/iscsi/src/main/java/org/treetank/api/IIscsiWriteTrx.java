@@ -38,7 +38,7 @@ import org.treetank.exception.TTException;
 public interface IIscsiWriteTrx extends IIscsiReadTrx {
 
     /**
-     * This method inserts the given node into the database.
+     * This method inserts the given data into the database.
      * 
      * @param vals 
      * @throws TTException
@@ -46,10 +46,10 @@ public interface IIscsiWriteTrx extends IIscsiReadTrx {
     public void bootstrap(byte[] vals) throws TTException;
 
     /**
-     * Set value of node.
+     * Set value of data.
      * 
      * @param pValue
-     *            new value of node
+     *            new value of data
      * @throws TTException 
      *             if value couldn't be set
      */

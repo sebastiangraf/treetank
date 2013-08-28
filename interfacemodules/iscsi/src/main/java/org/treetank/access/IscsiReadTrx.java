@@ -76,7 +76,7 @@ public class IscsiReadTrx implements IIscsiReadTrx {
      * {@inheritDoc}
      */
     @Override
-    public byte[] getValueOfCurrentNode() {
+    public byte[] getValueOfCurrentData() {
         if (mCurrentData == null)
             return null;
 

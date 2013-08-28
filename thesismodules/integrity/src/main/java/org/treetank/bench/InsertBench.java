@@ -54,7 +54,7 @@ public class InsertBench {
     private IStorage mStorage;
     private final Injector mInject;
     private ISession mSession;
-    private DumbData[] mNodesToInsert = BenchUtils.createNodes(new int[] {
+    private DumbData[] mNodesToInsert = BenchUtils.createDatas(new int[] {
         262144
     })[0];
     private IBucketWriteTrx mTrx;

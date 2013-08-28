@@ -34,51 +34,51 @@ import com.google.common.hash.Funnel;
 import com.google.common.hash.PrimitiveSink;
 
 /**
- * This implementation of {@link IData} is used to store byte arrays in nodes.
+ * This implementation of {@link IData} is used to store byte arrays in datas.
  * 
  * @author Andreas Rain
  */
 public class BlockDataElement implements IData {
     /**
-     * Enum for ByteNodeFunnel.
+     * Enum for ByteDataFunnel.
      * 
      * @author Sebastian Graf, University of Konstanz
      * 
      */
-    enum ByteNodeFunnel implements Funnel<IData> {
+    enum ByteDataFunnel implements Funnel<IData> {
         INSTANCE;
         public void funnel(IData data, PrimitiveSink into) {
             final BlockDataElement from = (BlockDataElement)data;
-            into.putLong(from.nodeKey).putBytes(from.val).putInt(from.size);
+            into.putLong(from.dataKey).putBytes(from.val).putInt(from.size);
         }
     }
 
     /**
-     * The nodes key value, which is equal with it's position in the list.
+     * The datas key value, which is equal with it's position in the list.
      */
-    private final long nodeKey;
+    private final long dataKey;
 
 
     /**
-     * The size of the byte array in the node. The maximum size of a byte array in
+     * The size of the byte array in the data. The maximum size of a byte array in
      * a {@link BlockDataElement} is 2^32 - 1. This is because in the deserialization the
-     * first 4 bytes determine the size of each node.
+     * first 4 bytes determine the size of each data.
      */
     private int size = 0;
 
     /**
-     * The content of this node in form of a byte array.
+     * The content of this data in form of a byte array.
      */
     private byte[] val;
 
     /**
      * Creates a BlockDataElement with given bytes
      * 
-     * @param pNodeKey
+     * @param pDataKey
      * @param pContent
      */
-    public BlockDataElement(long pNodeKey, byte[] pContent) {
-        nodeKey = pNodeKey;
+    public BlockDataElement(long pDataKey, byte[] pContent) {
+        dataKey = pDataKey;
         size = pContent.length;
         val = pContent;
     }
@@ -93,7 +93,7 @@ public class BlockDataElement implements IData {
     public void serialize(final DataOutput output) throws TTIOException {
         try {
             output.writeInt(size);
-            output.writeLong(nodeKey);
+            output.writeLong(dataKey);
             output.write(val);
         } catch (final IOException exc) {
             throw new TTIOException(exc);
@@ -103,11 +103,11 @@ public class BlockDataElement implements IData {
     @Override
     public long getDataKey() {
 
-        return this.nodeKey;
+        return this.dataKey;
     }
 
     /**
-     * Getting the byte array contained by this node.
+     * Getting the byte array contained by this data.
      * 
      * @return returns the byte array
      */
@@ -131,7 +131,7 @@ public class BlockDataElement implements IData {
     public int hashCode() {
         final int prime = 36919;
         int result = 1;
-        result = prime * result + (int)(nodeKey ^ (nodeKey >>> 32));
+        result = prime * result + (int)(dataKey ^ (dataKey >>> 32));
         result = prime * result + size;
         return result;
     }
@@ -148,7 +148,7 @@ public class BlockDataElement implements IData {
         if (getClass() != obj.getClass())
             return false;
         BlockDataElement other = (BlockDataElement)obj;
-        if (nodeKey != other.nodeKey)
+        if (dataKey != other.dataKey)
             return false;
         if (size != other.size)
             return false;
@@ -160,7 +160,7 @@ public class BlockDataElement implements IData {
      */
     @Override
     public Funnel<IData> getFunnel() {
-        return ByteNodeFunnel.INSTANCE;
+        return ByteDataFunnel.INSTANCE;
     }
 
 }

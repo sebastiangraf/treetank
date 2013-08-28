@@ -84,17 +84,17 @@ public final class TransactionTest {
         CoreTestHelper.Holder.generateSession(holder, mResource);
         this.holder = Holder.generateWtx(holder, mResource);
 
-        testBytes = new byte[TreetankStorageModule.BYTES_IN_NODE * 256];
+        testBytes = new byte[TreetankStorageModule.BYTES_IN_DATA * 256];
         CoreTestHelper.random.nextBytes(testBytes);
 
         for (int i = 0; i < IConstants.CONTENT_COUNT; i++) {
             LOGGER.info("Bootstrapping node " + i);
-            this.holder.getIWtx().bootstrap(new byte[TreetankStorageModule.BYTES_IN_NODE]);
+            this.holder.getIWtx().bootstrap(new byte[TreetankStorageModule.BYTES_IN_DATA]);
             this.holder.getIWtx().commit();
         }
 
         LOGGER.info("Bootstrapping node " + IConstants.CONTENT_COUNT + 1);
-        this.holder.getIWtx().bootstrap(new byte[TreetankStorageModule.BYTES_IN_NODE]);
+        this.holder.getIWtx().bootstrap(new byte[TreetankStorageModule.BYTES_IN_DATA]);
         this.holder.getIWtx().commit();
     }
 
@@ -105,16 +105,16 @@ public final class TransactionTest {
      */
     @Test
     public void testReadWrite() throws TTException {
-        byte[] subByte = new byte[TreetankStorageModule.BYTES_IN_NODE];
-        System.arraycopy(testBytes, 0, subByte, 0, TreetankStorageModule.BYTES_IN_NODE);
+        byte[] subByte = new byte[TreetankStorageModule.BYTES_IN_DATA];
+        System.arraycopy(testBytes, 0, subByte, 0, TreetankStorageModule.BYTES_IN_DATA);
 
         holder.getIWtx().moveTo(0);
         holder.getIWtx().setValue(subByte);
 
-        assertTrue(Arrays.equals(subByte, holder.getIWtx().getValueOfCurrentNode()));
+        assertTrue(Arrays.equals(subByte, holder.getIWtx().getValueOfCurrentData()));
 
         holder.getIWtx().commit();
-        assertTrue(Arrays.equals(subByte, holder.getIWtx().getValueOfCurrentNode()));
+        assertTrue(Arrays.equals(subByte, holder.getIWtx().getValueOfCurrentData()));
 
     }
 

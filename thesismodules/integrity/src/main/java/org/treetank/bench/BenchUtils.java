@@ -28,17 +28,17 @@ public class BenchUtils {
     }
 
     /**
-     * Generating new nodes passed on a given number of nodes within a revision
+     * Generating new data-elements passed on a given number of datas within a revision
      * 
-     * @param pNodesPerRevision
-     *            denote the number of nodes within all versions
-     * @return a two-dimensional array containing the nodes.
+     * @param pDatasPerRevision
+     *            denote the number of datas within all versions
+     * @return a two-dimensional array containing the datas.
      */
-    public static final DumbData[][] createNodes(final int[] pNodesPerRevision) {
-        final DumbData[][] returnVal = new DumbData[pNodesPerRevision.length][];
-        for (int i = 0; i < pNodesPerRevision.length; i++) {
-            returnVal[i] = new DumbData[pNodesPerRevision[i]];
-            for (int j = 0; j < pNodesPerRevision[i]; j++) {
+    public static final DumbData[][] createDatas(final int[] pDatasPerRevision) {
+        final DumbData[][] returnVal = new DumbData[pDatasPerRevision.length][];
+        for (int i = 0; i < pDatasPerRevision.length; i++) {
+            returnVal[i] = new DumbData[pDatasPerRevision[i]];
+            for (int j = 0; j < pDatasPerRevision[i]; j++) {
                 returnVal[i][j] = generateOne();
             }
         }

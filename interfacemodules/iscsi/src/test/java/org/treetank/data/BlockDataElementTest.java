@@ -62,7 +62,7 @@ public class BlockDataElementTest {
     public void testSerializeAndDeserialize() throws IOException, TTIOException {
 
         // testing full writes
-        byte[] bytes = new byte[TreetankStorageModule.BYTES_IN_NODE];
+        byte[] bytes = new byte[TreetankStorageModule.BYTES_IN_DATA];
         CoreTestHelper.random.nextBytes(bytes);
 
         final BlockDataElement blockDataElement = new BlockDataElement(CoreTestHelper.random.nextLong(), bytes);

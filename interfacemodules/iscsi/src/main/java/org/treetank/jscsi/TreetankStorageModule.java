@@ -27,14 +27,13 @@ package org.treetank.jscsi;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.io.IOException;
-import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
-import org.jclouds.filesystem.reference.FilesystemConstants;
 import org.jscsi.target.storage.IStorageModule;
+import org.jscsi.target.storage.JCloudsStorageModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.treetank.access.IscsiWriteTrx;
@@ -56,32 +55,32 @@ import com.google.common.io.Files;
 public class TreetankStorageModule implements IStorageModule {
 
     /**
-     * Number of Blocks in one Cluster. 8 equals 4KB nodes 16 equals 8KB nodes
+     * Number of Blocks in one Cluster. 8 equals 4KB datas; 16 equals 8KB datas
      * ...
      * 
      * When using berkeley db as a backend consider that if you increase the
-     * size of the blocks in node up to 12800 nodes can be held in ram. If you
+     * size of the blocks in datas up to 12800 datas can be held in ram. If you
      * have a 1gb storage maximally 1gb heap is needed. However if the storage
-     * is bigger and the blocks per node is considerably high (e.g. 256kb per
+     * is bigger and the blocks per data is considerably high (e.g. 256kb per
      * node) you might have to increase the ram for the jvm.
      */
-    public static final int BLOCKS_IN_NODE = 16;
+    public static final int BLOCKS_IN_DATA = 16;
 
     /** Threshold when commit should occur in number of bytes. */
     private static final int COMMIT_THRESHOLD = 268435456;
 
     /** Number of Bytes in Bucket. */
-    public final static int BYTES_IN_NODE = BLOCKS_IN_NODE * VIRTUAL_BLOCK_SIZE;
+    public final static int BYTES_IN_DATA = BLOCKS_IN_DATA * VIRTUAL_BLOCK_SIZE;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TreetankStorageModule.class);
 
     /**
-     * The number of nodes in the storage resulting in mNodeNumbers *
-     * BLOCKS_IN_NODE * VIRTUAL_BLOCK_SIZE bytes
+     * The number of datas in the storage resulting in mDataNumbers *
+     * BLOCKS_IN_DATA * VIRTUAL_BLOCK_SIZE bytes
      * 
      * @see #VIRTUAL_BLOCK_SIZE
      */
-    private final long mNodeNumbers;
+    private final long mDataNumbers;
 
     /**
      * The mSession this storage module uses to access the storage device.
@@ -99,8 +98,8 @@ public class TreetankStorageModule implements IStorageModule {
      */
     private volatile int mByteCounter;
 
-    /** FileStorage mirror for faster response times (filesystem backend) */
-    private FileStorage mFileStorage;
+    /** FileStorageModule mirror for faster response times (filesystem backend) */
+    private JCloudsStorageModule jCloudsStorageModule;
 
     /** ExecutorService to perform WriteTasks */
     private ExecutorService mWriteTaskExecutor;
@@ -117,9 +116,9 @@ public class TreetankStorageModule implements IStorageModule {
      */
     public TreetankStorageModule(final long pNodeNumber, final ISession pSession) throws TTException {
 
-        mNodeNumbers = pNodeNumber;
+        mDataNumbers = pNodeNumber;
 
-        LOGGER.debug("Initializing storagemodule with: number of nodes=" + mNodeNumbers + ", blockSize="
+        LOGGER.debug("Initializing storagemodule with: number of nodes=" + mDataNumbers + ", blockSize="
             + IStorageModule.VIRTUAL_BLOCK_SIZE);
 
         mSession = pSession;
@@ -141,21 +140,12 @@ public class TreetankStorageModule implements IStorageModule {
      */
     private void createStorage() throws TTException {
 
-        LOGGER.debug("Creating storage with " + mNodeNumbers + " nodes containing " + BLOCKS_IN_NODE
+        LOGGER.debug("Creating storage with " + mDataNumbers + " nodes containing " + BLOCKS_IN_DATA
             + " blocks with " + IStorageModule.VIRTUAL_BLOCK_SIZE + " bytes each.");
 
-        // Creating random access file as mirror
-        Properties properties = new Properties();
-        properties.setProperty(FilesystemConstants.PROPERTY_BASEDIR, Files.createTempDir().getAbsolutePath());
-
-        try {
-            mFileStorage =
-                new FileStorage(Files.createTempDir().getAbsolutePath(), BLOCKS_IN_NODE * VIRTUAL_BLOCK_SIZE);
-        } catch (IOException e) {
-            throw new TTException(e.getMessage()) {
-                private static final long serialVersionUID = 6736130138810572965L;
-            };
-        }
+        // Creating mirror
+        jCloudsStorageModule =
+            new JCloudsStorageModule(BLOCKS_IN_DATA * VIRTUAL_BLOCK_SIZE, Files.createTempDir());
 
         IData data = this.mRtx.getCurrentData();
 
@@ -163,15 +153,14 @@ public class TreetankStorageModule implements IStorageModule {
             return;
         }
 
-        for (int i = 0; i < mNodeNumbers; i++) {
+        for (int i = 0; i < mDataNumbers; i++) {
 
             // Bootstrapping nodes containing clusterSize -many blocks/sectors.
-            LOGGER.debug("Bootstraping node " + i + "\tof " + (mNodeNumbers - 1));
-            this.mRtx.bootstrap(new byte[TreetankStorageModule.BYTES_IN_NODE]);
+            LOGGER.debug("Bootstraping node " + i + "\tof " + (mDataNumbers - 1));
+            this.mRtx.bootstrap(new byte[TreetankStorageModule.BYTES_IN_DATA]);
         }
 
         this.mRtx.commit();
-
     }
 
     /**
@@ -197,7 +186,7 @@ public class TreetankStorageModule implements IStorageModule {
      */
     @Override
     public long getSizeInBlocks() {
-        return mNodeNumbers * BLOCKS_IN_NODE;
+        return mDataNumbers * BLOCKS_IN_DATA;
     }
 
     /**
@@ -208,46 +197,7 @@ public class TreetankStorageModule implements IStorageModule {
         LOGGER.debug("Starting to read with param: " + "\nstorageIndex = " + storageIndex
             + "\nbytes.length = " + bytes.length);
 
-        mFileStorage.read(bytes, storageIndex);
-
-        // long startIndex = storageIndex / BYTES_IN_NODE;
-        // int startIndexOffset = (int)(storageIndex % BYTES_IN_NODE);
-        //
-        // long endIndex = (storageIndex + bytes.length) / BYTES_IN_NODE;
-        //
-        // int endIndexMax = (int)((storageIndex + bytes.length) % BYTES_IN_NODE);
-        //
-        // LOGGER.debug("startIndex: " + startIndex);
-        // LOGGER.debug("startIndexOffset: " + startIndexOffset);
-        // LOGGER.debug("endIndex: " + endIndex);
-        // LOGGER.debug("endIndexMax: " + endIndexMax);
-        //
-        // int bytesRead =
-        // bytes.length + startIndexOffset > BYTES_IN_NODE ? BYTES_IN_NODE - startIndexOffset : bytes.length;
-        //
-        // checkState(mRtx.moveTo(startIndex));
-        // byte[] data = mRtx.getValueOfCurrentNode();
-        // System.arraycopy(data, startIndexOffset, bytes, 0, bytesRead);
-        //
-        // for (long i = startIndex + 1; i < endIndex; i++) {
-        // checkState(mRtx.moveTo(i));
-        // data = mRtx.getValueOfCurrentNode();
-        // System.arraycopy(data, 0, bytes, bytesRead, data.length);
-        // bytesRead = bytesRead + data.length;
-        //
-        // }
-        //
-        // if (startIndex != endIndex && endIndex < mNodeNumbers) {
-        // checkState(mRtx.moveTo(endIndex));
-        // data = mRtx.getValueOfCurrentNode();
-        // System.arraycopy(data, 0, bytes, bytesRead, endIndexMax);
-        //
-        // bytesRead += endIndexMax;
-        // }
-        //
-        // // Bytes read is the actual number of bytes that have been read.
-        // // The two lengths have to match, otherwise not enough bytes have been read (or too much?).
-        // checkState(bytesRead == bytes.length);
+        jCloudsStorageModule.read(bytes, storageIndex);
     }
 
     /**
@@ -258,10 +208,11 @@ public class TreetankStorageModule implements IStorageModule {
         LOGGER.debug("Starting to write with param: " + "\nstorageIndex = " + storageIndex
             + "\nbytes.length = " + bytes.length);
 
-        mFileStorage.write(bytes, storageIndex);
+        jCloudsStorageModule.write(bytes, storageIndex);
 
         // Submitting into treetank
         mWriteTaskExecutor.submit(new WriteTask(bytes, storageIndex));
+
     }
 
     /**
@@ -282,34 +233,34 @@ public class TreetankStorageModule implements IStorageModule {
 
         @Override
         public Void call() throws Exception {
-            long startIndex = mStorageIndex / BYTES_IN_NODE;
-            int startIndexOffset = (int)(mStorageIndex % BYTES_IN_NODE);
+            long startIndex = mStorageIndex / BYTES_IN_DATA;
+            int startIndexOffset = (int)(mStorageIndex % BYTES_IN_DATA);
 
-            long endIndex = (mStorageIndex + mBytes.length) / BYTES_IN_NODE;
-            int endIndexMax = (int)((mStorageIndex + mBytes.length) % BYTES_IN_NODE);
+            long endIndex = (mStorageIndex + mBytes.length) / BYTES_IN_DATA;
+            int endIndexMax = (int)((mStorageIndex + mBytes.length) % BYTES_IN_DATA);
 
             int bytesWritten =
-                mBytes.length + startIndexOffset > BYTES_IN_NODE ? BYTES_IN_NODE - startIndexOffset
+                mBytes.length + startIndexOffset > BYTES_IN_DATA ? BYTES_IN_DATA - startIndexOffset
                     : mBytes.length;
 
             try {
                 checkState(mRtx.moveTo(startIndex));
-                byte[] data = mRtx.getValueOfCurrentNode();
+                byte[] data = mRtx.getValueOfCurrentData();
                 System.arraycopy(mBytes, 0, data, startIndexOffset, bytesWritten);
                 mRtx.setValue(data);
 
                 for (long i = startIndex + 1; i < endIndex; i++) {
                     checkState(mRtx.moveTo(i));
-                    data = mRtx.getValueOfCurrentNode();
+                    data = mRtx.getValueOfCurrentData();
                     System.arraycopy(mBytes, bytesWritten, data, 0, data.length);
                     mRtx.setValue(data);
                     bytesWritten = bytesWritten + data.length;
 
                 }
 
-                if (startIndex != endIndex && endIndex < mNodeNumbers) {
+                if (startIndex != endIndex && endIndex < mDataNumbers) {
                     checkState(mRtx.moveTo(endIndex));
-                    data = mRtx.getValueOfCurrentNode();
+                    data = mRtx.getValueOfCurrentData();
                     System.arraycopy(mBytes, bytesWritten, data, 0, endIndexMax);
                     mRtx.setValue(data);
 
