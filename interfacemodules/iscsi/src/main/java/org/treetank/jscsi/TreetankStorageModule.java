@@ -32,8 +32,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
-import org.jscsi.target.storage.FileStorageModule;
 import org.jscsi.target.storage.IStorageModule;
+import org.jscsi.target.storage.JCloudsStorageModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.treetank.access.IscsiWriteTrx;
@@ -41,7 +41,6 @@ import org.treetank.api.IData;
 import org.treetank.api.IIscsiWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
-import org.treetank.exception.TTIOException;
 
 import com.google.common.io.Files;
 
@@ -100,7 +99,7 @@ public class TreetankStorageModule implements IStorageModule {
     private volatile int mByteCounter;
 
     /** FileStorageModule mirror for faster response times (filesystem backend) */
-    private FileStorageModule mFileStorageModule;
+    private JCloudsStorageModule jCloudsStorageModule;
 
     /** ExecutorService to perform WriteTasks */
     private ExecutorService mWriteTaskExecutor;
@@ -145,13 +144,8 @@ public class TreetankStorageModule implements IStorageModule {
             + " blocks with " + IStorageModule.VIRTUAL_BLOCK_SIZE + " bytes each.");
 
         // Creating mirror
-
-        try {
-            mFileStorageModule =
-                new FileStorageModule(Files.createTempDir().getAbsolutePath(), BLOCKS_IN_DATA * VIRTUAL_BLOCK_SIZE, 8192);
-        } catch (IOException e) {
-            throw new TTIOException(e.getMessage());
-        }
+        jCloudsStorageModule =
+            new JCloudsStorageModule(BLOCKS_IN_DATA * VIRTUAL_BLOCK_SIZE, Files.createTempDir());
 
         IData data = this.mRtx.getCurrentData();
 
@@ -203,7 +197,7 @@ public class TreetankStorageModule implements IStorageModule {
         LOGGER.debug("Starting to read with param: " + "\nstorageIndex = " + storageIndex
             + "\nbytes.length = " + bytes.length);
 
-        mFileStorageModule.read(bytes, storageIndex);
+        jCloudsStorageModule.read(bytes, storageIndex);
     }
 
     /**
@@ -214,7 +208,7 @@ public class TreetankStorageModule implements IStorageModule {
         LOGGER.debug("Starting to write with param: " + "\nstorageIndex = " + storageIndex
             + "\nbytes.length = " + bytes.length);
 
-        mFileStorageModule.write(bytes, storageIndex);
+        jCloudsStorageModule.write(bytes, storageIndex);
 
         // Submitting into treetank
         mWriteTaskExecutor.submit(new WriteTask(bytes, storageIndex));
