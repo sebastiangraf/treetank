@@ -6,6 +6,8 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 
 import java.io.File;
 import java.nio.file.WatchEvent;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 
@@ -40,6 +42,11 @@ public class FilesystemNotification implements Callable<Void>{
     private final IFilelistenerWriteTrx mWtx;
     
     /**
+     * FilesystemNotificationObservers for this notification
+     */
+    private Collection<FilesystemNotificationObserver> mObservers;
+    
+    /**
      * Create a FilesystemNotification
      * that holds the File
      * 
@@ -56,6 +63,7 @@ public class FilesystemNotification implements Callable<Void>{
         mEvtType = pEvtType;
         mWtx = pWtx;
         mFinished = false;
+        mObservers = new HashSet<>();
     }
 
     public File getFile() {
@@ -104,10 +112,35 @@ public class FilesystemNotification implements Callable<Void>{
         } else if (this.getEvtType() == ENTRY_DELETE) {
             mWtx.removeFile(this.getRelativePath());
         }
-        mWtx.commit();
-        System.out.println("Commited.");
+        
+        if(this.mObservers.size() > 0){
+            // For bench purposes
+            System.out.println("Commit blocked");
+            mWtx.commitBlocked();
+        }
+        else{
+            // Non blocking
+            mWtx.commit();
+        }
         mFinished = true;
+        
+        // Notifying observers that a task has been finished.
+        this.notifyObservers();
         return null;
     }
+    
+    public void notifyObservers() throws InterruptedException{
+        synchronized (this) {
+            for (FilesystemNotificationObserver o : mObservers) {
+                o.getBlockingQueue().put(this);
+            }
+        }
+    }
+    
+    public void addObserver(FilesystemNotificationObserver observer){
+        this.mObservers.add(observer);
+    }
+    
+    
 
 }

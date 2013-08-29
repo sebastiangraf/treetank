@@ -105,7 +105,7 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
      */
     @Override
     public synchronized void addFile(File pFile, String pRelativePath) throws TTException, IOException {
-        LOGGER.info("Adding file " + pFile.getName());
+        LOGGER.debug("Adding file " + pFile.getName());
 
         int readingAmount = 0;
 
@@ -119,18 +119,11 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
             } catch (OverlappingFileLockException e) {
                 // File is already locked in this thread or virtual machine
             }
-
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
         }
 
         ByteBuffer buffer = ByteBuffer.allocate(FileNode.FILENODESIZE);
 
-        LOGGER.info("Successfully initialized byte source.");
+        LOGGER.debug("Successfully initialized byte source.");
         readingAmount += ch.read(buffer);
 
         if (readingAmount <= 0) {
@@ -152,13 +145,14 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
         MetaValue value = new MetaValue(newKey);
 
         // And adding it to the meta map
-        LOGGER.info("Metakeypair setup");
+        LOGGER.debug("Metakeypair setup");
         getBucketTransaction().getMetaBucket().put(key, value);
 
         // Creating and setting the headernode.
         FileNode headerNode = new FileNode(newKey, new byte[FileNode.FILENODESIZE]);
         headerNode.setHeader(true);
         headerNode.setEof(false);
+        headerNode.setNextNodeKey(headerNode.getDataKey() + 1);
 
         headerNode.setVal(buffer.array());
 
@@ -166,20 +160,18 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
 
         // Creating and setting following nodes based on the file size.
         FileNode node;
-        FileNode lastNode;
 
         int currentReadingAmount = 0;
         while ((currentReadingAmount = ch.read(buffer = ByteBuffer.allocate(FileNode.FILENODESIZE))) > 0) {
-            LOGGER.info("" + currentReadingAmount);
+            LOGGER.debug("" + currentReadingAmount);
             byte[] slice = Arrays.copyOf(buffer.array(), currentReadingAmount);
 
-            node = new FileNode(getBucketTransaction().incrementDataKey(), slice);
+            long dataKey = getBucketTransaction().incrementDataKey();
+            node = new FileNode(dataKey, slice);
+            node.setNextNodeKey(dataKey + 1);
             node.setHeader(false);
             node.setEof(false);
-
-            lastNode = (FileNode)getBucketTransaction().getData(node.getDataKey() - 1);
-            lastNode.setNextNodeKey(node.getDataKey());
-            getBucketTransaction().setData(lastNode);
+            
             getBucketTransaction().setData(node);
 
             readingAmount += currentReadingAmount;
@@ -193,19 +185,11 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
         node.setHeader(false);
         node.setEof(true);
 
-        lastNode = (FileNode)getBucketTransaction().getData(node.getDataKey() - 1);
-
-        lastNode.setNextNodeKey(node.getDataKey());
-
-        getBucketTransaction().setData(lastNode);
-
         getBucketTransaction().setData(node);
 
         Preconditions.checkArgument(getBucketTransaction().getData(newKey) != null);
         lock.release();
         ch.close();
-
-        System.out.println("Done writing.");
     }
 
     /**
@@ -227,6 +211,17 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
 
         // ICommitStrategy uber page.
         getBucketTransaction().commit();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void commitBlocked() throws TTException {
+        checkAccessAndCommit();
+
+        // ICommitStrategy uber page.
+        getBucketTransaction().commitBlocked();
     }
 
     /**
