@@ -30,13 +30,18 @@ public interface IFilelistenerWriteTrx extends IFilelistenerReadTrx {
     public void removeFile(String pRelativePath) throws TTException;
 
     /**
-     * ICommitStrategy all modifications of the exclusive write transaction. Even commit
-     * if there are no modification at all.
-     * 
+     * Non-blocking commit in TT
      * @throws TTException
      *             if this revision couldn't be commited
      */
     public void commit() throws TTException;
+    
+    /**
+     * Blocking commit in TT
+     * @throws TTException
+     *             if this revision couldn't be commited
+     */
+    public void commitBlocked() throws TTException;
 
     /**
      * Abort all modifications of the exclusive write transaction.

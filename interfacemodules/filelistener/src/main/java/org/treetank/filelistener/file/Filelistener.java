@@ -67,6 +67,8 @@ public class Filelistener {
     private Map<String, FilesystemNotification> mLockedFiles;
     /** Map to put FSN inside if a fsn is still locked in mLockedFiles */
     private Map<String, FilesystemNotification> mFsnOnHold;
+    /** Observer class to be notified when a notification has been processed */
+    private FilesystemNotificationObserver mObserver;
 
     /**
      * This thread is used, so the program does not get blocked by the
@@ -83,6 +85,22 @@ public class Filelistener {
         mExecutorMap = new HashMap<String, ExecutorService>();
         mLockedFiles = new HashMap<>();
         mFsnOnHold = new HashMap<>();
+    }
+
+    /**
+     * Get the observer for this filelistener
+     * 
+     * @return observer
+     */
+    public FilesystemNotificationObserver getObserver() {
+        return mObserver;
+    }
+
+    /**
+     * Set the observer for this filelistener
+     */
+    public void setObserver(FilesystemNotificationObserver pObserver) {
+        this.mObserver = pObserver;
     }
 
     /**
@@ -141,8 +159,8 @@ public class Filelistener {
 
         for (Entry<String, String> e : filelisteners.entrySet()) {
             mSessions.put(e.getKey(), StorageManager.getSession(e.getKey()));
-            mTrx.put(e.getKey(), new FilelistenerWriteTrx(mSessions.get(e.getKey())
-                .beginBucketWtx(), mSessions.get(e.getKey())));
+            mTrx.put(e.getKey(), new FilelistenerWriteTrx(mSessions.get(e.getKey()).beginBucketWtx(),
+                mSessions.get(e.getKey())));
             mSubDirectories.put(e.getValue(), new ArrayList<String>());
             mExecutorMap.put(e.getValue(), Executors.newSingleThreadExecutor());
 
@@ -255,6 +273,27 @@ public class Filelistener {
                 }
             }
             key.reset();
+
+            processFsnOnHold();
+        }
+    }
+
+    private void processFsnOnHold() {
+        // Maybe lockedfiles are finished
+        for (Entry<String, FilesystemNotification> e : mFsnOnHold.entrySet()) {
+            if (mLockedFiles.get(e.getValue().getRootPath() + e.getValue().getRelativePath()) != null
+                && mLockedFiles.get(e.getValue().getRootPath() + e.getValue().getRelativePath()).isFinished()) {
+                mLockedFiles.remove(e.getValue().getRootPath() + e.getValue().getRelativePath());
+            }
+            if (mLockedFiles.get(e.getValue().getRootPath() + e.getValue().getRelativePath()) == null) {
+                ExecutorService s = mExecutorMap.get(e.getValue().getRootPath());
+                if (s != null && !s.isShutdown()) {
+                    mFsnOnHold.remove(e.getValue().getRootPath() + e.getValue().getRelativePath());
+                    mLockedFiles.put(e.getValue().getRootPath() + e.getValue().getRelativePath(), e
+                        .getValue());
+                    s.submit(e.getValue());
+                }
+            }
         }
     }
 
@@ -270,7 +309,7 @@ public class Filelistener {
      */
     private void process(Path dir, Path file, WatchEvent.Kind<?> evtType) throws TTException, IOException,
         InterruptedException {
-        LOGGER.info("Processing " + file.getFileName() + " with event " + evtType);
+        LOGGER.debug("Processing " + file.getFileName() + " with event " + evtType);
         IFilelistenerWriteTrx trx = null;
         String rootPath = getListenerRootPath(dir);
 
@@ -295,7 +334,6 @@ public class Filelistener {
                 }
             }
         } else {
-
             if (mLockedFiles.get(rootPath + file.toFile().getName()) != null) {
                 if (mLockedFiles.get(rootPath + file.toFile().getName()).isFinished()) {
                     ExecutorService s = mExecutorMap.get(getListenerRootPath(dir));
@@ -303,14 +341,19 @@ public class Filelistener {
 
                         FilesystemNotification n =
                             new FilesystemNotification(file.toFile(), relativePath, rootPath, evtType, trx);
+                        if (mObserver != null) {
+                            n.addObserver(mObserver);
+                        }
                         mFsnOnHold.remove(rootPath + file.toFile().getName());
                         mLockedFiles.put(rootPath + file.toFile().getName(), n);
                         s.submit(n);
                     }
                 } else {
-
                     FilesystemNotification n =
                         new FilesystemNotification(file.toFile(), relativePath, rootPath, evtType, trx);
+                    if (mObserver != null) {
+                        n.addObserver(mObserver);
+                    }
                     mFsnOnHold.put(rootPath + file.toFile().getName(), n);
                 }
             } else {
@@ -318,6 +361,9 @@ public class Filelistener {
                 if (s != null && !s.isShutdown()) {
                     FilesystemNotification n =
                         new FilesystemNotification(file.toFile(), relativePath, rootPath, evtType, trx);
+                    if (mObserver != null) {
+                        n.addObserver(mObserver);
+                    }
                     mLockedFiles.put(rootPath + file.toFile().getName(), n);
 
                     s.submit(n);
