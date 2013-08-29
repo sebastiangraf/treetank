@@ -218,7 +218,7 @@ public class TreetankStorageModule implements IStorageModule {
             bytesRead += endIndexMax;
         }
 
-        if(storageIndex == 0){
+        if(storageIndex % BYTES_IN_DATA ==  0){
             prefetch(storageIndex);
         }
         // Bytes read is the actual number of bytes that have been read.
@@ -278,7 +278,7 @@ public class TreetankStorageModule implements IStorageModule {
                 mByteCounter = 0;
             }
             
-            if(storageIndex == 0){
+            if(storageIndex % BYTES_IN_DATA ==  0){
                 prefetch(storageIndex);
             }
         } catch (TTException exc) {
@@ -305,6 +305,10 @@ public class TreetankStorageModule implements IStorageModule {
         }
         
         for (int i = 0; i < BUCKETS_TO_PREFETCH; i++) {
+            if((startIndex + i) > (mNodeNumbers / 128)) {
+                return;
+            }
+            
             mRtx.moveTo(startIndex);
             startIndex += 128;
         }
