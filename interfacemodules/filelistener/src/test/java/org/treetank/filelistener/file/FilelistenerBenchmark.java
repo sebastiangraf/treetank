@@ -79,6 +79,8 @@ public class FilelistenerBenchmark implements FilesystemNotificationObserver {
         TMPDIR_1.delete();
     }
 
+    private final static int FILES = 100;
+    
     /**
      * This test case benches one megabyte file reads / writes on the filelistener.
      * @throws TTException 
@@ -88,7 +90,6 @@ public class FilelistenerBenchmark implements FilesystemNotificationObserver {
      * @throws FileNotFoundException 
      * @throws InterruptedException 
      */
-    
     @Parameters({"filebench-size"})
     @Test
     public void bench(int filebenchSize) throws FileNotFoundException, ClassNotFoundException, IOException, ResourceNotExistingException, TTException, InterruptedException {
@@ -98,7 +99,7 @@ public class FilelistenerBenchmark implements FilesystemNotificationObserver {
         filelistener.startListening();
 
         // Setting up file data for 10 files
-        fileBytes = new byte[10][filebenchSize];
+        fileBytes = new byte[FILES][filebenchSize];
         
         for (int i = 0; i < fileBytes.length; i++) {
             // Using random seed of (i+1) * 42
@@ -107,8 +108,8 @@ public class FilelistenerBenchmark implements FilesystemNotificationObserver {
         }
 
         // Benching creation of files on the filesystem and awaiting finalization in treetank.
-        starts = new long[10];
-        ends = new long[10];
+        starts = new long[FILES];
+        ends = new long[FILES];
         for (int i = 0; i < fileBytes.length; i++) {
             String filename = TMPDIR_1 + File.separator + "file" + (i+1) + ".data";
             fileMap.put(File.separator + "file" + (i+1) + ".data", i);
@@ -124,12 +125,12 @@ public class FilelistenerBenchmark implements FilesystemNotificationObserver {
             if(n.getRelativePath() != null){
                 ends[fileMap.get(n.getRelativePath())] = System.currentTimeMillis();
                 
-                if(fileMap.get(n.getRelativePath()) == 9) finishedBench = true;
+                if(fileMap.get(n.getRelativePath()) == 99) finishedBench = true;
             }
         }
         if(finishedBench){
             // Do something, analyze
-            printBench((((double) filebenchSize) / 1024 / 1024) + "MB");
+            printBench( filebenchSize + " bytes");
         }
         else{
             fail("Bench was not finished but notified that it would be finished.");
@@ -149,7 +150,7 @@ public class FilelistenerBenchmark implements FilesystemNotificationObserver {
         String s = "";
         for (int i = 0; i < starts.length; i++) {
             System.out.print( (ends[i] - starts[i]) + "ms \t");
-            s += (ends[i] - starts[i]) + "\t";
+            s += (ends[i] - starts[i]) + ",";
         }
         Files.append(s+"\n", benchFile, Charset.forName("UTF-8"));
         System.out.println();
