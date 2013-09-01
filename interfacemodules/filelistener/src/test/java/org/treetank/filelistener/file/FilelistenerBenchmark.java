@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Parameters;
@@ -33,10 +34,12 @@ import com.google.common.io.Files;
  */
 public class FilelistenerBenchmark implements FilesystemNotificationObserver {
 
-    private File benchFile = new File("target" + File.separator + "FileBench.csv");
+    private String benchFile = "target" + File.separator + "FileBench";
     
     /** Filelistener resource */
     private static final String RESOURCE_1 = "RESOURCE_1";
+    private static final String BUCKETFOLDER = StorageManager.ROOT_PATH + File.separator + "storage" + File.separator + "resources" + File.separator + RESOURCE_1 + File.separator + "data";
+    
     /** Temp dir for the test files */
     private final File TMPDIR_1 = Files.createTempDir();
     /** Filelistener for the benchmark */
@@ -47,6 +50,8 @@ public class FilelistenerBenchmark implements FilesystemNotificationObserver {
     long[] starts;
     /** long array to track end time of file reads/writes */
     long[] ends;
+    /** long array to track bucket counts */
+    long[] bucketCount;
     /** Filename corresponding to array position */
     Map<String, Integer> fileMap;
     /** Still running */
@@ -94,6 +99,7 @@ public class FilelistenerBenchmark implements FilesystemNotificationObserver {
     @Test
     public void bench(int filebenchSize) throws FileNotFoundException, ClassNotFoundException, IOException, ResourceNotExistingException, TTException, InterruptedException {
         // Listening to the target folder
+        Assert.assertNotNull(new File(BUCKETFOLDER).list());
         Filelistener.addFilelistener(RESOURCE_1, TMPDIR_1.getAbsolutePath());
         filelistener.watchDir(TMPDIR_1);
         filelistener.startListening();
@@ -110,6 +116,7 @@ public class FilelistenerBenchmark implements FilesystemNotificationObserver {
         // Benching creation of files on the filesystem and awaiting finalization in treetank.
         starts = new long[FILES];
         ends = new long[FILES];
+        bucketCount = new long[FILES];
         for (int i = 0; i < fileBytes.length; i++) {
             String filename = TMPDIR_1 + File.separator + "file" + (i+1) + ".data";
             fileMap.put(File.separator + "file" + (i+1) + ".data", i);
@@ -124,7 +131,7 @@ public class FilelistenerBenchmark implements FilesystemNotificationObserver {
             }
             if(n.getRelativePath() != null){
                 ends[fileMap.get(n.getRelativePath())] = System.currentTimeMillis();
-                
+                bucketCount[fileMap.get(n.getRelativePath())] = bucketCount();
                 if(fileMap.get(n.getRelativePath()) == 99) finishedBench = true;
             }
         }
@@ -147,14 +154,25 @@ public class FilelistenerBenchmark implements FilesystemNotificationObserver {
             System.out.print("Run " + i + "\t");
         }
         System.out.println();
-        String s = "";
+        String s =  "timeTaken,";
         for (int i = 0; i < starts.length; i++) {
-            System.out.print( (ends[i] - starts[i]) + "ms \t");
             s += (ends[i] - starts[i]) + ",";
         }
-        Files.append(s+"\n", benchFile, Charset.forName("UTF-8"));
+        String s2 = "bucketCount,";
+        for (int i = 0; i < starts.length; i++) {
+            s2 += bucketCount[i] + ",";
+        }
+        System.out.println(s);
+        System.out.println(s2);
+        
+        Files.append(s+"\n", new File(benchFile+"_"+string+".csv"), Charset.forName("UTF-8"));
+        Files.append(s2, new File(benchFile+"_"+string+".csv"), Charset.forName("UTF-8"));
         System.out.println();
         
+    }
+
+    private long bucketCount() {
+        return new File(BUCKETFOLDER).list().length;
     }
 
     @Override
