@@ -75,8 +75,8 @@ public class ModuleFactory implements IModuleFactory {
                 metaFacName = "org.treetank.data.ISCSIMetaPageFactory";
                 break;
             case "filelistener":
-                dataFacName = "org.treetank.filelistener.file.node.FileNodeFactory";
-                metaFacName = "org.treetank.filelistener.file.node.FilelistenerMetaPageFactory";
+                dataFacName = "org.treetank.filelistener.file.data.FileDataFactory";
+                metaFacName = "org.treetank.filelistener.file.data.FilelistenerMetaPageFactory";
                 break;
             default:
                 throw new IllegalStateException("Suitable module not found");
