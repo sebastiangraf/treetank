@@ -18,7 +18,7 @@ import org.treetank.exception.TTException;
 import org.treetank.filelistener.exceptions.StorageAlreadyExistsException;
 import org.treetank.filelistener.file.StorageManager;
 import org.treetank.filelistener.file.data.FileDataFactory;
-import org.treetank.filelistener.file.data.FilelistenerMetaPageFactory;
+import org.treetank.filelistener.file.data.FilelistenerMetaDataFactory;
 import org.treetank.io.IBackend;
 import org.treetank.io.jclouds.JCloudsStorage;
 import org.treetank.revisioning.IRevisioning;
@@ -153,7 +153,7 @@ public class CreateStorageConfigurationDialog extends Dialog {
                 revClass = SlidingSnapshot.class;
             }
             
-            StorageManager.createResource(this.name, new ModuleSetter().setDataFacClass(FileDataFactory.class).setMetaFacClass(FilelistenerMetaPageFactory.class)
+            StorageManager.createResource(this.name, new ModuleSetter().setDataFacClass(FileDataFactory.class).setMetaFacClass(FilelistenerMetaDataFactory.class)
                 .setRevisioningClass(revClass).setBackendClass(backendClass).createModule());
             
         } catch (StorageAlreadyExistsException e1) {

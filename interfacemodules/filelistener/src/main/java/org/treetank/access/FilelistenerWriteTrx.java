@@ -17,8 +17,8 @@ import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.filelistener.file.data.FileData;
-import org.treetank.filelistener.file.data.FilelistenerMetaPageFactory.MetaKey;
-import org.treetank.filelistener.file.data.FilelistenerMetaPageFactory.MetaValue;
+import org.treetank.filelistener.file.data.FilelistenerMetaDataFactory.MetaKey;
+import org.treetank.filelistener.file.data.FilelistenerMetaDataFactory.MetaValue;
 
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteArrayDataOutput;

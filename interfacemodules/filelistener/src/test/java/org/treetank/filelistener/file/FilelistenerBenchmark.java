@@ -21,7 +21,7 @@ import org.treetank.access.conf.ModuleSetter;
 import org.treetank.exception.TTException;
 import org.treetank.filelistener.exceptions.ResourceNotExistingException;
 import org.treetank.filelistener.file.data.FileDataFactory;
-import org.treetank.filelistener.file.data.FilelistenerMetaPageFactory;
+import org.treetank.filelistener.file.data.FilelistenerMetaDataFactory;
 import org.treetank.io.IOUtils;
 
 import com.google.common.io.Files;
@@ -67,7 +67,7 @@ public class FilelistenerBenchmark implements FilesystemNotificationObserver {
     public void setUp() throws Exception {
         IOUtils.recursiveDelete(new File(StorageManager.ROOT_PATH));
         StorageManager.createResource(RESOURCE_1, new ModuleSetter().setDataFacClass(FileDataFactory.class)
-            .setMetaFacClass(FilelistenerMetaPageFactory.class).createModule());
+            .setMetaFacClass(FilelistenerMetaDataFactory.class).createModule());
         filelistener = new Filelistener();
         filelistener.setObserver(this);
         fileMap = new HashMap<String, Integer>();

@@ -20,7 +20,7 @@ import com.google.common.hash.PrimitiveSink;
  * @author Andreas Rain
  * 
  */
-public class FilelistenerMetaPageFactory implements IMetaEntryFactory {
+public class FilelistenerMetaDataFactory implements IMetaEntryFactory {
 
     private final static int KEY = 1;
     private final static int VALUE = 2;

@@ -1,8 +1,7 @@
 name: FileSuite
 threadCount: 4
-parameters: { DataFactory: org.treetank.filelistener.file.data.FileDataFactory, MetaFactory: org.treetank.filelistener.file.data.FilelistenerMetaPageFactory }
+parameters: { NodeFactory: org.treetank.filelistener.file.data.FileDataFactory, MetaFactory: org.treetank.filelistener.file.data.FilelistenerMetaDataFactory }
 
- 
 tests:
   - name: Sliding Berkeley
     parameters: { Revisioning: org.treetank.revisioning.SlidingSnapshot, Backend: org.treetank.io.berkeley.BerkeleyStorage }
