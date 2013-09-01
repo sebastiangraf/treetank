@@ -1,6 +1,6 @@
 name: FileSuite
 threadCount: 4
-parameters: { NodeFactory: org.treetank.filelistener.file.node.FileNodeFactory, MetaFactory: org.treetank.filelistener.file.node.FilelistenerMetaPageFactory }
+parameters: { DataFactory: org.treetank.filelistener.file.data.FileDataFactory, MetaFactory: org.treetank.filelistener.file.data.FilelistenerMetaPageFactory }
 
  
 tests:
