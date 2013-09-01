@@ -1,11 +1,10 @@
-package org.treetank.filelistener.file.node;
+package org.treetank.filelistener.file.data;
 
 import java.io.DataOutput;
 import java.io.IOException;
 
 import org.treetank.api.IData;
 import org.treetank.exception.TTIOException;
-import org.treetank.filelistener.exceptions.WrongFilenodeDataLengthException;
 
 import com.google.common.hash.Funnel;
 import com.google.common.hash.PrimitiveSink;
@@ -20,7 +19,7 @@ import com.google.common.hash.PrimitiveSink;
  * @author andreas
  * 
  */
-public class FileNode implements IData {
+public class FileData implements IData {
 
     /**
      * Enum for FileNodeFunnel.
@@ -31,8 +30,8 @@ public class FileNode implements IData {
     enum FileNodeFunnel implements Funnel<IData> {
         INSTANCE;
         public void funnel(IData data, PrimitiveSink into) {
-            final FileNode from = (FileNode)data;
-            into.putLong(from.nodeKey).putLong(from.nextNodeKey).putBytes(from.val).putBoolean(from.header)
+            final FileData from = (FileData)data;
+            into.putLong(from.dataKey).putLong(from.nextDataKey).putBytes(from.val).putBoolean(from.header)
                 .putBoolean(from.eof);
         }
     }
@@ -40,17 +39,17 @@ public class FileNode implements IData {
     /**
      * The nodes key value, which is equal with it's position in the list.
      */
-    private long nodeKey = 0;
+    private long dataKey = 0;
 
     /**
      * The following nodes key
      */
-    private long nextNodeKey = 0;
+    private long nextDataKey = 0;
 
     /**
      * The size of the filenode
      */
-    public static final int FILENODESIZE = 1024*4;
+    public static final int FILENODESIZE = 524288;
 
     /**
      * NodeKey for EOF filenodes
@@ -75,27 +74,24 @@ public class FileNode implements IData {
 
     /**
      * Creates a Filenode with given bytes
-     * 
+     * @param dataKey 
      * @param content
      *            , as byte array
-     * @throws WrongFilenodeDataLengthException
      */
-    public FileNode(long nodeKey, byte[] content) {
-        this.nodeKey = nodeKey;
+    public FileData(long dataKey, byte[] content) {
+        this.dataKey = dataKey;
         val = content;
     }
 
     /**
      * Serializing to given dataput
      * 
-     * @param pOutput
-     *            to serialize to
      * @throws TTIOException
      */
     public void serialize(final DataOutput output) throws TTIOException {
         try {
-            output.writeLong(nodeKey);
-            output.writeLong(nextNodeKey);
+            output.writeLong(dataKey);
+            output.writeLong(nextDataKey);
             output.writeBoolean(header);
             output.writeBoolean(eof);
             output.writeInt(val.length);
@@ -107,18 +103,22 @@ public class FileNode implements IData {
 
     @Override
     public long getDataKey() {
-        return this.nodeKey;
+        return this.dataKey;
     }
 
     /**
      * Check whether or not this filenode is the first in the sequence.
      * 
-     * @return
+     * @return true if is a header element
      */
     public boolean isHeader() {
         return header;
     }
 
+    /**
+     * Set header element
+     * @param header
+     */
     public void setHeader(boolean header) {
         this.header = header;
     }
@@ -126,7 +126,7 @@ public class FileNode implements IData {
     /**
      * Check whether or not this filenode is the last in the sequence.
      * 
-     * @return
+     * @return true if this is the last element in the sequence
      */
     public boolean isEof() {
         return eof;
@@ -142,8 +142,8 @@ public class FileNode implements IData {
      * @param nextNodeKey
      *            as a long
      */
-    public void setNextNodeKey(long nextNodeKey) {
-        this.nextNodeKey = nextNodeKey;
+    public void setNextDataKey(long nextNodeKey) {
+        this.nextDataKey = nextNodeKey;
     }
 
     /**
@@ -151,8 +151,8 @@ public class FileNode implements IData {
      * 
      * @return returns the key as long
      */
-    public long getNextNodeKey() {
-        return nextNodeKey;
+    public long getNextDataKey() {
+        return nextDataKey;
     }
 
     /**
@@ -164,10 +164,16 @@ public class FileNode implements IData {
         return !this.isEof();
     }
 
+    /**
+     * @return value held by this node
+     */
     public byte[] getVal() {
         return val;
     }
 
+    /**
+     * @param val
+     */
     public void setVal(byte[] val) {
         this.val = val;
     }

@@ -1,4 +1,4 @@
-package org.treetank.filelistener.file.node;
+package org.treetank.filelistener.file.data;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -125,7 +125,7 @@ public class FilelistenerMetaPageFactory implements IMetaEntryFactory {
 
     /**
      * Value which is basically the byte representation
-     * of the header FileNode
+     * of the header FileData
      * 
      * @author Andreas Rain
      * 
