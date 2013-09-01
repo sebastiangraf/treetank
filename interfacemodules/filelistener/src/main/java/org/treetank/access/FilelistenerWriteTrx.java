@@ -16,9 +16,9 @@ import org.treetank.api.IFilelistenerWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.filelistener.file.node.FileNode;
-import org.treetank.filelistener.file.node.FilelistenerMetaPageFactory.MetaKey;
-import org.treetank.filelistener.file.node.FilelistenerMetaPageFactory.MetaValue;
+import org.treetank.filelistener.file.data.FileData;
+import org.treetank.filelistener.file.data.FilelistenerMetaDataFactory.MetaKey;
+import org.treetank.filelistener.file.data.FilelistenerMetaDataFactory.MetaValue;
 
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteArrayDataOutput;
@@ -121,7 +121,7 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
             }
         }
 
-        ByteBuffer buffer = ByteBuffer.allocate(FileNode.FILENODESIZE);
+        ByteBuffer buffer = ByteBuffer.allocate(FileData.FILENODESIZE);
 
         LOGGER.debug("Successfully initialized byte source.");
         readingAmount += ch.read(buffer);
@@ -140,7 +140,7 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
             removeFile(pRelativePath);
         }
 
-        // Setting a new header file node
+        // Setting a new header file data
         MetaKey key = new MetaKey(pRelativePath);
         MetaValue value = new MetaValue(newKey);
 
@@ -148,31 +148,31 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
         LOGGER.debug("Metakeypair setup");
         getBucketTransaction().getMetaBucket().put(key, value);
 
-        // Creating and setting the headernode.
-        FileNode headerNode = new FileNode(newKey, new byte[FileNode.FILENODESIZE]);
-        headerNode.setHeader(true);
-        headerNode.setEof(false);
-        headerNode.setNextNodeKey(headerNode.getDataKey() + 1);
+        // Creating and setting the headerdata.
+        FileData headerData = new FileData(newKey, new byte[FileData.FILENODESIZE]);
+        headerData.setHeader(true);
+        headerData.setEof(false);
+        headerData.setNextDataKey(headerData.getDataKey() + 1);
 
-        headerNode.setVal(buffer.array());
+        headerData.setVal(buffer.array());
 
-        getBucketTransaction().setData(headerNode);
+        getBucketTransaction().setData(headerData);
 
-        // Creating and setting following nodes based on the file size.
-        FileNode node;
+        // Creating and setting following datas based on the file size.
+        FileData data;
 
         int currentReadingAmount = 0;
-        while ((currentReadingAmount = ch.read(buffer = ByteBuffer.allocate(FileNode.FILENODESIZE))) > 0) {
+        while ((currentReadingAmount = ch.read(buffer = ByteBuffer.allocate(FileData.FILENODESIZE))) > 0) {
             LOGGER.debug("" + currentReadingAmount);
             byte[] slice = Arrays.copyOf(buffer.array(), currentReadingAmount);
 
             long dataKey = getBucketTransaction().incrementDataKey();
-            node = new FileNode(dataKey, slice);
-            node.setNextNodeKey(dataKey + 1);
-            node.setHeader(false);
-            node.setEof(false);
+            data = new FileData(dataKey, slice);
+            data.setNextDataKey(dataKey + 1);
+            data.setHeader(false);
+            data.setEof(false);
             
-            getBucketTransaction().setData(node);
+            getBucketTransaction().setData(data);
 
             readingAmount += currentReadingAmount;
         }
@@ -180,12 +180,12 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
         ByteArrayDataOutput size = ByteStreams.newDataOutput();
         size.writeInt(readingAmount);
 
-        node = new FileNode(getBucketTransaction().incrementDataKey(), size.toByteArray());
+        data = new FileData(getBucketTransaction().incrementDataKey(), size.toByteArray());
 
-        node.setHeader(false);
-        node.setEof(true);
+        data.setHeader(false);
+        data.setEof(true);
 
-        getBucketTransaction().setData(node);
+        getBucketTransaction().setData(data);
 
         Preconditions.checkArgument(getBucketTransaction().getData(newKey) != null);
         lock.release();

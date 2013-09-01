@@ -15,8 +15,8 @@ import org.treetank.api.IStorage;
 import org.treetank.exception.TTException;
 import org.treetank.filelistener.exceptions.ResourceNotExistingException;
 import org.treetank.filelistener.exceptions.StorageAlreadyExistsException;
-import org.treetank.filelistener.file.node.FileNodeFactory;
-import org.treetank.filelistener.file.node.FilelistenerMetaPageFactory;
+import org.treetank.filelistener.file.data.FileDataFactory;
+import org.treetank.filelistener.file.data.FilelistenerMetaDataFactory;
 import org.treetank.io.IBackend.IBackendFactory;
 import org.treetank.revisioning.IRevisioning;
 
@@ -82,8 +82,8 @@ public class StorageManager {
 
         Properties props = StandardSettings.getProps(storageFile.getAbsolutePath(), name);
         ResourceConfiguration mResourceConfig =
-            new ResourceConfiguration(props, backend, revision, new FileNodeFactory(),
-                new FilelistenerMetaPageFactory());
+            new ResourceConfiguration(props, backend, revision, new FileDataFactory(),
+                new FilelistenerMetaDataFactory());
 
         storage.createResource(mResourceConfig);
 

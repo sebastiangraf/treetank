@@ -17,8 +17,8 @@ import org.testng.annotations.Test;
 import org.treetank.access.conf.ModuleSetter;
 import org.treetank.exception.TTException;
 import org.treetank.filelistener.exceptions.ResourceNotExistingException;
-import org.treetank.filelistener.file.node.FileNodeFactory;
-import org.treetank.filelistener.file.node.FilelistenerMetaPageFactory;
+import org.treetank.filelistener.file.data.FileDataFactory;
+import org.treetank.filelistener.file.data.FilelistenerMetaDataFactory;
 import org.treetank.io.IOUtils;
 
 import com.google.common.io.Files;
@@ -44,10 +44,10 @@ public class FilelistenerTest {
     public void setUp() throws Exception {
         IOUtils.recursiveDelete(new File(StorageManager.ROOT_PATH));
         
-        StorageManager.createResource(RESOURCE_1, new ModuleSetter().setDataFacClass(FileNodeFactory.class)
-            .setMetaFacClass(FilelistenerMetaPageFactory.class).createModule());
-        StorageManager.createResource(RESOURCE_2, new ModuleSetter().setDataFacClass(FileNodeFactory.class)
-            .setMetaFacClass(FilelistenerMetaPageFactory.class).createModule());
+        StorageManager.createResource(RESOURCE_1, new ModuleSetter().setDataFacClass(FileDataFactory.class)
+            .setMetaFacClass(FilelistenerMetaDataFactory.class).createModule());
+        StorageManager.createResource(RESOURCE_2, new ModuleSetter().setDataFacClass(FileDataFactory.class)
+            .setMetaFacClass(FilelistenerMetaDataFactory.class).createModule());
         filelistener = new Filelistener();
     }
 

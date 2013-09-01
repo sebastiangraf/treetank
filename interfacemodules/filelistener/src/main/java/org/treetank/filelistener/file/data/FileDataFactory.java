@@ -1,4 +1,4 @@
-package org.treetank.filelistener.file.node;
+package org.treetank.filelistener.file.data;
 
 import java.io.DataInput;
 import java.io.IOException;
@@ -12,7 +12,7 @@ import org.treetank.exception.TTIOException;
  * @author Andreas Rain
  * 
  */
-public class FileNodeFactory implements IDataFactory {
+public class FileDataFactory implements IDataFactory {
 
     /**
      * {@inheritDoc}
@@ -29,9 +29,9 @@ public class FileNodeFactory implements IDataFactory {
             byte[] data = new byte[length];
             input.readFully(data);
 
-            FileNode node = null;
-            node = new FileNode(nodeKey, data);
-            node.setNextNodeKey(nextNodeKey);
+            FileData node = null;
+            node = new FileData(nodeKey, data);
+            node.setNextDataKey(nextNodeKey);
             node.setHeader(header);
             node.setEof(eof);
             return node;

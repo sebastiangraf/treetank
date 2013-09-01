@@ -1,4 +1,4 @@
-package org.treetank.filelistener.file.node;
+package org.treetank.filelistener.file.data;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -20,7 +20,7 @@ import com.google.common.hash.PrimitiveSink;
  * @author Andreas Rain
  * 
  */
-public class FilelistenerMetaPageFactory implements IMetaEntryFactory {
+public class FilelistenerMetaDataFactory implements IMetaEntryFactory {
 
     private final static int KEY = 1;
     private final static int VALUE = 2;
@@ -125,7 +125,7 @@ public class FilelistenerMetaPageFactory implements IMetaEntryFactory {
 
     /**
      * Value which is basically the byte representation
-     * of the header FileNode
+     * of the header FileData
      * 
      * @author Andreas Rain
      * 

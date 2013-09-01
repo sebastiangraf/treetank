@@ -15,8 +15,8 @@ import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
 import org.treetank.filelistener.exceptions.StorageAlreadyExistsException;
 import org.treetank.filelistener.exceptions.ResourceNotExistingException;
-import org.treetank.filelistener.file.node.FileNodeFactory;
-import org.treetank.filelistener.file.node.FilelistenerMetaPageFactory;
+import org.treetank.filelistener.file.data.FileDataFactory;
+import org.treetank.filelistener.file.data.FilelistenerMetaDataFactory;
 import org.treetank.io.IOUtils;
 
 /**
@@ -36,8 +36,8 @@ public class StorageManagerTest {
     @BeforeMethod
     public void setUp() throws StorageAlreadyExistsException, TTException {
         IOUtils.recursiveDelete(new File(StorageManager.ROOT_PATH));
-        StorageManager.createResource(mStorageName, new ModuleSetter().setDataFacClass(FileNodeFactory.class)
-            .setMetaFacClass(FilelistenerMetaPageFactory.class).createModule());
+        StorageManager.createResource(mStorageName, new ModuleSetter().setDataFacClass(FileDataFactory.class)
+            .setMetaFacClass(FilelistenerMetaDataFactory.class).createModule());
     }
 
     @AfterMethod

@@ -11,9 +11,9 @@ import org.treetank.api.IFilelistenerReadTrx;
 import org.treetank.api.IMetaEntry;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.filelistener.file.node.FileNode;
-import org.treetank.filelistener.file.node.FilelistenerMetaPageFactory.MetaKey;
-import org.treetank.filelistener.file.node.FilelistenerMetaPageFactory.MetaValue;
+import org.treetank.filelistener.file.data.FileData;
+import org.treetank.filelistener.file.data.FilelistenerMetaDataFactory.MetaKey;
+import org.treetank.filelistener.file.data.FilelistenerMetaDataFactory.MetaValue;
 
 import com.google.common.io.Files;
 import com.google.common.io.OutputSupplier;
@@ -102,7 +102,7 @@ public class FilelistenerReadTrx implements IFilelistenerReadTrx {
             return file;
         }
 
-        FileNode node = (FileNode)mPageReadTrx.getData(value.getData());
+        FileData node = (FileData)mPageReadTrx.getData(value.getData());
 
         OutputSupplier<FileOutputStream> supplier = Files.newOutputStreamSupplier(file, true);
 
@@ -110,7 +110,7 @@ public class FilelistenerReadTrx implements IFilelistenerReadTrx {
         // and writing the bytes to a temporary file.
         do {
             supplier.getOutput().write(node.getVal());
-            node = (FileNode)mPageReadTrx.getData(node.getNextNodeKey());
+            node = (FileData)mPageReadTrx.getData(node.getNextDataKey());
         } while (!node.isEof());
 
         supplier.getOutput().close();

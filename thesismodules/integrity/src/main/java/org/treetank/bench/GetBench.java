@@ -71,74 +71,74 @@ public class GetBench {
     private IBucketReadTrx mTrx;
 
     public GetBench() throws TTException {
-        final Injector inj =
-            Guice.createInjector(new ModuleSetter().setDataFacClass(DumbDataFactory.class).setMetaFacClass(
-                DumbMetaEntryFactory.class).setBackendClass(JCloudsStorage.class).createModule());
-
-        final ResourceConfiguration resConfig =
-            inj.getInstance(IResourceConfigurationFactory.class).create(
-                StandardSettings.getProps(benchedFile.getAbsolutePath(), RESOURCENAME));
-        IOUtils.recursiveDelete(benchedFile);
-
-        // Creating Storage and inserting ELEMENTS nodes in FACTOR revisions
-        final StorageConfiguration storConfig = new StorageConfiguration(benchedFile);
-        Storage.createStorage(storConfig);
-        final IStorage storage = Storage.openStorage(benchedFile);
-        storage.createResource(resConfig);
-        final ISession session =
-            storage.getSession(new SessionConfiguration(RESOURCENAME, StandardSettings.KEY));
-        IBucketWriteTrx trx = session.beginBucketWtx();
-        long time = System.currentTimeMillis();
-        // Creating FACTOR versions with ELEMENTS\FACTOR elements
-        for (int j = 0; j < FACTOR; j++) {
-            System.out.println("Inserting revision " + j + " and " + (ELEMENTS / FACTOR) + " elements");
-            for (int i = 0; i < ELEMENTS / FACTOR; i++) {
-                final long nodeKey = trx.incrementDataKey();
-                mNodesToInsert[i].setDataKey(nodeKey);
-                trx.setData(mNodesToInsert[i]);
-            }
-            trx.commit();
-        }
-        trx.close();
-        trx = session.beginBucketWtx();
-        long endtime = System.currentTimeMillis();
-        System.out.println("Generating nodes in " + FACTOR + " versions took " + (endtime - time) + "ms");
-
-        // Modifying ELEMENT nodes in FACTOR revisions.
-        for (int i = 0; i < FACTOR; i++) {
-            System.out.println("Modifying revision " + i + " and " + (ELEMENTS / FACTOR) + " elements");
-            boolean continueFlag = true;
-            for (int j = 0; j < ELEMENTS / FACTOR && continueFlag; j++) {
-                try {
-                    final long keyToAdapt = Math.abs(BenchUtils.random.nextLong()) % ELEMENTS;
-                    final DumbData data= BenchUtils.generateOne();
-                    data.setDataKey(keyToAdapt);
-                    trx.setData(data);
-                } catch (Exception e) {
-                    System.err.println("Exception " + e + " thrown in factor " + i + "  and Elements " + j);
-                    continueFlag = false;
-                }
-            }
-            if (continueFlag) {
-                long commitstart = System.currentTimeMillis();
-                System.out.println("Revision " + i + " before commit");
-                trx.commit();
-                System.out.println("Commit of revision " + i + " finished in "
-                    + (System.currentTimeMillis() - commitstart) + "ms");
-            } else {
-                System.out.println("Revision " + i + " skipped");
-                i--;
-                trx.close();
-                trx = session.beginBucketWtx();
-            }
-        }
-        long endtimeMod = System.currentTimeMillis();
-        System.out
-            .println("Modifying nodes in " + FACTOR + " versions took " + (endtimeMod - endtime) + "ms");
-
-        trx.close();
-        session.close();
-        storage.close();
+//        final Injector inj =
+//            Guice.createInjector(new ModuleSetter().setDataFacClass(DumbDataFactory.class).setMetaFacClass(
+//                DumbMetaEntryFactory.class).setBackendClass(JCloudsStorage.class).createModule());
+//
+//        final ResourceConfiguration resConfig =
+//            inj.getInstance(IResourceConfigurationFactory.class).create(
+//                StandardSettings.getProps(benchedFile.getAbsolutePath(), RESOURCENAME));
+//        IOUtils.recursiveDelete(benchedFile);
+//
+//        // Creating Storage and inserting ELEMENTS nodes in FACTOR revisions
+//        final StorageConfiguration storConfig = new StorageConfiguration(benchedFile);
+//        Storage.createStorage(storConfig);
+//        final IStorage storage = Storage.openStorage(benchedFile);
+//        storage.createResource(resConfig);
+//        final ISession session =
+//            storage.getSession(new SessionConfiguration(RESOURCENAME, StandardSettings.KEY));
+//        IBucketWriteTrx trx = session.beginBucketWtx();
+//        long time = System.currentTimeMillis();
+//        // Creating FACTOR versions with ELEMENTS\FACTOR elements
+//        for (int j = 0; j < FACTOR; j++) {
+//            System.out.println("Inserting revision " + j + " and " + (ELEMENTS / FACTOR) + " elements");
+//            for (int i = 0; i < ELEMENTS / FACTOR; i++) {
+//                final long nodeKey = trx.incrementDataKey();
+//                mNodesToInsert[i].setDataKey(nodeKey);
+//                trx.setData(mNodesToInsert[i]);
+//            }
+//            trx.commit();
+//        }
+//        trx.close();
+//        trx = session.beginBucketWtx();
+//        long endtime = System.currentTimeMillis();
+//        System.out.println("Generating nodes in " + FACTOR + " versions took " + (endtime - time) + "ms");
+//
+//        // Modifying ELEMENT nodes in FACTOR revisions.
+//        for (int i = 0; i < FACTOR; i++) {
+//            System.out.println("Modifying revision " + i + " and " + (ELEMENTS / FACTOR) + " elements");
+//            boolean continueFlag = true;
+//            for (int j = 0; j < ELEMENTS / FACTOR && continueFlag; j++) {
+//                try {
+//                    final long keyToAdapt = Math.abs(BenchUtils.random.nextLong()) % ELEMENTS;
+//                    final DumbData data= BenchUtils.generateOne();
+//                    data.setDataKey(keyToAdapt);
+//                    trx.setData(data);
+//                } catch (Exception e) {
+//                    System.err.println("Exception " + e + " thrown in factor " + i + "  and Elements " + j);
+//                    continueFlag = false;
+//                }
+//            }
+//            if (continueFlag) {
+//                long commitstart = System.currentTimeMillis();
+//                System.out.println("Revision " + i + " before commit");
+//                trx.commit();
+//                System.out.println("Commit of revision " + i + " finished in "
+//                    + (System.currentTimeMillis() - commitstart) + "ms");
+//            } else {
+//                System.out.println("Revision " + i + " skipped");
+//                i--;
+//                trx.close();
+//                trx = session.beginBucketWtx();
+//            }
+//        }
+//        long endtimeMod = System.currentTimeMillis();
+//        System.out
+//            .println("Modifying nodes in " + FACTOR + " versions took " + (endtimeMod - endtime) + "ms");
+//
+//        trx.close();
+//        session.close();
+//        storage.close();
 
     }
 
@@ -164,17 +164,17 @@ public class GetBench {
         mTrx = mSession.beginBucketRtx(mSession.getMostRecentVersion());
     }
 
-    @Bench
-    public void random016384() throws TTException {
-        get(16384, true);
-        System.out.println("163842");
-    }
-
-    @Bench
-    public void random032768() throws TTException {
-        get(32768, true);
-        System.out.println("32768");
-    }
+    // @Bench
+    // public void random016384() throws TTException {
+    // get(16384, true);
+    // System.out.println("163842");
+    // }
+    //
+    // @Bench
+    // public void random032768() throws TTException {
+    // get(32768, true);
+    // System.out.println("32768");
+    // }
 
     @Bench
     public void random065536() throws TTException {
@@ -182,47 +182,47 @@ public class GetBench {
         System.out.println("65536");
     }
 
-    @Bench
-    public void random131072() throws TTException {
-        get(131072, true);
-        System.out.println("131072");
-    }
+    // @Bench
+    // public void random131072() throws TTException {
+    // get(131072, true);
+    // System.out.println("131072");
+    // }
+    //
+    // @Bench
+    // public void random262144() throws TTException {
+    // get(262144, true);
+    // System.out.println("262144");
+    // }
 
-    @Bench
-    public void random262144() throws TTException {
-        get(262144, true);
-        System.out.println("262144");
-    }
-
-    @Bench
-    public void seq016384() throws TTException {
-        get(16384, false);
-        System.out.println("163842");
-    }
-
-    @Bench
-    public void seq032768() throws TTException {
-        get(32768, false);
-        System.out.println("32768");
-    }
-
-    @Bench
-    public void seq065536() throws TTException {
-        get(65536, false);
-        System.out.println("65536");
-    }
-
-    @Bench
-    public void seq131072() throws TTException {
-        get(131072, false);
-        System.out.println("131072");
-    }
-
-    @Bench
-    public void seq262144() throws TTException {
-        get(262144, false);
-        System.out.println("262144");
-    }
+//    @Bench
+//    public void seq016384() throws TTException {
+//        get(16384, false);
+//        System.out.println("163842");
+//    }
+//
+//    @Bench
+//    public void seq032768() throws TTException {
+//        get(32768, false);
+//        System.out.println("32768");
+//    }
+//
+//    @Bench
+//    public void seq065536() throws TTException {
+//        get(65536, false);
+//        System.out.println("65536");
+//    }
+//
+//    @Bench
+//    public void seq131072() throws TTException {
+//        get(131072, false);
+//        System.out.println("131072");
+//    }
+//
+//    @Bench
+//    public void seq262144() throws TTException {
+//        get(262144, false);
+//        System.out.println("262144");
+//    }
 
     @AfterEachRun
     public void tearDown() throws TTException {
@@ -251,7 +251,7 @@ public class GetBench {
 
     static class Config extends AbstractConfig {
 
-        private final static int RUNS = 1;
+        private final static int RUNS = 2;
         private final static Set<AbstractMeter> METERS = new HashSet<AbstractMeter>();
         private final static Set<AbstractOutput> OUTPUT = new HashSet<AbstractOutput>();
 
