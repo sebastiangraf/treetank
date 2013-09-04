@@ -111,7 +111,9 @@ public class FilesystemNotification implements Callable<Void> {
 
 				if (this.mObservers.size() > 0) {
 					// For bench purposes
+				    System.out.println("Commiting blocked");
 					mWtx.commitBlocked();
+				    System.out.println("Commit finsihed.");
 				} else {
 					// Non blocking
 					mWtx.commit();

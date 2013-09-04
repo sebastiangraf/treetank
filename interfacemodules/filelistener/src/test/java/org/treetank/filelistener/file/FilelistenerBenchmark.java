@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.treetank.access.conf.ModuleSetter;
 import org.treetank.exception.TTException;
@@ -43,8 +42,6 @@ public class FilelistenerBenchmark implements FilesystemNotificationObserver {
 
 	/** Filelistener for the benchmark */
 	private Filelistener filelistener;
-	/** Two-dimensional byte array for mltiple bytes */
-	private byte[][] fileBytes;
 	/** long array to track start time of file reads/writes */
 	long[] starts;
 	/** long array to track end time of file reads/writes */
@@ -94,31 +91,26 @@ public class FilelistenerBenchmark implements FilesystemNotificationObserver {
 			ClassNotFoundException, IOException, ResourceNotExistingException,
 			TTException, InterruptedException {
 		// Listening to the target folder
-		Assert.assertNotNull(new File(BUCKETFOLDER).list());
+//		Assert.assertNotNull(new File(BUCKETFOLDER).list());
 		final File tmpdir = Files.createTempDir();
 		Filelistener.addFilelistener(RESOURCE_1, tmpdir.getAbsolutePath());
 		filelistener.watchDir(tmpdir);
 		filelistener.startListening();
-
-		// Setting up file data for 10 files
-		fileBytes = new byte[FILES][filebenchSize];
-
-		for (int i = 0; i < fileBytes.length; i++) {
-			// Using random seed of (i+1) * 42
-			Random rand = new Random(42 * (i + 1));
-			rand.nextBytes(fileBytes[i]);
-		}
 
 		// Benching creation of files on the filesystem and awaiting
 		// finalization in treetank.
 		starts = new long[FILES];
 		ends = new long[FILES];
 		bucketCount = new long[FILES];
-		for (int i = 0; i < fileBytes.length; i++) {
+		for (int i = 0; i < FILES; i++) {
 			String filename = tmpdir + File.separator + "file" + (i + 1)
 					+ ".data";
 			fileMap.put(File.separator + "file" + (i + 1) + ".data", i);
-			Files.write(fileBytes[i], new File(filename));
+			
+			byte[] fileBytes = new byte[filebenchSize];
+                        Random rand = new Random(42 * (i + 1));
+                        rand.nextBytes(fileBytes);
+			Files.write(fileBytes, new File(filename));
 			
 		}
 
@@ -177,7 +169,12 @@ public class FilelistenerBenchmark implements FilesystemNotificationObserver {
 	}
 
 	private long bucketCount() {
-		return new File(BUCKETFOLDER).list().length;
+	    File file = new File(BUCKETFOLDER);
+	    if(file.list() != null){
+	        return file.list().length;
+	    }
+	    
+	    return 0;
 	}
 
 	@Override
