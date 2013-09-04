@@ -42,17 +42,17 @@ public class StandardSettings {
             StorageConfiguration.Paths.Data.getFile().getName(), resource).toString());
         properties.setProperty(ConstructorProps.NUMBERTORESTORE, Integer.toString(4));
 
-//        properties.setProperty(ConstructorProps.JCLOUDSTYPE, "aws-s3");
-         properties.setProperty(ConstructorProps.JCLOUDSTYPE, "filesystem");
+        // properties.setProperty(ConstructorProps.JCLOUDSTYPE, "aws-s3");
+        properties.setProperty(ConstructorProps.JCLOUDSTYPE, "filesystem");
         // Path not to main storage but to any to simulate remote cloud location.
 
 //        properties
 //            .setProperty(FilesystemConstants.PROPERTY_BASEDIR,
 //                "/Users/sebi/Documents/workspace/treetank/thesismodules/integrity/tmp/bench/resources/benchResourcegrave9283");
-        // properties.setProperty(FilesystemConstants.PROPERTY_BASEDIR,
-        // "/Volumes/ramdisk/tt/resources/benchResourcegrave9283/data");
+//         properties.setProperty(FilesystemConstants.PROPERTY_BASEDIR,
+//         "/Volumes/ramdisk/tt/resources/benchResourcegrave9283/data");
 
-        properties.setProperty(FilesystemConstants.PROPERTY_BASEDIR, "/home/sebi/.treetank/storage/resources/RESOURCE_1/data");
+        properties.setProperty(FilesystemConstants.PROPERTY_BASEDIR, Files.createTempDir().getAbsolutePath());
         // properties.setProperty(FilesystemConstants.PROPERTY_BASEDIR,
         // "/Users/sebi/Documents/workspace/treetank/thesismodules/integrity/tmp/bliblablubb");
         // properties.setProperty(FilesystemConstants.PROPERTY_BASEDIR, "/Volumes/ramdisk/data");
