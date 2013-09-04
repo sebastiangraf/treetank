@@ -49,7 +49,7 @@ public class FileData implements IData {
     /**
      * The size of the filenode
      */
-    public static final int FILENODESIZE = 524288;
+    public static final int FILENODESIZE = 1024*16;
 
     /**
      * NodeKey for EOF filenodes

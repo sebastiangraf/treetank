@@ -105,7 +105,7 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
      */
     @Override
     public synchronized void addFile(File pFile, String pRelativePath) throws TTException, IOException {
-        LOGGER.debug("Adding file " + pFile.getName());
+        LOGGER.info("Adding file " + pFile.getName());
 
         int readingAmount = 0;
 
@@ -120,12 +120,15 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
                 // File is already locked in this thread or virtual machine
             }
         }
+        
+        LOGGER.info("Filesize: " + ch.size());
 
         ByteBuffer buffer = ByteBuffer.allocate(FileData.FILENODESIZE);
 
         LOGGER.debug("Successfully initialized byte source.");
         readingAmount += ch.read(buffer);
-
+        
+        LOGGER.info("First readAmount: " + readingAmount);
         if (readingAmount <= 0) {
             MetaKey key = new MetaKey(pRelativePath);
             MetaValue value = new MetaValue(FilelistenerReadTrx.emptyFileKey);
@@ -162,8 +165,9 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
         FileData data;
 
         int currentReadingAmount = 0;
+        LOGGER.info("Iterating file content");
         while ((currentReadingAmount = ch.read(buffer = ByteBuffer.allocate(FileData.FILENODESIZE))) > 0) {
-            LOGGER.debug("" + currentReadingAmount);
+            LOGGER.info("Curr. read amount: " + currentReadingAmount);
             byte[] slice = Arrays.copyOf(buffer.array(), currentReadingAmount);
 
             long dataKey = getBucketTransaction().incrementDataKey();
