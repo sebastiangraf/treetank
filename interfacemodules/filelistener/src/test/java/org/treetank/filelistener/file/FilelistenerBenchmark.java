@@ -126,6 +126,7 @@ public class FilelistenerBenchmark implements FilesystemNotificationObserver {
 				ends[fileMap.get(n.getRelativePath())] = System
 						.currentTimeMillis();
 				bucketCount[fileMap.get(n.getRelativePath())] = bucketCount();
+				System.out.println("Run finished.");
 				if (fileMap.get(n.getRelativePath()) == FILES-1)
 					finishedBench = true;
 			}

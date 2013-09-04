@@ -128,7 +128,7 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
         LOGGER.debug("Successfully initialized byte source.");
         readingAmount += ch.read(buffer);
         
-        LOGGER.info("First readAmount: " + readingAmount);
+        LOGGER.debug("First readAmount: " + readingAmount);
         if (readingAmount <= 0) {
             MetaKey key = new MetaKey(pRelativePath);
             MetaValue value = new MetaValue(FilelistenerReadTrx.emptyFileKey);
@@ -167,7 +167,7 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
         int currentReadingAmount = 0;
         LOGGER.info("Iterating file content");
         while ((currentReadingAmount = ch.read(buffer = ByteBuffer.allocate(FileData.FILENODESIZE))) > 0) {
-            LOGGER.info("Curr. read amount: " + currentReadingAmount);
+            LOGGER.debug("Curr. read amount: " + currentReadingAmount);
             byte[] slice = Arrays.copyOf(buffer.array(), currentReadingAmount);
 
             long dataKey = getBucketTransaction().incrementDataKey();
