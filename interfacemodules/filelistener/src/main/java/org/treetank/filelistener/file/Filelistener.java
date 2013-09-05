@@ -332,8 +332,8 @@ public class Filelistener {
 	 */
 	private void process(Path dir, Path file, WatchEvent.Kind<?> evtType)
 			throws TTException, IOException, InterruptedException {
-		LOGGER.info("Processing " + file.getFileName() + " with event "
-				+ evtType);
+//		LOGGER.info("Processing " + file.getFileName() + " with event "
+//				+ evtType);
 		IFilelistenerWriteTrx trx = null;
 		String rootPath = getListenerRootPath(dir);
 
