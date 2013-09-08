@@ -215,10 +215,15 @@ public class JCloudsReader implements IBackendReader {
         @Override
         public Map.Entry<Long, IBucket> call() throws Exception {
 
+            final int tryCounter = 10;
             IBucket bucket = null;
-            // IBucket bucket = mCache.getIfPresent(mBucketId);
-            // if (bucket == null) {
             Blob blob = mBlobStore.getBlob(mResourceName, Long.toString(mBucketId));
+            int i = 0;
+            while (blob == null && i < tryCounter) {
+                Thread.sleep(10);
+                blob = mBlobStore.getBlob(mResourceName, Long.toString(mBucketId));
+                i++;
+            }
             checkNotNull(blob, "Blob %s not found", mBucketId);
             DataInputStream datain =
                 new DataInputStream(mByteHandler.deserialize(blob.getPayload().getInput()));
