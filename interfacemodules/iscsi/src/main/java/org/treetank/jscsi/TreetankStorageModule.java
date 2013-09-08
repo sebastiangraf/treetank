@@ -64,7 +64,7 @@ public class TreetankStorageModule implements IStorageModule {
     public static final int BLOCKS_IN_DATA = 16;
 
     /** Threshold when commit should occur in number of bytes. */
-     private static final int COMMIT_THRESHOLD = 268435456;
+    private static final int COMMIT_THRESHOLD = 268435456;
 
     /** Number of Bytes in Bucket. */
     public final static int BYTES_IN_DATA = BLOCKS_IN_DATA * VIRTUAL_BLOCK_SIZE;
@@ -94,7 +94,7 @@ public class TreetankStorageModule implements IStorageModule {
      * - If a certain amount of bytes have been written, a commit is made to treetank.
      */
     private volatile int mByteCounter;
-    
+
     Set<Long> mPrefetchedBuckets;
     private int BUCKETS_TO_PREFETCH = 3;
 
@@ -218,7 +218,7 @@ public class TreetankStorageModule implements IStorageModule {
             bytesRead += endIndexMax;
         }
 
-        if(storageIndex % BYTES_IN_DATA ==  0){
+        if (storageIndex % BYTES_IN_DATA == 0) {
             prefetch(storageIndex);
         }
         // Bytes read is the actual number of bytes that have been read.
@@ -242,77 +242,91 @@ public class TreetankStorageModule implements IStorageModule {
         int bytesWritten =
             bytes.length + startIndexOffset > BYTES_IN_DATA ? BYTES_IN_DATA - startIndexOffset : bytes.length;
 
+        checkState(mRtx.moveTo(startIndex));
+        byte[] data = mRtx.getValueOfCurrentData();
+        System.arraycopy(bytes, 0, data, startIndexOffset, bytesWritten);
         try {
-            checkState(mRtx.moveTo(startIndex));
-            byte[] data = mRtx.getValueOfCurrentData();
-            System.arraycopy(bytes, 0, data, startIndexOffset, bytesWritten);
             mRtx.setValue(data);
-
-            for (long i = startIndex + 1; i < endIndex; i++) {
-                checkState(mRtx.moveTo(i));
-                data = mRtx.getValueOfCurrentData();
-                System.arraycopy(bytes, bytesWritten, data, 0, data.length);
-                mRtx.setValue(data);
-                bytesWritten = bytesWritten + data.length;
-
-            }
-
-            if (startIndex != endIndex && endIndex < mNodeNumbers) {
-                checkState(mRtx.moveTo(endIndex));
-                data = mRtx.getValueOfCurrentData();
-                System.arraycopy(bytes, bytesWritten, data, 0, endIndexMax);
-                mRtx.setValue(data);
-
-                bytesWritten += endIndexMax;
-            }
-
-            // Bytes written is the actual number of bytes that have been written.
-            // The two lengths have to match, otherwise not enough bytes have been written (or too much?).
-            checkState(bytesWritten == bytes.length);
-
-            // Incrementing bytewriter counter
-            mByteCounter += bytesWritten;
-
-            if (mByteCounter >= COMMIT_THRESHOLD) {
-                this.mRtx.commit();
-                mByteCounter = 0;
-            }
-            
-            if(storageIndex % BYTES_IN_DATA ==  0){
-                prefetch(storageIndex);
-            }
-        } catch (TTException exc) {
-            throw new IOException(exc);
+        } catch (TTException e) {
+            throw new IOException(e);
         }
-        
-//        System.out.println("######################################################### \n\t\t Write took: " + (System.currentTimeMillis() - time) 
-//            + "ms\n\t\t StorageIndex: " + storageIndex 
-//            + "\n\t\t BytesLength: " + bytes.length 
-//            + "\n#########################################################");
+
+        for (long i = startIndex + 1; i < endIndex; i++) {
+            checkState(mRtx.moveTo(i));
+            data = mRtx.getValueOfCurrentData();
+            System.arraycopy(bytes, bytesWritten, data, 0, data.length);
+            try {
+                mRtx.setValue(data);
+            } catch (TTException e) {
+                throw new IOException(e);
+            }
+            bytesWritten = bytesWritten + data.length;
+
+        }
+
+        if (startIndex != endIndex && endIndex < mNodeNumbers) {
+            checkState(mRtx.moveTo(endIndex));
+            data = mRtx.getValueOfCurrentData();
+            System.arraycopy(bytes, bytesWritten, data, 0, endIndexMax);
+            try {
+                mRtx.setValue(data);
+            } catch (TTException e) {
+                throw new IOException(e);
+            }
+
+            bytesWritten += endIndexMax;
+        }
+
+        // Bytes written is the actual number of bytes that have been written.
+        // The two lengths have to match, otherwise not enough bytes have been written (or too much?).
+        checkState(bytesWritten == bytes.length);
+
+        // Incrementing bytewriter counter
+        mByteCounter += bytesWritten;
+
+        if (mByteCounter >= COMMIT_THRESHOLD) {
+            try {
+                this.mRtx.commit();
+            } catch (TTException e) {
+                throw new IOException(e);
+            }
+            mByteCounter = 0;
+        }
+
+        if (storageIndex % BYTES_IN_DATA == 0) {
+            prefetch(storageIndex);
+        }
+
+        // System.out.println("######################################################### \n\t\t Write took: "
+        // + (System.currentTimeMillis() - time)
+        // + "ms\n\t\t StorageIndex: " + storageIndex
+        // + "\n\t\t BytesLength: " + bytes.length
+        // + "\n#########################################################");
     }
-    
+
     /**
      * Prefetch buckets if necessary
      */
-    private void prefetch(long storageIndex){
+    private void prefetch(long storageIndex) {
         long startIndex = storageIndex / BYTES_IN_DATA;
-        //Inc to next bucket
+        // Inc to next bucket
         startIndex += 128;
-        
-        if(mPrefetchedBuckets.contains(startIndex)){
+
+        if (mPrefetchedBuckets.contains(startIndex)) {
             mPrefetchedBuckets.remove(startIndex);
             return;
         }
-        
+
         for (int i = 0; i < BUCKETS_TO_PREFETCH; i++) {
-            if((startIndex + i) > (mNodeNumbers / 128)) {
+            if ((startIndex + i) > (mNodeNumbers / 128)) {
                 return;
             }
-            
+
             mRtx.moveTo(startIndex);
             startIndex += 128;
         }
     }
+
     /**
      * {@inheritDoc}
      */
