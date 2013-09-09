@@ -56,6 +56,13 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
     /**
      * {@inheritDoc}
      */
+    public int getCount() {
+        return mDelegate.getCount();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean fileExists(String pRelativePath) {
         return mDelegate.fileExists(pRelativePath);

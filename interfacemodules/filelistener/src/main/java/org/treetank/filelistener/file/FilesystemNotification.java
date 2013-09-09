@@ -21,7 +21,7 @@ import org.treetank.api.IFilelistenerWriteTrx;
  * 
  */
 public class FilesystemNotification implements Callable<Void> {
-
+        
 	/** The file that has been changed */
 	private final File mFile;
 
@@ -41,6 +41,11 @@ public class FilesystemNotification implements Callable<Void> {
 	 * Time this notification needed to be processed.
 	 */
 	private long mTimeTaken;
+	
+	/**
+	 * Bucket amount
+	 */
+	private int mBuckets;
 
 	/** Transaction to use */
 	private final IFilelistenerWriteTrx mWtx;
@@ -145,15 +150,30 @@ public class FilesystemNotification implements Callable<Void> {
 	public long getTime(){
 	    return mTimeTaken;
 	}
+        
+        /**
+         * Determine how many buckets are in the storage after this notifcation was processed.
+         * @return amount of buckets
+         */
+        public int getBucketAmount(){
+            return mBuckets;
+        }
 
+	/**
+	 * @throws InterruptedException
+	 */
 	public void notifyObservers() throws InterruptedException {
 		synchronized (this) {
 			for (FilesystemNotificationObserver o : mObservers) {
+		                mBuckets = mWtx.getCount();
 				o.addNotification(this);
 			}
 		}
 	}
 
+	/**
+	 * @param observer
+	 */
 	public void addObserver(FilesystemNotificationObserver observer) {
 		this.mObservers.add(observer);
 	}
