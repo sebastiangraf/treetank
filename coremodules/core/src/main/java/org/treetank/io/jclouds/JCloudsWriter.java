@@ -6,6 +6,7 @@ package org.treetank.io.jclouds;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.concurrent.Callable;
 
 import org.jclouds.blobstore.BlobStore;
@@ -194,11 +195,18 @@ public class JCloudsWriter implements IBackendWriter {
                     DataOutputStream dataOut = new DataOutputStream(mReader.mByteHandler.serialize(byteOut));
                     mBucket.serialize(dataOut);
                     dataOut.close();
+                    
+                    //storing length in front of byte array
+                    final byte[] data = byteOut.toByteArray();
+                    final ByteBuffer buffer = ByteBuffer.allocate(4 + data.length);
+                    buffer.putInt(buffer.capacity());
+                    buffer.put(data);
 
                     BlobBuilder blobbuilder =
                         mReader.mBlobStore.blobBuilder(Long.toString(mBucket.getBucketKey()));
                     Blob blob = blobbuilder.build();
-                    blob.setPayload(byteOut.toByteArray());
+                    
+                    blob.setPayload(buffer.array());
                     mReader.mBlobStore.putBlob(mReader.mResourceName, blob);
                 } catch (Exception e) {
 
