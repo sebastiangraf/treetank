@@ -218,12 +218,12 @@ public class JCloudsReader implements IBackendReader {
         @Override
         public Map.Entry<Long, IBucket> call() throws Exception {
 
-            final int tryCounter = 10;
+            final int tryCounter = 100;
             IBucket bucket = null;
             Blob blob = mBlobStore.getBlob(mResourceName, Long.toString(mBucketId));
-            int i = 0;
-            while (blob == null && i < tryCounter) {
-                Thread.sleep(10);
+            int i = 1;
+            while (blob == null && i <= tryCounter) {
+                Thread.sleep(i*10);
                 blob = mBlobStore.getBlob(mResourceName, Long.toString(mBucketId));
                 i++;
             }

@@ -211,7 +211,7 @@ public class JCloudsWriter implements IBackendWriter {
                 } catch (Exception e) {
 
                 }
-                finished = true;
+                finished = mReader.mBlobStore.blobExists(mReader.mResourceName, Long.toString(mBucket.getBucketKey()));
 
                 // upload.write(mBucket.getBucketKey() + "," + mBucket.getClass().getName() + "\n");
                 // upload.flush();

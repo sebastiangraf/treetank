@@ -185,7 +185,7 @@ public class TreetankTargetServer {
         IOUtils.recursiveDelete(config.mFile);
         Storage.createStorage(config);
 
-        final String resourceName="bench53473ResourcegraveISCSI9283";
+        final String resourceName="bench53473ResourcegraveISCSI9284";
         
         // Guice Stuff for building the module
         final Injector injector =
