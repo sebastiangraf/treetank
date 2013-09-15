@@ -8,6 +8,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -223,7 +224,7 @@ public class JCloudsReader implements IBackendReader {
             Blob blob = mBlobStore.getBlob(mResourceName, Long.toString(mBucketId));
             int i = 1;
             while (blob == null && i <= tryCounter) {
-                Thread.sleep(i*10);
+                Thread.sleep(i * 10);
                 blob = mBlobStore.getBlob(mResourceName, Long.toString(mBucketId));
                 i++;
             }
@@ -231,12 +232,16 @@ public class JCloudsReader implements IBackendReader {
 
             // retrieving incomplete written data completely
             boolean stayIn = false;
-            byte[] data;
+            byte[] data = new byte[0];
             do {
-                data = ByteStreams.toByteArray(blob.getPayload().getInput());
-                final ByteBuffer buffer = ByteBuffer.wrap(data);
-                final int length = buffer.getInt();
-                if (length < data.length) {
+                try {
+                    data = ByteStreams.toByteArray(blob.getPayload().getInput());
+                    final ByteBuffer buffer = ByteBuffer.wrap(data);
+                    final int length = buffer.getInt();
+                    if (length < data.length) {
+                        stayIn = true;
+                    }
+                } catch (SocketTimeoutException exc) {
                     stayIn = true;
                 }
             } while (stayIn);

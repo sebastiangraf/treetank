@@ -19,7 +19,7 @@ import org.jclouds.blobstore.BlobStoreContext;
 public class BucketCleaner {
 
     private static final String CONTAINER[] = {
-        "benchResourcegrave928312331","bench53473ResourcegraveISCSI9284"
+        "benchResourcegrave92831231"
     };
 
     /**
