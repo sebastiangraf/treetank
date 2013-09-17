@@ -22,7 +22,6 @@ public class FileDataFactory implements IDataFactory {
     public IData deserializeData(DataInput input) throws TTIOException {
         try {
             long nodeKey = input.readLong();
-            long nextNodeKey = input.readLong();
             boolean header = input.readBoolean();
             boolean eof = input.readBoolean();
             int length = input.readInt();
@@ -30,10 +29,7 @@ public class FileDataFactory implements IDataFactory {
             input.readFully(data);
 
             FileData node = null;
-            node = new FileData(nodeKey, data);
-            node.setNextDataKey(nextNodeKey);
-            node.setHeader(header);
-            node.setEof(eof);
+            node = new FileData(nodeKey, data, header, eof);
             return node;
         } catch (final IOException exc) {
             throw new TTIOException(exc);

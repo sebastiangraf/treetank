@@ -9,8 +9,6 @@ import java.nio.channels.FileLock;
 import java.nio.channels.OverlappingFileLockException;
 import java.util.Arrays;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.treetank.api.IBucketWriteTrx;
 import org.treetank.api.IFilelistenerWriteTrx;
 import org.treetank.api.ISession;
@@ -29,7 +27,7 @@ import com.google.common.io.ByteStreams;
  */
 public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(FilelistenerWriteTrx.class);
+    //    private static final Logger LOGGER = LoggerFactory.getLogger(FilelistenerWriteTrx.class);
 
     /** Session for abort/commit. */
     private final ISession mSession;
@@ -112,7 +110,7 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
      */
     @Override
     public synchronized void addFile(File pFile, String pRelativePath) throws TTException, IOException {
-//        LOGGER.info("Adding file " + pFile.getName());
+        // LOGGER.info("Adding file " + pFile.getName());
 
         int readingAmount = 0;
 
@@ -127,15 +125,15 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
                 // File is already locked in this thread or virtual machine
             }
         }
-        
-//        LOGGER.info("Filesize: " + ch.size());
+
+        // LOGGER.info("Filesize: " + ch.size());
 
         ByteBuffer buffer = ByteBuffer.allocate(FileData.FILENODESIZE);
 
-//        LOGGER.debug("Successfully initialized byte source.");
+        // LOGGER.debug("Successfully initialized byte source.");
         readingAmount += ch.read(buffer);
-        
-//        LOGGER.debug("First readAmount: " + readingAmount);
+
+        // LOGGER.debug("First readAmount: " + readingAmount);
         if (readingAmount <= 0) {
             MetaKey key = new MetaKey(pRelativePath);
             MetaValue value = new MetaValue(FilelistenerReadTrx.emptyFileKey);
@@ -155,16 +153,11 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
         MetaValue value = new MetaValue(newKey);
 
         // And adding it to the meta map
-//        LOGGER.debug("Metakeypair setup");
+        // LOGGER.debug("Metakeypair setup");
         getBucketTransaction().getMetaBucket().put(key, value);
 
         // Creating and setting the headerdata.
-        FileData headerData = new FileData(newKey, new byte[FileData.FILENODESIZE]);
-        headerData.setHeader(true);
-        headerData.setEof(false);
-        headerData.setNextDataKey(headerData.getDataKey() + 1);
-
-        headerData.setVal(buffer.array());
+        FileData headerData = new FileData(newKey, buffer.array(), true, false);
 
         getBucketTransaction().setData(headerData);
 
@@ -172,17 +165,14 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
         FileData data;
 
         int currentReadingAmount = 0;
-//        LOGGER.info("Iterating file content");
+        // LOGGER.info("Iterating file content");
         while ((currentReadingAmount = ch.read(buffer = ByteBuffer.allocate(FileData.FILENODESIZE))) > 0) {
-//            LOGGER.debug("Curr. read amount: " + currentReadingAmount);
+            // LOGGER.debug("Curr. read amount: " + currentReadingAmount);
             byte[] slice = Arrays.copyOf(buffer.array(), currentReadingAmount);
 
             long dataKey = getBucketTransaction().incrementDataKey();
-            data = new FileData(dataKey, slice);
-            data.setNextDataKey(dataKey + 1);
-            data.setHeader(false);
-            data.setEof(false);
-            
+            data = new FileData(dataKey, slice, false, false);
+
             getBucketTransaction().setData(data);
 
             readingAmount += currentReadingAmount;
@@ -191,10 +181,7 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
         ByteArrayDataOutput size = ByteStreams.newDataOutput();
         size.writeInt(readingAmount);
 
-        data = new FileData(getBucketTransaction().incrementDataKey(), size.toByteArray());
-
-        data.setHeader(false);
-        data.setEof(true);
+        data = new FileData(getBucketTransaction().incrementDataKey(), size.toByteArray(), false, true);
 
         getBucketTransaction().setData(data);
 
@@ -223,7 +210,7 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
         // ICommitStrategy uber page.
         getBucketTransaction().commit();
     }
-    
+
     /**
      * {@inheritDoc}
      */

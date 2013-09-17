@@ -31,56 +31,47 @@ public class FileData implements IData {
         INSTANCE;
         public void funnel(IData data, PrimitiveSink into) {
             final FileData from = (FileData)data;
-            into.putLong(from.dataKey).putLong(from.nextDataKey).putBytes(from.val).putBoolean(from.header)
-                .putBoolean(from.eof);
+            into.putLong(from.dataKey).putBytes(from.val).putBoolean(from.header).putBoolean(from.eof);
         }
     }
 
     /**
      * The nodes key value, which is equal with it's position in the list.
      */
-    private long dataKey = 0;
-
-    /**
-     * The following nodes key
-     */
-    private long nextDataKey = 0;
+    private final long dataKey;
 
     /**
      * The size of the filenode
      */
-    public static final int FILENODESIZE = 1024*16;
-
-    /**
-     * NodeKey for EOF filenodes
-     */
-
-    public static final long EOF_KEY = -1;
+    public static final int FILENODESIZE = 1024 * 16;
 
     /**
      * The content of this node in form of a byte array.
      */
-    private byte[] val;
+    private final byte[] val;
 
     /**
      * Determines whether or not this filenode is the first in the sequence.
      */
-    private boolean header;
+    private final boolean header;
 
     /**
      * Determines whether or not this filenode is the last in the sequence.
      */
-    private boolean eof;
+    private final boolean eof;
 
     /**
      * Creates a Filenode with given bytes
-     * @param dataKey 
+     * 
+     * @param dataKey
      * @param content
      *            , as byte array
      */
-    public FileData(long dataKey, byte[] content) {
+    public FileData(long dataKey, byte[] content, boolean header, boolean eof) {
         this.dataKey = dataKey;
-        val = content;
+        this.val = content;
+        this.header = header;
+        this.eof = eof;
     }
 
     /**
@@ -91,7 +82,6 @@ public class FileData implements IData {
     public void serialize(final DataOutput output) throws TTIOException {
         try {
             output.writeLong(dataKey);
-            output.writeLong(nextDataKey);
             output.writeBoolean(header);
             output.writeBoolean(eof);
             output.writeInt(val.length);
@@ -116,14 +106,6 @@ public class FileData implements IData {
     }
 
     /**
-     * Set header element
-     * @param header
-     */
-    public void setHeader(boolean header) {
-        this.header = header;
-    }
-
-    /**
      * Check whether or not this filenode is the last in the sequence.
      * 
      * @return true if this is the last element in the sequence
@@ -132,50 +114,11 @@ public class FileData implements IData {
         return eof;
     }
 
-    public void setEof(boolean eof) {
-        this.eof = eof;
-    }
-
-    /**
-     * Set the link to the next node. Use the nodekey of that node.
-     * 
-     * @param nextNodeKey
-     *            as a long
-     */
-    public void setNextDataKey(long nextNodeKey) {
-        this.nextDataKey = nextNodeKey;
-    }
-
-    /**
-     * The node key of the next node
-     * 
-     * @return returns the key as long
-     */
-    public long getNextDataKey() {
-        return nextDataKey;
-    }
-
-    /**
-     * Determine if a node follows after this one.
-     * 
-     * @return returns true if a node follows
-     */
-    public boolean hasNext() {
-        return !this.isEof();
-    }
-
     /**
      * @return value held by this node
      */
     public byte[] getVal() {
         return val;
-    }
-
-    /**
-     * @param val
-     */
-    public void setVal(byte[] val) {
-        this.val = val;
     }
 
     /**
