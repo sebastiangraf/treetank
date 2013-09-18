@@ -14,6 +14,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.testng.annotations.Test;
 import org.treetank.access.conf.ModuleSetter;
+import org.treetank.api.IFilelistenerWriteTrx;
 import org.treetank.exception.TTException;
 import org.treetank.filelistener.exceptions.ResourceNotExistingException;
 import org.treetank.filelistener.file.data.FileDataFactory;
@@ -31,155 +32,152 @@ import com.google.common.io.Files;
  */
 public class FilelistenerBenchmark implements FilesystemNotificationObserver {
 
-	private String benchFile = "target" + File.separator + "FileBench";
+    private static final String createBenchFile = "target" + File.separator + "F";
 
-	/** Filelistener resource */
-	private static final String RESOURCE_1 = "RESOURCE_1";
-	private static final String BUCKETFOLDER = StorageManager.ROOT_PATH
-			+ File.separator + "storage" + File.separator + "resources"
-			+ File.separator + RESOURCE_1 + File.separator + "data"
-			+ File.separator + "RESOURCE_1";
+    /** Filelistener resource */
+    public static final String RESOURCE_1 = "bench53473ResourcegraveISCSI9283";
 
-	/** Filelistener for the benchmark */
-	private Filelistener filelistener;
-	/** long array to track start time of file reads/writes */
-	long[] starts;
-	/** long array to track end time of file reads/writes */
-	long[] ends;
-	/** long array to track bucket counts */
-	long[] bucketCount;
-	/** Filename corresponding to array position */
-	Map<String, Integer> fileMap;
-	/** Still running */
-	boolean finishedBench;
-	/** BlockingQueue */
-	private LinkedBlockingQueue<FilesystemNotification> notifications;
+    /** Filelistener for the benchmark */
+    private Filelistener filelistener;
+    /** long array to track end time of file writes */
+    long[] createEnds;
+    /** long array to track end time of file reads */
+    long[] readEnds;
+     /** long array to track bucket counts */
+     long[] bucketCount;
+    /** Filename corresponding to array position */
+    Map<String, Integer> fileMap;
+    /** Still running */
+    boolean finishedBench;
+    /** BlockingQueue */
+    private LinkedBlockingQueue<FilesystemNotification> notifications;
 
-	public void setUp() throws Exception {
-		IOUtils.recursiveDelete(new File(StorageManager.ROOT_PATH));
-		StorageManager.createResource(RESOURCE_1,
-				new ModuleSetter().setDataFacClass(FileDataFactory.class)
-						.setMetaFacClass(FilelistenerMetaDataFactory.class)
-						.createModule());
-		filelistener = new Filelistener();
-		filelistener.setObserver(this);
-		fileMap = new HashMap<String, Integer>();
-		finishedBench = false;
-		notifications = new LinkedBlockingQueue<>();
-	}
+    public void setUp() throws Exception {
+        IOUtils.recursiveDelete(new File(StorageManager.ROOT_PATH));
+        StorageManager.createResource(RESOURCE_1, new ModuleSetter().setDataFacClass(FileDataFactory.class)
+            .setMetaFacClass(FilelistenerMetaDataFactory.class).createModule());
+        filelistener = new Filelistener();
+        filelistener.setObserver(this);
+        fileMap = new HashMap<String, Integer>();
+        finishedBench = false;
+        notifications = new LinkedBlockingQueue<>();
+    }
 
-	public void tearDown() throws Exception {
-		filelistener.removeFilelistener(RESOURCE_1);
-	}
+    public void tearDown() throws Exception {
+        filelistener.removeFilelistener(RESOURCE_1);
+    }
 
-	private final static int FILES = 100;
+    private final static int FILES = 100;
 
-	@Test
-	public void realBench() throws Exception {
-		int[] toExecute = new int[] {/* 262144, 524288, 1048576, 2097152,
-				4194304, 8388608, */16777216, 33554432 };
+    @Test
+    public void realBench() throws Exception {
+        int[] toExecute = new int[] {
+            262144, 524288, 1048576, 2097152, 4194304, 8388608, 16777216, 33554432
+        };
 
-		for (int i = 0; i < toExecute.length; i++) {
-			setUp();
-			bench(toExecute[i]);
-			tearDown();
-		}
+        for (int i = 0; i < toExecute.length; i++) {
+            setUp();
+            bench(toExecute[i]);
+            tearDown();
+        }
 
-	}
+    }
 
-	private void bench(int filebenchSize) throws FileNotFoundException,
-			ClassNotFoundException, IOException, ResourceNotExistingException,
-			TTException, InterruptedException {
-		// Listening to the target folder
-//		Assert.assertNotNull(new File(BUCKETFOLDER).list());
-		final File tmpdir = Files.createTempDir();
-		Filelistener.addFilelistener(RESOURCE_1, tmpdir.getAbsolutePath());
-		filelistener.watchDir(tmpdir);
-		filelistener.startListening();
+    private void bench(int filebenchSize) throws FileNotFoundException, ClassNotFoundException, IOException,
+        ResourceNotExistingException, TTException, InterruptedException {
+        // Listening to the target folder
+        // Assert.assertNotNull(new File(BUCKETFOLDER).list());
+        final File tmpdir = Files.createTempDir();
+        Filelistener.addFilelistener(RESOURCE_1, tmpdir.getAbsolutePath());
+        filelistener.watchDir(tmpdir);
+        filelistener.startListening();
 
-		// Benching creation of files on the filesystem and awaiting
-		// finalization in treetank.
-		starts = new long[FILES];
-		ends = new long[FILES];
-		bucketCount = new long[FILES];
-		for (int i = 0; i < FILES; i++) {
-			String filename = tmpdir + File.separator + "file" + (i + 1)
-					+ ".data";
-			fileMap.put(File.separator + "file" + (i + 1) + ".data", i);
-			
-			byte[] fileBytes = new byte[filebenchSize];
-                        Random rand = new Random(42 * (i + 1));
-                        rand.nextBytes(fileBytes);
-			Files.write(fileBytes, new File(filename));
-			
-		}
+        // Benching creation of files on the filesystem and awaiting
+        // finalization in treetank.
 
-		while (!finishedBench) {
-			FilesystemNotification n = notifications.poll();
-			if (n == null || n.getEvtType() == ENTRY_CREATE) {
-				if (n != null)
-					starts[fileMap.get(n.getRelativePath())] = System
-							.currentTimeMillis();
-				continue;
-			}
-			if (n.getRelativePath() != null) {
-				ends[fileMap.get(n.getRelativePath())] = System
-						.currentTimeMillis();
-				bucketCount[fileMap.get(n.getRelativePath())] = bucketCount();
-				if (fileMap.get(n.getRelativePath()) == FILES-1)
-					finishedBench = true;
-			}
-		}
-		if (finishedBench) {
-			// Do something, analyze
-			printBench(filebenchSize+"");
-		} else {
-			fail("Bench was not finished but notified that it would be finished.");
-		}
+        createEnds = new long[FILES];
+        readEnds = new long[FILES];
+        bucketCount = new long[FILES];
+        for (int i = 0; i < FILES; i++) {
+            String filename = tmpdir + File.separator + "file" + (i + 1) + ".data";
+            fileMap.put(File.separator + "file" + (i + 1) + ".data", i);
 
-		filelistener.shutDownListener();
-		IOUtils.recursiveDelete(tmpdir);
-	}
+            byte[] fileBytes = new byte[filebenchSize];
+            Random rand = new Random(42 * (i + 1));
+            rand.nextBytes(fileBytes);
+            Files.write(fileBytes, new File(filename));
 
-	private void printBench(String string) throws IOException {
-		System.out.println("######################################");
-		System.out.println("Finished bench with " + string + ".");
-		System.out.println("######################################");
-		for (int i = 0; i < starts.length; i++) {
-			System.out.print("Run " + i + "\t");
-		}
-		System.out.println();
-		String s = "";
-		for (int i = 0; i < starts.length; i++) {
-			s += (ends[i] - starts[i]) + ",";
-		}
-		String s2 = "";
-		for (int i = 0; i < starts.length; i++) {
-			s2 += bucketCount[i] + ",";
-		}
-		System.out.println(s);
-		System.out.println(s2);
+        }
 
-		Files.append(s + "\n", new File(benchFile + "_" + string + "time.csv"),
-				Charset.forName("UTF-8"));
-		Files.append(s2, new File(benchFile + "_" + string + "buckets.csv"),
-				Charset.forName("UTF-8"));
-		System.out.println();
+        while (!finishedBench || !notifications.isEmpty()) {
+            FilesystemNotification n = notifications.poll();
+            if (n == null || n.getEvtType() == ENTRY_CREATE) {
+                continue;
+            }
+            if (n.getRelativePath() != null) {
+                createEnds[fileMap.get(n.getRelativePath())] = n.getTime();
+                bucketCount[fileMap.get(n.getRelativePath())] = n.getBucketAmount();
+                // System.out.println("Run finished.");
+                if (fileMap.get(n.getRelativePath()) == FILES - 1)
+                    finishedBench = true;
+            }
+        }
+        
+        if (finishedBench) {
+            //All files in storage, time to check retrieval time
+            IFilelistenerWriteTrx trx = filelistener.getTrx(RESOURCE_1);
+            File file;
+            long time;
+            String filename;
+            for (int i = 0; i < FILES; i++) {
+                filename = File.separator + "file" + (i + 1) + ".data";
+                time = System.currentTimeMillis();
+                file = trx.getFullFile(filename);
+                time = System.currentTimeMillis() - time;
+                readEnds[i] = time;
 
-	}
+            }
+            
+            // Do something, analyze
+            printBench(filebenchSize + "");
+        } else {
+            fail("Bench was not finished but notified that it would be finished.");
+        }
 
-	private long bucketCount() {
-	    File file = new File(BUCKETFOLDER);
-	    if(file.list() != null){
-	        return file.list().length;
-	    }
-	    
-	    return 0;
-	}
+        filelistener.shutDownListener();
+        IOUtils.recursiveDelete(tmpdir);
+    }
 
-	@Override
-	public synchronized LinkedBlockingQueue<FilesystemNotification> getBlockingQueue() {
-		return notifications;
-	}
+    private void printBench(String string) throws IOException {
+        while (string.length() < 8) {
+            string = "0" + string;
+        }
+        String s = "";
+        String s2 = "";
+        String s3 = "";
+        for (int i = 0; i < createEnds.length - 1; i++) {
+            s   += createEnds[i] + ",";
+            s2  += bucketCount[i] + ",";
+            s3  += readEnds[i] + ",";
+
+        }
+        s       +=  createEnds[createEnds.length - 1];
+        s2      += bucketCount[bucketCount.length - 1];
+        s3      +=    readEnds[readEnds.length - 1];
+
+        Files.write(s   + "\n", new File(createBenchFile + string + "T.csv"), Charset.forName("UTF-8"));
+        Files.write(s2  + "\n", new File(createBenchFile + string + "B.csv"), Charset.forName("UTF-8"));
+        Files.write(s3  + "\n", new File(createBenchFile + string + "R.csv"), Charset.forName("UTF-8"));
+    }
+
+    @Override
+    public synchronized LinkedBlockingQueue<FilesystemNotification> getBlockingQueue() {
+        return notifications;
+    }
+
+    @Override
+    public synchronized void addNotification(FilesystemNotification n) {
+        notifications.add(n);
+    }
 
 }

@@ -77,52 +77,16 @@
         <module>coremodules/commons</module>
         <module>coremodules/core</module>
         <module>coremodules/node</module>
-        <module>interfacemodules/saxon</module>
         <module>interfacemodules/jax-rx</module>
         <module>interfacemodules/xml</module>
         <module>interfacemodules/iscsi</module>
         <module>interfacemodules/filelistener</module>
+        <module>interfacemodules/saxon</module>
     </modules>
 
     <prerequisites>
         <maven>3.0.3</maven>
     </prerequisites>
-
-    <repositories>
-        <repository>
-            <id>disyInternal</id>
-            <name>Internal Repository for the Distributed System Group</name>
-            <url>http://mavenrepo.disy.inf.uni-konstanz.de/repository/disyInternal</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>disyInternalSnapshot</id>
-            <name>Internal Snapshot Repository for the Distributed System Group</name>
-            <url>http://mavenrepo.disy.inf.uni-konstanz.de/repository/disyInternalSnapshot</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>disyThirdParty</id>
-            <name>Repository for third party jar used by disy</name>
-            <url>http://mavenrepo.disy.inf.uni-konstanz.de/repository/disyThirdParty</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
 
     <build>
         <plugins>

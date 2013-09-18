@@ -13,8 +13,14 @@ public interface FilesystemNotificationObserver {
     
     /**
      *  Adds a new notification to the observer.
-     * @param notification
+     * @return blocking queue holding notifications for direct submission
      */
     public LinkedBlockingQueue<FilesystemNotification> getBlockingQueue();
+
+    /**
+     * Adds a notification to the blocking queue.
+     * @param n - FilesystemNotification
+     */
+    void addNotification(FilesystemNotification n);
 
 }

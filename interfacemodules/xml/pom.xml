@@ -33,35 +33,6 @@
     <artifactId>xml</artifactId>
     <packaging>jar</packaging>
     <name>Bundle to store XML</name>
-    <repositories>
-        <repository>
-            <id>javamaven2</id>
-            <name>Repository for Maven2</name>
-            <url>http://download.java.net/maven/2</url>
-        </repository>
-        <repository>
-            <id>disyInternal</id>
-            <name>Internal Repository for the Distributed System Group</name>
-            <url>http://mavenrepo.disy.inf.uni-konstanz.de/repository/disyInternal/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>disyInternalSnapshot</id>
-            <name>Internal Snapshot Repository for the Distributed System Group</name>
-            <url>http://mavenrepo.disy.inf.uni-konstanz.de/repository/disyInternalSnapshot/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
     <dependencies>
         <dependency>
             <groupId>org.treetank</groupId>
@@ -86,11 +57,6 @@
             <version>6.0.1-SNAPSHOT</version>
             <type>test-jar</type>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>saxon</groupId>
-            <artifactId>saxon</artifactId>
-            <version>9.3</version>
         </dependency>
         <dependency>
             <groupId>jtidy</groupId>

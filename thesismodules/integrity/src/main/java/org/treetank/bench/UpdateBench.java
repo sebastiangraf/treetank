@@ -195,19 +195,19 @@ public class UpdateBench {
 
         }
     }
+//
+//    @Bench
+//    public void blockedRan016384() throws TTException {
+//        modify(16384, true, false);
+//        System.out.println("16384");
+//    }
 
     @Bench
-    public void blockedRan016384() throws TTException {
-        modify(16384, true, false);
-        System.out.println("16384");
+    public void blockedRan032768() throws TTException {
+        modify(32768, true, false);
+        System.out.println("32768");
     }
 
-//    @Bench
-//    public void blockedRan032768() throws TTException {
-//        modify(32768, true, false);
-//        System.out.println("32768");
-//    }
-//
 //    @Bench
 //    public void blockedRan065536() throws TTException {
 //        modify(65536, true, false);
@@ -220,36 +220,36 @@ public class UpdateBench {
 //        System.out.println("131072");
 //    }
 //
-////    @Bench
-////    public void blockedRan262144() throws TTException {
-////        modify(262144, true, false);
-////        System.out.println("262144");
-////    }
+//    @Bench
+//    public void blockedRan262144() throws TTException {
+//        modify(262144, true, false);
+//        System.out.println("262144");
+//    }
 //
 //    @Bench
 //    public void nonblockedRan016384() throws TTException {
 //        modify(16384, false, false);
 //        System.out.println("16384");
 //    }
-//
-//    @Bench
-//    public void nonblockedRan032768() throws TTException {
-//        modify(32768, false, false);
-//        System.out.println("32768");
-//    }
-//
+
+    @Bench
+    public void nonblockedRan032768() throws TTException {
+        modify(32768, false, false);
+        System.out.println("32768");
+    }
+
 //    @Bench
 //    public void nonblockedRan065536() throws TTException {
 //        modify(65536, false, false);
 //        System.out.println("65536");
 //    }
-//
-//    @Bench
-//    public void nonblockedRan131072() throws TTException {
-//        modify(131072, false, false);
-//        System.out.println("131072");
-//    }
-//
+
+    @Bench
+    public void nonblockedRan131072() throws TTException {
+        modify(131072, false, false);
+        System.out.println("131072");
+    }
+
 //    @Bench
 //    public void nonblockedRan262144() throws TTException {
 //        modify(262144, false, false);
@@ -344,7 +344,7 @@ public class UpdateBench {
 
     static class Config extends AbstractConfig {
 
-        private final static int RUNS = 3;
+        private final static int RUNS = 1;
         private final static Set<AbstractMeter> METERS = new HashSet<AbstractMeter>();
         private final static Set<AbstractOutput> OUTPUT = new HashSet<AbstractOutput>();
 

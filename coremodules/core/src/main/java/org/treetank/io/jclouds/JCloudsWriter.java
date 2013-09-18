@@ -6,6 +6,7 @@ package org.treetank.io.jclouds;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.concurrent.Callable;
 
 import org.jclouds.blobstore.BlobStore;
@@ -47,10 +48,10 @@ public class JCloudsWriter implements IBackendWriter {
     /** Delegate for reader. */
     private final JCloudsReader mReader;
 
-//    static long readTime = 0;
-//    static int readCounter = 0;
-//    static long writeTime = 0;
-//    static int writeCounter = 0;
+    // static long readTime = 0;
+    // static int readCounter = 0;
+    // static long writeTime = 0;
+    // static int writeCounter = 0;
 
     // private final ConcurrentHashMap<Long, Future<Long>> mRunningWriteTasks;
     // private final CompletionService<Long> mWriterCompletion;
@@ -85,10 +86,10 @@ public class JCloudsWriter implements IBackendWriter {
         // throw new TTIOException(exc);
         // }
         // }
-//        readCounter++;
-//        long time = System.currentTimeMillis();
+        // readCounter++;
+        // long time = System.currentTimeMillis();
         final IBucket bucket = mReader.read(pKey);
-//        readTime = readTime + System.currentTimeMillis() - time;
+        // readTime = readTime + System.currentTimeMillis() - time;
         return bucket;
     }
 
@@ -101,10 +102,10 @@ public class JCloudsWriter implements IBackendWriter {
             // writer.write(pBucket.getBucketKey() + "," + pBucket.getClass().getName() + "\n");
             // writer.flush();
             //
-//            writeCounter++;
-//            long time = System.currentTimeMillis();
+            // writeCounter++;
+            // long time = System.currentTimeMillis();
             new WriteTask(pBucket).call();
-//            writeTime = writeTime + System.currentTimeMillis() - time;
+            // writeTime = writeTime + System.currentTimeMillis() - time;
             // Future<Long> task = mWriterCompletion.submit(new WriteTask(pBucket));
             // mRunningWriteTasks.put(pBucket.getBucketKey(), task);
             // mReader.mCache.put(pBucket.getBucketKey(), pBucket);
@@ -189,17 +190,28 @@ public class JCloudsWriter implements IBackendWriter {
             boolean finished = false;
 
             while (!finished) {
-                ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
-                DataOutputStream dataOut = new DataOutputStream(mReader.mByteHandler.serialize(byteOut));
-                mBucket.serialize(dataOut);
-                dataOut.close();
+                try {
+                    ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+                    DataOutputStream dataOut = new DataOutputStream(mReader.mByteHandler.serialize(byteOut));
+                    mBucket.serialize(dataOut);
+                    dataOut.close();
+                    
+                    //storing length in front of byte array
+                    final byte[] data = byteOut.toByteArray();
+                    final ByteBuffer buffer = ByteBuffer.allocate(4 + data.length);
+                    buffer.putInt(buffer.capacity());
+                    buffer.put(data);
 
-                BlobBuilder blobbuilder =
-                    mReader.mBlobStore.blobBuilder(Long.toString(mBucket.getBucketKey()));
-                Blob blob = blobbuilder.build();
-                blob.setPayload(byteOut.toByteArray());
-                mReader.mBlobStore.putBlob(mReader.mResourceName, blob);
-                finished = true;
+                    BlobBuilder blobbuilder =
+                        mReader.mBlobStore.blobBuilder(Long.toString(mBucket.getBucketKey()));
+                    Blob blob = blobbuilder.build();
+                    
+                    blob.setPayload(buffer.array());
+                    mReader.mBlobStore.putBlob(mReader.mResourceName, blob);
+                } catch (Exception e) {
+
+                }
+                finished = mReader.mBlobStore.blobExists(mReader.mResourceName, Long.toString(mBucket.getBucketKey()));
 
                 // upload.write(mBucket.getBucketKey() + "," + mBucket.getClass().getName() + "\n");
                 // upload.flush();

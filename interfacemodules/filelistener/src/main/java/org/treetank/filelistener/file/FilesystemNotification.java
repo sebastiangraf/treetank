@@ -21,7 +21,7 @@ import org.treetank.api.IFilelistenerWriteTrx;
  * 
  */
 public class FilesystemNotification implements Callable<Void> {
-
+        
 	/** The file that has been changed */
 	private final File mFile;
 
@@ -36,6 +36,16 @@ public class FilesystemNotification implements Callable<Void> {
 
 	/** The event for this notification */
 	private WatchEvent.Kind<?> mEvtType;
+	
+	/**
+	 * Time this notification needed to be processed.
+	 */
+	private long mTimeTaken;
+	
+	/**
+	 * Bucket amount
+	 */
+	private int mBuckets;
 
 	/** Transaction to use */
 	private final IFilelistenerWriteTrx mWtx;
@@ -101,6 +111,7 @@ public class FilesystemNotification implements Callable<Void> {
 
 	@Override
 	public Void call() throws Exception {
+	        mTimeTaken = System.currentTimeMillis();
 
 		if (this.getEvtType() == ENTRY_CREATE) {
 			mWtx.addEmptyFile(this.getRelativePath());
@@ -111,9 +122,9 @@ public class FilesystemNotification implements Callable<Void> {
 
 				if (this.mObservers.size() > 0) {
 					// For bench purposes
-				    System.out.println("Commiting blocked");
+//				    System.out.println("Commiting blocked");
 					mWtx.commitBlocked();
-				    System.out.println("Commit finsihed.");
+//				    System.out.println("Commit finsihed.");
 				} else {
 					// Non blocking
 					mWtx.commit();
@@ -124,20 +135,45 @@ public class FilesystemNotification implements Callable<Void> {
 		}
 
 		mFinished = true;
+		
+		mTimeTaken = System.currentTimeMillis() - mTimeTaken;
 
 		// Notifying observers that a task has been finished.
 		this.notifyObservers();
 		return null;
 	}
+	
+	/**
+	 * Determine how long this notifcation was processed.
+	 * @return time in form of a long in ms
+	 */
+	public long getTime(){
+	    return mTimeTaken;
+	}
+        
+        /**
+         * Determine how many buckets are in the storage after this notifcation was processed.
+         * @return amount of buckets
+         */
+        public int getBucketAmount(){
+            return mBuckets;
+        }
 
+	/**
+	 * @throws InterruptedException
+	 */
 	public void notifyObservers() throws InterruptedException {
 		synchronized (this) {
 			for (FilesystemNotificationObserver o : mObservers) {
-				o.getBlockingQueue().put(this);
+		                mBuckets = mWtx.getCount();
+				o.addNotification(this);
 			}
 		}
 	}
 
+	/**
+	 * @param observer
+	 */
 	public void addObserver(FilesystemNotificationObserver observer) {
 		this.mObservers.add(observer);
 	}

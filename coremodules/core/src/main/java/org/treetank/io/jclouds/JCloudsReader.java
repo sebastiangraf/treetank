@@ -5,8 +5,11 @@ package org.treetank.io.jclouds;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
+import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -23,6 +26,7 @@ import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.common.io.ByteStreams;
 
 /**
  * Accessing the Cloud storage for reading in a multithreaded manner.
@@ -215,13 +219,38 @@ public class JCloudsReader implements IBackendReader {
         @Override
         public Map.Entry<Long, IBucket> call() throws Exception {
 
+            final int tryCounter = 100;
             IBucket bucket = null;
-            // IBucket bucket = mCache.getIfPresent(mBucketId);
-            // if (bucket == null) {
             Blob blob = mBlobStore.getBlob(mResourceName, Long.toString(mBucketId));
+            int i = 1;
+            while (blob == null && i <= tryCounter) {
+                Thread.sleep(i * 10);
+                blob = mBlobStore.getBlob(mResourceName, Long.toString(mBucketId));
+                i++;
+            }
             checkNotNull(blob, "Blob %s not found", mBucketId);
+
+            // retrieving incomplete written data completely
+            boolean stayIn = false;
+            byte[] data = new byte[0];
+            do {
+                try {
+                    data = ByteStreams.toByteArray(blob.getPayload().getInput());
+                    final ByteBuffer buffer = ByteBuffer.wrap(data);
+                    final int length = buffer.getInt();
+                    if (length < data.length) {
+                        stayIn = true;
+                    }
+                } catch (SocketTimeoutException exc) {
+                    stayIn = true;
+                }
+            } while (stayIn);
+
+            final byte[] dataWithoutSize = new byte[data.length - 4];
+            System.arraycopy(data, 4, dataWithoutSize, 0, dataWithoutSize.length);
+
             DataInputStream datain =
-                new DataInputStream(mByteHandler.deserialize(blob.getPayload().getInput()));
+                new DataInputStream(mByteHandler.deserialize(new ByteArrayInputStream(dataWithoutSize)));
             bucket = mFac.deserializeBucket(datain);
             datain.close();
             // mCache.put(mBucketId, bucket);

@@ -25,6 +25,12 @@ public interface IFilelistenerReadTrx {
      * @return
      */
     public boolean fileExists(String pRelativePath);
+    
+    /**
+     * 
+     * @return int - amount of buckets
+     */
+    public int getCount();
 
     /**
      * This method allows you to get a full file using the node key of the

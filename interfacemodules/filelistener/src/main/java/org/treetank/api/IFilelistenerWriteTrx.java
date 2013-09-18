@@ -28,6 +28,12 @@ public interface IFilelistenerWriteTrx extends IFilelistenerReadTrx {
      *             if node couldn't be removed
      */
     public void removeFile(String pRelativePath) throws TTException;
+    
+    /**
+     * 
+     * @return int - amount of buckets
+     */
+    public int getCount();
 
     /**
      * Non-blocking commit in TT

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (c) 2011, University of Konstanz, Distributed Systems Group
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions are met:
+        * Redistributions of source code must retain the above copyright
+          notice, this list of conditions and the following disclaimer.
+        * Redistributions in binary form must reproduce the above copyright
+          notice, this list of conditions and the following disclaimer in the
+          documentation and/or other materials provided with the distribution.
+        * Neither the name of the University of Konstanz nor the
+          names of its contributors may be used to endorse or promote products
+          derived from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
+    DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+    (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+    ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<!--
+		xmlns="http://jax-rx.sourceforge.net"
+		targetNamespace="http://jax-rx.sourceforge.net"
+	-->
+
+	<!-- allowed root elements: query, run and command -->
+	<xs:element name="query">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="text" />
+        <xs:element ref="parameter" minOccurs="0" maxOccurs="unbounded" />
+        <xs:element ref="variable" minOccurs="0" maxOccurs="unbounded" />
+        <xs:element ref="output" minOccurs="0" maxOccurs="unbounded" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="run">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="text" />
+				<xs:element ref="parameter" minOccurs="0" maxOccurs="unbounded" />
+				 <xs:element ref="variable" minOccurs="0" maxOccurs="unbounded" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="command">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="text" />
+				<xs:element ref="parameter" minOccurs="0" maxOccurs="unbounded" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="text" type="xs:string" />
+
+	<xs:element name="parameter">
+		<xs:complexType>
+			<xs:attribute name="name" type="names" use="required" />
+			<xs:attribute name="value" type="xs:string" use="required" />
+		</xs:complexType>
+	</xs:element>
+
+  <xs:element name="variable">
+    <xs:complexType>
+      <xs:attribute name="name" type="xs:string" use="required" />
+      <xs:attribute name="value" type="xs:string" use="required" />
+      <xs:attribute name="type" type="xs:string" use="optional" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="output">
+    <xs:complexType>
+      <xs:attribute name="name" type="xs:string" use="required" />
+      <xs:attribute name="value" type="xs:string" use="required" />
+    </xs:complexType>
+  </xs:element>
+
+	<!--
+		allowed parameters, as defined by the QueryParameter enumeration
+	-->
+	<xs:simpleType name="names">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="revision" />
+			<xs:enumeration value="output" />
+			<xs:enumeration value="xsl" />
+			<xs:enumeration value="wrap" />
+			<xs:enumeration value="start" />
+			<xs:enumeration value="count" />
+			<xs:enumeration value="var" />
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

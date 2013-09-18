@@ -51,6 +51,7 @@ import org.treetank.data.ISCSIMetaPageFactory;
 import org.treetank.io.IBackend;
 import org.treetank.io.IOUtils;
 import org.treetank.io.berkeley.BerkeleyStorage;
+import org.treetank.io.jclouds.JCloudsStorage;
 import org.treetank.revisioning.IRevisioning;
 import org.treetank.revisioning.SlidingSnapshot;
 
@@ -155,7 +156,8 @@ public class TreetankTargetServer {
             File file = new File(argsMap.get("storagePath"));
             config = new StorageConfiguration(file);
         } else {
-            String file = Files.createTempDir().getAbsolutePath();
+//            String file = Files.createTempDir().getAbsolutePath();
+        	String file = "/tmp/tttarget";
             config =
                 new StorageConfiguration(new File(new StringBuilder(file).append(File.separator)
                     .append("tnk").append(File.separator).append("path1").toString()));
@@ -170,7 +172,7 @@ public class TreetankTargetServer {
         if (argsMap.get("backendImplementation") != null) {
             backendClass = (Class<? extends IBackend>)Class.forName(argsMap.get("backendImplementation"));
         } else {
-            backendClass = BerkeleyStorage.class;
+            backendClass = JCloudsStorage.class;
         }
 
         if (argsMap.get("revisioningImplementation") != null) {
@@ -183,6 +185,8 @@ public class TreetankTargetServer {
         IOUtils.recursiveDelete(config.mFile);
         Storage.createStorage(config);
 
+        final String resourceName="bench53473ResourcegraveISCSI9284";
+        
         // Guice Stuff for building the module
         final Injector injector =
             Guice.createInjector(new ModuleSetter().setDataFacClass(BlockDataElementFactory.class).setMetaFacClass(
@@ -190,12 +194,12 @@ public class TreetankTargetServer {
                 revisioningClass).createModule());
         final IResourceConfigurationFactory resFac =
             injector.getInstance(IResourceConfigurationFactory.class);
-        final Properties props = StandardSettings.getProps(config.mFile.getAbsolutePath(), "iscsi");
+        final Properties props = StandardSettings.getProps(config.mFile.getAbsolutePath(), resourceName);
         final ResourceConfiguration resConf = resFac.create(props);
 
         final IStorage db = Storage.openStorage(config.mFile);
         db.createResource(resConf);
-        final ISession session = db.getSession(new SessionConfiguration("iscsi", StandardSettings.KEY));
+        final ISession session = db.getSession(new SessionConfiguration(resourceName, StandardSettings.KEY));
 
         TargetServer target =
             new TargetServer(TreetankConfiguration.create(TreetankConfiguration.CONFIGURATION_SCHEMA_FILE,

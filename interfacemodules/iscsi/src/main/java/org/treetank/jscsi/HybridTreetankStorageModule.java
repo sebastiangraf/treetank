@@ -64,10 +64,10 @@ public class HybridTreetankStorageModule implements IStorageModule {
      * is bigger and the blocks per data is considerably high (e.g. 256kb per
      * node) you might have to increase the ram for the jvm.
      */
-    public static final int BLOCKS_IN_DATA = 16;
+    public static final int BLOCKS_IN_DATA = 8;
 
     /** Threshold when commit should occur in number of bytes. */
-    private static final int COMMIT_THRESHOLD = 268435456;
+    private static final int COMMIT_THRESHOLD = 67108864;
 
     /** Number of Bytes in Bucket. */
     public final static int BYTES_IN_DATA = BLOCKS_IN_DATA * VIRTUAL_BLOCK_SIZE;

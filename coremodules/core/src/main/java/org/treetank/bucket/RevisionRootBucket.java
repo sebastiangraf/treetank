@@ -35,7 +35,6 @@ import java.util.Arrays;
 
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.bucket.interfaces.IReferenceBucket;
-import org.treetank.bucket.interfaces.IRevisionBucket;
 import org.treetank.exception.TTIOException;
 
 import com.google.common.hash.HashCode;
@@ -51,7 +50,7 @@ import com.google.common.hash.Hasher;
  * @author Sebastian Graf, University of Konstanz
  * @author Marc Kramis, University of Konstanz
  */
-public final class RevisionRootBucket implements IRevisionBucket, IReferenceBucket {
+public final class RevisionRootBucket implements IReferenceBucket {
 
     /** Offset of name bucket reference. */
     public static final int META_REFERENCE_OFFSET = 1;
@@ -109,7 +108,6 @@ public final class RevisionRootBucket implements IRevisionBucket, IReferenceBuck
     /**
      * {@inheritDoc}
      */
-    @Override
     public long getRevision() {
         return mRevision;
     }

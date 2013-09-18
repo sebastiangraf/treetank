@@ -11,6 +11,7 @@ import org.treetank.api.IFilelistenerReadTrx;
 import org.treetank.api.IMetaEntry;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
+import org.treetank.filelistener.file.StorageManager;
 import org.treetank.filelistener.file.data.FileData;
 import org.treetank.filelistener.file.data.FilelistenerMetaDataFactory.MetaKey;
 import org.treetank.filelistener.file.data.FilelistenerMetaDataFactory.MetaValue;
@@ -110,12 +111,28 @@ public class FilelistenerReadTrx implements IFilelistenerReadTrx {
         // and writing the bytes to a temporary file.
         do {
             supplier.getOutput().write(node.getVal());
-            node = (FileData)mPageReadTrx.getData(node.getNextDataKey());
+            node = (FileData)mPageReadTrx.getData(node.getDataKey() + 1);
         } while (!node.isEof());
 
         supplier.getOutput().close();
 
         return file;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getCount() {
+        // This will only apply for the filebench or if this resource name on a local storage is used
+        String resourceName = "bench53473ResourcegraveISCSI9283";
+        String bucketFolder =
+            StorageManager.ROOT_PATH + File.separator + "storage" + File.separator + "resources"
+                + File.separator + resourceName + File.separator + "data" + File.separator + resourceName;
+        String[] buckets = new File(bucketFolder).list();
+        if (buckets == null) {
+            return -1;
+        }
+        return buckets.length;
     }
 
     /**
