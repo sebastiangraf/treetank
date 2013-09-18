@@ -34,12 +34,14 @@ import net.sf.saxon.Configuration;
 import net.sf.saxon.event.Receiver;
 import net.sf.saxon.om.DocumentInfo;
 import net.sf.saxon.om.NamePool;
+import net.sf.saxon.om.NamespaceBinding;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.pattern.NodeTest;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.AxisIterator;
 import net.sf.saxon.tree.util.FastStringBuffer;
+import net.sf.saxon.type.SchemaType;
 import net.sf.saxon.value.Value;
 
 import org.slf4j.Logger;
@@ -260,11 +262,6 @@ public final class DocumentWrapper implements DocumentInfo {
     }
 
     @Override
-    public int[] getDeclaredNamespaces(int[] arg0) {
-        return getNodeWrapper().getDeclaredNamespaces(arg0);
-    }
-
-    @Override
     public String getDisplayName() {
         return getNodeWrapper().getDisplayName();
     }
@@ -391,5 +388,26 @@ public final class DocumentWrapper implements DocumentInfo {
 
     public NodeWrapper getNodeWrapper() {
         return mNodeWrapper;
+    }
+
+    @Override
+    public String getAttributeValue(String arg0, String arg1) {
+        return getNodeWrapper().getAttributeValue(arg0, arg1);
+    }
+
+    @Override
+    public NamespaceBinding[] getDeclaredNamespaces(NamespaceBinding[] arg0) {
+        return getNodeWrapper().getDeclaredNamespaces(arg0);
+    }
+
+    @Override
+    public SchemaType getSchemaType() {
+        return getNodeWrapper().getSchemaType();
+    }
+
+    @Override
+    public boolean isTyped() {
+        // all nodes are untyped
+        return false;
     }
 }

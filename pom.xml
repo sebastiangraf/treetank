@@ -81,6 +81,7 @@
         <module>interfacemodules/xml</module>
         <module>interfacemodules/iscsi</module>
         <module>interfacemodules/filelistener</module>
+        <module>interfacemodules/saxon</module>
     </modules>
 
     <prerequisites>
