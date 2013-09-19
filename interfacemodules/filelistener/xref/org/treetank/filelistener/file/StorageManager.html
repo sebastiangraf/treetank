@@ -25,8 +25,8 @@
 <a class="jxr_linenumber" name="15" href="#15">15</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTException;
 <a class="jxr_linenumber" name="16" href="#16">16</a>  <strong class="jxr_keyword">import</strong> org.treetank.filelistener.exceptions.ResourceNotExistingException;
 <a class="jxr_linenumber" name="17" href="#17">17</a>  <strong class="jxr_keyword">import</strong> org.treetank.filelistener.exceptions.StorageAlreadyExistsException;
-<a class="jxr_linenumber" name="18" href="#18">18</a>  <strong class="jxr_keyword">import</strong> org.treetank.filelistener.file.node.FileNodeFactory;
-<a class="jxr_linenumber" name="19" href="#19">19</a>  <strong class="jxr_keyword">import</strong> org.treetank.filelistener.file.node.FilelistenerMetaPageFactory;
+<a class="jxr_linenumber" name="18" href="#18">18</a>  <strong class="jxr_keyword">import</strong> org.treetank.filelistener.file.data.FileDataFactory;
+<a class="jxr_linenumber" name="19" href="#19">19</a>  <strong class="jxr_keyword">import</strong> org.treetank.filelistener.file.data.FilelistenerMetaDataFactory;
 <a class="jxr_linenumber" name="20" href="#20">20</a>  <strong class="jxr_keyword">import</strong> org.treetank.io.IBackend.IBackendFactory;
 <a class="jxr_linenumber" name="21" href="#21">21</a>  <strong class="jxr_keyword">import</strong> org.treetank.revisioning.IRevisioning;
 <a class="jxr_linenumber" name="22" href="#22">22</a>  
@@ -92,8 +92,8 @@
 <a class="jxr_linenumber" name="82" href="#82">82</a>  
 <a class="jxr_linenumber" name="83" href="#83">83</a>          Properties props = StandardSettings.getProps(storageFile.getAbsolutePath(), name);
 <a class="jxr_linenumber" name="84" href="#84">84</a>          ResourceConfiguration mResourceConfig =
-<a class="jxr_linenumber" name="85" href="#85">85</a>              <strong class="jxr_keyword">new</strong> ResourceConfiguration(props, backend, revision, <strong class="jxr_keyword">new</strong> <a href="../../../../org/treetank/filelistener/file/node/FileNodeFactory.html">FileNodeFactory</a>(),
-<a class="jxr_linenumber" name="86" href="#86">86</a>                  <strong class="jxr_keyword">new</strong> <a href="../../../../org/treetank/filelistener/file/node/FilelistenerMetaPageFactory.html">FilelistenerMetaPageFactory</a>());
+<a class="jxr_linenumber" name="85" href="#85">85</a>              <strong class="jxr_keyword">new</strong> ResourceConfiguration(props, backend, revision, <strong class="jxr_keyword">new</strong> <a href="../../../../org/treetank/filelistener/file/data/FileDataFactory.html">FileDataFactory</a>(),
+<a class="jxr_linenumber" name="86" href="#86">86</a>                  <strong class="jxr_keyword">new</strong> <a href="../../../../org/treetank/filelistener/file/data/FilelistenerMetaDataFactory.html">FilelistenerMetaDataFactory</a>());
 <a class="jxr_linenumber" name="87" href="#87">87</a>  
 <a class="jxr_linenumber" name="88" href="#88">88</a>          storage.createResource(mResourceConfig);
 <a class="jxr_linenumber" name="89" href="#89">89</a>  

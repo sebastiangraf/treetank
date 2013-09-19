@@ -11,21 +11,21 @@ public class Incremental implements IRevisioning {
      * {@inheritDoc}
      */
     @Override
-    public NodeBucket combineBuckets(final NodeBucket[] pBuckets) {
-        checkArgument(pBuckets.length > 0, "At least one Nodebucket must be provided");
+    public DataBucket combineBuckets(final DataBucket[] pBuckets) {
+        checkArgument(pBuckets.length > 0, "At least one DataBucket must be provided");
         // create entire bucket..
-        final NodeBucket returnVal = new NodeBucket(pBuckets[0].getBucketKey(), pBuckets[0].getLastBucketPointer());
-        // ...iterate through the nodes and check if it is stored..
-        for (int i = 0; i < pBuckets[0].getNodes().length; i++) {
+        final DataBucket returnVal = new DataBucket(pBuckets[0].getBucketKey(), pBuckets[0].getLastBucketPointer());
+        // ...iterate through the datas and check if it is stored..
+        for (int i = 0; i < pBuckets[0].getDatas().length; i++) {
             boolean bucketSkip = false;
             // ... form the newest version to the oldest one..
             for (int j = 0; !bucketSkip && j < pBuckets.length; j++) {
-                // if the node is not set yet but existing in the current version..
-                if (pBuckets[j].getNode(i) != null) {
+                // if the data is not set yet but existing in the current version..
+                if (pBuckets[j].getData(i) != null) {
                     // ...break out the loop the next time and..
                     bucketSkip = true;
                     // ...set it
-                    returnVal.setNode(i, pBuckets[j].getNode(i));
+                    returnVal.setData(i, pBuckets[j].getData(i));
                 }
 
             }
@@ -37,18 +37,114 @@ public class Incremental implements IRevisioning {
      * {@inheritDoc}
      */
     @Override
-    public LogValue combineBucketsForModification(int pRevisionsToRestore, long pNewBucketKey, NodeBucket[] pBuckets,
+    public LogValue combineBucketsForModification(int pRevisionsToRestore, long pNewBucketKey, DataBucket[] pBuckets,
         boolean pFullDump) {
-        checkArgument(pBuckets.length > 0, "At least one Nodebucket must be provided");
+        checkArgument(pBuckets.length > 0, "At least one DataBucket must be provided");
         // create buckets for container..
-        final NodeBucket[] returnVal =
+        final DataBucket[] returnVal =
             {
-                new NodeBucket(pBuckets[0].getBucketKey(), pBuckets[0].getLastBucketPointer()),
-                new NodeBucket(pNewBucketKey, pBuckets[0].getBucketKey())
+                new DataBucket(pBuckets[0].getBucketKey(), pBuckets[0].getLastBucketPointer()),
+                new DataBucket(pNewBucketKey, pBuckets[0].getBucketKey())
             };
-        // ...iterate through the nodes and check if it is stored..
-        for (int i = 0; i < pBuckets[0].getNodes().length; i++) {
+        // ...iterate through the datas and check if it is stored..
+        for (int i = 0; i < pBuckets[0].getDatas().length; i++) {
             boolean bucketSkip = false;
+]]>
+</codefragment>
+</duplication>
+<duplication lines="43" tokens="124">
+<file line="83" path="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/bucket/IndirectBucket.java"/>
+<file line="126" path="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/bucket/RevisionRootBucket.java"/>
+<codefragment>
+<![CDATA[
+            pOutput.writeLong(mBucketKey);
+            for (long key : mReferenceKeys) {
+                pOutput.writeLong(key);
+            }
+            for (byte[] hash : mReferenceHashs) {
+                pOutput.writeInt(hash.length);
+                pOutput.write(hash);
+            }
+        } catch (final IOException exc) {
+            throw new TTIOException(exc);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long getBucketKey() {
+        return mBucketKey;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long[] getReferenceKeys() {
+        return mReferenceKeys;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setReferenceKey(int pIndex, long pKey) {
+        mReferenceKeys[pIndex] = pKey;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return toStringHelper(this).add("mBucketKey", mBucketKey).add("mReferenceKeys",
+]]>
+</codefragment>
+</duplication>
+<duplication lines="37" tokens="101">
+<file line="92" path="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/bucket/DumbMetaEntryFactory.java"/>
+<file line="173" path="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/bucket/DumbMetaEntryFactory.java"/>
+<codefragment>
+<![CDATA[
+                pOutput.writeInt(KEY);
+                pOutput.writeLong(mData);
+            } catch (final IOException exc) {
+                throw new TTIOException(exc);
+            }
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int hashCode() {
+            return Objects.hash(mData);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public final boolean equals(final Object pObj) {
+            return this.hashCode() == pObj.hashCode();
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String toString() {
+            return toStringHelper(this).add("mData", mData).toString();
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Funnel<IMetaEntry> getFunnel() {
+            return DumbKeyFunnel.INSTANCE;
 ]]>
 </codefragment>
 </duplication>

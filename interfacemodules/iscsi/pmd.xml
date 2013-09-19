@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pmd version="4.3" timestamp="2013-06-25T15:11:07.877">
+<pmd version="4.3" timestamp="2013-09-19T14:38:13.207">
 <file name="/Users/sebi/Dropbox/github/treetank/interfacemodules/iscsi/src/main/java/org/treetank/jscsi/TreetankTargetServer.java">
-<violation beginline="47" endline="47" begincolumn="1" endcolumn="37" rule="UnusedImports" ruleset="Import Statement Rules" package="org.treetank.jscsi" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#UnusedImports" priority="4">
-Avoid unused imports such as 'org.treetank.api.INodeFactory'
+<violation beginline="53" endline="53" begincolumn="1" endcolumn="48" rule="UnusedImports" ruleset="Import Statement Rules" package="org.treetank.jscsi" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#UnusedImports" priority="4">
+Avoid unused imports such as 'org.treetank.io.berkeley.BerkeleyStorage'
+</violation>
+<violation beginline="58" endline="58" begincolumn="1" endcolumn="34" rule="UnusedImports" ruleset="Import Statement Rules" package="org.treetank.jscsi" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#UnusedImports" priority="4">
+Avoid unused imports such as 'com.google.common.io.Files'
 </violation>
 </file>
 </pmd>

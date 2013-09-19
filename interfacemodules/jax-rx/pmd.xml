@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pmd version="4.3" timestamp="2013-06-25T15:10:24.803">
+<pmd version="4.3" timestamp="2013-09-19T14:37:41.345">
+<file name="/Users/sebi/Dropbox/github/treetank/interfacemodules/jax-rx/src/main/java/org/jaxrx/resource/AResource.java">
+<violation beginline="268" endline="269" begincolumn="9" endcolumn="7" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.jaxrx.resource" class="AResource" method="createMap" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
+Avoid empty catch blocks
+</violation>
+</file>
 <file name="/Users/sebi/Dropbox/github/treetank/interfacemodules/jax-rx/src/main/java/org/treetank/service/jaxrx/implementation/NodeIdRepresentation.java">
 <violation beginline="409" endline="463" begincolumn="13" endcolumn="5" rule="UnusedFormalParameter" ruleset="Unused Code Rules" package="org.treetank.service.jaxrx.implementation" class="NodeIdRepresentation" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedFormalParameter" priority="3">
 Avoid unused method parameters such as 'revision'.
 </violation>
 </file>
+<suppressedviolation filename="/Users/sebi/Dropbox/github/treetank/interfacemodules/jax-rx/src/main/java/org/jaxrx/dom/DOMJaxRx.java" suppressiontype="annotation" msg="Avoid unused local variables such as 'params'." usermsg=""/>
 </pmd>

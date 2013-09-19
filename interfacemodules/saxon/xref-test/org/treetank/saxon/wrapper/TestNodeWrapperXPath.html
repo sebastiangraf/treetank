@@ -65,7 +65,7 @@
 <a class="jxr_linenumber" name="55" href="#55">55</a>  <strong class="jxr_keyword">import</strong> org.treetank.CoreTestHelper;
 <a class="jxr_linenumber" name="56" href="#56">56</a>  <strong class="jxr_keyword">import</strong> org.treetank.Holder;
 <a class="jxr_linenumber" name="57" href="#57">57</a>  <strong class="jxr_keyword">import</strong> org.treetank.ModuleFactory;
-<a class="jxr_linenumber" name="58" href="#58">58</a>  <strong class="jxr_keyword">import</strong> org.treetank.NodeTestHelper;
+<a class="jxr_linenumber" name="58" href="#58">58</a>  <strong class="jxr_keyword">import</strong> org.treetank.NodeElementTestHelper;
 <a class="jxr_linenumber" name="59" href="#59">59</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.NodeReadTrx;
 <a class="jxr_linenumber" name="60" href="#60">60</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.ResourceConfiguration;
 <a class="jxr_linenumber" name="61" href="#61">61</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
@@ -106,7 +106,7 @@
 <a class="jxr_linenumber" name="96" href="#96">96</a>              StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
 <a class="jxr_linenumber" name="97" href="#97">97</a>                  .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
 <a class="jxr_linenumber" name="98" href="#98">98</a>          ResourceConfiguration resource = mResourceConfig.create(props);
-<a class="jxr_linenumber" name="99" href="#99">99</a>          NodeTestHelper.createTestDocument(resource);
+<a class="jxr_linenumber" name="99" href="#99">99</a>          NodeElementTestHelper.createTestDocument(resource);
 <a class="jxr_linenumber" name="100" href="#100">100</a>         <strong class="jxr_keyword">this</strong>.holder = Holder.generateRtx(holder, resource);
 <a class="jxr_linenumber" name="101" href="#101">101</a> 
 <a class="jxr_linenumber" name="102" href="#102">102</a>         <em class="jxr_comment">// Saxon setup.</em>
@@ -185,7 +185,7 @@
 <a class="jxr_linenumber" name="175" href="#175">175</a>                 <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> j = 0; j &lt; test.size(); j++) {
 <a class="jxr_linenumber" name="176" href="#176">176</a>                     <strong class="jxr_keyword">final</strong> INode item = test.get(j);
 <a class="jxr_linenumber" name="177" href="#177">177</a> 
-<a class="jxr_linenumber" name="178" href="#178">178</a>                     holder.getNRtx().moveTo(item.getNodeKey());
+<a class="jxr_linenumber" name="178" href="#178">178</a>                     holder.getNRtx().moveTo(item.getDataKey());
 <a class="jxr_linenumber" name="179" href="#179">179</a> 
 <a class="jxr_linenumber" name="180" href="#180">180</a>                     <strong class="jxr_keyword">final</strong> QName qName = holder.getNRtx().getQNameOfCurrentNode();
 <a class="jxr_linenumber" name="181" href="#181">181</a> 
@@ -404,11 +404,11 @@
 <a class="jxr_linenumber" name="394" href="#394">394</a>         <strong class="jxr_keyword">final</strong> INodeReadTrx rtx =
 <a class="jxr_linenumber" name="395" href="#395">395</a>             <strong class="jxr_keyword">new</strong> NodeReadTrx(holder.getSession().beginBucketRtx(
 <a class="jxr_linenumber" name="396" href="#396">396</a>                 holder.getSession().getMostRecentVersion()));
-<a class="jxr_linenumber" name="397" href="#397">397</a>         rtx.moveTo(result.get(0).getNodeKey());
+<a class="jxr_linenumber" name="397" href="#397">397</a>         rtx.moveTo(result.get(0).getDataKey());
 <a class="jxr_linenumber" name="398" href="#398">398</a>         assertEquals(<span class="jxr_string">"oops1"</span>, rtx.getValueOfCurrentNode());
-<a class="jxr_linenumber" name="399" href="#399">399</a>         rtx.moveTo(result.get(1).getNodeKey());
+<a class="jxr_linenumber" name="399" href="#399">399</a>         rtx.moveTo(result.get(1).getDataKey());
 <a class="jxr_linenumber" name="400" href="#400">400</a>         assertEquals(<span class="jxr_string">"oops2"</span>, rtx.getValueOfCurrentNode());
-<a class="jxr_linenumber" name="401" href="#401">401</a>         rtx.moveTo(result.get(2).getNodeKey());
+<a class="jxr_linenumber" name="401" href="#401">401</a>         rtx.moveTo(result.get(2).getDataKey());
 <a class="jxr_linenumber" name="402" href="#402">402</a>         assertEquals(<span class="jxr_string">"oops3"</span>, rtx.getValueOfCurrentNode());
 <a class="jxr_linenumber" name="403" href="#403">403</a>         rtx.close();
 <a class="jxr_linenumber" name="404" href="#404">404</a>     }
@@ -450,16 +450,16 @@
 <a class="jxr_linenumber" name="440" href="#440">440</a>         <strong class="jxr_keyword">final</strong> ArrayList&lt;INode&gt; result = (ArrayList&lt;INode&gt;)findLine.evaluate(doc, XPathConstants.NODESET);
 <a class="jxr_linenumber" name="441" href="#441">441</a> 
 <a class="jxr_linenumber" name="442" href="#442">442</a>         assertNotNull(result);
-<a class="jxr_linenumber" name="443" href="#443">443</a>         assertEquals(5, result.get(0).getNodeKey());
-<a class="jxr_linenumber" name="444" href="#444">444</a>         assertEquals(9, result.get(1).getNodeKey());
+<a class="jxr_linenumber" name="443" href="#443">443</a>         assertEquals(5, result.get(0).getDataKey());
+<a class="jxr_linenumber" name="444" href="#444">444</a>         assertEquals(9, result.get(1).getDataKey());
 <a class="jxr_linenumber" name="445" href="#445">445</a> 
 <a class="jxr_linenumber" name="446" href="#446">446</a>         <strong class="jxr_keyword">final</strong> INodeReadTrx rtx =
 <a class="jxr_linenumber" name="447" href="#447">447</a>             <strong class="jxr_keyword">new</strong> NodeReadTrx(holder.getSession().beginBucketRtx(
 <a class="jxr_linenumber" name="448" href="#448">448</a>                 holder.getSession().getMostRecentVersion()));
-<a class="jxr_linenumber" name="449" href="#449">449</a>         rtx.moveTo(result.get(0).getNodeKey());
+<a class="jxr_linenumber" name="449" href="#449">449</a>         rtx.moveTo(result.get(0).getDataKey());
 <a class="jxr_linenumber" name="450" href="#450">450</a>         assertEquals(<span class="jxr_string">"b"</span>, rtx.getQNameOfCurrentNode().getLocalPart());
 <a class="jxr_linenumber" name="451" href="#451">451</a> 
-<a class="jxr_linenumber" name="452" href="#452">452</a>         rtx.moveTo(result.get(1).getNodeKey());
+<a class="jxr_linenumber" name="452" href="#452">452</a>         rtx.moveTo(result.get(1).getDataKey());
 <a class="jxr_linenumber" name="453" href="#453">453</a>         assertEquals(<span class="jxr_string">"b"</span>, rtx.getQNameOfCurrentNode().getLocalPart());
 <a class="jxr_linenumber" name="454" href="#454">454</a>     }
 <a class="jxr_linenumber" name="455" href="#455">455</a> 

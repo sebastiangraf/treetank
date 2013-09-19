@@ -176,11 +176,11 @@
 <a class="jxr_linenumber" name="166" href="#166">166</a>         mLatch = <strong class="jxr_keyword">new</strong> CountDownLatch(1);
 <a class="jxr_linenumber" name="167" href="#167">167</a>         <strong class="jxr_keyword">if</strong> (mWtx.getNode() == <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="168" href="#168">168</a>             <strong class="jxr_keyword">final</strong> NodeDelegate nodeDel =
-<a class="jxr_linenumber" name="169" href="#169">169</a>                 <strong class="jxr_keyword">new</strong> NodeDelegate(paramWtx.getPageWtx().incrementNodeKey(), NULL_NODE, 0);
+<a class="jxr_linenumber" name="169" href="#169">169</a>                 <strong class="jxr_keyword">new</strong> NodeDelegate(paramWtx.getPageWtx().incrementDataKey(), NULL_NODE, 0);
 <a class="jxr_linenumber" name="170" href="#170">170</a>             DocumentRootNode node =
 <a class="jxr_linenumber" name="171" href="#171">171</a>                 <strong class="jxr_keyword">new</strong> DocumentRootNode(nodeDel, <strong class="jxr_keyword">new</strong> StructNodeDelegate(nodeDel, NULL_NODE, NULL_NODE,
 <a class="jxr_linenumber" name="172" href="#172">172</a>                     NULL_NODE, 0));
-<a class="jxr_linenumber" name="173" href="#173">173</a>             mWtx.getPageWtx().setNode(node);
+<a class="jxr_linenumber" name="173" href="#173">173</a>             mWtx.getPageWtx().setData(node);
 <a class="jxr_linenumber" name="174" href="#174">174</a>             mWtx.moveTo(org.treetank.node.IConstants.ROOT_NODE);
 <a class="jxr_linenumber" name="175" href="#175">175</a>         }
 <a class="jxr_linenumber" name="176" href="#176">176</a>     }
@@ -361,7 +361,7 @@
 <a class="jxr_linenumber" name="351" href="#351">351</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> time = System.currentTimeMillis();
 <a class="jxr_linenumber" name="352" href="#352">352</a> 
 <a class="jxr_linenumber" name="353" href="#353">353</a>         Injector injector =
-<a class="jxr_linenumber" name="354" href="#354">354</a>             Guice.createInjector(<strong class="jxr_keyword">new</strong> ModuleSetter().setNodeFacClass(TreeNodeFactory.<strong class="jxr_keyword">class</strong>).setMetaFacClass(
+<a class="jxr_linenumber" name="354" href="#354">354</a>             Guice.createInjector(<strong class="jxr_keyword">new</strong> ModuleSetter().setDataFacClass(TreeNodeFactory.<strong class="jxr_keyword">class</strong>).setMetaFacClass(
 <a class="jxr_linenumber" name="355" href="#355">355</a>                 NodeMetaPageFactory.<strong class="jxr_keyword">class</strong>).createModule());
 <a class="jxr_linenumber" name="356" href="#356">356</a>         IBackendFactory storage = injector.getInstance(IBackendFactory.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="357" href="#357">357</a>         IRevisioning revision = injector.getInstance(IRevisioning.<strong class="jxr_keyword">class</strong>);
@@ -378,10 +378,10 @@
 <a class="jxr_linenumber" name="368" href="#368">368</a>         <strong class="jxr_keyword">final</strong> INodeWriteTrx wtx =
 <a class="jxr_linenumber" name="369" href="#369">369</a>             <strong class="jxr_keyword">new</strong> NodeWriteTrx(session, session.beginBucketWtx(), HashKind.Rolling);
 <a class="jxr_linenumber" name="370" href="#370">370</a>         <em class="jxr_comment">// generating root node</em>
-<a class="jxr_linenumber" name="371" href="#371">371</a>         <strong class="jxr_keyword">final</strong> NodeDelegate nodeDel = <strong class="jxr_keyword">new</strong> NodeDelegate(wtx.getPageWtx().incrementNodeKey(), NULL_NODE, 0);
+<a class="jxr_linenumber" name="371" href="#371">371</a>         <strong class="jxr_keyword">final</strong> NodeDelegate nodeDel = <strong class="jxr_keyword">new</strong> NodeDelegate(wtx.getPageWtx().incrementDataKey(), NULL_NODE, 0);
 <a class="jxr_linenumber" name="372" href="#372">372</a>         DocumentRootNode node =
 <a class="jxr_linenumber" name="373" href="#373">373</a>             <strong class="jxr_keyword">new</strong> DocumentRootNode(nodeDel, <strong class="jxr_keyword">new</strong> StructNodeDelegate(nodeDel, NULL_NODE, NULL_NODE, NULL_NODE, 0));
-<a class="jxr_linenumber" name="374" href="#374">374</a>         wtx.getPageWtx().setNode(node);
+<a class="jxr_linenumber" name="374" href="#374">374</a>         wtx.getPageWtx().setData(node);
 <a class="jxr_linenumber" name="375" href="#375">375</a>         wtx.moveTo(org.treetank.node.IConstants.ROOT_NODE);
 <a class="jxr_linenumber" name="376" href="#376">376</a> 
 <a class="jxr_linenumber" name="377" href="#377">377</a>         <strong class="jxr_keyword">final</strong> XMLEventReader reader = createFileReader(<strong class="jxr_keyword">new</strong> File(paramArgs[0]));

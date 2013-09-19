@@ -48,7 +48,7 @@
 <a class="jxr_linenumber" name="38" href="#38">38</a>  <strong class="jxr_keyword">import</strong> org.testng.annotations.Test;
 <a class="jxr_linenumber" name="39" href="#39">39</a>  <strong class="jxr_keyword">import</strong> org.treetank.CoreTestHelper;
 <a class="jxr_linenumber" name="40" href="#40">40</a>  <strong class="jxr_keyword">import</strong> org.treetank.ModuleFactory;
-<a class="jxr_linenumber" name="41" href="#41">41</a>  <strong class="jxr_keyword">import</strong> org.treetank.NodeTestHelper;
+<a class="jxr_linenumber" name="41" href="#41">41</a>  <strong class="jxr_keyword">import</strong> org.treetank.NodeElementTestHelper;
 <a class="jxr_linenumber" name="42" href="#42">42</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.NodeWriteTrx;
 <a class="jxr_linenumber" name="43" href="#43">43</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.NodeWriteTrx.HashKind;
 <a class="jxr_linenumber" name="44" href="#44">44</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.ResourceConfiguration;
@@ -92,7 +92,7 @@
 <a class="jxr_linenumber" name="82" href="#82">82</a>          <strong class="jxr_keyword">final</strong> INodeWriteTrx wtx =
 <a class="jxr_linenumber" name="83" href="#83">83</a>              <strong class="jxr_keyword">new</strong> NodeWriteTrx(holder.getSession(), holder.getSession().beginBucketWtx(),
 <a class="jxr_linenumber" name="84" href="#84">84</a>                  HashKind.Rolling);
-<a class="jxr_linenumber" name="85" href="#85">85</a>          NodeTestHelper.DocumentCreater.create(wtx);
+<a class="jxr_linenumber" name="85" href="#85">85</a>          NodeElementTestHelper.DocumentCreater.create(wtx);
 <a class="jxr_linenumber" name="86" href="#86">86</a>          wtx.commit();
 <a class="jxr_linenumber" name="87" href="#87">87</a>          wtx.close();
 <a class="jxr_linenumber" name="88" href="#88">88</a>  
@@ -113,7 +113,7 @@
 <a class="jxr_linenumber" name="103" href="#103">103</a>         <strong class="jxr_keyword">final</strong> INodeWriteTrx wtx =
 <a class="jxr_linenumber" name="104" href="#104">104</a>             <strong class="jxr_keyword">new</strong> NodeWriteTrx(holder.getSession(), holder.getSession().beginBucketWtx(),
 <a class="jxr_linenumber" name="105" href="#105">105</a>                 HashKind.Rolling);
-<a class="jxr_linenumber" name="106" href="#106">106</a>         NodeTestHelper.DocumentCreater.create(wtx);
+<a class="jxr_linenumber" name="106" href="#106">106</a>         NodeElementTestHelper.DocumentCreater.create(wtx);
 <a class="jxr_linenumber" name="107" href="#107">107</a>         wtx.commit();
 <a class="jxr_linenumber" name="108" href="#108">108</a>         wtx.close();
 <a class="jxr_linenumber" name="109" href="#109">109</a> 
@@ -134,7 +134,7 @@
 <a class="jxr_linenumber" name="124" href="#124">124</a>         <strong class="jxr_keyword">final</strong> INodeWriteTrx wtx =
 <a class="jxr_linenumber" name="125" href="#125">125</a>             <strong class="jxr_keyword">new</strong> NodeWriteTrx(holder.getSession(), holder.getSession().beginBucketWtx(),
 <a class="jxr_linenumber" name="126" href="#126">126</a>                 HashKind.Rolling);
-<a class="jxr_linenumber" name="127" href="#127">127</a>         NodeTestHelper.DocumentCreater.create(wtx);
+<a class="jxr_linenumber" name="127" href="#127">127</a>         NodeElementTestHelper.DocumentCreater.create(wtx);
 <a class="jxr_linenumber" name="128" href="#128">128</a>         wtx.commit();
 <a class="jxr_linenumber" name="129" href="#129">129</a>         wtx.close();
 <a class="jxr_linenumber" name="130" href="#130">130</a> 

@@ -39,7 +39,7 @@
 <a class="jxr_linenumber" name="29" href="#29">29</a>          LogKeyBinding binding = <strong class="jxr_keyword">new</strong> LogKeyBinding();
 <a class="jxr_linenumber" name="30" href="#30">30</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; NUMBEROFELEMENTS; i++) {
 <a class="jxr_linenumber" name="31" href="#31">31</a>              LogKey key =
-<a class="jxr_linenumber" name="32" href="#32">32</a>                  <strong class="jxr_keyword">new</strong> LogKey(CoreTestHelper.random.nextBoolean(), CoreTestHelper.random.nextLong(),
+<a class="jxr_linenumber" name="32" href="#32">32</a>                  <strong class="jxr_keyword">new</strong> LogKey(CoreTestHelper.random.nextBoolean(), CoreTestHelper.random.nextInt(),
 <a class="jxr_linenumber" name="33" href="#33">33</a>                      CoreTestHelper.random.nextLong());
 <a class="jxr_linenumber" name="34" href="#34">34</a>              TupleOutput output = <strong class="jxr_keyword">new</strong> TupleOutput();
 <a class="jxr_linenumber" name="35" href="#35">35</a>              binding.objectToEntry(key, output);

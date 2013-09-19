@@ -230,7 +230,7 @@
 <a class="jxr_linenumber" name="220" href="#220">220</a>                 }
 <a class="jxr_linenumber" name="221" href="#221">221</a>             }
 <a class="jxr_linenumber" name="222" href="#222">222</a>         } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (node.hasRightSibling()) {
-<a class="jxr_linenumber" name="223" href="#223">223</a>             <strong class="jxr_keyword">if</strong> (paramRtx.getNode().getNodeKey() == mRootKey) {
+<a class="jxr_linenumber" name="223" href="#223">223</a>             <strong class="jxr_keyword">if</strong> (paramRtx.getNode().getDataKey() == mRootKey) {
 <a class="jxr_linenumber" name="224" href="#224">224</a>                 paramRtx.moveTo(ROOT_NODE);
 <a class="jxr_linenumber" name="225" href="#225">225</a>             } <strong class="jxr_keyword">else</strong> {
 <a class="jxr_linenumber" name="226" href="#226">226</a>                 moved = paramRtx.moveTo(((IStructNode)paramRtx.getNode()).getRightSiblingKey());
@@ -256,7 +256,7 @@
 <a class="jxr_linenumber" name="246" href="#246">246</a>         <strong class="jxr_keyword">throws</strong> TTIOException {
 <a class="jxr_linenumber" name="247" href="#247">247</a>         <strong class="jxr_keyword">boolean</strong> moved = false;
 <a class="jxr_linenumber" name="248" href="#248">248</a>         <strong class="jxr_keyword">while</strong> (!((IStructNode)paramRtx.getNode()).hasRightSibling()
-<a class="jxr_linenumber" name="249" href="#249">249</a>             &amp;&amp; ((IStructNode)paramRtx.getNode()).hasParent() &amp;&amp; paramRtx.getNode().getNodeKey() != mRootKey) {
+<a class="jxr_linenumber" name="249" href="#249">249</a>             &amp;&amp; ((IStructNode)paramRtx.getNode()).hasParent() &amp;&amp; paramRtx.getNode().getDataKey() != mRootKey) {
 <a class="jxr_linenumber" name="250" href="#250">250</a>             moved = paramRtx.moveTo(paramRtx.getNode().getParentKey());
 <a class="jxr_linenumber" name="251" href="#251">251</a>             <strong class="jxr_keyword">if</strong> (moved) {
 <a class="jxr_linenumber" name="252" href="#252">252</a>                 <strong class="jxr_keyword">switch</strong> (paramRevision) {
@@ -270,7 +270,7 @@
 <a class="jxr_linenumber" name="260" href="#260">260</a>             }
 <a class="jxr_linenumber" name="261" href="#261">261</a>         }
 <a class="jxr_linenumber" name="262" href="#262">262</a> 
-<a class="jxr_linenumber" name="263" href="#263">263</a>         <strong class="jxr_keyword">if</strong> (paramRtx.getNode().getNodeKey() == mRootKey) {
+<a class="jxr_linenumber" name="263" href="#263">263</a>         <strong class="jxr_keyword">if</strong> (paramRtx.getNode().getDataKey() == mRootKey) {
 <a class="jxr_linenumber" name="264" href="#264">264</a>             paramRtx.moveTo(ROOT_NODE);
 <a class="jxr_linenumber" name="265" href="#265">265</a>         }
 <a class="jxr_linenumber" name="266" href="#266">266</a> 
@@ -349,7 +349,7 @@
 <a class="jxr_linenumber" name="339" href="#339">339</a>         <strong class="jxr_keyword">case</strong> ROOT:
 <a class="jxr_linenumber" name="340" href="#340">340</a>         <strong class="jxr_keyword">case</strong> TEXT:
 <a class="jxr_linenumber" name="341" href="#341">341</a>         <strong class="jxr_keyword">case</strong> ELEMENT:
-<a class="jxr_linenumber" name="342" href="#342">342</a>             <strong class="jxr_keyword">if</strong> (paramNewRtx.getNode().getNodeKey() != paramOldRtx.getNode().getNodeKey()
+<a class="jxr_linenumber" name="342" href="#342">342</a>             <strong class="jxr_keyword">if</strong> (paramNewRtx.getNode().getDataKey() != paramOldRtx.getNode().getDataKey()
 <a class="jxr_linenumber" name="343" href="#343">343</a>                 || paramNewRtx.getNode().getHash() != paramOldRtx.getNode().getHash()) {
 <a class="jxr_linenumber" name="344" href="#344">344</a>                 <em class="jxr_comment">// Check if nodes are the same (even if subtrees may vary).</em>
 <a class="jxr_linenumber" name="345" href="#345">345</a>                 <strong class="jxr_keyword">if</strong> (checkNodes(paramNewRtx, paramOldRtx)) {
@@ -401,7 +401,7 @@
 <a class="jxr_linenumber" name="391" href="#391">391</a>         } <strong class="jxr_keyword">else</strong> {
 <a class="jxr_linenumber" name="392" href="#392">392</a>             <em class="jxr_comment">// See if one of the right sibling matches.</em>
 <a class="jxr_linenumber" name="393" href="#393">393</a>             <a href="../../../../../org/treetank/service/xml/diff/EFoundEqualNode.html">EFoundEqualNode</a> found = EFoundEqualNode.FALSE;
-<a class="jxr_linenumber" name="394" href="#394">394</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> key = paramOldRtx.getNode().getNodeKey();
+<a class="jxr_linenumber" name="394" href="#394">394</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> key = paramOldRtx.getNode().getDataKey();
 <a class="jxr_linenumber" name="395" href="#395">395</a> 
 <a class="jxr_linenumber" name="396" href="#396">396</a>             <strong class="jxr_keyword">while</strong> (((IStructNode)paramOldRtx.getNode()).hasRightSibling()
 <a class="jxr_linenumber" name="397" href="#397">397</a>                 &amp;&amp; paramOldRtx.moveTo(((IStructNode)paramOldRtx.getNode()).getRightSiblingKey())
@@ -477,9 +477,9 @@
 <a class="jxr_linenumber" name="467" href="#467">467</a>         assert paramNewRtx != <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="468" href="#468">468</a>         assert paramOldRtx != <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="469" href="#469">469</a>         <strong class="jxr_keyword">boolean</strong> updated = false;
-<a class="jxr_linenumber" name="470" href="#470">470</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> newKey = paramNewRtx.getNode().getNodeKey();
+<a class="jxr_linenumber" name="470" href="#470">470</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> newKey = paramNewRtx.getNode().getDataKey();
 <a class="jxr_linenumber" name="471" href="#471">471</a>         <strong class="jxr_keyword">boolean</strong> movedNewRtx = paramNewRtx.moveTo(((IStructNode)paramNewRtx.getNode()).getRightSiblingKey());
-<a class="jxr_linenumber" name="472" href="#472">472</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> oldKey = paramOldRtx.getNode().getNodeKey();
+<a class="jxr_linenumber" name="472" href="#472">472</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> oldKey = paramOldRtx.getNode().getDataKey();
 <a class="jxr_linenumber" name="473" href="#473">473</a>         <strong class="jxr_keyword">boolean</strong> movedOldRtx = paramOldRtx.moveTo(((IStructNode)paramOldRtx.getNode()).getRightSiblingKey());
 <a class="jxr_linenumber" name="474" href="#474">474</a>         <strong class="jxr_keyword">if</strong> (movedNewRtx &amp;&amp; movedOldRtx &amp;&amp; checkNodes(paramNewRtx, paramOldRtx)) {
 <a class="jxr_linenumber" name="475" href="#475">475</a>             updated = <strong class="jxr_keyword">true</strong>;
@@ -494,7 +494,7 @@
 <a class="jxr_linenumber" name="484" href="#484">484</a>         paramNewRtx.moveTo(newKey);
 <a class="jxr_linenumber" name="485" href="#485">485</a>         paramOldRtx.moveTo(oldKey);
 <a class="jxr_linenumber" name="486" href="#486">486</a>         <strong class="jxr_keyword">if</strong> (!updated) {
-<a class="jxr_linenumber" name="487" href="#487">487</a>             updated = paramNewRtx.getNode().getNodeKey() == paramOldRtx.getNode().getNodeKey();
+<a class="jxr_linenumber" name="487" href="#487">487</a>             updated = paramNewRtx.getNode().getDataKey() == paramOldRtx.getNode().getDataKey();
 <a class="jxr_linenumber" name="488" href="#488">488</a>         }
 <a class="jxr_linenumber" name="489" href="#489">489</a>         <strong class="jxr_keyword">return</strong> updated;
 <a class="jxr_linenumber" name="490" href="#490">490</a>     }

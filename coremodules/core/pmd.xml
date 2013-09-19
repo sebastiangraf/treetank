@@ -1,24 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pmd version="4.3" timestamp="2013-06-25T15:03:56.928">
+<pmd version="4.3" timestamp="2013-09-19T14:34:26.519">
 <file name="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/access/BucketWriteTrx.java">
-<violation beginline="40" endline="40" begincolumn="1" endcolumn="47" rule="UnusedImports" ruleset="Import Statement Rules" package="org.treetank.access" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#UnusedImports" priority="4">
-Avoid unused imports such as 'java.util.concurrent.ExecutionException'
-</violation>
-<violation beginline="262" endline="264" begincolumn="15" endcolumn="13" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.treetank.access" class="BucketWriteTrx" method="close" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
+<violation beginline="296" endline="298" begincolumn="15" endcolumn="13" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.treetank.access" class="BucketWriteTrx" method="close" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
 </violation>
-<violation beginline="501" endline="537" begincolumn="13" endcolumn="5" rule="UnusedFormalParameter" ruleset="Unused Code Rules" package="org.treetank.access" class="BucketWriteTrx" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedFormalParameter" priority="3">
+<violation beginline="540" endline="580" begincolumn="13" endcolumn="5" rule="UnusedFormalParameter" ruleset="Unused Code Rules" package="org.treetank.access" class="BucketWriteTrx" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedFormalParameter" priority="3">
 Avoid unused method parameters such as 'pSession'.
-</violation>
-<violation beginline="501" endline="537" begincolumn="13" endcolumn="5" rule="UnusedFormalParameter" ruleset="Unused Code Rules" package="org.treetank.access" class="BucketWriteTrx" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedFormalParameter" priority="3">
-Avoid unused method parameters such as 'pWriter'.
 </violation>
 </file>
 <file name="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/access/Storage.java">
-<violation beginline="138" endline="148" begincolumn="13" endcolumn="13" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="org.treetank.access" class="Storage" method="truncateStorage" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
+<violation beginline="135" endline="145" begincolumn="13" endcolumn="13" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="org.treetank.access" class="Storage" method="truncateStorage" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
 These nested if statements could be combined
 </violation>
-<violation beginline="341" endline="410" begincolumn="20" endcolumn="5" rule="UnusedFormalParameter" ruleset="Unused Code Rules" package="org.treetank.access" class="Storage" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedFormalParameter" priority="3">
+<violation beginline="338" endline="400" begincolumn="20" endcolumn="5" rule="UnusedFormalParameter" ruleset="Unused Code Rules" package="org.treetank.access" class="Storage" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedFormalParameter" priority="3">
 Avoid unused method parameters such as 'pStorage'.
 </violation>
 </file>
@@ -28,8 +22,13 @@ Avoid unused imports such as 'org.treetank.io.berkeley.BerkeleyStorage'
 </violation>
 </file>
 <file name="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/access/conf/ResourceConfiguration.java">
-<violation beginline="334" endline="336" begincolumn="18" endcolumn="5" rule="UnnecessaryFinalModifier" ruleset="Basic Rules" package="org.treetank.access.conf" class="ResourceConfiguration" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#UnnecessaryFinalModifier" priority="3">
+<violation beginline="335" endline="337" begincolumn="18" endcolumn="5" rule="UnnecessaryFinalModifier" ruleset="Basic Rules" package="org.treetank.access.conf" class="ResourceConfiguration" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#UnnecessaryFinalModifier" priority="3">
 Unnecessary final modifier in final class
+</violation>
+</file>
+<file name="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/access/conf/StandardSettings.java">
+<violation beginline="21" endline="21" begincolumn="1" endcolumn="34" rule="UnusedImports" ruleset="Import Statement Rules" package="org.treetank.access.conf" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#UnusedImports" priority="4">
+Avoid unused imports such as 'com.google.common.io.Files'
 </violation>
 </file>
 <file name="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/api/IBucketReadTrx.java">
@@ -42,35 +41,14 @@ Avoid unused imports such as 'org.treetank.exception.TTException'
 Avoid unused imports such as 'org.treetank.exception.TTIOException'
 </violation>
 </file>
-<file name="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/bucket/BucketFactory.java">
-<violation beginline="42" endline="42" begincolumn="1" endcolumn="48" rule="UnusedImports" ruleset="Import Statement Rules" package="org.treetank.bucket" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#UnusedImports" priority="4">
-Avoid unused imports such as 'com.google.common.io.ByteArrayDataOutput'
-</violation>
-<violation beginline="43" endline="43" begincolumn="1" endcolumn="40" rule="UnusedImports" ruleset="Import Statement Rules" package="org.treetank.bucket" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#UnusedImports" priority="4">
-Avoid unused imports such as 'com.google.common.io.ByteStreams'
-</violation>
-<violation beginline="46" endline="46" begincolumn="1" endcolumn="52" rule="UnusedImports" ruleset="Import Statement Rules" package="org.treetank.bucket" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#UnusedImports" priority="4">
-Avoid unused imports such as 'com.sleepycat.je.log.FileReader.EOFException'
-</violation>
-</file>
-<file name="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/bucket/MetaBucket.java">
-<violation beginline="149" endline="153" begincolumn="25" endcolumn="5" rule="UnnecessaryFinalModifier" ruleset="Basic Rules" package="org.treetank.bucket" class="MetaBucket" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#UnnecessaryFinalModifier" priority="3">
-Unnecessary final modifier in final class
-</violation>
-</file>
-<file name="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/bucket/RevisionRootBucket.java">
-<violation beginline="183" endline="190" begincolumn="25" endcolumn="5" rule="UnnecessaryFinalModifier" ruleset="Basic Rules" package="org.treetank.bucket" class="RevisionRootBucket" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#UnnecessaryFinalModifier" priority="3">
-Unnecessary final modifier in final class
-</violation>
-</file>
-<file name="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/bucket/UberBucket.java">
-<violation beginline="182" endline="188" begincolumn="25" endcolumn="5" rule="UnnecessaryFinalModifier" ruleset="Basic Rules" package="org.treetank.bucket" class="UberBucket" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#UnnecessaryFinalModifier" priority="3">
-Unnecessary final modifier in final class
-</violation>
-</file>
 <file name="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/io/IBackendReader.java">
 <violation beginline="32" endline="32" begincolumn="1" endcolumn="42" rule="UnusedImports" ruleset="Import Statement Rules" package="org.treetank.io" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#UnusedImports" priority="4">
 Avoid unused imports such as 'org.treetank.exception.TTException'
+</violation>
+</file>
+<file name="/Users/sebi/Dropbox/github/treetank/coremodules/core/src/main/java/org/treetank/io/jclouds/JCloudsWriter.java">
+<violation beginline="211" endline="213" begincolumn="19" endcolumn="17" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.treetank.io.jclouds" class="JCloudsWriter$WriteTask" method="call" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
+Avoid empty catch blocks
 </violation>
 </file>
 </pmd>

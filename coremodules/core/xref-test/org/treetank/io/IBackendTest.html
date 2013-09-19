@@ -25,13 +25,13 @@
 <a class="jxr_linenumber" name="15" href="#15">15</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.ResourceConfiguration;
 <a class="jxr_linenumber" name="16" href="#16">16</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.StandardSettings;
 <a class="jxr_linenumber" name="17" href="#17">17</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.IMetaEntryFactory;
-<a class="jxr_linenumber" name="18" href="#18">18</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.INodeFactory;
+<a class="jxr_linenumber" name="18" href="#18">18</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.IDataFactory;
 <a class="jxr_linenumber" name="19" href="#19">19</a>  <strong class="jxr_keyword">import</strong> org.treetank.bucket.DumbMetaEntryFactory;
-<a class="jxr_linenumber" name="20" href="#20">20</a>  <strong class="jxr_keyword">import</strong> org.treetank.bucket.DumbNodeFactory;
+<a class="jxr_linenumber" name="20" href="#20">20</a>  <strong class="jxr_keyword">import</strong> org.treetank.bucket.DumbDataFactory;
 <a class="jxr_linenumber" name="21" href="#21">21</a>  <strong class="jxr_keyword">import</strong> org.treetank.bucket.IConstants;
 <a class="jxr_linenumber" name="22" href="#22">22</a>  <strong class="jxr_keyword">import</strong> org.treetank.bucket.IndirectBucket;
 <a class="jxr_linenumber" name="23" href="#23">23</a>  <strong class="jxr_keyword">import</strong> org.treetank.bucket.MetaBucket;
-<a class="jxr_linenumber" name="24" href="#24">24</a>  <strong class="jxr_keyword">import</strong> org.treetank.bucket.NodeBucket;
+<a class="jxr_linenumber" name="24" href="#24">24</a>  <strong class="jxr_keyword">import</strong> org.treetank.bucket.DataBucket;
 <a class="jxr_linenumber" name="25" href="#25">25</a>  <strong class="jxr_keyword">import</strong> org.treetank.bucket.RevisionRootBucket;
 <a class="jxr_linenumber" name="26" href="#26">26</a>  <strong class="jxr_keyword">import</strong> org.treetank.bucket.UberBucket;
 <a class="jxr_linenumber" name="27" href="#27">27</a>  <strong class="jxr_keyword">import</strong> org.treetank.bucket.interfaces.IBucket;
@@ -73,7 +73,7 @@
 <a class="jxr_linenumber" name="63" href="#63">63</a>              backendWriter.writeUberBucket(bucket1);
 <a class="jxr_linenumber" name="64" href="#64">64</a>              <strong class="jxr_keyword">final</strong> UberBucket bucket2 = backendWriter.readUber();
 <a class="jxr_linenumber" name="65" href="#65">65</a>              assertEquals(<strong class="jxr_keyword">new</strong> StringBuilder(<span class="jxr_string">"Check for "</span>).append(backend.getClass()).append(<span class="jxr_string">" failed."</span>)
-<a class="jxr_linenumber" name="66" href="#66">66</a>                  .toString(), bucket1, bucket2);
+<a class="jxr_linenumber" name="66" href="#66">66</a>                  .toString(), bucket1.hashCode(), bucket2.hashCode());
 <a class="jxr_linenumber" name="67" href="#67">67</a>              backendWriter.close();
 <a class="jxr_linenumber" name="68" href="#68">68</a>  
 <a class="jxr_linenumber" name="69" href="#69">69</a>              <em class="jxr_comment">// new instance check</em>
@@ -150,7 +150,7 @@
 <a class="jxr_linenumber" name="140" href="#140">140</a>     @DataProvider(name = <span class="jxr_string">"instantiateBackend"</span>)
 <a class="jxr_linenumber" name="141" href="#141">141</a>     <strong class="jxr_keyword">public</strong> Object[][] instantiateBackend() <strong class="jxr_keyword">throws</strong> TTException {
 <a class="jxr_linenumber" name="142" href="#142">142</a> 
-<a class="jxr_linenumber" name="143" href="#143">143</a>         <strong class="jxr_keyword">final</strong> INodeFactory nodeFac = <strong class="jxr_keyword">new</strong> DumbNodeFactory();
+<a class="jxr_linenumber" name="143" href="#143">143</a>         <strong class="jxr_keyword">final</strong> IDataFactory dataFac = <strong class="jxr_keyword">new</strong> DumbDataFactory();
 <a class="jxr_linenumber" name="144" href="#144">144</a>         <strong class="jxr_keyword">final</strong> IMetaEntryFactory metaFac = <strong class="jxr_keyword">new</strong> DumbMetaEntryFactory();
 <a class="jxr_linenumber" name="145" href="#145">145</a> 
 <a class="jxr_linenumber" name="146" href="#146">146</a>         Object[][] returnVal = {
@@ -159,17 +159,17 @@
 <a class="jxr_linenumber" name="149" href="#149">149</a>                     <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/io/IBackendTest.html">IBackendCreator</a>() {
 <a class="jxr_linenumber" name="150" href="#150">150</a>                         @Override
 <a class="jxr_linenumber" name="151" href="#151">151</a>                         <strong class="jxr_keyword">public</strong> IBackend getBackend() <strong class="jxr_keyword">throws</strong> TTIOException {
-<a class="jxr_linenumber" name="152" href="#152">152</a>                             <strong class="jxr_keyword">return</strong> createBerkeleyStorage(nodeFac, handler, metaFac);
+<a class="jxr_linenumber" name="152" href="#152">152</a>                             <strong class="jxr_keyword">return</strong> createBerkeleyStorage(dataFac, handler, metaFac);
 <a class="jxr_linenumber" name="153" href="#153">153</a>                         }
 <a class="jxr_linenumber" name="154" href="#154">154</a>                     }, <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/io/IBackendTest.html">IBackendCreator</a>() {
 <a class="jxr_linenumber" name="155" href="#155">155</a>                         @Override
 <a class="jxr_linenumber" name="156" href="#156">156</a>                         <strong class="jxr_keyword">public</strong> IBackend getBackend() <strong class="jxr_keyword">throws</strong> TTIOException {
-<a class="jxr_linenumber" name="157" href="#157">157</a>                             <strong class="jxr_keyword">return</strong> createLocalJCloudsStorage(nodeFac, handler, metaFac);
+<a class="jxr_linenumber" name="157" href="#157">157</a>                             <strong class="jxr_keyword">return</strong> createLocalJCloudsStorage(dataFac, handler, metaFac);
 <a class="jxr_linenumber" name="158" href="#158">158</a>                         }
 <a class="jxr_linenumber" name="159" href="#159">159</a>                     }, <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/io/IBackendTest.html">IBackendCreator</a>() {
 <a class="jxr_linenumber" name="160" href="#160">160</a>                         @Override
 <a class="jxr_linenumber" name="161" href="#161">161</a>                         <strong class="jxr_keyword">public</strong> IBackend getBackend() <strong class="jxr_keyword">throws</strong> TTIOException {
-<a class="jxr_linenumber" name="162" href="#162">162</a>                             <strong class="jxr_keyword">return</strong> createCombinedStorage(nodeFac, handler, metaFac);
+<a class="jxr_linenumber" name="162" href="#162">162</a>                             <strong class="jxr_keyword">return</strong> createCombinedStorage(dataFac, handler, metaFac);
 <a class="jxr_linenumber" name="163" href="#163">163</a>                         }
 <a class="jxr_linenumber" name="164" href="#164">164</a>                     }
 <a class="jxr_linenumber" name="165" href="#165">165</a>                 <em class="jxr_comment">/*</em>
@@ -177,7 +177,7 @@
 <a class="jxr_linenumber" name="167" href="#167">167</a> <em class="jxr_comment">                 * </em>
 <a class="jxr_linenumber" name="168" href="#168">168</a> <em class="jxr_comment">                 * @Override</em>
 <a class="jxr_linenumber" name="169" href="#169">169</a> <em class="jxr_comment">                 * public IBackend getBackend() throws TTIOException {</em>
-<a class="jxr_linenumber" name="170" href="#170">170</a> <em class="jxr_comment">                 * return createAWSJCloudsStorage(nodeFac, handler, metaFac);</em>
+<a class="jxr_linenumber" name="170" href="#170">170</a> <em class="jxr_comment">                 * return createAWSJCloudsStorage(dataFac, handler, metaFac);</em>
 <a class="jxr_linenumber" name="171" href="#171">171</a> <em class="jxr_comment">                 * }</em>
 <a class="jxr_linenumber" name="172" href="#172">172</a> <em class="jxr_comment">                 * }</em>
 <a class="jxr_linenumber" name="173" href="#173">173</a> <em class="jxr_comment">                 */</em>
@@ -188,7 +188,7 @@
 <a class="jxr_linenumber" name="178" href="#178">178</a>         <strong class="jxr_keyword">return</strong> returnVal;
 <a class="jxr_linenumber" name="179" href="#179">179</a>     }
 <a class="jxr_linenumber" name="180" href="#180">180</a> 
-<a class="jxr_linenumber" name="181" href="#181">181</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> IBackend createCombinedStorage(INodeFactory pNodeFac, IByteHandlerPipeline pHandler,
+<a class="jxr_linenumber" name="181" href="#181">181</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> IBackend createCombinedStorage(IDataFactory pDataFac, IByteHandlerPipeline pHandler,
 <a class="jxr_linenumber" name="182" href="#182">182</a>         IMetaEntryFactory pMetaFac) <strong class="jxr_keyword">throws</strong> TTIOException {
 <a class="jxr_linenumber" name="183" href="#183">183</a>         Properties props =
 <a class="jxr_linenumber" name="184" href="#184">184</a>             StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
@@ -197,35 +197,35 @@
 <a class="jxr_linenumber" name="187" href="#187">187</a>             .getAbsolutePath());
 <a class="jxr_linenumber" name="188" href="#188">188</a>         props.setProperty(FilesystemConstants.PROPERTY_BASEDIR, CoreTestHelper.PATHS.PATH2.getFile()
 <a class="jxr_linenumber" name="189" href="#189">189</a>             .getAbsolutePath());
-<a class="jxr_linenumber" name="190" href="#190">190</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> CombinedStorage(props, pNodeFac, pMetaFac, pHandler);
+<a class="jxr_linenumber" name="190" href="#190">190</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> CombinedStorage(props, pDataFac, pMetaFac, pHandler);
 <a class="jxr_linenumber" name="191" href="#191">191</a>     }
 <a class="jxr_linenumber" name="192" href="#192">192</a> 
-<a class="jxr_linenumber" name="193" href="#193">193</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> IBackend createBerkeleyStorage(INodeFactory pNodeFac, IByteHandlerPipeline pHandler,
+<a class="jxr_linenumber" name="193" href="#193">193</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> IBackend createBerkeleyStorage(IDataFactory pDataFac, IByteHandlerPipeline pHandler,
 <a class="jxr_linenumber" name="194" href="#194">194</a>         IMetaEntryFactory pMetaFac) <strong class="jxr_keyword">throws</strong> TTIOException {
 <a class="jxr_linenumber" name="195" href="#195">195</a>         Properties props =
 <a class="jxr_linenumber" name="196" href="#196">196</a>             StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
 <a class="jxr_linenumber" name="197" href="#197">197</a>                 CoreTestHelper.RESOURCENAME);
 <a class="jxr_linenumber" name="198" href="#198">198</a>         props.setProperty(ConstructorProps.RESOURCEPATH, CoreTestHelper.PATHS.PATH1.getFile()
 <a class="jxr_linenumber" name="199" href="#199">199</a>             .getAbsolutePath());
-<a class="jxr_linenumber" name="200" href="#200">200</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> BerkeleyStorage(props, pNodeFac, pMetaFac, pHandler);
+<a class="jxr_linenumber" name="200" href="#200">200</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> BerkeleyStorage(props, pDataFac, pMetaFac, pHandler);
 <a class="jxr_linenumber" name="201" href="#201">201</a>     }
 <a class="jxr_linenumber" name="202" href="#202">202</a> 
 <a class="jxr_linenumber" name="203" href="#203">203</a>     <em class="jxr_comment">//</em>
-<a class="jxr_linenumber" name="204" href="#204">204</a>     <em class="jxr_comment">// private static IBackend createAWSJCloudsStorage(INodeFactory pNodeFac, IByteHandlerPipeline pHandler,</em>
+<a class="jxr_linenumber" name="204" href="#204">204</a>     <em class="jxr_comment">// private static IBackend createAWSJCloudsStorage(IDataFactory pDataFac, IByteHandlerPipeline pHandler,</em>
 <a class="jxr_linenumber" name="205" href="#205">205</a>     <em class="jxr_comment">// IMetaEntryFactory pMetaFac) throws TTIOException {</em>
 <a class="jxr_linenumber" name="206" href="#206">206</a>     <em class="jxr_comment">// Properties props =</em>
 <a class="jxr_linenumber" name="207" href="#207">207</a>     <em class="jxr_comment">// StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),</em>
 <a class="jxr_linenumber" name="208" href="#208">208</a>     <em class="jxr_comment">// CoreTestHelper.RESOURCENAME);</em>
 <a class="jxr_linenumber" name="209" href="#209">209</a>     <em class="jxr_comment">// props.setProperty(ConstructorProps.JCLOUDSTYPE, "aws-s3");</em>
-<a class="jxr_linenumber" name="210" href="#210">210</a>     <em class="jxr_comment">// return new JCloudsStorage(props, pNodeFac, pMetaFac, pHandler);</em>
+<a class="jxr_linenumber" name="210" href="#210">210</a>     <em class="jxr_comment">// return new JCloudsStorage(props, pDataFac, pMetaFac, pHandler);</em>
 <a class="jxr_linenumber" name="211" href="#211">211</a>     <em class="jxr_comment">// }</em>
 <a class="jxr_linenumber" name="212" href="#212">212</a> 
-<a class="jxr_linenumber" name="213" href="#213">213</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> IBackend createLocalJCloudsStorage(INodeFactory pNodeFac, IByteHandlerPipeline pHandler,
+<a class="jxr_linenumber" name="213" href="#213">213</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> IBackend createLocalJCloudsStorage(IDataFactory pDataFac, IByteHandlerPipeline pHandler,
 <a class="jxr_linenumber" name="214" href="#214">214</a>         IMetaEntryFactory pMetaFac) <strong class="jxr_keyword">throws</strong> TTIOException {
 <a class="jxr_linenumber" name="215" href="#215">215</a>         Properties props =
 <a class="jxr_linenumber" name="216" href="#216">216</a>             StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
 <a class="jxr_linenumber" name="217" href="#217">217</a>                 CoreTestHelper.RESOURCENAME);
-<a class="jxr_linenumber" name="218" href="#218">218</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> JCloudsStorage(props, pNodeFac, pMetaFac, pHandler);
+<a class="jxr_linenumber" name="218" href="#218">218</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> JCloudsStorage(props, pDataFac, pMetaFac, pHandler);
 <a class="jxr_linenumber" name="219" href="#219">219</a>     }
 <a class="jxr_linenumber" name="220" href="#220">220</a> 
 <a class="jxr_linenumber" name="221" href="#221">221</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> IBucket generateBucket(<strong class="jxr_keyword">long</strong> pKey) {
@@ -234,42 +234,46 @@
 <a class="jxr_linenumber" name="224" href="#224">224</a>             IndirectBucket returnVal = <strong class="jxr_keyword">new</strong> IndirectBucket(pKey);
 <a class="jxr_linenumber" name="225" href="#225">225</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; IConstants.CONTENT_COUNT; i++) {
 <a class="jxr_linenumber" name="226" href="#226">226</a>                 returnVal.setReferenceKey(i, CoreTestHelper.random.nextLong());
-<a class="jxr_linenumber" name="227" href="#227">227</a>             }
-<a class="jxr_linenumber" name="228" href="#228">228</a>             <strong class="jxr_keyword">return</strong> returnVal;
-<a class="jxr_linenumber" name="229" href="#229">229</a>         } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (whichBucketPage &lt; 0.4) {
-<a class="jxr_linenumber" name="230" href="#230">230</a>             MetaBucket returnVal = <strong class="jxr_keyword">new</strong> MetaBucket(pKey);
-<a class="jxr_linenumber" name="231" href="#231">231</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; IConstants.CONTENT_COUNT; i++) {
-<a class="jxr_linenumber" name="232" href="#232">232</a>                 returnVal.getMetaMap().put(
-<a class="jxr_linenumber" name="233" href="#233">233</a>                     <strong class="jxr_keyword">new</strong> DumbMetaEntryFactory.DumbKey(CoreTestHelper.random.nextLong()),
+<a class="jxr_linenumber" name="227" href="#227">227</a>                 returnVal.setReferenceHash(i, CoreTestHelper.generateRandomHash().asBytes());
+<a class="jxr_linenumber" name="228" href="#228">228</a>             }
+<a class="jxr_linenumber" name="229" href="#229">229</a>             <strong class="jxr_keyword">return</strong> returnVal;
+<a class="jxr_linenumber" name="230" href="#230">230</a>         } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (whichBucketPage &lt; 0.4) {
+<a class="jxr_linenumber" name="231" href="#231">231</a>             MetaBucket returnVal = <strong class="jxr_keyword">new</strong> MetaBucket(pKey);
+<a class="jxr_linenumber" name="232" href="#232">232</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; IConstants.CONTENT_COUNT; i++) {
+<a class="jxr_linenumber" name="233" href="#233">233</a>                 returnVal.put(<strong class="jxr_keyword">new</strong> DumbMetaEntryFactory.DumbKey(CoreTestHelper.random.nextLong()),
 <a class="jxr_linenumber" name="234" href="#234">234</a>                     <strong class="jxr_keyword">new</strong> DumbMetaEntryFactory.DumbValue(CoreTestHelper.random.nextLong()));
 <a class="jxr_linenumber" name="235" href="#235">235</a>             }
 <a class="jxr_linenumber" name="236" href="#236">236</a>             <strong class="jxr_keyword">return</strong> returnVal;
 <a class="jxr_linenumber" name="237" href="#237">237</a>         } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (whichBucketPage &lt; 0.6) {
-<a class="jxr_linenumber" name="238" href="#238">238</a>             NodeBucket returnVal = <strong class="jxr_keyword">new</strong> NodeBucket(pKey, pKey);
+<a class="jxr_linenumber" name="238" href="#238">238</a>             DataBucket returnVal = <strong class="jxr_keyword">new</strong> DataBucket(pKey, pKey);
 <a class="jxr_linenumber" name="239" href="#239">239</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; IConstants.CONTENT_COUNT; i++) {
-<a class="jxr_linenumber" name="240" href="#240">240</a>                 returnVal.setNode(i, CoreTestHelper.generateOne());
+<a class="jxr_linenumber" name="240" href="#240">240</a>                 returnVal.setData(i, CoreTestHelper.generateOne());
 <a class="jxr_linenumber" name="241" href="#241">241</a>             }
 <a class="jxr_linenumber" name="242" href="#242">242</a>             <strong class="jxr_keyword">return</strong> returnVal;
 <a class="jxr_linenumber" name="243" href="#243">243</a>         } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (whichBucketPage &lt; 0.8) {
 <a class="jxr_linenumber" name="244" href="#244">244</a>             RevisionRootBucket returnVal =
-<a class="jxr_linenumber" name="245" href="#245">245</a>                 <strong class="jxr_keyword">new</strong> RevisionRootBucket(pKey, CoreTestHelper.random.nextLong(), CoreTestHelper.random.nextLong());
-<a class="jxr_linenumber" name="246" href="#246">246</a>             returnVal.setReferenceKey(0, CoreTestHelper.random.nextLong());
-<a class="jxr_linenumber" name="247" href="#247">247</a>             returnVal.setReferenceKey(1, CoreTestHelper.random.nextLong());
-<a class="jxr_linenumber" name="248" href="#248">248</a>             <strong class="jxr_keyword">return</strong> returnVal;
-<a class="jxr_linenumber" name="249" href="#249">249</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="250" href="#250">250</a>             UberBucket returnVal =
-<a class="jxr_linenumber" name="251" href="#251">251</a>                 <strong class="jxr_keyword">new</strong> UberBucket(pKey, CoreTestHelper.random.nextLong(), CoreTestHelper.random.nextLong());
-<a class="jxr_linenumber" name="252" href="#252">252</a>             returnVal.setReferenceKey(0, CoreTestHelper.random.nextLong());
-<a class="jxr_linenumber" name="253" href="#253">253</a>             <strong class="jxr_keyword">return</strong> returnVal;
-<a class="jxr_linenumber" name="254" href="#254">254</a>         }
-<a class="jxr_linenumber" name="255" href="#255">255</a> 
-<a class="jxr_linenumber" name="256" href="#256">256</a>     }
-<a class="jxr_linenumber" name="257" href="#257">257</a> 
-<a class="jxr_linenumber" name="258" href="#258">258</a>     <strong class="jxr_keyword">interface</strong> <a href="../../../org/treetank/io/IBackendTest.html">IBackendCreator</a> {
-<a class="jxr_linenumber" name="259" href="#259">259</a>         IBackend getBackend() <strong class="jxr_keyword">throws</strong> TTIOException;
+<a class="jxr_linenumber" name="245" href="#245">245</a>                 <strong class="jxr_keyword">new</strong> RevisionRootBucket(pKey, CoreTestHelper.random.nextLong(), CoreTestHelper.random
+<a class="jxr_linenumber" name="246" href="#246">246</a>                     .nextLong());
+<a class="jxr_linenumber" name="247" href="#247">247</a>             returnVal.setReferenceKey(0, CoreTestHelper.random.nextLong());
+<a class="jxr_linenumber" name="248" href="#248">248</a>             returnVal.setReferenceHash(0, CoreTestHelper.generateRandomHash().asBytes());
+<a class="jxr_linenumber" name="249" href="#249">249</a>             returnVal.setReferenceKey(1, CoreTestHelper.random.nextLong());
+<a class="jxr_linenumber" name="250" href="#250">250</a>             returnVal.setReferenceHash(1, CoreTestHelper.generateRandomHash().asBytes());
+<a class="jxr_linenumber" name="251" href="#251">251</a>             <strong class="jxr_keyword">return</strong> returnVal;
+<a class="jxr_linenumber" name="252" href="#252">252</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="253" href="#253">253</a>             UberBucket returnVal =
+<a class="jxr_linenumber" name="254" href="#254">254</a>                 <strong class="jxr_keyword">new</strong> UberBucket(pKey, CoreTestHelper.random.nextLong(), CoreTestHelper.random.nextLong());
+<a class="jxr_linenumber" name="255" href="#255">255</a>             returnVal.setReferenceKey(0, CoreTestHelper.random.nextLong());
+<a class="jxr_linenumber" name="256" href="#256">256</a>             returnVal.setReferenceHash(0, CoreTestHelper.generateRandomHash().asBytes());
+<a class="jxr_linenumber" name="257" href="#257">257</a>             <strong class="jxr_keyword">return</strong> returnVal;
+<a class="jxr_linenumber" name="258" href="#258">258</a>         }
+<a class="jxr_linenumber" name="259" href="#259">259</a> 
 <a class="jxr_linenumber" name="260" href="#260">260</a>     }
 <a class="jxr_linenumber" name="261" href="#261">261</a> 
-<a class="jxr_linenumber" name="262" href="#262">262</a> }
+<a class="jxr_linenumber" name="262" href="#262">262</a>     <strong class="jxr_keyword">interface</strong> <a href="../../../org/treetank/io/IBackendTest.html">IBackendCreator</a> {
+<a class="jxr_linenumber" name="263" href="#263">263</a>         IBackend getBackend() <strong class="jxr_keyword">throws</strong> TTIOException;
+<a class="jxr_linenumber" name="264" href="#264">264</a>     }
+<a class="jxr_linenumber" name="265" href="#265">265</a> 
+<a class="jxr_linenumber" name="266" href="#266">266</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

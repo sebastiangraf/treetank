@@ -52,7 +52,7 @@
 <a class="jxr_linenumber" name="42" href="#42">42</a>  <strong class="jxr_keyword">import</strong> org.treetank.CoreTestHelper;
 <a class="jxr_linenumber" name="43" href="#43">43</a>  <strong class="jxr_keyword">import</strong> org.treetank.Holder;
 <a class="jxr_linenumber" name="44" href="#44">44</a>  <strong class="jxr_keyword">import</strong> org.treetank.ModuleFactory;
-<a class="jxr_linenumber" name="45" href="#45">45</a>  <strong class="jxr_keyword">import</strong> org.treetank.NodeTestHelper;
+<a class="jxr_linenumber" name="45" href="#45">45</a>  <strong class="jxr_keyword">import</strong> org.treetank.NodeElementTestHelper;
 <a class="jxr_linenumber" name="46" href="#46">46</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.NodeWriteTrx.HashKind;
 <a class="jxr_linenumber" name="47" href="#47">47</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.ResourceConfiguration;
 <a class="jxr_linenumber" name="48" href="#48">48</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
@@ -83,7 +83,7 @@
 <a class="jxr_linenumber" name="73" href="#73">73</a>              StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
 <a class="jxr_linenumber" name="74" href="#74">74</a>                  CoreTestHelper.RESOURCENAME);
 <a class="jxr_linenumber" name="75" href="#75">75</a>          mResource = mResourceConfig.create(props);
-<a class="jxr_linenumber" name="76" href="#76">76</a>          NodeTestHelper.createTestDocument(mResource);
+<a class="jxr_linenumber" name="76" href="#76">76</a>          NodeElementTestHelper.createTestDocument(mResource);
 <a class="jxr_linenumber" name="77" href="#77">77</a>          <strong class="jxr_keyword">this</strong>.holder = Holder.generateWtx(holder,mResource);
 <a class="jxr_linenumber" name="78" href="#78">78</a>      }
 <a class="jxr_linenumber" name="79" href="#79">79</a>  
@@ -123,9 +123,9 @@
 <a class="jxr_linenumber" name="113" href="#113">113</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="114" href="#114">114</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> nodeIsolation(<strong class="jxr_keyword">final</strong> INodeReadTrx pRtx) <strong class="jxr_keyword">throws</strong> TTException {
 <a class="jxr_linenumber" name="115" href="#115">115</a>         assertTrue(pRtx.moveTo(ROOT_NODE));
-<a class="jxr_linenumber" name="116" href="#116">116</a>         assertEquals(0, pRtx.getNode().getNodeKey());
+<a class="jxr_linenumber" name="116" href="#116">116</a>         assertEquals(0, pRtx.getNode().getDataKey());
 <a class="jxr_linenumber" name="117" href="#117">117</a>         assertTrue(pRtx.moveTo(((IStructNode)pRtx.getNode()).getFirstChildKey()));
-<a class="jxr_linenumber" name="118" href="#118">118</a>         assertEquals(1, pRtx.getNode().getNodeKey());
+<a class="jxr_linenumber" name="118" href="#118">118</a>         assertEquals(1, pRtx.getNode().getDataKey());
 <a class="jxr_linenumber" name="119" href="#119">119</a>         assertEquals(5, ((IStructNode)pRtx.getNode()).getChildCount());
 <a class="jxr_linenumber" name="120" href="#120">120</a>     }
 <a class="jxr_linenumber" name="121" href="#121">121</a> 
@@ -133,7 +133,7 @@
 <a class="jxr_linenumber" name="123" href="#123">123</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testInsertChild() <strong class="jxr_keyword">throws</strong> TTException {
 <a class="jxr_linenumber" name="124" href="#124">124</a> 
 <a class="jxr_linenumber" name="125" href="#125">125</a>         INodeWriteTrx wtx = holder.getNWtx();
-<a class="jxr_linenumber" name="126" href="#126">126</a>         NodeTestHelper.createDocumentRootNode(wtx);
+<a class="jxr_linenumber" name="126" href="#126">126</a>         NodeElementTestHelper.createDocumentRootNode(wtx);
 <a class="jxr_linenumber" name="127" href="#127">127</a>         wtx.commit();
 <a class="jxr_linenumber" name="128" href="#128">128</a>         wtx.close();
 <a class="jxr_linenumber" name="129" href="#129">129</a> 
@@ -184,7 +184,7 @@
 <a class="jxr_linenumber" name="174" href="#174">174</a>         wtx =
 <a class="jxr_linenumber" name="175" href="#175">175</a>             <strong class="jxr_keyword">new</strong> NodeWriteTrx(holder.getSession(), holder.getSession().beginBucketWtx(),
 <a class="jxr_linenumber" name="176" href="#176">176</a>                 HashKind.Rolling);
-<a class="jxr_linenumber" name="177" href="#177">177</a>         NodeTestHelper.createDocumentRootNode(wtx);
+<a class="jxr_linenumber" name="177" href="#177">177</a>         NodeElementTestHelper.createDocumentRootNode(wtx);
 <a class="jxr_linenumber" name="178" href="#178">178</a>         wtx.moveTo(ROOT_NODE);
 <a class="jxr_linenumber" name="179" href="#179">179</a>         assertEquals(15L, wtx.insertElementAsFirstChild(<strong class="jxr_keyword">new</strong> QName(<span class="jxr_string">""</span>)));
 <a class="jxr_linenumber" name="180" href="#180">180</a>         assertEquals(16L, wtx.insertElementAsFirstChild(<strong class="jxr_keyword">new</strong> QName(<span class="jxr_string">""</span>)));
@@ -207,7 +207,7 @@
 <a class="jxr_linenumber" name="197" href="#197">197</a>     @Test
 <a class="jxr_linenumber" name="198" href="#198">198</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testPageBoundary() <strong class="jxr_keyword">throws</strong> TTException {
 <a class="jxr_linenumber" name="199" href="#199">199</a>         INodeWriteTrx wtx = holder.getNWtx();
-<a class="jxr_linenumber" name="200" href="#200">200</a>         NodeTestHelper.createDocumentRootNode(wtx);
+<a class="jxr_linenumber" name="200" href="#200">200</a>         NodeElementTestHelper.createDocumentRootNode(wtx);
 <a class="jxr_linenumber" name="201" href="#201">201</a> 
 <a class="jxr_linenumber" name="202" href="#202">202</a>         <em class="jxr_comment">// Document root.</em>
 <a class="jxr_linenumber" name="203" href="#203">203</a>         wtx.insertElementAsFirstChild(<strong class="jxr_keyword">new</strong> QName(<span class="jxr_string">""</span>));
@@ -216,18 +216,18 @@
 <a class="jxr_linenumber" name="206" href="#206">206</a>         }
 <a class="jxr_linenumber" name="207" href="#207">207</a> 
 <a class="jxr_linenumber" name="208" href="#208">208</a>         assertTrue(wtx.moveTo(2L));
-<a class="jxr_linenumber" name="209" href="#209">209</a>         assertEquals(2L, wtx.getNode().getNodeKey());
+<a class="jxr_linenumber" name="209" href="#209">209</a>         assertEquals(2L, wtx.getNode().getDataKey());
 <a class="jxr_linenumber" name="210" href="#210">210</a>         wtx.commit();
 <a class="jxr_linenumber" name="211" href="#211">211</a> 
 <a class="jxr_linenumber" name="212" href="#212">212</a>         assertTrue(wtx.moveTo(2L));
-<a class="jxr_linenumber" name="213" href="#213">213</a>         assertEquals(2L, wtx.getNode().getNodeKey());
+<a class="jxr_linenumber" name="213" href="#213">213</a>         assertEquals(2L, wtx.getNode().getDataKey());
 <a class="jxr_linenumber" name="214" href="#214">214</a>         wtx.close();
 <a class="jxr_linenumber" name="215" href="#215">215</a>         <strong class="jxr_keyword">final</strong> INodeReadTrx rtx =
 <a class="jxr_linenumber" name="216" href="#216">216</a>             <strong class="jxr_keyword">new</strong> NodeReadTrx(holder.getSession().beginBucketRtx(
 <a class="jxr_linenumber" name="217" href="#217">217</a>                 holder.getSession().getMostRecentVersion()));
 <a class="jxr_linenumber" name="218" href="#218">218</a> 
 <a class="jxr_linenumber" name="219" href="#219">219</a>         assertTrue(rtx.moveTo(2L));
-<a class="jxr_linenumber" name="220" href="#220">220</a>         assertEquals(2L, rtx.getNode().getNodeKey());
+<a class="jxr_linenumber" name="220" href="#220">220</a>         assertEquals(2L, rtx.getNode().getDataKey());
 <a class="jxr_linenumber" name="221" href="#221">221</a>         rtx.close();
 <a class="jxr_linenumber" name="222" href="#222">222</a> 
 <a class="jxr_linenumber" name="223" href="#223">223</a>     }
@@ -235,7 +235,7 @@
 <a class="jxr_linenumber" name="225" href="#225">225</a>     @Test(expectedExceptions = IllegalStateException.<strong class="jxr_keyword">class</strong>)
 <a class="jxr_linenumber" name="226" href="#226">226</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testRemoveDocument() <strong class="jxr_keyword">throws</strong> TTException {
 <a class="jxr_linenumber" name="227" href="#227">227</a>         <strong class="jxr_keyword">final</strong> INodeWriteTrx wtx = holder.getNWtx();
-<a class="jxr_linenumber" name="228" href="#228">228</a>         NodeTestHelper.DocumentCreater.create(wtx);
+<a class="jxr_linenumber" name="228" href="#228">228</a>         NodeElementTestHelper.DocumentCreater.create(wtx);
 <a class="jxr_linenumber" name="229" href="#229">229</a>         wtx.moveTo(ROOT_NODE);
 <a class="jxr_linenumber" name="230" href="#230">230</a>         <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="231" href="#231">231</a>             wtx.remove();
@@ -272,18 +272,18 @@
 <a class="jxr_linenumber" name="262" href="#262">262</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="263" href="#263">263</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> removeDescendant(<strong class="jxr_keyword">final</strong> INodeReadTrx pRtx) <strong class="jxr_keyword">throws</strong> TTException {
 <a class="jxr_linenumber" name="264" href="#264">264</a>         assertTrue(pRtx.moveTo(ROOT_NODE));
-<a class="jxr_linenumber" name="265" href="#265">265</a>         assertEquals(0, pRtx.getNode().getNodeKey());
+<a class="jxr_linenumber" name="265" href="#265">265</a>         assertEquals(0, pRtx.getNode().getDataKey());
 <a class="jxr_linenumber" name="266" href="#266">266</a>         assertTrue(pRtx.moveTo(((IStructNode)pRtx.getNode()).getFirstChildKey()));
-<a class="jxr_linenumber" name="267" href="#267">267</a>         assertEquals(1, pRtx.getNode().getNodeKey());
+<a class="jxr_linenumber" name="267" href="#267">267</a>         assertEquals(1, pRtx.getNode().getDataKey());
 <a class="jxr_linenumber" name="268" href="#268">268</a>         assertEquals(4, ((IStructNode)pRtx.getNode()).getChildCount());
 <a class="jxr_linenumber" name="269" href="#269">269</a>         assertTrue(pRtx.moveTo(((IStructNode)pRtx.getNode()).getFirstChildKey()));
-<a class="jxr_linenumber" name="270" href="#270">270</a>         assertEquals(4, pRtx.getNode().getNodeKey());
+<a class="jxr_linenumber" name="270" href="#270">270</a>         assertEquals(4, pRtx.getNode().getDataKey());
 <a class="jxr_linenumber" name="271" href="#271">271</a>         assertTrue(pRtx.moveTo(((IStructNode)pRtx.getNode()).getRightSiblingKey()));
-<a class="jxr_linenumber" name="272" href="#272">272</a>         assertEquals(8, pRtx.getNode().getNodeKey());
+<a class="jxr_linenumber" name="272" href="#272">272</a>         assertEquals(8, pRtx.getNode().getDataKey());
 <a class="jxr_linenumber" name="273" href="#273">273</a>         assertTrue(pRtx.moveTo(((IStructNode)pRtx.getNode()).getRightSiblingKey()));
-<a class="jxr_linenumber" name="274" href="#274">274</a>         assertEquals(9, pRtx.getNode().getNodeKey());
+<a class="jxr_linenumber" name="274" href="#274">274</a>         assertEquals(9, pRtx.getNode().getDataKey());
 <a class="jxr_linenumber" name="275" href="#275">275</a>         assertTrue(pRtx.moveTo(((IStructNode)pRtx.getNode()).getRightSiblingKey()));
-<a class="jxr_linenumber" name="276" href="#276">276</a>         assertEquals(13, pRtx.getNode().getNodeKey());
+<a class="jxr_linenumber" name="276" href="#276">276</a>         assertEquals(13, pRtx.getNode().getDataKey());
 <a class="jxr_linenumber" name="277" href="#277">277</a>     }
 <a class="jxr_linenumber" name="278" href="#278">278</a> 
 <a class="jxr_linenumber" name="279" href="#279">279</a> }

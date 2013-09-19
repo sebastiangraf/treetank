@@ -74,9 +74,9 @@
 <a class="jxr_linenumber" name="64" href="#64">64</a>  
 <a class="jxr_linenumber" name="65" href="#65">65</a>          <strong class="jxr_keyword">boolean</strong> found = false;
 <a class="jxr_linenumber" name="66" href="#66">66</a>  
-<a class="jxr_linenumber" name="67" href="#67">67</a>          <strong class="jxr_keyword">if</strong> (paramFirstRtx.getNode().getNodeKey() == paramSecondRtx.getNode().getNodeKey()
+<a class="jxr_linenumber" name="67" href="#67">67</a>          <strong class="jxr_keyword">if</strong> (paramFirstRtx.getNode().getDataKey() == paramSecondRtx.getNode().getDataKey()
 <a class="jxr_linenumber" name="68" href="#68">68</a>              &amp;&amp; paramFirstRtx.getNode().equals(paramSecondRtx.getNode())) {
-<a class="jxr_linenumber" name="69" href="#69">69</a>              <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> nodeKey = paramFirstRtx.getNode().getNodeKey();
+<a class="jxr_linenumber" name="69" href="#69">69</a>              <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> nodeKey = paramFirstRtx.getNode().getDataKey();
 <a class="jxr_linenumber" name="70" href="#70">70</a>  
 <a class="jxr_linenumber" name="71" href="#71">71</a>              <strong class="jxr_keyword">if</strong> (paramFirstRtx.getNode().getKind() == IConstants.ELEMENT) {
 <a class="jxr_linenumber" name="72" href="#72">72</a>                  <strong class="jxr_keyword">if</strong> (((ElementNode)paramFirstRtx.getNode()).getNamespaceCount() == 0

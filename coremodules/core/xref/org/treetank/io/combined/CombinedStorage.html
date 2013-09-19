@@ -16,7 +16,7 @@
 <a class="jxr_linenumber" name="6" href="#6">6</a>   <strong class="jxr_keyword">import</strong> java.util.Properties;
 <a class="jxr_linenumber" name="7" href="#7">7</a>   
 <a class="jxr_linenumber" name="8" href="#8">8</a>   <strong class="jxr_keyword">import</strong> org.treetank.api.IMetaEntryFactory;
-<a class="jxr_linenumber" name="9" href="#9">9</a>   <strong class="jxr_keyword">import</strong> org.treetank.api.INodeFactory;
+<a class="jxr_linenumber" name="9" href="#9">9</a>   <strong class="jxr_keyword">import</strong> org.treetank.api.IDataFactory;
 <a class="jxr_linenumber" name="10" href="#10">10</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTException;
 <a class="jxr_linenumber" name="11" href="#11">11</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTIOException;
 <a class="jxr_linenumber" name="12" href="#12">12</a>  <strong class="jxr_keyword">import</strong> org.treetank.io.IBackend;
@@ -48,8 +48,8 @@
 <a class="jxr_linenumber" name="38" href="#38">38</a>  <em class="jxr_javadoccomment">     * </em>
 <a class="jxr_linenumber" name="39" href="#39">39</a>  <em class="jxr_javadoccomment">     * @param pProperties</em>
 <a class="jxr_linenumber" name="40" href="#40">40</a>  <em class="jxr_javadoccomment">     *            not only the file associated with the database</em>
-<a class="jxr_linenumber" name="41" href="#41">41</a>  <em class="jxr_javadoccomment">     * @param pNodeFac</em>
-<a class="jxr_linenumber" name="42" href="#42">42</a>  <em class="jxr_javadoccomment">     *            factory for the nodes</em>
+<a class="jxr_linenumber" name="41" href="#41">41</a>  <em class="jxr_javadoccomment">     * @param pDataFac</em>
+<a class="jxr_linenumber" name="42" href="#42">42</a>  <em class="jxr_javadoccomment">     *            factory for the datas</em>
 <a class="jxr_linenumber" name="43" href="#43">43</a>  <em class="jxr_javadoccomment">     * @param pMetaFac</em>
 <a class="jxr_linenumber" name="44" href="#44">44</a>  <em class="jxr_javadoccomment">     *            factory for meta bucket</em>
 <a class="jxr_linenumber" name="45" href="#45">45</a>  <em class="jxr_javadoccomment">     * @param pByteHandler</em>
@@ -58,10 +58,10 @@
 <a class="jxr_linenumber" name="48" href="#48">48</a>  <em class="jxr_javadoccomment">     *             of something odd happens while database-connection</em>
 <a class="jxr_linenumber" name="49" href="#49">49</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="50" href="#50">50</a>      @Inject
-<a class="jxr_linenumber" name="51" href="#51">51</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../org/treetank/io/combined/CombinedStorage.html">CombinedStorage</a>(@Assisted Properties pProperties, <a href="../../../../org/treetank/api/INodeFactory.html">INodeFactory</a> pNodeFac,
+<a class="jxr_linenumber" name="51" href="#51">51</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../org/treetank/io/combined/CombinedStorage.html">CombinedStorage</a>(@Assisted Properties pProperties, <a href="../../../../org/treetank/api/IDataFactory.html">IDataFactory</a> pDataFac,
 <a class="jxr_linenumber" name="52" href="#52">52</a>          <a href="../../../../org/treetank/api/IMetaEntryFactory.html">IMetaEntryFactory</a> pMetaFac, IByteHandlerPipeline pByteHandler) <strong class="jxr_keyword">throws</strong> TTIOException {
-<a class="jxr_linenumber" name="53" href="#53">53</a>          mLocalBackend = <strong class="jxr_keyword">new</strong> <a href="../../../../org/treetank/io/berkeley/BerkeleyStorage.html">BerkeleyStorage</a>(pProperties, pNodeFac, pMetaFac, pByteHandler);
-<a class="jxr_linenumber" name="54" href="#54">54</a>          mRemoteBackend = <strong class="jxr_keyword">new</strong> <a href="../../../../org/treetank/io/jclouds/JCloudsStorage.html">JCloudsStorage</a>(pProperties, pNodeFac, pMetaFac, pByteHandler.clone());
+<a class="jxr_linenumber" name="53" href="#53">53</a>          mLocalBackend = <strong class="jxr_keyword">new</strong> <a href="../../../../org/treetank/io/berkeley/BerkeleyStorage.html">BerkeleyStorage</a>(pProperties, pDataFac, pMetaFac, pByteHandler);
+<a class="jxr_linenumber" name="54" href="#54">54</a>          mRemoteBackend = <strong class="jxr_keyword">new</strong> <a href="../../../../org/treetank/io/jclouds/JCloudsStorage.html">JCloudsStorage</a>(pProperties, pDataFac, pMetaFac, pByteHandler.clone());
 <a class="jxr_linenumber" name="55" href="#55">55</a>      }
 <a class="jxr_linenumber" name="56" href="#56">56</a>  
 <a class="jxr_linenumber" name="57" href="#57">57</a>      <em class="jxr_javadoccomment">/**</em>

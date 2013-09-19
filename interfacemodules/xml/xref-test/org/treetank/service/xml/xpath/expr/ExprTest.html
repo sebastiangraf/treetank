@@ -23,7 +23,7 @@
 <a class="jxr_linenumber" name="13" href="#13">13</a>  <strong class="jxr_keyword">import</strong> org.treetank.CoreTestHelper;
 <a class="jxr_linenumber" name="14" href="#14">14</a>  <strong class="jxr_keyword">import</strong> org.treetank.Holder;
 <a class="jxr_linenumber" name="15" href="#15">15</a>  <strong class="jxr_keyword">import</strong> org.treetank.ModuleFactory;
-<a class="jxr_linenumber" name="16" href="#16">16</a>  <strong class="jxr_keyword">import</strong> org.treetank.NodeTestHelper;
+<a class="jxr_linenumber" name="16" href="#16">16</a>  <strong class="jxr_keyword">import</strong> org.treetank.NodeElementTestHelper;
 <a class="jxr_linenumber" name="17" href="#17">17</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.ResourceConfiguration;
 <a class="jxr_linenumber" name="18" href="#18">18</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 <a class="jxr_linenumber" name="19" href="#19">19</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.StandardSettings;
@@ -68,7 +68,7 @@
 <a class="jxr_linenumber" name="58" href="#58">58</a>              StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
 <a class="jxr_linenumber" name="59" href="#59">59</a>                  .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
 <a class="jxr_linenumber" name="60" href="#60">60</a>          mResource = mResourceConfig.create(props);
-<a class="jxr_linenumber" name="61" href="#61">61</a>          NodeTestHelper.createTestDocument(mResource);
+<a class="jxr_linenumber" name="61" href="#61">61</a>          NodeElementTestHelper.createTestDocument(mResource);
 <a class="jxr_linenumber" name="62" href="#62">62</a>          <strong class="jxr_keyword">this</strong>.holder = Holder.generateRtx(holder, mResource);
 <a class="jxr_linenumber" name="63" href="#63">63</a>      }
 <a class="jxr_linenumber" name="64" href="#64">64</a>  
@@ -530,7 +530,7 @@
 <a class="jxr_linenumber" name="520" href="#520">520</a>                             <strong class="jxr_keyword">final</strong> AbsAxis axis1 = <strong class="jxr_keyword">new</strong> LiteralExpr(pRtx, key1);
 <a class="jxr_linenumber" name="521" href="#521">521</a> 
 <a class="jxr_linenumber" name="522" href="#522">522</a>                             assertEquals(<strong class="jxr_keyword">true</strong>, axis1.hasNext());
-<a class="jxr_linenumber" name="523" href="#523">523</a>                             assertEquals(key1, axis1.getNode().getNodeKey());
+<a class="jxr_linenumber" name="523" href="#523">523</a>                             assertEquals(key1, axis1.getNode().getDataKey());
 <a class="jxr_linenumber" name="524" href="#524">524</a>                             assertEquals(NamePageHash.generateHashForString(<span class="jxr_string">"xs:boolean"</span>), axis1.getNode()
 <a class="jxr_linenumber" name="525" href="#525">525</a>                                 .getTypeKey());
 <a class="jxr_linenumber" name="526" href="#526">526</a>                             assertEquals(false, Boolean.parseBoolean(<strong class="jxr_keyword">new</strong> String(((IValNode)axis1.getNode())
@@ -539,7 +539,7 @@
 <a class="jxr_linenumber" name="529" href="#529">529</a> 
 <a class="jxr_linenumber" name="530" href="#530">530</a>                             <strong class="jxr_keyword">final</strong> AbsAxis axis2 = <strong class="jxr_keyword">new</strong> LiteralExpr(pRtx, key2);
 <a class="jxr_linenumber" name="531" href="#531">531</a>                             assertEquals(<strong class="jxr_keyword">true</strong>, axis2.hasNext());
-<a class="jxr_linenumber" name="532" href="#532">532</a>                             assertEquals(key2, axis2.getNode().getNodeKey());
+<a class="jxr_linenumber" name="532" href="#532">532</a>                             assertEquals(key2, axis2.getNode().getDataKey());
 <a class="jxr_linenumber" name="533" href="#533">533</a>                             assertEquals(NamePageHash.generateHashForString(<span class="jxr_string">"xs:integer"</span>), axis2.getNode()
 <a class="jxr_linenumber" name="534" href="#534">534</a>                                 .getTypeKey());
 <a class="jxr_linenumber" name="535" href="#535">535</a>                             assertEquals(14, Integer.parseInt(<strong class="jxr_keyword">new</strong> String(((IValNode)axis2.getNode())
@@ -716,24 +716,24 @@
 <a class="jxr_linenumber" name="706" href="#706">706</a>                             <em class="jxr_comment">// assertEquals(false, axis1.hasNext());</em>
 <a class="jxr_linenumber" name="707" href="#707">707</a>                             axis1.update(5L);
 <a class="jxr_linenumber" name="708" href="#708">708</a>                             assertEquals(<strong class="jxr_keyword">true</strong>, axis1.hasNext());
-<a class="jxr_linenumber" name="709" href="#709">709</a>                             assertEquals(5L, pRtx.getNode().getNodeKey());
+<a class="jxr_linenumber" name="709" href="#709">709</a>                             assertEquals(5L, pRtx.getNode().getDataKey());
 <a class="jxr_linenumber" name="710" href="#710">710</a>                             axis1.update(13L);
 <a class="jxr_linenumber" name="711" href="#711">711</a>                             assertEquals(<strong class="jxr_keyword">true</strong>, axis1.hasNext());
-<a class="jxr_linenumber" name="712" href="#712">712</a>                             assertEquals(13L, pRtx.getNode().getNodeKey());
+<a class="jxr_linenumber" name="712" href="#712">712</a>                             assertEquals(13L, pRtx.getNode().getDataKey());
 <a class="jxr_linenumber" name="713" href="#713">713</a>                             axis1.update(1L);
 <a class="jxr_linenumber" name="714" href="#714">714</a>                             assertEquals(<strong class="jxr_keyword">true</strong>, axis1.hasNext());
-<a class="jxr_linenumber" name="715" href="#715">715</a>                             assertEquals(1L, pRtx.getNode().getNodeKey());
+<a class="jxr_linenumber" name="715" href="#715">715</a>                             assertEquals(1L, pRtx.getNode().getDataKey());
 <a class="jxr_linenumber" name="716" href="#716">716</a>                             assertEquals(false, axis1.hasNext());
 <a class="jxr_linenumber" name="717" href="#717">717</a> 
 <a class="jxr_linenumber" name="718" href="#718">718</a>                             <strong class="jxr_keyword">final</strong> VarRefExpr axis2 = <strong class="jxr_keyword">new</strong> VarRefExpr(pRtx, variable);
 <a class="jxr_linenumber" name="719" href="#719">719</a>                             <em class="jxr_comment">// assertEquals(false, axis2.hasNext());</em>
 <a class="jxr_linenumber" name="720" href="#720">720</a>                             axis2.update(13L);
 <a class="jxr_linenumber" name="721" href="#721">721</a>                             assertEquals(<strong class="jxr_keyword">true</strong>, axis2.hasNext());
-<a class="jxr_linenumber" name="722" href="#722">722</a>                             assertEquals(13L, pRtx.getNode().getNodeKey());
+<a class="jxr_linenumber" name="722" href="#722">722</a>                             assertEquals(13L, pRtx.getNode().getDataKey());
 <a class="jxr_linenumber" name="723" href="#723">723</a>                             assertEquals(false, axis2.hasNext());
 <a class="jxr_linenumber" name="724" href="#724">724</a>                             axis2.update(12L);
 <a class="jxr_linenumber" name="725" href="#725">725</a>                             assertEquals(<strong class="jxr_keyword">true</strong>, axis2.hasNext());
-<a class="jxr_linenumber" name="726" href="#726">726</a>                             assertEquals(12L, pRtx.getNode().getNodeKey());
+<a class="jxr_linenumber" name="726" href="#726">726</a>                             assertEquals(12L, pRtx.getNode().getDataKey());
 <a class="jxr_linenumber" name="727" href="#727">727</a>                             assertEquals(false, axis2.hasNext());
 <a class="jxr_linenumber" name="728" href="#728">728</a>                         }
 <a class="jxr_linenumber" name="729" href="#729">729</a>                     }

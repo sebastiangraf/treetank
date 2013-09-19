@@ -3,10 +3,10 @@ org.treetank.access.conf
 org.treetank.api
 org.treetank.bucket
 org.treetank.bucket.interfaces
-org.treetank.io
 org.treetank.io.berkeley
 org.treetank.io.bytepipe
 org.treetank.io.combined
+org.treetank.io
 org.treetank.io.jclouds
 org.treetank
 org.treetank.revisioning

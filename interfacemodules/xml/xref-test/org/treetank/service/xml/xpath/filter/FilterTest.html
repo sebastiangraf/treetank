@@ -51,7 +51,7 @@
 <a class="jxr_linenumber" name="41" href="#41">41</a>  <strong class="jxr_keyword">import</strong> org.treetank.CoreTestHelper;
 <a class="jxr_linenumber" name="42" href="#42">42</a>  <strong class="jxr_keyword">import</strong> org.treetank.Holder;
 <a class="jxr_linenumber" name="43" href="#43">43</a>  <strong class="jxr_keyword">import</strong> org.treetank.ModuleFactory;
-<a class="jxr_linenumber" name="44" href="#44">44</a>  <strong class="jxr_keyword">import</strong> org.treetank.NodeTestHelper;
+<a class="jxr_linenumber" name="44" href="#44">44</a>  <strong class="jxr_keyword">import</strong> org.treetank.NodeElementTestHelper;
 <a class="jxr_linenumber" name="45" href="#45">45</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.ResourceConfiguration;
 <a class="jxr_linenumber" name="46" href="#46">46</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 <a class="jxr_linenumber" name="47" href="#47">47</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.StandardSettings;
@@ -99,7 +99,7 @@
 <a class="jxr_linenumber" name="89" href="#89">89</a>              StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
 <a class="jxr_linenumber" name="90" href="#90">90</a>                  .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
 <a class="jxr_linenumber" name="91" href="#91">91</a>          mResource = mResourceConfig.create(props);
-<a class="jxr_linenumber" name="92" href="#92">92</a>          NodeTestHelper.createTestDocument(mResource);
+<a class="jxr_linenumber" name="92" href="#92">92</a>          NodeElementTestHelper.createTestDocument(mResource);
 <a class="jxr_linenumber" name="93" href="#93">93</a>          <strong class="jxr_keyword">this</strong>.holder = Holder.generateRtx(holder, mResource);
 <a class="jxr_linenumber" name="94" href="#94">94</a>      }
 <a class="jxr_linenumber" name="95" href="#95">95</a>  

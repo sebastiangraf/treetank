@@ -257,7 +257,7 @@
 <a class="jxr_linenumber" name="247" href="#247">247</a>                 <strong class="jxr_keyword">final</strong> INameNode namenode = (INameNode)paramRTX.getNode();
 <a class="jxr_linenumber" name="248" href="#248">248</a>                 mOut.write(ECharsForSerializing.OPEN.getBytes());
 <a class="jxr_linenumber" name="249" href="#249">249</a>                 mOut.write(paramRTX.nameForKey(namenode.getNameKey()).getBytes());
-<a class="jxr_linenumber" name="250" href="#250">250</a>                 <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> key = paramRTX.getNode().getNodeKey();
+<a class="jxr_linenumber" name="250" href="#250">250</a>                 <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> key = paramRTX.getNode().getDataKey();
 <a class="jxr_linenumber" name="251" href="#251">251</a>                 <em class="jxr_comment">// Emit namespace declarations.</em>
 <a class="jxr_linenumber" name="252" href="#252">252</a>                 <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> index = 0, length = ((ElementNode)namenode).getNamespaceCount(); index &lt; length; index++) {
 <a class="jxr_linenumber" name="253" href="#253">253</a>                     paramRTX.moveToNamespace(index);
@@ -284,7 +284,7 @@
 <a class="jxr_linenumber" name="274" href="#274">274</a>                     }
 <a class="jxr_linenumber" name="275" href="#275">275</a>                     mOut.write(ECharsForSerializing.ID.getBytes());
 <a class="jxr_linenumber" name="276" href="#276">276</a>                     mOut.write(ECharsForSerializing.EQUAL_QUOTE.getBytes());
-<a class="jxr_linenumber" name="277" href="#277">277</a>                     write(paramRTX.getNode().getNodeKey());
+<a class="jxr_linenumber" name="277" href="#277">277</a>                     write(paramRTX.getNode().getDataKey());
 <a class="jxr_linenumber" name="278" href="#278">278</a>                     mOut.write(ECharsForSerializing.QUOTE.getBytes());
 <a class="jxr_linenumber" name="279" href="#279">279</a>                 }
 <a class="jxr_linenumber" name="280" href="#280">280</a> 
@@ -458,7 +458,7 @@
 <a class="jxr_linenumber" name="448" href="#448">448</a>         System.out.print(<span class="jxr_string">"Serializing '"</span> + args[0] + <span class="jxr_string">"' to '"</span> + args[1] + <span class="jxr_string">"' ... "</span>);
 <a class="jxr_linenumber" name="449" href="#449">449</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> time = System.currentTimeMillis();
 <a class="jxr_linenumber" name="450" href="#450">450</a> 
-<a class="jxr_linenumber" name="451" href="#451">451</a>         Injector injector = Guice.createInjector(<strong class="jxr_keyword">new</strong> ModuleSetter().setNodeFacClass(TreeNodeFactory.<strong class="jxr_keyword">class</strong>).setMetaFacClass(NodeMetaPageFactory.<strong class="jxr_keyword">class</strong>).createModule());
+<a class="jxr_linenumber" name="451" href="#451">451</a>         Injector injector = Guice.createInjector(<strong class="jxr_keyword">new</strong> ModuleSetter().setDataFacClass(TreeNodeFactory.<strong class="jxr_keyword">class</strong>).setMetaFacClass(NodeMetaPageFactory.<strong class="jxr_keyword">class</strong>).createModule());
 <a class="jxr_linenumber" name="452" href="#452">452</a>         IBackendFactory storage = injector.getInstance(IBackendFactory.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="453" href="#453">453</a>         IRevisioning revision = injector.getInstance(IRevisioning.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="454" href="#454">454</a> 

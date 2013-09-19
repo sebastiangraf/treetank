@@ -524,7 +524,7 @@
 <a class="jxr_linenumber" name="514" href="#514">514</a>         } <strong class="jxr_keyword">else</strong> {
 <a class="jxr_linenumber" name="515" href="#515">515</a> 
 <a class="jxr_linenumber" name="516" href="#516">516</a>             <em class="jxr_comment">// Move cursor to parent.</em>
-<a class="jxr_linenumber" name="517" href="#517">517</a>             <strong class="jxr_keyword">if</strong> (mWtx.getNode().getNodeKey() == mLastNodeKey) {
+<a class="jxr_linenumber" name="517" href="#517">517</a>             <strong class="jxr_keyword">if</strong> (mWtx.getNode().getDataKey() == mLastNodeKey) {
 <a class="jxr_linenumber" name="518" href="#518">518</a>                 <em class="jxr_comment">/*</em>
 <a class="jxr_linenumber" name="519" href="#519">519</a> <em class="jxr_comment">                 * An end tag must have been parsed immediately before and it</em>
 <a class="jxr_linenumber" name="520" href="#520">520</a> <em class="jxr_comment">                 * must have been an empty element at the end of a subtree, thus</em>
@@ -559,7 +559,7 @@
 <a class="jxr_linenumber" name="549" href="#549">549</a> 
 <a class="jxr_linenumber" name="550" href="#550">550</a>             }
 <a class="jxr_linenumber" name="551" href="#551">551</a> 
-<a class="jxr_linenumber" name="552" href="#552">552</a>             mLastNodeKey = mWtx.getNode().getNodeKey();
+<a class="jxr_linenumber" name="552" href="#552">552</a>             mLastNodeKey = mWtx.getNode().getDataKey();
 <a class="jxr_linenumber" name="553" href="#553">553</a> 
 <a class="jxr_linenumber" name="554" href="#554">554</a>             <em class="jxr_comment">// Move cursor to right sibling if it has one.</em>
 <a class="jxr_linenumber" name="555" href="#555">555</a>             <strong class="jxr_keyword">if</strong> (((IStructNode)mWtx.getNode()).hasRightSibling()) {
@@ -608,11 +608,11 @@
 <a class="jxr_linenumber" name="598" href="#598">598</a>             } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (paramEvent.isCharacters()) {
 <a class="jxr_linenumber" name="599" href="#599">599</a>                 mFound = checkText(paramEvent.asCharacters());
 <a class="jxr_linenumber" name="600" href="#600">600</a>             }
-<a class="jxr_linenumber" name="601" href="#601">601</a>             <strong class="jxr_keyword">if</strong> (mWtx.getNode().getNodeKey() != mNodeKey) {
+<a class="jxr_linenumber" name="601" href="#601">601</a>             <strong class="jxr_keyword">if</strong> (mWtx.getNode().getDataKey() != mNodeKey) {
 <a class="jxr_linenumber" name="602" href="#602">602</a>                 mIsRightSibling = <strong class="jxr_keyword">true</strong>;
 <a class="jxr_linenumber" name="603" href="#603">603</a>             }
 <a class="jxr_linenumber" name="604" href="#604">604</a> 
-<a class="jxr_linenumber" name="605" href="#605">605</a>             mKeyMatches = mWtx.getNode().getNodeKey();
+<a class="jxr_linenumber" name="605" href="#605">605</a>             mKeyMatches = mWtx.getNode().getDataKey();
 <a class="jxr_linenumber" name="606" href="#606">606</a>             <em class="jxr_comment">//</em>
 <a class="jxr_linenumber" name="607" href="#607">607</a>             <em class="jxr_comment">// if (mFound &amp;&amp; mIsRightSibling) {</em>
 <a class="jxr_linenumber" name="608" href="#608">608</a>             <em class="jxr_comment">// </em><em class="jxr_comment">/*</em>
@@ -1038,7 +1038,7 @@
 <a class="jxr_linenumber" name="1028" href="#1028">1028</a>         <strong class="jxr_keyword">boolean</strong> isLast = false;
 <a class="jxr_linenumber" name="1029" href="#1029">1029</a> 
 <a class="jxr_linenumber" name="1030" href="#1030">1030</a>         <strong class="jxr_keyword">do</strong> {
-<a class="jxr_linenumber" name="1031" href="#1031">1031</a>             <strong class="jxr_keyword">if</strong> (mWtx.getNode().getNodeKey() != mKeyMatches) {
+<a class="jxr_linenumber" name="1031" href="#1031">1031</a>             <strong class="jxr_keyword">if</strong> (mWtx.getNode().getDataKey() != mKeyMatches) {
 <a class="jxr_linenumber" name="1032" href="#1032">1032</a>                 <strong class="jxr_keyword">final</strong> IStructNode node = (IStructNode)mWtx.getNode();
 <a class="jxr_linenumber" name="1033" href="#1033">1033</a>                 <strong class="jxr_keyword">if</strong> (!node.hasRightSibling() &amp;&amp; !node.hasLeftSibling()) {
 <a class="jxr_linenumber" name="1034" href="#1034">1034</a>                     <em class="jxr_comment">// if (mDelete == EDelete.ATSTARTMIDDLE) {</em>
@@ -1059,7 +1059,7 @@
 <a class="jxr_linenumber" name="1049" href="#1049">1049</a> 
 <a class="jxr_linenumber" name="1050" href="#1050">1050</a>                 mWtx.remove();
 <a class="jxr_linenumber" name="1051" href="#1051">1051</a>             }
-<a class="jxr_linenumber" name="1052" href="#1052">1052</a>         } <strong class="jxr_keyword">while</strong> (mWtx.getNode().getNodeKey() != mKeyMatches &amp;&amp; !movedToParent &amp;&amp; !isLast);
+<a class="jxr_linenumber" name="1052" href="#1052">1052</a>         } <strong class="jxr_keyword">while</strong> (mWtx.getNode().getDataKey() != mKeyMatches &amp;&amp; !movedToParent &amp;&amp; !isLast);
 <a class="jxr_linenumber" name="1053" href="#1053">1053</a> 
 <a class="jxr_linenumber" name="1054" href="#1054">1054</a>         <strong class="jxr_keyword">if</strong> (movedToParent) {
 <a class="jxr_linenumber" name="1055" href="#1055">1055</a>             <strong class="jxr_keyword">if</strong> (mDelete == EDelete.ATBOTTOM) {
@@ -1108,7 +1108,7 @@
 <a class="jxr_linenumber" name="1098" href="#1098">1098</a> <em class="jxr_javadoccomment">     * Initialize variables needed for the main algorithm.</em>
 <a class="jxr_linenumber" name="1099" href="#1099">1099</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="1100" href="#1100">1100</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> initializeVars() {
-<a class="jxr_linenumber" name="1101" href="#1101">1101</a>         mNodeKey = mWtx.getNode().getNodeKey();
+<a class="jxr_linenumber" name="1101" href="#1101">1101</a>         mNodeKey = mWtx.getNode().getDataKey();
 <a class="jxr_linenumber" name="1102" href="#1102">1102</a>         mFound = false;
 <a class="jxr_linenumber" name="1103" href="#1103">1103</a>         mIsRightSibling = false;
 <a class="jxr_linenumber" name="1104" href="#1104">1104</a>         mKeyMatches = -1;
@@ -1194,7 +1194,7 @@
 <a class="jxr_linenumber" name="1184" href="#1184">1184</a>         <strong class="jxr_keyword">if</strong> (mWtx.getNode().getKind() == IConstants.ELEMENT
 <a class="jxr_linenumber" name="1185" href="#1185">1185</a>             &amp;&amp; mWtx.getQNameOfCurrentNode().equals(mEvent.getName())) {
 <a class="jxr_linenumber" name="1186" href="#1186">1186</a>             <em class="jxr_comment">// Check if atts and namespaces are the same.</em>
-<a class="jxr_linenumber" name="1187" href="#1187">1187</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> nodeKey = mWtx.getNode().getNodeKey();
+<a class="jxr_linenumber" name="1187" href="#1187">1187</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> nodeKey = mWtx.getNode().getDataKey();
 <a class="jxr_linenumber" name="1188" href="#1188">1188</a> 
 <a class="jxr_linenumber" name="1189" href="#1189">1189</a>             <em class="jxr_comment">// Check attributes.</em>
 <a class="jxr_linenumber" name="1190" href="#1190">1190</a>             <strong class="jxr_keyword">boolean</strong> foundAtts = false;
@@ -1275,7 +1275,7 @@
 <a class="jxr_linenumber" name="1265" href="#1265">1265</a>         <strong class="jxr_keyword">final</strong> File target = <strong class="jxr_keyword">new</strong> File(args[1]);
 <a class="jxr_linenumber" name="1266" href="#1266">1266</a> 
 <a class="jxr_linenumber" name="1267" href="#1267">1267</a>         Injector injector =
-<a class="jxr_linenumber" name="1268" href="#1268">1268</a>             Guice.createInjector(<strong class="jxr_keyword">new</strong> ModuleSetter().setNodeFacClass(TreeNodeFactory.<strong class="jxr_keyword">class</strong>).setMetaFacClass(
+<a class="jxr_linenumber" name="1268" href="#1268">1268</a>             Guice.createInjector(<strong class="jxr_keyword">new</strong> ModuleSetter().setDataFacClass(TreeNodeFactory.<strong class="jxr_keyword">class</strong>).setMetaFacClass(
 <a class="jxr_linenumber" name="1269" href="#1269">1269</a>                 NodeMetaPageFactory.<strong class="jxr_keyword">class</strong>).createModule());
 <a class="jxr_linenumber" name="1270" href="#1270">1270</a>         IBackendFactory storage = injector.getInstance(IBackendFactory.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="1271" href="#1271">1271</a>         IRevisioning revision = injector.getInstance(IRevisioning.<strong class="jxr_keyword">class</strong>);

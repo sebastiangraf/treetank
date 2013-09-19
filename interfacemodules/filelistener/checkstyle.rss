@@ -6,10 +6,10 @@
     <link>http://disy.github.com/treetank/interfacemodules/filelistener/</link>
     <description>Filelistener interface for Treetank - Checkstyle report</description>
     <language>en-us</language>
-    <copyright>&#169;2013 Distributed Systems Group</copyright>
+    <copyright>&#169;2013</copyright>
     <item>
-      <title>File: 21,
-             Errors: 1378,
+      <title>File: 22,
+             Errors: 2025,
              Warnings: 0,
              Infos: 0
       </title>
@@ -43,6 +43,34 @@
               </tr>
                           <tr>
                 <td>
+                  <a href="http://disy.github.com/treetank/interfacemodules/filelistener//checkstyle.html#org.treetank.filelistener.file.data.FilelistenerMetaDataFactory.java">org/treetank/filelistener/file/data/FilelistenerMetaDataFactory.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  44
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://disy.github.com/treetank/interfacemodules/filelistener//checkstyle.html#org.treetank.filelistener.file.data.FileDataFactory.java">org/treetank/filelistener/file/data/FileDataFactory.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  5
+                </td>
+              </tr>
+                          <tr>
+                <td>
                   <a href="http://disy.github.com/treetank/interfacemodules/filelistener//checkstyle.html#org.treetank.filelistener.file.FilesystemNotification.java">org/treetank/filelistener/file/FilesystemNotification.java</a>
                 </td>
                 <td>
@@ -52,7 +80,7 @@
                   0
                 </td>
                 <td>
-                  47
+                  180
                 </td>
               </tr>
                           <tr>
@@ -67,6 +95,20 @@
                 </td>
                 <td>
                   83
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://disy.github.com/treetank/interfacemodules/filelistener//checkstyle.html#org.treetank.filelistener.file.data.FileData.java">org/treetank/filelistener/file/data/FileData.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  37
                 </td>
               </tr>
                           <tr>
@@ -94,7 +136,7 @@
                   0
                 </td>
                 <td>
-                  59
+                  41
                 </td>
               </tr>
                           <tr>
@@ -113,20 +155,6 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://disy.github.com/treetank/interfacemodules/filelistener//checkstyle.html#org.treetank.filelistener.file.node.FilelistenerMetaPageFactory.java">org/treetank/filelistener/file/node/FilelistenerMetaPageFactory.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  25
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://disy.github.com/treetank/interfacemodules/filelistener//checkstyle.html#org.treetank.filelistener.file.Filelistener.java">org/treetank/filelistener/file/Filelistener.java</a>
                 </td>
                 <td>
@@ -136,7 +164,7 @@
                   0
                 </td>
                 <td>
-                  132
+                  644
                 </td>
               </tr>
                           <tr>
@@ -164,7 +192,7 @@
                   0
                 </td>
                 <td>
-                  30
+                  33
                 </td>
               </tr>
                           <tr>
@@ -206,7 +234,7 @@
                   0
                 </td>
                 <td>
-                  26
+                  29
                 </td>
               </tr>
                           <tr>
@@ -234,7 +262,7 @@
                   0
                 </td>
                 <td>
-                  25
+                  30
                 </td>
               </tr>
                           <tr>
@@ -249,20 +277,6 @@
                 </td>
                 <td>
                   67
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://disy.github.com/treetank/interfacemodules/filelistener//checkstyle.html#org.treetank.filelistener.file.node.FileNodeFactory.java">org/treetank/filelistener/file/node/FileNodeFactory.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  5
                 </td>
               </tr>
                           <tr>
@@ -295,6 +309,20 @@
               </tr>
                           <tr>
                 <td>
+                  <a href="http://disy.github.com/treetank/interfacemodules/filelistener//checkstyle.html#org.treetank.filelistener.file.FilesystemNotificationObserver.java">org/treetank/filelistener/file/FilesystemNotificationObserver.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  4
+                </td>
+              </tr>
+                          <tr>
+                <td>
                   <a href="http://disy.github.com/treetank/interfacemodules/filelistener//checkstyle.html#org.treetank.filelistener.file.StorageManager.java">org/treetank/filelistener/file/StorageManager.java</a>
                 </td>
                 <td>
@@ -305,20 +333,6 @@
                 </td>
                 <td>
                   35
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://disy.github.com/treetank/interfacemodules/filelistener//checkstyle.html#org.treetank.filelistener.file.node.FileNode.java">org/treetank/filelistener/file/node/FileNode.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  51
                 </td>
               </tr>
                       </tbody>

@@ -144,21 +144,21 @@
 <a class="jxr_linenumber" name="134" href="#134">134</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> getLastChild() {
 <a class="jxr_linenumber" name="135" href="#135">135</a> 
 <a class="jxr_linenumber" name="136" href="#136">136</a>         <em class="jxr_comment">// nodekey of the root of the current subtree</em>
-<a class="jxr_linenumber" name="137" href="#137">137</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> parent = getNode().getNodeKey();
+<a class="jxr_linenumber" name="137" href="#137">137</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> parent = getNode().getDataKey();
 <a class="jxr_linenumber" name="138" href="#138">138</a> 
 <a class="jxr_linenumber" name="139" href="#139">139</a>         <em class="jxr_comment">// traverse tree in pre order to the leftmost leaf of the subtree and</em>
 <a class="jxr_linenumber" name="140" href="#140">140</a>         <em class="jxr_comment">// push</em>
 <a class="jxr_linenumber" name="141" href="#141">141</a>         <em class="jxr_comment">// all nodes to the stack</em>
 <a class="jxr_linenumber" name="142" href="#142">142</a>         <strong class="jxr_keyword">if</strong> (((IStructNode)getNode()).hasFirstChild()) {
 <a class="jxr_linenumber" name="143" href="#143">143</a>             <strong class="jxr_keyword">while</strong> (((IStructNode)getNode()).hasFirstChild()) {
-<a class="jxr_linenumber" name="144" href="#144">144</a>                 mStack.push(getNode().getNodeKey());
+<a class="jxr_linenumber" name="144" href="#144">144</a>                 mStack.push(getNode().getDataKey());
 <a class="jxr_linenumber" name="145" href="#145">145</a>                 moveTo(((IStructNode)getNode()).getFirstChildKey());
 <a class="jxr_linenumber" name="146" href="#146">146</a>             }
 <a class="jxr_linenumber" name="147" href="#147">147</a> 
 <a class="jxr_linenumber" name="148" href="#148">148</a>             <em class="jxr_comment">// traverse all the siblings of the leftmost leave and all their</em>
 <a class="jxr_linenumber" name="149" href="#149">149</a>             <em class="jxr_comment">// descendants and push all of them to the stack</em>
 <a class="jxr_linenumber" name="150" href="#150">150</a>             <strong class="jxr_keyword">while</strong> (((IStructNode)getNode()).hasRightSibling()) {
-<a class="jxr_linenumber" name="151" href="#151">151</a>                 mStack.push(getNode().getNodeKey());
+<a class="jxr_linenumber" name="151" href="#151">151</a>                 mStack.push(getNode().getDataKey());
 <a class="jxr_linenumber" name="152" href="#152">152</a>                 moveTo(((IStructNode)getNode()).getRightSiblingKey());
 <a class="jxr_linenumber" name="153" href="#153">153</a>                 getLastChild();
 <a class="jxr_linenumber" name="154" href="#154">154</a>             }
@@ -168,7 +168,7 @@
 <a class="jxr_linenumber" name="158" href="#158">158</a>             <em class="jxr_comment">// right siblings and their descendants on each step</em>
 <a class="jxr_linenumber" name="159" href="#159">159</a>             <strong class="jxr_keyword">if</strong> (getNode().hasParent() &amp;&amp; (getNode().getParentKey() != parent)) {
 <a class="jxr_linenumber" name="160" href="#160">160</a> 
-<a class="jxr_linenumber" name="161" href="#161">161</a>                 mStack.push(getNode().getNodeKey());
+<a class="jxr_linenumber" name="161" href="#161">161</a>                 mStack.push(getNode().getDataKey());
 <a class="jxr_linenumber" name="162" href="#162">162</a>                 <strong class="jxr_keyword">while</strong> (getNode().hasParent() &amp;&amp; (getNode().getParentKey() != parent)) {
 <a class="jxr_linenumber" name="163" href="#163">163</a> 
 <a class="jxr_linenumber" name="164" href="#164">164</a>                     moveTo(getNode().getParentKey());
@@ -180,7 +180,7 @@
 <a class="jxr_linenumber" name="170" href="#170">170</a> 
 <a class="jxr_linenumber" name="171" href="#171">171</a>                         moveTo(((IStructNode)getNode()).getRightSiblingKey());
 <a class="jxr_linenumber" name="172" href="#172">172</a>                         getLastChild();
-<a class="jxr_linenumber" name="173" href="#173">173</a>                         mStack.push(getNode().getNodeKey());
+<a class="jxr_linenumber" name="173" href="#173">173</a>                         mStack.push(getNode().getDataKey());
 <a class="jxr_linenumber" name="174" href="#174">174</a>                     }
 <a class="jxr_linenumber" name="175" href="#175">175</a>                 }
 <a class="jxr_linenumber" name="176" href="#176">176</a> 

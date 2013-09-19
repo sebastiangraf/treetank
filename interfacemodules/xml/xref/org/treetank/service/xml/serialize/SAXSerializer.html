@@ -175,7 +175,7 @@
 <a class="jxr_linenumber" name="165" href="#165">165</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="166" href="#166">166</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> generateElement(<strong class="jxr_keyword">final</strong> INodeReadTrx paramRtx) <strong class="jxr_keyword">throws</strong> TTIOException {
 <a class="jxr_linenumber" name="167" href="#167">167</a>         <strong class="jxr_keyword">final</strong> AttributesImpl atts = <strong class="jxr_keyword">new</strong> AttributesImpl();
-<a class="jxr_linenumber" name="168" href="#168">168</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> key = paramRtx.getNode().getNodeKey();
+<a class="jxr_linenumber" name="168" href="#168">168</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> key = paramRtx.getNode().getDataKey();
 <a class="jxr_linenumber" name="169" href="#169">169</a> 
 <a class="jxr_linenumber" name="170" href="#170">170</a>         <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="171" href="#171">171</a>             <em class="jxr_comment">// Process namespace nodes.</em>
@@ -248,7 +248,7 @@
 <a class="jxr_linenumber" name="238" href="#238">238</a>         Storage.createStorage(config);
 <a class="jxr_linenumber" name="239" href="#239">239</a>         <strong class="jxr_keyword">final</strong> IStorage storage = Storage.openStorage(<strong class="jxr_keyword">new</strong> File(args[0]));
 <a class="jxr_linenumber" name="240" href="#240">240</a> 
-<a class="jxr_linenumber" name="241" href="#241">241</a>         Injector injector = Guice.createInjector(<strong class="jxr_keyword">new</strong> ModuleSetter().setNodeFacClass(TreeNodeFactory.<strong class="jxr_keyword">class</strong>).setMetaFacClass(NodeMetaPageFactory.<strong class="jxr_keyword">class</strong>).createModule());
+<a class="jxr_linenumber" name="241" href="#241">241</a>         Injector injector = Guice.createInjector(<strong class="jxr_keyword">new</strong> ModuleSetter().setDataFacClass(TreeNodeFactory.<strong class="jxr_keyword">class</strong>).setMetaFacClass(NodeMetaPageFactory.<strong class="jxr_keyword">class</strong>).createModule());
 <a class="jxr_linenumber" name="242" href="#242">242</a>         IBackendFactory backend = injector.getInstance(IBackendFactory.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="243" href="#243">243</a>         IRevisioning revision = injector.getInstance(IRevisioning.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="244" href="#244">244</a>         Properties props = <strong class="jxr_keyword">new</strong> Properties();

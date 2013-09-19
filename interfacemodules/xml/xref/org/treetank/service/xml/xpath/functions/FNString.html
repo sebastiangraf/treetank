@@ -133,7 +133,7 @@
 <a class="jxr_linenumber" name="123" href="#123">123</a> 
 <a class="jxr_linenumber" name="124" href="#124">124</a>         <strong class="jxr_keyword">final</strong> StringBuilder value = <strong class="jxr_keyword">new</strong> StringBuilder();
 <a class="jxr_linenumber" name="125" href="#125">125</a> 
-<a class="jxr_linenumber" name="126" href="#126">126</a>         <strong class="jxr_keyword">if</strong> (getNode().getNodeKey() &gt;= 0) { <em class="jxr_comment">// is node</em>
+<a class="jxr_linenumber" name="126" href="#126">126</a>         <strong class="jxr_keyword">if</strong> (getNode().getDataKey() &gt;= 0) { <em class="jxr_comment">// is node</em>
 <a class="jxr_linenumber" name="127" href="#127">127</a>             <strong class="jxr_keyword">if</strong> (getNode().getKind() == IConstants.ATTRIBUTE || getNode().getKind() == IConstants.TEXT) {
 <a class="jxr_linenumber" name="128" href="#128">128</a>                 value.append(<strong class="jxr_keyword">new</strong> String(((IValNode)getNode()).getRawValue()));
 <a class="jxr_linenumber" name="129" href="#129">129</a>             } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (getNode().getKind() == IConstants.ROOT || getNode().getKind() == IConstants.ELEMENT) {

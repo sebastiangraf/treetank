@@ -80,7 +80,7 @@
 <a class="jxr_linenumber" name="70" href="#70">70</a>  
 <a class="jxr_linenumber" name="71" href="#71">71</a>          <em class="jxr_comment">// store item key as atomic value</em>
 <a class="jxr_linenumber" name="72" href="#72">72</a>          <strong class="jxr_keyword">final</strong> AtomicValue mAtomized =
-<a class="jxr_linenumber" name="73" href="#73">73</a>              <strong class="jxr_keyword">new</strong> AtomicValue(TypedValue.getBytes(((Long)getNode().getNodeKey()).toString()), NamePageHash
+<a class="jxr_linenumber" name="73" href="#73">73</a>              <strong class="jxr_keyword">new</strong> AtomicValue(TypedValue.getBytes(((Long)getNode().getDataKey()).toString()), NamePageHash
 <a class="jxr_linenumber" name="74" href="#74">74</a>                  .generateHashForString(<span class="jxr_string">"xs:integer"</span>));
 <a class="jxr_linenumber" name="75" href="#75">75</a>          <strong class="jxr_keyword">final</strong> AtomicValue[] op = {
 <a class="jxr_linenumber" name="76" href="#76">76</a>              mAtomized

@@ -6,10 +6,10 @@
     <link>http://disy.github.com/treetank/interfacemodules/jax-rx/</link>
     <description>Jax-RX interface implementation - Checkstyle report</description>
     <language>en-us</language>
-    <copyright>&#169;2013 Distributed Systems Group</copyright>
+    <copyright>&#169;2013</copyright>
     <item>
-      <title>File: 14,
-             Errors: 477,
+      <title>File: 28,
+             Errors: 1275,
              Warnings: 0,
              Infos: 0
       </title>
@@ -29,7 +29,7 @@
           <tbody>
                           <tr>
                 <td>
-                  <a href="http://disy.github.com/treetank/interfacemodules/jax-rx//checkstyle.html#org.treetank.service.jaxrx.implementation.package-info.java">org/treetank/service/jaxrx/implementation/package-info.java</a>
+                  <a href="http://disy.github.com/treetank/interfacemodules/jax-rx//checkstyle.html#org.jaxrx.core.ResourcePath.java">org/jaxrx/core/ResourcePath.java</a>
                 </td>
                 <td>
                   0
@@ -38,12 +38,12 @@
                   0
                 </td>
                 <td>
-                  6
+                  8
                 </td>
               </tr>
                           <tr>
                 <td>
-                  <a href="http://disy.github.com/treetank/interfacemodules/jax-rx//checkstyle.html#org.treetank.service.jaxrx.implementation.NodeIdRepresentation.java">org/treetank/service/jaxrx/implementation/NodeIdRepresentation.java</a>
+                  <a href="http://disy.github.com/treetank/interfacemodules/jax-rx//checkstyle.html#org.jaxrx.core.ResponseBuilder.java">org/jaxrx/core/ResponseBuilder.java</a>
                 </td>
                 <td>
                   0
@@ -52,7 +52,21 @@
                   0
                 </td>
                 <td>
-                  129
+                  114
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://disy.github.com/treetank/interfacemodules/jax-rx//checkstyle.html#org.jaxrx.resource.JaxRxResource.java">org/jaxrx/resource/JaxRxResource.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  8
                 </td>
               </tr>
                           <tr>
@@ -85,7 +99,7 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://disy.github.com/treetank/interfacemodules/jax-rx//checkstyle.html#org.treetank.service.jaxrx.server.StartServer.java">org/treetank/service/jaxrx/server/StartServer.java</a>
+                  <a href="http://disy.github.com/treetank/interfacemodules/jax-rx//checkstyle.html#org.jaxrx.JettyServer.java">org/jaxrx/JettyServer.java</a>
                 </td>
                 <td>
                   0
@@ -94,35 +108,7 @@
                   0
                 </td>
                 <td>
-                  12
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://disy.github.com/treetank/interfacemodules/jax-rx//checkstyle.html#org.treetank.service.jaxrx.util.WorkerHelper.java">org/treetank/service/jaxrx/util/WorkerHelper.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  43
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://disy.github.com/treetank/interfacemodules/jax-rx//checkstyle.html#org.treetank.service.jaxrx.implementation.TreeTankMediator.java">org/treetank/service/jaxrx/implementation/TreeTankMediator.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  49
+                  7
                 </td>
               </tr>
                           <tr>
@@ -141,7 +127,7 @@
               </tr>
                           <tr>
                 <td>
-                  <a href="http://disy.github.com/treetank/interfacemodules/jax-rx//checkstyle.html#org.treetank.service.jaxrx.util.RESTXMLShredder.java">org/treetank/service/jaxrx/util/RESTXMLShredder.java</a>
+                  <a href="http://disy.github.com/treetank/interfacemodules/jax-rx//checkstyle.html#org.jaxrx.dom.DOMs.java">org/jaxrx/dom/DOMs.java</a>
                 </td>
                 <td>
                   0
@@ -150,21 +136,7 @@
                   0
                 </td>
                 <td>
-                  10
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://disy.github.com/treetank/interfacemodules/jax-rx//checkstyle.html#org.treetank.service.jaxrx.util.RestXPathProcessor.java">org/treetank/service/jaxrx/util/RestXPathProcessor.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  42
+                  26
                 </td>
               </tr>
                           <tr>
@@ -193,6 +165,230 @@
                 </td>
                 <td>
                   6
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://disy.github.com/treetank/interfacemodules/jax-rx//checkstyle.html#org.treetank.service.jaxrx.implementation.package-info.java">org/treetank/service/jaxrx/implementation/package-info.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  6
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://disy.github.com/treetank/interfacemodules/jax-rx//checkstyle.html#org.treetank.service.jaxrx.implementation.NodeIdRepresentation.java">org/treetank/service/jaxrx/implementation/NodeIdRepresentation.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  129
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://disy.github.com/treetank/interfacemodules/jax-rx//checkstyle.html#org.jaxrx.core.SchemaChecker.java">org/jaxrx/core/SchemaChecker.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  66
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://disy.github.com/treetank/interfacemodules/jax-rx//checkstyle.html#org.jaxrx.core.JaxRxConstants.java">org/jaxrx/core/JaxRxConstants.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  34
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://disy.github.com/treetank/interfacemodules/jax-rx//checkstyle.html#org.treetank.service.jaxrx.server.StartServer.java">org/treetank/service/jaxrx/server/StartServer.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  12
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://disy.github.com/treetank/interfacemodules/jax-rx//checkstyle.html#org.treetank.service.jaxrx.util.WorkerHelper.java">org/treetank/service/jaxrx/util/WorkerHelper.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  43
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://disy.github.com/treetank/interfacemodules/jax-rx//checkstyle.html#org.jaxrx.core.QueryParameter.java">org/jaxrx/core/QueryParameter.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  19
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://disy.github.com/treetank/interfacemodules/jax-rx//checkstyle.html#org.jaxrx.JaxRx.java">org/jaxrx/JaxRx.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  163
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://disy.github.com/treetank/interfacemodules/jax-rx//checkstyle.html#org.treetank.service.jaxrx.util.RESTXMLShredder.java">org/treetank/service/jaxrx/util/RESTXMLShredder.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  10
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://disy.github.com/treetank/interfacemodules/jax-rx//checkstyle.html#org.treetank.service.jaxrx.implementation.TreeTankMediator.java">org/treetank/service/jaxrx/implementation/TreeTankMediator.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  49
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://disy.github.com/treetank/interfacemodules/jax-rx//checkstyle.html#org.jaxrx.resource.AResource.java">org/jaxrx/resource/AResource.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  54
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://disy.github.com/treetank/interfacemodules/jax-rx//checkstyle.html#org.jaxrx.core.JaxRxException.java">org/jaxrx/core/JaxRxException.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  15
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://disy.github.com/treetank/interfacemodules/jax-rx//checkstyle.html#org.jaxrx.resource.XMLResource.java">org/jaxrx/resource/XMLResource.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  10
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://disy.github.com/treetank/interfacemodules/jax-rx//checkstyle.html#org.treetank.service.jaxrx.util.RestXPathProcessor.java">org/treetank/service/jaxrx/util/RestXPathProcessor.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  42
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://disy.github.com/treetank/interfacemodules/jax-rx//checkstyle.html#org.jaxrx.dom.DOMJaxRx.java">org/jaxrx/dom/DOMJaxRx.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  158
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://disy.github.com/treetank/interfacemodules/jax-rx//checkstyle.html#org.jaxrx.core.Systems.java">org/jaxrx/core/Systems.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  116
                 </td>
               </tr>
                           <tr>

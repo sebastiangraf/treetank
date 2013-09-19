@@ -1,4 +1,8 @@
 org.eclipse.wb.swt
+org.jaxrx
+org.jaxrx.core
+org.jaxrx.dom
+org.jaxrx.resource
 org.treetank
 org.treetank.access
 org.treetank.access.conf
@@ -8,10 +12,11 @@ org.treetank.axis
 org.treetank.axis.filter
 org.treetank.bucket
 org.treetank.bucket.interfaces
+org.treetank.data
 org.treetank.exception
 org.treetank.filelistener.exceptions
 org.treetank.filelistener.file
-org.treetank.filelistener.file.node
+org.treetank.filelistener.file.data
 org.treetank.filelistener.ui.api
 org.treetank.filelistener.ui.application
 org.treetank.filelistener.ui.composites

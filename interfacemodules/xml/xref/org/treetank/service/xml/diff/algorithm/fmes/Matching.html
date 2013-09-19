@@ -135,7 +135,7 @@
 <a class="jxr_linenumber" name="125" href="#125">125</a> 
 <a class="jxr_linenumber" name="126" href="#126">126</a>         mIsInSubtree.set(paramNode, paramNode, <strong class="jxr_keyword">true</strong>);
 <a class="jxr_linenumber" name="127" href="#127">127</a>         <strong class="jxr_keyword">if</strong> (paramNode.hasParent()) {
-<a class="jxr_linenumber" name="128" href="#128">128</a>             paramRtx.moveTo(paramNode.getNodeKey());
+<a class="jxr_linenumber" name="128" href="#128">128</a>             paramRtx.moveTo(paramNode.getDataKey());
 <a class="jxr_linenumber" name="129" href="#129">129</a>             <strong class="jxr_keyword">while</strong> (((IStructNode)paramRtx.getNode()).hasParent()) {
 <a class="jxr_linenumber" name="130" href="#130">130</a>                 paramRtx.moveTo(paramRtx.getNode().getParentKey());
 <a class="jxr_linenumber" name="131" href="#131">131</a>                 mIsInSubtree.set(paramRtx.getNode(), paramNode, <strong class="jxr_keyword">true</strong>);
@@ -172,7 +172,7 @@
 <a class="jxr_linenumber" name="162" href="#162">162</a>         assert paramNodeY != <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="163" href="#163">163</a>         <strong class="jxr_keyword">long</strong> retVal = 0;
 <a class="jxr_linenumber" name="164" href="#164">164</a> 
-<a class="jxr_linenumber" name="165" href="#165">165</a>         mRtxOld.moveTo(paramNodeX.getNodeKey());
+<a class="jxr_linenumber" name="165" href="#165">165</a>         mRtxOld.moveTo(paramNodeX.getDataKey());
 <a class="jxr_linenumber" name="166" href="#166">166</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> AbsAxis axis = <strong class="jxr_keyword">new</strong> DescendantAxis(mRtxOld, <strong class="jxr_keyword">true</strong>); axis.hasNext(); axis.next()) {
 <a class="jxr_linenumber" name="167" href="#167">167</a>             retVal += mIsInSubtree.get(paramNodeY, partner(mRtxOld.getNode())) ? 1 : 0;
 <a class="jxr_linenumber" name="168" href="#168">168</a>         }

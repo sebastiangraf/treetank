@@ -51,7 +51,7 @@
 <a class="jxr_linenumber" name="41" href="#41">41</a>  <strong class="jxr_keyword">import</strong> org.treetank.CoreTestHelper;
 <a class="jxr_linenumber" name="42" href="#42">42</a>  <strong class="jxr_keyword">import</strong> org.treetank.Holder;
 <a class="jxr_linenumber" name="43" href="#43">43</a>  <strong class="jxr_keyword">import</strong> org.treetank.ModuleFactory;
-<a class="jxr_linenumber" name="44" href="#44">44</a>  <strong class="jxr_keyword">import</strong> org.treetank.NodeTestHelper;
+<a class="jxr_linenumber" name="44" href="#44">44</a>  <strong class="jxr_keyword">import</strong> org.treetank.NodeElementTestHelper;
 <a class="jxr_linenumber" name="45" href="#45">45</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.ResourceConfiguration;
 <a class="jxr_linenumber" name="46" href="#46">46</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 <a class="jxr_linenumber" name="47" href="#47">47</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.StandardSettings;
@@ -79,7 +79,7 @@
 <a class="jxr_linenumber" name="69" href="#69">69</a>              StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
 <a class="jxr_linenumber" name="70" href="#70">70</a>                  .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
 <a class="jxr_linenumber" name="71" href="#71">71</a>          mResource = mResourceConfig.create(props);
-<a class="jxr_linenumber" name="72" href="#72">72</a>          NodeTestHelper.createTestDocument(mResource);
+<a class="jxr_linenumber" name="72" href="#72">72</a>          NodeElementTestHelper.createTestDocument(mResource);
 <a class="jxr_linenumber" name="73" href="#73">73</a>          <strong class="jxr_keyword">this</strong>.holder = Holder.generateWtx(holder, mResource);
 <a class="jxr_linenumber" name="74" href="#74">74</a>      }
 <a class="jxr_linenumber" name="75" href="#75">75</a>  
@@ -144,19 +144,19 @@
 <a class="jxr_linenumber" name="134" href="#134">134</a> 
 <a class="jxr_linenumber" name="135" href="#135">135</a>         AssertJUnit.assertEquals(<strong class="jxr_keyword">true</strong>, axis.hasNext());
 <a class="jxr_linenumber" name="136" href="#136">136</a>         axis.next();
-<a class="jxr_linenumber" name="137" href="#137">137</a>         AssertJUnit.assertEquals(nodeKey + 1, wtx.getNode().getNodeKey());
+<a class="jxr_linenumber" name="137" href="#137">137</a>         AssertJUnit.assertEquals(nodeKey + 1, wtx.getNode().getDataKey());
 <a class="jxr_linenumber" name="138" href="#138">138</a>         AssertJUnit.assertEquals(<strong class="jxr_keyword">new</strong> QName(<span class="jxr_string">"foo0"</span>), wtx.getQNameOfCurrentNode());
 <a class="jxr_linenumber" name="139" href="#139">139</a>         AssertJUnit.assertEquals(<span class="jxr_string">"0"</span>, wtx.getValueOfCurrentNode());
 <a class="jxr_linenumber" name="140" href="#140">140</a> 
 <a class="jxr_linenumber" name="141" href="#141">141</a>         AssertJUnit.assertEquals(<strong class="jxr_keyword">true</strong>, axis.hasNext());
 <a class="jxr_linenumber" name="142" href="#142">142</a>         axis.next();
-<a class="jxr_linenumber" name="143" href="#143">143</a>         AssertJUnit.assertEquals(nodeKey + 2, wtx.getNode().getNodeKey());
+<a class="jxr_linenumber" name="143" href="#143">143</a>         AssertJUnit.assertEquals(nodeKey + 2, wtx.getNode().getDataKey());
 <a class="jxr_linenumber" name="144" href="#144">144</a>         AssertJUnit.assertEquals(<strong class="jxr_keyword">new</strong> QName(<span class="jxr_string">"foo1"</span>), wtx.getQNameOfCurrentNode());
 <a class="jxr_linenumber" name="145" href="#145">145</a>         AssertJUnit.assertEquals(<span class="jxr_string">"1"</span>, wtx.getValueOfCurrentNode());
 <a class="jxr_linenumber" name="146" href="#146">146</a> 
 <a class="jxr_linenumber" name="147" href="#147">147</a>         AssertJUnit.assertEquals(<strong class="jxr_keyword">true</strong>, axis.hasNext());
 <a class="jxr_linenumber" name="148" href="#148">148</a>         axis.next();
-<a class="jxr_linenumber" name="149" href="#149">149</a>         AssertJUnit.assertEquals(nodeKey + 3, wtx.getNode().getNodeKey());
+<a class="jxr_linenumber" name="149" href="#149">149</a>         AssertJUnit.assertEquals(nodeKey + 3, wtx.getNode().getDataKey());
 <a class="jxr_linenumber" name="150" href="#150">150</a>         AssertJUnit.assertEquals(<strong class="jxr_keyword">new</strong> QName(<span class="jxr_string">"foo2"</span>), wtx.getQNameOfCurrentNode());
 <a class="jxr_linenumber" name="151" href="#151">151</a>         AssertJUnit.assertEquals(<span class="jxr_string">"2"</span>, wtx.getValueOfCurrentNode());
 <a class="jxr_linenumber" name="152" href="#152">152</a> 

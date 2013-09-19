@@ -475,7 +475,7 @@
 <tr>  <td class="numLineCover">&nbsp;247</td>  <td class="nbHitsCovered">&nbsp;979</td>  <td class="src"><pre class="src">&nbsp;                <span class="keyword">final</span> INameNode namenode = (INameNode)paramRTX.getNode();</pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;248</td>  <td class="nbHitsCovered">&nbsp;979</td>  <td class="src"><pre class="src">&nbsp;                mOut.write(ECharsForSerializing.OPEN.getBytes());</pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;249</td>  <td class="nbHitsCovered">&nbsp;979</td>  <td class="src"><pre class="src">&nbsp;                mOut.write(paramRTX.nameForKey(namenode.getNameKey()).getBytes());</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;250</td>  <td class="nbHitsCovered">&nbsp;979</td>  <td class="src"><pre class="src">&nbsp;                <span class="keyword">final</span> <span class="keyword">long</span> key = paramRTX.getNode().getNodeKey();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;250</td>  <td class="nbHitsCovered">&nbsp;979</td>  <td class="src"><pre class="src">&nbsp;                <span class="keyword">final</span> <span class="keyword">long</span> key = paramRTX.getNode().getDataKey();</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;251</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                <span class="comment">// Emit namespace declarations.</span></pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;252</td>  <td class="nbHitsCovered"><a title="Line 252: Conditional coverage 100% (2/2).">&nbsp;1031</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 252: Conditional coverage 100% (2/2).">                <span class="keyword">for</span> (<span class="keyword">int</span> index = 0, length = ((ElementNode)namenode).getNamespaceCount(); index &lt; length; index++) {</a></pre></td></tr>
@@ -510,7 +510,7 @@
   <td class="src"><pre class="src">&nbsp;                    }</pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;275</td>  <td class="nbHitsCovered">&nbsp;10</td>  <td class="src"><pre class="src">&nbsp;                    mOut.write(ECharsForSerializing.ID.getBytes());</pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;276</td>  <td class="nbHitsCovered">&nbsp;10</td>  <td class="src"><pre class="src">&nbsp;                    mOut.write(ECharsForSerializing.EQUAL_QUOTE.getBytes());</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;277</td>  <td class="nbHitsCovered">&nbsp;10</td>  <td class="src"><pre class="src">&nbsp;                    write(paramRTX.getNode().getNodeKey());</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;277</td>  <td class="nbHitsCovered">&nbsp;10</td>  <td class="src"><pre class="src">&nbsp;                    write(paramRTX.getNode().getDataKey());</pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;278</td>  <td class="nbHitsCovered">&nbsp;10</td>  <td class="src"><pre class="src">&nbsp;                    mOut.write(ECharsForSerializing.QUOTE.getBytes());</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;279</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;                }</pre></td></tr>
@@ -779,7 +779,7 @@
 <tr>  <td class="numLineCover">&nbsp;449</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        <span class="keyword">final</span> <span class="keyword">long</span> time = System.currentTimeMillis();</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;450</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;451</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        Injector injector = Guice.createInjector(<span class="keyword">new</span> ModuleSetter().setNodeFacClass(TreeNodeFactory.<span class="keyword">class</span>).setMetaFacClass(NodeMetaPageFactory.<span class="keyword">class</span>).createModule());</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;451</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        Injector injector = Guice.createInjector(<span class="keyword">new</span> ModuleSetter().setDataFacClass(TreeNodeFactory.<span class="keyword">class</span>).setMetaFacClass(NodeMetaPageFactory.<span class="keyword">class</span>).createModule());</span></pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;452</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        IBackendFactory storage = injector.getInstance(IBackendFactory.<span class="keyword">class</span>);</span></pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;453</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        IRevisioning revision = injector.getInstance(IRevisioning.<span class="keyword">class</span>);</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;454</td>  <td class="nbHits">&nbsp;</td>
@@ -1100,6 +1100,6 @@
   <td class="src"><pre class="src">&nbsp;}</pre></td></tr>
 </table>
 
-<div class="footer">Report generated by <a href="http://cobertura.sourceforge.net/" target="_top">Cobertura</a> 1.9.4.1 on 6/25/13 3:08 PM.</div>
+<div class="footer">Report generated by <a href="http://cobertura.sourceforge.net/" target="_top">Cobertura</a> 1.9.4.1 on 9/19/13 2:36 PM.</div>
 </body>
 </html>

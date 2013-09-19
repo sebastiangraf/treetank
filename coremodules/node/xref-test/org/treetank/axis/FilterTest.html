@@ -50,7 +50,7 @@
 <a class="jxr_linenumber" name="40" href="#40">40</a>  <strong class="jxr_keyword">import</strong> org.treetank.CoreTestHelper;
 <a class="jxr_linenumber" name="41" href="#41">41</a>  <strong class="jxr_keyword">import</strong> org.treetank.Holder;
 <a class="jxr_linenumber" name="42" href="#42">42</a>  <strong class="jxr_keyword">import</strong> org.treetank.ModuleFactory;
-<a class="jxr_linenumber" name="43" href="#43">43</a>  <strong class="jxr_keyword">import</strong> org.treetank.NodeTestHelper;
+<a class="jxr_linenumber" name="43" href="#43">43</a>  <strong class="jxr_keyword">import</strong> org.treetank.NodeElementTestHelper;
 <a class="jxr_linenumber" name="44" href="#44">44</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.ResourceConfiguration;
 <a class="jxr_linenumber" name="45" href="#45">45</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 <a class="jxr_linenumber" name="46" href="#46">46</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.StandardSettings;
@@ -95,7 +95,7 @@
 <a class="jxr_linenumber" name="85" href="#85">85</a>              StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
 <a class="jxr_linenumber" name="86" href="#86">86</a>                  .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
 <a class="jxr_linenumber" name="87" href="#87">87</a>          mResource = mResourceConfig.create(props);
-<a class="jxr_linenumber" name="88" href="#88">88</a>          NodeTestHelper.createTestDocument(mResource);
+<a class="jxr_linenumber" name="88" href="#88">88</a>          NodeElementTestHelper.createTestDocument(mResource);
 <a class="jxr_linenumber" name="89" href="#89">89</a>          <strong class="jxr_keyword">this</strong>.holder = Holder.generateRtx(holder, mResource);
 <a class="jxr_linenumber" name="90" href="#90">90</a>      }
 <a class="jxr_linenumber" name="91" href="#91">91</a>  
@@ -337,12 +337,12 @@
 <a class="jxr_linenumber" name="327" href="#327">327</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> testFilterConventions(<strong class="jxr_keyword">final</strong> AbsFilter filter, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> expected) {
 <a class="jxr_linenumber" name="328" href="#328">328</a> 
 <a class="jxr_linenumber" name="329" href="#329">329</a>         <em class="jxr_comment">// IFilter Convention 1.</em>
-<a class="jxr_linenumber" name="330" href="#330">330</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> startKey = filter.getNode().getNodeKey();
+<a class="jxr_linenumber" name="330" href="#330">330</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> startKey = filter.getNode().getDataKey();
 <a class="jxr_linenumber" name="331" href="#331">331</a> 
 <a class="jxr_linenumber" name="332" href="#332">332</a>         assertEquals(expected, filter.filter());
 <a class="jxr_linenumber" name="333" href="#333">333</a> 
 <a class="jxr_linenumber" name="334" href="#334">334</a>         <em class="jxr_comment">// IAxis Convention 2.</em>
-<a class="jxr_linenumber" name="335" href="#335">335</a>         assertEquals(startKey, filter.getNode().getNodeKey());
+<a class="jxr_linenumber" name="335" href="#335">335</a>         assertEquals(startKey, filter.getNode().getDataKey());
 <a class="jxr_linenumber" name="336" href="#336">336</a> 
 <a class="jxr_linenumber" name="337" href="#337">337</a>     }
 <a class="jxr_linenumber" name="338" href="#338">338</a> 

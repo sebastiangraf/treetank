@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pmd version="4.3" timestamp="2013-06-25T15:09:34.252">
+<pmd version="4.3" timestamp="2013-09-19T14:39:19.498">
 <file name="/Users/sebi/Dropbox/github/treetank/interfacemodules/saxon/src/main/java/org/treetank/saxon/wrapper/NodeWrapper.java">
-<violation beginline="28" endline="925" begincolumn="1" endcolumn="2" rule="TooManyStaticImports" ruleset="Import Statement Rules" package="org.treetank.saxon.wrapper" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#TooManyStaticImports" priority="3">
+<violation beginline="28" endline="959" begincolumn="1" endcolumn="2" rule="TooManyStaticImports" ruleset="Import Statement Rules" package="org.treetank.saxon.wrapper" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#TooManyStaticImports" priority="3">
 Too many static imports may lead to messy code
+</violation>
+<violation beginline="57" endline="57" begincolumn="1" endcolumn="48" rule="UnusedImports" ruleset="Import Statement Rules" package="org.treetank.saxon.wrapper" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#UnusedImports" priority="4">
+Avoid unused imports such as 'net.sf.saxon.tree.util.NamespaceIterator'
+</violation>
+<violation beginline="62" endline="62" begincolumn="1" endcolumn="33" rule="UnusedImports" ruleset="Import Statement Rules" package="org.treetank.saxon.wrapper" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#UnusedImports" priority="4">
+Avoid unused imports such as 'net.sf.saxon.type.AnyType'
+</violation>
+<violation beginline="64" endline="64" begincolumn="1" endcolumn="36" rule="UnusedImports" ruleset="Import Statement Rules" package="org.treetank.saxon.wrapper" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#UnusedImports" priority="4">
+Avoid unused imports such as 'net.sf.saxon.type.SimpleType'
 </violation>
 </file>
 </pmd>

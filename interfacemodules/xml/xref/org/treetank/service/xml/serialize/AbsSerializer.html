@@ -155,7 +155,7 @@
 <a class="jxr_linenumber" name="145" href="#145">145</a> 
 <a class="jxr_linenumber" name="146" href="#146">146</a>             <em class="jxr_comment">// Setup primitives.</em>
 <a class="jxr_linenumber" name="147" href="#147">147</a>             <strong class="jxr_keyword">boolean</strong> closeElements = false;
-<a class="jxr_linenumber" name="148" href="#148">148</a>             <strong class="jxr_keyword">long</strong> key = rtx.getNode().getNodeKey();
+<a class="jxr_linenumber" name="148" href="#148">148</a>             <strong class="jxr_keyword">long</strong> key = rtx.getNode().getDataKey();
 <a class="jxr_linenumber" name="149" href="#149">149</a> 
 <a class="jxr_linenumber" name="150" href="#150">150</a>             <em class="jxr_comment">// Iterate over all nodes of the subtree including self.</em>
 <a class="jxr_linenumber" name="151" href="#151">151</a>             <strong class="jxr_keyword">while</strong> (descAxis.hasNext()) {
@@ -181,7 +181,7 @@
 <a class="jxr_linenumber" name="171" href="#171">171</a>                 <em class="jxr_comment">// Push end element to stack if we are a start element with</em>
 <a class="jxr_linenumber" name="172" href="#172">172</a>                 <em class="jxr_comment">// children.</em>
 <a class="jxr_linenumber" name="173" href="#173">173</a>                 <strong class="jxr_keyword">if</strong> (currentStruc.getKind() == IConstants.ELEMENT &amp;&amp; currentStruc.hasFirstChild()) {
-<a class="jxr_linenumber" name="174" href="#174">174</a>                     mStack.push(rtx.getNode().getNodeKey());
+<a class="jxr_linenumber" name="174" href="#174">174</a>                     mStack.push(rtx.getNode().getDataKey());
 <a class="jxr_linenumber" name="175" href="#175">175</a>                 }
 <a class="jxr_linenumber" name="176" href="#176">176</a> 
 <a class="jxr_linenumber" name="177" href="#177">177</a>                 <em class="jxr_comment">// Remember to emit all pending end elements from stack if</em>

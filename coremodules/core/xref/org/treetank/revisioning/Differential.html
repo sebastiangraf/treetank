@@ -16,11 +16,11 @@
 <a class="jxr_linenumber" name="6" href="#6">6</a>   <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> com.google.common.base.Objects.toStringHelper;
 <a class="jxr_linenumber" name="7" href="#7">7</a>   <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> com.google.common.base.Preconditions.checkArgument;
 <a class="jxr_linenumber" name="8" href="#8">8</a>   
-<a class="jxr_linenumber" name="9" href="#9">9</a>   <strong class="jxr_keyword">import</strong> org.treetank.bucket.NodeBucket;
+<a class="jxr_linenumber" name="9" href="#9">9</a>   <strong class="jxr_keyword">import</strong> org.treetank.bucket.DataBucket;
 <a class="jxr_linenumber" name="10" href="#10">10</a>  <strong class="jxr_keyword">import</strong> org.treetank.io.LogValue;
 <a class="jxr_linenumber" name="11" href="#11">11</a>  
 <a class="jxr_linenumber" name="12" href="#12">12</a>  <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="13" href="#13">13</a>  <em class="jxr_javadoccomment"> * Differential versioning of {@link NodeBucket}s.</em>
+<a class="jxr_linenumber" name="13" href="#13">13</a>  <em class="jxr_javadoccomment"> * Differential versioning of {@link DataBucket}s.</em>
 <a class="jxr_linenumber" name="14" href="#14">14</a>  <em class="jxr_javadoccomment"> * </em>
 <a class="jxr_linenumber" name="15" href="#15">15</a>  <em class="jxr_javadoccomment"> * @author Sebastian Graf, University of Konstanz</em>
 <a class="jxr_linenumber" name="16" href="#16">16</a>  <em class="jxr_javadoccomment"> * </em>
@@ -31,19 +31,19 @@
 <a class="jxr_linenumber" name="21" href="#21">21</a>  <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
 <a class="jxr_linenumber" name="22" href="#22">22</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="23" href="#23">23</a>      @Override
-<a class="jxr_linenumber" name="24" href="#24">24</a>      <strong class="jxr_keyword">public</strong> <a href="../../../org/treetank/bucket/NodeBucket.html">NodeBucket</a> combineBuckets(<strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/bucket/NodeBucket.html">NodeBucket</a>[] pBuckets) {
+<a class="jxr_linenumber" name="24" href="#24">24</a>      <strong class="jxr_keyword">public</strong> <a href="../../../org/treetank/bucket/DataBucket.html">DataBucket</a> combineBuckets(<strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/bucket/DataBucket.html">DataBucket</a>[] pBuckets) {
 <a class="jxr_linenumber" name="25" href="#25">25</a>          <em class="jxr_comment">// check to have only the newer version and the related fulldump to read on</em>
-<a class="jxr_linenumber" name="26" href="#26">26</a>          checkArgument(pBuckets.length &gt; 0, <span class="jxr_string">"At least one Nodebucket must be provided"</span>);
+<a class="jxr_linenumber" name="26" href="#26">26</a>          checkArgument(pBuckets.length &gt; 0, <span class="jxr_string">"At least one Databucket must be provided"</span>);
 <a class="jxr_linenumber" name="27" href="#27">27</a>          <em class="jxr_comment">// create entire buckets..</em>
-<a class="jxr_linenumber" name="28" href="#28">28</a>          <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/bucket/NodeBucket.html">NodeBucket</a> returnVal = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/bucket/NodeBucket.html">NodeBucket</a>(pBuckets[0].getBucketKey(), pBuckets[0].getLastBucketPointer());
-<a class="jxr_linenumber" name="29" href="#29">29</a>          <em class="jxr_comment">// ...and for all nodes...</em>
-<a class="jxr_linenumber" name="30" href="#30">30</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; pBuckets[0].getNodes().length; i++) {
-<a class="jxr_linenumber" name="31" href="#31">31</a>              <em class="jxr_comment">// ..check if node exists in newer version, and if not...</em>
-<a class="jxr_linenumber" name="32" href="#32">32</a>              <strong class="jxr_keyword">if</strong> (pBuckets[0].getNodes()[i] != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="33" href="#33">33</a>                  returnVal.setNode(i, pBuckets[0].getNode(i));
+<a class="jxr_linenumber" name="28" href="#28">28</a>          <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/bucket/DataBucket.html">DataBucket</a> returnVal = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/bucket/DataBucket.html">DataBucket</a>(pBuckets[0].getBucketKey(), pBuckets[0].getLastBucketPointer());
+<a class="jxr_linenumber" name="29" href="#29">29</a>          <em class="jxr_comment">// ...and for all datas...</em>
+<a class="jxr_linenumber" name="30" href="#30">30</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; pBuckets[0].getDatas().length; i++) {
+<a class="jxr_linenumber" name="31" href="#31">31</a>              <em class="jxr_comment">// ..check if data exists in newer version, and if not...</em>
+<a class="jxr_linenumber" name="32" href="#32">32</a>              <strong class="jxr_keyword">if</strong> (pBuckets[0].getDatas()[i] != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="33" href="#33">33</a>                  returnVal.setData(i, pBuckets[0].getData(i));
 <a class="jxr_linenumber" name="34" href="#34">34</a>              }<em class="jxr_comment">// ...set the version from the last fulldump</em>
 <a class="jxr_linenumber" name="35" href="#35">35</a>              <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (pBuckets.length &gt; 1) {
-<a class="jxr_linenumber" name="36" href="#36">36</a>                  returnVal.setNode(i, pBuckets[1].getNode(i));
+<a class="jxr_linenumber" name="36" href="#36">36</a>                  returnVal.setData(i, pBuckets[1].getData(i));
 <a class="jxr_linenumber" name="37" href="#37">37</a>              }
 <a class="jxr_linenumber" name="38" href="#38">38</a>          }
 <a class="jxr_linenumber" name="39" href="#39">39</a>          <strong class="jxr_keyword">return</strong> returnVal;
@@ -53,30 +53,30 @@
 <a class="jxr_linenumber" name="43" href="#43">43</a>  <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
 <a class="jxr_linenumber" name="44" href="#44">44</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="45" href="#45">45</a>      @Override
-<a class="jxr_linenumber" name="46" href="#46">46</a>      <strong class="jxr_keyword">public</strong> <a href="../../../org/treetank/io/LogValue.html">LogValue</a> combineBucketsForModification(<strong class="jxr_keyword">int</strong> pRevisionsToRestore, <strong class="jxr_keyword">long</strong> pNewBucketKey, <a href="../../../org/treetank/bucket/NodeBucket.html">NodeBucket</a>[] pBuckets,
+<a class="jxr_linenumber" name="46" href="#46">46</a>      <strong class="jxr_keyword">public</strong> <a href="../../../org/treetank/io/LogValue.html">LogValue</a> combineBucketsForModification(<strong class="jxr_keyword">int</strong> pRevisionsToRestore, <strong class="jxr_keyword">long</strong> pNewBucketKey, <a href="../../../org/treetank/bucket/DataBucket.html">DataBucket</a>[] pBuckets,
 <a class="jxr_linenumber" name="47" href="#47">47</a>          <strong class="jxr_keyword">boolean</strong> pFullDump) {
 <a class="jxr_linenumber" name="48" href="#48">48</a>          <em class="jxr_comment">// check to have only the newer version and the related fulldump to read on</em>
-<a class="jxr_linenumber" name="49" href="#49">49</a>          checkArgument(pBuckets.length &gt; 0, <span class="jxr_string">"At least one Nodebucket must be provided"</span>);
+<a class="jxr_linenumber" name="49" href="#49">49</a>          checkArgument(pBuckets.length &gt; 0, <span class="jxr_string">"At least one Databucket must be provided"</span>);
 <a class="jxr_linenumber" name="50" href="#50">50</a>          <em class="jxr_comment">// create buckets for container..</em>
-<a class="jxr_linenumber" name="51" href="#51">51</a>          <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/bucket/NodeBucket.html">NodeBucket</a>[] returnVal =
+<a class="jxr_linenumber" name="51" href="#51">51</a>          <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/bucket/DataBucket.html">DataBucket</a>[] returnVal =
 <a class="jxr_linenumber" name="52" href="#52">52</a>              {
-<a class="jxr_linenumber" name="53" href="#53">53</a>                  <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/bucket/NodeBucket.html">NodeBucket</a>(pBuckets[0].getBucketKey(), pBuckets[0].getLastBucketPointer()),
-<a class="jxr_linenumber" name="54" href="#54">54</a>                  <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/bucket/NodeBucket.html">NodeBucket</a>(pNewBucketKey, pBuckets[0].getBucketKey())
+<a class="jxr_linenumber" name="53" href="#53">53</a>                  <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/bucket/DataBucket.html">DataBucket</a>(pBuckets[0].getBucketKey(), pBuckets[0].getLastBucketPointer()),
+<a class="jxr_linenumber" name="54" href="#54">54</a>                  <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/bucket/DataBucket.html">DataBucket</a>(pNewBucketKey, pBuckets[0].getBucketKey())
 <a class="jxr_linenumber" name="55" href="#55">55</a>              };
 <a class="jxr_linenumber" name="56" href="#56">56</a>  
-<a class="jxr_linenumber" name="57" href="#57">57</a>          <em class="jxr_comment">// ...iterate through the nodes and check if it is stored..</em>
-<a class="jxr_linenumber" name="58" href="#58">58</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> j = 0; j &lt; returnVal[0].getNodes().length; j++) {
-<a class="jxr_linenumber" name="59" href="#59">59</a>              <em class="jxr_comment">// ...check if the node was written within the last version, if so...</em>
-<a class="jxr_linenumber" name="60" href="#60">60</a>              <strong class="jxr_keyword">if</strong> (pBuckets[0].getNode(j) != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="57" href="#57">57</a>          <em class="jxr_comment">// ...iterate through the datas and check if it is stored..</em>
+<a class="jxr_linenumber" name="58" href="#58">58</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> j = 0; j &lt; returnVal[0].getDatas().length; j++) {
+<a class="jxr_linenumber" name="59" href="#59">59</a>              <em class="jxr_comment">// ...check if the data was written within the last version, if so...</em>
+<a class="jxr_linenumber" name="60" href="#60">60</a>              <strong class="jxr_keyword">if</strong> (pBuckets[0].getData(j) != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="61" href="#61">61</a>                  <em class="jxr_comment">// ...set it in the read and write-version to be rewritten again...</em>
-<a class="jxr_linenumber" name="62" href="#62">62</a>                  returnVal[0].setNode(j, pBuckets[0].getNode(j));
-<a class="jxr_linenumber" name="63" href="#63">63</a>                  returnVal[1].setNode(j, pBuckets[0].getNode(j));
+<a class="jxr_linenumber" name="62" href="#62">62</a>                  returnVal[0].setData(j, pBuckets[0].getData(j));
+<a class="jxr_linenumber" name="63" href="#63">63</a>                  returnVal[1].setData(j, pBuckets[0].getData(j));
 <a class="jxr_linenumber" name="64" href="#64">64</a>              } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (pBuckets.length &gt; 1) {
-<a class="jxr_linenumber" name="65" href="#65">65</a>                  <em class="jxr_comment">// otherwise, just store then node from the fulldump to complete read-uucket except...</em>
-<a class="jxr_linenumber" name="66" href="#66">66</a>                  returnVal[0].setNode(j, pBuckets[1].getNode(j));
+<a class="jxr_linenumber" name="65" href="#65">65</a>                  <em class="jxr_comment">// otherwise, just store then data from the fulldump to complete read-uucket except...</em>
+<a class="jxr_linenumber" name="66" href="#66">66</a>                  returnVal[0].setData(j, pBuckets[1].getData(j));
 <a class="jxr_linenumber" name="67" href="#67">67</a>                  <em class="jxr_comment">// ..a fulldump becomes necessary.</em>
 <a class="jxr_linenumber" name="68" href="#68">68</a>                  <strong class="jxr_keyword">if</strong> (pFullDump) {
-<a class="jxr_linenumber" name="69" href="#69">69</a>                      returnVal[1].setNode(j, pBuckets[1].getNode(j));
+<a class="jxr_linenumber" name="69" href="#69">69</a>                      returnVal[1].setData(j, pBuckets[1].getData(j));
 <a class="jxr_linenumber" name="70" href="#70">70</a>                  }
 <a class="jxr_linenumber" name="71" href="#71">71</a>              }
 <a class="jxr_linenumber" name="72" href="#72">72</a>          }

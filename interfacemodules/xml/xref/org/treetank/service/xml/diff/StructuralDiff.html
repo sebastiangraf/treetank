@@ -66,7 +66,7 @@
 <a class="jxr_linenumber" name="56" href="#56">56</a>      @Override
 <a class="jxr_linenumber" name="57" href="#57">57</a>      <strong class="jxr_keyword">boolean</strong> checkNodes(<strong class="jxr_keyword">final</strong> INodeReadTrx paramNewRtx, <strong class="jxr_keyword">final</strong> INodeReadTrx paramOldRtx) {
 <a class="jxr_linenumber" name="58" href="#58">58</a>          <strong class="jxr_keyword">boolean</strong> found = false;
-<a class="jxr_linenumber" name="59" href="#59">59</a>          <strong class="jxr_keyword">if</strong> (paramNewRtx.getNode().getNodeKey() == paramOldRtx.getNode().getNodeKey()) {
+<a class="jxr_linenumber" name="59" href="#59">59</a>          <strong class="jxr_keyword">if</strong> (paramNewRtx.getNode().getDataKey() == paramOldRtx.getNode().getDataKey()) {
 <a class="jxr_linenumber" name="60" href="#60">60</a>              <strong class="jxr_keyword">if</strong> (paramNewRtx.getNode().getKind() == paramOldRtx.getNode().getKind()) {
 <a class="jxr_linenumber" name="61" href="#61">61</a>                  <strong class="jxr_keyword">switch</strong> (paramNewRtx.getNode().getKind()) {
 <a class="jxr_linenumber" name="62" href="#62">62</a>                  <strong class="jxr_keyword">case</strong> IConstants.ELEMENT:

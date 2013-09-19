@@ -13,7 +13,7 @@
 <a class="jxr_linenumber" name="3" href="#3">3</a>   <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="4" href="#4">4</a>   <strong class="jxr_keyword">package</strong> org.treetank.revisioning;
 <a class="jxr_linenumber" name="5" href="#5">5</a>   
-<a class="jxr_linenumber" name="6" href="#6">6</a>   <strong class="jxr_keyword">import</strong> org.treetank.bucket.NodeBucket;
+<a class="jxr_linenumber" name="6" href="#6">6</a>   <strong class="jxr_keyword">import</strong> org.treetank.bucket.DataBucket;
 <a class="jxr_linenumber" name="7" href="#7">7</a>   <strong class="jxr_keyword">import</strong> org.treetank.io.LogValue;
 <a class="jxr_linenumber" name="8" href="#8">8</a>   
 <a class="jxr_linenumber" name="9" href="#9">9</a>   <em class="jxr_javadoccomment">/**</em>
@@ -26,33 +26,33 @@
 <a class="jxr_linenumber" name="16" href="#16">16</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">interface</strong> <a href="../../../org/treetank/revisioning/IRevisioning.html">IRevisioning</a> {
 <a class="jxr_linenumber" name="17" href="#17">17</a>  
 <a class="jxr_linenumber" name="18" href="#18">18</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="19" href="#19">19</a>  <em class="jxr_javadoccomment">     * Method to reconstruct a complete {@link NodeBucket} with the help of party filled</em>
+<a class="jxr_linenumber" name="19" href="#19">19</a>  <em class="jxr_javadoccomment">     * Method to reconstruct a complete {@link DataBucket} with the help of party filled</em>
 <a class="jxr_linenumber" name="20" href="#20">20</a>  <em class="jxr_javadoccomment">     * buckets plus a revision-delta which determines the necessary steps back.</em>
 <a class="jxr_linenumber" name="21" href="#21">21</a>  <em class="jxr_javadoccomment">     * </em>
 <a class="jxr_linenumber" name="22" href="#22">22</a>  <em class="jxr_javadoccomment">     * @param pBuckets</em>
-<a class="jxr_linenumber" name="23" href="#23">23</a>  <em class="jxr_javadoccomment">     *            the base of the complete {@link NodeBucket}</em>
-<a class="jxr_linenumber" name="24" href="#24">24</a>  <em class="jxr_javadoccomment">     * @return the complete {@link NodeBucket}</em>
+<a class="jxr_linenumber" name="23" href="#23">23</a>  <em class="jxr_javadoccomment">     *            the base of the complete {@link DataBucket}</em>
+<a class="jxr_linenumber" name="24" href="#24">24</a>  <em class="jxr_javadoccomment">     * @return the complete {@link DataBucket}</em>
 <a class="jxr_linenumber" name="25" href="#25">25</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="26" href="#26">26</a>      <a href="../../../org/treetank/bucket/NodeBucket.html">NodeBucket</a> combineBuckets(<strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/bucket/NodeBucket.html">NodeBucket</a>[] pBuckets);
+<a class="jxr_linenumber" name="26" href="#26">26</a>      <a href="../../../org/treetank/bucket/DataBucket.html">DataBucket</a> combineBuckets(<strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/bucket/DataBucket.html">DataBucket</a>[] pBuckets);
 <a class="jxr_linenumber" name="27" href="#27">27</a>  
 <a class="jxr_linenumber" name="28" href="#28">28</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="29" href="#29">29</a>  <em class="jxr_javadoccomment">     * Method to reconstruct a complete {@link NodeBucket} for reading as well as a</em>
-<a class="jxr_linenumber" name="30" href="#30">30</a>  <em class="jxr_javadoccomment">     * NodeBucket for serializing with the Nodes to write already on there.</em>
+<a class="jxr_linenumber" name="29" href="#29">29</a>  <em class="jxr_javadoccomment">     * Method to reconstruct a complete {@link DataBucket} for reading as well as a</em>
+<a class="jxr_linenumber" name="30" href="#30">30</a>  <em class="jxr_javadoccomment">     * DataBucket for serializing with the datas to write already on there.</em>
 <a class="jxr_linenumber" name="31" href="#31">31</a>  <em class="jxr_javadoccomment">     * </em>
 <a class="jxr_linenumber" name="32" href="#32">32</a>  <em class="jxr_javadoccomment">     * @param pRevisionsToRestore</em>
 <a class="jxr_linenumber" name="33" href="#33">33</a>  <em class="jxr_javadoccomment">     *            number of revisions to restore</em>
 <a class="jxr_linenumber" name="34" href="#34">34</a>  <em class="jxr_javadoccomment">     * @param pNewBucketKey</em>
 <a class="jxr_linenumber" name="35" href="#35">35</a>  <em class="jxr_javadoccomment">     *            bucket key of the new bucket</em>
 <a class="jxr_linenumber" name="36" href="#36">36</a>  <em class="jxr_javadoccomment">     * @param pBuckets</em>
-<a class="jxr_linenumber" name="37" href="#37">37</a>  <em class="jxr_javadoccomment">     *            the base of the complete Nodebucket</em>
+<a class="jxr_linenumber" name="37" href="#37">37</a>  <em class="jxr_javadoccomment">     *            the base of the complete DataBucket</em>
 <a class="jxr_linenumber" name="38" href="#38">38</a>  <em class="jxr_javadoccomment">     * @param pFullDump</em>
 <a class="jxr_linenumber" name="39" href="#39">39</a>  <em class="jxr_javadoccomment">     *            boolean if entire bucket should be written. Must be triggered from extern since it is based on</em>
 <a class="jxr_linenumber" name="40" href="#40">40</a>  <em class="jxr_javadoccomment">     *            the revisionToRestore-Param</em>
-<a class="jxr_linenumber" name="41" href="#41">41</a>  <em class="jxr_javadoccomment">     * @return a {@link LogValue} holding a complete {@link NodeBucket} for reading a one</em>
+<a class="jxr_linenumber" name="41" href="#41">41</a>  <em class="jxr_javadoccomment">     * @return a {@link LogValue} holding a complete {@link DataBucket} for reading a one</em>
 <a class="jxr_linenumber" name="42" href="#42">42</a>  <em class="jxr_javadoccomment">     *         for writing</em>
 <a class="jxr_linenumber" name="43" href="#43">43</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="44" href="#44">44</a>      <a href="../../../org/treetank/io/LogValue.html">LogValue</a> combineBucketsForModification(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> pRevisionsToRestore, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> pNewBucketKey,
-<a class="jxr_linenumber" name="45" href="#45">45</a>          <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/bucket/NodeBucket.html">NodeBucket</a>[] pBuckets, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> pFullDump);
+<a class="jxr_linenumber" name="45" href="#45">45</a>          <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/bucket/DataBucket.html">DataBucket</a>[] pBuckets, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> pFullDump);
 <a class="jxr_linenumber" name="46" href="#46">46</a>  
 <a class="jxr_linenumber" name="47" href="#47">47</a>  }
 </pre>

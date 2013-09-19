@@ -1,16 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pmd version="4.3" timestamp="2013-06-25T15:11:41.120">
+<pmd version="4.3" timestamp="2013-09-19T14:38:40.124">
 <file name="/Users/sebi/Dropbox/github/treetank/interfacemodules/filelistener/src/main/java/org/treetank/access/FilelistenerWriteTrx.java">
-<violation beginline="3" endline="3" begincolumn="1" endcolumn="35" rule="UnusedImports" ruleset="Import Statement Rules" package="org.treetank.access" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#UnusedImports" priority="4">
-Avoid unused imports such as 'java.io.BufferedInputStream'
-</violation>
-<violation beginline="27" endline="27" begincolumn="1" endcolumn="34" rule="UnusedImports" ruleset="Import Statement Rules" package="org.treetank.access" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#UnusedImports" priority="4">
-Avoid unused imports such as 'com.google.common.io.Files'
-</violation>
-<violation beginline="99" endline="99" begincolumn="9" endcolumn="15" rule="UnnecessaryReturn" ruleset="Basic Rules" package="org.treetank.access" class="FilelistenerWriteTrx" method="addEmptyFile" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#UnnecessaryReturn" priority="3">
+<violation beginline="102" endline="102" begincolumn="9" endcolumn="15" rule="UnnecessaryReturn" ruleset="Basic Rules" package="org.treetank.access" class="FilelistenerWriteTrx" method="addEmptyFile" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#UnnecessaryReturn" priority="3">
 Avoid unnecessary return statements
 </violation>
-<violation beginline="121" endline="123" begincolumn="15" endcolumn="13" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.treetank.access" class="FilelistenerWriteTrx" method="addFile" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
+<violation beginline="124" endline="126" begincolumn="15" endcolumn="13" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.treetank.access" class="FilelistenerWriteTrx" method="addFile" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
 </violation>
 </file>
@@ -20,13 +14,14 @@ Avoid unused imports such as 'org.treetank.exception.TTIOException'
 </violation>
 </file>
 <file name="/Users/sebi/Dropbox/github/treetank/interfacemodules/filelistener/src/main/java/org/treetank/filelistener/file/Filelistener.java">
-<violation beginline="113" endline="114" begincolumn="19" endcolumn="17" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.treetank.filelistener.file" class="Filelistener" method="run" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
-Avoid empty catch blocks
+<violation beginline="80" endline="80" begincolumn="53" endcolumn="64" rule="UnusedPrivateField" ruleset="Unused Code Rules" package="org.treetank.filelistener.file" class="Filelistener" variable="mLockedFiles" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedPrivateField" priority="3">
+Avoid unused private fields such as 'mLockedFiles'.
 </violation>
-</file>
-<file name="/Users/sebi/Dropbox/github/treetank/interfacemodules/filelistener/src/main/java/org/treetank/filelistener/file/node/FileNode.java">
-<violation beginline="8" endline="8" begincolumn="1" endcolumn="77" rule="UnusedImports" ruleset="Import Statement Rules" package="org.treetank.filelistener.file.node" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#UnusedImports" priority="4">
-Avoid unused imports such as 'org.treetank.filelistener.exceptions.WrongFilenodeDataLengthException'
+<violation beginline="82" endline="82" begincolumn="53" endcolumn="62" rule="UnusedPrivateField" ruleset="Unused Code Rules" package="org.treetank.filelistener.file" class="Filelistener" variable="mFsnOnHold" externalInfoUrl="http://pmd.sourceforge.net/rules/unusedcode.html#UnusedPrivateField" priority="3">
+Avoid unused private fields such as 'mFsnOnHold'.
+</violation>
+<violation beginline="146" endline="147" begincolumn="35" endcolumn="33" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.treetank.filelistener.file" class="Filelistener" method="run" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
+Avoid empty catch blocks
 </violation>
 </file>
 <file name="/Users/sebi/Dropbox/github/treetank/interfacemodules/filelistener/src/main/java/org/treetank/filelistener/ui/dialogs/RestoreDialog.java">

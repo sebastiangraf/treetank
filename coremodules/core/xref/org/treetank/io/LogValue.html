@@ -46,8 +46,8 @@
 <a class="jxr_linenumber" name="36" href="#36">36</a>  <strong class="jxr_keyword">import</strong> java.io.IOException;
 <a class="jxr_linenumber" name="37" href="#37">37</a>  
 <a class="jxr_linenumber" name="38" href="#38">38</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.IMetaEntryFactory;
-<a class="jxr_linenumber" name="39" href="#39">39</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.INodeFactory;
-<a class="jxr_linenumber" name="40" href="#40">40</a>  <strong class="jxr_keyword">import</strong> org.treetank.bucket.NodeBucket;
+<a class="jxr_linenumber" name="39" href="#39">39</a>  <strong class="jxr_keyword">import</strong> org.treetank.api.IDataFactory;
+<a class="jxr_linenumber" name="40" href="#40">40</a>  <strong class="jxr_keyword">import</strong> org.treetank.bucket.DataBucket;
 <a class="jxr_linenumber" name="41" href="#41">41</a>  <strong class="jxr_keyword">import</strong> org.treetank.bucket.BucketFactory;
 <a class="jxr_linenumber" name="42" href="#42">42</a>  <strong class="jxr_keyword">import</strong> org.treetank.bucket.interfaces.IBucket;
 <a class="jxr_linenumber" name="43" href="#43">43</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTIOException;
@@ -59,13 +59,13 @@
 <a class="jxr_linenumber" name="49" href="#49">49</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="50" href="#50">50</a>  <em class="jxr_javadoccomment"> * &lt;h1&gt;LogValue&lt;/h1&gt; </em>
 <a class="jxr_linenumber" name="51" href="#51">51</a>  <em class="jxr_javadoccomment"> * </em>
-<a class="jxr_linenumber" name="52" href="#52">52</a>  <em class="jxr_javadoccomment"> * This class acts as a container for revisioned {@link NodeBucket}s. Each</em>
-<a class="jxr_linenumber" name="53" href="#53">53</a>  <em class="jxr_javadoccomment"> * {@link NodeBucket} is stored in a versioned manner. If</em>
-<a class="jxr_linenumber" name="54" href="#54">54</a>  <em class="jxr_javadoccomment"> * modifications occur, the versioned {@link NodeBucket}s are dereferenced and</em>
-<a class="jxr_linenumber" name="55" href="#55">55</a>  <em class="jxr_javadoccomment"> * reconstructed. Afterwards, this container is used to store a complete {@link NodeBucket} as well as one for</em>
+<a class="jxr_linenumber" name="52" href="#52">52</a>  <em class="jxr_javadoccomment"> * This class acts as a container for revisioned {@link DataBucket}s. Each</em>
+<a class="jxr_linenumber" name="53" href="#53">53</a>  <em class="jxr_javadoccomment"> * {@link DataBucket} is stored in a versioned manner. If</em>
+<a class="jxr_linenumber" name="54" href="#54">54</a>  <em class="jxr_javadoccomment"> * modifications occur, the versioned {@link DataBucket}s are dereferenced and</em>
+<a class="jxr_linenumber" name="55" href="#55">55</a>  <em class="jxr_javadoccomment"> * reconstructed. Afterwards, this container is used to store a complete {@link DataBucket} as well as one for</em>
 <a class="jxr_linenumber" name="56" href="#56">56</a>  <em class="jxr_javadoccomment"> * upcoming modifications.</em>
 <a class="jxr_linenumber" name="57" href="#57">57</a>  <em class="jxr_javadoccomment"> * </em>
-<a class="jxr_linenumber" name="58" href="#58">58</a>  <em class="jxr_javadoccomment"> * Both {@link NodeBucket}s can differ since the complete one is mainly used for</em>
+<a class="jxr_linenumber" name="58" href="#58">58</a>  <em class="jxr_javadoccomment"> * Both {@link DataBucket}s can differ since the complete one is mainly used for</em>
 <a class="jxr_linenumber" name="59" href="#59">59</a>  <em class="jxr_javadoccomment"> * read access and the modifying one for write access (and therefore mostly lazy</em>
 <a class="jxr_linenumber" name="60" href="#60">60</a>  <em class="jxr_javadoccomment"> * dereferenced).</em>
 <a class="jxr_linenumber" name="61" href="#61">61</a>  <em class="jxr_javadoccomment"> * </em>
@@ -134,13 +134,13 @@
 <a class="jxr_linenumber" name="124" href="#124">124</a>         <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="125" href="#125">125</a> <em class="jxr_javadoccomment">         * Constructor</em>
 <a class="jxr_linenumber" name="126" href="#126">126</a> <em class="jxr_javadoccomment">         * </em>
-<a class="jxr_linenumber" name="127" href="#127">127</a> <em class="jxr_javadoccomment">         * @param pNodeFac</em>
-<a class="jxr_linenumber" name="128" href="#128">128</a> <em class="jxr_javadoccomment">         *            for the deserialization of nodes</em>
+<a class="jxr_linenumber" name="127" href="#127">127</a> <em class="jxr_javadoccomment">         * @param pDataFac</em>
+<a class="jxr_linenumber" name="128" href="#128">128</a> <em class="jxr_javadoccomment">         *            for the deserialization of datas</em>
 <a class="jxr_linenumber" name="129" href="#129">129</a> <em class="jxr_javadoccomment">         * @param pMetaFac</em>
 <a class="jxr_linenumber" name="130" href="#130">130</a> <em class="jxr_javadoccomment">         *            for the deserialization of meta-entries</em>
 <a class="jxr_linenumber" name="131" href="#131">131</a> <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="132" href="#132">132</a>         <strong class="jxr_keyword">public</strong> <a href="../../../org/treetank/io/LogValue.html">LogValueBinding</a>(<strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/api/INodeFactory.html">INodeFactory</a> pNodeFac, <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/api/IMetaEntryFactory.html">IMetaEntryFactory</a> pMetaFac) {
-<a class="jxr_linenumber" name="133" href="#133">133</a>             mFac = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/bucket/BucketFactory.html">BucketFactory</a>(pNodeFac, pMetaFac);
+<a class="jxr_linenumber" name="132" href="#132">132</a>         <strong class="jxr_keyword">public</strong> <a href="../../../org/treetank/io/LogValue.html">LogValueBinding</a>(<strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/api/IDataFactory.html">IDataFactory</a> pDataFac, <strong class="jxr_keyword">final</strong> <a href="../../../org/treetank/api/IMetaEntryFactory.html">IMetaEntryFactory</a> pMetaFac) {
+<a class="jxr_linenumber" name="133" href="#133">133</a>             mFac = <strong class="jxr_keyword">new</strong> <a href="../../../org/treetank/bucket/BucketFactory.html">BucketFactory</a>(pDataFac, pMetaFac);
 <a class="jxr_linenumber" name="134" href="#134">134</a>         }
 <a class="jxr_linenumber" name="135" href="#135">135</a> 
 <a class="jxr_linenumber" name="136" href="#136">136</a>         <em class="jxr_javadoccomment">/**</em>

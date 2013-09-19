@@ -1,6 +1,5 @@
 org.treetank.access
 org.treetank.access.conf
-org.treetank.bench
 org.treetank.bucket
 org.treetank
 org.treetank.io
@@ -19,9 +18,11 @@ org.treetank.service.xml.xpath.filter
 org.treetank.service.xml.xpath.operators
 org.treetank.service.xml.xpath.parser
 org.treetank.service.xml.xpath.xmark
-org.treetank.saxon.wrapper
+org.jaxrx.blackbox
 org.treetank.service.jaxrx.implementation
 org.treetank.service.jaxrx.server
 org.treetank.service.jaxrx.util
+org.treetank.data
 org.treetank.jscsi
 org.treetank.filelistener.file
+org.treetank.saxon.wrapper

@@ -27,8 +27,8 @@
 <a class="jxr_linenumber" name="17" href="#17">17</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.ModuleSetter;
 <a class="jxr_linenumber" name="18" href="#18">18</a>  <strong class="jxr_keyword">import</strong> org.treetank.exception.TTException;
 <a class="jxr_linenumber" name="19" href="#19">19</a>  <strong class="jxr_keyword">import</strong> org.treetank.filelistener.exceptions.ResourceNotExistingException;
-<a class="jxr_linenumber" name="20" href="#20">20</a>  <strong class="jxr_keyword">import</strong> org.treetank.filelistener.file.node.FileNodeFactory;
-<a class="jxr_linenumber" name="21" href="#21">21</a>  <strong class="jxr_keyword">import</strong> org.treetank.filelistener.file.node.FilelistenerMetaPageFactory;
+<a class="jxr_linenumber" name="20" href="#20">20</a>  <strong class="jxr_keyword">import</strong> org.treetank.filelistener.file.data.FileDataFactory;
+<a class="jxr_linenumber" name="21" href="#21">21</a>  <strong class="jxr_keyword">import</strong> org.treetank.filelistener.file.data.FilelistenerMetaDataFactory;
 <a class="jxr_linenumber" name="22" href="#22">22</a>  <strong class="jxr_keyword">import</strong> org.treetank.io.IOUtils;
 <a class="jxr_linenumber" name="23" href="#23">23</a>  
 <a class="jxr_linenumber" name="24" href="#24">24</a>  <strong class="jxr_keyword">import</strong> com.google.common.io.Files;
@@ -42,8 +42,8 @@
 <a class="jxr_linenumber" name="32" href="#32">32</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String RESOURCE_1 = <span class="jxr_string">"RESOURCE_1"</span>;
 <a class="jxr_linenumber" name="33" href="#33">33</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String RESOURCE_2 = <span class="jxr_string">"RESOURCE_2"</span>;
 <a class="jxr_linenumber" name="34" href="#34">34</a>  
-<a class="jxr_linenumber" name="35" href="#35">35</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> File TMPDIR_1 = Files.createTempDir();
-<a class="jxr_linenumber" name="36" href="#36">36</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> File TMPDIR_2 = Files.createTempDir();
+<a class="jxr_linenumber" name="35" href="#35">35</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> File TMPDIR_1 = Files.createTempDir();
+<a class="jxr_linenumber" name="36" href="#36">36</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> File TMPDIR_2 = Files.createTempDir();
 <a class="jxr_linenumber" name="37" href="#37">37</a>  
 <a class="jxr_linenumber" name="38" href="#38">38</a>      <strong class="jxr_keyword">private</strong> Filelistener filelistener;
 <a class="jxr_linenumber" name="39" href="#39">39</a>  
@@ -54,10 +54,10 @@
 <a class="jxr_linenumber" name="44" href="#44">44</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setUp() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="45" href="#45">45</a>          IOUtils.recursiveDelete(<strong class="jxr_keyword">new</strong> File(StorageManager.ROOT_PATH));
 <a class="jxr_linenumber" name="46" href="#46">46</a>          
-<a class="jxr_linenumber" name="47" href="#47">47</a>          StorageManager.createResource(RESOURCE_1, <strong class="jxr_keyword">new</strong> ModuleSetter().setNodeFacClass(FileNodeFactory.<strong class="jxr_keyword">class</strong>)
-<a class="jxr_linenumber" name="48" href="#48">48</a>              .setMetaFacClass(FilelistenerMetaPageFactory.<strong class="jxr_keyword">class</strong>).createModule());
-<a class="jxr_linenumber" name="49" href="#49">49</a>          StorageManager.createResource(RESOURCE_2, <strong class="jxr_keyword">new</strong> ModuleSetter().setNodeFacClass(FileNodeFactory.<strong class="jxr_keyword">class</strong>)
-<a class="jxr_linenumber" name="50" href="#50">50</a>              .setMetaFacClass(FilelistenerMetaPageFactory.<strong class="jxr_keyword">class</strong>).createModule());
+<a class="jxr_linenumber" name="47" href="#47">47</a>          StorageManager.createResource(RESOURCE_1, <strong class="jxr_keyword">new</strong> ModuleSetter().setDataFacClass(FileDataFactory.<strong class="jxr_keyword">class</strong>)
+<a class="jxr_linenumber" name="48" href="#48">48</a>              .setMetaFacClass(FilelistenerMetaDataFactory.<strong class="jxr_keyword">class</strong>).createModule());
+<a class="jxr_linenumber" name="49" href="#49">49</a>          StorageManager.createResource(RESOURCE_2, <strong class="jxr_keyword">new</strong> ModuleSetter().setDataFacClass(FileDataFactory.<strong class="jxr_keyword">class</strong>)
+<a class="jxr_linenumber" name="50" href="#50">50</a>              .setMetaFacClass(FilelistenerMetaDataFactory.<strong class="jxr_keyword">class</strong>).createModule());
 <a class="jxr_linenumber" name="51" href="#51">51</a>          filelistener = <strong class="jxr_keyword">new</strong> Filelistener();
 <a class="jxr_linenumber" name="52" href="#52">52</a>      }
 <a class="jxr_linenumber" name="53" href="#53">53</a>  

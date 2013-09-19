@@ -42,7 +42,7 @@
 <a class="jxr_linenumber" name="32" href="#32">32</a>  <strong class="jxr_keyword">import</strong> javax.xml.stream.XMLEventReader;
 <a class="jxr_linenumber" name="33" href="#33">33</a>  
 <a class="jxr_linenumber" name="34" href="#34">34</a>  <strong class="jxr_keyword">import</strong> org.treetank.CoreTestHelper;
-<a class="jxr_linenumber" name="35" href="#35">35</a>  <strong class="jxr_keyword">import</strong> org.treetank.NodeTestHelper;
+<a class="jxr_linenumber" name="35" href="#35">35</a>  <strong class="jxr_keyword">import</strong> org.treetank.NodeElementTestHelper;
 <a class="jxr_linenumber" name="36" href="#36">36</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.NodeWriteTrx;
 <a class="jxr_linenumber" name="37" href="#37">37</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.NodeWriteTrx.HashKind;
 <a class="jxr_linenumber" name="38" href="#38">38</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.Storage;
@@ -83,7 +83,7 @@
 <a class="jxr_linenumber" name="73" href="#73">73</a>              storage.getSession(<strong class="jxr_keyword">new</strong> SessionConfiguration(CoreTestHelper.RESOURCENAME, StandardSettings.KEY));
 <a class="jxr_linenumber" name="74" href="#74">74</a>          <strong class="jxr_keyword">final</strong> INodeWriteTrx wtx =
 <a class="jxr_linenumber" name="75" href="#75">75</a>              <strong class="jxr_keyword">new</strong> NodeWriteTrx(session, session.beginBucketWtx(), HashKind.Rolling);
-<a class="jxr_linenumber" name="76" href="#76">76</a>          NodeTestHelper.createDocumentRootNode(wtx);
+<a class="jxr_linenumber" name="76" href="#76">76</a>          NodeElementTestHelper.createDocumentRootNode(wtx);
 <a class="jxr_linenumber" name="77" href="#77">77</a>          <strong class="jxr_keyword">final</strong> XMLEventReader reader = XMLShredder.createFileReader(BOOKSXML);
 <a class="jxr_linenumber" name="78" href="#78">78</a>          <strong class="jxr_keyword">final</strong> XMLShredder shredder = <strong class="jxr_keyword">new</strong> XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);
 <a class="jxr_linenumber" name="79" href="#79">79</a>          shredder.call();

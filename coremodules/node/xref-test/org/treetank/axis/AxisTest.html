@@ -53,7 +53,7 @@
 <a class="jxr_linenumber" name="43" href="#43">43</a>  <strong class="jxr_keyword">import</strong> org.treetank.CoreTestHelper;
 <a class="jxr_linenumber" name="44" href="#44">44</a>  <strong class="jxr_keyword">import</strong> org.treetank.Holder;
 <a class="jxr_linenumber" name="45" href="#45">45</a>  <strong class="jxr_keyword">import</strong> org.treetank.ModuleFactory;
-<a class="jxr_linenumber" name="46" href="#46">46</a>  <strong class="jxr_keyword">import</strong> org.treetank.NodeTestHelper;
+<a class="jxr_linenumber" name="46" href="#46">46</a>  <strong class="jxr_keyword">import</strong> org.treetank.NodeElementTestHelper;
 <a class="jxr_linenumber" name="47" href="#47">47</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.ResourceConfiguration;
 <a class="jxr_linenumber" name="48" href="#48">48</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 <a class="jxr_linenumber" name="49" href="#49">49</a>  <strong class="jxr_keyword">import</strong> org.treetank.access.conf.StandardSettings;
@@ -92,7 +92,7 @@
 <a class="jxr_linenumber" name="82" href="#82">82</a>              StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
 <a class="jxr_linenumber" name="83" href="#83">83</a>                  .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
 <a class="jxr_linenumber" name="84" href="#84">84</a>          mResource = mResourceConfig.create(props);
-<a class="jxr_linenumber" name="85" href="#85">85</a>          NodeTestHelper.createTestDocument(mResource);
+<a class="jxr_linenumber" name="85" href="#85">85</a>          NodeElementTestHelper.createTestDocument(mResource);
 <a class="jxr_linenumber" name="86" href="#86">86</a>          <strong class="jxr_keyword">this</strong>.holder = Holder.generateRtx(holder, mResource);
 <a class="jxr_linenumber" name="87" href="#87">87</a>      }
 <a class="jxr_linenumber" name="88" href="#88">88</a>  
@@ -594,7 +594,7 @@
 <a class="jxr_linenumber" name="584" href="#584">584</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> testIAxisConventions(<strong class="jxr_keyword">final</strong> AbsAxis axis, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong>[] expectedKeys) {
 <a class="jxr_linenumber" name="585" href="#585">585</a> 
 <a class="jxr_linenumber" name="586" href="#586">586</a>         <em class="jxr_comment">// IAxis Convention 1.</em>
-<a class="jxr_linenumber" name="587" href="#587">587</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> startKey = axis.getNode().getNodeKey();
+<a class="jxr_linenumber" name="587" href="#587">587</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> startKey = axis.getNode().getDataKey();
 <a class="jxr_linenumber" name="588" href="#588">588</a> 
 <a class="jxr_linenumber" name="589" href="#589">589</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong>[] keys = <strong class="jxr_keyword">new</strong> <strong class="jxr_keyword">long</strong>[expectedKeys.length];
 <a class="jxr_linenumber" name="590" href="#590">590</a>         <strong class="jxr_keyword">int</strong> offset = 0;
@@ -603,7 +603,7 @@
 <a class="jxr_linenumber" name="593" href="#593">593</a>             <em class="jxr_comment">// IAxis results.</em>
 <a class="jxr_linenumber" name="594" href="#594">594</a>             assertTrue(<strong class="jxr_keyword">new</strong> StringBuilder(<span class="jxr_string">"Test for: "</span>).append(axis.getClass().getName()).toString(),
 <a class="jxr_linenumber" name="595" href="#595">595</a>                 offset &lt; expectedKeys.length);
-<a class="jxr_linenumber" name="596" href="#596">596</a>             keys[offset++] = axis.getNode().getNodeKey();
+<a class="jxr_linenumber" name="596" href="#596">596</a>             keys[offset++] = axis.getNode().getDataKey();
 <a class="jxr_linenumber" name="597" href="#597">597</a> 
 <a class="jxr_linenumber" name="598" href="#598">598</a>             <em class="jxr_comment">// IAxis Convention 2.</em>
 <a class="jxr_linenumber" name="599" href="#599">599</a>             <strong class="jxr_keyword">try</strong> {
@@ -621,7 +621,7 @@
 <a class="jxr_linenumber" name="611" href="#611">611</a> 
 <a class="jxr_linenumber" name="612" href="#612">612</a>         <em class="jxr_comment">// IAxis Convention 5.</em>
 <a class="jxr_linenumber" name="613" href="#613">613</a>         assertEquals(<strong class="jxr_keyword">new</strong> StringBuilder(<span class="jxr_string">"Test for: "</span>).append(axis.getClass().getName()).toString(), startKey,
-<a class="jxr_linenumber" name="614" href="#614">614</a>             axis.getNode().getNodeKey());
+<a class="jxr_linenumber" name="614" href="#614">614</a>             axis.getNode().getDataKey());
 <a class="jxr_linenumber" name="615" href="#615">615</a> 
 <a class="jxr_linenumber" name="616" href="#616">616</a>         <em class="jxr_comment">// IAxis results.</em>
 <a class="jxr_linenumber" name="617" href="#617">617</a>         assertArrayEquals(<strong class="jxr_keyword">new</strong> StringBuilder(<span class="jxr_string">"Test for: "</span>).append(axis.getClass().getName()).toString(),

@@ -173,7 +173,7 @@
 <a class="jxr_linenumber" name="163" href="#163">163</a> <em class="jxr_javadoccomment">     * @throws TTIOException</em>
 <a class="jxr_linenumber" name="164" href="#164">164</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="165" href="#165">165</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> emitEndTag() <strong class="jxr_keyword">throws</strong> TTIOException {
-<a class="jxr_linenumber" name="166" href="#166">166</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> nodeKey = mRtx.getNode().getNodeKey();
+<a class="jxr_linenumber" name="166" href="#166">166</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> nodeKey = mRtx.getNode().getDataKey();
 <a class="jxr_linenumber" name="167" href="#167">167</a>         mEvent = mFac.createEndElement(mRtx.getQNameOfCurrentNode(), <strong class="jxr_keyword">new</strong> NamespaceIterator(mRtx));
 <a class="jxr_linenumber" name="168" href="#168">168</a>         mRtx.moveTo(nodeKey);
 <a class="jxr_linenumber" name="169" href="#169">169</a>     }
@@ -191,7 +191,7 @@
 <a class="jxr_linenumber" name="181" href="#181">181</a>             mEvent = mFac.createStartDocument();
 <a class="jxr_linenumber" name="182" href="#182">182</a>             <strong class="jxr_keyword">break</strong>;
 <a class="jxr_linenumber" name="183" href="#183">183</a>         <strong class="jxr_keyword">case</strong> ELEMENT:
-<a class="jxr_linenumber" name="184" href="#184">184</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> key = mRtx.getNode().getNodeKey();
+<a class="jxr_linenumber" name="184" href="#184">184</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> key = mRtx.getNode().getDataKey();
 <a class="jxr_linenumber" name="185" href="#185">185</a>             <strong class="jxr_keyword">final</strong> QName qName = mRtx.getQNameOfCurrentNode();
 <a class="jxr_linenumber" name="186" href="#186">186</a>             mEvent = mFac.createStartElement(qName, <strong class="jxr_keyword">new</strong> <a href="../../../../../org/treetank/service/xml/serialize/StAXSerializer.html">AttributeIterator</a>(mRtx), <strong class="jxr_keyword">new</strong> <a href="../../../../../org/treetank/service/xml/serialize/StAXSerializer.html">NamespaceIterator</a>(mRtx));
 <a class="jxr_linenumber" name="187" href="#187">187</a>             mRtx.moveTo(key);
@@ -220,7 +220,7 @@
 <a class="jxr_linenumber" name="210" href="#210">210</a>     @Override
 <a class="jxr_linenumber" name="211" href="#211">211</a>     <strong class="jxr_keyword">public</strong> String getElementText() <strong class="jxr_keyword">throws</strong> XMLStreamException {
 <a class="jxr_linenumber" name="212" href="#212">212</a> 
-<a class="jxr_linenumber" name="213" href="#213">213</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> nodeKey = mAxis.getNode().getNodeKey();
+<a class="jxr_linenumber" name="213" href="#213">213</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> nodeKey = mAxis.getNode().getDataKey();
 <a class="jxr_linenumber" name="214" href="#214">214</a> 
 <a class="jxr_linenumber" name="215" href="#215">215</a>         <em class="jxr_comment">/*</em>
 <a class="jxr_linenumber" name="216" href="#216">216</a> <em class="jxr_comment">         * The cursor has to move back (once) after determining, that a closing</em>
@@ -315,7 +315,7 @@
 <a class="jxr_linenumber" name="305" href="#305">305</a>     <em class="jxr_javadoccomment">/**</em><em class="jxr_javadoccomment"> {@inheritDoc} */</em>
 <a class="jxr_linenumber" name="306" href="#306">306</a>     @Override
 <a class="jxr_linenumber" name="307" href="#307">307</a>     <strong class="jxr_keyword">public</strong> XMLEvent peek() <strong class="jxr_keyword">throws</strong> XMLStreamException {
-<a class="jxr_linenumber" name="308" href="#308">308</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> currNodeKey = mAxis.getNode().getNodeKey();
+<a class="jxr_linenumber" name="308" href="#308">308</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> currNodeKey = mAxis.getNode().getDataKey();
 <a class="jxr_linenumber" name="309" href="#309">309</a>         <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="310" href="#310">310</a>             <strong class="jxr_keyword">if</strong> (mCloseElements) {
 <a class="jxr_linenumber" name="311" href="#311">311</a>                 mRtx.moveTo(mStack.peek());
@@ -410,7 +410,7 @@
 <a class="jxr_linenumber" name="400" href="#400">400</a>             <em class="jxr_comment">// Emit node.</em>
 <a class="jxr_linenumber" name="401" href="#401">401</a>             emitNode();
 <a class="jxr_linenumber" name="402" href="#402">402</a> 
-<a class="jxr_linenumber" name="403" href="#403">403</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> nodeKey = mRtx.getNode().getNodeKey();
+<a class="jxr_linenumber" name="403" href="#403">403</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> nodeKey = mRtx.getNode().getDataKey();
 <a class="jxr_linenumber" name="404" href="#404">404</a>             mLastKey = nodeKey;
 <a class="jxr_linenumber" name="405" href="#405">405</a> 
 <a class="jxr_linenumber" name="406" href="#406">406</a>             <em class="jxr_comment">// Push end element to stack if we are a start element.</em>
@@ -474,7 +474,7 @@
 <a class="jxr_linenumber" name="464" href="#464">464</a> <em class="jxr_javadoccomment">         */</em>
 <a class="jxr_linenumber" name="465" href="#465">465</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../org/treetank/service/xml/serialize/StAXSerializer.html">AttributeIterator</a>(<strong class="jxr_keyword">final</strong> INodeReadTrx rtx) {
 <a class="jxr_linenumber" name="466" href="#466">466</a>             mRTX = rtx;
-<a class="jxr_linenumber" name="467" href="#467">467</a>             mNodeKey = mRTX.getNode().getNodeKey();
+<a class="jxr_linenumber" name="467" href="#467">467</a>             mNodeKey = mRTX.getNode().getDataKey();
 <a class="jxr_linenumber" name="468" href="#468">468</a>             mIndex = 0;
 <a class="jxr_linenumber" name="469" href="#469">469</a> 
 <a class="jxr_linenumber" name="470" href="#470">470</a>             <strong class="jxr_keyword">if</strong> (mRTX.getNode().getKind() == ELEMENT) {
@@ -550,7 +550,7 @@
 <a class="jxr_linenumber" name="540" href="#540">540</a> <em class="jxr_javadoccomment">         */</em>
 <a class="jxr_linenumber" name="541" href="#541">541</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../org/treetank/service/xml/serialize/StAXSerializer.html">NamespaceIterator</a>(<strong class="jxr_keyword">final</strong> INodeReadTrx rtx) {
 <a class="jxr_linenumber" name="542" href="#542">542</a>             mRTX = rtx;
-<a class="jxr_linenumber" name="543" href="#543">543</a>             mNodeKey = mRTX.getNode().getNodeKey();
+<a class="jxr_linenumber" name="543" href="#543">543</a>             mNodeKey = mRTX.getNode().getDataKey();
 <a class="jxr_linenumber" name="544" href="#544">544</a>             mIndex = 0;
 <a class="jxr_linenumber" name="545" href="#545">545</a> 
 <a class="jxr_linenumber" name="546" href="#546">546</a>             <strong class="jxr_keyword">if</strong> (mRTX.getNode().getKind() == ELEMENT) {
