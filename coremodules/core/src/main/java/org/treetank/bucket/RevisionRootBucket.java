@@ -106,7 +106,9 @@ public final class RevisionRootBucket implements IReferenceBucket {
     }
 
     /**
-     * {@inheritDoc}
+     * Getting revision of this root bucket.
+     * 
+     * @return current revision
      */
     public long getRevision() {
         return mRevision;

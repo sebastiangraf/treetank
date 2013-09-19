@@ -47,7 +47,7 @@ import org.treetank.CoreTestHelper;
 import org.treetank.CoreTestHelper.PATHS;
 import org.treetank.Holder;
 import org.treetank.ModuleFactory;
-import org.treetank.NodeTestHelper;
+import org.treetank.NodeElementTestHelper;
 import org.treetank.access.NodeReadTrx;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
@@ -109,7 +109,7 @@ public class XMLShredderTest {
         // Setup parsed session.
         XMLShredder.main(XML, PATHS.PATH2.getFile().getAbsolutePath());
         final INodeWriteTrx expectedTrx = holder.getNWtx();
-        NodeTestHelper.createDocumentRootNode(expectedTrx);
+        NodeElementTestHelper.createDocumentRootNode(expectedTrx);
 
         // Verify.
         final IStorage database2 = CoreTestHelper.getStorage(PATHS.PATH2.getFile());
@@ -174,7 +174,7 @@ public class XMLShredderTest {
 
         final INodeWriteTrx expectedTrx =
             new NodeWriteTrx(expectedSession, expectedSession.beginBucketWtx(), HashKind.Rolling);
-        NodeTestHelper.DocumentCreater.create(expectedTrx);
+        NodeElementTestHelper.DocumentCreater.create(expectedTrx);
         expectedTrx.commit();
         expectedTrx.moveTo(ROOT_NODE);
 

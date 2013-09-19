@@ -43,7 +43,7 @@ import org.testng.annotations.Test;
 import org.treetank.CoreTestHelper;
 import org.treetank.Holder;
 import org.treetank.ModuleFactory;
-import org.treetank.NodeTestHelper;
+import org.treetank.NodeElementTestHelper;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.StandardSettings;
@@ -75,7 +75,7 @@ public final class TestNodeWrapperS9ApiXPath {
             StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
                 .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
         ResourceConfiguration mResource = mResourceConfig.create(props);
-        NodeTestHelper.createTestDocument(mResource);
+        NodeElementTestHelper.createTestDocument(mResource);
         this.holder = Holder.generateRtx(holder, mResource);
         XMLUnit.setIgnoreWhitespace(true);
     }

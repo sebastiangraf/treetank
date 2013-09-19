@@ -56,7 +56,7 @@ import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.CoreTestHelper;
 import org.treetank.ModuleFactory;
-import org.treetank.NodeTestHelper;
+import org.treetank.NodeElementTestHelper;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.Storage;
@@ -114,7 +114,7 @@ public final class TestNodeWrapperS9ApiXSLT {
                 StandardSettings.KEY));
         final INodeWriteTrx wtx =
             new NodeWriteTrx(session, session.beginBucketWtx(), HashKind.Rolling);
-        NodeTestHelper.createDocumentRootNode(wtx);
+        NodeElementTestHelper.createDocumentRootNode(wtx);
         final XMLEventReader reader = XMLShredder.createFileReader(BOOKS);
         final XMLShredder shredder = new XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();

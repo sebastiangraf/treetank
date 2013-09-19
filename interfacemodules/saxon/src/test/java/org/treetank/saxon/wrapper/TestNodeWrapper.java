@@ -52,7 +52,7 @@ import org.testng.annotations.Test;
 import org.treetank.CoreTestHelper;
 import org.treetank.Holder;
 import org.treetank.ModuleFactory;
-import org.treetank.NodeTestHelper;
+import org.treetank.NodeElementTestHelper;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.Storage;
@@ -98,7 +98,7 @@ public class TestNodeWrapper {
             StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
                 CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
-        NodeTestHelper.createTestDocument(mResource);
+        NodeElementTestHelper.createTestDocument(mResource);
         this.holder = Holder.generateRtx(holder, mResource);
 
         final Processor proc = new Processor(false);
@@ -176,7 +176,7 @@ public class TestNodeWrapper {
         final ISession session =
             storage.getSession(new SessionConfiguration(CoreTestHelper.RESOURCENAME, StandardSettings.KEY));
         final INodeWriteTrx wtx = new NodeWriteTrx(session, session.beginBucketWtx(), HashKind.Rolling);
-        NodeTestHelper.createDocumentRootNode(wtx);
+        NodeElementTestHelper.createDocumentRootNode(wtx);
         final XMLEventReader reader = XMLShredder.createFileReader(source);
         final XMLShredder shredder = new XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();

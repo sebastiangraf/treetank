@@ -55,7 +55,7 @@ import org.testng.annotations.Test;
 import org.treetank.CoreTestHelper;
 import org.treetank.Holder;
 import org.treetank.ModuleFactory;
-import org.treetank.NodeTestHelper;
+import org.treetank.NodeElementTestHelper;
 import org.treetank.access.NodeReadTrx;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
@@ -96,7 +96,7 @@ public final class TestNodeWrapperXPath {
             StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
                 .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
         ResourceConfiguration resource = mResourceConfig.create(props);
-        NodeTestHelper.createTestDocument(resource);
+        NodeElementTestHelper.createTestDocument(resource);
         this.holder = Holder.generateRtx(holder, resource);
 
         // Saxon setup.

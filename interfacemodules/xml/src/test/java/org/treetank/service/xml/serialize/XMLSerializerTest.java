@@ -38,7 +38,7 @@ import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.CoreTestHelper;
 import org.treetank.ModuleFactory;
-import org.treetank.NodeTestHelper;
+import org.treetank.NodeElementTestHelper;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.ResourceConfiguration;
@@ -82,7 +82,7 @@ public class XMLSerializerTest {
         final INodeWriteTrx wtx =
             new NodeWriteTrx(holder.getSession(), holder.getSession().beginBucketWtx(),
                 HashKind.Rolling);
-        NodeTestHelper.DocumentCreater.create(wtx);
+        NodeElementTestHelper.DocumentCreater.create(wtx);
         wtx.commit();
         wtx.close();
 
@@ -103,7 +103,7 @@ public class XMLSerializerTest {
         final INodeWriteTrx wtx =
             new NodeWriteTrx(holder.getSession(), holder.getSession().beginBucketWtx(),
                 HashKind.Rolling);
-        NodeTestHelper.DocumentCreater.create(wtx);
+        NodeElementTestHelper.DocumentCreater.create(wtx);
         wtx.commit();
         wtx.close();
 
@@ -124,7 +124,7 @@ public class XMLSerializerTest {
         final INodeWriteTrx wtx =
             new NodeWriteTrx(holder.getSession(), holder.getSession().beginBucketWtx(),
                 HashKind.Rolling);
-        NodeTestHelper.DocumentCreater.create(wtx);
+        NodeElementTestHelper.DocumentCreater.create(wtx);
         wtx.commit();
         wtx.close();
 

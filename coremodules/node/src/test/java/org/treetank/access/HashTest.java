@@ -41,7 +41,7 @@ import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
 import org.treetank.CoreTestHelper;
 import org.treetank.ModuleFactory;
-import org.treetank.NodeTestHelper;
+import org.treetank.NodeElementTestHelper;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
@@ -255,7 +255,7 @@ public class HashTest {
             storage.getSession(new SessionConfiguration(CoreTestHelper.RESOURCENAME, StandardSettings.KEY));
         final IBucketWriteTrx pTrx = session.beginBucketWtx();
         final INodeWriteTrx wTrx = new NodeWriteTrx(session, pTrx, kind);
-        NodeTestHelper.createDocumentRootNode(wTrx);
+        NodeElementTestHelper.createDocumentRootNode(wTrx);
         return wTrx;
     }
 }

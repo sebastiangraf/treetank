@@ -10,7 +10,7 @@ import java.io.IOException;
 
 import javax.xml.namespace.QName;
 
-import org.treetank.NodeTestHelper;
+import org.treetank.NodeElementTestHelper;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.exception.TTException;
 
@@ -81,7 +81,7 @@ public class XMLTestHelper {
          */
         public static void createVersioned(final INodeWriteTrx pWtx) throws TTException {
             assertNotNull(pWtx);
-            NodeTestHelper.DocumentCreater.create(pWtx);
+            NodeElementTestHelper.DocumentCreater.create(pWtx);
             pWtx.commit();
             for (int i = 0; i <= 1; i++) {
                 pWtx.moveTo(ROOT_NODE);
@@ -103,7 +103,7 @@ public class XMLTestHelper {
          */
         public static void createWithoutNamespace(final INodeWriteTrx pWtx) throws TTException {
             assertNotNull(pWtx);
-            NodeTestHelper.createDocumentRootNode(pWtx);
+            NodeElementTestHelper.createDocumentRootNode(pWtx);
             pWtx.moveTo(ROOT_NODE);
 
             pWtx.insertElementAsFirstChild(new QName("a"));

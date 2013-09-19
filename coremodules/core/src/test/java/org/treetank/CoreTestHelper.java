@@ -192,7 +192,7 @@ public final class CoreTestHelper {
      *            length of the bucket
      * @param databucketKey
      *            key of the databucket
-     * @param lastbucketKey
+     * @param lastBucketKey
      *            key of the former bucket
      * @return a {@link DataBucket} filled
      */

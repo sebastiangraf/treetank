@@ -72,7 +72,7 @@ public class DumbDataFactory implements IDataFactory {
          * 
          * @param pDataKey
          *            to be set
-         * @param pHash
+         * @param pValue
          *            to be set
          */
         public DumbData(long pDataKey, byte[] pValue) {

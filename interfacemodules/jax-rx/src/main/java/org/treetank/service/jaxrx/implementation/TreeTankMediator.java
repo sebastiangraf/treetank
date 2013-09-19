@@ -80,8 +80,6 @@ public final class TreeTankMediator implements JaxRx {
      * 
      * Constructor.
      * 
-     * @param pStoragePath
-     *            where the data should be stored.
      * @throws TTException
      */
     public TreeTankMediator() throws TTException {
