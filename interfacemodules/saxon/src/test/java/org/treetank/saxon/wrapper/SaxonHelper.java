@@ -32,7 +32,7 @@ import java.util.Properties;
 import javax.xml.stream.XMLEventReader;
 
 import org.treetank.CoreTestHelper;
-import org.treetank.NodeTestHelper;
+import org.treetank.NodeElementTestHelper;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.Storage;
@@ -73,7 +73,7 @@ public final class SaxonHelper {
             storage.getSession(new SessionConfiguration(CoreTestHelper.RESOURCENAME, StandardSettings.KEY));
         final INodeWriteTrx wtx =
             new NodeWriteTrx(session, session.beginBucketWtx(), HashKind.Rolling);
-        NodeTestHelper.createDocumentRootNode(wtx);
+        NodeElementTestHelper.createDocumentRootNode(wtx);
         final XMLEventReader reader = XMLShredder.createFileReader(BOOKSXML);
         final XMLShredder shredder = new XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();

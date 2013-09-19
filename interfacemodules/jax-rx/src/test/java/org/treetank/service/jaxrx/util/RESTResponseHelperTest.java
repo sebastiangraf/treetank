@@ -114,18 +114,7 @@ public class RESTResponseHelperTest {
         CoreTestHelper.deleteEverything();
     }
 
-    /**
-     * Test method for
-     * {@link org.treetank.service.jaxrx.util.RESTResponseHelper#buildResponseOfDomLR(org.treetank.api.IStorage, IBackendFactory, IRevisioning)}
-     * .
-     * 
-     * @throws IOException
-     * @throws WebApplicationException
-     * @throws SAXException
-     * @throws ParserConfigurationException
-     * @throws TTException
-     * @throws InterruptedException
-     */
+   
     @Test
     public final void testBuildResponseOfDomLR() throws WebApplicationException, IOException,
         ParserConfigurationException, SAXException, TTException, InterruptedException {

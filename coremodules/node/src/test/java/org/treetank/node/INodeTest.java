@@ -53,9 +53,9 @@ public class INodeTest {
     }
 
     /**
-     * Test method for {@link org.treetank.api.IData#getHash()},
-     * {@link org.treetank.api.IData#getDataKey()},
-     * {@link org.treetank.api.IData#serialize(java.io.DataOutput)},
+     * Test method for {@link INode#getHash()},
+     * {@link INode#getDataKey()},
+     * {@link INode#serialize(java.io.DataOutput)},
      * 
      * @param pNodeClass
      *            class for node to test
@@ -95,10 +95,10 @@ public class INodeTest {
     }
 
     /**
-     * Providing different implementations of the {@link IData} as Dataprovider to the test class.
+     * Providing different implementations of the {@link INode} as Dataprovider to the test class.
      * 
-     * @return different classes of the {@link IData} and <code>INodeChecker</code>
-     * @throws TTByteHandleException
+     * @return different classes of the {@link INode} and <code>INodeChecker</code>
+     * @throws TTByteHandleException if something weird happens
      */
     @DataProvider(name = "instantiateNode")
     public Object[][] instantiateNode() throws TTByteHandleException {

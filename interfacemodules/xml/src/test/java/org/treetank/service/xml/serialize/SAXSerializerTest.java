@@ -39,7 +39,7 @@ import org.testng.annotations.Test;
 import org.treetank.CoreTestHelper;
 import org.treetank.Holder;
 import org.treetank.ModuleFactory;
-import org.treetank.NodeTestHelper;
+import org.treetank.NodeElementTestHelper;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.StandardSettings;
@@ -75,7 +75,7 @@ public class SAXSerializerTest {
             StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
                 .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
-        NodeTestHelper.createTestDocument(mResource);
+        NodeElementTestHelper.createTestDocument(mResource);
         this.holder = Holder.generateWtx(holder, mResource);
     }
 
@@ -129,6 +129,6 @@ public class SAXSerializerTest {
 
         final SAXSerializer serializer = new SAXSerializer(holder.getSession(), contHandler);
         serializer.call();
-        assertEquals(NodeTestHelper.XML, strBuilder.toString());
+        assertEquals(NodeElementTestHelper.XML, strBuilder.toString());
     }
 }

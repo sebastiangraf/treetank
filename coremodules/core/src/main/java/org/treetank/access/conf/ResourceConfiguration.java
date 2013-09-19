@@ -156,10 +156,11 @@ public final class ResourceConfiguration {
     /**
      * Constructor.
      * 
-     * @param pResourceFile
+     * @param pProperties
      * @param pStorage
      * @param pRevisioning
      * @param pDataFac
+     * @param pMetaFac
      */
     public ResourceConfiguration(Properties pProperties, IBackend pStorage, IRevisioning pRevisioning,
         IDataFactory pDataFac, IMetaEntryFactory pMetaFac) {

@@ -61,7 +61,7 @@ import org.treetank.node.delegates.StructNodeDelegate;
  * 
  */
 
-public final class NodeTestHelper {
+public final class NodeElementTestHelper {
 
     /**
      * Creating a test document at {@link PATHS#PATH1}.
@@ -149,7 +149,7 @@ public final class NodeTestHelper {
         public static void create(final INodeWriteTrx paramWtx) throws TTException {
             assertNotNull(paramWtx);
 
-            NodeTestHelper.createDocumentRootNode(paramWtx);
+            NodeElementTestHelper.createDocumentRootNode(paramWtx);
 
             assertTrue(paramWtx.moveTo(ROOT_NODE));
 

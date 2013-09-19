@@ -42,7 +42,7 @@ import com.google.common.hash.PrimitiveSink;
 
 /**
  * Delegate method for all nodes. That means that all nodes stored in Treetank
- * are represented by an instance of the interface {@link IData} namely
+ * are represented by an instance of the interface {@link INode} namely
  * containing the position in the tree related to a parent-node, the related
  * type and the corresponding hash recursivly computed.
  * 
