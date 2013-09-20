@@ -26,7 +26,7 @@ import org.treetank.revisioning.SlidingSnapshot;
 
 /**
  * @author Andreas Rain
- *
+ * 
  */
 public class CreateStorageConfigurationDialog extends Dialog {
 
@@ -109,25 +109,26 @@ public class CreateStorageConfigurationDialog extends Dialog {
         lblTheStorageAlready.setBounds(6, 227, 420, 53);
         lblTheStorageAlready.setText("The storage already exists try another name");
         lblTheStorageAlready.setVisible(false);
-        
+
         lblBackend = new Label(shell, SWT.NONE);
         lblBackend.setBounds(10, 66, 416, 15);
         lblBackend.setText("Type in a backend");
-        
+
         txtBackend = new Text(shell, SWT.BORDER);
         txtBackend.setBounds(10, 87, 416, 21);
-        
+
         lblRevisioning = new Label(shell, SWT.NONE);
         lblRevisioning.setBounds(10, 114, 416, 15);
         lblRevisioning.setText("Type in a revisioning");
-        
+
         txtRevisioning = new Text(shell, SWT.BORDER);
         txtRevisioning.setBounds(10, 135, 416, 21);
-        
+
         lblInfoIfYou = new Label(shell, SWT.WRAP);
         lblInfoIfYou.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.ITALIC));
         lblInfoIfYou.setBounds(10, 181, 416, 40);
-        lblInfoIfYou.setText("Info: If you type in a wrong class the default backend JCloudsStorage and default revisioning SlidingSnapshot are going to be used.");
+        lblInfoIfYou
+            .setText("Info: If you type in a wrong class the default backend JCloudsStorage and default revisioning SlidingSnapshot are going to be used.");
 
     }
 
@@ -135,27 +136,28 @@ public class CreateStorageConfigurationDialog extends Dialog {
     protected void do_btnSubmit_widgetSelected(final SelectionEvent e) {
         try {
             this.name = text.getText();
-            
+
             String backend = txtBackend.getText();
             String rev = txtRevisioning.getText();
             Class<? extends IBackend> backendClass;
             Class<? extends IRevisioning> revClass;
-            
+
             try {
-                backendClass = (Class<IBackend>) Class.forName(backend);
+                backendClass = (Class<IBackend>)Class.forName(backend);
             } catch (ClassNotFoundException e1) {
                 backendClass = JCloudsStorage.class;
             }
-            
+
             try {
-                revClass = (Class<IRevisioning>) Class.forName(rev);
+                revClass = (Class<IRevisioning>)Class.forName(rev);
             } catch (ClassNotFoundException e1) {
                 revClass = SlidingSnapshot.class;
             }
-            
-            StorageManager.createResource(this.name, new ModuleSetter().setDataFacClass(FileDataFactory.class).setMetaFacClass(FilelistenerMetaDataFactory.class)
+
+            StorageManager.createResource(this.name, new ModuleSetter()
+                .setDataFacClass(FileDataFactory.class).setMetaFacClass(FilelistenerMetaDataFactory.class)
                 .setRevisioningClass(revClass).setBackendClass(backendClass).createModule());
-            
+
         } catch (StorageAlreadyExistsException e1) {
             lblTheStorageAlready.setVisible(true);
             return;
@@ -168,11 +170,11 @@ public class CreateStorageConfigurationDialog extends Dialog {
 
         this.getParent().close();
     }
-    
+
     /**
      * @return String - name of the resource
      */
-    public String getName(){
+    public String getName() {
         return this.name;
     }
 

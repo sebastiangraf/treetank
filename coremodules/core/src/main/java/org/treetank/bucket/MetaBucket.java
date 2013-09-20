@@ -181,14 +181,14 @@ public final class MetaBucket implements IBucket {
      */
     @Override
     public boolean equals(Object obj) {
-      return obj.hashCode()==this.hashCode();
+        return obj.hashCode() == this.hashCode();
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
-    public HashCode  secureHash() {
+    public HashCode secureHash() {
         final Hasher code = StandardSettings.HASHFUNC.newHasher().putLong(mBucketKey);
         for (final IMetaEntry key : mMetaMap.keySet()) {
             final IMetaEntry val = mMetaMap.get(key);

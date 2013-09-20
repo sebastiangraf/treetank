@@ -72,8 +72,10 @@ public class StorageManagerTest {
      * @throws TTException
      * @throws ResourceNotExistingException
      */
-    @Test(enabled = false) // Not enabled because used in tear down already.
-    public void testRemoveResource() throws TTException, ResourceNotExistingException {
+    @Test(enabled = false)
+    // Not enabled because used in tear down already.
+        public
+        void testRemoveResource() throws TTException, ResourceNotExistingException {
         StorageManager.removeResource(mStorageName);
 
         List<String> storages = StorageManager.getResources();

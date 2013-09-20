@@ -68,7 +68,7 @@ public class ReadTransactionTest {
                 CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
         NodeElementTestHelper.createTestDocument(mResource);
-        this.holder = Holder.generateWtx(holder,mResource);
+        this.holder = Holder.generateWtx(holder, mResource);
     }
 
     @AfterMethod

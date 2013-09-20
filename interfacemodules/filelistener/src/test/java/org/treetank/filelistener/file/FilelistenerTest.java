@@ -43,7 +43,7 @@ public class FilelistenerTest {
     @BeforeMethod
     public void setUp() throws Exception {
         IOUtils.recursiveDelete(new File(StorageManager.ROOT_PATH));
-        
+
         StorageManager.createResource(RESOURCE_1, new ModuleSetter().setDataFacClass(FileDataFactory.class)
             .setMetaFacClass(FilelistenerMetaDataFactory.class).createModule());
         StorageManager.createResource(RESOURCE_2, new ModuleSetter().setDataFacClass(FileDataFactory.class)
@@ -56,8 +56,10 @@ public class FilelistenerTest {
      */
     @AfterMethod
     public void tearDown() throws Exception {
-//        StorageManager.removeResource(RESOURCE_1); Not necessary since Filelistener.removeFileListener(String resourceName) already deletes the resource.
-//        StorageManager.removeResource(RESOURCE_2); Not necessary since Filelistener.removeFileListener(String resourceName) already deletes the resource.
+        // StorageManager.removeResource(RESOURCE_1); Not necessary since
+        // Filelistener.removeFileListener(String resourceName) already deletes the resource.
+        // StorageManager.removeResource(RESOURCE_2); Not necessary since
+        // Filelistener.removeFileListener(String resourceName) already deletes the resource.
 
         filelistener.removeFilelistener(RESOURCE_1);
         filelistener.removeFilelistener(RESOURCE_2);

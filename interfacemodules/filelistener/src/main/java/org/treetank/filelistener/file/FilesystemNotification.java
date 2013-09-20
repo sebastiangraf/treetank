@@ -21,161 +21,162 @@ import org.treetank.api.IFilelistenerWriteTrx;
  * 
  */
 public class FilesystemNotification implements Callable<Void> {
-        
-	/** The file that has been changed */
-	private final File mFile;
 
-	/** Determine whether or not this fsn has finished. */
-	private boolean mFinished;
+    /** The file that has been changed */
+    private final File mFile;
 
-	/** The relative path as a String */
-	private final String mRelativePath;
+    /** Determine whether or not this fsn has finished. */
+    private boolean mFinished;
 
-	/** The root path of the listener folder */
-	private final String mRootPath;
+    /** The relative path as a String */
+    private final String mRelativePath;
 
-	/** The event for this notification */
-	private WatchEvent.Kind<?> mEvtType;
-	
-	/**
-	 * Time this notification needed to be processed.
-	 */
-	private long mTimeTaken;
-	
-	/**
-	 * Bucket amount
-	 */
-	private int mBuckets;
+    /** The root path of the listener folder */
+    private final String mRootPath;
 
-	/** Transaction to use */
-	private final IFilelistenerWriteTrx mWtx;
+    /** The event for this notification */
+    private WatchEvent.Kind<?> mEvtType;
 
-	/**
-	 * FilesystemNotificationObservers for this notification
-	 */
-	private Collection<FilesystemNotificationObserver> mObservers;
+    /**
+     * Time this notification needed to be processed.
+     */
+    private long mTimeTaken;
 
-	/**
-	 * Create a FilesystemNotification that holds the File
-	 * 
-	 * @param pFile
-	 * @param pRelativePath
-	 * @param pRootPath
-	 */
-	public FilesystemNotification(File pFile, String pRelativePath,
-			String pRootPath, WatchEvent.Kind<?> pEvtType,
-			IFilelistenerWriteTrx pWtx) {
-		super();
-		mFile = pFile;
-		mRelativePath = pRelativePath;
-		mRootPath = pRootPath;
-		mEvtType = pEvtType;
-		mWtx = pWtx;
-		mFinished = false;
-		mObservers = new HashSet<>();
-	}
+    /**
+     * Bucket amount
+     */
+    private int mBuckets;
 
-	public File getFile() {
-		return mFile;
-	}
+    /** Transaction to use */
+    private final IFilelistenerWriteTrx mWtx;
 
-	public String getRelativePath() {
-		return mRelativePath;
-	}
+    /**
+     * FilesystemNotificationObservers for this notification
+     */
+    private Collection<FilesystemNotificationObserver> mObservers;
 
-	public String getRootPath() {
-		return mRootPath;
-	}
+    /**
+     * Create a FilesystemNotification that holds the File
+     * 
+     * @param pFile
+     * @param pRelativePath
+     * @param pRootPath
+     */
+    public FilesystemNotification(File pFile, String pRelativePath, String pRootPath,
+        WatchEvent.Kind<?> pEvtType, IFilelistenerWriteTrx pWtx) {
+        super();
+        mFile = pFile;
+        mRelativePath = pRelativePath;
+        mRootPath = pRootPath;
+        mEvtType = pEvtType;
+        mWtx = pWtx;
+        mFinished = false;
+        mObservers = new HashSet<>();
+    }
 
-	public void setEvtType(WatchEvent.Kind<?> pEvtType) {
-		mEvtType = pEvtType;
-	}
+    public File getFile() {
+        return mFile;
+    }
 
-	public WatchEvent.Kind<?> getEvtType() {
-		return mEvtType;
-	}
+    public String getRelativePath() {
+        return mRelativePath;
+    }
 
-	public boolean isFinished() {
-		return mFinished;
-	}
+    public String getRootPath() {
+        return mRootPath;
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(mEvtType, mRelativePath, mRootPath, mFile);
-	}
+    public void setEvtType(WatchEvent.Kind<?> pEvtType) {
+        mEvtType = pEvtType;
+    }
 
-	@Override
-	public boolean equals(Object o) {
-		return this.hashCode() == o.hashCode();
-	}
+    public WatchEvent.Kind<?> getEvtType() {
+        return mEvtType;
+    }
 
-	@Override
-	public Void call() throws Exception {
-	        mTimeTaken = System.currentTimeMillis();
+    public boolean isFinished() {
+        return mFinished;
+    }
 
-		if (this.getEvtType() == ENTRY_CREATE) {
-			mWtx.addEmptyFile(this.getRelativePath());
-		} else if (this.getEvtType() == ENTRY_MODIFY) {
-			mWtx.removeFile(this.getRelativePath());
-			if (this.getFile().exists()) {
-				mWtx.addFile(this.getFile(), this.getRelativePath());
+    @Override
+    public int hashCode() {
+        return Objects.hash(mEvtType, mRelativePath, mRootPath, mFile);
+    }
 
-				if (this.mObservers.size() > 0) {
-					// For bench purposes
-//				    System.out.println("Commiting blocked");
-					mWtx.commitBlocked();
-//				    System.out.println("Commit finsihed.");
-				} else {
-					// Non blocking
-					mWtx.commit();
-				}
-			}
-		} else if (this.getEvtType() == ENTRY_DELETE) {
-			mWtx.removeFile(this.getRelativePath());
-		}
+    @Override
+    public boolean equals(Object o) {
+        return this.hashCode() == o.hashCode();
+    }
 
-		mFinished = true;
-		
-		mTimeTaken = System.currentTimeMillis() - mTimeTaken;
+    @Override
+    public Void call() throws Exception {
+        mTimeTaken = System.currentTimeMillis();
 
-		// Notifying observers that a task has been finished.
-		this.notifyObservers();
-		return null;
-	}
-	
-	/**
-	 * Determine how long this notifcation was processed.
-	 * @return time in form of a long in ms
-	 */
-	public long getTime(){
-	    return mTimeTaken;
-	}
-        
-        /**
-         * Determine how many buckets are in the storage after this notifcation was processed.
-         * @return amount of buckets
-         */
-        public int getBucketAmount(){
-            return mBuckets;
+        if (this.getEvtType() == ENTRY_CREATE) {
+            mWtx.addEmptyFile(this.getRelativePath());
+        } else if (this.getEvtType() == ENTRY_MODIFY) {
+            mWtx.removeFile(this.getRelativePath());
+            if (this.getFile().exists()) {
+                mWtx.addFile(this.getFile(), this.getRelativePath());
+
+                if (this.mObservers.size() > 0) {
+                    // For bench purposes
+                    // System.out.println("Commiting blocked");
+                    mWtx.commitBlocked();
+                    // System.out.println("Commit finsihed.");
+                } else {
+                    // Non blocking
+                    mWtx.commit();
+                }
+            }
+        } else if (this.getEvtType() == ENTRY_DELETE) {
+            mWtx.removeFile(this.getRelativePath());
         }
 
-	/**
-	 * @throws InterruptedException
-	 */
-	public void notifyObservers() throws InterruptedException {
-		synchronized (this) {
-			for (FilesystemNotificationObserver o : mObservers) {
-		                mBuckets = mWtx.getCount();
-				o.addNotification(this);
-			}
-		}
-	}
+        mFinished = true;
 
-	/**
-	 * @param observer
-	 */
-	public void addObserver(FilesystemNotificationObserver observer) {
-		this.mObservers.add(observer);
-	}
+        mTimeTaken = System.currentTimeMillis() - mTimeTaken;
+
+        // Notifying observers that a task has been finished.
+        this.notifyObservers();
+        return null;
+    }
+
+    /**
+     * Determine how long this notifcation was processed.
+     * 
+     * @return time in form of a long in ms
+     */
+    public long getTime() {
+        return mTimeTaken;
+    }
+
+    /**
+     * Determine how many buckets are in the storage after this notifcation was processed.
+     * 
+     * @return amount of buckets
+     */
+    public int getBucketAmount() {
+        return mBuckets;
+    }
+
+    /**
+     * @throws InterruptedException
+     */
+    public void notifyObservers() throws InterruptedException {
+        synchronized (this) {
+            for (FilesystemNotificationObserver o : mObservers) {
+                mBuckets = mWtx.getCount();
+                o.addNotification(this);
+            }
+        }
+    }
+
+    /**
+     * @param observer
+     */
+    public void addObserver(FilesystemNotificationObserver observer) {
+        this.mObservers.add(observer);
+    }
 
 }

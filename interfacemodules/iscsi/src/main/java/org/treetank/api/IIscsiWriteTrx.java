@@ -33,14 +33,14 @@ import org.treetank.exception.TTException;
  * This interface defines the funcationalities of an IscsiWriteTransaction
  * 
  * @author Andreas Rain
- *
+ * 
  */
 public interface IIscsiWriteTrx extends IIscsiReadTrx {
 
     /**
      * This method inserts the given data into the database.
      * 
-     * @param vals 
+     * @param vals
      * @throws TTException
      */
     public void bootstrap(byte[] vals) throws TTException;
@@ -50,7 +50,7 @@ public interface IIscsiWriteTrx extends IIscsiReadTrx {
      * 
      * @param pValue
      *            new value of data
-     * @throws TTException 
+     * @throws TTException
      *             if value couldn't be set
      */
     public void setValue(final byte[] pValue) throws TTException;
@@ -66,7 +66,8 @@ public interface IIscsiWriteTrx extends IIscsiReadTrx {
 
     /**
      * Abort all modifications of the exclusive write transaction.
-     * @throws TTException 
+     * 
+     * @throws TTException
      *             if this revision couldn't be aborted
      */
     public void abort() throws TTException;

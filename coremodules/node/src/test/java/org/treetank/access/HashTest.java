@@ -75,19 +75,19 @@ public class HashTest {
         CoreTestHelper.deleteEverything();
     }
 
-    @Test(enabled=false)
+    @Test(enabled = false)
     public void testPostorderInsertRemove() throws TTException {
         final INodeWriteTrx wtx = createWtx(HashKind.Postorder);
         testHashTreeWithInsertAndRemove(wtx);
     }
 
-    @Test(enabled=false)
+    @Test(enabled = false)
     public void testPostorderDeep() throws TTException {
         final INodeWriteTrx wtx = createWtx(HashKind.Postorder);
         testDeepTree(wtx);
     }
 
-    @Test(enabled=false)
+    @Test(enabled = false)
     public void testPostorderSetter() throws TTException {
         final INodeWriteTrx wtx = createWtx(HashKind.Postorder);
         testSetter(wtx);
@@ -248,7 +248,9 @@ public class HashTest {
 
     private INodeWriteTrx createWtx(final HashKind kind) throws TTException {
         final IStorage storage = CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile());
-        Properties props = StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(), CoreTestHelper.RESOURCENAME);
+        Properties props =
+            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                CoreTestHelper.RESOURCENAME);
         ResourceConfiguration res = mResourceConfig.create(props);
         CoreTestHelper.createResource(res);
         final ISession session =

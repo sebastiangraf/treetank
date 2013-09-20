@@ -105,15 +105,14 @@ public final class TestNodeWrapperS9ApiXSLT {
         Storage.createStorage(dbConfig);
         final IStorage databaseBooks = Storage.openStorage(CoreTestHelper.PATHS.PATH1.getFile());
         Properties props =
-            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
-                .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
+            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                CoreTestHelper.RESOURCENAME);
         ResourceConfiguration resConfig = mResourceConfig.create(props);
         databaseBooks.createResource(resConfig);
         final ISession session =
             databaseBooks.getSession(new SessionConfiguration(CoreTestHelper.RESOURCENAME,
                 StandardSettings.KEY));
-        final INodeWriteTrx wtx =
-            new NodeWriteTrx(session, session.beginBucketWtx(), HashKind.Rolling);
+        final INodeWriteTrx wtx = new NodeWriteTrx(session, session.beginBucketWtx(), HashKind.Rolling);
         NodeElementTestHelper.createDocumentRootNode(wtx);
         final XMLEventReader reader = XMLShredder.createFileReader(BOOKS);
         final XMLShredder shredder = new XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);
@@ -134,36 +133,36 @@ public final class TestNodeWrapperS9ApiXSLT {
         CoreTestHelper.deleteEverything();
     }
 
-//    @Test
-//    public void testWithoutSerializer() throws Exception {
-//        final OutputStream out =
-//            new XSLTEvaluator(holder.getSession(), STYLESHEET, new ByteArrayOutputStream()).call();
-//
-//        final StringBuilder sBuilder = readFile();
-//
-//        final Diff diff = new Diff(sBuilder.toString(), out.toString());
-//        diff.overrideElementQualifier(new RecursiveElementNameAndTextQualifier());
-//
-//        AssertJUnit.assertTrue(diff.toString(), diff.similar());
-//    }
-//
-//    @Test
-//    public void testWithSerializer() throws Exception {
-//        final Serializer serializer = new Serializer();
-//        serializer.setOutputProperty(Serializer.Property.METHOD, "xml");
-//        serializer.setOutputProperty(Serializer.Property.INDENT, "yes");
-//
-//        final OutputStream out =
-//            new XSLTEvaluator(holder.getSession(), STYLESHEET, new ByteArrayOutputStream(), serializer)
-//                .call();
-//
-//        final StringBuilder sBuilder = readFile();
-//
-//        final Diff diff = new Diff(sBuilder.toString(), out.toString());
-//        diff.overrideElementQualifier(new RecursiveElementNameAndTextQualifier());
-//
-//        AssertJUnit.assertTrue(diff.toString(), diff.similar());
-//    }
+    // @Test
+    // public void testWithoutSerializer() throws Exception {
+    // final OutputStream out =
+    // new XSLTEvaluator(holder.getSession(), STYLESHEET, new ByteArrayOutputStream()).call();
+    //
+    // final StringBuilder sBuilder = readFile();
+    //
+    // final Diff diff = new Diff(sBuilder.toString(), out.toString());
+    // diff.overrideElementQualifier(new RecursiveElementNameAndTextQualifier());
+    //
+    // AssertJUnit.assertTrue(diff.toString(), diff.similar());
+    // }
+    //
+    // @Test
+    // public void testWithSerializer() throws Exception {
+    // final Serializer serializer = new Serializer();
+    // serializer.setOutputProperty(Serializer.Property.METHOD, "xml");
+    // serializer.setOutputProperty(Serializer.Property.INDENT, "yes");
+    //
+    // final OutputStream out =
+    // new XSLTEvaluator(holder.getSession(), STYLESHEET, new ByteArrayOutputStream(), serializer)
+    // .call();
+    //
+    // final StringBuilder sBuilder = readFile();
+    //
+    // final Diff diff = new Diff(sBuilder.toString(), out.toString());
+    // diff.overrideElementQualifier(new RecursiveElementNameAndTextQualifier());
+    //
+    // AssertJUnit.assertTrue(diff.toString(), diff.similar());
+    // }
 
     /**
      * Transform source document with the given stylesheet.

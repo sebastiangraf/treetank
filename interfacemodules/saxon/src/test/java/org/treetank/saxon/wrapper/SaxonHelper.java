@@ -71,8 +71,7 @@ public final class SaxonHelper {
         storage.createResource(resFac.create(props));
         final ISession session =
             storage.getSession(new SessionConfiguration(CoreTestHelper.RESOURCENAME, StandardSettings.KEY));
-        final INodeWriteTrx wtx =
-            new NodeWriteTrx(session, session.beginBucketWtx(), HashKind.Rolling);
+        final INodeWriteTrx wtx = new NodeWriteTrx(session, session.beginBucketWtx(), HashKind.Rolling);
         NodeElementTestHelper.createDocumentRootNode(wtx);
         final XMLEventReader reader = XMLShredder.createFileReader(BOOKSXML);
         final XMLShredder shredder = new XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);

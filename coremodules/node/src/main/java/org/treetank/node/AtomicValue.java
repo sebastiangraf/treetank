@@ -316,7 +316,6 @@ public class AtomicValue implements INode, IValNode {
     public void serialize(final DataOutput pOutput) throws TTIOException {
     }
 
-
     /**
      * {@inheritDoc}
      */

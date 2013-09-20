@@ -195,8 +195,8 @@ public class JCloudsWriter implements IBackendWriter {
                     DataOutputStream dataOut = new DataOutputStream(mReader.mByteHandler.serialize(byteOut));
                     mBucket.serialize(dataOut);
                     dataOut.close();
-                    
-                    //storing length in front of byte array
+
+                    // storing length in front of byte array
                     final byte[] data = byteOut.toByteArray();
                     final ByteBuffer buffer = ByteBuffer.allocate(4 + data.length);
                     buffer.putInt(buffer.capacity());
@@ -205,13 +205,15 @@ public class JCloudsWriter implements IBackendWriter {
                     BlobBuilder blobbuilder =
                         mReader.mBlobStore.blobBuilder(Long.toString(mBucket.getBucketKey()));
                     Blob blob = blobbuilder.build();
-                    
+
                     blob.setPayload(buffer.array());
                     mReader.mBlobStore.putBlob(mReader.mResourceName, blob);
                 } catch (Exception e) {
 
                 }
-                finished = mReader.mBlobStore.blobExists(mReader.mResourceName, Long.toString(mBucket.getBucketKey()));
+                finished =
+                    mReader.mBlobStore.blobExists(mReader.mResourceName, Long
+                        .toString(mBucket.getBucketKey()));
 
                 // upload.write(mBucket.getBucketKey() + "," + mBucket.getClass().getName() + "\n");
                 // upload.flush();

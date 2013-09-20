@@ -65,7 +65,8 @@ public class BlockDataElementTest {
         byte[] bytes = new byte[TreetankStorageModule.BYTES_IN_DATA];
         CoreTestHelper.random.nextBytes(bytes);
 
-        final BlockDataElement blockDataElement = new BlockDataElement(CoreTestHelper.random.nextLong(), bytes);
+        final BlockDataElement blockDataElement =
+            new BlockDataElement(CoreTestHelper.random.nextLong(), bytes);
 
         final ByteArrayDataOutput out = ByteStreams.newDataOutput();
         blockDataElement.serialize(out);

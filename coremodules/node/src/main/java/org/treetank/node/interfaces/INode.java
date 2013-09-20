@@ -86,7 +86,7 @@ public interface INode extends org.treetank.api.IData {
      * @return the hash stored in this node
      */
     long getHash();
-    
+
     /**
      * Setting the hash of this node including substructure.
      * 
@@ -94,6 +94,5 @@ public interface INode extends org.treetank.api.IData {
      *            to be set
      */
     void setHash(long pHash);
-
 
 }

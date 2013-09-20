@@ -156,8 +156,8 @@ public class TreetankTargetServer {
             File file = new File(argsMap.get("storagePath"));
             config = new StorageConfiguration(file);
         } else {
-//            String file = Files.createTempDir().getAbsolutePath();
-        	String file = "/tmp/tttarget";
+            // String file = Files.createTempDir().getAbsolutePath();
+            String file = "/tmp/tttarget";
             config =
                 new StorageConfiguration(new File(new StringBuilder(file).append(File.separator)
                     .append("tnk").append(File.separator).append("path1").toString()));
@@ -181,17 +181,17 @@ public class TreetankTargetServer {
         } else {
             revisioningClass = SlidingSnapshot.class;
         }
-        
+
         IOUtils.recursiveDelete(config.mFile);
         Storage.createStorage(config);
 
-        final String resourceName="bench53473ResourcegraveISCSI9284";
-        
+        final String resourceName = "bench53473ResourcegraveISCSI9284";
+
         // Guice Stuff for building the module
         final Injector injector =
-            Guice.createInjector(new ModuleSetter().setDataFacClass(BlockDataElementFactory.class).setMetaFacClass(
-                ISCSIMetaPageFactory.class).setBackendClass(backendClass).setRevisioningClass(
-                revisioningClass).createModule());
+            Guice.createInjector(new ModuleSetter().setDataFacClass(BlockDataElementFactory.class)
+                .setMetaFacClass(ISCSIMetaPageFactory.class).setBackendClass(backendClass)
+                .setRevisioningClass(revisioningClass).createModule());
         final IResourceConfigurationFactory resFac =
             injector.getInstance(IResourceConfigurationFactory.class);
         final Properties props = StandardSettings.getProps(config.mFile.getAbsolutePath(), resourceName);

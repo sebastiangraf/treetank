@@ -68,16 +68,14 @@ public class ChooseExisitingStorageDialog extends Dialog {
         combo.setBounds(10, 10, 272, 29);
 
         List<String> storages = StorageManager.getResources();
-        
-        if(storages != null){
+
+        if (storages != null) {
             for (String s : StorageManager.getResources()) {
                 combo.add(s);
             }
-        }
-        else{
+        } else {
             combo.add("There are no existing storages.");
         }
-        
 
         btnSubmit = new Button(shell, SWT.NONE);
         btnSubmit.addSelectionListener(new SelectionAdapter() {

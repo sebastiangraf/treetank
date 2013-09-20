@@ -28,7 +28,7 @@ public interface IFilelistenerWriteTrx extends IFilelistenerReadTrx {
      *             if node couldn't be removed
      */
     public void removeFile(String pRelativePath) throws TTException;
-    
+
     /**
      * 
      * @return int - amount of buckets
@@ -37,13 +37,15 @@ public interface IFilelistenerWriteTrx extends IFilelistenerReadTrx {
 
     /**
      * Non-blocking commit in TT
+     * 
      * @throws TTException
      *             if this revision couldn't be commited
      */
     public void commit() throws TTException;
-    
+
     /**
      * Blocking commit in TT
+     * 
      * @throws TTException
      *             if this revision couldn't be commited
      */
@@ -59,6 +61,7 @@ public interface IFilelistenerWriteTrx extends IFilelistenerReadTrx {
 
     /**
      * Add an empty file in case of ENTRY_CREATE event.
+     * 
      * @param pRelativePath
      * @throws TTException
      * @throws IOException

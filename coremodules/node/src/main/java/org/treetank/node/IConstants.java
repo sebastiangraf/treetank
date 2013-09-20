@@ -41,7 +41,6 @@ public interface IConstants {
     public static final HashFunction HF = Hashing.md5();
 
     /** Static type key for normal txpes. */
-    public static final int TYPE_KEY = NamePageHash
-            .generateHashForString("xs:untyped");
+    public static final int TYPE_KEY = NamePageHash.generateHashForString("xs:untyped");
 
 }

@@ -92,8 +92,8 @@ public class XMLShredderTest {
         CoreTestHelper.deleteEverything();
         CoreTestHelper.Holder holder = CoreTestHelper.Holder.generateStorage();
         Properties props =
-            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
-                .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
+            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
         this.holder = Holder.generateWtx(holder, mResource);
     }
@@ -115,8 +115,7 @@ public class XMLShredderTest {
         final IStorage database2 = CoreTestHelper.getStorage(PATHS.PATH2.getFile());
         final ISession session =
             database2.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
-        final INodeReadTrx rtx =
-            new NodeReadTrx(session.beginBucketRtx(session.getMostRecentVersion()));
+        final INodeReadTrx rtx = new NodeReadTrx(session.beginBucketRtx(session.getMostRecentVersion()));
         rtx.moveTo(ROOT_NODE);
         final Iterator<Long> expectedDescendants = new DescendantAxis(expectedTrx);
         final Iterator<Long> descendants = new DescendantAxis(rtx);
@@ -165,8 +164,7 @@ public class XMLShredderTest {
         // Setup expected session.
         final IStorage database2 = CoreTestHelper.getStorage(PATHS.PATH2.getFile());
         Properties props =
-            StandardSettings.getProps(CoreTestHelper.PATHS.PATH2.getFile()
-                .getAbsolutePath(), "shredded");
+            StandardSettings.getProps(CoreTestHelper.PATHS.PATH2.getFile().getAbsolutePath(), "shredded");
         mResource = mResourceConfig.create(props);
         database2.createResource(mResource);
         final ISession expectedSession =
@@ -180,8 +178,7 @@ public class XMLShredderTest {
 
         // Verify.
         final INodeReadTrx rtx =
-            new NodeReadTrx(holder.getSession().beginBucketRtx(
-                holder.getSession().getMostRecentVersion()));
+            new NodeReadTrx(holder.getSession().beginBucketRtx(holder.getSession().getMostRecentVersion()));
 
         final Iterator<Long> descendants = new DescendantAxis(rtx);
         final Iterator<Long> expectedDescendants = new DescendantAxis(expectedTrx);
@@ -213,14 +210,13 @@ public class XMLShredderTest {
         // Setup parsed session.
         final IStorage database2 = CoreTestHelper.getStorage(PATHS.PATH2.getFile());
         Properties props =
-            StandardSettings.getProps(CoreTestHelper.PATHS.PATH2.getFile()
-                .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
+            StandardSettings.getProps(CoreTestHelper.PATHS.PATH2.getFile().getAbsolutePath(),
+                CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
         database2.createResource(mResource);
         final ISession session2 =
             database2.getSession(new SessionConfiguration(CoreTestHelper.RESOURCENAME, StandardSettings.KEY));
-        final INodeWriteTrx wtx =
-            new NodeWriteTrx(session2, session2.beginBucketWtx(), HashKind.Rolling);
+        final INodeWriteTrx wtx = new NodeWriteTrx(session2, session2.beginBucketWtx(), HashKind.Rolling);
         final XMLShredder shredder =
             new XMLShredder(wtx, XMLShredder.createFileReader(new File(XML2)),
                 EShredderInsert.ADDASFIRSTCHILD);
@@ -228,8 +224,7 @@ public class XMLShredderTest {
         wtx.commit();
 
         // Verify.
-        final INodeReadTrx rtx =
-            new NodeReadTrx(session2.beginBucketRtx(session2.getMostRecentVersion()));
+        final INodeReadTrx rtx = new NodeReadTrx(session2.beginBucketRtx(session2.getMostRecentVersion()));
         rtx.moveTo(ROOT_NODE);
         final Iterator<Long> expectedAttributes = new DescendantAxis(holder.getNWtx());
         final Iterator<Long> attributes = new DescendantAxis(rtx);
@@ -255,22 +250,19 @@ public class XMLShredderTest {
     public void testShreddingLargeText() throws Exception {
         final IStorage storage = CoreTestHelper.getStorage(PATHS.PATH2.getFile());
         Properties props =
-            StandardSettings.getProps(CoreTestHelper.PATHS.PATH2.getFile()
-                .getAbsolutePath(), "shredded");
+            StandardSettings.getProps(CoreTestHelper.PATHS.PATH2.getFile().getAbsolutePath(), "shredded");
         mResource = mResourceConfig.create(props);
         storage.createResource(mResource);
         final ISession session =
             storage.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
-        final INodeWriteTrx wtx =
-            new NodeWriteTrx(session, session.beginBucketWtx(), HashKind.Rolling);
+        final INodeWriteTrx wtx = new NodeWriteTrx(session, session.beginBucketWtx(), HashKind.Rolling);
         final XMLShredder shredder =
             new XMLShredder(wtx, XMLShredder.createFileReader(new File(XML3)),
                 EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();
         wtx.close();
 
-        final INodeReadTrx rtx =
-            new NodeReadTrx(session.beginBucketRtx(session.getMostRecentVersion()));
+        final INodeReadTrx rtx = new NodeReadTrx(session.beginBucketRtx(session.getMostRecentVersion()));
         AssertJUnit.assertTrue(rtx.moveTo(((IStructNode)rtx.getNode()).getFirstChildKey()));
         AssertJUnit.assertTrue(rtx.moveTo(((IStructNode)rtx.getNode()).getFirstChildKey()));
 

@@ -50,7 +50,7 @@ import org.treetank.exception.TTException;
 public class Holder {
 
     private CoreTestHelper.Holder mHolder;
-    
+
     private INodeReadTrx mNRtx;
 
     public static Holder generateWtx(CoreTestHelper.Holder pHolder, ResourceConfiguration pConf)
@@ -68,8 +68,7 @@ public class Holder {
         Holder holder = new Holder();
         holder.mHolder = pHolder;
         CoreTestHelper.Holder.generateSession(pHolder, pConf);
-        IBucketReadTrx rtx =
-            pHolder.getSession().beginBucketRtx(pHolder.getSession().getMostRecentVersion());
+        IBucketReadTrx rtx = pHolder.getSession().beginBucketRtx(pHolder.getSession().getMostRecentVersion());
         holder.mNRtx = new NodeReadTrx(rtx);
         return holder;
     }

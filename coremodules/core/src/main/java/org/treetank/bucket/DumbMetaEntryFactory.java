@@ -69,7 +69,7 @@ public class DumbMetaEntryFactory implements IMetaEntryFactory {
                 into.putLong(data.mData);
             }
         }
-        
+
         /** The data itself. */
         private final long mData;
 
@@ -119,7 +119,7 @@ public class DumbMetaEntryFactory implements IMetaEntryFactory {
         public String toString() {
             return toStringHelper(this).add("mData", mData).toString();
         }
-        
+
         /**
          * {@inheritDoc}
          */
@@ -150,7 +150,7 @@ public class DumbMetaEntryFactory implements IMetaEntryFactory {
                 into.putLong(data.mData);
             }
         }
-        
+
         /** The data itself. */
         private final long mData;
 
@@ -200,6 +200,7 @@ public class DumbMetaEntryFactory implements IMetaEntryFactory {
         public String toString() {
             return toStringHelper(this).add("mData", mData).toString();
         }
+
         /**
          * {@inheritDoc}
          */

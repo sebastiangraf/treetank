@@ -103,8 +103,7 @@ public class RestXPathProcessorTest {
     @BeforeMethod
     public void setUpGlobal() throws TTException {
         CoreTestHelper.deleteEverything();
-        rxProcessor =
-            new RestXPathProcessor(CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile()));
+        rxProcessor = new RestXPathProcessor(CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile()));
         final InputStream xmlInput = RestXPathProcessorTest.class.getResourceAsStream("/books.xml");
         new DatabaseRepresentation(CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile()),
             mStorageFac, mRevisioning).shred(xmlInput, RESOURCENAME);

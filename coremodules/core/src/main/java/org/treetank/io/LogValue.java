@@ -47,10 +47,10 @@ import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;
 
 /**
- * <h1>LogValue</h1> 
+ * <h1>LogValue</h1>
  * 
- * This class acts as a container for revisioned {@link DataBucket}s. Each
- * {@link DataBucket} is stored in a versioned manner. If
+ * This class acts as a container for revisioned {@link DataBucket}s. Each {@link DataBucket} is stored in a
+ * versioned manner. If
  * modifications occur, the versioned {@link DataBucket}s are dereferenced and
  * reconstructed. Afterwards, this container is used to store a complete {@link DataBucket} as well as one for
  * upcoming modifications.
@@ -102,7 +102,6 @@ public final class LogValue {
         return mModified;
     }
 
- 
     /**
      * {@inheritDoc}
      */

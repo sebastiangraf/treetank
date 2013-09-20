@@ -120,8 +120,8 @@ public class IBucketTest {
         }
         // MetaBucket setup
         MetaBucket metaBucket = new MetaBucket(CoreTestHelper.random.nextLong());
-        metaBucket.put(new DumbKey(CoreTestHelper.random.nextLong()),
-            new DumbValue(CoreTestHelper.random.nextLong()));
+        metaBucket.put(new DumbKey(CoreTestHelper.random.nextLong()), new DumbValue(CoreTestHelper.random
+            .nextLong()));
 
         Object[][] returnVal = {
             {

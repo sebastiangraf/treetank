@@ -32,7 +32,7 @@ public class TTByteHandleException extends TTException {
     public TTByteHandleException(final IOException pExc) {
         super(pExc);
     }
-    
+
     /**
      * 
      * Constructor.

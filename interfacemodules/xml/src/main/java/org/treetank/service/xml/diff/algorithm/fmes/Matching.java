@@ -101,7 +101,7 @@ public final class Matching {
      *            source node
      * @param paramNodeY
      *            partner of paramNodeX
-     * @throws TTIOException 
+     * @throws TTIOException
      */
     public void add(final INode paramNodeX, final INode paramNodeY) throws TTIOException {
         mMapping.put(paramNodeX, paramNodeY);
@@ -117,7 +117,7 @@ public final class Matching {
      *            node in subtree
      * @param paramRtx
      *            {@link IReadTransaction} reference
-     * @throws TTIOException 
+     * @throws TTIOException
      */
     private void updateSubtreeMap(final INode paramNode, final INodeReadTrx paramRtx) throws TTIOException {
         assert paramNode != null;
@@ -155,7 +155,7 @@ public final class Matching {
      * @param paramNodeY
      *            second subtree root node
      * @return number of children which have been matched
-     * @throws TTIOException 
+     * @throws TTIOException
      */
     public long containedChildren(final INode paramNodeX, final INode paramNodeY) throws TTIOException {
         assert paramNodeX != null;

@@ -71,8 +71,8 @@ public final class StructuralDiffTest {
         CoreTestHelper.deleteEverything();
         holder = CoreTestHelper.Holder.generateStorage();
         Properties props =
-            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
-                .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
+            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
         Holder.generateSession(holder, mResource);
         mObserver = DiffTestHelper.createMock();
@@ -83,21 +83,21 @@ public final class StructuralDiffTest {
         CoreTestHelper.deleteEverything();
     }
 
-    @Test(enabled=false)
+    @Test(enabled = false)
     public void testStructuralDiffFirst() throws Exception {
         DiffTestHelper.setUpFirst(holder);
         DiffTestHelper.check(holder, mObserver, EDiffOptimized.NO);
         DiffTestHelper.verifyDiffFirst(mObserver);
     }
 
-    @Test(enabled=false)
+    @Test(enabled = false)
     public void testOptimizedFirst() throws Exception {
         DiffTestHelper.setUpFirst(holder);
         DiffTestHelper.check(holder, mObserver, EDiffOptimized.HASHED);
         DiffTestHelper.verifyOptimizedFirst(mObserver);
     }
 
-    @Test(enabled=false)
+    @Test(enabled = false)
     public void testStructuralDiffSecond() throws TTException, InterruptedException, IOException,
         XMLStreamException {
         DiffTestHelper.setUpSecond(holder);
@@ -113,7 +113,7 @@ public final class StructuralDiffTest {
         DiffTestHelper.verifyDiffSecond(mObserver);
     }
 
-    @Test(enabled=false)
+    @Test(enabled = false)
     public void testStructuralDiffThird() throws TTException, IOException, XMLStreamException,
         InterruptedException {
         DiffTestHelper.setUpThird(holder);
@@ -121,7 +121,7 @@ public final class StructuralDiffTest {
         DiffTestHelper.verifyDiffThird(mObserver);
     }
 
-    @Test(enabled=false)
+    @Test(enabled = false)
     public void testStructuralDiffOptimizedThird() throws TTException, IOException, XMLStreamException,
         InterruptedException {
         DiffTestHelper.setUpThird(holder);
@@ -129,42 +129,42 @@ public final class StructuralDiffTest {
         DiffTestHelper.verifyOptimizedThird(mObserver);
     }
 
-    @Test(enabled=false)
+    @Test(enabled = false)
     public void testStructuralDiffFourth() throws Exception {
         DiffTestHelper.setUpFourth(holder);
         DiffTestHelper.check(holder, mObserver, EDiffOptimized.NO);
         DiffTestHelper.verifyDiffFourth(mObserver);
     }
 
-    @Test(enabled=false)
+    @Test(enabled = false)
     public void testStructuralDiffOptimizedFourth() throws Exception {
         DiffTestHelper.setUpFourth(holder);
         DiffTestHelper.check(holder, mObserver, EDiffOptimized.HASHED);
         DiffTestHelper.verifyDiffFourth(mObserver);
     }
 
-    @Test(enabled=false)
+    @Test(enabled = false)
     public void testStructuralDiffFifth() throws Exception {
         DiffTestHelper.setUpFifth(holder);
         DiffTestHelper.check(holder, mObserver, EDiffOptimized.NO);
         DiffTestHelper.verifyDiffFifth(mObserver);
     }
 
-    @Test(enabled=false)
+    @Test(enabled = false)
     public void testStructuralDiffOptimizedFifth() throws Exception {
         DiffTestHelper.setUpFifth(holder);
         DiffTestHelper.check(holder, mObserver, EDiffOptimized.HASHED);
         DiffTestHelper.verifyDiffFifth(mObserver);
     }
 
-    @Test(enabled=false)
+    @Test(enabled = false)
     public void testStructuralDiffSixth() throws Exception {
         DiffTestHelper.setUpSixth(holder);
         DiffTestHelper.check(holder, mObserver, EDiffOptimized.NO);
         DiffTestHelper.verifyDiffSixth(mObserver);
     }
 
-    @Test(enabled=false)
+    @Test(enabled = false)
     public void testStructuralDiffOptimizedSixth() throws Exception {
         DiffTestHelper.setUpSixth(holder);
         DiffTestHelper.check(holder, mObserver, EDiffOptimized.HASHED);

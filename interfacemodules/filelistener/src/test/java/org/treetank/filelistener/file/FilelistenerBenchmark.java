@@ -43,8 +43,8 @@ public class FilelistenerBenchmark implements FilesystemNotificationObserver {
     long[] createEnds;
     /** long array to track end time of file reads */
     long[] readEnds;
-     /** long array to track bucket counts */
-     long[] bucketCount;
+    /** long array to track bucket counts */
+    long[] bucketCount;
     /** Filename corresponding to array position */
     Map<String, Integer> fileMap;
     /** Still running */
@@ -122,9 +122,9 @@ public class FilelistenerBenchmark implements FilesystemNotificationObserver {
                     finishedBench = true;
             }
         }
-        
+
         if (finishedBench) {
-            //All files in storage, time to check retrieval time
+            // All files in storage, time to check retrieval time
             IFilelistenerWriteTrx trx = filelistener.getTrx(RESOURCE_1);
             File file;
             long time;
@@ -137,7 +137,7 @@ public class FilelistenerBenchmark implements FilesystemNotificationObserver {
                 readEnds[i] = time;
 
             }
-            
+
             // Do something, analyze
             printBench(filebenchSize + "");
         } else {
@@ -156,18 +156,18 @@ public class FilelistenerBenchmark implements FilesystemNotificationObserver {
         String s2 = "";
         String s3 = "";
         for (int i = 0; i < createEnds.length - 1; i++) {
-            s   += createEnds[i] + ",";
-            s2  += bucketCount[i] + ",";
-            s3  += readEnds[i] + ",";
+            s += createEnds[i] + ",";
+            s2 += bucketCount[i] + ",";
+            s3 += readEnds[i] + ",";
 
         }
-        s       +=  createEnds[createEnds.length - 1];
-        s2      += bucketCount[bucketCount.length - 1];
-        s3      +=    readEnds[readEnds.length - 1];
+        s += createEnds[createEnds.length - 1];
+        s2 += bucketCount[bucketCount.length - 1];
+        s3 += readEnds[readEnds.length - 1];
 
-        Files.write(s   + "\n", new File(createBenchFile + string + "T.csv"), Charset.forName("UTF-8"));
-        Files.write(s2  + "\n", new File(createBenchFile + string + "B.csv"), Charset.forName("UTF-8"));
-        Files.write(s3  + "\n", new File(createBenchFile + string + "R.csv"), Charset.forName("UTF-8"));
+        Files.write(s + "\n", new File(createBenchFile + string + "T.csv"), Charset.forName("UTF-8"));
+        Files.write(s2 + "\n", new File(createBenchFile + string + "B.csv"), Charset.forName("UTF-8"));
+        Files.write(s3 + "\n", new File(createBenchFile + string + "R.csv"), Charset.forName("UTF-8"));
     }
 
     @Override

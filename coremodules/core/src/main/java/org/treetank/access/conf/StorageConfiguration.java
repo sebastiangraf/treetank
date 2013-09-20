@@ -56,7 +56,7 @@ public final class StorageConfiguration {
      * Paths for a {@link org.treetank.access.Storage}. Each {@link org.treetank.access.Storage} has the
      * same folder.layout.
      */
-    public enum Paths implements IConfigurationPath{
+    public enum Paths implements IConfigurationPath {
 
         /** File to store db settings. */
         ConfigBinary(new File("dbsetting.obj"), false),

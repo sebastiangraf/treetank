@@ -53,8 +53,7 @@ public class INodeTest {
     }
 
     /**
-     * Test method for {@link INode#getHash()},
-     * {@link INode#getDataKey()},
+     * Test method for {@link INode#getHash()}, {@link INode#getDataKey()},
      * {@link INode#serialize(java.io.DataOutput)},
      * 
      * @param pNodeClass
@@ -98,7 +97,8 @@ public class INodeTest {
      * Providing different implementations of the {@link INode} as Dataprovider to the test class.
      * 
      * @return different classes of the {@link INode} and <code>INodeChecker</code>
-     * @throws TTByteHandleException if something weird happens
+     * @throws TTByteHandleException
+     *             if something weird happens
      */
     @DataProvider(name = "instantiateNode")
     public Object[][] instantiateNode() throws TTByteHandleException {

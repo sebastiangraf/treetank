@@ -9,7 +9,8 @@ import org.treetank.exception.TTException;
  * Write-Transaction of a bucket ensuring read- and write access to any buckets.
  * The transaction is bound on the very last revision and bases on a session.
  * 
- * Each {@link IBucketWriteTrx} can afterwards get datas from the bucket-layer and the underlaying backend as well
+ * Each {@link IBucketWriteTrx} can afterwards get datas from the bucket-layer and the underlaying backend as
+ * well
  * as store new {@link IData}s in the backend.
  * 
  * 
@@ -59,5 +60,5 @@ public interface IBucketWriteTrx extends IBucketReadTrx {
      *             anything weird happens
      */
     void commitBlocked() throws TTException;
-    
+
 }

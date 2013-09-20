@@ -371,7 +371,7 @@ public class NodeIdRepresentation {
                     } else {
                         throw new JaxRxException(404, NOTFOUND);
                     }
-                } catch (final JaxRxException exce) { 
+                } catch (final JaxRxException exce) {
                     abort = true;
                     throw exce;
                 } catch (final Exception exce) {

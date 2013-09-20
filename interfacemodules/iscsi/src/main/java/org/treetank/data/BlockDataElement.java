@@ -58,7 +58,6 @@ public class BlockDataElement implements IData {
      */
     private final long dataKey;
 
-
     /**
      * The size of the byte array in the data. The maximum size of a byte array in
      * a {@link BlockDataElement} is 2^32 - 1. This is because in the deserialization the

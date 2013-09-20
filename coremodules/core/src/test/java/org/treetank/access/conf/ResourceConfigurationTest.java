@@ -50,8 +50,8 @@ public class ResourceConfigurationTest {
     @Test
     public void testDeSerialize() throws Exception {
         Properties props =
-            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
-                .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
+            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                CoreTestHelper.RESOURCENAME);
         CoreTestHelper.getStorage(CoreTestHelper.PATHS.PATH1.getFile());
         ResourceConfiguration resConf = mResourceConfig.create(props);
         CoreTestHelper.createResource(resConf);

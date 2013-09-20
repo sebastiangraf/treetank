@@ -59,8 +59,7 @@ public class InstanceOfExpr extends AbsExpression {
      * @param mSequenceType
      *            sequence type to test whether the input sequence matches to.
      */
-    public InstanceOfExpr(final INodeReadTrx mRtx, final AbsAxis mInputExpr,
-        final SequenceType mSequenceType) {
+    public InstanceOfExpr(final INodeReadTrx mRtx, final AbsAxis mInputExpr, final SequenceType mSequenceType) {
 
         super(mRtx);
         this.mInputExpr = mInputExpr;

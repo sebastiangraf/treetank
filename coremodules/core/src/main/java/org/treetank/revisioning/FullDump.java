@@ -21,7 +21,8 @@ public class FullDump implements IRevisioning {
      */
     @Override
     public DataBucket combineBuckets(DataBucket[] pBuckets) {
-        final DataBucket returnVal = new DataBucket(pBuckets[0].getBucketKey(), pBuckets[0].getLastBucketPointer());
+        final DataBucket returnVal =
+            new DataBucket(pBuckets[0].getBucketKey(), pBuckets[0].getLastBucketPointer());
         for (int i = 0; i < pBuckets[0].getDatas().length; i++) {
             returnVal.setData(i, pBuckets[0].getData(i));
         }
@@ -32,8 +33,8 @@ public class FullDump implements IRevisioning {
      * {@inheritDoc}
      */
     @Override
-    public LogValue combineBucketsForModification(int pRevisionsToRestore, long pNewBucketKey, DataBucket[] pBuckets,
-        boolean fullDump) {
+    public LogValue combineBucketsForModification(int pRevisionsToRestore, long pNewBucketKey,
+        DataBucket[] pBuckets, boolean fullDump) {
         final DataBucket[] returnVal =
             {
                 new DataBucket(pBuckets[0].getBucketKey(), pBuckets[0].getLastBucketPointer()),

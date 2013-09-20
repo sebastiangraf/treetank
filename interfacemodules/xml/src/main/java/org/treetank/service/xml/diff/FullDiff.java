@@ -55,10 +55,14 @@ final class FullDiff extends AbsDiff {
         super(paramBuilder);
     }
 
-    /** {@inheritDoc} 
-     * @throws TTIOException */
+    /**
+     * {@inheritDoc}
+     * 
+     * @throws TTIOException
+     */
     @Override
-    boolean checkNodes(final INodeReadTrx paramFirstRtx, final INodeReadTrx paramSecondRtx) throws TTIOException {
+    boolean checkNodes(final INodeReadTrx paramFirstRtx, final INodeReadTrx paramSecondRtx)
+        throws TTIOException {
         assert paramFirstRtx != null;
         assert paramSecondRtx != null;
 

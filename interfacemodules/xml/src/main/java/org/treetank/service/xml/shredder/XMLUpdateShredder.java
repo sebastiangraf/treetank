@@ -1282,8 +1282,7 @@ public final class XMLUpdateShredder extends XMLShredder implements Callable<Voi
                 new NodeMetaPageFactory()));
             final ISession session =
                 db.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
-            final INodeWriteTrx wtx =
-                new NodeWriteTrx(session, session.beginBucketWtx(), HashKind.Rolling);
+            final INodeWriteTrx wtx = new NodeWriteTrx(session, session.beginBucketWtx(), HashKind.Rolling);
             final XMLEventReader reader = createFileReader(new File(args[0]));
             final XMLUpdateShredder shredder =
                 new XMLUpdateShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD, new File(args[0]),

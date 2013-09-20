@@ -20,19 +20,19 @@ import org.treetank.filelistener.exceptions.ResourceNotExistingException;
 import org.treetank.filelistener.file.Filelistener;
 import org.treetank.filelistener.ui.dialogs.RestoreDialog;
 
-public class MainComposite extends Composite{
+public class MainComposite extends Composite {
     private Label mLblFoldersYouAre;
     private List mList;
     private Composite mComposite;
-    
+
     private Filelistener mListener;
     private StyledText mStyledText;
 
     public MainComposite(Composite parent, int style) {
         super(parent, style);
-        
+
         parent.addDisposeListener(new DisposeListener() {
-            
+
             @Override
             public void widgetDisposed(DisposeEvent e) {
                 try {
@@ -46,7 +46,7 @@ public class MainComposite extends Composite{
                 }
             }
         });
-        
+
         setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 
         setLocation(0, 0);
@@ -64,22 +64,22 @@ public class MainComposite extends Composite{
 
         mComposite = new Composite(this, SWT.BORDER);
         mComposite.setBounds(225, 10, this.getClientArea().width - 235, this.getClientArea().height - 50);
-        
+
         mStyledText = new StyledText(mComposite, SWT.BORDER);
         mStyledText.setBounds(0, 0, 965, 642);
-        
+
         try {
             mListener = new Filelistener();
 
             try {
-                for(Entry<String, String> e : Filelistener.getFilelisteners().entrySet()){
+                for (Entry<String, String> e : Filelistener.getFilelisteners().entrySet()) {
                     mList.add(e.getValue() + " : " + e.getKey());
-                    
+
                     mListener.watchDir(new File(e.getValue()));
-                    
+
                     mStyledText.setText(mStyledText.getText() + "\n" + "\tWatching dir: " + e.getValue());
                 }
-                
+
                 try {
                     mListener.startListening();
                 } catch (ResourceNotExistingException | TTException e1) {
@@ -103,7 +103,8 @@ public class MainComposite extends Composite{
     }
 
     @Override
-    protected void checkSubclass() {}
+    protected void checkSubclass() {
+    }
 
     public void resize() {
         int width = this.getClientArea().width;
@@ -115,7 +116,7 @@ public class MainComposite extends Composite{
     }
 
     public void configurationListChanged() throws IOException {
-        
+
         mList.removeAll();
         try {
             mListener.shutDownListener();
@@ -123,21 +124,21 @@ public class MainComposite extends Composite{
             // TODO Auto-generated catch block
             e2.printStackTrace();
         }
-        
+
         try {
             mListener = new Filelistener();
-            
+
             try {
                 mStyledText.setText(mStyledText.getText() + "\n" + "Restarting listeners...");
-                
-                for(Entry<String, String> e : Filelistener.getFilelisteners().entrySet()){
+
+                for (Entry<String, String> e : Filelistener.getFilelisteners().entrySet()) {
                     mList.add(e.getValue() + " : " + e.getKey());
-                    
+
                     mListener.watchDir(new File(e.getValue()));
-                    
+
                     mStyledText.setText(mStyledText.getText() + "\n" + "\tWatching dir: " + e.getValue());
                 }
-                
+
                 try {
                     mListener.startListening();
                 } catch (ResourceNotExistingException e1) {
@@ -154,7 +155,8 @@ public class MainComposite extends Composite{
     }
 
     public void shutdown() {
-        if(mListener == null) return;
+        if (mListener == null)
+            return;
         try {
             mListener.shutDownListener();
         } catch (TTException e) {
@@ -164,7 +166,7 @@ public class MainComposite extends Composite{
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+
     }
 
     public void restore() {

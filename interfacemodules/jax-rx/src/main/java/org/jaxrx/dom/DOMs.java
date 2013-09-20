@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -35,27 +35,27 @@ import org.w3c.dom.Document;
 
 @SuppressWarnings("all")
 final class DOMs {
-	/**
-	 * Private constructor.
-	 */
-	private DOMs() {
-	}
+    /**
+     * Private constructor.
+     */
+    private DOMs() {
+    }
 
-	private static final Map<String, Document> DOMS = new HashMap<String, Document>();
+    private static final Map<String, Document> DOMS = new HashMap<String, Document>();
 
-	static void putDOM(final Document doc, final String name) {
-		DOMS.put(name, doc);
-	}
+    static void putDOM(final Document doc, final String name) {
+        DOMS.put(name, doc);
+    }
 
-	static Document getDOM(final String name) {
-		return DOMS.get(name);
-	}
+    static Document getDOM(final String name) {
+        return DOMS.get(name);
+    }
 
-	static boolean deleteDOM(final String name) {
-		return DOMS.remove(name) != null;
-	}
+    static boolean deleteDOM(final String name) {
+        return DOMS.remove(name) != null;
+    }
 
-	static Set<String> getAllDOMs() {
-		return DOMS.keySet();
-	}
+    static Set<String> getAllDOMs() {
+        return DOMS.keySet();
+    }
 }

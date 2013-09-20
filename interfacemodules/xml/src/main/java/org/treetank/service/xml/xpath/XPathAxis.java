@@ -45,9 +45,9 @@ import org.treetank.service.xml.xpath.parser.XPathParser;
  * <h2>User Example</h2>
  * <p>
  * In order to use it, at first a treetank session has to be bound to the XML document in question or an tnk
- * file and a <code>NodeReadTrx</code> with an <code>IItemList</code> as argument has to be started on
- * it. (For more information how to do that, see the treetank documentation.) Then the <code>XPathAxis</code>
- * can be used like this:
+ * file and a <code>NodeReadTrx</code> with an <code>IItemList</code> as argument has to be started on it.
+ * (For more information how to do that, see the treetank documentation.) Then the <code>XPathAxis</code> can
+ * be used like this:
  * <p>
  * 
  * <pre>
