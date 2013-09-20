@@ -27,7 +27,7 @@ import com.google.common.io.ByteStreams;
  */
 public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
 
-    //    private static final Logger LOGGER = LoggerFactory.getLogger(FilelistenerWriteTrx.class);
+    // private static final Logger LOGGER = LoggerFactory.getLogger(FilelistenerWriteTrx.class);
 
     /** Session for abort/commit. */
     private final ISession mSession;
@@ -157,7 +157,7 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
         getBucketTransaction().getMetaBucket().put(key, value);
 
         // Creating and setting the headerdata.
-        FileData headerData = new FileData(newKey, buffer.array(), true, false);
+        FileData headerData = new FileData(newKey, buffer.array(), false);
 
         getBucketTransaction().setData(headerData);
 
@@ -171,7 +171,7 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
             byte[] slice = Arrays.copyOf(buffer.array(), currentReadingAmount);
 
             long dataKey = getBucketTransaction().incrementDataKey();
-            data = new FileData(dataKey, slice, false, false);
+            data = new FileData(dataKey, slice, false);
 
             getBucketTransaction().setData(data);
 
@@ -181,7 +181,7 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
         ByteArrayDataOutput size = ByteStreams.newDataOutput();
         size.writeInt(readingAmount);
 
-        data = new FileData(getBucketTransaction().incrementDataKey(), size.toByteArray(), false, true);
+        data = new FileData(getBucketTransaction().incrementDataKey(), size.toByteArray(), true);
 
         getBucketTransaction().setData(data);
 

@@ -31,7 +31,7 @@ public class FileData implements IData {
         INSTANCE;
         public void funnel(IData data, PrimitiveSink into) {
             final FileData from = (FileData)data;
-            into.putLong(from.dataKey).putBytes(from.val).putBoolean(from.header).putBoolean(from.eof);
+            into.putLong(from.dataKey).putBytes(from.val).putBoolean(from.eof);
         }
     }
 
@@ -51,11 +51,6 @@ public class FileData implements IData {
     private final byte[] val;
 
     /**
-     * Determines whether or not this filenode is the first in the sequence.
-     */
-    private final boolean header;
-
-    /**
      * Determines whether or not this filenode is the last in the sequence.
      */
     private final boolean eof;
@@ -67,10 +62,9 @@ public class FileData implements IData {
      * @param content
      *            , as byte array
      */
-    public FileData(long dataKey, byte[] content, boolean header, boolean eof) {
+    public FileData(long dataKey, byte[] content, boolean eof) {
         this.dataKey = dataKey;
         this.val = content;
-        this.header = header;
         this.eof = eof;
     }
 
@@ -82,7 +76,6 @@ public class FileData implements IData {
     public void serialize(final DataOutput output) throws TTIOException {
         try {
             output.writeLong(dataKey);
-            output.writeBoolean(header);
             output.writeBoolean(eof);
             output.writeInt(val.length);
             output.write(val);
@@ -94,15 +87,6 @@ public class FileData implements IData {
     @Override
     public long getDataKey() {
         return this.dataKey;
-    }
-
-    /**
-     * Check whether or not this filenode is the first in the sequence.
-     * 
-     * @return true if is a header element
-     */
-    public boolean isHeader() {
-        return header;
     }
 
     /**
