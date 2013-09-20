@@ -25,7 +25,7 @@ public interface IFilelistenerReadTrx {
      * @return
      */
     public boolean fileExists(String pRelativePath);
-    
+
     /**
      * 
      * @return int - amount of buckets

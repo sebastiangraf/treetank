@@ -22,14 +22,13 @@ public class FileDataFactory implements IDataFactory {
     public IData deserializeData(DataInput input) throws TTIOException {
         try {
             long nodeKey = input.readLong();
-            boolean header = input.readBoolean();
             boolean eof = input.readBoolean();
             int length = input.readInt();
             byte[] data = new byte[length];
             input.readFully(data);
 
             FileData node = null;
-            node = new FileData(nodeKey, data, header, eof);
+            node = new FileData(nodeKey, data, eof);
             return node;
         } catch (final IOException exc) {
             throw new TTIOException(exc);

@@ -61,9 +61,9 @@ public class StorageManager {
         throws StorageAlreadyExistsException, TTException {
         File file = new File(ROOT_PATH);
         File storageFile = new File(STORAGE_PATH);
-        
+
         if (!file.exists() || !storageFile.exists()) {
-            file.mkdirs();   
+            file.mkdirs();
 
             StorageConfiguration configuration = new StorageConfiguration(storageFile);
 
@@ -73,7 +73,7 @@ public class StorageManager {
             Storage.createStorage(configuration);
 
         }
-        
+
         IStorage storage = Storage.openStorage(storageFile);
 
         Injector injector = Guice.createInjector(module);

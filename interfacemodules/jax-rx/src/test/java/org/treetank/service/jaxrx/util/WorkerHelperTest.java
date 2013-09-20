@@ -151,8 +151,7 @@ public class WorkerHelperTest {
         final IStorage storage = Storage.openStorage(DBFILE.getParentFile());
         final ISession session =
             storage.getSession(new SessionConfiguration(DBFILE.getName(), StandardSettings.KEY));
-        final INodeWriteTrx wtx =
-            new NodeWriteTrx(session, session.beginBucketWtx(), HashKind.Rolling);
+        final INodeWriteTrx wtx = new NodeWriteTrx(session, session.beginBucketWtx(), HashKind.Rolling);
 
         final InputStream inputStream = new ByteArrayInputStream("<testNode/>".getBytes());
 
@@ -173,8 +172,7 @@ public class WorkerHelperTest {
         IStorage storage = Storage.openStorage(DBFILE.getParentFile());
         ISession session =
             storage.getSession(new SessionConfiguration(DBFILE.getName(), StandardSettings.KEY));
-        final INodeWriteTrx wtx =
-            new NodeWriteTrx(session, session.beginBucketWtx(), HashKind.Rolling);
+        final INodeWriteTrx wtx = new NodeWriteTrx(session, session.beginBucketWtx(), HashKind.Rolling);
 
         WorkerHelper.closeWTX(false, wtx, session);
 
@@ -182,8 +180,7 @@ public class WorkerHelperTest {
 
         storage = Storage.openStorage(DBFILE.getParentFile());
         session = storage.getSession(new SessionConfiguration(DBFILE.getName(), StandardSettings.KEY));
-        final INodeReadTrx rtx =
-            new NodeReadTrx(session.beginBucketRtx(session.getMostRecentVersion()));
+        final INodeReadTrx rtx = new NodeReadTrx(session.beginBucketRtx(session.getMostRecentVersion()));
         WorkerHelper.closeRTX(rtx, session);
         rtx.moveTo(11);
 

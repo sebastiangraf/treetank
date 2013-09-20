@@ -29,7 +29,7 @@ import static org.testng.AssertJUnit.assertTrue;
 
 /**
  * @author Andreas Rain
- *
+ * 
  */
 @Guice(moduleFactory = ModuleFactory.class)
 public class FilesystemNotificationTest {
@@ -38,7 +38,7 @@ public class FilesystemNotificationTest {
     private IResourceConfigurationFactory mResourceConfig;
 
     private Holder mHolder;
-    
+
     /**
      * @throws java.lang.Exception
      */
@@ -51,44 +51,48 @@ public class FilesystemNotificationTest {
                 .getAbsolutePath(), CoreTestHelper.RESOURCENAME));
         CoreTestHelper.Holder.generateSession(mHolder, config);
     }
-    
+
     /**
      * @throws Exception
      */
     @Test
-    public void testDifferentEvents() throws Exception{
-        IFilelistenerWriteTrx trx = new FilelistenerWriteTrx(mHolder.getSession().beginBucketWtx(), mHolder.getSession());
+    public void testDifferentEvents() throws Exception {
+        IFilelistenerWriteTrx trx =
+            new FilelistenerWriteTrx(mHolder.getSession().beginBucketWtx(), mHolder.getSession());
         File tmp = Files.createTempDir();
-        
-        String relativePath = File.separator+"file.txt";
-        File file = new File(tmp.getAbsolutePath() + File.separator+"file.txt");
-        
-        byte[] bytes = new byte[1024*8];
-        
+
+        String relativePath = File.separator + "file.txt";
+        File file = new File(tmp.getAbsolutePath() + File.separator + "file.txt");
+
+        byte[] bytes = new byte[1024 * 8];
+
         Random rand = new Random(42);
         rand.nextBytes(bytes);
-        
+
         Files.write(bytes, file);
-        
+
         List<FilesystemNotification> notifications = new ArrayList<FilesystemNotification>();
-        
-        notifications.add(new FilesystemNotification(file, relativePath, tmp.getAbsolutePath(), ENTRY_CREATE, trx));
-        notifications.add(new FilesystemNotification(file, relativePath, tmp.getAbsolutePath(), ENTRY_MODIFY, trx));
-        notifications.add(new FilesystemNotification(file, relativePath, tmp.getAbsolutePath(), ENTRY_DELETE, trx));
-        
-        for(FilesystemNotification s : notifications){
+
+        notifications.add(new FilesystemNotification(file, relativePath, tmp.getAbsolutePath(), ENTRY_CREATE,
+            trx));
+        notifications.add(new FilesystemNotification(file, relativePath, tmp.getAbsolutePath(), ENTRY_MODIFY,
+            trx));
+        notifications.add(new FilesystemNotification(file, relativePath, tmp.getAbsolutePath(), ENTRY_DELETE,
+            trx));
+
+        for (FilesystemNotification s : notifications) {
             s.call();
         }
-        
+
     }
-    
+
     /**
      * 
      */
     @Test
-    public void testEquals(){
+    public void testEquals() {
         File f = new File("");
-        
+
         FilesystemNotification fsn1 = new FilesystemNotification(f, "", "", ENTRY_CREATE, null);
         FilesystemNotification fsn2 = new FilesystemNotification(f, "", "", ENTRY_CREATE, null);
         FilesystemNotification fsn3 = new FilesystemNotification(f, "", "", ENTRY_MODIFY, null);
@@ -97,7 +101,7 @@ public class FilesystemNotificationTest {
         FilesystemNotification fsn6 = new FilesystemNotification(null, "", "", ENTRY_CREATE, null);
         FilesystemNotification fsn7 = new FilesystemNotification(null, "a", "b", ENTRY_CREATE, null);
         FilesystemNotification fsn8 = new FilesystemNotification(null, "", "b", ENTRY_CREATE, null);
-        
+
         assertEquals(fsn1, fsn2);
         assertTrue(!fsn1.equals(fsn3));
         assertTrue(!fsn1.equals(fsn4));
@@ -106,7 +110,7 @@ public class FilesystemNotificationTest {
         assertTrue(!fsn6.equals(fsn7));
         assertTrue(!fsn7.equals(fsn8));
     }
-    
+
     /**
      * @throws java.lang.Exception
      */
@@ -114,6 +118,5 @@ public class FilesystemNotificationTest {
     public void tearDown() throws Exception {
         CoreTestHelper.deleteEverything();
     }
-
 
 }

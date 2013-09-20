@@ -195,12 +195,13 @@ public class UpdateBench {
 
         }
     }
-//
-//    @Bench
-//    public void blockedRan016384() throws TTException {
-//        modify(16384, true, false);
-//        System.out.println("16384");
-//    }
+
+    //
+    // @Bench
+    // public void blockedRan016384() throws TTException {
+    // modify(16384, true, false);
+    // System.out.println("16384");
+    // }
 
     @Bench
     public void blockedRan032768() throws TTException {
@@ -208,29 +209,29 @@ public class UpdateBench {
         System.out.println("32768");
     }
 
-//    @Bench
-//    public void blockedRan065536() throws TTException {
-//        modify(65536, true, false);
-//        System.out.println("65536");
-//    }
-//
-//    @Bench
-//    public void blockedRan131072() throws TTException {
-//        modify(131072, true, false);
-//        System.out.println("131072");
-//    }
-//
-//    @Bench
-//    public void blockedRan262144() throws TTException {
-//        modify(262144, true, false);
-//        System.out.println("262144");
-//    }
-//
-//    @Bench
-//    public void nonblockedRan016384() throws TTException {
-//        modify(16384, false, false);
-//        System.out.println("16384");
-//    }
+    // @Bench
+    // public void blockedRan065536() throws TTException {
+    // modify(65536, true, false);
+    // System.out.println("65536");
+    // }
+    //
+    // @Bench
+    // public void blockedRan131072() throws TTException {
+    // modify(131072, true, false);
+    // System.out.println("131072");
+    // }
+    //
+    // @Bench
+    // public void blockedRan262144() throws TTException {
+    // modify(262144, true, false);
+    // System.out.println("262144");
+    // }
+    //
+    // @Bench
+    // public void nonblockedRan016384() throws TTException {
+    // modify(16384, false, false);
+    // System.out.println("16384");
+    // }
 
     @Bench
     public void nonblockedRan032768() throws TTException {
@@ -238,11 +239,11 @@ public class UpdateBench {
         System.out.println("32768");
     }
 
-//    @Bench
-//    public void nonblockedRan065536() throws TTException {
-//        modify(65536, false, false);
-//        System.out.println("65536");
-//    }
+    // @Bench
+    // public void nonblockedRan065536() throws TTException {
+    // modify(65536, false, false);
+    // System.out.println("65536");
+    // }
 
     @Bench
     public void nonblockedRan131072() throws TTException {
@@ -250,41 +251,41 @@ public class UpdateBench {
         System.out.println("131072");
     }
 
-//    @Bench
-//    public void nonblockedRan262144() throws TTException {
-//        modify(262144, false, false);
-//        System.out.println("262144");
-//    }
-//
-//    @Bench
-//    public void blockedSeq016384() throws TTException {
-//        modify(16384, true, true);
-//        System.out.println("16384");
-//    }
-//
-//    @Bench
-//    public void blockedSeq032768() throws TTException {
-//        modify(32768, true, true);
-//        System.out.println("32768");
-//    }
-//
-//    @Bench
-//    public void blockedSeq065536() throws TTException {
-//        modify(65536, true, true);
-//        System.out.println("65536");
-//    }
-//
-//    @Bench
-//    public void blockedSeq131072() throws TTException {
-//        modify(131072, true, true);
-//        System.out.println("131072");
-//    }
-//
-//    @Bench
-//    public void blockedSeq262144() throws TTException {
-//        modify(262144, true, true);
-//        System.out.println("262144");
-//    }
+    // @Bench
+    // public void nonblockedRan262144() throws TTException {
+    // modify(262144, false, false);
+    // System.out.println("262144");
+    // }
+    //
+    // @Bench
+    // public void blockedSeq016384() throws TTException {
+    // modify(16384, true, true);
+    // System.out.println("16384");
+    // }
+    //
+    // @Bench
+    // public void blockedSeq032768() throws TTException {
+    // modify(32768, true, true);
+    // System.out.println("32768");
+    // }
+    //
+    // @Bench
+    // public void blockedSeq065536() throws TTException {
+    // modify(65536, true, true);
+    // System.out.println("65536");
+    // }
+    //
+    // @Bench
+    // public void blockedSeq131072() throws TTException {
+    // modify(131072, true, true);
+    // System.out.println("131072");
+    // }
+    //
+    // @Bench
+    // public void blockedSeq262144() throws TTException {
+    // modify(262144, true, true);
+    // System.out.println("262144");
+    // }
     //
     // @Bench
     // public void nonblockedSeq016384() throws TTException {

@@ -181,9 +181,9 @@ public class RestoreDialog extends Dialog {
                         e1.printStackTrace();
                     }
                 }
-                
+
                 mShell.dispose();
-                
+
             }
         } else {
             // TODO: Not directory OR not empty

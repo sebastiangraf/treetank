@@ -217,7 +217,7 @@ public final class BerkeleyStorage implements IBackend {
      * @author Sebastian Graf, University of Konstanz
      * 
      */
-    class BucketBinding extends TupleBinding<IBucket>{
+    class BucketBinding extends TupleBinding<IBucket> {
 
         /**
          * {@inheritDoc}
@@ -246,7 +246,7 @@ public final class BerkeleyStorage implements IBackend {
                 final DataOutput output = new DataOutputStream(handledStream);
                 arg0.serialize(output);
                 handledStream.close();
-                
+
                 arg1.close();
             } catch (IOException | TTException exc) {
                 throw new RuntimeException(exc);

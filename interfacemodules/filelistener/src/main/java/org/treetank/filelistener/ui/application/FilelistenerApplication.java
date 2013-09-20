@@ -16,7 +16,7 @@ import org.treetank.filelistener.ui.dialogs.ListenToFolderDialog;
 
 /**
  * @author Andreas Rain
- *
+ * 
  */
 public class FilelistenerApplication {
 
@@ -76,15 +76,15 @@ public class FilelistenerApplication {
      */
     protected void createContents() {
         shell = new Shell();
-        
-        if(shell.getDisplay().getClientArea().width / shell.getDisplay().getClientArea().height < 2)
+
+        if (shell.getDisplay().getClientArea().width / shell.getDisplay().getClientArea().height < 2)
             shell.setBounds((int)(shell.getDisplay().getClientArea().width * 0.125), (int)(shell.getDisplay()
                 .getClientArea().height * 0.125), (int)(shell.getDisplay().getClientArea().width * 0.75),
                 (int)(shell.getDisplay().getClientArea().height * 0.75));
         else
             shell.setBounds((int)(shell.getDisplay().getClientArea().width * 0.05), (int)(shell.getDisplay()
-            .getClientArea().height * 0.125), (int)(shell.getDisplay().getClientArea().width * 0.4),
-            (int)(shell.getDisplay().getClientArea().height * 0.75));
+                .getClientArea().height * 0.125), (int)(shell.getDisplay().getClientArea().width * 0.4),
+                (int)(shell.getDisplay().getClientArea().height * 0.75));
         shell.setText("Treetank Fileservice");
 
         mComposite = new MainComposite(shell, SWT.NONE);
@@ -105,7 +105,7 @@ public class FilelistenerApplication {
             }
         });
         mntmListenToA.setText("Listen to a folder");
-        
+
         mntmRestoreConfigurationInto = new MenuItem(menu_2, SWT.NONE);
         mntmRestoreConfigurationInto.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -159,7 +159,7 @@ public class FilelistenerApplication {
             e1.printStackTrace();
         }
     }
-    
+
     protected void do_mntmRestoreConfigurationInto_widgetSelected(final SelectionEvent e) {
         mComposite.restore();
     }

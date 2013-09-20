@@ -26,7 +26,7 @@ public interface IMetaEntry {
      * @throws TTIOException
      */
     void serialize(final DataOutput pOutput) throws TTIOException;
-    
+
     /**
      * Getting a Funnel for computing guava-based hashes.
      * 

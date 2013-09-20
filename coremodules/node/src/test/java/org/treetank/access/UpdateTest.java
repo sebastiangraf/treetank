@@ -74,7 +74,7 @@ public class UpdateTest {
                 CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
         NodeElementTestHelper.createTestDocument(mResource);
-        this.holder = Holder.generateWtx(holder,mResource);
+        this.holder = Holder.generateWtx(holder, mResource);
     }
 
     @AfterMethod
@@ -86,8 +86,7 @@ public class UpdateTest {
     public void testNodeTransactionIsolation() throws TTException {
 
         INodeReadTrx rtx =
-            new NodeReadTrx(holder.getSession().beginBucketRtx(
-                holder.getSession().getMostRecentVersion()));
+            new NodeReadTrx(holder.getSession().beginBucketRtx(holder.getSession().getMostRecentVersion()));
         INodeWriteTrx wtx = holder.getNWtx();
         wtx.moveTo(ROOT_NODE);
         wtx.insertElementAsFirstChild(new QName(""));
@@ -127,8 +126,7 @@ public class UpdateTest {
         wtx.commit();
         wtx.close();
 
-        IBucketReadTrx pRtx =
-            holder.getSession().beginBucketRtx(holder.getSession().getMostRecentVersion());
+        IBucketReadTrx pRtx = holder.getSession().beginBucketRtx(holder.getSession().getMostRecentVersion());
         INodeReadTrx rtx = new NodeReadTrx(pRtx);
 
         assertEquals(2L, pRtx.getRevision());
@@ -136,8 +134,7 @@ public class UpdateTest {
         // Insert 100 children.
         for (int i = 1; i <= 10; i++) {
             wtx =
-                new NodeWriteTrx(holder.getSession(), holder.getSession().beginBucketWtx(),
-                    HashKind.Rolling);
+                new NodeWriteTrx(holder.getSession(), holder.getSession().beginBucketWtx(), HashKind.Rolling);
 
             wtx.moveTo(ROOT_NODE);
             wtx.insertTextAsFirstChild(Integer.toString(i));
@@ -145,8 +142,8 @@ public class UpdateTest {
             wtx.close();
 
             rtx =
-                new NodeReadTrx(holder.getSession().beginBucketRtx(
-                    holder.getSession().getMostRecentVersion()));
+                new NodeReadTrx(holder.getSession()
+                    .beginBucketRtx(holder.getSession().getMostRecentVersion()));
             rtx.moveTo(ROOT_NODE);
             rtx.moveTo(((IStructNode)rtx.getNode()).getFirstChildKey());
             assertEquals(Integer.toString(i), rtx.getValueOfCurrentNode());
@@ -154,9 +151,7 @@ public class UpdateTest {
             rtx.close();
         }
 
-        rtx =
-            new NodeReadTrx(holder.getSession().beginBucketRtx(
-                holder.getSession().getMostRecentVersion()));
+        rtx = new NodeReadTrx(holder.getSession().beginBucketRtx(holder.getSession().getMostRecentVersion()));
         rtx.moveTo(ROOT_NODE);
         rtx.moveTo(((IStructNode)rtx.getNode()).getFirstChildKey());
         assertEquals("10", rtx.getValueOfCurrentNode());
@@ -171,9 +166,7 @@ public class UpdateTest {
         wtx.commit();
         wtx.close();
 
-        wtx =
-            new NodeWriteTrx(holder.getSession(), holder.getSession().beginBucketWtx(),
-                HashKind.Rolling);
+        wtx = new NodeWriteTrx(holder.getSession(), holder.getSession().beginBucketWtx(), HashKind.Rolling);
         NodeElementTestHelper.createDocumentRootNode(wtx);
         wtx.moveTo(ROOT_NODE);
         assertEquals(15L, wtx.insertElementAsFirstChild(new QName("")));
@@ -184,9 +177,7 @@ public class UpdateTest {
         wtx.commit();
         wtx.close();
 
-        wtx =
-            new NodeWriteTrx(holder.getSession(), holder.getSession().beginBucketWtx(),
-                HashKind.Rolling);
+        wtx = new NodeWriteTrx(holder.getSession(), holder.getSession().beginBucketWtx(), HashKind.Rolling);
         assertTrue(wtx.moveTo(ROOT_NODE));
         assertEquals(19L, wtx.insertElementAsFirstChild(new QName("")));
         wtx.commit();
@@ -213,8 +204,7 @@ public class UpdateTest {
         assertEquals(2L, wtx.getNode().getDataKey());
         wtx.close();
         final INodeReadTrx rtx =
-            new NodeReadTrx(holder.getSession().beginBucketRtx(
-                holder.getSession().getMostRecentVersion()));
+            new NodeReadTrx(holder.getSession().beginBucketRtx(holder.getSession().getMostRecentVersion()));
 
         assertTrue(rtx.moveTo(2L));
         assertEquals(2L, rtx.getNode().getDataKey());
@@ -246,8 +236,7 @@ public class UpdateTest {
         removeDescendant(wtx);
         wtx.close();
         final INodeReadTrx rtx =
-            new NodeReadTrx(holder.getSession().beginBucketRtx(
-                holder.getSession().getMostRecentVersion()));
+            new NodeReadTrx(holder.getSession().beginBucketRtx(holder.getSession().getMostRecentVersion()));
         removeDescendant(rtx);
         rtx.close();
     }

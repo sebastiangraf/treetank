@@ -66,7 +66,7 @@ public class FilelistenerMetaDataFactory implements IMetaEntryFactory {
                 into.putString(node.mKey);
             }
         }
-        
+
         /** Key Variable. */
         private final String mKey;
 
@@ -113,7 +113,7 @@ public class FilelistenerMetaDataFactory implements IMetaEntryFactory {
         public final boolean equals(final Object pObj) {
             return this.hashCode() == pObj.hashCode();
         }
-        
+
         /**
          * {@inheritDoc}
          */
@@ -144,7 +144,7 @@ public class FilelistenerMetaDataFactory implements IMetaEntryFactory {
                 into.putLong(node.mData);
             }
         }
-        
+
         /** Value Variable. */
         private final long mData;
 
@@ -190,7 +190,7 @@ public class FilelistenerMetaDataFactory implements IMetaEntryFactory {
         public long getData() {
             return mData;
         }
-        
+
         /**
          * {@inheritDoc}
          */

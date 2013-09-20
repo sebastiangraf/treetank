@@ -25,7 +25,8 @@ public class Differential implements IRevisioning {
         // check to have only the newer version and the related fulldump to read on
         checkArgument(pBuckets.length > 0, "At least one Databucket must be provided");
         // create entire buckets..
-        final DataBucket returnVal = new DataBucket(pBuckets[0].getBucketKey(), pBuckets[0].getLastBucketPointer());
+        final DataBucket returnVal =
+            new DataBucket(pBuckets[0].getBucketKey(), pBuckets[0].getLastBucketPointer());
         // ...and for all datas...
         for (int i = 0; i < pBuckets[0].getDatas().length; i++) {
             // ..check if data exists in newer version, and if not...
@@ -43,8 +44,8 @@ public class Differential implements IRevisioning {
      * {@inheritDoc}
      */
     @Override
-    public LogValue combineBucketsForModification(int pRevisionsToRestore, long pNewBucketKey, DataBucket[] pBuckets,
-        boolean pFullDump) {
+    public LogValue combineBucketsForModification(int pRevisionsToRestore, long pNewBucketKey,
+        DataBucket[] pBuckets, boolean pFullDump) {
         // check to have only the newer version and the related fulldump to read on
         checkArgument(pBuckets.length > 0, "At least one Databucket must be provided");
         // create buckets for container..

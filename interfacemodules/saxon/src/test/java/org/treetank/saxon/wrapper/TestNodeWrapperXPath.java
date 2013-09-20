@@ -93,8 +93,8 @@ public final class TestNodeWrapperXPath {
         CoreTestHelper.deleteEverything();
         CoreTestHelper.Holder holder = CoreTestHelper.Holder.generateStorage();
         Properties props =
-            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
-                .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
+            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                CoreTestHelper.RESOURCENAME);
         ResourceConfiguration resource = mResourceConfig.create(props);
         NodeElementTestHelper.createTestDocument(resource);
         this.holder = Holder.generateRtx(holder, resource);
@@ -392,8 +392,7 @@ public final class TestNodeWrapperXPath {
         assertNotNull(result);
 
         final INodeReadTrx rtx =
-            new NodeReadTrx(holder.getSession().beginBucketRtx(
-                holder.getSession().getMostRecentVersion()));
+            new NodeReadTrx(holder.getSession().beginBucketRtx(holder.getSession().getMostRecentVersion()));
         rtx.moveTo(result.get(0).getDataKey());
         assertEquals("oops1", rtx.getValueOfCurrentNode());
         rtx.moveTo(result.get(1).getDataKey());
@@ -444,8 +443,7 @@ public final class TestNodeWrapperXPath {
         assertEquals(9, result.get(1).getDataKey());
 
         final INodeReadTrx rtx =
-            new NodeReadTrx(holder.getSession().beginBucketRtx(
-                holder.getSession().getMostRecentVersion()));
+            new NodeReadTrx(holder.getSession().beginBucketRtx(holder.getSession().getMostRecentVersion()));
         rtx.moveTo(result.get(0).getDataKey());
         assertEquals("b", rtx.getQNameOfCurrentNode().getLocalPart());
 

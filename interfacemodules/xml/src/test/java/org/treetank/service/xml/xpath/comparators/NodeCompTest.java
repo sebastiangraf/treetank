@@ -67,8 +67,8 @@ public class NodeCompTest {
         CoreTestHelper.deleteEverything();
         CoreTestHelper.Holder holder = CoreTestHelper.Holder.generateStorage();
         Properties props =
-            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
-                .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
+            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
         NodeElementTestHelper.createTestDocument(mResource);
         this.holder = Holder.generateRtx(holder, mResource);

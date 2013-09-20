@@ -75,6 +75,7 @@ public final class ElementNode implements INode, IStructNode, INameNode {
             }
         }
     }
+
     /** Delegate for common node information. */
     private final NodeDelegate mDel;
     /** Delegate for struct node information. */

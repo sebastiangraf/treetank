@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -33,44 +33,43 @@ import javax.ws.rs.core.Response;
 /**
  * An exception that is either thrown by the JAX-RX interface or its underlying
  * implementation.
- *
+ * 
  * @author Sebastian Graf, Christian Gruen, Lukas Lewandowski, University of
  *         Konstanz
- *
+ * 
  */
 public final class JaxRxException extends WebApplicationException {
-	/**
-	 * Constructs a new exception with the given HTTP status code and status
-	 * message.
-	 *
-	 * @param status
-	 *            HTTP status code
-	 * @param message
-	 *            status message
-	 */
-	public JaxRxException(final int status, final String message) {
-		super(Response.status(status).entity(message).
-		    type(MediaType.TEXT_PLAIN).build());
-	}
+    /**
+     * Constructs a new exception with the given HTTP status code and status
+     * message.
+     * 
+     * @param status
+     *            HTTP status code
+     * @param message
+     *            status message
+     */
+    public JaxRxException(final int status, final String message) {
+        super(Response.status(status).entity(message).type(MediaType.TEXT_PLAIN).build());
+    }
 
-  /**
-   * Constructor, wrapping the specified exception and setting 500 as HTTP
-   * status code.
-   *
-   * @param exception
-   *            exception to be wrapped
-   */
-  public JaxRxException(final Exception exception) {
-    this(500, exception.getMessage());
-  }
+    /**
+     * Constructor, wrapping the specified exception and setting 500 as HTTP
+     * status code.
+     * 
+     * @param exception
+     *            exception to be wrapped
+     */
+    public JaxRxException(final Exception exception) {
+        this(500, exception.getMessage());
+    }
 
-  /**
-   * Constructor, using a {@link Response} reference.
-   *
-   * @param response
-   *            response to be passed on
-   */
-  public JaxRxException(final Response response) {
-    super(response);
-  }
+    /**
+     * Constructor, using a {@link Response} reference.
+     * 
+     * @param response
+     *            response to be passed on
+     */
+    public JaxRxException(final Response response) {
+        super(response);
+    }
 }

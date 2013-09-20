@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2011, University of Konstanz, Distributed Systems Group
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of the University of Konstanz nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * * Neither the name of the University of Konstanz nor the
+ * names of its contributors may be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -59,110 +59,127 @@ import org.jaxrx.core.Systems;
 @Path(JaxRxConstants.RESOURCEPATH)
 public final class XMLResource extends AResource {
 
-  /**
-   * This method returns a collection of available resources. An available
-   * resource can be either a particular XML resource or a collection containing
-   * further XML resources.
-   * 
-   * @param system The associated system with this request.
-   * @param resource The name of the requested resource.
-   * @param uri The context information due to the requested URI.
-   * @param headers {@link HttpHeaders} information.
-   * @return A collection of available resources.
-   */
-  @GET
-  public Response getResource(
-      @PathParam(JaxRxConstants.SYSTEM) final String system,
-      @PathParam(JaxRxConstants.RESOURCE) final String resource,
-      @Context final UriInfo uri, @Context final HttpHeaders headers) {
+    /**
+     * This method returns a collection of available resources. An available
+     * resource can be either a particular XML resource or a collection containing
+     * further XML resources.
+     * 
+     * @param system
+     *            The associated system with this request.
+     * @param resource
+     *            The name of the requested resource.
+     * @param uri
+     *            The context information due to the requested URI.
+     * @param headers
+     *            {@link HttpHeaders} information.
+     * @return A collection of available resources.
+     */
+    @GET
+    public Response getResource(@PathParam(JaxRxConstants.SYSTEM) final String system,
+        @PathParam(JaxRxConstants.RESOURCE) final String resource, @Context final UriInfo uri,
+        @Context final HttpHeaders headers) {
 
-    return getResource(system, uri, resource, headers);
-  }
+        return getResource(system, uri, resource, headers);
+    }
 
-  /**
-   * This method will be called when a HTTP client sends a POST request to an
-   * existing resource with 'application/query+xml' as Content-Type.
-   * 
-   * @param system The implementation system.
-   * @param resource The resource name.
-   * @param input The input stream.
-   * @param headers HTTP header attributes.
-   * @return The {@link Response} which can be empty when no response is
-   *         expected. Otherwise it holds the response XML file.
-   */
-  @POST
-  @Consumes(APPLICATION_QUERY_XML)
-  public Response postQuery(
-      @PathParam(JaxRxConstants.SYSTEM) final String system,
-      @PathParam(JaxRxConstants.RESOURCE) final String resource,
-      @Context final HttpHeaders headers, final InputStream input) {
-    return postQuery(system, input, resource, headers);
-  }
+    /**
+     * This method will be called when a HTTP client sends a POST request to an
+     * existing resource with 'application/query+xml' as Content-Type.
+     * 
+     * @param system
+     *            The implementation system.
+     * @param resource
+     *            The resource name.
+     * @param input
+     *            The input stream.
+     * @param headers
+     *            HTTP header attributes.
+     * @return The {@link Response} which can be empty when no response is
+     *         expected. Otherwise it holds the response XML file.
+     */
+    @POST
+    @Consumes(APPLICATION_QUERY_XML)
+    public Response postQuery(@PathParam(JaxRxConstants.SYSTEM) final String system,
+        @PathParam(JaxRxConstants.RESOURCE) final String resource, @Context final HttpHeaders headers,
+        final InputStream input) {
+        return postQuery(system, input, resource, headers);
+    }
 
-  /**
-   * This method will be called when an HTTP client sends a POST request to an
-   * existing resource to add a resource. Content-Type must be 'text/xml'.
-   * 
-   * @param system The implementation system.
-   * @param resource The resource name.
-   * @param headers HTTP header attributes.
-   * @param input The input stream.
-   * @return The {@link Response} which can be empty when no response is
-   *         expected. Otherwise it holds the response XML file.
-   */
-  @POST
-  @Consumes({ MediaType.TEXT_XML, MediaType.APPLICATION_XML})
-  public Response postResource(
-      @PathParam(JaxRxConstants.SYSTEM) final String system,
-      @PathParam(JaxRxConstants.RESOURCE) final String resource,
-      @Context final HttpHeaders headers, final InputStream input) {
+    /**
+     * This method will be called when an HTTP client sends a POST request to an
+     * existing resource to add a resource. Content-Type must be 'text/xml'.
+     * 
+     * @param system
+     *            The implementation system.
+     * @param resource
+     *            The resource name.
+     * @param headers
+     *            HTTP header attributes.
+     * @param input
+     *            The input stream.
+     * @return The {@link Response} which can be empty when no response is
+     *         expected. Otherwise it holds the response XML file.
+     */
+    @POST
+    @Consumes({
+        MediaType.TEXT_XML, MediaType.APPLICATION_XML
+    })
+    public Response postResource(@PathParam(JaxRxConstants.SYSTEM) final String system,
+        @PathParam(JaxRxConstants.RESOURCE) final String resource, @Context final HttpHeaders headers,
+        final InputStream input) {
 
-    final JaxRx impl = Systems.getInstance(system);
-    final String info = impl.add(input, new ResourcePath(resource, headers));
-    return Response.created(null).entity(info).build();
-  }
+        final JaxRx impl = Systems.getInstance(system);
+        final String info = impl.add(input, new ResourcePath(resource, headers));
+        return Response.created(null).entity(info).build();
+    }
 
-  /**
-   * This method will be called when a new XML file has to be stored within the
-   * database. The user request will be forwarded to this method. Afterwards it
-   * creates a response message with the 'created' HTTP status code, if the
-   * storing has been successful.
-   * 
-   * @param system The associated system with this request.
-   * @param resource The name of the new resource.
-   * @param headers HTTP header attributes.
-   * @param xml The XML file as {@link InputStream} that will be stored.
-   * @return The HTTP status code as response.
-   */
-  @PUT
-  @Consumes({ MediaType.TEXT_XML, MediaType.APPLICATION_XML})
-  public Response putResource(
-      @PathParam(JaxRxConstants.SYSTEM) final String system,
-      @PathParam(JaxRxConstants.RESOURCE) final String resource,
-      @Context final HttpHeaders headers, final InputStream xml) {
+    /**
+     * This method will be called when a new XML file has to be stored within the
+     * database. The user request will be forwarded to this method. Afterwards it
+     * creates a response message with the 'created' HTTP status code, if the
+     * storing has been successful.
+     * 
+     * @param system
+     *            The associated system with this request.
+     * @param resource
+     *            The name of the new resource.
+     * @param headers
+     *            HTTP header attributes.
+     * @param xml
+     *            The XML file as {@link InputStream} that will be stored.
+     * @return The HTTP status code as response.
+     */
+    @PUT
+    @Consumes({
+        MediaType.TEXT_XML, MediaType.APPLICATION_XML
+    })
+    public Response putResource(@PathParam(JaxRxConstants.SYSTEM) final String system,
+        @PathParam(JaxRxConstants.RESOURCE) final String resource, @Context final HttpHeaders headers,
+        final InputStream xml) {
 
-    final JaxRx impl = Systems.getInstance(system);
-    final String info = impl.update(xml, new ResourcePath(resource, headers));
-    return Response.created(null).entity(info).build();
-  }
+        final JaxRx impl = Systems.getInstance(system);
+        final String info = impl.update(xml, new ResourcePath(resource, headers));
+        return Response.created(null).entity(info).build();
+    }
 
-  /**
-   * This method will be called when an HTTP client sends a DELETE request to
-   * delete an existing resource.
-   * 
-   * @param system The associated system with this request.
-   * @param resource The name of the existing resource that has to be deleted.
-   * @param headers HTTP header attributes.
-   * @return The HTTP response code for this call.
-   */
-  @DELETE
-  public Response deleteResource(
-      @PathParam(JaxRxConstants.SYSTEM) final String system,
-      @PathParam(JaxRxConstants.RESOURCE) final String resource,
-      @Context final HttpHeaders headers) {
+    /**
+     * This method will be called when an HTTP client sends a DELETE request to
+     * delete an existing resource.
+     * 
+     * @param system
+     *            The associated system with this request.
+     * @param resource
+     *            The name of the existing resource that has to be deleted.
+     * @param headers
+     *            HTTP header attributes.
+     * @return The HTTP response code for this call.
+     */
+    @DELETE
+    public Response deleteResource(@PathParam(JaxRxConstants.SYSTEM) final String system,
+        @PathParam(JaxRxConstants.RESOURCE) final String resource, @Context final HttpHeaders headers) {
 
-    final JaxRx impl = Systems.getInstance(system);
-    final String info = impl.delete(new ResourcePath(resource, headers));
-    return Response.ok().entity(info).build();
-  }
+        final JaxRx impl = Systems.getInstance(system);
+        final String info = impl.delete(new ResourcePath(resource, headers));
+        return Response.ok().entity(info).build();
+    }
 }

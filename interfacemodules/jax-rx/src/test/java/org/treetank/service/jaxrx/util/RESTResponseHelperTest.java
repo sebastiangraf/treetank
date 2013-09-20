@@ -114,7 +114,6 @@ public class RESTResponseHelperTest {
         CoreTestHelper.deleteEverything();
     }
 
-   
     @Test
     public final void testBuildResponseOfDomLR() throws WebApplicationException, IOException,
         ParserConfigurationException, SAXException, TTException, InterruptedException {

@@ -170,7 +170,7 @@ public final class IndirectBucket implements IReferenceBucket {
      * {@inheritDoc}
      */
     @Override
-    public HashCode  secureHash() {
+    public HashCode secureHash() {
         final Hasher code = StandardSettings.HASHFUNC.newHasher().putLong(mBucketKey);
         for (int i = 0; i < mReferenceKeys.length; i++) {
             code.putLong(mReferenceKeys[i]);

@@ -17,7 +17,7 @@ import org.treetank.filelistener.file.Filelistener;
 
 /**
  * @author Andreas Rain
- *
+ * 
  */
 public class ListenToFolderDialog extends Dialog {
 
@@ -186,7 +186,7 @@ public class ListenToFolderDialog extends Dialog {
     private void btnSubmit() {
         try {
             Filelistener.addFilelistener(this.mStorageName, this.mListenFolder);
-            
+
             this.getParent().close();
         } catch (ClassNotFoundException | IOException e) {
             e.printStackTrace();

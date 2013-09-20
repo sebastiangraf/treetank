@@ -80,8 +80,8 @@ public final class XMLUpdateShredderTest {
         CoreTestHelper.deleteEverything();
         holder = CoreTestHelper.Holder.generateStorage();
         Properties props =
-            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
-                .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
+            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
         CoreTestHelper.Holder.generateSession(holder, mResource);
         XMLUnit.setIgnoreComments(true);

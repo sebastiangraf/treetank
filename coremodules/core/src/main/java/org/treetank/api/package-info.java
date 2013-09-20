@@ -29,18 +29,18 @@
  * TreeTank API
  * 
  * This package contains the public TreeTank API. Users will have to connect to any TreeTank through this API.
- * Note that for common usage, only access-interfaces provided by this package should be used. 
+ * Note that for common usage, only access-interfaces provided by this package should be used.
  * 
  * Treetank is based on three layers of interaction:
  * <ul>
  * <li>IStorage: This layer denotes a persistent storage. Each storage can be created using one specific
  * <code>StorageConfiguration</code>. Afterwards, this configuration is valid for the whole lifetime of the
  * database. Each IStorage can hold multiple resources accessible over ISession.</li>
- * <li>ISession: This layer denotes a runtime access on a resource stored in a storage. Only one ISession is allowed at one time.
- * The layer has ability to provide runtime-settings as well. Especially settings regarding the
- * transaction-handling can be provided.</li>
- * <li>IBucketReadTrx/IBucketWriteTrx: This layer provided direct access to the database. All access to datas used
- * either a <code>IBucketReadTrx</code> or <code>IBucketWriteTrx</code>.
+ * <li>ISession: This layer denotes a runtime access on a resource stored in a storage. Only one ISession is
+ * allowed at one time. The layer has ability to provide runtime-settings as well. Especially settings
+ * regarding the transaction-handling can be provided.</li>
+ * <li>IBucketReadTrx/IBucketWriteTrx: This layer provided direct access to the database. All access to datas
+ * used either a <code>IBucketReadTrx</code> or <code>IBucketWriteTrx</code>.
  * </ul>
  * Additional to these access-interfaces, this api-packages provides direct access-methods for the
  * data-structure:

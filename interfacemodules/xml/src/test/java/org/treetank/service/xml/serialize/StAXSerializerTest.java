@@ -83,8 +83,8 @@ public class StAXSerializerTest {
         CoreTestHelper.deleteEverything();
         CoreTestHelper.Holder holder = CoreTestHelper.Holder.generateStorage();
         Properties props =
-            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
-                .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
+            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
         NodeElementTestHelper.createTestDocument(mResource);
         this.holder = Holder.generateWtx(holder, mResource);
@@ -105,8 +105,7 @@ public class StAXSerializerTest {
         xmlSerializer.call();
 
         final INodeReadTrx rtx =
-            new NodeReadTrx(holder.getSession().beginBucketRtx(
-                holder.getSession().getMostRecentVersion()));
+            new NodeReadTrx(holder.getSession().beginBucketRtx(holder.getSession().getMostRecentVersion()));
         StAXSerializer serializer = new StAXSerializer(new DescendantAxis(rtx), rtx);
         final StringBuilder strBuilder = new StringBuilder();
         boolean isEmptyElement = false;

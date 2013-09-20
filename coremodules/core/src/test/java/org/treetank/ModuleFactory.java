@@ -98,9 +98,9 @@ public class ModuleFactory implements IModuleFactory {
         }
 
         returnVal =
-            new ModuleSetter().setDataFacClass(dataFac).setMetaFacClass(metaFac)
-                .setRevisioningClass(revisioning).setBackendClass(backend).createModule();
-        
+            new ModuleSetter().setDataFacClass(dataFac).setMetaFacClass(metaFac).setRevisioningClass(
+                revisioning).setBackendClass(backend).createModule();
+
         return returnVal;
 
     }

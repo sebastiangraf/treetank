@@ -66,8 +66,8 @@ public class XMLSerializerTest {
         CoreTestHelper.deleteEverything();
         holder = CoreTestHelper.Holder.generateStorage();
         Properties props =
-            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
-                .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
+            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
         CoreTestHelper.Holder.generateSession(holder, mResource);
     }
@@ -80,8 +80,7 @@ public class XMLSerializerTest {
     @Test
     public void testXMLSerializer() throws Exception {
         final INodeWriteTrx wtx =
-            new NodeWriteTrx(holder.getSession(), holder.getSession().beginBucketWtx(),
-                HashKind.Rolling);
+            new NodeWriteTrx(holder.getSession(), holder.getSession().beginBucketWtx(), HashKind.Rolling);
         NodeElementTestHelper.DocumentCreater.create(wtx);
         wtx.commit();
         wtx.close();
@@ -101,8 +100,7 @@ public class XMLSerializerTest {
     public void testRestSerializer() throws Exception {
 
         final INodeWriteTrx wtx =
-            new NodeWriteTrx(holder.getSession(), holder.getSession().beginBucketWtx(),
-                HashKind.Rolling);
+            new NodeWriteTrx(holder.getSession(), holder.getSession().beginBucketWtx(), HashKind.Rolling);
         NodeElementTestHelper.DocumentCreater.create(wtx);
         wtx.commit();
         wtx.close();
@@ -122,8 +120,7 @@ public class XMLSerializerTest {
     @Test
     public void testIDSerializer() throws Exception {
         final INodeWriteTrx wtx =
-            new NodeWriteTrx(holder.getSession(), holder.getSession().beginBucketWtx(),
-                HashKind.Rolling);
+            new NodeWriteTrx(holder.getSession(), holder.getSession().beginBucketWtx(), HashKind.Rolling);
         NodeElementTestHelper.DocumentCreater.create(wtx);
         wtx.commit();
         wtx.close();
@@ -141,8 +138,7 @@ public class XMLSerializerTest {
     @Test
     public void testSampleCompleteSerializer() throws Exception {
         final INodeWriteTrx wtx =
-            new NodeWriteTrx(holder.getSession(), holder.getSession().beginBucketWtx(),
-                HashKind.Rolling);
+            new NodeWriteTrx(holder.getSession(), holder.getSession().beginBucketWtx(), HashKind.Rolling);
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         // generate serialize all from this session
@@ -169,8 +165,7 @@ public class XMLSerializerTest {
     public void testKeyStart() throws Exception {
 
         final INodeWriteTrx wtx =
-            new NodeWriteTrx(holder.getSession(), holder.getSession().beginBucketWtx(),
-                HashKind.Rolling);
+            new NodeWriteTrx(holder.getSession(), holder.getSession().beginBucketWtx(), HashKind.Rolling);
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         // generate serialize all from this session

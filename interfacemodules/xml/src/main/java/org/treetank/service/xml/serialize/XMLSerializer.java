@@ -448,7 +448,9 @@ public final class XMLSerializer extends AbsSerializer {
         System.out.print("Serializing '" + args[0] + "' to '" + args[1] + "' ... ");
         final long time = System.currentTimeMillis();
 
-        Injector injector = Guice.createInjector(new ModuleSetter().setDataFacClass(TreeNodeFactory.class).setMetaFacClass(NodeMetaPageFactory.class).createModule());
+        Injector injector =
+            Guice.createInjector(new ModuleSetter().setDataFacClass(TreeNodeFactory.class).setMetaFacClass(
+                NodeMetaPageFactory.class).createModule());
         IBackendFactory storage = injector.getInstance(IBackendFactory.class);
         IRevisioning revision = injector.getInstance(IRevisioning.class);
 
@@ -462,7 +464,8 @@ public final class XMLSerializer extends AbsSerializer {
         Properties props = new Properties();
         props.setProperty(ConstructorProps.STORAGEPATH, target.getAbsolutePath());
         props.setProperty(ConstructorProps.RESOURCE, "shredded");
-        db.createResource(new ResourceConfiguration(props, storage, revision, new TreeNodeFactory(),new NodeMetaPageFactory()));
+        db.createResource(new ResourceConfiguration(props, storage, revision, new TreeNodeFactory(),
+            new NodeMetaPageFactory()));
         final ISession session = db.getSession(new SessionConfiguration("shredded", StandardSettings.KEY));
 
         final XMLSerializer serializer = new XMLSerializerBuilder(session, outputStream).build();

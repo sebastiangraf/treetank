@@ -36,7 +36,8 @@ public interface IRevisioning {
      * @param pBuckets
      *            the base of the complete DataBucket
      * @param pFullDump
-     *            boolean if entire bucket should be written. Must be triggered from extern since it is based on
+     *            boolean if entire bucket should be written. Must be triggered from extern since it is based
+     *            on
      *            the revisionToRestore-Param
      * @return a {@link LogValue} holding a complete {@link DataBucket} for reading a one
      *         for writing

@@ -73,8 +73,8 @@ public class XPathFunctionTest {
         CoreTestHelper.deleteEverything();
         CoreTestHelper.Holder holder = CoreTestHelper.Holder.generateStorage();
         Properties props =
-            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile()
-                .getAbsolutePath(), CoreTestHelper.RESOURCENAME);
+            StandardSettings.getProps(CoreTestHelper.PATHS.PATH1.getFile().getAbsolutePath(),
+                CoreTestHelper.RESOURCENAME);
         mResource = mResourceConfig.create(props);
         this.holder = Holder.generateWtx(holder, mResource);
         new XMLShredder(this.holder.getNWtx(), XMLShredder.createFileReader(new File(XML)),

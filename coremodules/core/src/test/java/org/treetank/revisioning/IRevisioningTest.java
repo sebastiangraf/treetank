@@ -106,7 +106,8 @@ public class IRevisioningTest {
 
     /**
      * Test method for
-     * {@link org.treetank.revisioning.IRevisioning#combineBucketsForModification(int, long, DataBucket[], boolean)}.
+     * {@link org.treetank.revisioning.IRevisioning#combineBucketsForModification(int, long, DataBucket[], boolean)}
+     * .
      * This test just takes two versions and checks if the version-counter is interpreted correctly.
      * 
      * @param pRevisioningClass
@@ -341,8 +342,8 @@ public class IRevisioningTest {
                             for (int j = 0; j < 62; j++) {
                                 // filling databuckets from end to start with 2 elements each slot
                                 buckets[j] =
-                                    getDataBucket(j * 2, (j * 2) + 2, buckets.length - j - 1, buckets.length - j
-                                        - 2);
+                                    getDataBucket(j * 2, (j * 2) + 2, buckets.length - j - 1, buckets.length
+                                        - j - 2);
                             }
                             // set a fulldump as last revision
                             buckets[62] = getDataBucket(0, 128, 0, -1);
@@ -373,8 +374,8 @@ public class IRevisioningTest {
                             for (int j = 0; j < 64; j++) {
                                 // filling databuckets from end to start with 2 elements each slot
                                 buckets[j] =
-                                    getDataBucket(j * 2, (j * 2) + 2, buckets.length - j - 1, buckets.length - j
-                                        - 2);
+                                    getDataBucket(j * 2, (j * 2) + 2, buckets.length - j - 1, buckets.length
+                                        - j - 2);
                             }
                             return buckets;
                         }
@@ -394,7 +395,8 @@ public class IRevisioningTest {
     interface IRevisionChecker {
         void checkCompleteBuckets(DataBucket pComplete, DataBucket[] pFragments);
 
-        void checkCompleteBucketsForModification(LogValue pComplete, DataBucket[] pFragments, boolean fullDump);
+            void
+            checkCompleteBucketsForModification(LogValue pComplete, DataBucket[] pFragments, boolean fullDump);
     }
 
     /**

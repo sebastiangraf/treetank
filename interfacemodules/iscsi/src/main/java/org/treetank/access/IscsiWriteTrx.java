@@ -83,7 +83,7 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
     @Override
     public void setValue(byte[] val) throws TTException {
 
-        BlockDataElement data= (BlockDataElement) mDelegate.getCurrentData();
+        BlockDataElement data = (BlockDataElement)mDelegate.getCurrentData();
         data.setVal(val);
         getPageTransaction().setData(data);
     }
@@ -95,18 +95,18 @@ public class IscsiWriteTrx implements IIscsiWriteTrx {
     public void commit() throws TTException {
         checkState(!mDelegate.isClosed(), "Transaction is already closed.");
 
-//        final long time = System.currentTimeMillis();
+        // final long time = System.currentTimeMillis();
         //
-//        System.out.println("++++++++++++++++++++++++++++++++++++++");
-//        System.out.println("Commit starting " + new Date());
-//        System.out.println("++++++++++++++++++++++++++++++++++++++");
+        // System.out.println("++++++++++++++++++++++++++++++++++++++");
+        // System.out.println("Commit starting " + new Date());
+        // System.out.println("++++++++++++++++++++++++++++++++++++++");
 
         // ICommitStrategy uber page.
         getPageTransaction().commit();
 
-//        System.out.println("++++++++++++++++++++++++++++++++++++++");
-//        System.out.println("Commit took = " + (System.currentTimeMillis() - time));
-//        System.out.println("++++++++++++++++++++++++++++++++++++++");
+        // System.out.println("++++++++++++++++++++++++++++++++++++++");
+        // System.out.println("Commit took = " + (System.currentTimeMillis() - time));
+        // System.out.println("++++++++++++++++++++++++++++++++++++++");
 
     }
 

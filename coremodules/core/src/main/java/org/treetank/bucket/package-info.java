@@ -28,18 +28,23 @@
 /**
  * <h1>Bucket Layer for Treetank</h1>
  * <p>
- * Contains all bucket kinds and bucket utils. 
+ * Contains all bucket kinds and bucket utils.
  * </p>
  * <p>
  * The buckets are namely
  * <ul>
  * <li>UberBucket: Representing the main-entrance point in the bucket-structure of the structure.</li>
- * <li>IndirectBucket: Pointing to other buckets to multiply the fanout within the tree-structure within the entire structure as well as within the sub-structures under each revision namely the RevisionRootBuckets.</li>
- * <li>RevisionRootBucket: Representing a single version within the structure. Offers to the ability to point to any Indirect-/DataBucket (even if they were created in former versions.)</li>
- * <li>MetaBucket: Storing application-specific metadata in a map-structure. The entries must be provided by the application.</li>
- * <li>DataBucket: Storing application-specific datas in any structure. The data must be provided by the application.</li>
+ * <li>IndirectBucket: Pointing to other buckets to multiply the fanout within the tree-structure within the
+ * entire structure as well as within the sub-structures under each revision namely the RevisionRootBuckets.</li>
+ * <li>RevisionRootBucket: Representing a single version within the structure. Offers to the ability to point
+ * to any Indirect-/DataBucket (even if they were created in former versions.)</li>
+ * <li>MetaBucket: Storing application-specific metadata in a map-structure. The entries must be provided by
+ * the application.</li>
+ * <li>DataBucket: Storing application-specific datas in any structure. The data must be provided by the
+ * application.</li>
  * </ul>
  * </p>
+ * 
  * @author Sebastian Graf, University of Konstanz
  * @author Marc Kramis, University of Konstanz
  * 

@@ -63,7 +63,8 @@ public class TreetankConfiguration extends Configuration {
 
     /**
      * Create a new {@link TreetankConfiguration}
-     * @param pSession 
+     * 
+     * @param pSession
      *            a vaid session for the treetank storage has to be intitalized
      *            and passed here.
      * @param pTargetAddress
@@ -90,7 +91,8 @@ public class TreetankConfiguration extends Configuration {
      * @throws TTException
      */
     public static TreetankConfiguration create(final File schemaLocation, final File configFile,
-        ISession session, final String pTargetAddress) throws SAXException, ParserConfigurationException, IOException, TTException {
+        ISession session, final String pTargetAddress) throws SAXException, ParserConfigurationException,
+        IOException, TTException {
 
         final SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         final Schema schema = schemaFactory.newSchema(schemaLocation);
@@ -185,13 +187,13 @@ public class TreetankConfiguration extends Configuration {
                 Math.round(((Double.valueOf(sizeAttribute.getTextContent())) * Math.pow(1024, 3)));
         }
 
-        final IStorageModule module = 
+        final IStorageModule module =
             new TreetankStorageModule(storageLength / TreetankStorageModule.BYTES_IN_DATA, conf.mSession);
 
-//        final IStorageModule module = 
- //               new HybridTreetankStorageModule(storageLength / TreetankStorageModule.BYTES_IN_DATA, conf.mSession);
+        // final IStorageModule module =
+        // new HybridTreetankStorageModule(storageLength / TreetankStorageModule.BYTES_IN_DATA,
+        // conf.mSession);
 
-        
         return new Target(targetName, targetAlias, module);
 
     }

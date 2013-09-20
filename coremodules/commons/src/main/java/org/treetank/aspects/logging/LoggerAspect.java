@@ -42,9 +42,11 @@ public class LoggerAspect {
     /**
      * Injection point for logging aspect
      * 
-     * @param pjp where the inject takes pace
+     * @param pjp
+     *            where the inject takes pace
      * @return the point reaches
-     * @throws Throwable if anything happens
+     * @throws Throwable
+     *             if anything happens
      */
     @Around("@annotation(org.treetank.aspects.logging.Logging)")
     public Object advice(ProceedingJoinPoint pjp) throws Throwable {

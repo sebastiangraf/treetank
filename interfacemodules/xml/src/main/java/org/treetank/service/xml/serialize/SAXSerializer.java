@@ -238,7 +238,9 @@ public final class SAXSerializer extends AbsSerializer implements XMLReader {
         Storage.createStorage(config);
         final IStorage storage = Storage.openStorage(new File(args[0]));
 
-        Injector injector = Guice.createInjector(new ModuleSetter().setDataFacClass(TreeNodeFactory.class).setMetaFacClass(NodeMetaPageFactory.class).createModule());
+        Injector injector =
+            Guice.createInjector(new ModuleSetter().setDataFacClass(TreeNodeFactory.class).setMetaFacClass(
+                NodeMetaPageFactory.class).createModule());
         IBackendFactory backend = injector.getInstance(IBackendFactory.class);
         IRevisioning revision = injector.getInstance(IRevisioning.class);
         Properties props = new Properties();

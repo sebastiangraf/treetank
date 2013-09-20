@@ -24,7 +24,8 @@ public class Incremental implements IRevisioning {
     public DataBucket combineBuckets(final DataBucket[] pBuckets) {
         checkArgument(pBuckets.length > 0, "At least one DataBucket must be provided");
         // create entire bucket..
-        final DataBucket returnVal = new DataBucket(pBuckets[0].getBucketKey(), pBuckets[0].getLastBucketPointer());
+        final DataBucket returnVal =
+            new DataBucket(pBuckets[0].getBucketKey(), pBuckets[0].getLastBucketPointer());
         // ...iterate through the datas and check if it is stored..
         for (int i = 0; i < pBuckets[0].getDatas().length; i++) {
             boolean bucketSkip = false;
@@ -47,8 +48,8 @@ public class Incremental implements IRevisioning {
      * {@inheritDoc}
      */
     @Override
-    public LogValue combineBucketsForModification(int pRevisionsToRestore, long pNewBucketKey, DataBucket[] pBuckets,
-        boolean pFullDump) {
+    public LogValue combineBucketsForModification(int pRevisionsToRestore, long pNewBucketKey,
+        DataBucket[] pBuckets, boolean pFullDump) {
         checkArgument(pBuckets.length > 0, "At least one DataBucket must be provided");
         // create buckets for container..
         final DataBucket[] returnVal =

@@ -91,8 +91,7 @@ public final class LabelFMESVisitor {
             addLeafLabel();
             mRtx.moveTo(nodeKey);
         }
-        if (pNode.hasFirstChild() || pNode.getAttributeCount() > 0
-            || pNode.getNamespaceCount() > 0) {
+        if (pNode.hasFirstChild() || pNode.getAttributeCount() > 0 || pNode.getNamespaceCount() > 0) {
             if (!mLabels.containsKey(pNode.getKind())) {
                 mLabels.put(pNode.getKind(), new ArrayList<INode>());
             }
