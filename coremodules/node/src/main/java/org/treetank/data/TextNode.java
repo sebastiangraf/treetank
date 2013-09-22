@@ -25,63 +25,71 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.node;
+package org.treetank.data;
 
 import static com.google.common.base.Objects.toStringHelper;
 
 import java.io.DataOutput;
 import java.io.IOException;
 
+import org.treetank.data.delegates.NodeDelegate;
+import org.treetank.data.delegates.StructNodeDelegate;
+import org.treetank.data.delegates.ValNodeDelegate;
+import org.treetank.data.interfaces.ITreeData;
+import org.treetank.data.interfaces.ITreeStructData;
+import org.treetank.data.interfaces.ITreeValData;
 import org.treetank.exception.TTIOException;
-import org.treetank.node.delegates.NodeDelegate;
-import org.treetank.node.delegates.StructNodeDelegate;
-import org.treetank.node.interfaces.INode;
-import org.treetank.node.interfaces.IStructNode;
 
 import com.google.common.hash.Funnel;
 import com.google.common.hash.PrimitiveSink;
 
 /**
- * <h1>DocumentNode</h1>
+ * <h1>TextNode</h1>
  * 
  * <p>
- * Node representing the root of a document. This node is guaranteed to exist in revision 0 and can not be
- * removed.
+ * Node representing a text node.
  * </p>
  */
-public final class DocumentRootNode implements INode, IStructNode {
+public final class TextNode implements ITreeStructData, ITreeValData, ITreeData {
 
     /**
-     * Enum for DocRootFunnel.
+     * Enum for TextNodeFunnel.
      * 
      * @author Sebastian Graf, University of Konstanz
      * 
      */
-    enum DocumentNodeFunnel implements Funnel<org.treetank.api.IData> {
+    enum TextNodeFunnel implements Funnel<org.treetank.api.IData> {
         INSTANCE;
         public void funnel(org.treetank.api.IData data, PrimitiveSink into) {
-            final DocumentRootNode from = (DocumentRootNode)data;
+            final TextNode from = (TextNode)data;
             from.mDel.getFunnel().funnel(from, into);
             from.mStrucDel.getFunnel().funnel(from, into);
+            from.mValDel.getFunnel().funnel(from, into);
         }
     }
 
     /** Delegate for common node information. */
     private final NodeDelegate mDel;
 
-    /** Delegate for struct node information. */
+    /** Delegate for common value node information. */
+    private final ValNodeDelegate mValDel;
+
+    /** Delegate for common struct node information. */
     private final StructNodeDelegate mStrucDel;
 
     /**
-     * Constructor.
+     * Constructor for TextNode.
      * 
-     * @param pNodeDel
-     *            delegate for node properties
+     * @param pDel
+     *            Delegate for <code>IData</code> implementation.
+     * @param pValDel
+     *            Delegate for {@link ITreeValData} implementation.
      * @param pStrucDel
-     *            delegate for struct properties
+     *            Delegate for {@link ITreeStructData} implementation.
      */
-    public DocumentRootNode(final NodeDelegate pNodeDel, final StructNodeDelegate pStrucDel) {
-        mDel = pNodeDel;
+    public TextNode(final NodeDelegate pDel, final StructNodeDelegate pStrucDel, final ValNodeDelegate pValDel) {
+        mDel = pDel;
+        mValDel = pValDel;
         mStrucDel = pStrucDel;
     }
 
@@ -90,7 +98,45 @@ public final class DocumentRootNode implements INode, IStructNode {
      */
     @Override
     public int getKind() {
-        return IConstants.ROOT;
+        return IConstants.TEXT;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] getRawValue() {
+        return mValDel.getRawValue();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setValue(final byte[] pVal) {
+        mValDel.setValue(pVal);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public long getFirstChildKey() {
+        return mStrucDel.getFirstChildKey();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setHash(final long pHash) {
+        mDel.setHash(pHash);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long getHash() {
+        return mDel.getHash();
     }
 
     /**
@@ -113,32 +159,8 @@ public final class DocumentRootNode implements INode, IStructNode {
      * {@inheritDoc}
      */
     @Override
-    public long getHash() {
-        return mDel.getHash();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setHash(final long pHash) {
-        mDel.setHash(pHash);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        return mDel.hashCode();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(Object pObj) {
-        return pObj.hashCode() == hashCode();
+    public boolean hasParent() {
+        return mDel.hasParent();
     }
 
     /**
@@ -153,8 +175,16 @@ public final class DocumentRootNode implements INode, IStructNode {
      * {@inheritDoc}
      */
     @Override
-    public boolean hasParent() {
-        return mDel.hasParent();
+    public void setParentKey(final long pParentKey) {
+        mDel.setParentKey(pParentKey);
+    }
+
+    /**
+     * /** {@inheritDoc}
+     */
+    @Override
+    public void setTypeKey(final int pTypeKey) {
+        mDel.setTypeKey(pTypeKey);
     }
 
     /**
@@ -193,14 +223,6 @@ public final class DocumentRootNode implements INode, IStructNode {
      * {@inheritDoc}
      */
     @Override
-    public long getFirstChildKey() {
-        return mStrucDel.getFirstChildKey();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public long getLeftSiblingKey() {
         return mStrucDel.getLeftSiblingKey();
     }
@@ -217,24 +239,24 @@ public final class DocumentRootNode implements INode, IStructNode {
      * {@inheritDoc}
      */
     @Override
-    public void setRightSiblingKey(final long pKey) {
-        mStrucDel.setRightSiblingKey(pKey);
+    public void setRightSiblingKey(final long pRightSiblingKey) {
+        mStrucDel.setRightSiblingKey(pRightSiblingKey);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void setLeftSiblingKey(final long pKey) {
-        mStrucDel.setLeftSiblingKey(pKey);
+    public void setLeftSiblingKey(final long pLeftSiblingKey) {
+        mStrucDel.setLeftSiblingKey(pLeftSiblingKey);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void setFirstChildKey(final long pKey) {
-        mStrucDel.setFirstChildKey(pKey);
+    public void setFirstChildKey(final long pFirstChildKey) {
+        mStrucDel.setFirstChildKey(pFirstChildKey);
     }
 
     /**
@@ -257,24 +279,9 @@ public final class DocumentRootNode implements INode, IStructNode {
      * {@inheritDoc}
      */
     @Override
-    public void setParentKey(final long pKey) {
-        mStrucDel.setParentKey(pKey);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setTypeKey(final int pTypeKey) {
-        mStrucDel.setTypeKey(pTypeKey);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public String toString() {
-        return toStringHelper(this).add("mDel", mDel).add("mStrucDel", mStrucDel).toString();
+        return toStringHelper(this).add("mDel", mDel).add("mValDel", mValDel).add("mStrucDel", mStrucDel)
+            .toString();
     }
 
     /**
@@ -283,9 +290,10 @@ public final class DocumentRootNode implements INode, IStructNode {
     @Override
     public void serialize(final DataOutput pOutput) throws TTIOException {
         try {
-            pOutput.writeInt(IConstants.ROOT);
+            pOutput.writeInt(IConstants.TEXT);
             mDel.serialize(pOutput);
             mStrucDel.serialize(pOutput);
+            mValDel.serialize(pOutput);
         } catch (final IOException exc) {
             throw new TTIOException(exc);
         }
@@ -293,7 +301,22 @@ public final class DocumentRootNode implements INode, IStructNode {
 
     @Override
     public Funnel<org.treetank.api.IData> getFunnel() {
-        return DocumentNodeFunnel.INSTANCE;
+        return TextNodeFunnel.INSTANCE;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((mDel == null) ? 0 : mDel.hashCode());
+        result = prime * result + ((mStrucDel == null) ? 0 : mStrucDel.hashCode());
+        result = prime * result + ((mValDel == null) ? 0 : mValDel.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return this.hashCode() == obj.hashCode();
     }
 
 }

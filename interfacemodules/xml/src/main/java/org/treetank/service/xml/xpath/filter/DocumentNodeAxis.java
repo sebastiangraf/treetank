@@ -27,7 +27,7 @@
 
 package org.treetank.service.xml.xpath.filter;
 
-import static org.treetank.node.IConstants.ROOT_NODE;
+import static org.treetank.data.IConstants.ROOT_NODE;
 
 import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;

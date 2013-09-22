@@ -24,30 +24,23 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/**
- * 
- */
-package org.treetank.node.interfaces;
 
 /**
+ * <h1>Node Page Layer for Treetank</h1>
+ * <p>
+ * Here, all different nodes are listed which are used in Treetank. The nodes can be distinguished between
+ * <code>AbsStructNode</code> and <code>AbsNode</code>.
+ * <ul>
+ * <li>An <code>AbsNode</code> is the super type of all nodes. It implements the <code>IItem</code> Interface.
+ * </li>
+ * <li>An <code>AbsStructNode</code> is the super type of all nodes. It inherits from the <code>AbsNode</code>
+ * .</li>
+ * </ul>
+ * </p>
+ * 
+ * 
+ * @author Marc Kramis, University of Konstanz
  * @author Sebastian Graf, University of Konstanz
- * 
  */
-public interface IValNode extends org.treetank.api.IData {
+package org.treetank.data;
 
-    /**
-     * Return a byte array representation of the item's value.
-     * 
-     * @return returns the value of the item
-     */
-    byte[] getRawValue();
-
-    /**
-     * Setting the value key.
-     * 
-     * @param pValue
-     *            the value to be set.
-     */
-    void setValue(byte[] pValue);
-
-}

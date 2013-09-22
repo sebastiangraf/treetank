@@ -31,7 +31,7 @@ import java.util.List;
 
 import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
-import org.treetank.node.AtomicValue;
+import org.treetank.data.AtomicValue;
 import org.treetank.utils.NamePageHash;
 import org.treetank.utils.TypedValue;
 

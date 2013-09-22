@@ -25,16 +25,16 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.node;
+package org.treetank.data;
 
 import static com.google.common.base.Objects.toStringHelper;
-import static org.treetank.node.IConstants.NULL_NODE;
+import static org.treetank.data.IConstants.NULL_NODE;
 
 import java.io.DataOutput;
 
+import org.treetank.data.interfaces.ITreeData;
+import org.treetank.data.interfaces.ITreeValData;
 import org.treetank.exception.TTIOException;
-import org.treetank.node.interfaces.INode;
-import org.treetank.node.interfaces.IValNode;
 import org.treetank.utils.NamePageHash;
 import org.treetank.utils.TypedValue;
 
@@ -49,7 +49,7 @@ import com.google.common.hash.PrimitiveSink;
  * Atomic types are anyAtomicType and all types derived from it.)
  * </p>
  */
-public class AtomicValue implements INode, IValNode {
+public class AtomicValue implements ITreeData, ITreeValData {
 
     /**
      * Enum for AtomicValueFunnel.

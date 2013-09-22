@@ -18,7 +18,6 @@ import org.treetank.exception.TTIOException;
 
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
-import com.google.common.io.Files;
 
 /**
  * Standard Module defining standard settings.

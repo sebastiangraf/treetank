@@ -24,32 +24,32 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.treetank.node.delegates;
+package org.treetank.data.delegates;
 
 import static com.google.common.base.Objects.toStringHelper;
-import static org.treetank.node.IConstants.NULL_NODE;
-import static org.treetank.node.IConstants.TYPE_KEY;
+import static org.treetank.data.IConstants.NULL_NODE;
+import static org.treetank.data.IConstants.TYPE_KEY;
 
 import java.io.DataOutput;
 import java.io.IOException;
 
+import org.treetank.data.IConstants;
+import org.treetank.data.interfaces.ITreeData;
 import org.treetank.exception.TTIOException;
-import org.treetank.node.IConstants;
-import org.treetank.node.interfaces.INode;
 
 import com.google.common.hash.Funnel;
 import com.google.common.hash.PrimitiveSink;
 
 /**
  * Delegate method for all nodes. That means that all nodes stored in Treetank
- * are represented by an instance of the interface {@link INode} namely
+ * are represented by an instance of the interface {@link ITreeData} namely
  * containing the position in the tree related to a parent-node, the related
  * type and the corresponding hash recursivly computed.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public class NodeDelegate implements INode {
+public class NodeDelegate implements ITreeData {
 
     /**
      * Enum for NodeValueFunnel.
@@ -60,7 +60,7 @@ public class NodeDelegate implements INode {
     enum NodeDelegateFunnel implements Funnel<org.treetank.api.IData> {
         INSTANCE;
         public void funnel(org.treetank.api.IData data, PrimitiveSink into) {
-            final INode from = (INode)data;
+            final ITreeData from = (ITreeData)data;
             into.putLong(from.getDataKey()).putLong(from.getParentKey());
         }
     }

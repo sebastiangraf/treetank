@@ -27,16 +27,16 @@
 /**
  * 
  */
-package org.treetank.node.delegates;
+package org.treetank.data.delegates;
 
 import static com.google.common.base.Objects.toStringHelper;
 
 import java.io.DataOutput;
 import java.io.IOException;
 
+import org.treetank.data.interfaces.ITreeData;
+import org.treetank.data.interfaces.ITreeNameData;
 import org.treetank.exception.TTIOException;
-import org.treetank.node.interfaces.INameNode;
-import org.treetank.node.interfaces.INode;
 
 import com.google.common.hash.Funnel;
 import com.google.common.hash.PrimitiveSink;
@@ -44,13 +44,13 @@ import com.google.common.hash.PrimitiveSink;
 /**
  * Delegate method for all nodes containing \"naming\"-data. That means that
  * different fixed defined names are represented by the nodes delegating the
- * calls of the interface {@link INameNode} to this class. Mainly, keys are
+ * calls of the interface {@link ITreeNameData} to this class. Mainly, keys are
  * stored referencing later on to the string stored in dedicated pages.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public class NameNodeDelegate implements INode, INameNode {
+public class NameNodeDelegate implements ITreeData, ITreeNameData {
     /**
      * Enum for AtomicValueFunnel.
      * 
@@ -60,7 +60,7 @@ public class NameNodeDelegate implements INode, INameNode {
     enum NameNodeDelegateFunnel implements Funnel<org.treetank.api.IData> {
         INSTANCE;
         public void funnel(org.treetank.api.IData data, PrimitiveSink into) {
-            final INameNode from = (INameNode)data;
+            final ITreeNameData from = (ITreeNameData)data;
             into.putInt(from.getNameKey()).putInt(from.getURIKey());
         }
     }
@@ -92,7 +92,7 @@ public class NameNodeDelegate implements INode, INameNode {
      * Delegate method for setHash.
      * 
      * @param pHash
-     * @see org.treetank.node.delegates.NodeDelegate#setHash(long)
+     * @see org.treetank.data.delegates.NodeDelegate#setHash(long)
      */
     public void setHash(final long pHash) {
         mDelegate.setHash(pHash);
@@ -102,7 +102,7 @@ public class NameNodeDelegate implements INode, INameNode {
      * Delegate method for getHash.
      * 
      * @return the hash
-     * @see org.treetank.node.delegates.NodeDelegate#getHash()
+     * @see org.treetank.data.delegates.NodeDelegate#getHash()
      */
     public long getHash() {
         return mDelegate.getHash();
@@ -112,7 +112,7 @@ public class NameNodeDelegate implements INode, INameNode {
      * Delegate method for getNodeKey.
      * 
      * @return the key of the node
-     * @see org.treetank.node.delegates.NodeDelegate#getDataKey()
+     * @see org.treetank.data.delegates.NodeDelegate#getDataKey()
      */
     public long getDataKey() {
         return mDelegate.getDataKey();
@@ -122,7 +122,7 @@ public class NameNodeDelegate implements INode, INameNode {
      * Delegate method for getParentKey.
      * 
      * @return the key of the parent node
-     * @see org.treetank.node.delegates.NodeDelegate#getParentKey()
+     * @see org.treetank.data.delegates.NodeDelegate#getParentKey()
      */
     public long getParentKey() {
         return mDelegate.getParentKey();
@@ -132,7 +132,7 @@ public class NameNodeDelegate implements INode, INameNode {
      * Delegate method for hasParent.
      * 
      * @return if the node has a parent
-     * @see org.treetank.node.delegates.NodeDelegate#hasParent()
+     * @see org.treetank.data.delegates.NodeDelegate#hasParent()
      */
     public boolean hasParent() {
         return mDelegate.hasParent();
@@ -142,7 +142,7 @@ public class NameNodeDelegate implements INode, INameNode {
      * Delegate method for getTypeKey.
      * 
      * @return the key of the type
-     * @see org.treetank.node.delegates.NodeDelegate#getTypeKey()
+     * @see org.treetank.data.delegates.NodeDelegate#getTypeKey()
      */
     public int getTypeKey() {
         return mDelegate.getTypeKey();
@@ -152,7 +152,7 @@ public class NameNodeDelegate implements INode, INameNode {
      * Delegate method for setParentKey.
      * 
      * @param pNodeKey
-     * @see org.treetank.node.delegates.NodeDelegate#setParentKey(long)
+     * @see org.treetank.data.delegates.NodeDelegate#setParentKey(long)
      */
     public void setParentKey(final long pNodeKey) {
         mDelegate.setParentKey(pNodeKey);
@@ -162,7 +162,7 @@ public class NameNodeDelegate implements INode, INameNode {
      * Delegate method for setType.
      * 
      * @param pTypeKey
-     * @see org.treetank.node.delegates.NodeDelegate#setTypeKey(int)
+     * @see org.treetank.data.delegates.NodeDelegate#setTypeKey(int)
      */
     public void setTypeKey(final int pTypeKey) {
         mDelegate.setTypeKey(pTypeKey);

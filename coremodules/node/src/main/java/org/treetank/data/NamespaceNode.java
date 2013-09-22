@@ -25,18 +25,18 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.node;
+package org.treetank.data;
 
 import static com.google.common.base.Objects.toStringHelper;
 
 import java.io.DataOutput;
 import java.io.IOException;
 
+import org.treetank.data.delegates.NameNodeDelegate;
+import org.treetank.data.delegates.NodeDelegate;
+import org.treetank.data.interfaces.ITreeData;
+import org.treetank.data.interfaces.ITreeNameData;
 import org.treetank.exception.TTIOException;
-import org.treetank.node.delegates.NameNodeDelegate;
-import org.treetank.node.delegates.NodeDelegate;
-import org.treetank.node.interfaces.INameNode;
-import org.treetank.node.interfaces.INode;
 
 import com.google.common.hash.Funnel;
 import com.google.common.hash.PrimitiveSink;
@@ -48,7 +48,7 @@ import com.google.common.hash.PrimitiveSink;
  * Node representing a namespace.
  * </p>
  */
-public final class NamespaceNode implements INode, INameNode {
+public final class NamespaceNode implements ITreeData, ITreeNameData {
 
     /**
      * Enum for NamespaceFunnel.

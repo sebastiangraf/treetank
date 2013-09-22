@@ -28,8 +28,8 @@
 package org.treetank.axis;
 
 import org.treetank.api.INodeReadTrx;
-import org.treetank.node.ElementNode;
-import org.treetank.node.IConstants;
+import org.treetank.data.ElementNode;
+import org.treetank.data.IConstants;
 
 /**
  * <h1>AttributeAxis</h1>

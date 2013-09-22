@@ -14,7 +14,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.testng.annotations.Test;
 import org.treetank.access.conf.ModuleSetter;
-import org.treetank.api.IFilelistenerWriteTrx;
 import org.treetank.exception.TTException;
 import org.treetank.filelistener.exceptions.ResourceNotExistingException;
 import org.treetank.filelistener.file.data.FileDataFactory;
@@ -124,15 +123,9 @@ public class FilelistenerBenchmark implements FilesystemNotificationObserver {
         }
 
         if (finishedBench) {
-            // All files in storage, time to check retrieval time
-            IFilelistenerWriteTrx trx = filelistener.getTrx(RESOURCE_1);
-            File file;
             long time;
-            String filename;
             for (int i = 0; i < FILES; i++) {
-                filename = File.separator + "file" + (i + 1) + ".data";
                 time = System.currentTimeMillis();
-                file = trx.getFullFile(filename);
                 time = System.currentTimeMillis() - time;
                 readEnds[i] = time;
 

@@ -1,4 +1,4 @@
-package org.treetank.node;
+package org.treetank.data;
 
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertTrue;
@@ -12,16 +12,23 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.treetank.CoreTestHelper;
 import org.treetank.api.IDataFactory;
+import org.treetank.data.AttributeNode;
+import org.treetank.data.DocumentRootNode;
+import org.treetank.data.ElementNode;
+import org.treetank.data.IConstants;
+import org.treetank.data.NamespaceNode;
+import org.treetank.data.TextNode;
+import org.treetank.data.TreeNodeFactory;
+import org.treetank.data.delegates.NameNodeDelegate;
+import org.treetank.data.delegates.NodeDelegate;
+import org.treetank.data.delegates.StructNodeDelegate;
+import org.treetank.data.delegates.ValNodeDelegate;
+import org.treetank.data.interfaces.ITreeData;
+import org.treetank.data.interfaces.ITreeNameData;
+import org.treetank.data.interfaces.ITreeStructData;
+import org.treetank.data.interfaces.ITreeValData;
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.exception.TTIOException;
-import org.treetank.node.delegates.NameNodeDelegate;
-import org.treetank.node.delegates.NodeDelegate;
-import org.treetank.node.delegates.StructNodeDelegate;
-import org.treetank.node.delegates.ValNodeDelegate;
-import org.treetank.node.interfaces.INameNode;
-import org.treetank.node.interfaces.INode;
-import org.treetank.node.interfaces.IStructNode;
-import org.treetank.node.interfaces.IValNode;
 import org.treetank.utils.NamePageHash;
 
 import com.google.common.io.ByteArrayDataInput;
@@ -53,8 +60,8 @@ public class INodeTest {
     }
 
     /**
-     * Test method for {@link INode#getHash()}, {@link INode#getDataKey()},
-     * {@link INode#serialize(java.io.DataOutput)},
+     * Test method for {@link ITreeData#getHash()}, {@link ITreeData#getDataKey()},
+     * {@link ITreeData#serialize(java.io.DataOutput)},
      * 
      * @param pNodeClass
      *            class for node to test
@@ -68,7 +75,7 @@ public class INodeTest {
      * 
      */
     @Test(dataProvider = "instantiateNode")
-    public void testNode(Class<INode> pNodeClass, INode[] pNodes, Class<INodeChecker> pNodeCheckerClass,
+    public void testNode(Class<ITreeData> pNodeClass, ITreeData[] pNodes, Class<INodeChecker> pNodeCheckerClass,
         INodeChecker[] pNodeChecker) throws TTIOException {
 
         // be sure you have enough checkers for the revisioning to check
@@ -82,7 +89,7 @@ public class INodeTest {
             final byte[] firstSerialized = output.toByteArray();
 
             ByteArrayDataInput input = ByteStreams.newDataInput(firstSerialized);
-            final INode serializedNode = (INode)fac.deserializeData(input);
+            final ITreeData serializedNode = (ITreeData)fac.deserializeData(input);
             output = ByteStreams.newDataOutput();
             serializedNode.serialize(output);
             byte[] secondSerialized = output.toByteArray();
@@ -94,9 +101,9 @@ public class INodeTest {
     }
 
     /**
-     * Providing different implementations of the {@link INode} as Dataprovider to the test class.
+     * Providing different implementations of the {@link ITreeData} as Dataprovider to the test class.
      * 
-     * @return different classes of the {@link INode} and <code>INodeChecker</code>
+     * @return different classes of the {@link ITreeData} and <code>INodeChecker</code>
      * @throws TTByteHandleException
      *             if something weird happens
      */
@@ -125,8 +132,8 @@ public class INodeTest {
         Object[][] returnVal =
             {
                 {
-                    INode.class,
-                    new INode[] {
+                    ITreeData.class,
+                    new ITreeData[] {
                         new AttributeNode(del, nameDel, valDel), new DocumentRootNode(del, strucDel),
                         elemNode, new NamespaceNode(del, nameDel), new TextNode(del, strucDel, valDel)
 
@@ -134,11 +141,11 @@ public class INodeTest {
                         // Checker for AttributeNode
                         new INodeChecker() {
                             @Override
-                            public void checkNode(INode node) {
-                                checkPlainNode(node);
-                                checkNameNode(node);
-                                checkValNode(node);
-                                assertEquals("Check for AttributeNode failed: ", IConstants.ATTRIBUTE, node
+                            public void checkNode(ITreeData treeData) {
+                                checkPlainNode(treeData);
+                                checkNameNode(treeData);
+                                checkValNode(treeData);
+                                assertEquals("Check for AttributeNode failed: ", IConstants.ATTRIBUTE, treeData
                                     .getKind());
 
                             }
@@ -146,20 +153,20 @@ public class INodeTest {
                         // Checker for DocumentRootNode
                         new INodeChecker() {
                             @Override
-                            public void checkNode(INode node) {
-                                checkPlainNode(node);
-                                checkStrucNode(node);
-                                assertEquals(IConstants.ROOT, node.getKind());
+                            public void checkNode(ITreeData treeData) {
+                                checkPlainNode(treeData);
+                                checkStrucNode(treeData);
+                                assertEquals(IConstants.ROOT, treeData.getKind());
 
                             }
                         },// Checker for ElementNode
                         new INodeChecker() {
                             @Override
-                            public void checkNode(INode node) {
-                                ElementNode elemNode = (ElementNode)node;
-                                checkPlainNode(node);
-                                checkNameNode(node);
-                                checkStrucNode(node);
+                            public void checkNode(ITreeData treeData) {
+                                ElementNode elemNode = (ElementNode)treeData;
+                                checkPlainNode(treeData);
+                                checkNameNode(treeData);
+                                checkStrucNode(treeData);
                                 assertEquals("Check for ElementNode failed: ", 2, elemNode
                                     .getAttributeCount());
                                 assertEquals("Check for ElementNode failed: ", 2, elemNode
@@ -179,21 +186,21 @@ public class INodeTest {
                         },// Checker for NamespaceNode
                         new INodeChecker() {
                             @Override
-                            public void checkNode(INode node) {
-                                checkPlainNode(node);
-                                checkNameNode(node);
-                                assertEquals("Check for NamespaceNode failed: ", IConstants.NAMESPACE, node
+                            public void checkNode(ITreeData treeData) {
+                                checkPlainNode(treeData);
+                                checkNameNode(treeData);
+                                assertEquals("Check for NamespaceNode failed: ", IConstants.NAMESPACE, treeData
                                     .getKind());
 
                             }
                         }, // Checker for TextNode
                         new INodeChecker() {
                             @Override
-                            public void checkNode(INode node) {
-                                checkPlainNode(node);
-                                checkValNode(node);
-                                checkStrucNode(node);
-                                assertEquals("Check for TextNode failed: ", IConstants.TEXT, node.getKind());
+                            public void checkNode(ITreeData treeData) {
+                                checkPlainNode(treeData);
+                                checkValNode(treeData);
+                                checkStrucNode(treeData);
+                                assertEquals("Check for TextNode failed: ", IConstants.TEXT, treeData.getKind());
                             }
                         }
                     }
@@ -202,47 +209,47 @@ public class INodeTest {
         return returnVal;
     }
 
-    private static void checkPlainNode(INode node) {
-        assertEquals(new StringBuilder("Check for ").append(node.getClass().getName()).append(" failed: ")
-            .toString(), 99L, node.getDataKey());
-        assertEquals(new StringBuilder("Check for ").append(node.getClass().getName()).append(" failed: ")
-            .toString(), 13L, node.getParentKey());
-        assertEquals(new StringBuilder("Check for ").append(node.getClass().getName()).append(" failed: ")
-            .toString(), true, node.hasParent());
-        assertEquals(new StringBuilder("Check for ").append(node.getClass().getName()).append(" failed: ")
-            .toString(), NamePageHash.generateHashForString("xs:untyped"), node.getTypeKey());
+    private static void checkPlainNode(ITreeData treeData) {
+        assertEquals(new StringBuilder("Check for ").append(treeData.getClass().getName()).append(" failed: ")
+            .toString(), 99L, treeData.getDataKey());
+        assertEquals(new StringBuilder("Check for ").append(treeData.getClass().getName()).append(" failed: ")
+            .toString(), 13L, treeData.getParentKey());
+        assertEquals(new StringBuilder("Check for ").append(treeData.getClass().getName()).append(" failed: ")
+            .toString(), true, treeData.hasParent());
+        assertEquals(new StringBuilder("Check for ").append(treeData.getClass().getName()).append(" failed: ")
+            .toString(), NamePageHash.generateHashForString("xs:untyped"), treeData.getTypeKey());
     }
 
-    private static void checkNameNode(INode node) {
-        INameNode nameNode = (INameNode)node;
-        assertEquals(new StringBuilder("Check for ").append(node.getClass().getName()).append(" failed: ")
-            .toString(), 15, nameNode.getURIKey());
-        assertEquals(new StringBuilder("Check for ").append(node.getClass().getName()).append(" failed: ")
-            .toString(), 14, nameNode.getNameKey());
+    private static void checkNameNode(ITreeData treeData) {
+        ITreeNameData treeNameData = (ITreeNameData)treeData;
+        assertEquals(new StringBuilder("Check for ").append(treeData.getClass().getName()).append(" failed: ")
+            .toString(), 15, treeNameData.getURIKey());
+        assertEquals(new StringBuilder("Check for ").append(treeData.getClass().getName()).append(" failed: ")
+            .toString(), 14, treeNameData.getNameKey());
     }
 
-    private static void checkValNode(INode node) {
-        IValNode valNode = (IValNode)node;
-        assertEquals(new StringBuilder("Check for ").append(node.getClass().getName()).append(" failed: ")
-            .toString(), 2, valNode.getRawValue().length);
+    private static void checkValNode(ITreeData treeData) {
+        ITreeValData treeValData = (ITreeValData)treeData;
+        assertEquals(new StringBuilder("Check for ").append(treeData.getClass().getName()).append(" failed: ")
+            .toString(), 2, treeValData.getRawValue().length);
 
     }
 
-    private static void checkStrucNode(INode node) {
-        IStructNode strucNode = (IStructNode)node;
-        assertEquals(new StringBuilder("Check for ").append(node.getClass().getName()).append(" failed: ")
+    private static void checkStrucNode(ITreeData treeData) {
+        ITreeStructData strucNode = (ITreeStructData)treeData;
+        assertEquals(new StringBuilder("Check for ").append(treeData.getClass().getName()).append(" failed: ")
             .toString(), 24L, strucNode.getFirstChildKey());
-        assertEquals(new StringBuilder("Check for ").append(node.getClass().getName()).append(" failed: ")
+        assertEquals(new StringBuilder("Check for ").append(treeData.getClass().getName()).append(" failed: ")
             .toString(), 48L, strucNode.getLeftSiblingKey());
-        assertEquals(new StringBuilder("Check for ").append(node.getClass().getName()).append(" failed: ")
+        assertEquals(new StringBuilder("Check for ").append(treeData.getClass().getName()).append(" failed: ")
             .toString(), 36L, strucNode.getRightSiblingKey());
-        assertEquals(new StringBuilder("Check for ").append(node.getClass().getName()).append(" failed: ")
+        assertEquals(new StringBuilder("Check for ").append(treeData.getClass().getName()).append(" failed: ")
             .toString(), true, strucNode.hasLeftSibling());
-        assertEquals(new StringBuilder("Check for ").append(node.getClass().getName()).append(" failed: ")
+        assertEquals(new StringBuilder("Check for ").append(treeData.getClass().getName()).append(" failed: ")
             .toString(), true, strucNode.hasRightSibling());
-        assertEquals(new StringBuilder("Check for ").append(node.getClass().getName()).append(" failed: ")
+        assertEquals(new StringBuilder("Check for ").append(treeData.getClass().getName()).append(" failed: ")
             .toString(), true, strucNode.hasFirstChild());
-        assertEquals(new StringBuilder("Check for ").append(node.getClass().getName()).append(" failed: ")
+        assertEquals(new StringBuilder("Check for ").append(treeData.getClass().getName()).append(" failed: ")
             .toString(), 77, strucNode.getChildCount());
     }
 
@@ -253,7 +260,7 @@ public class INodeTest {
      * 
      */
     interface INodeChecker {
-        void checkNode(INode node);
+        void checkNode(ITreeData treeData);
 
     }
 

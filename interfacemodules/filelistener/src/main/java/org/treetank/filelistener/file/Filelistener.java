@@ -75,10 +75,10 @@ public class Filelistener {
      */
     private Map<String, ExecutorService> mExecutorMap;
 
-    /** Map to keep track of filesystemnotifications */
-    private Map<String, FilesystemNotification> mLockedFiles;
-    /** Map to put FSN inside if a fsn is still locked in mLockedFiles */
-    private Map<String, FilesystemNotification> mFsnOnHold;
+//    /** Map to keep track of filesystemnotifications */
+//    private Map<String, FilesystemNotification> mLockedFiles;
+//    /** Map to put FSN inside if a fsn is still locked in mLockedFiles */
+//    private Map<String, FilesystemNotification> mFsnOnHold;
     /** Observer class to be notified when a notification has been processed */
     private FilesystemNotificationObserver mObserver;
 
@@ -95,8 +95,8 @@ public class Filelistener {
         this.mWatcher = FileSystems.getDefault().newWatchService();
         mSubDirectories = new HashMap<String, List<String>>();
         mExecutorMap = new HashMap<String, ExecutorService>();
-        mLockedFiles = new HashMap<>();
-        mFsnOnHold = new HashMap<>();
+//        mLockedFiles = new HashMap<>();
+//        mFsnOnHold = new HashMap<>();
     }
 
     /**

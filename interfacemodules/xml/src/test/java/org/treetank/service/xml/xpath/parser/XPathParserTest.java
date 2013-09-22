@@ -43,8 +43,8 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.axis.AbsAxis;
+import org.treetank.data.interfaces.ITreeValData;
 import org.treetank.exception.TTException;
-import org.treetank.node.interfaces.IValNode;
 import org.treetank.service.xml.xpath.XPathAxis;
 import org.treetank.utils.NamePageHash;
 
@@ -86,37 +86,37 @@ public class XPathParserTest {
 
         axis = new XPathAxis(holder.getNRtx(), "\"12.5\"");
         assertEquals(true, axis.hasNext());
-        assertEquals("12.5", new String(((IValNode)axis.getNode()).getRawValue()));
+        assertEquals("12.5", new String(((ITreeValData)axis.getNode()).getRawValue()));
         assertEquals(NamePageHash.generateHashForString("xs:string"), axis.getNode().getTypeKey());
         assertEquals(false, axis.hasNext());
 
         axis = new XPathAxis(holder.getNRtx(), "\"He said, \"\"I don't like it\"\"\"");
         assertEquals(true, axis.hasNext());
-        assertEquals("He said, I don't like it", new String(((IValNode)axis.getNode()).getRawValue()));
+        assertEquals("He said, I don't like it", new String(((ITreeValData)axis.getNode()).getRawValue()));
         assertEquals(NamePageHash.generateHashForString("xs:string"), axis.getNode().getTypeKey());
         assertEquals(false, axis.hasNext());
 
         axis = new XPathAxis(holder.getNRtx(), "12");
         assertEquals(true, axis.hasNext());
         assertEquals(NamePageHash.generateHashForString("xs:integer"), axis.getNode().getTypeKey());
-        assertEquals("12", new String(((IValNode)axis.getNode()).getRawValue()));
+        assertEquals("12", new String(((ITreeValData)axis.getNode()).getRawValue()));
         assertEquals(false, axis.hasNext());
 
         axis = new XPathAxis(holder.getNRtx(), "12.5");
         assertEquals(true, axis.hasNext());
         assertEquals(NamePageHash.generateHashForString("xs:decimal"), axis.getNode().getTypeKey());
-        assertEquals("12.5", new String(((IValNode)axis.getNode()).getRawValue()));
+        assertEquals("12.5", new String(((ITreeValData)axis.getNode()).getRawValue()));
         assertEquals(false, axis.hasNext());
 
         axis = new XPathAxis(holder.getNRtx(), "12.5E2");
         assertEquals(true, axis.hasNext());
         assertEquals(NamePageHash.generateHashForString("xs:double"), axis.getNode().getTypeKey());
-        assertEquals("12.5E2", new String(((IValNode)axis.getNode()).getRawValue()));
+        assertEquals("12.5E2", new String(((ITreeValData)axis.getNode()).getRawValue()));
         assertEquals(false, axis.hasNext());
 
         axis = new XPathAxis(holder.getNRtx(), "1");
         assertEquals(true, axis.hasNext());
-        assertEquals("1", new String(((IValNode)axis.getNode()).getRawValue()));
+        assertEquals("1", new String(((ITreeValData)axis.getNode()).getRawValue()));
         assertEquals(NamePageHash.generateHashForString("xs:integer"), axis.getNode().getTypeKey());
         assertEquals(false, axis.hasNext());
 

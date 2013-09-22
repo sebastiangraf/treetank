@@ -27,7 +27,7 @@
 
 package org.treetank.service.xml.diff;
 
-import org.treetank.node.interfaces.IStructNode;
+import org.treetank.data.interfaces.ITreeStructData;
 import org.treetank.service.xml.diff.DiffFactory.EDiff;
 
 /**
@@ -40,11 +40,11 @@ public final class Diff {
     /** {@link EDiff} which specifies the kind of diff between two nodes. */
     private final EDiff mDiff;
 
-    /** {@link IStructNode} in new revision. */
-    private final IStructNode mNewNode;
+    /** {@link ITreeStructData} in new revision. */
+    private final ITreeStructData mNewNode;
 
-    /** {@link IStructNode} in old revision. */
-    private final IStructNode mOldNode;
+    /** {@link ITreeStructData} in old revision. */
+    private final ITreeStructData mOldNode;
 
     /** {@link DiffDepth} instance. */
     private final DiffDepth mDepth;
@@ -56,13 +56,13 @@ public final class Diff {
      *            {@link EDiff} which specifies the kind of diff between two
      *            nodes
      * @param paramNewNode
-     *            {@link IStructNode} in new revision
+     *            {@link ITreeStructData} in new revision
      * @param paramOldNode
-     *            {@link IStructNode} in old revision
+     *            {@link ITreeStructData} in old revision
      * @param paramDepth
      *            current {@link DiffDepth} instance
      */
-    public Diff(final EDiff paramDiff, final IStructNode paramNewNode, final IStructNode paramOldNode,
+    public Diff(final EDiff paramDiff, final ITreeStructData paramNewNode, final ITreeStructData paramOldNode,
         final DiffDepth paramDepth) {
         assert paramDiff != null;
         assert paramNewNode != null;
@@ -89,7 +89,7 @@ public final class Diff {
      * 
      * @return the new node
      */
-    public IStructNode getNewNode() {
+    public ITreeStructData getNewNode() {
         return mNewNode;
     }
 
@@ -98,7 +98,7 @@ public final class Diff {
      * 
      * @return the old node
      */
-    public IStructNode getOldNode() {
+    public ITreeStructData getOldNode() {
         return mOldNode;
     }
 

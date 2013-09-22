@@ -51,8 +51,8 @@
     
     You can do everything you like with the resulting items. The method <em>
     getStringValue()</em> of the item get's the string value from the underlying 
-    node type. In case of an element it concatenates all descending text-nodes.
-    To get the underlying node, which is a Treetank item instead of a Saxon item
+    treeData type. In case of an element it concatenates all descending text-nodes.
+    To get the underlying treeData, which is a Treetank item instead of a Saxon item
     can be retrieved by using the identically named method <em>
     getUnderlyingNode()</em>.
   </p>

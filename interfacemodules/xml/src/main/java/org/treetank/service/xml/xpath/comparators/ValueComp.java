@@ -29,10 +29,10 @@ package org.treetank.service.xml.xpath.comparators;
 
 import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
+import org.treetank.data.AtomicValue;
+import org.treetank.data.Type;
+import org.treetank.data.interfaces.ITreeValData;
 import org.treetank.exception.TTXPathException;
-import org.treetank.node.AtomicValue;
-import org.treetank.node.Type;
-import org.treetank.node.interfaces.IValNode;
 import org.treetank.service.xml.xpath.EXPathError;
 import org.treetank.utils.NamePageHash;
 
@@ -90,7 +90,7 @@ public class ValueComp extends AbsComparator {
             type = NamePageHash.generateHashForString("xs:string");
         }
 
-        final AtomicValue atomized = new AtomicValue(((IValNode)mOperand.getNode()).getRawValue(), type);
+        final AtomicValue atomized = new AtomicValue(((ITreeValData)mOperand.getNode()).getRawValue(), type);
         final AtomicValue[] op = {
             atomized
         };

@@ -29,10 +29,10 @@ package org.treetank.service.xml.xpath.expr;
 
 import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
+import org.treetank.data.AtomicValue;
+import org.treetank.data.Type;
+import org.treetank.data.interfaces.ITreeValData;
 import org.treetank.exception.TTXPathException;
-import org.treetank.node.AtomicValue;
-import org.treetank.node.Type;
-import org.treetank.node.interfaces.IValNode;
 import org.treetank.service.xml.xpath.SingleType;
 import org.treetank.service.xml.xpath.XPathError;
 import org.treetank.service.xml.xpath.XPathError.ErrorType;
@@ -114,7 +114,7 @@ public class CastableExpr extends AbsExpression {
         if (mSourceExpr.hasNext()) { // result sequence > 0
 
             final Type sourceType = Type.getType(getNode().getTypeKey());
-            final String sourceValue = new String(((IValNode)getNode()).getRawValue());
+            final String sourceValue = new String(((ITreeValData)getNode()).getRawValue());
 
             // determine castability
             isCastable = sourceType.isCastableTo(mTargetType, sourceValue);

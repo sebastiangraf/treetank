@@ -31,8 +31,8 @@ import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.treetank.node.IConstants.NULL_NODE;
-import static org.treetank.node.IConstants.ROOT_NODE;
+import static org.treetank.data.IConstants.NULL_NODE;
+import static org.treetank.data.IConstants.ROOT_NODE;
 
 import java.util.ArrayList;
 
@@ -41,23 +41,23 @@ import javax.xml.namespace.QName;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.IBucketWriteTrx;
 import org.treetank.api.ISession;
+import org.treetank.data.AttributeNode;
+import org.treetank.data.DocumentRootNode;
+import org.treetank.data.ElementNode;
+import org.treetank.data.IConstants;
+import org.treetank.data.NamespaceNode;
+import org.treetank.data.NodeMetaPageFactory;
+import org.treetank.data.TextNode;
+import org.treetank.data.delegates.NameNodeDelegate;
+import org.treetank.data.delegates.NodeDelegate;
+import org.treetank.data.delegates.StructNodeDelegate;
+import org.treetank.data.delegates.ValNodeDelegate;
+import org.treetank.data.interfaces.ITreeData;
+import org.treetank.data.interfaces.ITreeNameData;
+import org.treetank.data.interfaces.ITreeStructData;
+import org.treetank.data.interfaces.ITreeValData;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.node.AttributeNode;
-import org.treetank.node.DocumentRootNode;
-import org.treetank.node.ElementNode;
-import org.treetank.node.IConstants;
-import org.treetank.node.NamespaceNode;
-import org.treetank.node.NodeMetaPageFactory;
-import org.treetank.node.TextNode;
-import org.treetank.node.delegates.NameNodeDelegate;
-import org.treetank.node.delegates.NodeDelegate;
-import org.treetank.node.delegates.StructNodeDelegate;
-import org.treetank.node.delegates.ValNodeDelegate;
-import org.treetank.node.interfaces.INameNode;
-import org.treetank.node.interfaces.INode;
-import org.treetank.node.interfaces.IStructNode;
-import org.treetank.node.interfaces.IValNode;
 import org.treetank.utils.NamePageHash;
 import org.treetank.utils.TypedValue;
 
@@ -138,7 +138,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
 
         final long parentKey = mDelegate.getCurrentNode().getDataKey();
         final long leftSibKey = NULL_NODE;
-        final long rightSibKey = ((IStructNode)mDelegate.getCurrentNode()).getFirstChildKey();
+        final long rightSibKey = ((ITreeStructData)mDelegate.getCurrentNode()).getFirstChildKey();
         final ElementNode node = createElementNode(parentKey, leftSibKey, rightSibKey, 0, pQName);
 
         mDelegate.setCurrentNode(node);
@@ -156,13 +156,13 @@ public class NodeWriteTrx implements INodeWriteTrx {
         checkState(!mDelegate.isClosed(), "Transaction is already closed.");
         checkNotNull(pQName);
         checkState(
-            mDelegate.getCurrentNode() instanceof IStructNode,
+            mDelegate.getCurrentNode() instanceof ITreeStructData,
             "Insert is not allowed if current node is not an StructuralNode (either Text or Element), but was %s",
             mDelegate.getCurrentNode());
 
         final long parentKey = mDelegate.getCurrentNode().getParentKey();
         final long leftSibKey = mDelegate.getCurrentNode().getDataKey();
-        final long rightSibKey = ((IStructNode)mDelegate.getCurrentNode()).getRightSiblingKey();
+        final long rightSibKey = ((ITreeStructData)mDelegate.getCurrentNode()).getRightSiblingKey();
         final ElementNode node = createElementNode(parentKey, leftSibKey, rightSibKey, 0, pQName);
 
         mDelegate.setCurrentNode(node);
@@ -187,7 +187,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
         final byte[] value = TypedValue.getBytes(pValue);
         final long parentKey = mDelegate.getCurrentNode().getDataKey();
         final long leftSibKey = NULL_NODE;
-        final long rightSibKey = ((IStructNode)mDelegate.getCurrentNode()).getFirstChildKey();
+        final long rightSibKey = ((ITreeStructData)mDelegate.getCurrentNode()).getFirstChildKey();
         final TextNode node = createTextNode(parentKey, leftSibKey, rightSibKey, value);
 
         mDelegate.setCurrentNode(node);
@@ -211,7 +211,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
         final byte[] value = TypedValue.getBytes(pValue);
         final long parentKey = mDelegate.getCurrentNode().getParentKey();
         final long leftSibKey = mDelegate.getCurrentNode().getDataKey();
-        final long rightSibKey = ((IStructNode)mDelegate.getCurrentNode()).getRightSiblingKey();
+        final long rightSibKey = ((ITreeStructData)mDelegate.getCurrentNode()).getRightSiblingKey();
         final TextNode node = createTextNode(parentKey, leftSibKey, rightSibKey, value);
 
         mDelegate.setCurrentNode(node);
@@ -244,7 +244,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
         final AttributeNode node = new AttributeNode(nodeDel, nameDel, valDel);
         getPtx().setData(node);
 
-        final INode parentNode = (org.treetank.node.interfaces.INode)getPtx().getData(node.getParentKey());
+        final ITreeData parentNode = (org.treetank.data.interfaces.ITreeData)getPtx().getData(node.getParentKey());
         ((ElementNode)parentNode).insertAttribute(node.getDataKey());
         getPtx().setData(parentNode);
 
@@ -277,7 +277,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
         final NamespaceNode node = new NamespaceNode(nodeDel, nameDel);
         getPtx().setData(node);
 
-        final INode parentNode = (org.treetank.node.interfaces.INode)getPtx().getData(node.getParentKey());
+        final ITreeData parentNode = (org.treetank.data.interfaces.ITreeData)getPtx().getData(node.getParentKey());
         ((ElementNode)parentNode).insertNamespace(node.getDataKey());
         getPtx().setData(parentNode);
 
@@ -322,8 +322,8 @@ public class NodeWriteTrx implements INodeWriteTrx {
         checkState(!mDelegate.isClosed(), "Transaction is already closed.");
         checkState(mDelegate.getCurrentNode().getKind() != IConstants.ROOT,
             "Document root can not be removed.");
-        if (mDelegate.getCurrentNode() instanceof IStructNode) {
-            final IStructNode node = (IStructNode)mDelegate.getCurrentNode();
+        if (mDelegate.getCurrentNode() instanceof ITreeStructData) {
+            final ITreeStructData node = (ITreeStructData)mDelegate.getCurrentNode();
             if (node.getKind() == IConstants.ELEMENT) {
                 long currentKey = node.getDataKey();
                 ElementNode element = (ElementNode)node;
@@ -350,17 +350,17 @@ public class NodeWriteTrx implements INodeWriteTrx {
                 moveTo(node.getParentKey());
             }
         } else if (mDelegate.getCurrentNode().getKind() == IConstants.ATTRIBUTE) {
-            final INode node = mDelegate.getCurrentNode();
+            final ITreeData treeData = mDelegate.getCurrentNode();
 
-            final ElementNode parentNode = (ElementNode)getPtx().getData(node.getParentKey());
-            parentNode.removeAttribute(node.getDataKey());
+            final ElementNode parentNode = (ElementNode)getPtx().getData(treeData.getParentKey());
+            parentNode.removeAttribute(treeData.getDataKey());
             getPtx().setData(parentNode);
             adaptHashesWithRemove();
             moveTo(mDelegate.getCurrentNode().getParentKey());
         } else if (mDelegate.getCurrentNode().getKind() == IConstants.NAMESPACE) {
-            final INode node = mDelegate.getCurrentNode();
-            final ElementNode parentNode = (ElementNode)getPtx().getData(node.getParentKey());
-            parentNode.removeNamespace(node.getDataKey());
+            final ITreeData treeData = mDelegate.getCurrentNode();
+            final ElementNode parentNode = (ElementNode)getPtx().getData(treeData.getParentKey());
+            parentNode.removeNamespace(treeData.getDataKey());
             getPtx().setData(parentNode);
             adaptHashesWithRemove();
             moveTo(mDelegate.getCurrentNode().getParentKey());
@@ -373,17 +373,17 @@ public class NodeWriteTrx implements INodeWriteTrx {
     @Override
     public void setQName(final QName paramName) throws TTException {
         checkState(!mDelegate.isClosed(), "Transaction is already closed.");
-        checkState(mDelegate.getCurrentNode() instanceof INameNode,
-            "setQName is not allowed if current node is not an INameNode implementation, but was %s",
+        checkState(mDelegate.getCurrentNode() instanceof ITreeNameData,
+            "setQName is not allowed if current node is not an ITreeNameData implementation, but was %s",
             mDelegate.getCurrentNode());
 
         final long oldHash = mDelegate.getCurrentNode().hashCode();
 
-        final INameNode node = (INameNode)getPtx().getData(mDelegate.getCurrentNode().getDataKey());
+        final ITreeNameData node = (ITreeNameData)getPtx().getData(mDelegate.getCurrentNode().getDataKey());
         node.setNameKey(insertName(buildName(paramName)));
         getPtx().setData(node);
 
-        mDelegate.setCurrentNode((INode)node);
+        mDelegate.setCurrentNode((ITreeData)node);
         adaptHashedWithUpdate(oldHash);
     }
 
@@ -393,17 +393,17 @@ public class NodeWriteTrx implements INodeWriteTrx {
     @Override
     public void setURI(final String paramUri) throws TTException {
         checkState(!mDelegate.isClosed(), "Transaction is already closed.");
-        checkState(mDelegate.getCurrentNode() instanceof INameNode,
-            "setURI is not allowed if current node is not an INameNode implementation, but was %s", mDelegate
+        checkState(mDelegate.getCurrentNode() instanceof ITreeNameData,
+            "setURI is not allowed if current node is not an ITreeNameData implementation, but was %s", mDelegate
                 .getCurrentNode());
 
         final long oldHash = mDelegate.getCurrentNode().hashCode();
 
-        final INameNode node = (INameNode)getPtx().getData(mDelegate.getCurrentNode().getDataKey());
+        final ITreeNameData node = (ITreeNameData)getPtx().getData(mDelegate.getCurrentNode().getDataKey());
         node.setURIKey(insertName(paramUri));
         getPtx().setData(node);
 
-        mDelegate.setCurrentNode((INode)node);
+        mDelegate.setCurrentNode((ITreeData)node);
         adaptHashedWithUpdate(oldHash);
     }
 
@@ -413,17 +413,17 @@ public class NodeWriteTrx implements INodeWriteTrx {
     @Override
     public void setValue(final String pValue) throws TTException {
         checkState(!mDelegate.isClosed(), "Transaction is already closed.");
-        checkState(mDelegate.getCurrentNode() instanceof IValNode,
-            "setValue is not allowed if current node is not an IValNode implementation, but was %s",
+        checkState(mDelegate.getCurrentNode() instanceof ITreeValData,
+            "setValue is not allowed if current node is not an ITreeValData implementation, but was %s",
             mDelegate.getCurrentNode());
 
         final long oldHash = mDelegate.getCurrentNode().hashCode();
 
-        final IValNode node = (IValNode)getPtx().getData(mDelegate.getCurrentNode().getDataKey());
+        final ITreeValData node = (ITreeValData)getPtx().getData(mDelegate.getCurrentNode().getDataKey());
         node.setValue(TypedValue.getBytes(pValue));
         getPtx().setData(node);
 
-        mDelegate.setCurrentNode((INode)node);
+        mDelegate.setCurrentNode((ITreeData)node);
         adaptHashedWithUpdate(oldHash);
     }
 
@@ -511,12 +511,12 @@ public class NodeWriteTrx implements INodeWriteTrx {
      * @throws TTIOException
      *             if anything weird happens
      */
-    private void adaptForInsert(final INode paramNewNode, final boolean addAsFirstChild) throws TTException {
+    private void adaptForInsert(final ITreeData paramNewNode, final boolean addAsFirstChild) throws TTException {
         assert paramNewNode != null;
 
-        if (paramNewNode instanceof IStructNode) {
-            final IStructNode strucNode = (IStructNode)paramNewNode;
-            final IStructNode parent = (IStructNode)getPtx().getData(paramNewNode.getParentKey());
+        if (paramNewNode instanceof ITreeStructData) {
+            final ITreeStructData strucNode = (ITreeStructData)paramNewNode;
+            final ITreeStructData parent = (ITreeStructData)getPtx().getData(paramNewNode.getParentKey());
             parent.incrementChildCount();
             if (addAsFirstChild) {
                 parent.setFirstChildKey(paramNewNode.getDataKey());
@@ -524,14 +524,14 @@ public class NodeWriteTrx implements INodeWriteTrx {
             getPtx().setData(parent);
 
             if (strucNode.hasRightSibling()) {
-                final IStructNode rightSiblingNode =
-                    (IStructNode)getPtx().getData(strucNode.getRightSiblingKey());
+                final ITreeStructData rightSiblingNode =
+                    (ITreeStructData)getPtx().getData(strucNode.getRightSiblingKey());
                 rightSiblingNode.setLeftSiblingKey(paramNewNode.getDataKey());
                 getPtx().setData(rightSiblingNode);
             }
             if (strucNode.hasLeftSibling()) {
-                final IStructNode leftSiblingNode =
-                    (IStructNode)getPtx().getData(strucNode.getLeftSiblingKey());
+                final ITreeStructData leftSiblingNode =
+                    (ITreeStructData)getPtx().getData(strucNode.getLeftSiblingKey());
                 leftSiblingNode.setRightSiblingKey(paramNewNode.getDataKey());
                 getPtx().setData(leftSiblingNode);
             }
@@ -555,25 +555,25 @@ public class NodeWriteTrx implements INodeWriteTrx {
      * @throws TTIOException
      *             if anything weird happens
      */
-    private void adaptForRemove(final IStructNode pOldNode) throws TTException {
+    private void adaptForRemove(final ITreeStructData pOldNode) throws TTException {
         assert pOldNode != null;
 
         // Adapt left sibling node if there is one.
         if (pOldNode.hasLeftSibling()) {
-            final IStructNode leftSibling = (IStructNode)getPtx().getData(pOldNode.getLeftSiblingKey());
+            final ITreeStructData leftSibling = (ITreeStructData)getPtx().getData(pOldNode.getLeftSiblingKey());
             leftSibling.setRightSiblingKey(pOldNode.getRightSiblingKey());
             getPtx().setData(leftSibling);
         }
 
         // Adapt right sibling node if there is one.
         if (pOldNode.hasRightSibling()) {
-            final IStructNode rightSibling = (IStructNode)getPtx().getData(pOldNode.getRightSiblingKey());
+            final ITreeStructData rightSibling = (ITreeStructData)getPtx().getData(pOldNode.getRightSiblingKey());
             rightSibling.setLeftSiblingKey(pOldNode.getLeftSiblingKey());
             getPtx().setData(rightSibling);
         }
 
         // Adapt parent, if node has now left sibling it is a first child.
-        final IStructNode parent = (IStructNode)getPtx().getData(pOldNode.getParentKey());
+        final ITreeStructData parent = (ITreeStructData)getPtx().getData(pOldNode.getParentKey());
         if (!pOldNode.hasLeftSibling()) {
             parent.setFirstChildKey(pOldNode.getRightSiblingKey());
         }
@@ -692,17 +692,17 @@ public class NodeWriteTrx implements INodeWriteTrx {
         // long for adapting the hash of the parent
         long hashCodeForParent = 0;
         // adapting the parent if the current node is no structural one.
-        if (!(mDelegate.getCurrentNode() instanceof IStructNode)) {
+        if (!(mDelegate.getCurrentNode() instanceof ITreeStructData)) {
             getPtx().getData(mDelegate.getCurrentNode().getDataKey());
             mDelegate.getCurrentNode().setHash(mDelegate.getCurrentNode().hashCode());
             getPtx().setData(mDelegate.getCurrentNode());
             moveTo(mDelegate.getCurrentNode().getParentKey());
         }
         // Cursor to root
-        IStructNode cursorToRoot;
+        ITreeStructData cursorToRoot;
         do {
             synchronized (mDelegate.getCurrentNode()) {
-                cursorToRoot = (IStructNode)getPtx().getData(mDelegate.getCurrentNode().getDataKey());
+                cursorToRoot = (ITreeStructData)getPtx().getData(mDelegate.getCurrentNode().getDataKey());
                 hashCodeForParent = mDelegate.getCurrentNode().hashCode() + hashCodeForParent * PRIME;
                 // Caring about attributes and namespaces if node is an element.
                 if (cursorToRoot.getKind() == IConstants.ELEMENT) {
@@ -720,11 +720,11 @@ public class NodeWriteTrx implements INodeWriteTrx {
                 }
 
                 // Caring about the children of a node
-                if (moveTo(((IStructNode)getNode()).getFirstChildKey())) {
+                if (moveTo(((ITreeStructData)getNode()).getFirstChildKey())) {
                     do {
                         hashCodeForParent = mDelegate.getCurrentNode().getHash() + hashCodeForParent * PRIME;
-                    } while (moveTo(((IStructNode)getNode()).getRightSiblingKey()));
-                    moveTo(((IStructNode)getNode()).getParentKey());
+                    } while (moveTo(((ITreeStructData)getNode()).getRightSiblingKey()));
+                    moveTo(((ITreeStructData)getNode()).getParentKey());
                 }
 
                 // setting hash and resetting hash
@@ -747,7 +747,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      *             if anything weird happened
      */
     private void rollingUpdate(final long paramOldHash) throws TTException {
-        final INode newNode = mDelegate.getCurrentNode();
+        final ITreeData newNode = mDelegate.getCurrentNode();
         final long newNodeHash = newNode.hashCode();
         long resultNew = newNode.hashCode();
 
@@ -778,7 +778,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      *             if anything weird happened
      */
     private void rollingRemove() throws TTException {
-        final INode startNode = mDelegate.getCurrentNode();
+        final ITreeData startNode = mDelegate.getCurrentNode();
         long hashToRemove = startNode.getHash();
         long hashToAdd = 0;
         long newHash = 0;
@@ -817,7 +817,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      */
     private void rollingAdd() throws TTException {
         // start with hash to add
-        final INode startNode = mDelegate.getCurrentNode();
+        final ITreeData startNode = mDelegate.getCurrentNode();
         long hashToAdd = startNode.hashCode();
         long newHash = 0;
         long possibleOldHash = 0;
@@ -908,7 +908,7 @@ public class NodeWriteTrx implements INodeWriteTrx {
      * {@inheritDoc}
      */
     @Override
-    public INode getNode() {
+    public ITreeData getNode() {
         return mDelegate.getNode();
     }
 

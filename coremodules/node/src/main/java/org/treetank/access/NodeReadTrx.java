@@ -29,21 +29,21 @@ package org.treetank.access;
 
 import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkState;
-import static org.treetank.node.IConstants.NULL_NODE;
+import static org.treetank.data.IConstants.NULL_NODE;
 
 import javax.xml.namespace.QName;
 
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.IBucketReadTrx;
+import org.treetank.data.ElementNode;
+import org.treetank.data.IConstants;
+import org.treetank.data.NodeMetaPageFactory;
+import org.treetank.data.NodeMetaPageFactory.MetaValue;
+import org.treetank.data.interfaces.ITreeData;
+import org.treetank.data.interfaces.ITreeNameData;
+import org.treetank.data.interfaces.ITreeValData;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.node.ElementNode;
-import org.treetank.node.IConstants;
-import org.treetank.node.NodeMetaPageFactory;
-import org.treetank.node.NodeMetaPageFactory.MetaValue;
-import org.treetank.node.interfaces.INameNode;
-import org.treetank.node.interfaces.INode;
-import org.treetank.node.interfaces.IValNode;
 
 /**
  * <h1>NodeReadTrx</h1>
@@ -59,7 +59,7 @@ public class NodeReadTrx implements INodeReadTrx {
     protected IBucketReadTrx mPageReadTrx;
 
     /** Strong reference to currently selected node. */
-    private INode mCurrentNode;
+    private ITreeData mCurrentNode;
 
     /**
      * Constructor.
@@ -72,7 +72,7 @@ public class NodeReadTrx implements INodeReadTrx {
      */
     public NodeReadTrx(final IBucketReadTrx pPageTrx) throws TTException {
         mPageReadTrx = pPageTrx;
-        mCurrentNode = (org.treetank.node.interfaces.INode)mPageReadTrx.getData(IConstants.ROOT_NODE);
+        mCurrentNode = (org.treetank.data.interfaces.ITreeData)mPageReadTrx.getData(IConstants.ROOT_NODE);
     }
 
     /**
@@ -87,8 +87,8 @@ public class NodeReadTrx implements INodeReadTrx {
             return false;
         } else {
             // Remember old node and fetch new one.
-            final INode oldNode = mCurrentNode;
-            mCurrentNode = (org.treetank.node.interfaces.INode)mPageReadTrx.getData(pNodeKey);
+            final ITreeData oldNode = mCurrentNode;
+            mCurrentNode = (org.treetank.data.interfaces.ITreeData)mPageReadTrx.getData(pNodeKey);
 
             if (mCurrentNode == null) {
                 mCurrentNode = oldNode;
@@ -133,8 +133,8 @@ public class NodeReadTrx implements INodeReadTrx {
     public final String getValueOfCurrentNode() {
         checkState(!mPageReadTrx.isClosed(), "Transaction is already closed.");
         String returnVal;
-        if (mCurrentNode instanceof IValNode) {
-            returnVal = new String(((IValNode)mCurrentNode).getRawValue());
+        if (mCurrentNode instanceof ITreeValData) {
+            returnVal = new String(((ITreeValData)mCurrentNode).getRawValue());
         } else {
             returnVal = "";
         }
@@ -149,9 +149,9 @@ public class NodeReadTrx implements INodeReadTrx {
         checkState(!mPageReadTrx.isClosed(), "Transaction is already closed.");
         String name = "";
         String uri = "";
-        if (mCurrentNode instanceof INameNode) {
-            name = nameForKey(((INameNode)mCurrentNode).getNameKey());
-            uri = nameForKey(((INameNode)mCurrentNode).getURIKey());
+        if (mCurrentNode instanceof ITreeNameData) {
+            name = nameForKey(((ITreeNameData)mCurrentNode).getNameKey());
+            uri = nameForKey(((ITreeNameData)mCurrentNode).getURIKey());
         }
         return buildQName(uri, name);
     }
@@ -220,7 +220,7 @@ public class NodeReadTrx implements INodeReadTrx {
      * 
      * @return The current node.
      */
-    protected final INode getCurrentNode() {
+    protected final ITreeData getCurrentNode() {
         return mCurrentNode;
     }
 
@@ -230,7 +230,7 @@ public class NodeReadTrx implements INodeReadTrx {
      * @param paramCurrentNode
      *            The current node to set.
      */
-    protected final void setCurrentNode(final INode paramCurrentNode) {
+    protected final void setCurrentNode(final ITreeData paramCurrentNode) {
         checkState(!mPageReadTrx.isClosed(), "Transaction is already closed.");
         mCurrentNode = paramCurrentNode;
     }
@@ -239,7 +239,7 @@ public class NodeReadTrx implements INodeReadTrx {
      * {@inheritDoc}
      */
     @Override
-    public final INode getNode() {
+    public final ITreeData getNode() {
         checkState(!mPageReadTrx.isClosed(), "Transaction is already closed.");
         return mCurrentNode;
     }

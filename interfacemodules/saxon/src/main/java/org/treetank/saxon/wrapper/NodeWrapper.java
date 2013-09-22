@@ -27,13 +27,13 @@
 
 package org.treetank.saxon.wrapper;
 
-import static org.treetank.node.IConstants.ATTRIBUTE;
-import static org.treetank.node.IConstants.COMMENT;
-import static org.treetank.node.IConstants.ELEMENT;
-import static org.treetank.node.IConstants.NAMESPACE;
-import static org.treetank.node.IConstants.PROCESSING;
-import static org.treetank.node.IConstants.ROOT;
-import static org.treetank.node.IConstants.TEXT;
+import static org.treetank.data.IConstants.ATTRIBUTE;
+import static org.treetank.data.IConstants.COMMENT;
+import static org.treetank.data.IConstants.ELEMENT;
+import static org.treetank.data.IConstants.NAMESPACE;
+import static org.treetank.data.IConstants.PROCESSING;
+import static org.treetank.data.IConstants.ROOT;
+import static org.treetank.data.IConstants.TEXT;
 
 import javax.xml.namespace.QName;
 
@@ -84,29 +84,29 @@ import org.treetank.axis.ParentAxis;
 import org.treetank.axis.PrecedingAxis;
 import org.treetank.axis.PrecedingSiblingAxis;
 import org.treetank.axis.filter.TextFilter;
+import org.treetank.data.ElementNode;
+import org.treetank.data.IConstants;
+import org.treetank.data.interfaces.ITreeData;
+import org.treetank.data.interfaces.ITreeStructData;
 import org.treetank.exception.TTException;
-import org.treetank.node.ElementNode;
-import org.treetank.node.IConstants;
-import org.treetank.node.interfaces.INode;
-import org.treetank.node.interfaces.IStructNode;
 
 /**
  * <h1>NodeWrapper</h1>
  * 
  * <p>
- * Wraps a Treetank node into Saxon's internal representation of a node. It therefore implements Saxon's core
+ * Wraps a Treetank treeData into Saxon's internal representation of a treeData. It therefore implements Saxon's core
  * interface NodeInfo as well as two others:
  * </p>
  * 
  * <dl>
  * <dt>NodeInfo</dt>
- * <dd>The NodeInfo interface represents a node in Saxon's implementation of the XPath 2.0 data model.</dd>
+ * <dd>The NodeInfo interface represents a treeData in Saxon's implementation of the XPath 2.0 data model.</dd>
  * <dt>VirtualNode</dt>
  * <dd>This interface is implemented by NodeInfo implementations that act as wrappers on some underlying tree.
- * It provides a method to access the real node underlying the virtual node, for use by applications that need
+ * It provides a method to access the real treeData underlying the virtual treeData, for use by applications that need
  * to drill down to the underlying data.</dd>
  * <dt>SiblingCountingNode</dt>
- * <dd>Interface that extends NodeInfo by providing a method to get the position of a node relative to its
+ * <dd>Interface that extends NodeInfo by providing a method to get the position of a treeData relative to its
  * siblings.</dd>
  * </dl>
  * 
@@ -115,7 +115,7 @@ import org.treetank.node.interfaces.IStructNode;
  */
 public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
 
-    /** Kind of current node. */
+    /** Kind of current treeData. */
     protected transient final int nodeKind;
 
     /** Document wrapper. */
@@ -126,17 +126,17 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
      */
     protected static final Logger LOGGER = LoggerFactory.getLogger(NodeWrapper.class);
 
-    /** Key of node. */
+    /** Key of treeData. */
     protected transient final long mKey;
 
-    /** Treetank node. */
-    protected transient final INode node;
+    /** Treetank treeData. */
+    protected transient final ITreeData treeData;
 
-    /** QName of current node. */
+    /** QName of current treeData. */
     protected transient final QName qName;
 
     /**
-     * A node in the XML parse tree. Wrap a Treetank node.
+     * A treeData in the XML parse tree. Wrap a Treetank treeData.
      * 
      * @param pDocWrapper
      *            Document wrapper
@@ -153,7 +153,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
         rtx.moveTo(pNodekeyToStart);
         this.nodeKind = rtx.getNode().getKind();
         this.mKey = rtx.getNode().getDataKey();
-        this.node = rtx.getNode();
+        this.treeData = rtx.getNode();
 
         if (nodeKind == ELEMENT || nodeKind == ATTRIBUTE) {
             this.qName = rtx.getQNameOfCurrentNode();
@@ -210,7 +210,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
     }
 
     /**
-     * Copy this node to a given outputter (deep copy).
+     * Copy this treeData to a given outputter (deep copy).
      * 
      * @see net.sf.saxon.om.NodeInfo#copy(Receiver, int, int)
      */
@@ -257,7 +257,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
             baseURI = node.getAttributeValue(StandardNames.XML_BASE);
 
             if (baseURI == null) {
-                // Search for baseURI in parent node (xml:base="").
+                // Search for baseURI in parent treeData (xml:base="").
                 node = node.getParent();
             } else {
                 break;
@@ -447,7 +447,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
             break;
         default:
             /*
-             * Change nothing, return empty String in case of a node which isn't
+             * Change nothing, return empty String in case of a treeData which isn't
              * an element or attribute.
              */
         }
@@ -509,7 +509,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
     /**
      * Filter text nodes.
      * 
-     * @return concatenated String of text node values.
+     * @return concatenated String of text treeData values.
      */
     private String expandString() {
         final FastStringBuffer fsb = new FastStringBuffer(FastStringBuffer.SMALL);
@@ -584,7 +584,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
         boolean hasChildNodes = false;
         try {
             final INodeReadTrx rtx = createRtxAndMove();
-            if (((IStructNode)rtx.getNode()).getChildCount() > 0) {
+            if (((ITreeStructData)rtx.getNode()).getChildCount() > 0) {
                 hasChildNodes = true;
             }
             rtx.close();
@@ -794,7 +794,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
      */
     @Override
     public Object getUnderlyingNode() {
-        return node;
+        return treeData;
     }
 
     /**
@@ -805,8 +805,8 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
         int index = 0;
         try {
             final INodeReadTrx rtx = createRtxAndMove();
-            while (((IStructNode)rtx.getNode()).hasLeftSibling()) {
-                rtx.moveTo(((IStructNode)rtx.getNode()).getLeftSiblingKey());
+            while (((ITreeStructData)rtx.getNode()).hasLeftSibling()) {
+                rtx.moveTo(((ITreeStructData)rtx.getNode()).getLeftSiblingKey());
                 index++;
             }
             rtx.close();
@@ -824,10 +824,10 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
     }
 
     /**
-     * Treat a node value of null as an empty string.
+     * Treat a treeData value of null as an empty string.
      * 
      * @param s
-     *            The node value.
+     *            The treeData value.
      * @return a zero-length string if s is null, otherwise s.
      */
     private static String emptyIfNull(final String s) {
@@ -890,7 +890,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
     @Override
     public String getAttributeValue(String arg0, String arg1) {
         if (nodeKind == ELEMENT) {
-            final int count = ((ElementNode)node).getAttributeCount();
+            final int count = ((ElementNode)treeData).getAttributeCount();
 
             if (count == 0) {
                 return null;
@@ -899,7 +899,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
                 try {
                     final INodeReadTrx rtx = createRtxAndMove();
                     for (int i = 0; i < count; i++) {
-                        rtx.moveTo(((ElementNode)node).getAttributeKey(i));
+                        rtx.moveTo(((ElementNode)treeData).getAttributeKey(i));
                         QName name = rtx.getQNameOfCurrentNode();
                         if (name.getNamespaceURI().equals(arg0) && name.getLocalPart().equals(arg1)) {
                             rtx.close();
@@ -921,7 +921,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
     public NamespaceBinding[] getDeclaredNamespaces(NamespaceBinding[] arg0) {
 
         if (nodeKind == ELEMENT) {
-            final int count = ((ElementNode)node).getNamespaceCount();
+            final int count = ((ElementNode)treeData).getNamespaceCount();
 
             if (count == 0) {
                 return new NamespaceBinding[0];
@@ -931,7 +931,7 @@ public class NodeWrapper implements NodeInfo, VirtualNode, SiblingCountingNode {
                 try {
                     final INodeReadTrx rtx = createRtxAndMove();
                     for (int i = 0; i < count; i++) {
-                        rtx.moveTo(((ElementNode)node).getNamespaceKey(i));
+                        rtx.moveTo(((ElementNode)treeData).getNamespaceKey(i));
                         final String prefix = getPrefix();
                         final String uri = getURI();
                         rtx.moveTo(mKey);

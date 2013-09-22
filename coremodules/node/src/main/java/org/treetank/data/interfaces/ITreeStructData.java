@@ -25,74 +25,95 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.node.interfaces;
+package org.treetank.data.interfaces;
 
 /**
- * <h1>IItem</h1>
- * <p>
- * Common interface for all item kinds. An item can be a node or an atomic value.
- * </p>
+ * Class to denote that an {@link ITreeData} has structural attributes. That means
+ * that a class can have pointers to neighbours.
  */
-public interface INode extends org.treetank.api.IData {
+public interface ITreeStructData extends ITreeData {
 
     /**
-     * Gets key of the context item's parent.
+     * Declares, whether the item has a first child.
      * 
-     * @return parent key
+     * @return true, if item has a first child, otherwise false
      */
-    long getParentKey();
+    boolean hasFirstChild();
 
     /**
-     * Declares, whether the item has a parent.
+     * Declares, whether the item has a left sibling.
      * 
-     * @return true, if item has a parent
+     * @return true, if item has a left sibling, otherwise false
      */
-    boolean hasParent();
+    boolean hasLeftSibling();
 
     /**
-     * Gets the kind of the item (atomic value, element node, attribute
-     * node....).
+     * Declares, whether the item has a right sibling.
      * 
-     * @return kind of item
+     * @return true, if item has a right sibling, otherwise false
      */
-    int getKind();
+    boolean hasRightSibling();
 
     /**
-     * Gets value type of the item.
+     * Gets the number of children of the item.
      * 
-     * @return value type
+     * @return item's number of children
      */
-    int getTypeKey();
+    long getChildCount();
 
     /**
-     * Setting the parent key.
+     * Gets key of the context item's first child.
+     * 
+     * @return first child's key
+     */
+    long getFirstChildKey();
+
+    /**
+     * Gets key of the context item's left sibling.
+     * 
+     * @return left sibling key
+     */
+    long getLeftSiblingKey();
+
+    /**
+     * Gets key of the context item's right sibling.
+     * 
+     * @return right sibling key
+     */
+    long getRightSiblingKey();
+
+    /**
+     * Setting the right sibling key to this node.
      * 
      * @param pNodeKey
-     *            the parent to be set.
+     *            the new key to be set.
      */
-    void setParentKey(long pNodeKey);
+    void setRightSiblingKey(long pNodeKey);
 
     /**
-     * Setting the type key.
+     * Setting the left sibling key to this node.
      * 
-     * @param pTypeKey
-     *            the type to be set.
+     * @param pNodeKey
+     *            the new key to be set.
      */
-    void setTypeKey(int pTypeKey);
+    void setLeftSiblingKey(long pNodeKey);
 
     /**
-     * Getting the persisted hash value for this node.
+     * Setting the first child sibling key to this node.
      * 
-     * @return the hash stored in this node
+     * @param pNodeKey
+     *            the new key to be set.
      */
-    long getHash();
+    void setFirstChildKey(long pNodeKey);
 
     /**
-     * Setting the hash of this node including substructure.
+     * Decrementing the child count.
      * 
-     * @param pHash
-     *            to be set
      */
-    void setHash(long pHash);
+    void decrementChildCount();
 
+    /**
+     * Incrementing the child count.
+     */
+    void incrementChildCount();
 }

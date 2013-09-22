@@ -20,13 +20,13 @@ import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.AxisTest;
+import org.treetank.data.AtomicValue;
+import org.treetank.data.Type;
+import org.treetank.data.interfaces.ITreeValData;
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.exception.TTXPathException;
-import org.treetank.node.AtomicValue;
-import org.treetank.node.Type;
-import org.treetank.node.interfaces.IValNode;
 import org.treetank.service.xml.xpath.XPathAxis;
 import org.treetank.service.xml.xpath.XPathError;
 import org.treetank.service.xml.xpath.axis.VariableAxis;
@@ -73,7 +73,7 @@ public class ExprTest {
 
         for (int i = 0; i < pExprChecker.length; i++) {
             pExprChecker[i].checkExpr(holder.getNRtx());
-            holder.getNRtx().moveTo(org.treetank.node.IConstants.ROOT_NODE);
+            holder.getNRtx().moveTo(org.treetank.data.IConstants.ROOT_NODE);
         }
 
     }
@@ -99,25 +99,25 @@ public class ExprTest {
 
                             AbsAxis axis1 = new AndExpr(pRtx, trueLit1, trueLit2);
                             assertEquals(true, axis1.hasNext());
-                            assertEquals(true, Boolean.parseBoolean(new String(((IValNode)axis1.getNode())
+                            assertEquals(true, Boolean.parseBoolean(new String(((ITreeValData)axis1.getNode())
                                 .getRawValue())));
                             assertEquals(false, axis1.hasNext());
 
                             AbsAxis axis2 = new AndExpr(pRtx, trueLit1, falseLit1);
                             assertEquals(true, axis2.hasNext());
-                            assertEquals(false, Boolean.parseBoolean(new String(((IValNode)axis2.getNode())
+                            assertEquals(false, Boolean.parseBoolean(new String(((ITreeValData)axis2.getNode())
                                 .getRawValue())));
                             assertEquals(false, axis2.hasNext());
 
                             AbsAxis axis3 = new AndExpr(pRtx, falseLit1, trueLit1);
                             assertEquals(true, axis3.hasNext());
-                            assertEquals(false, Boolean.parseBoolean(new String(((IValNode)axis3.getNode())
+                            assertEquals(false, Boolean.parseBoolean(new String(((ITreeValData)axis3.getNode())
                                 .getRawValue())));
                             assertEquals(false, axis3.hasNext());
 
                             AbsAxis axis4 = new AndExpr(pRtx, falseLit1, falseLit2);
                             assertEquals(true, axis4.hasNext());
-                            assertEquals(false, Boolean.parseBoolean(new String(((IValNode)axis4.getNode())
+                            assertEquals(false, Boolean.parseBoolean(new String(((ITreeValData)axis4.getNode())
                                 .getRawValue())));
                             assertEquals(false, axis4.hasNext());
 
@@ -132,32 +132,32 @@ public class ExprTest {
 
                             final AbsAxis axis1 = new XPathAxis(pRtx, "text() and node()");
                             assertEquals(true, axis1.hasNext());
-                            assertEquals(true, Boolean.parseBoolean(new String(((IValNode)axis1.getNode())
+                            assertEquals(true, Boolean.parseBoolean(new String(((ITreeValData)axis1.getNode())
                                 .getRawValue())));
                             assertEquals(false, axis1.hasNext());
 
                             final AbsAxis axis2 = new XPathAxis(pRtx, "comment() and node()");
                             assertEquals(true, axis2.hasNext());
-                            assertEquals(false, Boolean.parseBoolean(new String(((IValNode)axis2.getNode())
+                            assertEquals(false, Boolean.parseBoolean(new String(((ITreeValData)axis2.getNode())
                                 .getRawValue())));
                             assertEquals(false, axis2.hasNext());
 
                             final AbsAxis axis3 = new XPathAxis(pRtx, "1 eq 1 and 2 eq 2");
                             assertEquals(true, axis3.hasNext());
-                            assertEquals(true, Boolean.parseBoolean(new String(((IValNode)axis3.getNode())
+                            assertEquals(true, Boolean.parseBoolean(new String(((ITreeValData)axis3.getNode())
                                 .getRawValue())));
                             assertEquals(false, axis3.hasNext());
 
                             final AbsAxis axis4 = new XPathAxis(pRtx, "1 eq 1 and 2 eq 3");
                             assertEquals(true, axis4.hasNext());
-                            assertEquals(false, Boolean.parseBoolean(new String(((IValNode)axis4.getNode())
+                            assertEquals(false, Boolean.parseBoolean(new String(((ITreeValData)axis4.getNode())
                                 .getRawValue())));
                             assertEquals(false, axis4.hasNext());
 
                             // is never evaluated.
                             final AbsAxis axis5 = new XPathAxis(pRtx, "1 eq 2 and (3 idiv 0 = 1)");
                             assertEquals(true, axis5.hasNext());
-                            assertEquals(false, Boolean.parseBoolean(new String(((IValNode)axis5.getNode())
+                            assertEquals(false, Boolean.parseBoolean(new String(((ITreeValData)axis5.getNode())
                                 .getRawValue())));
                             assertEquals(false, axis5.hasNext());
 
@@ -180,7 +180,7 @@ public class ExprTest {
                             assertEquals(true, axis1.hasNext());
                             assertEquals(NamePageHash.generateHashForString("xs:boolean"), axis1.getNode()
                                 .getTypeKey());
-                            assertEquals(true, Boolean.parseBoolean(new String(((IValNode)axis1.getNode())
+                            assertEquals(true, Boolean.parseBoolean(new String(((ITreeValData)axis1.getNode())
                                 .getRawValue())));
                             assertEquals(false, axis1.hasNext());
 
@@ -197,7 +197,7 @@ public class ExprTest {
                             assertEquals(true, axis4.hasNext());
                             assertEquals(NamePageHash.generateHashForString("xs:boolean"), axis4.getNode()
                                 .getTypeKey());
-                            assertEquals(true, Boolean.parseBoolean(new String(((IValNode)axis4.getNode())
+                            assertEquals(true, Boolean.parseBoolean(new String(((ITreeValData)axis4.getNode())
                                 .getRawValue())));
                             assertEquals(false, axis4.hasNext());
 
@@ -209,19 +209,19 @@ public class ExprTest {
                         public void checkExpr(INodeReadTrx pRtx) throws TTXPathException, TTIOException {
                             final AbsAxis axis1 = new XPathAxis(pRtx, "1.0 = 1.0");
                             assertEquals(true, axis1.hasNext());
-                            assertEquals(true, Boolean.parseBoolean(new String(((IValNode)axis1.getNode())
+                            assertEquals(true, Boolean.parseBoolean(new String(((ITreeValData)axis1.getNode())
                                 .getRawValue())));
                             assertEquals(false, axis1.hasNext());
 
                             final AbsAxis axis2 = new XPathAxis(pRtx, "(1, 2, 3) < (2, 3)");
                             assertEquals(true, axis2.hasNext());
-                            assertEquals(true, Boolean.parseBoolean(new String(((IValNode)axis2.getNode())
+                            assertEquals(true, Boolean.parseBoolean(new String(((ITreeValData)axis2.getNode())
                                 .getRawValue())));
                             assertEquals(false, axis2.hasNext());
 
                             final AbsAxis axis3 = new XPathAxis(pRtx, "(1, 2, 3) > (3, 4)");
                             assertEquals(true, axis3.hasNext());
-                            assertEquals(false, Boolean.parseBoolean(new String(((IValNode)axis3.getNode())
+                            assertEquals(false, Boolean.parseBoolean(new String(((ITreeValData)axis3.getNode())
                                 .getRawValue())));
                             assertEquals(false, axis3.hasNext());
 
@@ -234,14 +234,14 @@ public class ExprTest {
                             final AbsAxis axis1 =
                                 new XPathAxis(pRtx, "every $child in child::node()" + "satisfies $child/@i");
                             assertEquals(true, axis1.hasNext());
-                            assertEquals(true, Boolean.parseBoolean(new String(((IValNode)axis1.getNode())
+                            assertEquals(true, Boolean.parseBoolean(new String(((ITreeValData)axis1.getNode())
                                 .getRawValue())));
                             assertEquals(false, axis1.hasNext());
 
                             final AbsAxis axis2 =
                                 new XPathAxis(pRtx, "every $child in child::node()" + "satisfies $child/@abc");
                             assertEquals(true, axis2.hasNext());
-                            assertEquals(false, Boolean.parseBoolean(new String(((IValNode)axis2.getNode())
+                            assertEquals(false, Boolean.parseBoolean(new String(((ITreeValData)axis2.getNode())
                                 .getRawValue())));
                             assertEquals(false, axis2.hasNext());
 
@@ -250,7 +250,7 @@ public class ExprTest {
                                 new XPathAxis(pRtx, "every $child in child::element()"
                                     + " satisfies $child/attribute::attribute()");
                             assertEquals(true, axis3.hasNext());
-                            assertEquals(false, Boolean.parseBoolean(new String(((IValNode)axis3.getNode())
+                            assertEquals(false, Boolean.parseBoolean(new String(((ITreeValData)axis3.getNode())
                                 .getRawValue())));
                             assertEquals(false, axis3.hasNext());
 
@@ -259,7 +259,7 @@ public class ExprTest {
                                 new XPathAxis(pRtx,
                                     "every $child in child::element() satisfies $child/child::c");
                             assertEquals(true, axis4.hasNext());
-                            assertEquals(true, Boolean.parseBoolean(new String(((IValNode)axis4.getNode())
+                            assertEquals(true, Boolean.parseBoolean(new String(((ITreeValData)axis4.getNode())
                                 .getRawValue())));
                             assertEquals(false, axis4.hasNext());
 
@@ -342,13 +342,13 @@ public class ExprTest {
                                 new XPathAxis(pRtx, "for $i in (10, 20), $j in (1, 2) return ($i + $j)");
                             assertEquals(true, axis.hasNext());
 
-                            assertEquals("11.0", new String(((IValNode)axis.getNode()).getRawValue()));
+                            assertEquals("11.0", new String(((ITreeValData)axis.getNode()).getRawValue()));
                             assertEquals(true, axis.hasNext());
-                            assertEquals("12.0", new String(((IValNode)axis.getNode()).getRawValue()));
+                            assertEquals("12.0", new String(((ITreeValData)axis.getNode()).getRawValue()));
                             assertEquals(true, axis.hasNext());
-                            assertEquals("21.0", new String(((IValNode)axis.getNode()).getRawValue()));
+                            assertEquals("21.0", new String(((ITreeValData)axis.getNode()).getRawValue()));
                             assertEquals(true, axis.hasNext());
-                            assertEquals("22.0", new String(((IValNode)axis.getNode()).getRawValue()));
+                            assertEquals("22.0", new String(((ITreeValData)axis.getNode()).getRawValue()));
                             assertEquals(false, axis.hasNext());
 
                         }
@@ -361,38 +361,38 @@ public class ExprTest {
 
                             final AbsAxis axis1 = new XPathAxis(pRtx, "fn:count(text())");
                             assertEquals(true, axis1.hasNext());
-                            assertEquals(3, Integer.parseInt(new String(((IValNode)axis1.getNode())
+                            assertEquals(3, Integer.parseInt(new String(((ITreeValData)axis1.getNode())
                                 .getRawValue())));
                             assertEquals(false, axis1.hasNext());
 
                             final AbsAxis axis2 = new XPathAxis(pRtx, "fn:count(//node())");
                             assertEquals(true, axis2.hasNext());
-                            assertEquals(10, Integer.parseInt(new String(((IValNode)axis2.getNode())
+                            assertEquals(10, Integer.parseInt(new String(((ITreeValData)axis2.getNode())
                                 .getRawValue())));
                             assertEquals(false, axis2.hasNext());
 
                             final AbsAxis axis3 = new XPathAxis(pRtx, "fn:string(//node())");
                             assertEquals(true, axis3.hasNext());
                             assertEquals("oops1 foo oops2 bar oops3 oops1 foo oops2 bar oops3 foo bar",
-                                new String(((IValNode)axis3.getNode()).getRawValue()));
+                                new String(((ITreeValData)axis3.getNode()).getRawValue()));
                             ;
                             assertEquals(false, axis3.hasNext());
 
                             final AbsAxis axis4 = new XPathAxis(pRtx, "fn:string()");
                             assertEquals(true, axis4.hasNext());
-                            assertEquals("oops1 foo oops2 bar oops3", new String(((IValNode)axis4.getNode())
+                            assertEquals("oops1 foo oops2 bar oops3", new String(((ITreeValData)axis4.getNode())
                                 .getRawValue()));
                             assertEquals(false, axis4.hasNext());
 
                             final AbsAxis axis5 = new XPathAxis(pRtx, "fn:string(./attribute::attribute())");
                             assertEquals(true, axis5.hasNext());
-                            assertEquals("j", new String(((IValNode)axis5.getNode()).getRawValue()));
+                            assertEquals("j", new String(((ITreeValData)axis5.getNode()).getRawValue()));
                             assertEquals(false, axis5.hasNext());
 
                             pRtx.moveToAttribute(0);
                             final AbsAxis axis6 = new XPathAxis(pRtx, "fn:string()");
                             assertEquals(true, axis6.hasNext());
-                            assertEquals("j", new String(((IValNode)axis6.getNode()).getRawValue()));
+                            assertEquals("j", new String(((ITreeValData)axis6.getNode()).getRawValue()));
                             assertEquals(false, axis6.hasNext());
 
                         }
@@ -428,7 +428,7 @@ public class ExprTest {
                             assertEquals(true, axis1.hasNext());
                             assertEquals(NamePageHash.generateHashForString("xs:boolean"), axis1.getNode()
                                 .getTypeKey());
-                            assertEquals(true, Boolean.parseBoolean(new String(((IValNode)axis1.getNode())
+                            assertEquals(true, Boolean.parseBoolean(new String(((ITreeValData)axis1.getNode())
                                 .getRawValue())));
                             assertEquals(false, axis1.hasNext());
 
@@ -436,7 +436,7 @@ public class ExprTest {
                             assertEquals(true, axis2.hasNext());
                             assertEquals(NamePageHash.generateHashForString("xs:boolean"), axis2.getNode()
                                 .getTypeKey());
-                            assertEquals(false, Boolean.parseBoolean(new String(((IValNode)axis2.getNode())
+                            assertEquals(false, Boolean.parseBoolean(new String(((ITreeValData)axis2.getNode())
                                 .getRawValue())));
                             assertEquals(false, axis2.hasNext());
 
@@ -444,7 +444,7 @@ public class ExprTest {
                             assertEquals(true, axis3.hasNext());
                             assertEquals(NamePageHash.generateHashForString("xs:boolean"), axis3.getNode()
                                 .getTypeKey());
-                            assertEquals(true, Boolean.parseBoolean(new String(((IValNode)axis3.getNode())
+                            assertEquals(true, Boolean.parseBoolean(new String(((ITreeValData)axis3.getNode())
                                 .getRawValue())));
                             assertEquals(false, axis3.hasNext());
 
@@ -452,7 +452,7 @@ public class ExprTest {
                             assertEquals(true, axis4.hasNext());
                             assertEquals(NamePageHash.generateHashForString("xs:boolean"), axis4.getNode()
                                 .getTypeKey());
-                            assertEquals(true, Boolean.parseBoolean(new String(((IValNode)axis4.getNode())
+                            assertEquals(true, Boolean.parseBoolean(new String(((ITreeValData)axis4.getNode())
                                 .getRawValue())));
                             assertEquals(false, axis4.hasNext());
 
@@ -460,7 +460,7 @@ public class ExprTest {
                             assertEquals(true, axis5.hasNext());
                             assertEquals(NamePageHash.generateHashForString("xs:boolean"), axis5.getNode()
                                 .getTypeKey());
-                            assertEquals(true, Boolean.parseBoolean(new String(((IValNode)axis5.getNode())
+                            assertEquals(true, Boolean.parseBoolean(new String(((ITreeValData)axis5.getNode())
                                 .getRawValue())));
                             assertEquals(false, axis5.hasNext());
 
@@ -523,7 +523,7 @@ public class ExprTest {
                             assertEquals(key1, axis1.getNode().getDataKey());
                             assertEquals(NamePageHash.generateHashForString("xs:boolean"), axis1.getNode()
                                 .getTypeKey());
-                            assertEquals(false, Boolean.parseBoolean(new String(((IValNode)axis1.getNode())
+                            assertEquals(false, Boolean.parseBoolean(new String(((ITreeValData)axis1.getNode())
                                 .getRawValue())));
                             assertEquals(false, axis1.hasNext());
 
@@ -532,7 +532,7 @@ public class ExprTest {
                             assertEquals(key2, axis2.getNode().getDataKey());
                             assertEquals(NamePageHash.generateHashForString("xs:integer"), axis2.getNode()
                                 .getTypeKey());
-                            assertEquals(14, Integer.parseInt(new String(((IValNode)axis2.getNode())
+                            assertEquals(14, Integer.parseInt(new String(((ITreeValData)axis2.getNode())
                                 .getRawValue())));
                             assertEquals(false, axis2.hasNext());
 
@@ -552,25 +552,25 @@ public class ExprTest {
 
                             AbsAxis axis1 = new OrExpr(pRtx, trueLit1, trueLit2);
                             assertEquals(true, axis1.hasNext());
-                            assertEquals(true, Boolean.parseBoolean(new String(((IValNode)axis1.getNode())
+                            assertEquals(true, Boolean.parseBoolean(new String(((ITreeValData)axis1.getNode())
                                 .getRawValue())));
                             assertEquals(false, axis1.hasNext());
 
                             AbsAxis axis2 = new OrExpr(pRtx, trueLit1, falseLit1);
                             assertEquals(true, axis2.hasNext());
-                            assertEquals(true, Boolean.parseBoolean(new String(((IValNode)axis2.getNode())
+                            assertEquals(true, Boolean.parseBoolean(new String(((ITreeValData)axis2.getNode())
                                 .getRawValue())));
                             assertEquals(false, axis2.hasNext());
 
                             AbsAxis axis3 = new OrExpr(pRtx, falseLit1, trueLit1);
                             assertEquals(true, axis3.hasNext());
-                            assertEquals(true, Boolean.parseBoolean(new String(((IValNode)axis3.getNode())
+                            assertEquals(true, Boolean.parseBoolean(new String(((ITreeValData)axis3.getNode())
                                 .getRawValue())));
                             assertEquals(false, axis3.hasNext());
 
                             AbsAxis axis4 = new OrExpr(pRtx, falseLit1, falseLit2);
                             assertEquals(true, axis4.hasNext());
-                            assertEquals(false, Boolean.parseBoolean(new String(((IValNode)axis4.getNode())
+                            assertEquals(false, Boolean.parseBoolean(new String(((ITreeValData)axis4.getNode())
                                 .getRawValue())));
                             assertEquals(false, axis4.hasNext());
 
@@ -584,32 +584,32 @@ public class ExprTest {
 
                             final AbsAxis axis1 = new XPathAxis(pRtx, "text() or node()");
                             assertEquals(true, axis1.hasNext());
-                            assertEquals(true, Boolean.parseBoolean(new String(((IValNode)axis1.getNode())
+                            assertEquals(true, Boolean.parseBoolean(new String(((ITreeValData)axis1.getNode())
                                 .getRawValue())));
                             assertEquals(false, axis1.hasNext());
 
                             final AbsAxis axis2 = new XPathAxis(pRtx, "comment() or node()");
                             assertEquals(true, axis2.hasNext());
-                            assertEquals(true, Boolean.parseBoolean(new String(((IValNode)axis2.getNode())
+                            assertEquals(true, Boolean.parseBoolean(new String(((ITreeValData)axis2.getNode())
                                 .getRawValue())));
                             assertEquals(false, axis2.hasNext());
 
                             final AbsAxis axis3 = new XPathAxis(pRtx, "1 eq 1 or 2 eq 2");
                             assertEquals(true, axis3.hasNext());
-                            assertEquals(true, Boolean.parseBoolean(new String(((IValNode)axis3.getNode())
+                            assertEquals(true, Boolean.parseBoolean(new String(((ITreeValData)axis3.getNode())
                                 .getRawValue())));
                             assertEquals(false, axis3.hasNext());
 
                             final AbsAxis axis4 = new XPathAxis(pRtx, "1 eq 1 or 2 eq 3");
                             assertEquals(true, axis4.hasNext());
-                            assertEquals(true, Boolean.parseBoolean(new String(((IValNode)axis4.getNode())
+                            assertEquals(true, Boolean.parseBoolean(new String(((ITreeValData)axis4.getNode())
                                 .getRawValue())));
                             assertEquals(false, axis4.hasNext());
 
                             final AbsAxis axis5 = new XPathAxis(pRtx, "1 eq 2 or (3 idiv 0 = 1)");
                             try {
                                 assertEquals(true, axis5.hasNext());
-                                assertEquals(false, Boolean.parseBoolean(new String(((IValNode)axis5
+                                assertEquals(false, Boolean.parseBoolean(new String(((ITreeValData)axis5
                                     .getNode()).getRawValue())));
                                 assertEquals(false, axis5.hasNext());
                                 Assert.fail("Exprected XPathError");
@@ -619,7 +619,7 @@ public class ExprTest {
 
                             final AbsAxis axis6 = new XPathAxis(pRtx, "1 eq 1 or (3 idiv 0 = 1)");
                             assertEquals(true, axis6.hasNext());
-                            assertEquals(true, Boolean.parseBoolean(new String(((IValNode)axis6.getNode())
+                            assertEquals(true, Boolean.parseBoolean(new String(((ITreeValData)axis6.getNode())
                                 .getRawValue())));
 
                         }
@@ -632,14 +632,14 @@ public class ExprTest {
                             final AbsAxis axis1 =
                                 new XPathAxis(pRtx, "some $child in child::node() satisfies $child/@i");
                             assertEquals(true, axis1.hasNext());
-                            assertEquals(true, Boolean.parseBoolean(new String(((IValNode)axis1.getNode())
+                            assertEquals(true, Boolean.parseBoolean(new String(((ITreeValData)axis1.getNode())
                                 .getRawValue())));
                             assertEquals(false, axis1.hasNext());
 
                             final AbsAxis axis2 =
                                 new XPathAxis(pRtx, "some $child in child::node() satisfies $child/@abc");
                             assertEquals(true, axis2.hasNext());
-                            assertEquals(false, Boolean.parseBoolean(new String(((IValNode)axis2.getNode())
+                            assertEquals(false, Boolean.parseBoolean(new String(((ITreeValData)axis2.getNode())
                                 .getRawValue())));
                             assertEquals(false, axis2.hasNext());
 
@@ -648,7 +648,7 @@ public class ExprTest {
                                 new XPathAxis(pRtx,
                                     "some $child in child::node() satisfies $child/attribute::attribute()");
                             assertEquals(true, axis3.hasNext());
-                            assertEquals(true, Boolean.parseBoolean(new String(((IValNode)axis3.getNode())
+                            assertEquals(true, Boolean.parseBoolean(new String(((ITreeValData)axis3.getNode())
                                 .getRawValue())));
                             assertEquals(false, axis3.hasNext());
                         }

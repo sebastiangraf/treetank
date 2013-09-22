@@ -30,7 +30,7 @@ package org.treetank.axis;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.treetank.node.AtomicValue;
+import org.treetank.data.AtomicValue;
 
 /**
  * <h1>ItemList</h1>

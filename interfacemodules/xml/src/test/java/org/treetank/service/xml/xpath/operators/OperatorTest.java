@@ -19,11 +19,11 @@ import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFact
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
+import org.treetank.data.AtomicValue;
+import org.treetank.data.Type;
+import org.treetank.data.interfaces.ITreeValData;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTXPathException;
-import org.treetank.node.AtomicValue;
-import org.treetank.node.Type;
-import org.treetank.node.interfaces.IValNode;
 import org.treetank.service.xml.xpath.XPathError;
 import org.treetank.service.xml.xpath.axis.SequenceAxis;
 import org.treetank.service.xml.xpath.expr.LiteralExpr;
@@ -94,7 +94,7 @@ public class OperatorTest {
                             assertEquals(true, axis.hasNext());
                             assertEquals(NamePageHash.generateHashForString("xs:double"), axis.getNode()
                                 .getTypeKey());
-                            assertEquals(Double.parseDouble(new String(((IValNode)axis.getNode())
+                            assertEquals(Double.parseDouble(new String(((ITreeValData)axis.getNode())
                                 .getRawValue())), 0.5);
                             assertEquals(false, axis.hasNext());
 
@@ -115,7 +115,7 @@ public class OperatorTest {
                             AbsObAxis axis = new AddOpAxis(pRtx, op1, op2);
 
                             assertEquals(true, axis.hasNext());
-                            assertEquals(3.0, Double.parseDouble(new String(((IValNode)axis.getNode())
+                            assertEquals(3.0, Double.parseDouble(new String(((ITreeValData)axis.getNode())
                                 .getRawValue())));
                             assertEquals(NamePageHash.generateHashForString("xs:double"), axis.getNode()
                                 .getTypeKey());
@@ -230,7 +230,7 @@ public class OperatorTest {
                             AbsObAxis axis = new DivOpAxis(pRtx, op1, op2);
 
                             assertEquals(true, axis.hasNext());
-                            assertEquals(0.5, Double.parseDouble(new String(((IValNode)axis.getNode())
+                            assertEquals(0.5, Double.parseDouble(new String(((ITreeValData)axis.getNode())
                                 .getRawValue())));
                             assertEquals(NamePageHash.generateHashForString("xs:double"), axis.getNode()
                                 .getTypeKey());
@@ -432,7 +432,7 @@ public class OperatorTest {
                             AbsObAxis axis = new ModOpAxis(pRtx, op1, op2);
 
                             assertEquals(true, axis.hasNext());
-                            assertEquals(Double.parseDouble(new String(((IValNode)axis.getNode())
+                            assertEquals(Double.parseDouble(new String(((ITreeValData)axis.getNode())
                                 .getRawValue())), 1.0);
                             assertEquals(NamePageHash.generateHashForString("xs:double"), op1.getNode()
                                 .getTypeKey());
@@ -529,7 +529,7 @@ public class OperatorTest {
                             AbsObAxis axis = new MulOpAxis(pRtx, op1, op2);
 
                             assertEquals(true, axis.hasNext());
-                            assertEquals(6.0, Double.parseDouble(new String(((IValNode)axis.getNode())
+                            assertEquals(6.0, Double.parseDouble(new String(((ITreeValData)axis.getNode())
                                 .getRawValue())));
                             assertEquals(NamePageHash.generateHashForString("xs:double"), axis.getNode()
                                 .getTypeKey());
@@ -640,7 +640,7 @@ public class OperatorTest {
                             AbsObAxis axis = new SubOpAxis(pRtx, op1, op2);
 
                             assertEquals(true, axis.hasNext());
-                            assertEquals(-1.0, Double.parseDouble(new String(((IValNode)axis.getNode())
+                            assertEquals(-1.0, Double.parseDouble(new String(((ITreeValData)axis.getNode())
                                 .getRawValue())));
                             assertEquals(NamePageHash.generateHashForString("xs:double"), axis.getNode()
                                 .getTypeKey());

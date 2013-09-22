@@ -67,8 +67,8 @@ public class ModuleFactory implements IModuleFactory {
             case "xml":
             case "saxon":
             case "jax-rx":
-                dataFacName = "org.treetank.node.TreeNodeFactory";
-                metaFacName = "org.treetank.node.NodeMetaPageFactory";
+                dataFacName = "org.treetank.data.TreeNodeFactory";
+                metaFacName = "org.treetank.data.NodeMetaPageFactory";
                 break;
             case "iscsi":
                 dataFacName = "org.treetank.data.BlockDataElementFactory";

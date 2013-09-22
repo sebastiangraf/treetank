@@ -27,9 +27,9 @@
 
 package org.treetank.service.xml.serialize;
 
-import static org.treetank.node.IConstants.ELEMENT;
-import static org.treetank.node.IConstants.ROOT;
-import static org.treetank.node.IConstants.TEXT;
+import static org.treetank.data.IConstants.ELEMENT;
+import static org.treetank.data.IConstants.ROOT;
+import static org.treetank.data.IConstants.TEXT;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,11 +48,11 @@ import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
+import org.treetank.data.ElementNode;
+import org.treetank.data.NodeMetaPageFactory;
+import org.treetank.data.TreeNodeFactory;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackend.IBackendFactory;
-import org.treetank.node.ElementNode;
-import org.treetank.node.NodeMetaPageFactory;
-import org.treetank.node.TreeNodeFactory;
 import org.treetank.revisioning.IRevisioning;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.DTDHandler;

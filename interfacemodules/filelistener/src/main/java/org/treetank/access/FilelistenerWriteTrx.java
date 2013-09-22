@@ -36,7 +36,10 @@ public class FilelistenerWriteTrx implements IFilelistenerWriteTrx {
     private final FilelistenerReadTrx mDelegate;
 
     /**
-     * {@inheritDoc}
+     * Create a transaction for storaging files within treetank.
+     * @param pPageTrx - treetank transaction
+     * @param pSession - treetank session
+     * @throws TTException
      */
     public FilelistenerWriteTrx(IBucketWriteTrx pPageTrx, ISession pSession) throws TTException {
         mSession = pSession;

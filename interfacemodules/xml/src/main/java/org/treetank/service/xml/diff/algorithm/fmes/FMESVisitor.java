@@ -31,12 +31,12 @@ import java.util.Map;
 import org.treetank.access.NodeReadTrx;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.ISession;
+import org.treetank.data.ElementNode;
+import org.treetank.data.TextNode;
+import org.treetank.data.interfaces.ITreeData;
+import org.treetank.data.interfaces.ITreeStructData;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.node.ElementNode;
-import org.treetank.node.TextNode;
-import org.treetank.node.interfaces.INode;
-import org.treetank.node.interfaces.IStructNode;
 
 /**
  * Initialize data structures.
@@ -50,10 +50,10 @@ public final class FMESVisitor {
     private final INodeReadTrx mRtx;
 
     /** Determines if nodes are in order. */
-    private final Map<INode, Boolean> mInOrder;
+    private final Map<ITreeData, Boolean> mInOrder;
 
     /** Descendant count per node. */
-    private final Map<INode, Long> mDescendants;
+    private final Map<ITreeData, Long> mDescendants;
 
     /**
      * Constructor.
@@ -67,8 +67,8 @@ public final class FMESVisitor {
      * @throws TTException
      *             if setting up treetank fails
      */
-    public FMESVisitor(final ISession paramSession, final Map<INode, Boolean> paramInOrder,
-        final Map<INode, Long> paramDescendants) throws TTException {
+    public FMESVisitor(final ISession paramSession, final Map<ITreeData, Boolean> paramInOrder,
+        final Map<ITreeData, Long> paramDescendants) throws TTException {
         assert paramSession != null;
         assert paramInOrder != null;
         assert paramDescendants != null;
@@ -104,9 +104,9 @@ public final class FMESVisitor {
      * Fill data structures.
      */
     private void fillDataStructures() {
-        final INode node = mRtx.getNode();
-        mInOrder.put(node, true);
-        mDescendants.put(node, 1L);
+        final ITreeData treeData = mRtx.getNode();
+        mInOrder.put(treeData, true);
+        mDescendants.put(treeData, 1L);
     }
 
     /**
@@ -117,12 +117,12 @@ public final class FMESVisitor {
     private void countDescendants() throws TTIOException {
         long descendants = 1;
         final long nodeKey = mRtx.getNode().getDataKey();
-        if (((IStructNode)mRtx.getNode()).hasFirstChild()) {
-            mRtx.moveTo(((IStructNode)mRtx.getNode()).getFirstChildKey());
+        if (((ITreeStructData)mRtx.getNode()).hasFirstChild()) {
+            mRtx.moveTo(((ITreeStructData)mRtx.getNode()).getFirstChildKey());
             do {
                 descendants += mDescendants.get(mRtx.getNode());
-            } while (((IStructNode)mRtx.getNode()).hasRightSibling()
-                && mRtx.moveTo(((IStructNode)mRtx.getNode()).getRightSiblingKey()));
+            } while (((ITreeStructData)mRtx.getNode()).hasRightSibling()
+                && mRtx.moveTo(((ITreeStructData)mRtx.getNode()).getRightSiblingKey()));
         }
         mRtx.moveTo(nodeKey);
         mDescendants.put(mRtx.getNode(), descendants);

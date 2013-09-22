@@ -43,10 +43,10 @@ import org.treetank.NodeElementTestHelper;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.StandardSettings;
+import org.treetank.data.AtomicValue;
+import org.treetank.data.Type;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTXPathException;
-import org.treetank.node.AtomicValue;
-import org.treetank.node.Type;
 import org.treetank.service.xml.xpath.expr.LiteralExpr;
 
 import com.google.inject.Inject;

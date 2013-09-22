@@ -32,8 +32,8 @@ package org.treetank.service.jaxrx.server;
 
 import org.jaxrx.JettyServer;
 import org.treetank.access.conf.ModuleSetter;
-import org.treetank.node.NodeMetaPageFactory;
-import org.treetank.node.TreeNodeFactory;
+import org.treetank.data.NodeMetaPageFactory;
+import org.treetank.data.TreeNodeFactory;
 
 import com.google.inject.Guice;
 

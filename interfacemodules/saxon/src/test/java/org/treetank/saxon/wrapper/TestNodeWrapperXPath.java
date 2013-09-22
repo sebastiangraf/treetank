@@ -61,9 +61,9 @@ import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.INodeReadTrx;
+import org.treetank.data.IConstants;
+import org.treetank.data.interfaces.ITreeData;
 import org.treetank.exception.TTException;
-import org.treetank.node.IConstants;
-import org.treetank.node.interfaces.INode;
 
 import com.google.inject.Inject;
 
@@ -165,7 +165,7 @@ public final class TestNodeWrapperXPath {
             assertNotNull(result);
 
             if (xpathConstants[i].equals(XPathConstants.NODESET)) {
-                final ArrayList<INode> test = (ArrayList<INode>)result[i];
+                final ArrayList<ITreeData> test = (ArrayList<ITreeData>)result[i];
 
                 final String res = (String)expectedResults[i];
                 final String[] expRes = res.split(" ");
@@ -173,7 +173,7 @@ public final class TestNodeWrapperXPath {
                 // Iterate over expected result and the actual result and
                 // compare it.
                 for (int j = 0; j < test.size(); j++) {
-                    final INode item = test.get(j);
+                    final ITreeData item = test.get(j);
 
                     holder.getNRtx().moveTo(item.getDataKey());
 
@@ -388,7 +388,7 @@ public final class TestNodeWrapperXPath {
         final NodeInfo doc = new DocumentWrapper(holder.getSession(), config);
 
         // Execute XPath.
-        final ArrayList<INode> result = (ArrayList<INode>)findLine.evaluate(doc, XPathConstants.NODESET);
+        final ArrayList<ITreeData> result = (ArrayList<ITreeData>)findLine.evaluate(doc, XPathConstants.NODESET);
         assertNotNull(result);
 
         final INodeReadTrx rtx =
@@ -436,7 +436,7 @@ public final class TestNodeWrapperXPath {
         final NodeInfo doc = new DocumentWrapper(holder.getSession(), config);
 
         // Execute XPath.
-        final ArrayList<INode> result = (ArrayList<INode>)findLine.evaluate(doc, XPathConstants.NODESET);
+        final ArrayList<ITreeData> result = (ArrayList<ITreeData>)findLine.evaluate(doc, XPathConstants.NODESET);
 
         assertNotNull(result);
         assertEquals(5, result.get(0).getDataKey());
@@ -467,7 +467,7 @@ public final class TestNodeWrapperXPath {
          * Get the Namespace URI.
          * 
          * @param prefix
-         *            Prefix of the current node.
+         *            Prefix of the current treeData.
          * @return Return the Namespace URI.
          * @throws IllegalArgumentException
          *             if prefix is null.
@@ -492,7 +492,7 @@ public final class TestNodeWrapperXPath {
          * Get the prefix of the namespace.
          * 
          * @param namespace
-         *            Namespace of the current node.
+         *            Namespace of the current treeData.
          * @return "p" if the Namespace equals "ns", otherwise returns null.
          */
         public String getPrefix(final String namespace) {

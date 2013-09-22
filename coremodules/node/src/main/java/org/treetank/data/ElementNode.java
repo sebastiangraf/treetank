@@ -25,22 +25,22 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.node;
+package org.treetank.data;
 
 import static com.google.common.base.Objects.toStringHelper;
-import static org.treetank.node.IConstants.NULL_NODE;
+import static org.treetank.data.IConstants.NULL_NODE;
 
 import java.io.DataOutput;
 import java.io.IOException;
 import java.util.List;
 
+import org.treetank.data.delegates.NameNodeDelegate;
+import org.treetank.data.delegates.NodeDelegate;
+import org.treetank.data.delegates.StructNodeDelegate;
+import org.treetank.data.interfaces.ITreeData;
+import org.treetank.data.interfaces.ITreeNameData;
+import org.treetank.data.interfaces.ITreeStructData;
 import org.treetank.exception.TTIOException;
-import org.treetank.node.delegates.NameNodeDelegate;
-import org.treetank.node.delegates.NodeDelegate;
-import org.treetank.node.delegates.StructNodeDelegate;
-import org.treetank.node.interfaces.INameNode;
-import org.treetank.node.interfaces.INode;
-import org.treetank.node.interfaces.IStructNode;
 
 import com.google.common.hash.Funnel;
 import com.google.common.hash.PrimitiveSink;
@@ -52,7 +52,7 @@ import com.google.common.hash.PrimitiveSink;
  * Node representing an XML element.
  * </p>
  */
-public final class ElementNode implements INode, IStructNode, INameNode {
+public final class ElementNode implements ITreeData, ITreeStructData, ITreeNameData {
 
     /**
      * Enum for ElementFunnel.

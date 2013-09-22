@@ -29,9 +29,9 @@ package org.treetank.service.xml.xpath.comparators;
 
 import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
+import org.treetank.data.AtomicValue;
+import org.treetank.data.Type;
 import org.treetank.exception.TTXPathException;
-import org.treetank.node.AtomicValue;
-import org.treetank.node.Type;
 import org.treetank.service.xml.xpath.EXPathError;
 import org.treetank.utils.NamePageHash;
 import org.treetank.utils.TypedValue;

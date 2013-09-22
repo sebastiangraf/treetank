@@ -28,7 +28,7 @@
 package org.treetank.access;
 
 import static org.testng.AssertJUnit.assertEquals;
-import static org.treetank.node.IConstants.ROOT_NODE;
+import static org.treetank.data.IConstants.ROOT_NODE;
 
 import java.util.Properties;
 
@@ -43,9 +43,9 @@ import org.treetank.NodeElementTestHelper;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.StandardSettings;
+import org.treetank.data.IConstants;
+import org.treetank.data.interfaces.ITreeStructData;
 import org.treetank.exception.TTException;
-import org.treetank.node.IConstants;
-import org.treetank.node.interfaces.IStructNode;
 
 import com.google.inject.Inject;
 
@@ -82,9 +82,9 @@ public class ReadTransactionTest {
         assertEquals(true, holder.getNRtx().moveTo(ROOT_NODE));
         assertEquals(IConstants.ROOT, holder.getNRtx().getNode().getKind());
         assertEquals(false, holder.getNRtx().getNode().hasParent());
-        assertEquals(false, ((IStructNode)holder.getNRtx().getNode()).hasLeftSibling());
-        assertEquals(false, ((IStructNode)holder.getNRtx().getNode()).hasRightSibling());
-        assertEquals(true, ((IStructNode)holder.getNRtx().getNode()).hasFirstChild());
+        assertEquals(false, ((ITreeStructData)holder.getNRtx().getNode()).hasLeftSibling());
+        assertEquals(false, ((ITreeStructData)holder.getNRtx().getNode()).hasRightSibling());
+        assertEquals(true, ((ITreeStructData)holder.getNRtx().getNode()).hasFirstChild());
         holder.getNRtx().close();
     }
 
@@ -100,24 +100,24 @@ public class ReadTransactionTest {
             holder.getNRtx().getNode().getParentKey()));
         assertEquals(key, holder.getNRtx().getNode().getDataKey());
 
-        assertEquals(((IStructNode)holder.getNRtx().getNode()).hasFirstChild(), holder.getNRtx().moveTo(
-            ((IStructNode)holder.getNRtx().getNode()).getFirstChildKey()));
+        assertEquals(((ITreeStructData)holder.getNRtx().getNode()).hasFirstChild(), holder.getNRtx().moveTo(
+            ((ITreeStructData)holder.getNRtx().getNode()).getFirstChildKey()));
         assertEquals(1L, holder.getNRtx().getNode().getDataKey());
 
-        assertEquals(((IStructNode)holder.getNRtx().getNode()).hasRightSibling(), holder.getNRtx().moveTo(
-            ((IStructNode)holder.getNRtx().getNode()).getRightSiblingKey()));
+        assertEquals(((ITreeStructData)holder.getNRtx().getNode()).hasRightSibling(), holder.getNRtx().moveTo(
+            ((ITreeStructData)holder.getNRtx().getNode()).getRightSiblingKey()));
         assertEquals(1L, holder.getNRtx().getNode().getDataKey());
 
-        assertEquals(((IStructNode)holder.getNRtx().getNode()).hasFirstChild(), holder.getNRtx().moveTo(
-            ((IStructNode)holder.getNRtx().getNode()).getFirstChildKey()));
+        assertEquals(((ITreeStructData)holder.getNRtx().getNode()).hasFirstChild(), holder.getNRtx().moveTo(
+            ((ITreeStructData)holder.getNRtx().getNode()).getFirstChildKey()));
         assertEquals(4L, holder.getNRtx().getNode().getDataKey());
 
-        assertEquals(((IStructNode)holder.getNRtx().getNode()).hasRightSibling(), holder.getNRtx().moveTo(
-            ((IStructNode)holder.getNRtx().getNode()).getRightSiblingKey()));
+        assertEquals(((ITreeStructData)holder.getNRtx().getNode()).hasRightSibling(), holder.getNRtx().moveTo(
+            ((ITreeStructData)holder.getNRtx().getNode()).getRightSiblingKey()));
         assertEquals(5L, holder.getNRtx().getNode().getDataKey());
 
-        assertEquals(((IStructNode)holder.getNRtx().getNode()).hasLeftSibling(), holder.getNRtx().moveTo(
-            ((IStructNode)holder.getNRtx().getNode()).getLeftSiblingKey()));
+        assertEquals(((ITreeStructData)holder.getNRtx().getNode()).hasLeftSibling(), holder.getNRtx().moveTo(
+            ((ITreeStructData)holder.getNRtx().getNode()).getLeftSiblingKey()));
         assertEquals(4L, holder.getNRtx().getNode().getDataKey());
 
         assertEquals(holder.getNRtx().getNode().hasParent(), holder.getNRtx().moveTo(

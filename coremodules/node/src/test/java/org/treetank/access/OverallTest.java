@@ -27,10 +27,10 @@
 
 package org.treetank.access;
 
-import static org.treetank.node.IConstants.ATTRIBUTE;
-import static org.treetank.node.IConstants.ELEMENT;
-import static org.treetank.node.IConstants.NAMESPACE;
-import static org.treetank.node.IConstants.TEXT;
+import static org.treetank.data.IConstants.ATTRIBUTE;
+import static org.treetank.data.IConstants.ELEMENT;
+import static org.treetank.data.IConstants.NAMESPACE;
+import static org.treetank.data.IConstants.TEXT;
 
 import java.util.Properties;
 import java.util.Random;
@@ -48,9 +48,9 @@ import org.treetank.NodeElementTestHelper;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.StandardSettings;
+import org.treetank.data.ElementNode;
+import org.treetank.data.IConstants;
 import org.treetank.exception.TTException;
-import org.treetank.node.ElementNode;
-import org.treetank.node.IConstants;
 
 import com.google.inject.Inject;
 

@@ -44,8 +44,8 @@ import org.treetank.CoreTestHelper.Holder;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.api.INodeWriteTrx;
+import org.treetank.data.interfaces.ITreeStructData;
 import org.treetank.exception.TTException;
-import org.treetank.node.interfaces.IStructNode;
 import org.treetank.service.xml.XMLTestHelper;
 import org.treetank.service.xml.diff.DiffFactory.EDiff;
 import org.treetank.service.xml.diff.DiffFactory.EDiffOptimized;
@@ -123,101 +123,101 @@ public final class DiffTestHelper {
 
     static void verifyDiffFirst(final IDiffObserver paramListener) {
         final InOrder inOrder = inOrder(paramListener);
-        inOrder.verify(paramListener, times(2)).diffListener(eq(EDiff.INSERTED), isA(IStructNode.class),
-            isA(IStructNode.class), isA(DiffDepth.class));
-        inOrder.verify(paramListener, times(10)).diffListener(eq(EDiff.SAME), isA(IStructNode.class),
-            isA(IStructNode.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(2)).diffListener(eq(EDiff.INSERTED), isA(ITreeStructData.class),
+            isA(ITreeStructData.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(10)).diffListener(eq(EDiff.SAME), isA(ITreeStructData.class),
+            isA(ITreeStructData.class), isA(DiffDepth.class));
         inOrder.verify(paramListener, times(1)).diffDone();
     }
 
     static void verifyOptimizedFirst(final IDiffObserver paramListener) {
         final InOrder inOrder = inOrder(paramListener);
-        inOrder.verify(paramListener, times(2)).diffListener(eq(EDiff.INSERTED), isA(IStructNode.class),
-            isA(IStructNode.class), isA(DiffDepth.class));
-        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.SAME), isA(IStructNode.class),
-            isA(IStructNode.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(2)).diffListener(eq(EDiff.INSERTED), isA(ITreeStructData.class),
+            isA(ITreeStructData.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.SAME), isA(ITreeStructData.class),
+            isA(ITreeStructData.class), isA(DiffDepth.class));
         inOrder.verify(paramListener, times(1)).diffDone();
     }
 
     static void verifyDiffSecond(final IDiffObserver paramListener) {
         final InOrder inOrder = inOrder(paramListener);
-        inOrder.verify(paramListener, times(2)).diffListener(eq(EDiff.SAME), isA(IStructNode.class),
-            isA(IStructNode.class), isA(DiffDepth.class));
-        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.UPDATED), isA(IStructNode.class),
-            isA(IStructNode.class), isA(DiffDepth.class));
-        inOrder.verify(paramListener, times(4)).diffListener(eq(EDiff.SAME), isA(IStructNode.class),
-            isA(IStructNode.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(2)).diffListener(eq(EDiff.SAME), isA(ITreeStructData.class),
+            isA(ITreeStructData.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.UPDATED), isA(ITreeStructData.class),
+            isA(ITreeStructData.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(4)).diffListener(eq(EDiff.SAME), isA(ITreeStructData.class),
+            isA(ITreeStructData.class), isA(DiffDepth.class));
         inOrder.verify(paramListener, times(1)).diffDone();
     }
 
     static void verifyDiffThird(final IDiffObserver paramListener) {
         final InOrder inOrder = inOrder(paramListener);
-        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.SAME), isA(IStructNode.class),
-            isA(IStructNode.class), isA(DiffDepth.class));
-        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.DELETED), isA(IStructNode.class),
-            isA(IStructNode.class), isA(DiffDepth.class));
-        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.SAME), isA(IStructNode.class),
-            isA(IStructNode.class), isA(DiffDepth.class));
-        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.DELETED), isA(IStructNode.class),
-            isA(IStructNode.class), isA(DiffDepth.class));
-        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.SAME), isA(IStructNode.class),
-            isA(IStructNode.class), isA(DiffDepth.class));
-        inOrder.verify(paramListener, times(3)).diffListener(eq(EDiff.DELETED), isA(IStructNode.class),
-            isA(IStructNode.class), isA(DiffDepth.class));
-        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.SAME), isA(IStructNode.class),
-            isA(IStructNode.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.SAME), isA(ITreeStructData.class),
+            isA(ITreeStructData.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.DELETED), isA(ITreeStructData.class),
+            isA(ITreeStructData.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.SAME), isA(ITreeStructData.class),
+            isA(ITreeStructData.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.DELETED), isA(ITreeStructData.class),
+            isA(ITreeStructData.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.SAME), isA(ITreeStructData.class),
+            isA(ITreeStructData.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(3)).diffListener(eq(EDiff.DELETED), isA(ITreeStructData.class),
+            isA(ITreeStructData.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.SAME), isA(ITreeStructData.class),
+            isA(ITreeStructData.class), isA(DiffDepth.class));
         inOrder.verify(paramListener, times(1)).diffDone();
     }
 
     static void verifyOptimizedThird(final IDiffObserver paramListener) {
         final InOrder inOrder = inOrder(paramListener);
-        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.SAME), isA(IStructNode.class),
-            isA(IStructNode.class), isA(DiffDepth.class));
-        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.DELETED), isA(IStructNode.class),
-            isA(IStructNode.class), isA(DiffDepth.class));
-        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.SAME), isA(IStructNode.class),
-            isA(IStructNode.class), isA(DiffDepth.class));
-        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.DELETED), isA(IStructNode.class),
-            isA(IStructNode.class), isA(DiffDepth.class));
-        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.SAME), isA(IStructNode.class),
-            isA(IStructNode.class), isA(DiffDepth.class));
-        inOrder.verify(paramListener, times(2)).diffListener(eq(EDiff.DELETED), isA(IStructNode.class),
-            isA(IStructNode.class), isA(DiffDepth.class));
-        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.SAME), isA(IStructNode.class),
-            isA(IStructNode.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.SAME), isA(ITreeStructData.class),
+            isA(ITreeStructData.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.DELETED), isA(ITreeStructData.class),
+            isA(ITreeStructData.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.SAME), isA(ITreeStructData.class),
+            isA(ITreeStructData.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.DELETED), isA(ITreeStructData.class),
+            isA(ITreeStructData.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.SAME), isA(ITreeStructData.class),
+            isA(ITreeStructData.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(2)).diffListener(eq(EDiff.DELETED), isA(ITreeStructData.class),
+            isA(ITreeStructData.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.SAME), isA(ITreeStructData.class),
+            isA(ITreeStructData.class), isA(DiffDepth.class));
         inOrder.verify(paramListener, times(1)).diffDone();
     }
 
     static void verifyDiffFourth(final IDiffObserver paramListener) {
         final InOrder inOrder = inOrder(paramListener);
-        inOrder.verify(paramListener, times(3)).diffListener(eq(EDiff.SAME), isA(IStructNode.class),
-            isA(IStructNode.class), isA(DiffDepth.class));
-        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.INSERTED), isA(IStructNode.class),
-            isA(IStructNode.class), isA(DiffDepth.class));
-        inOrder.verify(paramListener, times(2)).diffListener(eq(EDiff.SAME), isA(IStructNode.class),
-            isA(IStructNode.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(3)).diffListener(eq(EDiff.SAME), isA(ITreeStructData.class),
+            isA(ITreeStructData.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.INSERTED), isA(ITreeStructData.class),
+            isA(ITreeStructData.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(2)).diffListener(eq(EDiff.SAME), isA(ITreeStructData.class),
+            isA(ITreeStructData.class), isA(DiffDepth.class));
         inOrder.verify(paramListener, times(1)).diffDone();
     }
 
     static void verifyDiffFifth(final IDiffObserver paramListener) {
         final InOrder inOrder = inOrder(paramListener);
-        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.SAME), isA(IStructNode.class),
-            isA(IStructNode.class), isA(DiffDepth.class));
-        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.UPDATED), isA(IStructNode.class),
-            isA(IStructNode.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.SAME), isA(ITreeStructData.class),
+            isA(ITreeStructData.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.UPDATED), isA(ITreeStructData.class),
+            isA(ITreeStructData.class), isA(DiffDepth.class));
         inOrder.verify(paramListener, times(1)).diffDone();
     }
 
     static void verifyDiffSixth(final IDiffObserver paramListener) {
         final InOrder inOrder = inOrder(paramListener);
-        inOrder.verify(paramListener, times(2)).diffListener(eq(EDiff.SAME), isA(IStructNode.class),
-            isA(IStructNode.class), isA(DiffDepth.class));
-        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.DELETED), isA(IStructNode.class),
-            isA(IStructNode.class), isA(DiffDepth.class));
-        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.SAME), isA(IStructNode.class),
-            isA(IStructNode.class), isA(DiffDepth.class));
-        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.DELETED), isA(IStructNode.class),
-            isA(IStructNode.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(2)).diffListener(eq(EDiff.SAME), isA(ITreeStructData.class),
+            isA(ITreeStructData.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.DELETED), isA(ITreeStructData.class),
+            isA(ITreeStructData.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.SAME), isA(ITreeStructData.class),
+            isA(ITreeStructData.class), isA(DiffDepth.class));
+        inOrder.verify(paramListener, times(1)).diffListener(eq(EDiff.DELETED), isA(ITreeStructData.class),
+            isA(ITreeStructData.class), isA(DiffDepth.class));
         inOrder.verify(paramListener, times(1)).diffDone();
     }
 

@@ -34,10 +34,10 @@ import java.util.List;
 
 import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
+import org.treetank.data.AtomicValue;
+import org.treetank.data.Type;
+import org.treetank.data.interfaces.ITreeValData;
 import org.treetank.exception.TTXPathException;
-import org.treetank.node.AtomicValue;
-import org.treetank.node.Type;
-import org.treetank.node.interfaces.IValNode;
 
 /**
  * <h1>GeneralComp</h1>
@@ -98,7 +98,7 @@ public class GeneralComp extends AbsComparator {
         AtomicValue atomized;
 
         do {
-            atomized = new AtomicValue(((IValNode)getNode()).getRawValue(), getNode().getTypeKey());
+            atomized = new AtomicValue(((ITreeValData)getNode()).getRawValue(), getNode().getTypeKey());
             op.add(atomized);
         } while (mOperand.hasNext());
 

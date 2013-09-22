@@ -34,11 +34,11 @@ import java.util.Map;
 import org.treetank.access.NodeReadTrx;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.ISession;
+import org.treetank.data.ElementNode;
+import org.treetank.data.TextNode;
+import org.treetank.data.interfaces.ITreeData;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.node.ElementNode;
-import org.treetank.node.TextNode;
-import org.treetank.node.interfaces.INode;
 
 /**
  * Label visitor.
@@ -52,10 +52,10 @@ public final class LabelFMESVisitor {
     private final INodeReadTrx mRtx;
 
     /** For each node type: list of inner nodes. */
-    private final Map<Integer, List<INode>> mLabels;
+    private final Map<Integer, List<ITreeData>> mLabels;
 
     /** For each node type: list of leaf nodes. */
-    private final Map<Integer, List<INode>> mLeafLabels;
+    private final Map<Integer, List<ITreeData>> mLeafLabels;
 
     /**
      * Constructor.
@@ -67,8 +67,8 @@ public final class LabelFMESVisitor {
      */
     public LabelFMESVisitor(final ISession paramSession) throws TTException {
         mRtx = new NodeReadTrx(paramSession.beginBucketRtx(paramSession.getMostRecentVersion()));
-        mLabels = new HashMap<Integer, List<INode>>();
-        mLeafLabels = new HashMap<Integer, List<INode>>();
+        mLabels = new HashMap<Integer, List<ITreeData>>();
+        mLeafLabels = new HashMap<Integer, List<ITreeData>>();
     }
 
     /**
@@ -93,7 +93,7 @@ public final class LabelFMESVisitor {
         }
         if (pNode.hasFirstChild() || pNode.getAttributeCount() > 0 || pNode.getNamespaceCount() > 0) {
             if (!mLabels.containsKey(pNode.getKind())) {
-                mLabels.put(pNode.getKind(), new ArrayList<INode>());
+                mLabels.put(pNode.getKind(), new ArrayList<ITreeData>());
             }
             mLabels.get(pNode.getKind()).add(pNode);
         }
@@ -117,7 +117,7 @@ public final class LabelFMESVisitor {
     private void addLeafLabel() {
         final int nodeKind = mRtx.getNode().getKind();
         if (!mLeafLabels.containsKey(nodeKind)) {
-            mLeafLabels.put(nodeKind, new ArrayList<INode>());
+            mLeafLabels.put(nodeKind, new ArrayList<ITreeData>());
         }
         mLeafLabels.get(nodeKind).add(mRtx.getNode());
     }
@@ -127,7 +127,7 @@ public final class LabelFMESVisitor {
      * 
      * @return the Labels
      */
-    public Map<Integer, List<INode>> getLabels() {
+    public Map<Integer, List<ITreeData>> getLabels() {
         return mLabels;
     }
 
@@ -136,7 +136,7 @@ public final class LabelFMESVisitor {
      * 
      * @return the leaf labels
      */
-    public Map<Integer, List<INode>> getLeafLabels() {
+    public Map<Integer, List<ITreeData>> getLeafLabels() {
         return mLeafLabels;
     }
 }

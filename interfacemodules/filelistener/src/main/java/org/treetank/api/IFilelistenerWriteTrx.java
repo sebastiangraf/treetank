@@ -16,8 +16,8 @@ public interface IFilelistenerWriteTrx extends IFilelistenerReadTrx {
     /**
      * Add a new file to the system
      * 
-     * @param file
-     * @param relativePath
+     * @param pFile
+     * @param pRelativePath
      */
     public void addFile(File pFile, String pRelativePath) throws TTException, IOException;
 

@@ -24,17 +24,17 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.treetank.node.delegates;
+package org.treetank.data.delegates;
 
 import static com.google.common.base.Objects.toStringHelper;
-import static org.treetank.node.IConstants.NULL_NODE;
+import static org.treetank.data.IConstants.NULL_NODE;
 
 import java.io.DataOutput;
 import java.io.IOException;
 
 import org.treetank.api.IData;
+import org.treetank.data.interfaces.ITreeStructData;
 import org.treetank.exception.TTIOException;
-import org.treetank.node.interfaces.IStructNode;
 
 import com.google.common.hash.Funnel;
 import com.google.common.hash.PrimitiveSink;
@@ -42,13 +42,13 @@ import com.google.common.hash.PrimitiveSink;
 /**
  * Delegate method for all nodes building up the structure. That means that all
  * nodes representing trees in Treetank are represented by an instance of the
- * interface {@link IStructNode} namely containing the position of all related
+ * interface {@link ITreeStructData} namely containing the position of all related
  * siblings, the first-child and all nodes defined by the {@link NodeDelegate} as well.
  * 
  * @author Sebastian Graf, University of Konstanz
  * 
  */
-public class StructNodeDelegate implements IStructNode {
+public class StructNodeDelegate implements ITreeStructData {
 
     /**
      * Enum for StructValueFunnel.
@@ -59,7 +59,7 @@ public class StructNodeDelegate implements IStructNode {
     enum StructNodeDelegateFunnel implements Funnel<org.treetank.api.IData> {
         INSTANCE;
         public void funnel(org.treetank.api.IData data, PrimitiveSink into) {
-            final IStructNode from = (IStructNode)data;
+            final ITreeStructData from = (ITreeStructData)data;
             into.putLong(from.getFirstChildKey());
             into.putLong(from.getRightSiblingKey());
             into.putLong(from.getLeftSiblingKey());
@@ -209,7 +209,7 @@ public class StructNodeDelegate implements IStructNode {
      * Delegate method for getNodeKey.
      * 
      * @return the key of the node
-     * @see org.treetank.node.delegates.NodeDelegate#getDataKey()
+     * @see org.treetank.data.delegates.NodeDelegate#getDataKey()
      */
     public long getDataKey() {
         return mDelegate.getDataKey();
@@ -219,7 +219,7 @@ public class StructNodeDelegate implements IStructNode {
      * Delegate method for getParentKey.
      * 
      * @return the key of the parent
-     * @see org.treetank.node.delegates.NodeDelegate#getParentKey()
+     * @see org.treetank.data.delegates.NodeDelegate#getParentKey()
      */
     public long getParentKey() {
         return mDelegate.getParentKey();
@@ -229,7 +229,7 @@ public class StructNodeDelegate implements IStructNode {
      * Delegate method for setParentKey.
      * 
      * @param pParentKey
-     * @see org.treetank.node.delegates.NodeDelegate#setParentKey(long)
+     * @see org.treetank.data.delegates.NodeDelegate#setParentKey(long)
      */
     public void setParentKey(long pParentKey) {
         mDelegate.setParentKey(pParentKey);
@@ -239,7 +239,7 @@ public class StructNodeDelegate implements IStructNode {
      * Delegate method for getHash.
      * 
      * @return the hash
-     * @see org.treetank.node.delegates.NodeDelegate#getHash()
+     * @see org.treetank.data.delegates.NodeDelegate#getHash()
      */
     public long getHash() {
         return mDelegate.getHash();
@@ -249,7 +249,7 @@ public class StructNodeDelegate implements IStructNode {
      * Delegate method for setHash.
      * 
      * @param pHash
-     * @see org.treetank.node.delegates.NodeDelegate#setHash(long)
+     * @see org.treetank.data.delegates.NodeDelegate#setHash(long)
      */
     public void setHash(long pHash) {
         mDelegate.setHash(pHash);
@@ -259,7 +259,7 @@ public class StructNodeDelegate implements IStructNode {
      * Delegate method for getTypeKey.
      * 
      * @return the type of the node
-     * @see org.treetank.node.delegates.NodeDelegate#getTypeKey()
+     * @see org.treetank.data.delegates.NodeDelegate#getTypeKey()
      */
     public int getTypeKey() {
         return mDelegate.getTypeKey();
@@ -269,7 +269,7 @@ public class StructNodeDelegate implements IStructNode {
      * Delegate method for setTypeKey.
      * 
      * @param pTypeKey
-     * @see org.treetank.node.delegates.NodeDelegate#setTypeKey(int)
+     * @see org.treetank.data.delegates.NodeDelegate#setTypeKey(int)
      */
     public void setTypeKey(int pTypeKey) {
         mDelegate.setTypeKey(pTypeKey);
@@ -279,7 +279,7 @@ public class StructNodeDelegate implements IStructNode {
      * Delegate method for hasParent.
      * 
      * @return if the node has a parent
-     * @see org.treetank.node.delegates.NodeDelegate#hasParent()
+     * @see org.treetank.data.delegates.NodeDelegate#hasParent()
      */
     public boolean hasParent() {
         return mDelegate.hasParent();

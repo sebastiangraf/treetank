@@ -31,10 +31,10 @@ import static org.treetank.service.xml.xpath.XPathAxis.XPATH_10_COMP;
 
 import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
+import org.treetank.data.AtomicValue;
+import org.treetank.data.Type;
+import org.treetank.data.interfaces.ITreeValData;
 import org.treetank.exception.TTXPathException;
-import org.treetank.node.AtomicValue;
-import org.treetank.node.Type;
-import org.treetank.node.interfaces.IValNode;
 import org.treetank.service.xml.xpath.expr.LiteralExpr;
 import org.treetank.utils.NamePageHash;
 
@@ -156,7 +156,7 @@ public abstract class AbsObAxis extends AbsAxis {
 
         if (XPATH_10_COMP) {
 
-            atom = new AtomicValue(((IValNode)getNode()).getRawValue(), getNode().getTypeKey());
+            atom = new AtomicValue(((ITreeValData)getNode()).getRawValue(), getNode().getTypeKey());
         } else {
             // unatomicType is cast to double
             if (type == NamePageHash.generateHashForString("xs:untypedAtomic")) {
@@ -164,7 +164,7 @@ public abstract class AbsObAxis extends AbsAxis {
                 // TODO: throw error, of cast fails
             }
 
-            atom = new AtomicValue(((IValNode)getNode()).getRawValue(), getNode().getTypeKey());
+            atom = new AtomicValue(((ITreeValData)getNode()).getRawValue(), getNode().getTypeKey());
         }
 
         // if (!XPATH_10_COMP && operand.hasNext()) {
