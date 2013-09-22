@@ -43,7 +43,7 @@ public class RestoreDialog extends Dialog {
      * 
      * @param parent
      * @param style
-     * @param mListener
+     * @param pListener
      */
     public RestoreDialog(Shell parent, int style, Filelistener pListener) {
         super(parent, style);

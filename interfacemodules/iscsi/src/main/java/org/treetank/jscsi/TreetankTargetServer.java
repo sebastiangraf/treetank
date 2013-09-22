@@ -50,12 +50,10 @@ import org.treetank.data.BlockDataElementFactory;
 import org.treetank.data.ISCSIMetaPageFactory;
 import org.treetank.io.IBackend;
 import org.treetank.io.IOUtils;
-import org.treetank.io.berkeley.BerkeleyStorage;
 import org.treetank.io.jclouds.JCloudsStorage;
 import org.treetank.revisioning.IRevisioning;
 import org.treetank.revisioning.SlidingSnapshot;
 
-import com.google.common.io.Files;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 

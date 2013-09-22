@@ -15,14 +15,14 @@ public interface IFilelistenerReadTrx {
     /**
      * The returned array consists of all the relative paths there are in the storage.
      * 
-     * @return
+     * @return array containing relative file paths contained in this storage.
      */
     public String[] getFilePaths();
 
     /**
      * The returned array consists of all the relative paths there are in the storage.
      * 
-     * @return
+     * @return true if file exists, false otherwise
      */
     public boolean fileExists(String pRelativePath);
 
@@ -36,7 +36,7 @@ public interface IFilelistenerReadTrx {
      * This method allows you to get a full file using the node key of the
      * header
      * 
-     * @param pKey
+     * @param pRelativePath
      * @return true if successful, false otherwise
      */
     public File getFullFile(String pRelativePath) throws TTIOException, IOException;
