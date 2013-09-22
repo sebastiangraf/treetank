@@ -28,7 +28,7 @@
 package org.treetank.service.xml.serialize;
 
 import static org.testng.AssertJUnit.assertEquals;
-import static org.treetank.node.IConstants.ROOT_NODE;
+import static org.treetank.data.IConstants.ROOT_NODE;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Iterator;

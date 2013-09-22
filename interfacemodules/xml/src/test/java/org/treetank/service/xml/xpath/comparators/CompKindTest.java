@@ -31,8 +31,8 @@ import static org.testng.AssertJUnit.assertEquals;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import org.treetank.data.Type;
 import org.treetank.exception.TTXPathException;
-import org.treetank.node.Type;
 
 public class CompKindTest {
 

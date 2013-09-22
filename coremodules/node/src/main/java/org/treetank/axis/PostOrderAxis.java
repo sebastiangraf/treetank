@@ -27,12 +27,12 @@
 
 package org.treetank.axis;
 
-import static org.treetank.node.IConstants.NULL_NODE;
+import static org.treetank.data.IConstants.NULL_NODE;
 
 import java.util.Stack;
 
 import org.treetank.api.INodeReadTrx;
-import org.treetank.node.interfaces.IStructNode;
+import org.treetank.data.interfaces.ITreeStructData;
 
 /**
  * <h1>PostOrder</h1>
@@ -79,17 +79,17 @@ public class PostOrderAxis extends AbsAxis {
         long key = mNextKey;
         if (key != NULL_NODE) {
             moveTo(mNextKey);
-            while (((IStructNode)getNode()).hasFirstChild() && key != mLastParent.peek()) {
+            while (((ITreeStructData)getNode()).hasFirstChild() && key != mLastParent.peek()) {
                 mLastParent.push(key);
-                key = ((IStructNode)getNode()).getFirstChildKey();
-                moveTo(((IStructNode)getNode()).getFirstChildKey());
+                key = ((ITreeStructData)getNode()).getFirstChildKey();
+                moveTo(((ITreeStructData)getNode()).getFirstChildKey());
             }
             if (key == mLastParent.peek()) {
                 mLastParent.pop();
             }
 
-            if (((IStructNode)getNode()).hasRightSibling()) {
-                mNextKey = ((IStructNode)getNode()).getRightSiblingKey();
+            if (((ITreeStructData)getNode()).hasRightSibling()) {
+                mNextKey = ((ITreeStructData)getNode()).getRightSiblingKey();
 
             } else {
                 mNextKey = mLastParent.peek();

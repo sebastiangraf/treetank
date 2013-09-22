@@ -28,10 +28,10 @@
 package org.treetank.service.xml.diff;
 
 import org.treetank.api.INodeReadTrx;
+import org.treetank.data.ElementNode;
+import org.treetank.data.IConstants;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.node.ElementNode;
-import org.treetank.node.IConstants;
 import org.treetank.service.xml.diff.DiffFactory.Builder;
 
 /**

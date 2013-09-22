@@ -25,21 +25,21 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.node;
+package org.treetank.data;
 
 import static com.google.common.base.Objects.toStringHelper;
 
 import java.io.DataOutput;
 import java.io.IOException;
 
+import org.treetank.data.delegates.NameNodeDelegate;
+import org.treetank.data.delegates.NodeDelegate;
+import org.treetank.data.delegates.StructNodeDelegate;
+import org.treetank.data.delegates.ValNodeDelegate;
+import org.treetank.data.interfaces.ITreeData;
+import org.treetank.data.interfaces.ITreeNameData;
+import org.treetank.data.interfaces.ITreeValData;
 import org.treetank.exception.TTIOException;
-import org.treetank.node.delegates.NameNodeDelegate;
-import org.treetank.node.delegates.NodeDelegate;
-import org.treetank.node.delegates.StructNodeDelegate;
-import org.treetank.node.delegates.ValNodeDelegate;
-import org.treetank.node.interfaces.INameNode;
-import org.treetank.node.interfaces.INode;
-import org.treetank.node.interfaces.IValNode;
 
 import com.google.common.hash.Funnel;
 import com.google.common.hash.PrimitiveSink;
@@ -51,7 +51,7 @@ import com.google.common.hash.PrimitiveSink;
  * Node representing an attribute.
  * </p>
  */
-public final class AttributeNode implements INode, IValNode, INameNode {
+public final class AttributeNode implements ITreeData, ITreeValData, ITreeNameData {
 
     /**
      * Enum for AttributeValueFunnel.
@@ -106,7 +106,7 @@ public final class AttributeNode implements INode, IValNode, INameNode {
      * Delegate method for getNodeKey.
      * 
      * @return the current key
-     * @see org.treetank.node.delegates.NodeDelegate#getDataKey()
+     * @see org.treetank.data.delegates.NodeDelegate#getDataKey()
      */
     public long getDataKey() {
         return mDel.getDataKey();
@@ -116,7 +116,7 @@ public final class AttributeNode implements INode, IValNode, INameNode {
      * Delegate method for getParentKey.
      * 
      * @return the parent key
-     * @see org.treetank.node.delegates.NodeDelegate#getParentKey()
+     * @see org.treetank.data.delegates.NodeDelegate#getParentKey()
      */
     public long getParentKey() {
         return mDel.getParentKey();
@@ -126,7 +126,7 @@ public final class AttributeNode implements INode, IValNode, INameNode {
      * Delegate method for setParentKey.
      * 
      * @param pParentKey
-     * @see org.treetank.node.delegates.NodeDelegate#setParentKey(long)
+     * @see org.treetank.data.delegates.NodeDelegate#setParentKey(long)
      */
     public void setParentKey(final long pParentKey) {
         mDel.setParentKey(pParentKey);
@@ -136,7 +136,7 @@ public final class AttributeNode implements INode, IValNode, INameNode {
      * Delegate method for getHash.
      * 
      * @return the current hash
-     * @see org.treetank.node.delegates.NodeDelegate#getHash()
+     * @see org.treetank.data.delegates.NodeDelegate#getHash()
      */
     public long getHash() {
         return mDel.getHash();
@@ -146,7 +146,7 @@ public final class AttributeNode implements INode, IValNode, INameNode {
      * Delegate method for setHash.
      * 
      * @param pHash
-     * @see org.treetank.node.delegates.NodeDelegate#setHash(long)
+     * @see org.treetank.data.delegates.NodeDelegate#setHash(long)
      */
     public void setHash(final long pHash) {
         mDel.setHash(pHash);
@@ -156,7 +156,7 @@ public final class AttributeNode implements INode, IValNode, INameNode {
      * Delegate method for getTypeKey.
      * 
      * @return the key of the type
-     * @see org.treetank.node.delegates.NodeDelegate#getTypeKey()
+     * @see org.treetank.data.delegates.NodeDelegate#getTypeKey()
      */
     public int getTypeKey() {
         return mDel.getTypeKey();
@@ -166,7 +166,7 @@ public final class AttributeNode implements INode, IValNode, INameNode {
      * Delegate method for setTypeKey.
      * 
      * @param pTypeKey
-     * @see org.treetank.node.delegates.NodeDelegate#setTypeKey(int)
+     * @see org.treetank.data.delegates.NodeDelegate#setTypeKey(int)
      */
     public void setTypeKey(final int pTypeKey) {
         mDel.setTypeKey(pTypeKey);
@@ -176,7 +176,7 @@ public final class AttributeNode implements INode, IValNode, INameNode {
      * Delegate method for hasParent.
      * 
      * @return if the node has a parent
-     * @see org.treetank.node.delegates.NodeDelegate#hasParent()
+     * @see org.treetank.data.delegates.NodeDelegate#hasParent()
      */
     public boolean hasParent() {
         return mDel.hasParent();
@@ -186,7 +186,7 @@ public final class AttributeNode implements INode, IValNode, INameNode {
      * Delegate method for getNameKey.
      * 
      * @return the name key
-     * @see org.treetank.node.delegates.NameNodeDelegate#getNameKey()
+     * @see org.treetank.data.delegates.NameNodeDelegate#getNameKey()
      */
     public int getNameKey() {
         return mNameDel.getNameKey();
@@ -196,7 +196,7 @@ public final class AttributeNode implements INode, IValNode, INameNode {
      * Delegate method for getURIKey.
      * 
      * @return the uri key
-     * @see org.treetank.node.delegates.NameNodeDelegate#getURIKey()
+     * @see org.treetank.data.delegates.NameNodeDelegate#getURIKey()
      */
     public int getURIKey() {
         return mNameDel.getURIKey();
@@ -206,7 +206,7 @@ public final class AttributeNode implements INode, IValNode, INameNode {
      * Delegate method for setNameKey.
      * 
      * @param pNameKey
-     * @see org.treetank.node.delegates.NameNodeDelegate#setNameKey(int)
+     * @see org.treetank.data.delegates.NameNodeDelegate#setNameKey(int)
      */
     public void setNameKey(final int pNameKey) {
         mNameDel.setNameKey(pNameKey);
@@ -216,7 +216,7 @@ public final class AttributeNode implements INode, IValNode, INameNode {
      * Delegate method for setURIKey.
      * 
      * @param pUriKey
-     * @see org.treetank.node.delegates.NameNodeDelegate#setURIKey(int)
+     * @see org.treetank.data.delegates.NameNodeDelegate#setURIKey(int)
      */
     public void setURIKey(final int pUriKey) {
         mNameDel.setURIKey(pUriKey);
@@ -226,7 +226,7 @@ public final class AttributeNode implements INode, IValNode, INameNode {
      * Delegate method for getRawValue.
      * 
      * @return the raw value of the node
-     * @see org.treetank.node.delegates.ValNodeDelegate#getRawValue()
+     * @see org.treetank.data.delegates.ValNodeDelegate#getRawValue()
      */
     public byte[] getRawValue() {
         return mValDel.getRawValue();
@@ -236,7 +236,7 @@ public final class AttributeNode implements INode, IValNode, INameNode {
      * Delegate method for setValue.
      * 
      * @param pVal
-     * @see org.treetank.node.delegates.ValNodeDelegate#setValue(byte[])
+     * @see org.treetank.data.delegates.ValNodeDelegate#setValue(byte[])
      */
     public void setValue(final byte[] pVal) {
         mValDel.setValue(pVal);

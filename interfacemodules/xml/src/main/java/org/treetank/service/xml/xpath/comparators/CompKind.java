@@ -30,8 +30,8 @@ package org.treetank.service.xml.xpath.comparators;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.treetank.data.Type;
 import org.treetank.exception.TTXPathException;
-import org.treetank.node.Type;
 import org.treetank.service.xml.xpath.EXPathError;
 
 /**

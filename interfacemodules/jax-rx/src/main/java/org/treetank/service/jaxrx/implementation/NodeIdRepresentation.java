@@ -45,8 +45,8 @@ import org.treetank.api.IStorage;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
+import org.treetank.data.interfaces.ITreeStructData;
 import org.treetank.exception.TTException;
-import org.treetank.node.interfaces.IStructNode;
 import org.treetank.service.jaxrx.enums.EIdAccessType;
 import org.treetank.service.jaxrx.util.RestXPathProcessor;
 import org.treetank.service.jaxrx.util.WorkerHelper;
@@ -350,9 +350,9 @@ public class NodeIdRepresentation {
                         } else if (type == EIdAccessType.RIGHTSIBLING) {
                             WorkerHelper.shredInputStream(wtx, input, EShredderInsert.ADDASRIGHTSIBLING);
                         } else if (type == EIdAccessType.LASTCHILD) {
-                            if (wtx.moveTo(((IStructNode)wtx.getNode()).getFirstChildKey())) {
+                            if (wtx.moveTo(((ITreeStructData)wtx.getNode()).getFirstChildKey())) {
                                 long last = wtx.getNode().getDataKey();
-                                while (wtx.moveTo(((IStructNode)wtx.getNode()).getRightSiblingKey())) {
+                                while (wtx.moveTo(((ITreeStructData)wtx.getNode()).getRightSiblingKey())) {
                                     last = wtx.getNode().getDataKey();
                                 }
                                 wtx.moveTo(last);
@@ -363,7 +363,7 @@ public class NodeIdRepresentation {
                             }
 
                         } else if (type == EIdAccessType.LEFTSIBLING
-                            && wtx.moveTo(((IStructNode)wtx.getNode()).getLeftSiblingKey())) {
+                            && wtx.moveTo(((ITreeStructData)wtx.getNode()).getLeftSiblingKey())) {
 
                             WorkerHelper.shredInputStream(wtx, input, EShredderInsert.ADDASRIGHTSIBLING);
 
@@ -501,13 +501,13 @@ public class NodeIdRepresentation {
 
                     switch (accessType) {
                     case FIRSTCHILD:
-                        if (!rtx.moveTo(((IStructNode)rtx.getNode()).getFirstChildKey()))
+                        if (!rtx.moveTo(((ITreeStructData)rtx.getNode()).getFirstChildKey()))
                             throw new JaxRxException(404, NOTFOUND);
                         break;
                     case LASTCHILD:
-                        if (rtx.moveTo(((IStructNode)rtx.getNode()).getFirstChildKey())) {
+                        if (rtx.moveTo(((ITreeStructData)rtx.getNode()).getFirstChildKey())) {
                             long last = rtx.getNode().getDataKey();
-                            while (rtx.moveTo(((IStructNode)rtx.getNode()).getRightSiblingKey())) {
+                            while (rtx.moveTo(((ITreeStructData)rtx.getNode()).getRightSiblingKey())) {
                                 last = rtx.getNode().getDataKey();
                             }
                             rtx.moveTo(last);
@@ -516,11 +516,11 @@ public class NodeIdRepresentation {
                         }
                         break;
                     case RIGHTSIBLING:
-                        if (!rtx.moveTo(((IStructNode)rtx.getNode()).getRightSiblingKey()))
+                        if (!rtx.moveTo(((ITreeStructData)rtx.getNode()).getRightSiblingKey()))
                             throw new JaxRxException(404, NOTFOUND);
                         break;
                     case LEFTSIBLING:
-                        if (!rtx.moveTo(((IStructNode)rtx.getNode()).getLeftSiblingKey()))
+                        if (!rtx.moveTo(((ITreeStructData)rtx.getNode()).getLeftSiblingKey()))
                             throw new JaxRxException(404, NOTFOUND);
                         break;
                     default: // nothing to do;

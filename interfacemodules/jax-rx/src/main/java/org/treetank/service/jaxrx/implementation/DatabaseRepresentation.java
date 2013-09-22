@@ -29,7 +29,7 @@ package org.treetank.service.jaxrx.implementation; // NOPMD we need all these im
 
 // pointless
 
-import static org.treetank.node.IConstants.ROOT_NODE;
+import static org.treetank.data.IConstants.ROOT_NODE;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -61,10 +61,10 @@ import org.treetank.api.IBucketWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
 import org.treetank.axis.AbsAxis;
+import org.treetank.data.NodeMetaPageFactory;
+import org.treetank.data.TreeNodeFactory;
 import org.treetank.exception.TTException;
 import org.treetank.io.IBackend.IBackendFactory;
-import org.treetank.node.NodeMetaPageFactory;
-import org.treetank.node.TreeNodeFactory;
 import org.treetank.revisioning.IRevisioning;
 import org.treetank.service.jaxrx.util.RESTResponseHelper;
 import org.treetank.service.jaxrx.util.RESTXMLShredder;

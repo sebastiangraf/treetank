@@ -35,10 +35,10 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.treetank.api.INodeReadTrx;
+import org.treetank.data.AtomicValue;
+import org.treetank.data.interfaces.ITreeData;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.node.AtomicValue;
-import org.treetank.node.interfaces.INode;
 
 /**
  * <h1>AbstractAxis</h1>
@@ -180,7 +180,7 @@ public abstract class AbsAxis implements Iterator<Long>, Iterable<Long> {
      * 
      * @return Getting the node.
      */
-    public INode getNode() {
+    public ITreeData getNode() {
         if (lastPointer.get(mRTX) != null && lastPointer.get(mRTX) < 0) {
             return atomics.get(mRTX).getItem(lastPointer.get(mRTX));
         } else {

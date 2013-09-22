@@ -30,8 +30,8 @@ package org.treetank.axis.filter;
 import java.util.Arrays;
 
 import org.treetank.api.INodeReadTrx;
-import org.treetank.node.IConstants;
-import org.treetank.node.interfaces.IValNode;
+import org.treetank.data.IConstants;
+import org.treetank.data.interfaces.ITreeValData;
 import org.treetank.utils.TypedValue;
 
 /**
@@ -77,6 +77,6 @@ public class ValueFilter extends AbsFilter {
     @Override
     public final boolean filter() {
         return (getNode().getKind() == IConstants.TEXT || getNode().getKind() == IConstants.ATTRIBUTE)
-            && (Arrays.equals(((IValNode)getNode()).getRawValue(), mValue));
+            && (Arrays.equals(((ITreeValData)getNode()).getRawValue(), mValue));
     }
 }

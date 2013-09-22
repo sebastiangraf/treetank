@@ -27,9 +27,9 @@
 
 package org.treetank.service.xml.serialize;
 
-import static org.treetank.node.IConstants.ELEMENT;
-import static org.treetank.node.IConstants.ROOT;
-import static org.treetank.node.IConstants.TEXT;
+import static org.treetank.data.IConstants.ELEMENT;
+import static org.treetank.data.IConstants.ROOT;
+import static org.treetank.data.IConstants.TEXT;
 import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_ID;
 import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_INDENT;
 import static org.treetank.service.xml.serialize.XMLSerializerProperties.S_INDENT_SPACES;
@@ -55,13 +55,13 @@ import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
+import org.treetank.data.ElementNode;
+import org.treetank.data.NodeMetaPageFactory;
+import org.treetank.data.TreeNodeFactory;
+import org.treetank.data.interfaces.ITreeNameData;
+import org.treetank.data.interfaces.ITreeStructData;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackend.IBackendFactory;
-import org.treetank.node.ElementNode;
-import org.treetank.node.NodeMetaPageFactory;
-import org.treetank.node.TreeNodeFactory;
-import org.treetank.node.interfaces.INameNode;
-import org.treetank.node.interfaces.IStructNode;
 import org.treetank.revisioning.IRevisioning;
 
 import com.google.inject.Guice;
@@ -244,22 +244,22 @@ public final class XMLSerializer extends AbsSerializer {
             case ELEMENT:
                 // Emit start element.
                 indent();
-                final INameNode namenode = (INameNode)paramRTX.getNode();
+                final ITreeNameData namenode = (ITreeNameData)paramRTX.getNode();
                 mOut.write(ECharsForSerializing.OPEN.getBytes());
                 mOut.write(paramRTX.nameForKey(namenode.getNameKey()).getBytes());
                 final long key = paramRTX.getNode().getDataKey();
                 // Emit namespace declarations.
                 for (int index = 0, length = ((ElementNode)namenode).getNamespaceCount(); index < length; index++) {
                     paramRTX.moveToNamespace(index);
-                    if (paramRTX.nameForKey(((INameNode)paramRTX.getNode()).getNameKey()).length() == 0) {
+                    if (paramRTX.nameForKey(((ITreeNameData)paramRTX.getNode()).getNameKey()).length() == 0) {
                         mOut.write(ECharsForSerializing.XMLNS.getBytes());
-                        write(paramRTX.nameForKey(((INameNode)paramRTX.getNode()).getURIKey()));
+                        write(paramRTX.nameForKey(((ITreeNameData)paramRTX.getNode()).getURIKey()));
                         mOut.write(ECharsForSerializing.QUOTE.getBytes());
                     } else {
                         mOut.write(ECharsForSerializing.XMLNS_COLON.getBytes());
-                        write(paramRTX.nameForKey(((INameNode)paramRTX.getNode()).getNameKey()));
+                        write(paramRTX.nameForKey(((ITreeNameData)paramRTX.getNode()).getNameKey()));
                         mOut.write(ECharsForSerializing.EQUAL_QUOTE.getBytes());
-                        write(paramRTX.nameForKey(((INameNode)paramRTX.getNode()).getURIKey()));
+                        write(paramRTX.nameForKey(((ITreeNameData)paramRTX.getNode()).getURIKey()));
                         mOut.write(ECharsForSerializing.QUOTE.getBytes());
                     }
                     paramRTX.moveTo(key);
@@ -282,13 +282,13 @@ public final class XMLSerializer extends AbsSerializer {
                 for (int index = 0; index < ((ElementNode)paramRTX.getNode()).getAttributeCount(); index++) {
                     paramRTX.moveToAttribute(index);
                     mOut.write(ECharsForSerializing.SPACE.getBytes());
-                    mOut.write(paramRTX.nameForKey(((INameNode)paramRTX.getNode()).getNameKey()).getBytes());
+                    mOut.write(paramRTX.nameForKey(((ITreeNameData)paramRTX.getNode()).getNameKey()).getBytes());
                     mOut.write(ECharsForSerializing.EQUAL_QUOTE.getBytes());
                     mOut.write(paramRTX.getValueOfCurrentNode().getBytes());
                     mOut.write(ECharsForSerializing.QUOTE.getBytes());
                     paramRTX.moveTo(key);
                 }
-                if (((IStructNode)paramRTX.getNode()).hasFirstChild()) {
+                if (((ITreeStructData)paramRTX.getNode()).hasFirstChild()) {
                     mOut.write(ECharsForSerializing.CLOSE.getBytes());
                 } else {
                     mOut.write(ECharsForSerializing.SLASH_CLOSE.getBytes());
@@ -321,7 +321,7 @@ public final class XMLSerializer extends AbsSerializer {
         try {
             indent();
             mOut.write(ECharsForSerializing.OPEN_SLASH.getBytes());
-            mOut.write(paramRTX.nameForKey(((INameNode)paramRTX.getNode()).getNameKey()).getBytes());
+            mOut.write(paramRTX.nameForKey(((ITreeNameData)paramRTX.getNode()).getNameKey()).getBytes());
             mOut.write(ECharsForSerializing.CLOSE.getBytes());
             if (mIndent) {
                 mOut.write(ECharsForSerializing.NEWLINE.getBytes());

@@ -29,7 +29,7 @@ package org.treetank.service.xml.xpath.filter;
 
 import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
-import org.treetank.node.interfaces.IValNode;
+import org.treetank.data.interfaces.ITreeValData;
 import org.treetank.utils.NamePageHash;
 
 /**
@@ -122,7 +122,7 @@ public class PredicateFilterAxis extends AbsAxis {
             if (getNode().getTypeKey() == NamePageHash.generateHashForString("xs:boolean")) {
                 // atomic value of type boolean
                 // return true, if atomic values's value is false
-                return !(Boolean.parseBoolean(new String(((IValNode)getNode()).getRawValue())));
+                return !(Boolean.parseBoolean(new String(((ITreeValData)getNode()).getRawValue())));
 
             } else {
                 return false;

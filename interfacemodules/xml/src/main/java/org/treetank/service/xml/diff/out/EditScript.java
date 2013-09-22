@@ -32,7 +32,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.treetank.node.interfaces.INode;
+import org.treetank.data.interfaces.ITreeData;
 import org.treetank.service.xml.diff.Diff;
 import org.treetank.service.xml.diff.DiffFactory.EDiff;
 
@@ -48,7 +48,7 @@ public final class EditScript implements Iterator<Diff>, Iterable<Diff> {
     private final List<Diff> mChanges;
 
     /** To do a lookup; we use node/object identities. */
-    private final IdentityHashMap<INode, Diff> mChangeByNode;
+    private final IdentityHashMap<ITreeData, Diff> mChangeByNode;
 
     /** Index in the {@link List} of {@link Diff}s. */
     private transient int mIndex;
@@ -58,7 +58,7 @@ public final class EditScript implements Iterator<Diff>, Iterable<Diff> {
      */
     public EditScript() {
         mChanges = new ArrayList<Diff>();
-        mChangeByNode = new IdentityHashMap<INode, Diff>();
+        mChangeByNode = new IdentityHashMap<ITreeData, Diff>();
         mIndex = 0;
     }
 
@@ -89,7 +89,7 @@ public final class EditScript implements Iterator<Diff>, Iterable<Diff> {
      * @return true if the changes {@link List} already contains the node, false
      *         otherwise
      */
-    public boolean containsNode(final INode paramItem) {
+    public boolean containsNode(final ITreeData paramItem) {
         assert paramItem != null;
         return mChangeByNode.containsKey(paramItem);
     }
@@ -109,7 +109,7 @@ public final class EditScript implements Iterator<Diff>, Iterable<Diff> {
      *            (not) changed node
      * @return the change assigned to the node or null
      */
-    public Diff get(final INode paramItem) {
+    public Diff get(final ITreeData paramItem) {
         return mChangeByNode.get(paramItem);
     }
 
@@ -122,7 +122,7 @@ public final class EditScript implements Iterator<Diff>, Iterable<Diff> {
      */
     public Diff add(final Diff paramChange) {
         assert paramChange != null;
-        final INode item =
+        final ITreeData item =
             paramChange.getDiff() == EDiff.DELETED ? paramChange.getOldNode() : paramChange.getNewNode();
         if (mChangeByNode.containsKey(item)) {
             return paramChange;

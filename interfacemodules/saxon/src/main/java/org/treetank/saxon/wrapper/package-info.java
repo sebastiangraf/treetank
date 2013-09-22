@@ -28,7 +28,7 @@
 /**
  * <h1>Treetank wrappers.</h1>
  * <p>
- * The wrappers implement the core interfaces of Saxon. Treetank's node type implementations are wrapped into
+ * The wrappers implement the core interfaces of Saxon. Treetank's treeData type implementations are wrapped into
  * Saxon's internal representation of nodes.
  * </p>
  * 

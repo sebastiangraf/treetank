@@ -30,7 +30,7 @@ package org.treetank.service.xml.shredder;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.treetank.node.IConstants.NULL_NODE;
+import static org.treetank.data.IConstants.NULL_NODE;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -67,16 +67,16 @@ import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
+import org.treetank.data.DocumentRootNode;
+import org.treetank.data.ElementNode;
+import org.treetank.data.IConstants;
+import org.treetank.data.NodeMetaPageFactory;
+import org.treetank.data.TreeNodeFactory;
+import org.treetank.data.delegates.NodeDelegate;
+import org.treetank.data.delegates.StructNodeDelegate;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackend.IBackendFactory;
-import org.treetank.node.DocumentRootNode;
-import org.treetank.node.ElementNode;
-import org.treetank.node.IConstants;
-import org.treetank.node.NodeMetaPageFactory;
-import org.treetank.node.TreeNodeFactory;
-import org.treetank.node.delegates.NodeDelegate;
-import org.treetank.node.delegates.StructNodeDelegate;
 import org.treetank.revisioning.IRevisioning;
 import org.treetank.utils.TypedValue;
 
@@ -171,7 +171,7 @@ public class XMLShredder implements Callable<Void> {
                 new DocumentRootNode(nodeDel, new StructNodeDelegate(nodeDel, NULL_NODE, NULL_NODE,
                     NULL_NODE, 0));
             mWtx.getPageWtx().setData(node);
-            mWtx.moveTo(org.treetank.node.IConstants.ROOT_NODE);
+            mWtx.moveTo(org.treetank.data.IConstants.ROOT_NODE);
         }
     }
 
@@ -371,7 +371,7 @@ public class XMLShredder implements Callable<Void> {
         DocumentRootNode node =
             new DocumentRootNode(nodeDel, new StructNodeDelegate(nodeDel, NULL_NODE, NULL_NODE, NULL_NODE, 0));
         wtx.getPageWtx().setData(node);
-        wtx.moveTo(org.treetank.node.IConstants.ROOT_NODE);
+        wtx.moveTo(org.treetank.data.IConstants.ROOT_NODE);
 
         final XMLEventReader reader = createFileReader(new File(paramArgs[0]));
         final XMLShredder shredder = new XMLShredder(wtx, reader, EShredderInsert.ADDASFIRSTCHILD);

@@ -28,7 +28,7 @@
 package org.treetank.service.xml.xpath.expr;
 
 import org.treetank.api.INodeReadTrx;
-import org.treetank.node.AtomicValue;
+import org.treetank.data.AtomicValue;
 import org.treetank.service.xml.xpath.axis.VariableAxis;
 
 /**

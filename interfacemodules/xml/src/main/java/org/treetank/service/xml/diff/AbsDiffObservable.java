@@ -31,8 +31,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.treetank.api.INodeReadTrx;
+import org.treetank.data.interfaces.ITreeStructData;
 import org.treetank.exception.TTException;
-import org.treetank.node.interfaces.IStructNode;
 import org.treetank.service.xml.diff.DiffFactory.EDiff;
 
 /**
@@ -65,8 +65,8 @@ abstract class AbsDiffObservable implements IDiffObservable {
 
     /** {@inheritDoc} */
     @Override
-    public final void fireDiff(final EDiff paramDiff, final IStructNode paramNewNode,
-        final IStructNode paramOldNode, final DiffDepth paramDepth) {
+    public final void fireDiff(final EDiff paramDiff, final ITreeStructData paramNewNode,
+        final ITreeStructData paramOldNode, final DiffDepth paramDepth) {
         for (final IDiffObserver observer : mDiffObservers) {
             observer.diffListener(paramDiff, paramNewNode, paramOldNode, paramDepth);
         }

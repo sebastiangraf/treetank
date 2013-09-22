@@ -31,8 +31,8 @@ import java.util.List;
 
 import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
+import org.treetank.data.AtomicValue;
 import org.treetank.exception.TTXPathException;
-import org.treetank.node.AtomicValue;
 import org.treetank.service.xml.xpath.EXPathError;
 import org.treetank.service.xml.xpath.expr.AbsExpression;
 

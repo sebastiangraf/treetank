@@ -31,8 +31,8 @@ import java.util.List;
 
 import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
+import org.treetank.data.interfaces.ITreeStructData;
 import org.treetank.exception.TTXPathException;
-import org.treetank.node.interfaces.IStructNode;
 import org.treetank.utils.TypedValue;
 
 /**
@@ -80,10 +80,10 @@ public class FNPosition extends AbsFunction {
         Integer position = 0;
         final long currentNode = getNode().getDataKey();
         moveTo(getNode().getParentKey());
-        moveTo(((IStructNode)getNode()).getFirstChildKey());
+        moveTo(((ITreeStructData)getNode()).getFirstChildKey());
         do {
             position++;
-            moveTo(((IStructNode)getNode()).getRightSiblingKey());
+            moveTo(((ITreeStructData)getNode()).getRightSiblingKey());
         } while (getNode().getDataKey() != currentNode);
 
         return TypedValue.getBytes(position.toString());

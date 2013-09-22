@@ -28,8 +28,8 @@
 package org.treetank.axis;
 
 import org.treetank.api.INodeReadTrx;
-import org.treetank.node.IConstants;
-import org.treetank.node.interfaces.IStructNode;
+import org.treetank.data.IConstants;
+import org.treetank.data.interfaces.ITreeStructData;
 
 /**
  * <h1>FollowingSiblingAxis</h1>
@@ -85,8 +85,8 @@ public class FollowingSiblingAxis extends AbsAxis {
 
         resetToLastKey();
 
-        if (((IStructNode)getNode()).hasRightSibling()) {
-            moveTo(((IStructNode)getNode()).getRightSiblingKey());
+        if (((ITreeStructData)getNode()).hasRightSibling()) {
+            moveTo(((ITreeStructData)getNode()).getRightSiblingKey());
             return true;
         }
         resetToStartKey();

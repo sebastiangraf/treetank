@@ -1,7 +1,7 @@
 package org.treetank.service.xml;
 
 import static org.junit.Assert.assertNotNull;
-import static org.treetank.node.IConstants.ROOT_NODE;
+import static org.treetank.data.IConstants.ROOT_NODE;
 
 import java.io.BufferedReader;
 import java.io.File;

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.treetank.node;
+package org.treetank.data;
 
 import java.io.DataInput;
 import java.io.IOException;
@@ -11,11 +11,11 @@ import java.util.List;
 import org.treetank.api.IData;
 import org.treetank.api.IDataFactory;
 import org.treetank.bucket.DataBucket.DeletedData;
+import org.treetank.data.delegates.NameNodeDelegate;
+import org.treetank.data.delegates.NodeDelegate;
+import org.treetank.data.delegates.StructNodeDelegate;
+import org.treetank.data.delegates.ValNodeDelegate;
 import org.treetank.exception.TTIOException;
-import org.treetank.node.delegates.NameNodeDelegate;
-import org.treetank.node.delegates.NodeDelegate;
-import org.treetank.node.delegates.StructNodeDelegate;
-import org.treetank.node.delegates.ValNodeDelegate;
 
 /**
  * Factory necessary to deserialize tree-nodes.

@@ -29,9 +29,9 @@ package org.treetank.service.xml.xpath.axis;
 
 import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
-import org.treetank.node.AtomicValue;
-import org.treetank.node.Type;
-import org.treetank.node.interfaces.IValNode;
+import org.treetank.data.AtomicValue;
+import org.treetank.data.Type;
+import org.treetank.data.interfaces.ITreeValData;
 import org.treetank.utils.NamePageHash;
 import org.treetank.utils.TypedValue;
 
@@ -96,11 +96,11 @@ public class RangeAxis extends AbsAxis {
         if (mFirst) {
             mFirst = false;
             if (mFrom.hasNext() && Type.getType(mFrom.getNode().getTypeKey()).derivesFrom(Type.INTEGER)) {
-                mStart = Integer.parseInt(new String(((IValNode)mFrom.getNode()).getRawValue()));
+                mStart = Integer.parseInt(new String(((ITreeValData)mFrom.getNode()).getRawValue()));
 
                 if (mTo.hasNext() && Type.getType(mTo.getNode().getTypeKey()).derivesFrom(Type.INTEGER)) {
 
-                    mEnd = Integer.parseInt(new String(((IValNode)mTo.getNode()).getRawValue()));
+                    mEnd = Integer.parseInt(new String(((ITreeValData)mTo.getNode()).getRawValue()));
 
                 } else {
                     // at least one operand is the empty sequence

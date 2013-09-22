@@ -51,16 +51,16 @@ import org.treetank.api.INodeReadTrx;
 import org.treetank.api.ISession;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.DescendantAxis;
+import org.treetank.data.ElementNode;
+import org.treetank.data.IConstants;
 import org.treetank.exception.TTException;
-import org.treetank.node.ElementNode;
-import org.treetank.node.IConstants;
 
 /**
  * <h1>DocumentWrapper</h1>
  * 
  * <p>
- * Wraps a Treetank document and represents a document node. Therefore it implements Saxon's DocumentInfo core
- * interface and also represents a Node in Saxon's internal node implementation. Thus it extends
+ * Wraps a Treetank document and represents a document treeData. Therefore it implements Saxon's DocumentInfo core
+ * interface and also represents a Node in Saxon's internal treeData implementation. Thus it extends
  * <tt>NodeWrapper</tt>.
  * </p>
  * 
@@ -177,7 +177,7 @@ public final class DocumentWrapper implements DocumentInfo {
      * Set the configuration (containing the name pool used for all names in
      * this document). Calling this method allocates a unique number to the
      * document (unique within the Configuration); this will form the basis for
-     * testing node identity.
+     * testing treeData identity.
      * 
      * @param config
      *            The configuration.

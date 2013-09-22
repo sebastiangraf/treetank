@@ -28,7 +28,7 @@
 package org.treetank.axis;
 
 import org.treetank.api.INodeReadTrx;
-import org.treetank.node.interfaces.IStructNode;
+import org.treetank.data.interfaces.ITreeStructData;
 
 /**
  * <h1>ChildAxis</h1>
@@ -67,12 +67,12 @@ public class ChildAxis extends AbsAxis {
     @Override
     public final boolean hasNext() {
         resetToLastKey();
-        if (!mFirst && ((IStructNode)getNode()).hasRightSibling()) {
-            moveTo(((IStructNode)getNode()).getRightSiblingKey());
+        if (!mFirst && ((ITreeStructData)getNode()).hasRightSibling()) {
+            moveTo(((ITreeStructData)getNode()).getRightSiblingKey());
             return true;
-        } else if (mFirst && (((IStructNode)getNode()).hasFirstChild())) {
+        } else if (mFirst && (((ITreeStructData)getNode()).hasFirstChild())) {
             mFirst = false;
-            moveTo(((IStructNode)getNode()).getFirstChildKey());
+            moveTo(((ITreeStructData)getNode()).getFirstChildKey());
             return true;
         } else {
             resetToStartKey();

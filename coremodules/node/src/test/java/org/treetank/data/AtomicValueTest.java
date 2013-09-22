@@ -25,12 +25,14 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.node;
+package org.treetank.data;
 
 import static org.testng.AssertJUnit.assertEquals;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import org.treetank.data.AtomicValue;
+import org.treetank.data.Type;
 
 public class AtomicValueTest {
 

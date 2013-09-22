@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.treetank.node;
+package org.treetank.data;
 
 import org.treetank.utils.NamePageHash;
 

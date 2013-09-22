@@ -27,7 +27,7 @@
 
 package org.treetank.service.xml.shredder;
 
-import static org.treetank.node.IConstants.ROOT_NODE;
+import static org.treetank.data.IConstants.ROOT_NODE;
 
 import java.io.File;
 import java.util.Iterator;
@@ -60,10 +60,10 @@ import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
 import org.treetank.axis.DescendantAxis;
+import org.treetank.data.ElementNode;
+import org.treetank.data.IConstants;
+import org.treetank.data.interfaces.ITreeStructData;
 import org.treetank.exception.TTException;
-import org.treetank.node.ElementNode;
-import org.treetank.node.IConstants;
-import org.treetank.node.interfaces.IStructNode;
 import org.treetank.service.xml.XMLTestHelper;
 
 import com.google.inject.Inject;
@@ -121,8 +121,8 @@ public class XMLShredderTest {
         final Iterator<Long> descendants = new DescendantAxis(rtx);
 
         while (expectedDescendants.hasNext() && descendants.hasNext()) {
-            final IStructNode expDesc = ((IStructNode)expectedTrx.getNode());
-            final IStructNode desc = ((IStructNode)rtx.getNode());
+            final ITreeStructData expDesc = ((ITreeStructData)expectedTrx.getNode());
+            final ITreeStructData desc = ((ITreeStructData)rtx.getNode());
             AssertJUnit.assertEquals(expDesc.getDataKey(), desc.getDataKey());
             AssertJUnit.assertEquals(expDesc.getParentKey(), desc.getParentKey());
             AssertJUnit.assertEquals(expDesc.getFirstChildKey(), desc.getFirstChildKey());
@@ -154,7 +154,7 @@ public class XMLShredderTest {
             new XMLShredder(wtx, XMLShredder.createFileReader(new File(XML)), EShredderInsert.ADDASFIRSTCHILD);
         shredder.call();
         wtx.moveTo(ROOT_NODE);
-        wtx.moveTo(((IStructNode)wtx.getNode()).getFirstChildKey());
+        wtx.moveTo(((ITreeStructData)wtx.getNode()).getFirstChildKey());
 
         final XMLShredder shredder2 =
             new XMLShredder(wtx, XMLShredder.createFileReader(new File(XML)),
@@ -263,13 +263,13 @@ public class XMLShredderTest {
         wtx.close();
 
         final INodeReadTrx rtx = new NodeReadTrx(session.beginBucketRtx(session.getMostRecentVersion()));
-        AssertJUnit.assertTrue(rtx.moveTo(((IStructNode)rtx.getNode()).getFirstChildKey()));
-        AssertJUnit.assertTrue(rtx.moveTo(((IStructNode)rtx.getNode()).getFirstChildKey()));
+        AssertJUnit.assertTrue(rtx.moveTo(((ITreeStructData)rtx.getNode()).getFirstChildKey()));
+        AssertJUnit.assertTrue(rtx.moveTo(((ITreeStructData)rtx.getNode()).getFirstChildKey()));
 
         final StringBuilder tnkBuilder = new StringBuilder();
         do {
             tnkBuilder.append(rtx.getValueOfCurrentNode());
-        } while (rtx.moveTo(((IStructNode)rtx.getNode()).getRightSiblingKey()));
+        } while (rtx.moveTo(((ITreeStructData)rtx.getNode()).getRightSiblingKey()));
 
         final String tnkString = tnkBuilder.toString();
 

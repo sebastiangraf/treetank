@@ -32,9 +32,9 @@ import java.util.Map;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.DescendantAxis;
+import org.treetank.data.interfaces.ITreeData;
+import org.treetank.data.interfaces.ITreeStructData;
 import org.treetank.exception.TTIOException;
-import org.treetank.node.interfaces.INode;
-import org.treetank.node.interfaces.IStructNode;
 
 /**
  * Keeps track of nodes in a matching.
@@ -45,17 +45,17 @@ import org.treetank.node.interfaces.IStructNode;
 public final class Matching {
 
     /** Forward matching. */
-    private final Map<INode, INode> mMapping;
+    private final Map<ITreeData, ITreeData> mMapping;
 
     /** Backward machting. */
-    private final Map<INode, INode> mReverseMapping;
+    private final Map<ITreeData, ITreeData> mReverseMapping;
 
     /**
      * Tracks the (grand-)parent-child relation of nodes. We use this to speed
      * up the calculation of the number of nodes in the subtree of two nodes
      * that are in the matching.
      */
-    private final ConnectionMap<INode> mIsInSubtree;
+    private final ConnectionMap<ITreeData> mIsInSubtree;
 
     /** {@link IReadTransaction} reference on old revision. */
     private final INodeReadTrx mRtxOld;
@@ -72,9 +72,9 @@ public final class Matching {
      *            {@link INodeReadTrx} reference on new revision.
      */
     public Matching(final INodeReadTrx pRtxOld, final INodeReadTrx pRtxNew) {
-        mMapping = new IdentityHashMap<INode, INode>();
-        mReverseMapping = new IdentityHashMap<INode, INode>();
-        mIsInSubtree = new ConnectionMap<INode>();
+        mMapping = new IdentityHashMap<ITreeData, ITreeData>();
+        mReverseMapping = new IdentityHashMap<ITreeData, ITreeData>();
+        mIsInSubtree = new ConnectionMap<ITreeData>();
         mRtxOld = pRtxOld;
         mRtxNew = pRtxNew;
     }
@@ -87,9 +87,9 @@ public final class Matching {
      *            the original
      */
     public Matching(final Matching paramMatch) {
-        mMapping = new IdentityHashMap<INode, INode>(paramMatch.mMapping);
-        mReverseMapping = new IdentityHashMap<INode, INode>(paramMatch.mReverseMapping);
-        mIsInSubtree = new ConnectionMap<INode>(paramMatch.mIsInSubtree);
+        mMapping = new IdentityHashMap<ITreeData, ITreeData>(paramMatch.mMapping);
+        mReverseMapping = new IdentityHashMap<ITreeData, ITreeData>(paramMatch.mReverseMapping);
+        mIsInSubtree = new ConnectionMap<ITreeData>(paramMatch.mIsInSubtree);
         mRtxOld = paramMatch.mRtxOld;
         mRtxNew = paramMatch.mRtxNew;
     }
@@ -103,7 +103,7 @@ public final class Matching {
      *            partner of paramNodeX
      * @throws TTIOException
      */
-    public void add(final INode paramNodeX, final INode paramNodeY) throws TTIOException {
+    public void add(final ITreeData paramNodeX, final ITreeData paramNodeY) throws TTIOException {
         mMapping.put(paramNodeX, paramNodeY);
         mReverseMapping.put(paramNodeY, paramNodeX);
         updateSubtreeMap(paramNodeX, mRtxNew);
@@ -119,14 +119,14 @@ public final class Matching {
      *            {@link IReadTransaction} reference
      * @throws TTIOException
      */
-    private void updateSubtreeMap(final INode paramNode, final INodeReadTrx paramRtx) throws TTIOException {
+    private void updateSubtreeMap(final ITreeData paramNode, final INodeReadTrx paramRtx) throws TTIOException {
         assert paramNode != null;
         assert paramRtx != null;
 
         mIsInSubtree.set(paramNode, paramNode, true);
         if (paramNode.hasParent()) {
             paramRtx.moveTo(paramNode.getDataKey());
-            while (((IStructNode)paramRtx.getNode()).hasParent()) {
+            while (((ITreeStructData)paramRtx.getNode()).hasParent()) {
                 paramRtx.moveTo(paramRtx.getNode().getParentKey());
                 mIsInSubtree.set(paramRtx.getNode(), paramNode, true);
             }
@@ -142,7 +142,7 @@ public final class Matching {
      *            partner of x
      * @return true iff add(x, y) was invoked first
      */
-    public boolean contains(final INode paramNodeX, final INode paramNodeY) {
+    public boolean contains(final ITreeData paramNodeX, final ITreeData paramNodeY) {
         return mMapping.get(paramNodeX) == paramNodeY;
     }
 
@@ -157,7 +157,7 @@ public final class Matching {
      * @return number of children which have been matched
      * @throws TTIOException
      */
-    public long containedChildren(final INode paramNodeX, final INode paramNodeY) throws TTIOException {
+    public long containedChildren(final ITreeData paramNodeX, final ITreeData paramNodeY) throws TTIOException {
         assert paramNodeX != null;
         assert paramNodeY != null;
         long retVal = 0;
@@ -177,7 +177,7 @@ public final class Matching {
      *            node for which a partner has to be found
      * @return the other node or null
      */
-    public INode partner(final INode paramNode) {
+    public ITreeData partner(final ITreeData paramNode) {
         return mMapping.get(paramNode);
     }
 
@@ -188,7 +188,7 @@ public final class Matching {
      *            node for which a reverse partner has to be found
      * @return x iff add(x, node) was called before
      */
-    public INode reversePartner(final INode paramNode) {
+    public ITreeData reversePartner(final ITreeData paramNode) {
         return mReverseMapping.get(paramNode);
     }
 }

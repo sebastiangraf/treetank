@@ -36,10 +36,10 @@ import org.treetank.api.INodeReadTrx;
 import org.treetank.api.ISession;
 import org.treetank.axis.AbsAxis;
 import org.treetank.axis.DescendantAxis;
+import org.treetank.data.IConstants;
+import org.treetank.data.interfaces.ITreeStructData;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.node.IConstants;
-import org.treetank.node.interfaces.IStructNode;
 
 /**
  * Class implements main serialization algorithm. Other classes can extend it.
@@ -150,7 +150,7 @@ abstract class AbsSerializer implements Callable<Void> {
             // Iterate over all nodes of the subtree including self.
             while (descAxis.hasNext()) {
                 key = descAxis.next();
-                IStructNode currentStruc = (IStructNode)rtx.getNode();
+                ITreeStructData currentStruc = (ITreeStructData)rtx.getNode();
 
                 // Emit all pending end elements.
                 if (closeElements) {

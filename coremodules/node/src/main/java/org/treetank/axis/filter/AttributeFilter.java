@@ -28,7 +28,7 @@
 package org.treetank.axis.filter;
 
 import org.treetank.api.INodeReadTrx;
-import org.treetank.node.IConstants;
+import org.treetank.data.IConstants;
 
 /**
  * <h1>AttributeAxisTest</h1>

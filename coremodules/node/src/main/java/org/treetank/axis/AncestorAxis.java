@@ -27,10 +27,10 @@
 
 package org.treetank.axis;
 
-import static org.treetank.node.IConstants.ROOT_NODE;
+import static org.treetank.data.IConstants.ROOT_NODE;
 
 import org.treetank.api.INodeReadTrx;
-import org.treetank.node.IConstants;
+import org.treetank.data.IConstants;
 
 /**
  * <h1>AncestorAxis</h1>

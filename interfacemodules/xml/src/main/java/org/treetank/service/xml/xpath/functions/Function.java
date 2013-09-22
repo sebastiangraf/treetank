@@ -32,8 +32,8 @@ import java.util.List;
 
 import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
+import org.treetank.data.interfaces.ITreeValData;
 import org.treetank.exception.TTXPathException;
-import org.treetank.node.interfaces.IValNode;
 import org.treetank.service.xml.xpath.functions.sequences.FNBoolean;
 import org.treetank.utils.NamePageHash;
 
@@ -49,7 +49,7 @@ public class Function {
         if (bAxis.hasNext()) {
             bAxis.next();
             final boolean result =
-                Boolean.parseBoolean(new String(((IValNode)bAxis.getNode()).getRawValue()));
+                Boolean.parseBoolean(new String(((ITreeValData)bAxis.getNode()).getRawValue()));
             if (!bAxis.hasNext()) {
                 bAxis.reset(axis.getNode().getDataKey());
                 return result;

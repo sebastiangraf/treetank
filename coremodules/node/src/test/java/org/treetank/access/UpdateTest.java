@@ -29,7 +29,7 @@ package org.treetank.access;
 
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertTrue;
-import static org.treetank.node.IConstants.ROOT_NODE;
+import static org.treetank.data.IConstants.ROOT_NODE;
 
 import java.util.Properties;
 
@@ -50,8 +50,8 @@ import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.IBucketReadTrx;
+import org.treetank.data.interfaces.ITreeStructData;
 import org.treetank.exception.TTException;
-import org.treetank.node.interfaces.IStructNode;
 
 import com.google.inject.Inject;
 
@@ -93,7 +93,7 @@ public class UpdateTest {
         nodeIsolation(rtx);
         wtx.commit();
         nodeIsolation(rtx);
-        wtx.moveTo(((IStructNode)wtx.getNode()).getFirstChildKey());
+        wtx.moveTo(((ITreeStructData)wtx.getNode()).getFirstChildKey());
         wtx.insertElementAsFirstChild(new QName(""));
         nodeIsolation(rtx);
         wtx.commit();
@@ -113,9 +113,9 @@ public class UpdateTest {
     private final static void nodeIsolation(final INodeReadTrx pRtx) throws TTException {
         assertTrue(pRtx.moveTo(ROOT_NODE));
         assertEquals(0, pRtx.getNode().getDataKey());
-        assertTrue(pRtx.moveTo(((IStructNode)pRtx.getNode()).getFirstChildKey()));
+        assertTrue(pRtx.moveTo(((ITreeStructData)pRtx.getNode()).getFirstChildKey()));
         assertEquals(1, pRtx.getNode().getDataKey());
-        assertEquals(5, ((IStructNode)pRtx.getNode()).getChildCount());
+        assertEquals(5, ((ITreeStructData)pRtx.getNode()).getChildCount());
     }
 
     @Test
@@ -145,7 +145,7 @@ public class UpdateTest {
                 new NodeReadTrx(holder.getSession()
                     .beginBucketRtx(holder.getSession().getMostRecentVersion()));
             rtx.moveTo(ROOT_NODE);
-            rtx.moveTo(((IStructNode)rtx.getNode()).getFirstChildKey());
+            rtx.moveTo(((ITreeStructData)rtx.getNode()).getFirstChildKey());
             assertEquals(Integer.toString(i), rtx.getValueOfCurrentNode());
             assertEquals(i + 2, holder.getSession().getMostRecentVersion());
             rtx.close();
@@ -153,7 +153,7 @@ public class UpdateTest {
 
         rtx = new NodeReadTrx(holder.getSession().beginBucketRtx(holder.getSession().getMostRecentVersion()));
         rtx.moveTo(ROOT_NODE);
-        rtx.moveTo(((IStructNode)rtx.getNode()).getFirstChildKey());
+        rtx.moveTo(((ITreeStructData)rtx.getNode()).getFirstChildKey());
         assertEquals("10", rtx.getValueOfCurrentNode());
         assertEquals(12L, holder.getSession().getMostRecentVersion());
         rtx.close();
@@ -252,16 +252,16 @@ public class UpdateTest {
     private final static void removeDescendant(final INodeReadTrx pRtx) throws TTException {
         assertTrue(pRtx.moveTo(ROOT_NODE));
         assertEquals(0, pRtx.getNode().getDataKey());
-        assertTrue(pRtx.moveTo(((IStructNode)pRtx.getNode()).getFirstChildKey()));
+        assertTrue(pRtx.moveTo(((ITreeStructData)pRtx.getNode()).getFirstChildKey()));
         assertEquals(1, pRtx.getNode().getDataKey());
-        assertEquals(4, ((IStructNode)pRtx.getNode()).getChildCount());
-        assertTrue(pRtx.moveTo(((IStructNode)pRtx.getNode()).getFirstChildKey()));
+        assertEquals(4, ((ITreeStructData)pRtx.getNode()).getChildCount());
+        assertTrue(pRtx.moveTo(((ITreeStructData)pRtx.getNode()).getFirstChildKey()));
         assertEquals(4, pRtx.getNode().getDataKey());
-        assertTrue(pRtx.moveTo(((IStructNode)pRtx.getNode()).getRightSiblingKey()));
+        assertTrue(pRtx.moveTo(((ITreeStructData)pRtx.getNode()).getRightSiblingKey()));
         assertEquals(8, pRtx.getNode().getDataKey());
-        assertTrue(pRtx.moveTo(((IStructNode)pRtx.getNode()).getRightSiblingKey()));
+        assertTrue(pRtx.moveTo(((ITreeStructData)pRtx.getNode()).getRightSiblingKey()));
         assertEquals(9, pRtx.getNode().getDataKey());
-        assertTrue(pRtx.moveTo(((IStructNode)pRtx.getNode()).getRightSiblingKey()));
+        assertTrue(pRtx.moveTo(((ITreeStructData)pRtx.getNode()).getRightSiblingKey()));
         assertEquals(13, pRtx.getNode().getDataKey());
     }
 

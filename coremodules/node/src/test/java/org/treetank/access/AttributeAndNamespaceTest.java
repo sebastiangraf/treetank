@@ -42,8 +42,8 @@ import org.treetank.NodeElementTestHelper;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.StandardSettings;
+import org.treetank.data.ElementNode;
 import org.treetank.exception.TTException;
-import org.treetank.node.ElementNode;
 
 import com.google.inject.Inject;
 

@@ -28,7 +28,7 @@
 package org.treetank.axis;
 
 import static org.testng.AssertJUnit.assertEquals;
-import static org.treetank.node.IConstants.ROOT_NODE;
+import static org.treetank.data.IConstants.ROOT_NODE;
 
 import java.util.Properties;
 

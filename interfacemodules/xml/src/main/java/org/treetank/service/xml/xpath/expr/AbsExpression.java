@@ -29,8 +29,8 @@ package org.treetank.service.xml.xpath.expr;
 
 import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
+import org.treetank.data.AtomicValue;
 import org.treetank.exception.TTXPathException;
-import org.treetank.node.AtomicValue;
 
 /**
  * <h1>AbstractExpression</h1>

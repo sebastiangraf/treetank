@@ -27,11 +27,11 @@
 
 package org.treetank.service.xml.serialize;
 
-import static org.treetank.node.IConstants.ATTRIBUTE;
-import static org.treetank.node.IConstants.ELEMENT;
-import static org.treetank.node.IConstants.NAMESPACE;
-import static org.treetank.node.IConstants.ROOT;
-import static org.treetank.node.IConstants.TEXT;
+import static org.treetank.data.IConstants.ATTRIBUTE;
+import static org.treetank.data.IConstants.ELEMENT;
+import static org.treetank.data.IConstants.NAMESPACE;
+import static org.treetank.data.IConstants.ROOT;
+import static org.treetank.data.IConstants.TEXT;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -51,10 +51,10 @@ import org.treetank.axis.AbsAxis;
 import org.treetank.axis.DescendantAxis;
 import org.treetank.axis.FilterAxis;
 import org.treetank.axis.filter.TextFilter;
+import org.treetank.data.ElementNode;
+import org.treetank.data.interfaces.ITreeStructData;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.node.ElementNode;
-import org.treetank.node.interfaces.IStructNode;
 
 /**
  * <h1>StAXSerializer</h1>
@@ -312,13 +312,13 @@ public final class StAXSerializer implements XMLEventReader {
                 emitEndTag();
             } else {
                 final int nodeKind = mRtx.getNode().getKind();
-                if (((IStructNode)mRtx.getNode()).hasFirstChild()) {
-                    mRtx.moveTo(((IStructNode)mRtx.getNode()).getFirstChildKey());
+                if (((ITreeStructData)mRtx.getNode()).hasFirstChild()) {
+                    mRtx.moveTo(((ITreeStructData)mRtx.getNode()).getFirstChildKey());
                     emitNode();
-                } else if (((IStructNode)mRtx.getNode()).hasRightSibling()) {
-                    mRtx.moveTo(((IStructNode)mRtx.getNode()).getRightSiblingKey());
+                } else if (((ITreeStructData)mRtx.getNode()).hasRightSibling()) {
+                    mRtx.moveTo(((ITreeStructData)mRtx.getNode()).getRightSiblingKey());
                     processNode(nodeKind);
-                } else if (((IStructNode)mRtx.getNode()).hasParent()) {
+                } else if (((ITreeStructData)mRtx.getNode()).hasParent()) {
                     mRtx.moveTo(mRtx.getNode().getParentKey());
                     emitEndTag();
                 }
@@ -383,7 +383,7 @@ public final class StAXSerializer implements XMLEventReader {
     private void emit() throws TTIOException {
         // Emit pending end elements.
         if (mCloseElements) {
-            if (!mStack.empty() && mStack.peek() != ((IStructNode)mRtx.getNode()).getLeftSiblingKey()) {
+            if (!mStack.empty() && mStack.peek() != ((ITreeStructData)mRtx.getNode()).getLeftSiblingKey()) {
                 mRtx.moveTo(mStack.pop());
                 emitEndTag();
                 mRtx.moveTo(mKey);
@@ -410,8 +410,8 @@ public final class StAXSerializer implements XMLEventReader {
 
             // Remember to emit all pending end elements from stack if
             // required.
-            if (!((IStructNode)mRtx.getNode()).hasFirstChild()
-                && !((IStructNode)mRtx.getNode()).hasRightSibling()) {
+            if (!((ITreeStructData)mRtx.getNode()).hasFirstChild()
+                && !((ITreeStructData)mRtx.getNode()).hasRightSibling()) {
                 mGoUp = true;
                 moveToNextNode();
             } else if (mRtx.getNode().getKind() == ELEMENT && !((ElementNode)mRtx.getNode()).hasFirstChild()) {

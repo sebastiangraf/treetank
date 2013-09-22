@@ -28,7 +28,7 @@
 package org.treetank.axis.filter;
 
 import org.treetank.api.INodeReadTrx;
-import org.treetank.node.interfaces.INameNode;
+import org.treetank.data.interfaces.ITreeNameData;
 import org.treetank.utils.NamePageHash;
 
 /**
@@ -63,8 +63,8 @@ public class NameFilter extends AbsFilter {
     public final boolean filter() {
 
         boolean returnVal = false;
-        if (getNode() instanceof INameNode) {
-            final INameNode node = (INameNode)getNode();
+        if (getNode() instanceof ITreeNameData) {
+            final ITreeNameData node = (ITreeNameData)getNode();
             returnVal = (node.getNameKey() == mLocalPartKey);
         }
         return returnVal;

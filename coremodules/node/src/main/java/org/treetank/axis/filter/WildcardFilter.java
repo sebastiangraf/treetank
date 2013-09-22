@@ -30,10 +30,10 @@ package org.treetank.axis.filter;
 import static com.google.common.base.Preconditions.checkState;
 
 import org.treetank.api.INodeReadTrx;
+import org.treetank.data.ElementNode;
+import org.treetank.data.IConstants;
+import org.treetank.data.interfaces.ITreeNameData;
 import org.treetank.exception.TTIOException;
-import org.treetank.node.ElementNode;
-import org.treetank.node.IConstants;
-import org.treetank.node.interfaces.INameNode;
 import org.treetank.utils.NamePageHash;
 
 /**
@@ -88,7 +88,7 @@ public class WildcardFilter extends AbsFilter {
             if (mIsName) { // local name is given
                 final String localname =
 
-                mRtx.nameForKey(((INameNode)mRtx.getNode()).getNameKey()).replaceFirst(".*:", "");
+                mRtx.nameForKey(((ITreeNameData)mRtx.getNode()).getNameKey()).replaceFirst(".*:", "");
                 final int localnameKey = NamePageHash.generateHashForString(localname);
 
                 return localnameKey == mKnownPartKey;
@@ -98,7 +98,7 @@ public class WildcardFilter extends AbsFilter {
                     for (int i = 0; i < nsCount; i++) {
                         mRtx.moveTo(((ElementNode)mRtx.getNode()).getNamespaceKey(i));
                         final int prefixKey = mKnownPartKey;
-                        if (((INameNode)mRtx.getNode()).getNameKey() == prefixKey) {
+                        if (((ITreeNameData)mRtx.getNode()).getNameKey() == prefixKey) {
                             mRtx.moveTo(mRtx.getNode().getParentKey());
                             return true;
                         }

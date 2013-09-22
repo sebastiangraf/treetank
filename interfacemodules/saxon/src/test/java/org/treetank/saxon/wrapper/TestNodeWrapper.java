@@ -87,7 +87,7 @@ public class TestNodeWrapper {
 
     private ResourceConfiguration mResource;
 
-    /** Document node. */
+    /** Document treeData. */
     private transient NodeWrapper node;
 
     @BeforeMethod
@@ -153,7 +153,7 @@ public class TestNodeWrapper {
         node.getNamePool().allocate(attribute.getPrefix(), attribute.getURI(), attribute.getLocalPart());
 
         // Only supported on element nodes.
-        // node = (NodeWrapper) node.getParent();
+        // treeData = (NodeWrapper) treeData.getParent();
 
         assertEquals("j", node.getAttributeValue(attribute.getFingerprint()));
     }
@@ -201,44 +201,44 @@ public class TestNodeWrapper {
     // @Test
     // public void testGetDeclaredNamespaces() {
     // // Namespace declared.
-    // final AxisIterator iterator = node.iterateAxis(Axis.CHILD);
-    // node = (NodeWrapper)iterator.next();
-    // final NamespaceBinding[] namespaces = node.getDeclaredNamespaces(new NamespaceBinding[1]);
+    // final AxisIterator iterator = treeData.iterateAxis(Axis.CHILD);
+    // treeData = (NodeWrapper)iterator.next();
+    // final NamespaceBinding[] namespaces = treeData.getDeclaredNamespaces(new NamespaceBinding[1]);
     //
-    // node.getNamePool().allocateNamespaceCode("p", "ns");
-    // final int expected = node.getNamePool().getNamespaceCode("p", "ns");
+    // treeData.getNamePool().allocateNamespaceCode("p", "ns");
+    // final int expected = treeData.getNamePool().getNamespaceCode("p", "ns");
     //
     // assertEquals(expected, namespaces[0]);
     //
-    // // Namespace not declared (on element node) -- returns zero length
+    // // Namespace not declared (on element treeData) -- returns zero length
     // // array.
-    // final AxisIterator iter = node.iterateAxis(Axis.DESCENDANT);
-    // node = (NodeWrapper)iter.next();
-    // node = (NodeWrapper)iter.next();
+    // final AxisIterator iter = treeData.iterateAxis(Axis.DESCENDANT);
+    // treeData = (NodeWrapper)iter.next();
+    // treeData = (NodeWrapper)iter.next();
     //
-    // final int[] namesp = node.getDeclaredNamespaces(new int[1]);
+    // final int[] namesp = treeData.getDeclaredNamespaces(new int[1]);
     //
     // assertTrue(namesp.length == 0);
     //
     // // Namespace nod declared on other nodes -- return null.
-    // final AxisIterator it = node.iterateAxis(Axis.DESCENDANT);
-    // node = (NodeWrapper)it.next();
+    // final AxisIterator it = treeData.iterateAxis(Axis.DESCENDANT);
+    // treeData = (NodeWrapper)it.next();
     //
-    // assertNull(node.getDeclaredNamespaces(new int[1]));
+    // assertNull(treeData.getDeclaredNamespaces(new int[1]));
     // }
 
     @Test
     public void testGetStringValueCS() {
-        // Test on document node.
+        // Test on document treeData.
         assertEquals("oops1foooops2baroops3", node.getStringValueCS());
 
-        // Test on element node.
+        // Test on element treeData.
         AxisIterator iterator = node.iterateAxis(Axis.DESCENDANT);
         node = (NodeWrapper)iterator.next();
         assertEquals("oops1foooops2baroops3", node.getStringValueCS());
 
-        // // Test on namespace node.
-        // iterator = node.iterateAxis(Axis.NAMESPACE);
+        // // Test on namespace treeData.
+        // iterator = treeData.iterateAxis(Axis.NAMESPACE);
         // NamespaceNodeImpl namespace = (NamespaceNodeImpl)iterator.next();
 
         // /*
@@ -257,18 +257,18 @@ public class TestNodeWrapper {
         // assertEquals("ns", namespace.getStringValueCS());
         // }
 
-        // Test on attribute node.
+        // Test on attribute treeData.
         final NodeWrapper attrib = (NodeWrapper)node.iterateAxis(Axis.ATTRIBUTE).next();
         assertEquals("j", attrib.getStringValueCS());
 
-        // Test on text node.
+        // Test on text treeData.
         final NodeWrapper text = (NodeWrapper)node.iterateAxis(Axis.CHILD).next();
         assertEquals("oops1", text.getStringValueCS());
     }
 
     @Test
     public void testGetSiblingPosition() {
-        // Test every node in test document.
+        // Test every treeData in test document.
         final AxisIterator iterator = node.iterateAxis(Axis.DESCENDANT);
         node = (NodeWrapper)iterator.next();
         node = (NodeWrapper)iterator.next();

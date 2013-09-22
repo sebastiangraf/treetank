@@ -111,7 +111,7 @@ public interface INodeReadTrx {
      * 
      * @return the node
      */
-    org.treetank.node.interfaces.INode getNode();
+    org.treetank.data.interfaces.ITreeData getNode();
 
     /**
      * Close shared read transaction and immediately release all resources.

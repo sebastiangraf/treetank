@@ -27,12 +27,12 @@
 
 package org.treetank.axis;
 
-import static org.treetank.node.IConstants.NULL_NODE;
+import static org.treetank.data.IConstants.NULL_NODE;
 
 import java.util.Stack;
 
 import org.treetank.api.INodeReadTrx;
-import org.treetank.node.interfaces.IStructNode;
+import org.treetank.data.interfaces.ITreeStructData;
 
 /**
  * <h1>DescendantAxis</h1>
@@ -81,7 +81,7 @@ public final class DescendantAxis extends AbsAxis {
         if (isSelfIncluded()) {
             mNextKey = getNode().getDataKey();
         } else {
-            mNextKey = ((IStructNode)getNode()).getFirstChildKey();
+            mNextKey = ((ITreeStructData)getNode()).getFirstChildKey();
         }
     }
 
@@ -101,23 +101,23 @@ public final class DescendantAxis extends AbsAxis {
         moveTo(mNextKey);
 
         // Fail if the subtree is finished.
-        if (((IStructNode)getNode()).getLeftSiblingKey() == getStartKey()) {
+        if (((ITreeStructData)getNode()).getLeftSiblingKey() == getStartKey()) {
             resetToStartKey();
             return false;
         }
 
         // Always follow first child if there is one.
-        if (((IStructNode)getNode()).hasFirstChild()) {
-            mNextKey = ((IStructNode)getNode()).getFirstChildKey();
-            if (((IStructNode)getNode()).hasRightSibling()) {
-                mRightSiblingKeyStack.push(((IStructNode)getNode()).getRightSiblingKey());
+        if (((ITreeStructData)getNode()).hasFirstChild()) {
+            mNextKey = ((ITreeStructData)getNode()).getFirstChildKey();
+            if (((ITreeStructData)getNode()).hasRightSibling()) {
+                mRightSiblingKeyStack.push(((ITreeStructData)getNode()).getRightSiblingKey());
             }
             return true;
         }
 
         // Then follow right sibling if there is one.
-        if (((IStructNode)getNode()).hasRightSibling()) {
-            mNextKey = ((IStructNode)getNode()).getRightSiblingKey();
+        if (((ITreeStructData)getNode()).hasRightSibling()) {
+            mNextKey = ((ITreeStructData)getNode()).getRightSiblingKey();
             return true;
         }
 

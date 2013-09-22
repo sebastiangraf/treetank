@@ -27,7 +27,7 @@
 
 package org.treetank.service.xml.diff;
 
-import org.treetank.node.interfaces.IStructNode;
+import org.treetank.data.interfaces.ITreeStructData;
 import org.treetank.service.xml.diff.DiffFactory.EDiff;
 
 /**
@@ -43,13 +43,13 @@ public interface IDiffObserver {
      * @param paramDiff
      *            the {@link EDiff} type
      * @param paramNewNode
-     *            {@link IStructNode} in new revision
+     *            {@link ITreeStructData} in new revision
      * @param paramOldNode
-     *            {@link IStructNode} in old revision
+     *            {@link ITreeStructData} in old revision
      * @param paramDepth
      *            current {@link DiffDepth} instance
      */
-    void diffListener(final EDiff paramDiff, final IStructNode paramNewNode, final IStructNode paramOldNode,
+    void diffListener(final EDiff paramDiff, final ITreeStructData paramNewNode, final ITreeStructData paramOldNode,
         final DiffDepth paramDepth);
 
     /** Signals that the diff calculation is done. */

@@ -1,6 +1,6 @@
 name: XMLSuite
 threadCount: 4
-parameters: { NodeFactory: org.treetank.node.TreeNodeFactory, MetaFactory: org.treetank.node.NodeMetaPageFactory }
+parameters: { NodeFactory: org.treetank.data.TreeNodeFactory, MetaFactory: org.treetank.data.NodeMetaPageFactory }
 
 tests:
 #  - name: Sliding Berkeley

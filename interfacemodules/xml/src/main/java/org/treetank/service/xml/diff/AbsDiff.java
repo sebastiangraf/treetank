@@ -27,19 +27,19 @@
 
 package org.treetank.service.xml.diff;
 
-import static org.treetank.node.IConstants.ELEMENT;
-import static org.treetank.node.IConstants.ROOT;
-import static org.treetank.node.IConstants.ROOT_NODE;
-import static org.treetank.node.IConstants.TEXT;
+import static org.treetank.data.IConstants.ELEMENT;
+import static org.treetank.data.IConstants.ROOT;
+import static org.treetank.data.IConstants.ROOT_NODE;
+import static org.treetank.data.IConstants.TEXT;
 
 import javax.xml.namespace.QName;
 
 import org.treetank.access.NodeReadTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.api.INodeReadTrx;
+import org.treetank.data.interfaces.ITreeStructData;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.node.interfaces.IStructNode;
 import org.treetank.service.xml.diff.DiffFactory.Builder;
 import org.treetank.service.xml.diff.DiffFactory.EDiff;
 import org.treetank.service.xml.diff.DiffFactory.EDiffOptimized;
@@ -197,17 +197,17 @@ abstract class AbsDiff extends AbsDiffObservable {
 
         boolean moved = false;
 
-        final IStructNode node = ((IStructNode)paramRtx.getNode());
+        final ITreeStructData node = ((ITreeStructData)paramRtx.getNode());
         if (node.hasFirstChild()) {
             if (node.getKind() != ROOT && mDiffKind == EDiffOptimized.HASHED && mHashKind != HashKind.None
                 && (mDiff == EDiff.SAMEHASH || mDiff == EDiff.DELETED)) {
-                moved = paramRtx.moveTo(((IStructNode)paramRtx.getNode()).getRightSiblingKey());
+                moved = paramRtx.moveTo(((ITreeStructData)paramRtx.getNode()).getRightSiblingKey());
 
                 if (!moved) {
                     moved = moveToFollowingNode(paramRtx, paramRevision);
                 }
             } else {
-                moved = paramRtx.moveTo(((IStructNode)paramRtx.getNode()).getFirstChildKey());
+                moved = paramRtx.moveTo(((ITreeStructData)paramRtx.getNode()).getFirstChildKey());
                 if (moved) {
                     switch (paramRevision) {
                     case NEW:
@@ -223,7 +223,7 @@ abstract class AbsDiff extends AbsDiffObservable {
             if (paramRtx.getNode().getDataKey() == mRootKey) {
                 paramRtx.moveTo(ROOT_NODE);
             } else {
-                moved = paramRtx.moveTo(((IStructNode)paramRtx.getNode()).getRightSiblingKey());
+                moved = paramRtx.moveTo(((ITreeStructData)paramRtx.getNode()).getRightSiblingKey());
             }
         } else {
             moved = moveToFollowingNode(paramRtx, paramRevision);
@@ -245,8 +245,8 @@ abstract class AbsDiff extends AbsDiffObservable {
     private boolean moveToFollowingNode(final INodeReadTrx paramRtx, final ERevision paramRevision)
         throws TTIOException {
         boolean moved = false;
-        while (!((IStructNode)paramRtx.getNode()).hasRightSibling()
-            && ((IStructNode)paramRtx.getNode()).hasParent() && paramRtx.getNode().getDataKey() != mRootKey) {
+        while (!((ITreeStructData)paramRtx.getNode()).hasRightSibling()
+            && ((ITreeStructData)paramRtx.getNode()).hasParent() && paramRtx.getNode().getDataKey() != mRootKey) {
             moved = paramRtx.moveTo(paramRtx.getNode().getParentKey());
             if (moved) {
                 switch (paramRevision) {
@@ -264,7 +264,7 @@ abstract class AbsDiff extends AbsDiffObservable {
             paramRtx.moveTo(ROOT_NODE);
         }
 
-        moved = paramRtx.moveTo(((IStructNode)paramRtx.getNode()).getRightSiblingKey());
+        moved = paramRtx.moveTo(((ITreeStructData)paramRtx.getNode()).getRightSiblingKey());
         return moved;
     }
 
@@ -305,7 +305,7 @@ abstract class AbsDiff extends AbsDiffObservable {
         }
 
         if (paramFireDiff == EFireDiff.TRUE) {
-            fireDiff(diff, ((IStructNode)paramNewRtx.getNode()), ((IStructNode)paramOldRtx.getNode()),
+            fireDiff(diff, ((ITreeStructData)paramNewRtx.getNode()), ((ITreeStructData)paramOldRtx.getNode()),
                 new DiffDepth(paramDepth.getNewDepth(), paramDepth.getOldDepth()));
         }
         return diff;
@@ -355,10 +355,10 @@ abstract class AbsDiff extends AbsDiffObservable {
 
         if (paramFireDiff == EFireDiff.TRUE) {
             if (diff == EDiff.SAMEHASH) {
-                fireDiff(EDiff.SAME, ((IStructNode)paramNewRtx.getNode()), ((IStructNode)paramOldRtx
+                fireDiff(EDiff.SAME, ((ITreeStructData)paramNewRtx.getNode()), ((ITreeStructData)paramOldRtx
                     .getNode()), new DiffDepth(paramDepth.getNewDepth(), paramDepth.getOldDepth()));
             } else {
-                fireDiff(diff, ((IStructNode)paramNewRtx.getNode()), ((IStructNode)paramOldRtx.getNode()),
+                fireDiff(diff, ((ITreeStructData)paramNewRtx.getNode()), ((ITreeStructData)paramOldRtx.getNode()),
                     new DiffDepth(paramDepth.getNewDepth(), paramDepth.getOldDepth()));
             }
         }
@@ -393,8 +393,8 @@ abstract class AbsDiff extends AbsDiffObservable {
             EFoundEqualNode found = EFoundEqualNode.FALSE;
             final long key = paramOldRtx.getNode().getDataKey();
 
-            while (((IStructNode)paramOldRtx.getNode()).hasRightSibling()
-                && paramOldRtx.moveTo(((IStructNode)paramOldRtx.getNode()).getRightSiblingKey())
+            while (((ITreeStructData)paramOldRtx.getNode()).hasRightSibling()
+                && paramOldRtx.moveTo(((ITreeStructData)paramOldRtx.getNode()).getRightSiblingKey())
                 && found == EFoundEqualNode.FALSE) {
                 if (checkNodes(paramNewRtx, paramOldRtx)) {
                     found = EFoundEqualNode.TRUE;
@@ -468,9 +468,9 @@ abstract class AbsDiff extends AbsDiffObservable {
         assert paramOldRtx != null;
         boolean updated = false;
         final long newKey = paramNewRtx.getNode().getDataKey();
-        boolean movedNewRtx = paramNewRtx.moveTo(((IStructNode)paramNewRtx.getNode()).getRightSiblingKey());
+        boolean movedNewRtx = paramNewRtx.moveTo(((ITreeStructData)paramNewRtx.getNode()).getRightSiblingKey());
         final long oldKey = paramOldRtx.getNode().getDataKey();
-        boolean movedOldRtx = paramOldRtx.moveTo(((IStructNode)paramOldRtx.getNode()).getRightSiblingKey());
+        boolean movedOldRtx = paramOldRtx.moveTo(((ITreeStructData)paramOldRtx.getNode()).getRightSiblingKey());
         if (movedNewRtx && movedOldRtx && checkNodes(paramNewRtx, paramOldRtx)) {
             updated = true;
         } else if (!movedNewRtx && !movedOldRtx) {
