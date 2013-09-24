@@ -71,7 +71,7 @@ public class FilelistenerBenchmark implements FilesystemNotificationObserver {
     @Test
     public void realBench() throws Exception {
         int[] toExecute = new int[] {
-            262144, 524288, 1048576, 2097152, 4194304, 8388608, 16777216, 33554432
+            262144//, 524288, 1048576, 2097152, 4194304, 8388608, 16777216, 33554432
         };
 
         for (int i = 0; i < toExecute.length; i++) {

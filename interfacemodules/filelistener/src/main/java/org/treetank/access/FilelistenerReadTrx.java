@@ -124,15 +124,17 @@ public class FilelistenerReadTrx implements IFilelistenerReadTrx {
      */
     public int getCount() {
         // This will only apply for the filebench or if this resource name on a local storage is used
-        String resourceName = "bench53473ResourcegraveISCSI9283";
-        String bucketFolder =
-            StorageManager.ROOT_PATH + File.separator + "storage" + File.separator + "resources"
-                + File.separator + resourceName + File.separator + "data" + File.separator + resourceName;
-        String[] buckets = new File(bucketFolder).list();
-        if (buckets == null) {
-            return -1;
-        }
-        return buckets.length;
+//        String resourceName = "bench53473ResourcegraveISCSI9283";
+//        String bucketFolder = StorageManager.ROOT_PATH
+//        + File.separator + "storage" + File.separator + "resources"
+//        + File.separator + resourceName + File.separator + "data"
+//        + File.separator + resourceName;
+//        String[] buckets = new File(bucketFolder).list();
+//        if(buckets == null){
+//            return -1;
+//        }
+//        return buckets.length;
+    	return -1;
     }
 
     /**
