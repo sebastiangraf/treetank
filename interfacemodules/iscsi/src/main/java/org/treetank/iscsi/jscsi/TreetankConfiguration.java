@@ -22,7 +22,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.jscsi;
+package org.treetank.iscsi.jscsi;
 
 import java.io.File;
 import java.io.IOException;

@@ -35,10 +35,10 @@ import java.io.IOException;
 import org.testng.annotations.Test;
 import org.treetank.CoreTestHelper;
 import org.treetank.api.IData;
-import org.treetank.data.BlockDataElement;
-import org.treetank.data.BlockDataElementFactory;
+import org.treetank.iscsi.data.BlockDataElement;
+import org.treetank.iscsi.data.BlockDataElementFactory;
 import org.treetank.exception.TTIOException;
-import org.treetank.jscsi.TreetankStorageModule;
+import org.treetank.iscsi.jscsi.TreetankStorageModule;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;

@@ -22,7 +22,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.jscsi;
+package org.treetank.iscsi.jscsi;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -46,11 +46,11 @@ import org.treetank.access.conf.StandardSettings;
 import org.treetank.access.conf.StorageConfiguration;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
-import org.treetank.data.BlockDataElementFactory;
-import org.treetank.data.ISCSIMetaPageFactory;
 import org.treetank.io.IBackend;
 import org.treetank.io.IOUtils;
 import org.treetank.io.jclouds.JCloudsStorage;
+import org.treetank.iscsi.data.BlockDataElementFactory;
+import org.treetank.iscsi.data.ISCSIMetaPageFactory;
 import org.treetank.revisioning.IRevisioning;
 import org.treetank.revisioning.SlidingSnapshot;
 

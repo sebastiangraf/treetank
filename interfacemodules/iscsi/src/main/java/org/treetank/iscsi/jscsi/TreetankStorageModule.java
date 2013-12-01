@@ -22,7 +22,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.jscsi;
+package org.treetank.iscsi.jscsi;
 
 import static com.google.common.base.Preconditions.checkState;
 
@@ -33,11 +33,11 @@ import java.util.Set;
 import org.jscsi.target.storage.IStorageModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.treetank.access.IscsiWriteTrx;
 import org.treetank.api.IData;
-import org.treetank.api.IIscsiWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
+import org.treetank.iscsi.access.IscsiWriteTrx;
+import org.treetank.iscsi.api.IIscsiWriteTrx;
 
 /**
  * <h1>TreetankStorageModule</h1>

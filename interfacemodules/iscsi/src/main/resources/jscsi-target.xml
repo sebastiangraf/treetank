@@ -34,13 +34,21 @@
 
     <TargetList>
         <Target>
-            <TargetName>iqn.2010-04.local-test:disk-1</TargetName>
+            <TargetName>box.vm:disk-1</TargetName>
             <TargetAlias>jSCSI Target</TargetAlias>
-            <SyncFileStorage>
-                <Path>/tmp/storage1.dat</Path>
-                <Create size="0.7"/>
-            </SyncFileStorage>
+            <AsyncFileStorage>
+                <Path>/tmp/vbox.dat</Path>
+                <NoCreate />
+            </AsyncFileStorage>
         </Target>
+<!--         <Target> -->
+<!--             <TargetName>iqn.2010-04.local-test:disk-1</TargetName> -->
+<!--             <TargetAlias>jSCSI Target</TargetAlias> -->
+<!--             <SyncFileStorage> -->
+<!--                 <Path>/tmp/storage1.dat</Path> -->
+<!--                 <Create size="0.7"/> -->
+<!--             </SyncFileStorage> -->
+<!--         </Target> -->
     </TargetList>
     <GlobalConfig>
         <AllowSloppyNegotiation>true</AllowSloppyNegotiation>
