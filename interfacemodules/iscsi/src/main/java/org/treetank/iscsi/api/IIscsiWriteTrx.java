@@ -25,52 +25,51 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.api;
+package org.treetank.iscsi.api;
 
-import org.treetank.data.BlockDataElement;
-import org.treetank.exception.TTIOException;
+import org.treetank.exception.TTException;
 
 /**
+ * This interface defines the funcationalities of an IscsiWriteTransaction
  * 
  * @author Andreas Rain
  * 
  */
-public interface IIscsiReadTrx {
+public interface IIscsiWriteTrx extends IIscsiReadTrx {
 
     /**
-     * Move the cursor to the given data key
+     * This method inserts the given data into the database.
      * 
-     * @param pKey
-     * @return true if successful, false otherwise
+     * @param vals
+     * @throws TTException
      */
-    public boolean moveTo(long pKey);
+    public void bootstrap(byte[] vals) throws TTException;
 
     /**
-     * A quick get method to get the value of the current data.
+     * Set value of data.
      * 
-     * @return the value of the current data
+     * @param pValue
+     *            new value of data
+     * @throws TTException
+     *             if value couldn't be set
      */
-    public byte[] getValueOfCurrentData();
+    public void setValue(final byte[] pValue) throws TTException;
 
     /**
-     * The data that the cursor currently points on
+     * ICommitStrategy all modifications of the exclusive write transaction. Even commit
+     * if there are no modification at all.
      * 
-     * @return the current data
+     * @throws TTException
+     *             if this revision couldn't be commited
      */
-    public BlockDataElement getCurrentData();
+    public void commit() throws TTException;
 
     /**
-     * Close this transaction
+     * Abort all modifications of the exclusive write transaction.
      * 
-     * @throws TTIOException
+     * @throws TTException
+     *             if this revision couldn't be aborted
      */
-    public void close() throws TTIOException;
-
-    /**
-     * Check whether or not this transaction has been closed
-     * 
-     * @return true if closed, false otherwise
-     */
-    public boolean isClosed();
+    public void abort() throws TTException;
 
 }

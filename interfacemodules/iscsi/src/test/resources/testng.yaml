@@ -1,6 +1,6 @@
 name: iSCSISuite
 threadCount: 4
-parameters: { NodeFactory: org.treetank.data.BlockDataElementFactory, MetaFactory: org.treetank.data.ISCSIMetaPageFactory }
+parameters: { NodeFactory: org.treetank.iscsi.data.BlockDataElementFactory, MetaFactory: org.treetank.iscsi.data.ISCSIMetaPageFactory }
 
 tests:
   - name: Storage Benchmark Berkley

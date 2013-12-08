@@ -25,13 +25,13 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.access;
+package org.treetank.iscsi.access;
 
-import org.treetank.api.IIscsiReadTrx;
 import org.treetank.api.IBucketReadTrx;
-import org.treetank.data.BlockDataElement;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
+import org.treetank.iscsi.api.IIscsiReadTrx;
+import org.treetank.iscsi.data.BlockDataElement;
 
 /**
  * @author Andreas Rain

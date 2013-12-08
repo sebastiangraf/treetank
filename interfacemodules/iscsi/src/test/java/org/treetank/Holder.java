@@ -27,10 +27,10 @@
 package org.treetank;
 
 import org.treetank.CoreTestHelper.PATHS;
-import org.treetank.access.IscsiWriteTrx;
+import org.treetank.iscsi.access.IscsiWriteTrx;
 import org.treetank.access.conf.ResourceConfiguration;
-import org.treetank.api.IIscsiReadTrx;
-import org.treetank.api.IIscsiWriteTrx;
+import org.treetank.iscsi.api.IIscsiReadTrx;
+import org.treetank.iscsi.api.IIscsiWriteTrx;
 import org.treetank.api.IBucketWriteTrx;
 import org.treetank.exception.TTException;
 

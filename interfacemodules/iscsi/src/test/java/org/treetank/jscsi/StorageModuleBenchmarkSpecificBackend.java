@@ -13,9 +13,10 @@ import org.treetank.access.conf.ModuleSetter;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.StandardSettings;
-import org.treetank.data.BlockDataElementFactory;
-import org.treetank.data.ISCSIMetaPageFactory;
+import org.treetank.iscsi.data.BlockDataElementFactory;
+import org.treetank.iscsi.data.ISCSIMetaPageFactory;
 import org.treetank.exception.TTException;
+import org.treetank.iscsi.jscsi.TreetankStorageModule;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;

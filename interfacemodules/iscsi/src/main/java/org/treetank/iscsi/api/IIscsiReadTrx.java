@@ -25,51 +25,52 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.api;
+package org.treetank.iscsi.api;
 
-import org.treetank.exception.TTException;
+import org.treetank.exception.TTIOException;
+import org.treetank.iscsi.data.BlockDataElement;
 
 /**
- * This interface defines the funcationalities of an IscsiWriteTransaction
  * 
  * @author Andreas Rain
  * 
  */
-public interface IIscsiWriteTrx extends IIscsiReadTrx {
+public interface IIscsiReadTrx {
 
     /**
-     * This method inserts the given data into the database.
+     * Move the cursor to the given data key
      * 
-     * @param vals
-     * @throws TTException
+     * @param pKey
+     * @return true if successful, false otherwise
      */
-    public void bootstrap(byte[] vals) throws TTException;
+    public boolean moveTo(long pKey);
 
     /**
-     * Set value of data.
+     * A quick get method to get the value of the current data.
      * 
-     * @param pValue
-     *            new value of data
-     * @throws TTException
-     *             if value couldn't be set
+     * @return the value of the current data
      */
-    public void setValue(final byte[] pValue) throws TTException;
+    public byte[] getValueOfCurrentData();
 
     /**
-     * ICommitStrategy all modifications of the exclusive write transaction. Even commit
-     * if there are no modification at all.
+     * The data that the cursor currently points on
      * 
-     * @throws TTException
-     *             if this revision couldn't be commited
+     * @return the current data
      */
-    public void commit() throws TTException;
+    public BlockDataElement getCurrentData();
 
     /**
-     * Abort all modifications of the exclusive write transaction.
+     * Close this transaction
      * 
-     * @throws TTException
-     *             if this revision couldn't be aborted
+     * @throws TTIOException
      */
-    public void abort() throws TTException;
+    public void close() throws TTIOException;
+
+    /**
+     * Check whether or not this transaction has been closed
+     * 
+     * @return true if closed, false otherwise
+     */
+    public boolean isClosed();
 
 }

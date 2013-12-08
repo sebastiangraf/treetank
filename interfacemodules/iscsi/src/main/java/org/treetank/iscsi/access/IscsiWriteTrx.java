@@ -22,16 +22,17 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank.access;
+package org.treetank.iscsi.access;
 
 import static com.google.common.base.Preconditions.checkState;
 
+import org.treetank.access.BucketWriteTrx;
 import org.treetank.api.IBucketWriteTrx;
-import org.treetank.api.IIscsiWriteTrx;
 import org.treetank.api.ISession;
-import org.treetank.data.BlockDataElement;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
+import org.treetank.iscsi.api.IIscsiWriteTrx;
+import org.treetank.iscsi.data.BlockDataElement;
 
 /**
  * @author Andreas Rain
