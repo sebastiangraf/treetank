@@ -109,6 +109,7 @@ public class TreetankTargetServer {
         File configFile;
         Class<? extends IBackend> backendClass;
         Class<? extends IRevisioning> revisioningClass;
+        boolean create = false;
 
         System.out.println("\nThis system provides more than one IP Address to advertise.\n");
 
@@ -180,8 +181,18 @@ public class TreetankTargetServer {
             revisioningClass = SlidingSnapshot.class;
         }
 
-        IOUtils.recursiveDelete(config.mFile);
-        Storage.createStorage(config);
+        if (argsMap.get("create") != null) {
+            if(argsMap.get("create").toLowerCase().equals("true")){
+                create = true;
+            }
+        } else {
+            revisioningClass = SlidingSnapshot.class;
+        }
+
+        if(create){
+            IOUtils.recursiveDelete(config.mFile);
+            Storage.createStorage(config);
+        }
 
         final String resourceName = "bench53473ResourcegraveISCSI9284";
 

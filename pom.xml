@@ -1,87 +1,87 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright (c) 2011, University of Konstanz, Distributed Systems Group 
-	All rights reserved. Redistribution and use in source and binary forms, with 
-	or without modification, are permitted provided that the following conditions 
-	are met: * Redistributions of source code must retain the above copyright 
-	notice, this list of conditions and the following disclaimer. * Redistributions 
-	in binary form must reproduce the above copyright notice, this list of conditions 
-	and the following disclaimer in the documentation and/or other materials 
-	provided with the distribution. * Neither the name of the University of Konstanz 
-	nor the names of its contributors may be used to endorse or promote products 
-	derived from this software without specific prior written permission. THIS 
-	SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
-	ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-	WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-	IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY DIRECT, INDIRECT, 
-	INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, 
-	DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY 
-	OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE 
-	OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
-	ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
+   All rights reserved. Redistribution and use in source and binary forms, with 
+   or without modification, are permitted provided that the following conditions 
+   are met: * Redistributions of source code must retain the above copyright 
+   notice, this list of conditions and the following disclaimer. * Redistributions 
+   in binary form must reproduce the above copyright notice, this list of conditions 
+   and the following disclaimer in the documentation and/or other materials 
+   provided with the distribution. * Neither the name of the University of Konstanz 
+   nor the names of its contributors may be used to endorse or promote products 
+   derived from this software without specific prior written permission. THIS 
+   SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
+   ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+   WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+   IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY DIRECT, INDIRECT, 
+   INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
+   NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, 
+   DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY 
+   OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE 
+   OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+   ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+   <modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.treetank</groupId>
-	<artifactId>pom</artifactId>
-	<packaging>pom</packaging>
-	<name>Treetank</name>
-	<version>6.0.1-SNAPSHOT</version>
+   <groupId>org.treetank</groupId>
+   <artifactId>pom</artifactId>
+   <packaging>pom</packaging>
+   <name>Treetank</name>
+   <version>6.0.1-SNAPSHOT</version>
 
-	<parent>
-		<groupId>org.sonatype.oss</groupId>
-		<artifactId>oss-parent</artifactId>
-		<version>7</version>
-	</parent>
+   <parent>
+      <groupId>org.sonatype.oss</groupId>
+      <artifactId>oss-parent</artifactId>
+      <version>7</version>
+   </parent>
 
-	<url>http://disy.github.com/treetank/</url>
-	<scm>
-		<url>git@github.com:disy/treetank.git</url>
-		<connection>scm:git:git@github.com:disy/treetank.git</connection>
-		<developerConnection>scm:git:git@github.com:disy/treetank.git</developerConnection>
-	</scm>
-	<issueManagement>
-		<url>https://github.com/disy/treetank/issues</url>
-		<system>GitHub Issues</system>
-	</issueManagement>
-	<licenses>
-		<license>
-			<name>New BSD</name>
-			<url>http://www.opensource.org/licenses/BSD-3-Clause</url>
-			<comments>3-clause BSD License</comments>
-		</license>
-	</licenses>
-	<ciManagement>
-		<system>Travis CI</system>
-		<url>http://travis-ci.org/#!/disy/treetank</url>
-	</ciManagement>
-	<developers>
-		<developer>
-			<name>Sebastian Graf</name>
-			<email>Sebastian.Graf@uni-konstanz.de</email>
-			<url>http://www.disy.uni-konstanz.de/en/members/sebastian-graf/</url>
-			<organization>University of Konstanz, Distributed Systems Group
+   <url>http://disy.github.com/treetank/</url>
+   <scm>
+      <url>git@github.com:disy/treetank.git</url>
+      <connection>scm:git:git@github.com:disy/treetank.git</connection>
+      <developerConnection>scm:git:git@github.com:disy/treetank.git</developerConnection>
+   </scm>
+   <issueManagement>
+      <url>https://github.com/disy/treetank/issues</url>
+      <system>GitHub Issues</system>
+   </issueManagement>
+   <licenses>
+      <license>
+         <name>New BSD</name>
+         <url>http://www.opensource.org/licenses/BSD-3-Clause</url>
+         <comments>3-clause BSD License</comments>
+      </license>
+   </licenses>
+   <ciManagement>
+      <system>Travis CI</system>
+      <url>http://travis-ci.org/#!/disy/treetank</url>
+   </ciManagement>
+   <developers>
+      <developer>
+         <name>Sebastian Graf</name>
+         <email>Sebastian.Graf@uni-konstanz.de</email>
+         <url>http://www.disy.uni-konstanz.de/en/members/sebastian-graf/</url>
+         <organization>University of Konstanz, Distributed Systems Group
             </organization>
-			<organizationUrl>http://www.disy.uni-konstanz.de/</organizationUrl>
-			<timezone>+1</timezone>
-		</developer>
-	</developers>
-	<modules>
-		<module>coremodules/commons</module>
-		<module>coremodules/core</module>
-		<module>coremodules/node</module>
-		<module>interfacemodules/jax-rx</module>
-		<module>interfacemodules/xml</module>
-		<module>interfacemodules/iscsi</module>
-		<module>interfacemodules/filelistener</module>
-		<module>interfacemodules/saxon</module>
-	</modules>
+         <organizationUrl>http://www.disy.uni-konstanz.de/</organizationUrl>
+         <timezone>+1</timezone>
+      </developer>
+   </developers>
+   <modules>
+      <module>coremodules/commons</module>
+      <module>coremodules/core</module>
+      <module>coremodules/node</module>
+      <module>interfacemodules/jax-rx</module>
+      <module>interfacemodules/xml</module>
+      <module>interfacemodules/iscsi</module>
+      <module>interfacemodules/filelistener</module>
+      <module>interfacemodules/saxon</module>
+   </modules>
 
-	<prerequisites>
-		<maven>3.0.3</maven>
-	</prerequisites>
+   <prerequisites>
+      <maven>3.0.3</maven>
+   </prerequisites>
 
 	<build>
 		<plugins>
@@ -238,99 +238,99 @@
 		</plugins>
 	</build>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.testng</groupId>
-			<artifactId>testng</artifactId>
-			<version>6.8</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.aspectj</groupId>
-			<artifactId>aspectjrt</artifactId>
-			<version>1.7.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.7.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
-			<version>1.9.5</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.google.inject</groupId>
-			<artifactId>guice</artifactId>
-			<version>3.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.inject.extensions</groupId>
-			<artifactId>guice-assistedinject</artifactId>
-			<version>3.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>14.0-rc3</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-			<version>2.2.2</version>
-		</dependency>
-	</dependencies>
+   <dependencies>
+      <dependency>
+         <groupId>org.testng</groupId>
+         <artifactId>testng</artifactId>
+         <version>6.8</version>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.aspectj</groupId>
+         <artifactId>aspectjrt</artifactId>
+         <version>1.7.2</version>
+      </dependency>
+      <dependency>
+         <groupId>org.slf4j</groupId>
+         <artifactId>slf4j-api</artifactId>
+         <version>1.7.2</version>
+      </dependency>
+      <dependency>
+         <groupId>org.mockito</groupId>
+         <artifactId>mockito-core</artifactId>
+         <version>1.9.5</version>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>com.google.inject</groupId>
+         <artifactId>guice</artifactId>
+         <version>3.0</version>
+      </dependency>
+      <dependency>
+         <groupId>com.google.inject.extensions</groupId>
+         <artifactId>guice-assistedinject</artifactId>
+         <version>3.0</version>
+      </dependency>
+      <dependency>
+         <groupId>com.google.guava</groupId>
+         <artifactId>guava</artifactId>
+         <version>14.0.1</version>
+      </dependency>
+      <dependency>
+         <groupId>com.google.code.gson</groupId>
+         <artifactId>gson</artifactId>
+         <version>2.2.2</version>
+      </dependency>
+   </dependencies>
 
-	<repositories>
-		<repository>
-			<id>sonatype-nexus-snapshots</id>
-			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-		</repository>
-	</repositories>
-	<distributionManagement>
-		<repository>
-			<id>sonatype-nexus-staging</id>
-			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-			<uniqueVersion>false</uniqueVersion>
-		</repository>
-		<snapshotRepository>
-			<id>sonatype-nexus-snapshots</id>
-			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-			<uniqueVersion>false</uniqueVersion>
-		</snapshotRepository>
-		<site>
-			<id>file</id>
-			<url>file:${site.deploy.dir}</url>
-		</site>
-	</distributionManagement>
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.source>1.7</maven.compiler.source>
-		<maven.compiler.target>1.7</maven.compiler.target>
-		<site.deploy.dir>/tmp/deploy</site.deploy.dir>
-	</properties>
+   <repositories>
+      <repository>
+         <id>sonatype-nexus-snapshots</id>
+         <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+      </repository>
+   </repositories>
+   <distributionManagement>
+      <repository>
+         <id>sonatype-nexus-staging</id>
+         <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+         <uniqueVersion>false</uniqueVersion>
+      </repository>
+      <snapshotRepository>
+         <id>sonatype-nexus-snapshots</id>
+         <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+         <uniqueVersion>false</uniqueVersion>
+      </snapshotRepository>
+      <site>
+         <id>file</id>
+         <url>file:${site.deploy.dir}</url>
+      </site>
+   </distributionManagement>
+   <properties>
+      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+      <maven.compiler.source>1.7</maven.compiler.source>
+      <maven.compiler.target>1.7</maven.compiler.target>
+      <site.deploy.dir>/tmp/deploy</site.deploy.dir>
+   </properties>
 
-	<profiles>
-		<profile>
-			<id>allTests</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<version>2.13</version>
-						<configuration>
-							<suiteXmlFiles>
-								<suiteXmlFile>src/test/resources/testng.yaml</suiteXmlFile>
-							</suiteXmlFiles>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
+   <profiles>
+      <profile>
+         <id>allTests</id>
+         <build>
+            <plugins>
+               <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-surefire-plugin</artifactId>
+                  <version>2.13</version>
+                  <configuration>
+                     <suiteXmlFiles>
+                        <suiteXmlFile>src/test/resources/testng.yaml</suiteXmlFile>
+                     </suiteXmlFiles>
+                  </configuration>
+               </plugin>
+            </plugins>
+         </build>
+      </profile>
+   </profiles>
 
 
 </project>

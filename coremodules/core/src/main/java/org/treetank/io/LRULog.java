@@ -30,6 +30,7 @@ package org.treetank.io;
 import static com.google.common.base.Objects.toStringHelper;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -55,6 +56,7 @@ import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
 import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
+import com.sleepycat.je.util.DbLoad;
 
 /**
  * An LRU cache, based on <code>LinkedHashMap</code>. This cache can hold an
@@ -158,7 +160,6 @@ public final class LRULog implements ILog {
             mEnv.cleanLog();
             final DatabaseConfig dbConfig = new DatabaseConfig();
             dbConfig.setAllowCreate(true);
-            dbConfig.setExclusiveCreate(true);
             mDatabase = mEnv.openDatabase(null, NAME + mSelected_db, dbConfig);
 
         } catch (final DatabaseException exc) {

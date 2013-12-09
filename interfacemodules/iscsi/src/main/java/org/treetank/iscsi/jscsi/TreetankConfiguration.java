@@ -144,6 +144,36 @@ public class TreetankConfiguration extends Configuration {
         return returnConfiguration;
     }
 
+    /**
+     * 
+     * @param session
+     * @param pTargetAddress
+     * @param pPort
+     * @param pTargetName
+     * @param pSize
+     * @return a newly created target configuration
+     * @throws SAXException
+     * @throws ParserConfigurationException
+     * @throws IOException
+     * @throws TTException
+     */
+    public static TreetankConfiguration create(ISession session, final String pTargetAddress,
+        final String pPort, final String pTargetName, final String pSize) throws SAXException,
+        ParserConfigurationException, IOException, TTException {
+
+        // TargetName
+        TreetankConfiguration returnConfiguration = new TreetankConfiguration(session, pTargetAddress);
+
+        returnConfiguration.getTargets().add(
+            new Target(pTargetName, pTargetName, new TreetankStorageModule(Math.round(((Double
+                .valueOf(Integer.parseInt(pSize))) * Math.pow(1024, 3))), session)));
+
+        returnConfiguration.port = Integer.parseInt(pPort);
+        returnConfiguration.allowSloppyNegotiation = false;
+
+        return returnConfiguration;
+    }
+
     private static final Target parseTargetElement(Element targetElement, TreetankConfiguration conf)
         throws IOException, TTException {
 
