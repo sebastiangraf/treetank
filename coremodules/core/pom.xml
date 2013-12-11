@@ -89,7 +89,28 @@
                   <Export-Package>org.treetank.api.*,
                      org.treetank.access.*, org.treetank.bucket.*,
                      org.treetank.io.*, org.treetank.revisioning.*</Export-Package>
-                     <Private-Package>com.sleepycat.*</Private-Package>
+                  <Private-Package>com.sleepycat.*</Private-Package>
+                  <Import-Package>
+                     com.google.common.base;version="[14.0,15)",
+                     com.google.common.cache;version="[14.0,15)",
+                     com.google.common.hash;version="[14.0,15)",
+                     com.google.common.io;version="[14.0,15)",
+                     com.google.gson.stream;version="[2.2,3)",
+                     com.google.inject;version="[1.3,2)",
+                     com.google.inject.assistedinject;version="[1.3,2)",
+                     com.google.inject.binder;version="[1.3,2)",
+                     javax.crypto,
+                     javax.crypto.spec,
+                     javax.management,
+                     javax.transaction.xa,
+                     org.jclouds;version="[1.6,2)",
+                     org.jclouds.blobstore;version="[1.6,2)",
+                     org.jclouds.blobstore.domain;version="[1.6,2)",
+                     org.jclouds.domain;version="[1.6,2)",
+                     org.jclouds.io;version="[1.6,2)",
+                     org.jclouds.javax.annotation;version="[1.6,2)",
+                     org.treetank.exception;version="[6.0,7)"
+                  </Import-Package>
                </instructions>
             </configuration>
          </plugin>
