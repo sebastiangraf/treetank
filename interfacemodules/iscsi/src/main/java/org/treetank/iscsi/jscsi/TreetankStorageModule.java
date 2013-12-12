@@ -333,6 +333,7 @@ public class TreetankStorageModule implements IStorageModule {
     public void close() throws IOException {
 
         try {
+            mRtx.commit();
             mRtx.close();
 
         } catch (TTException exc) {

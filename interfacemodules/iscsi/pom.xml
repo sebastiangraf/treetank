@@ -60,7 +60,7 @@
                   <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
                   <Bundle-Name>${project.artifactId}</Bundle-Name>
                   <Bundle-Version>${project.version}</Bundle-Version>
-                  <Private-Package>org.treetank.iscsi.*</Private-Package>
+                  <Export-Package>org.treetank.iscsi.*</Export-Package>
                   <Bundle-Activator>org.treetank.iscsi.bundle.IScsiActivator</Bundle-Activator>
                </instructions>
             </configuration>
@@ -71,7 +71,7 @@
       <dependency>
          <groupId>org.jscsi</groupId>
          <artifactId>target</artifactId>
-         <version>2.5.1-SNAPSHOT</version>
+         <version>2.5.2-SNAPSHOT</version>
       </dependency>
       <dependency>
          <groupId>org.treetank</groupId>
@@ -94,6 +94,11 @@
          <groupId>org.osgi</groupId>
          <artifactId>org.osgi.core</artifactId>
          <version>4.3.0</version>
+      </dependency>
+      <dependency>
+          <groupId>org.osgi</groupId>
+          <artifactId>org.osgi.compendium</artifactId>
+          <version>5.0.0</version>
       </dependency>
       <dependency>
          <groupId>org.apache.felix</groupId>

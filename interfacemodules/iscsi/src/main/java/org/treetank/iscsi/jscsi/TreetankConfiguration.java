@@ -166,7 +166,7 @@ public class TreetankConfiguration extends Configuration {
 
         returnConfiguration.getTargets().add(
             new Target(pTargetName, pTargetName, new TreetankStorageModule(Math.round(((Double
-                .valueOf(Integer.parseInt(pSize))) * Math.pow(1024, 3))), session)));
+                .valueOf(pSize)) * Math.pow(1024, 3))) / TreetankStorageModule.BYTES_IN_DATA, session)));
 
         returnConfiguration.port = Integer.parseInt(pPort);
         returnConfiguration.allowSloppyNegotiation = false;

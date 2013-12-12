@@ -25,6 +25,8 @@
 package org.treetank.iscsi.bundle;
 
 import java.io.File;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -32,6 +34,10 @@ import java.util.concurrent.Executors;
 import org.jscsi.target.TargetServer;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
+import org.osgi.framework.ServiceRegistration;
+import org.osgi.service.cm.ConfigurationException;
+import org.osgi.service.cm.ManagedService;
 import org.treetank.access.Storage;
 import org.treetank.access.conf.ModuleSetter;
 import org.treetank.access.conf.ResourceConfiguration;
@@ -75,45 +81,69 @@ public class IScsiActivator implements BundleActivator {
 
     // Defining no more than one target
     private String targetName = "local-test:disk-1";
-    private String size = "1.0";
+    private String size = "5.0";
     private String port = "3260";
-    private String createDevice = "false";
+    private String createDevice = "true";
+
+    // Configupdate registration:
+    private ServiceRegistration serviceReg;
 
     @Override
     public void start(BundleContext context) throws Exception {
         String s;
 
+        Hashtable<String, Object> properties = new Hashtable<String, Object>();
+        properties.put(Constants.SERVICE_PID, "org.treetank.iscsi");
+
         // Initializing properties for the target server
         if ((s = context.getProperty("publishingAddress")) != null) {
             publishingAddress = s;
+        } else {
+            properties.put("publishingAddress", publishingAddress);
         }
         if ((s = context.getProperty("backend")) != null) {
             backend = s;
+        } else {
+            properties.put("backend", backend);
         }
         if ((s = context.getProperty("revisioning")) != null) {
             revisioning = s;
+        } else {
+            properties.put("revisioning", revisioning);
         }
         if ((s = context.getProperty("storagePath")) != null) {
             storagePath = s;
+        } else {
+            properties.put("storagePath", storagePath);
         }
         if ((s = context.getProperty("targetName")) != null) {
             targetName = s;
+        } else {
+            properties.put("targetName", targetName);
         }
         if ((s = context.getProperty("size")) != null) {
             size = s;
+        } else {
+            properties.put("size", size);
         }
         if ((s = context.getProperty("port")) != null) {
             port = s;
+        } else {
+            properties.put("port", port);
         }
         if ((s = context.getProperty("createDevice")) != null) {
             createDevice = s;
+        } else {
+            properties.put("createDevice", createDevice);
         }
-        
+
+        serviceReg = context.registerService(ManagedService.class.getName(), new ConfigUpdater(), properties);
+
         File file = new File(storagePath);
         StorageConfiguration config = new StorageConfiguration(file);
-        
+
         // Determining whether to create the device
-        if(createDevice.toLowerCase().equals(true)){
+        if (createDevice.toLowerCase().equals("true") && !config.mFile.exists()) {
             IOUtils.recursiveDelete(config.mFile);
             Storage.createStorage(config);
         }
@@ -124,8 +154,9 @@ public class IScsiActivator implements BundleActivator {
         @SuppressWarnings("unchecked")
         final Injector injector =
             Guice.createInjector(new ModuleSetter().setDataFacClass(BlockDataElementFactory.class)
-                .setMetaFacClass(ISCSIMetaPageFactory.class).setBackendClass((Class<? extends IBackend>)Class.forName(backend))
-                .setRevisioningClass((Class<? extends IRevisioning>)Class.forName(revisioning)).createModule());
+                .setMetaFacClass(ISCSIMetaPageFactory.class).setBackendClass(
+                    (Class<? extends IBackend>)Class.forName(backend)).setRevisioningClass(
+                    (Class<? extends IRevisioning>)Class.forName(revisioning)).createModule());
         final IResourceConfigurationFactory resFac =
             injector.getInstance(IResourceConfigurationFactory.class);
         final Properties props = StandardSettings.getProps(storagePath, resourceName);
@@ -145,18 +176,38 @@ public class IScsiActivator implements BundleActivator {
 
     @Override
     public void stop(BundleContext context) throws Exception {
-         runner.shutdown();
-         
-         while(!runner.isShutdown()){
-             //waiting for termination
-         }
-         IBucketWriteTrx wtx = session.beginBucketWtx();
-         wtx.commit();
-         wtx.close();
-         if(session.close()){
-             System.out.println("Target successfully stopped.");
-         }
-         
+        serviceReg.unregister();
+        target.stop();
+        runner.shutdown();
+
+        while (!runner.isShutdown()) {
+            // waiting for termination
+        }
+        if (session.close()) {
+            System.out.println("Target successfully stopped.");
+        }
+
+    }
+
+    /**
+     * 
+     * This simple configuration service is used to react to updates within the configuration.
+     * 
+     * @author Andreas Rain, University of Konstanz
+     * 
+     */
+    private final class ConfigUpdater implements ManagedService {
+
+        @Override
+        public void updated(Dictionary<String, ?> properties) throws ConfigurationException {
+            if (properties == null) {
+                return;
+            }
+
+            // TODO: recognize new targets and so on.
+
+        }
+
     }
 
 }
