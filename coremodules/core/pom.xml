@@ -109,7 +109,8 @@
                      org.jclouds.domain;version="[1.6,2)",
                      org.jclouds.io;version="[1.6,2)",
                      org.jclouds.javax.annotation;version="[1.6,2)",
-                     org.treetank.exception;version="[6.0,7)"
+                     org.treetank.exception;version="[6.0,7)",
+                     org.treetank.iscsi.data;version="[6.0,7)"
                   </Import-Package>
                </instructions>
             </configuration>
