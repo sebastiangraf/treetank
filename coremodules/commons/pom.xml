@@ -34,7 +34,7 @@
     <name>Commons bundle for containing utility stuff</name>
     <packaging>jar</packaging>
    
-<!--   <build>
+   <build>
        <plugins>
          <plugin>
             <groupId>org.apache.felix</groupId>
@@ -50,5 +50,5 @@
             </configuration>
          </plugin>
        </plugins>
-   </build>-->
+   </build>
 </project>
