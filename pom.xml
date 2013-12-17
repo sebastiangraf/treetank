@@ -70,12 +70,12 @@
    <modules>
       <module>coremodules/commons</module>
       <module>coremodules/core</module>
-<!--      <module>coremodules/node</module>
+      <module>coremodules/node</module>
       <module>interfacemodules/jax-rx</module>
       <module>interfacemodules/xml</module>
       <module>interfacemodules/iscsi</module>
       <module>interfacemodules/filelistener</module>
-      <module>interfacemodules/saxon</module>-->
+      <module>interfacemodules/saxon</module>
    </modules>
 
    <prerequisites>
@@ -141,11 +141,7 @@
  				<version>1.4</version>
  				<executions>
  					<execution>
-<<<<<<< HEAD
  						<phase>deploy</phase>
-=======
- 						<phase>deply</phase>
->>>>>>> 8809ddfbc29f08adc462f0a9ae802d15121a8eb5
  						<goals>
  							<goal>sign</goal>
  						</goals>
