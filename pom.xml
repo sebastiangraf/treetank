@@ -27,7 +27,7 @@
    <artifactId>pom</artifactId>
    <packaging>pom</packaging>
    <name>Treetank</name>
-   <version>6.0.2-SNAPSHOT</version>
+   <version>6.0.1-SNAPSHOT</version>
 
    <parent>
       <groupId>org.sonatype.oss</groupId>
@@ -69,8 +69,8 @@
    </developers>
    <modules>
       <module>coremodules/commons</module>
-<!--      <module>coremodules/core</module>
-      <module>coremodules/node</module>
+      <module>coremodules/core</module>
+<!--      <module>coremodules/node</module>
       <module>interfacemodules/jax-rx</module>
       <module>interfacemodules/xml</module>
       <module>interfacemodules/iscsi</module>
