@@ -24,7 +24,7 @@
    <parent>
       <artifactId>pom</artifactId>
       <groupId>org.treetank</groupId>
-      <version>6.0.1-SNAPSHOT</version>
+      <version>6.0.1</version>
       <relativePath>../../pom.xml</relativePath>
    </parent>
    <artifactId>core</artifactId>
@@ -41,7 +41,7 @@
       <dependency>
          <groupId>org.treetank</groupId>
          <artifactId>commons</artifactId>
-         <version>6.0.1-SNAPSHOT</version>
+         <version>6.0.1</version>
       </dependency>
       <dependency>
          <groupId>com.sleepycat</groupId>
