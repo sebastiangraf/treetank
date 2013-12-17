@@ -40,7 +40,7 @@ import javax.xml.stream.XMLStreamException;
 
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
-import org.treetank.ModuleFactory;
+import org.treetank.testutil.ModuleFactory;
 
 /**
  * This class tests the class {@link RESTXMLShredder}.

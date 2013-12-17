@@ -25,7 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.treetank;
+package org.treetank.testutil;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -34,21 +34,22 @@ import static org.treetank.data.IConstants.ROOT_NODE;
 
 import javax.xml.namespace.QName;
 
-import org.treetank.CoreTestHelper.PATHS;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.Session;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
-import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.IBucketWriteTrx;
+import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
 import org.treetank.data.DocumentRootNode;
 import org.treetank.data.delegates.NodeDelegate;
 import org.treetank.data.delegates.StructNodeDelegate;
 import org.treetank.exception.TTException;
+import org.treetank.testutil.CoreTestHelper;
+import org.treetank.testutil.CoreTestHelper.PATHS;
 
 /**
  * 

@@ -137,7 +137,7 @@
  				<version>1.4</version>
  				<executions>
  					<execution>
- 						<phase>install</phase>
+ 						<phase>deploy</phase>
  						<goals>
  							<goal>sign</goal>
  						</goals>
@@ -235,7 +235,6 @@
          <groupId>org.testng</groupId>
          <artifactId>testng</artifactId>
          <version>6.8</version>
-         <scope>test</scope>
       </dependency>
       <dependency>
          <groupId>org.aspectj</groupId>
@@ -251,7 +250,6 @@
          <groupId>org.mockito</groupId>
          <artifactId>mockito-core</artifactId>
          <version>1.9.5</version>
-         <scope>test</scope>
       </dependency>
       <dependency>
          <groupId>com.google.inject</groupId>

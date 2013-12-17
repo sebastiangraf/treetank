@@ -10,18 +10,17 @@ import org.jclouds.filesystem.reference.FilesystemConstants;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-import org.treetank.CoreTestHelper;
 import org.treetank.access.conf.ConstructorProps;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.StandardSettings;
-import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.IDataFactory;
-import org.treetank.bucket.DumbMetaEntryFactory;
+import org.treetank.api.IMetaEntryFactory;
+import org.treetank.bucket.DataBucket;
 import org.treetank.bucket.DumbDataFactory;
+import org.treetank.bucket.DumbMetaEntryFactory;
 import org.treetank.bucket.IConstants;
 import org.treetank.bucket.IndirectBucket;
 import org.treetank.bucket.MetaBucket;
-import org.treetank.bucket.DataBucket;
 import org.treetank.bucket.RevisionRootBucket;
 import org.treetank.bucket.UberBucket;
 import org.treetank.bucket.interfaces.IBucket;
@@ -34,6 +33,7 @@ import org.treetank.io.bytepipe.IByteHandler.IByteHandlerPipeline;
 import org.treetank.io.bytepipe.Zipper;
 import org.treetank.io.combined.CombinedStorage;
 import org.treetank.io.jclouds.JCloudsStorage;
+import org.treetank.testutil.CoreTestHelper;
 
 public class IBackendTest {
 

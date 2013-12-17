@@ -28,7 +28,9 @@ package org.jaxrx;
 
 import java.io.InputStream;
 import java.util.Set;
+
 import javax.ws.rs.core.StreamingOutput;
+
 import org.jaxrx.core.JaxRxException;
 import org.jaxrx.core.QueryParameter;
 import org.jaxrx.core.ResourcePath;

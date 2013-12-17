@@ -40,22 +40,18 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
-import org.treetank.CoreTestHelper;
-import org.treetank.ModuleFactory;
 import org.treetank.access.conf.ConstructorProps;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.StandardSettings;
-import org.treetank.bucket.IConstants;
 import org.treetank.bucket.DataBucket;
+import org.treetank.bucket.IConstants;
 import org.treetank.bucket.interfaces.IBucket;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
-import org.treetank.io.IOUtils;
-import org.treetank.io.LRULog;
-import org.treetank.io.LogKey;
-import org.treetank.io.LogValue;
 import org.treetank.io.LRULog.LogIterator;
+import org.treetank.testutil.CoreTestHelper;
+import org.treetank.testutil.ModuleFactory;
 
 import com.google.inject.Inject;
 

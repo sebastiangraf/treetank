@@ -31,8 +31,6 @@ import java.util.Properties;
 
 import javax.xml.stream.XMLEventReader;
 
-import org.treetank.CoreTestHelper;
-import org.treetank.NodeElementTestHelper;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.Storage;
@@ -45,6 +43,8 @@ import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
 import org.treetank.service.xml.shredder.EShredderInsert;
 import org.treetank.service.xml.shredder.XMLShredder;
+import org.treetank.testutil.CoreTestHelper;
+import org.treetank.testutil.NodeElementTestHelper;
 
 /**
  * Helper class for saxon

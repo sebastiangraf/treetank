@@ -26,13 +26,14 @@
  */
 package org.treetank;
 
-import org.treetank.CoreTestHelper.PATHS;
-import org.treetank.iscsi.access.IscsiWriteTrx;
 import org.treetank.access.conf.ResourceConfiguration;
-import org.treetank.iscsi.api.IIscsiReadTrx;
-import org.treetank.iscsi.api.IIscsiWriteTrx;
 import org.treetank.api.IBucketWriteTrx;
 import org.treetank.exception.TTException;
+import org.treetank.iscsi.access.IscsiWriteTrx;
+import org.treetank.iscsi.api.IIscsiReadTrx;
+import org.treetank.iscsi.api.IIscsiWriteTrx;
+import org.treetank.testutil.CoreTestHelper;
+import org.treetank.testutil.CoreTestHelper.PATHS;
 
 /**
  * Generating a standard resource within the {@link PATHS#PATH1} path. It also

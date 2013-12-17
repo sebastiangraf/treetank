@@ -29,6 +29,7 @@ package org.jaxrx.resource;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -41,9 +42,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import javax.ws.rs.core.UriInfo;
+
+import org.jaxrx.core.JaxRxConstants;
 import org.jaxrx.core.ResponseBuilder;
 import org.jaxrx.core.Systems;
-import org.jaxrx.core.JaxRxConstants;
 
 /**
  * This class processes HTTP requests for the JAX-RX general URL part: <code>/{system}/jax-rx/}</code>.

@@ -18,10 +18,10 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-import org.treetank.CoreTestHelper;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
 import org.treetank.exception.TTByteHandleException;
+import org.treetank.testutil.CoreTestHelper;
 
 import com.google.common.io.ByteStreams;
 

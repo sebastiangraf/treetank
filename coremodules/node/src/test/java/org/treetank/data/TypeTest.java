@@ -31,7 +31,6 @@ import static org.testng.AssertJUnit.assertEquals;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import org.treetank.data.Type;
 import org.treetank.exception.TTXPathException;
 
 public class TypeTest {

@@ -28,6 +28,7 @@ package org.jaxrx.core;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.jaxrx.JaxRx;
 
 /**

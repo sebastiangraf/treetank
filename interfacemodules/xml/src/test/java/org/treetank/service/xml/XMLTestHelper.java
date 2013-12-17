@@ -10,9 +10,9 @@ import java.io.IOException;
 
 import javax.xml.namespace.QName;
 
-import org.treetank.NodeElementTestHelper;
 import org.treetank.api.INodeWriteTrx;
 import org.treetank.exception.TTException;
+import org.treetank.testutil.NodeElementTestHelper;
 
 public class XMLTestHelper {
 

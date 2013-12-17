@@ -26,7 +26,10 @@
  */
 package org.jaxrx.resource;
 
-import static org.jaxrx.core.JaxRxConstants.*;
+import static org.jaxrx.core.JaxRxConstants.MEDIATYPE;
+import static org.jaxrx.core.JaxRxConstants.METHOD;
+import static org.jaxrx.core.JaxRxConstants.METHODS;
+
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,6 +43,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import javax.ws.rs.core.UriInfo;
+
 import org.jaxrx.JaxRx;
 import org.jaxrx.core.JaxRxException;
 import org.jaxrx.core.QueryParameter;

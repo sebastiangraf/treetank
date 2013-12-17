@@ -35,10 +35,10 @@ import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.IDataFactory;
-import org.treetank.bucket.DataBucket;
+import org.treetank.api.IMetaEntryFactory;
 import org.treetank.bucket.BucketFactory;
+import org.treetank.bucket.DataBucket;
 import org.treetank.bucket.interfaces.IBucket;
 import org.treetank.exception.TTIOException;
 

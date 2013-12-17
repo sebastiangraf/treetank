@@ -38,8 +38,8 @@ import java.util.ArrayList;
 
 import javax.xml.namespace.QName;
 
-import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.IBucketWriteTrx;
+import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.data.AttributeNode;
 import org.treetank.data.DocumentRootNode;

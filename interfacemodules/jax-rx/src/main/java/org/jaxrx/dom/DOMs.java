@@ -29,6 +29,7 @@ package org.jaxrx.dom;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
 import org.w3c.dom.Document;
 
 /* TODO comments missing. */

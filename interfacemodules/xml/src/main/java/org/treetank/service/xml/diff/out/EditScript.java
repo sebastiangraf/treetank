@@ -32,6 +32,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.treetank.api.IData;
 import org.treetank.data.interfaces.ITreeData;
 import org.treetank.service.xml.diff.Diff;
 import org.treetank.service.xml.diff.DiffFactory.EDiff;

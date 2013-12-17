@@ -42,8 +42,6 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
-import org.treetank.CoreTestHelper;
-import org.treetank.ModuleFactory;
 import org.treetank.access.NodeReadTrx;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
@@ -59,6 +57,8 @@ import org.treetank.io.IBackend.IBackendFactory;
 import org.treetank.revisioning.IRevisioning;
 import org.treetank.service.jaxrx.implementation.DatabaseRepresentation;
 import org.treetank.service.xml.shredder.EShredderInsert;
+import org.treetank.testutil.CoreTestHelper;
+import org.treetank.testutil.ModuleFactory;
 
 import com.google.inject.Inject;
 

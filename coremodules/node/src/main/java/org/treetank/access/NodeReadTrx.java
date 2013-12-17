@@ -33,8 +33,8 @@ import static org.treetank.data.IConstants.NULL_NODE;
 
 import javax.xml.namespace.QName;
 
-import org.treetank.api.INodeReadTrx;
 import org.treetank.api.IBucketReadTrx;
+import org.treetank.api.INodeReadTrx;
 import org.treetank.data.ElementNode;
 import org.treetank.data.IConstants;
 import org.treetank.data.NodeMetaPageFactory;

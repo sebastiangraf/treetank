@@ -7,7 +7,7 @@ import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.AssertJUnit.assertTrue;
 import static org.testng.AssertJUnit.fail;
-import static org.treetank.CoreTestHelper.getFakedStructure;
+import static org.treetank.testutil.CoreTestHelper.getFakedStructure;
 
 import java.util.List;
 import java.util.Map;
@@ -16,9 +16,6 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
-import org.treetank.CoreTestHelper;
-import org.treetank.CoreTestHelper.Holder;
-import org.treetank.ModuleFactory;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.SessionConfiguration;
@@ -26,13 +23,16 @@ import org.treetank.access.conf.StandardSettings;
 import org.treetank.api.IBucketReadTrx;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
-import org.treetank.bucket.IConstants;
+import org.treetank.bucket.DumbDataFactory.DumbData;
 import org.treetank.bucket.DumbMetaEntryFactory.DumbKey;
 import org.treetank.bucket.DumbMetaEntryFactory.DumbValue;
-import org.treetank.bucket.DumbDataFactory.DumbData;
+import org.treetank.bucket.IConstants;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackendReader;
+import org.treetank.testutil.CoreTestHelper;
+import org.treetank.testutil.CoreTestHelper.Holder;
+import org.treetank.testutil.ModuleFactory;
 
 import com.google.inject.Inject;
 

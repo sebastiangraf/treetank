@@ -39,20 +39,20 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
-import org.treetank.CoreTestHelper;
-import org.treetank.ModuleFactory;
-import org.treetank.NodeElementTestHelper;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.SessionConfiguration;
 import org.treetank.access.conf.StandardSettings;
-import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.IBucketWriteTrx;
+import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
 import org.treetank.data.interfaces.ITreeStructData;
 import org.treetank.exception.TTException;
+import org.treetank.testutil.CoreTestHelper;
+import org.treetank.testutil.ModuleFactory;
+import org.treetank.testutil.NodeElementTestHelper;
 
 import com.google.inject.Inject;
 

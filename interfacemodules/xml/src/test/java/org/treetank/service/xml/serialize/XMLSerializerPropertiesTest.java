@@ -41,8 +41,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import org.treetank.CoreTestHelper;
 import org.treetank.exception.TTException;
+import org.treetank.testutil.CoreTestHelper;
 
 public class XMLSerializerPropertiesTest {
 

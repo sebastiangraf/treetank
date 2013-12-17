@@ -4,29 +4,21 @@
 package org.treetank.bucket;
 
 import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.AssertJUnit.assertNotSame;
 import static org.testng.AssertJUnit.assertTrue;
-import static org.testng.AssertJUnit.assertFalse;
+
 import java.util.Arrays;
 
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-import org.treetank.CoreTestHelper;
-import org.treetank.bucket.DumbMetaEntryFactory;
-import org.treetank.bucket.DumbDataFactory;
-import org.treetank.bucket.IConstants;
-import org.treetank.bucket.IndirectBucket;
-import org.treetank.bucket.MetaBucket;
-import org.treetank.bucket.DataBucket;
-import org.treetank.bucket.BucketFactory;
-import org.treetank.bucket.RevisionRootBucket;
-import org.treetank.bucket.UberBucket;
 import org.treetank.bucket.DumbMetaEntryFactory.DumbKey;
 import org.treetank.bucket.DumbMetaEntryFactory.DumbValue;
 import org.treetank.bucket.interfaces.IBucket;
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.bytepipe.IByteHandler;
+import org.treetank.testutil.CoreTestHelper;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;

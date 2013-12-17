@@ -42,13 +42,6 @@
         </dependency>
         <dependency>
             <groupId>org.treetank</groupId>
-            <artifactId>core</artifactId>
-            <version>6.0.1-SNAPSHOT</version>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.treetank</groupId>
             <artifactId>commons</artifactId>
             <version>6.0.1-SNAPSHOT</version>
         </dependency>
@@ -61,13 +54,6 @@
             <groupId>org.treetank</groupId>
             <artifactId>node</artifactId>
             <version>6.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.treetank</groupId>
-            <artifactId>node</artifactId>
-            <version>6.0.1-SNAPSHOT</version>
-            <type>test-jar</type>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.sun.jersey</groupId>

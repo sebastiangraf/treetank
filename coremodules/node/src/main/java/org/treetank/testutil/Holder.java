@@ -24,21 +24,22 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.treetank;
+package org.treetank.testutil;
 
 import static com.google.common.base.Preconditions.checkState;
 
-import org.treetank.CoreTestHelper.PATHS;
 import org.treetank.access.NodeReadTrx;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.conf.ResourceConfiguration;
-import org.treetank.api.INodeReadTrx;
-import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.IBucketReadTrx;
 import org.treetank.api.IBucketWriteTrx;
+import org.treetank.api.INodeReadTrx;
+import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.exception.TTException;
+import org.treetank.testutil.CoreTestHelper;
+import org.treetank.testutil.CoreTestHelper.PATHS;
 
 /**
  * Generating a standard resource within the {@link PATHS#PATH1} path. It also

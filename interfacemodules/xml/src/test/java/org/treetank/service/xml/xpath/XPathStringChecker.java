@@ -34,11 +34,11 @@ import static org.treetank.data.IConstants.ROOT_NODE;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
-import org.treetank.CoreTestHelper;
 import org.treetank.api.INodeReadTrx;
 import org.treetank.axis.AbsAxis;
 import org.treetank.data.interfaces.ITreeValData;
 import org.treetank.exception.TTException;
+import org.treetank.testutil.CoreTestHelper;
 
 public class XPathStringChecker {
 

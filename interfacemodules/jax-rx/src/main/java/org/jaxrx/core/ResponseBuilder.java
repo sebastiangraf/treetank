@@ -29,6 +29,7 @@ package org.jaxrx.core;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.ws.rs.core.StreamingOutput;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -37,6 +38,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

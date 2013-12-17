@@ -30,14 +30,13 @@ package org.treetank.io;
 import static com.google.common.base.Objects.toStringHelper;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import org.treetank.access.conf.ResourceConfiguration;
-import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.IDataFactory;
+import org.treetank.api.IMetaEntryFactory;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.LogKey.LogKeyBinding;
 import org.treetank.io.LogValue.LogValueBinding;
@@ -56,7 +55,6 @@ import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
 import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
-import com.sleepycat.je.util.DbLoad;
 
 /**
  * An LRU cache, based on <code>LinkedHashMap</code>. This cache can hold an

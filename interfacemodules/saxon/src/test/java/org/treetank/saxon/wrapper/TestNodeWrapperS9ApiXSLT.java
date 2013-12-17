@@ -28,11 +28,9 @@
 package org.treetank.saxon.wrapper;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Properties;
 
 import javax.xml.stream.XMLEventReader;
@@ -46,17 +44,10 @@ import net.sf.saxon.s9api.XsltCompiler;
 import net.sf.saxon.s9api.XsltExecutable;
 import net.sf.saxon.s9api.XsltTransformer;
 
-import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.custommonkey.xmlunit.examples.RecursiveElementNameAndTextQualifier;
-import org.testng.AssertJUnit;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Guice;
-import org.testng.annotations.Test;
-import org.treetank.CoreTestHelper;
-import org.treetank.ModuleFactory;
-import org.treetank.NodeElementTestHelper;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.access.Storage;
@@ -69,9 +60,11 @@ import org.treetank.api.INodeWriteTrx;
 import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
 import org.treetank.exception.TTException;
-import org.treetank.saxon.evaluator.XSLTEvaluator;
 import org.treetank.service.xml.shredder.EShredderInsert;
 import org.treetank.service.xml.shredder.XMLShredder;
+import org.treetank.testutil.CoreTestHelper;
+import org.treetank.testutil.ModuleFactory;
+import org.treetank.testutil.NodeElementTestHelper;
 
 import com.google.inject.Inject;
 

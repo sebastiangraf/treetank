@@ -40,7 +40,6 @@ import java.util.Set;
 import javax.xml.stream.XMLStreamException;
 
 import org.mockito.InOrder;
-import org.treetank.CoreTestHelper.Holder;
 import org.treetank.access.NodeWriteTrx;
 import org.treetank.access.NodeWriteTrx.HashKind;
 import org.treetank.api.INodeWriteTrx;
@@ -53,6 +52,7 @@ import org.treetank.service.xml.shredder.EShredderCommit;
 import org.treetank.service.xml.shredder.EShredderInsert;
 import org.treetank.service.xml.shredder.XMLShredder;
 import org.treetank.service.xml.shredder.XMLUpdateShredder;
+import org.treetank.testutil.CoreTestHelper.Holder;
 
 public final class DiffTestHelper {
 

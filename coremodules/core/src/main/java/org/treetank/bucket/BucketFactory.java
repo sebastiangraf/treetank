@@ -32,9 +32,9 @@ import static com.google.common.base.Objects.toStringHelper;
 import java.io.DataInput;
 import java.io.IOException;
 
+import org.treetank.api.IDataFactory;
 import org.treetank.api.IMetaEntry;
 import org.treetank.api.IMetaEntryFactory;
-import org.treetank.api.IDataFactory;
 import org.treetank.bucket.DataBucket.DeletedData;
 import org.treetank.bucket.interfaces.IBucket;
 import org.treetank.bucket.interfaces.IReferenceBucket;

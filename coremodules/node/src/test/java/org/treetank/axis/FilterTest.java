@@ -37,10 +37,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Guice;
 import org.testng.annotations.Test;
-import org.treetank.CoreTestHelper;
-import org.treetank.Holder;
-import org.treetank.ModuleFactory;
-import org.treetank.NodeElementTestHelper;
 import org.treetank.access.conf.ResourceConfiguration;
 import org.treetank.access.conf.ResourceConfiguration.IResourceConfigurationFactory;
 import org.treetank.access.conf.StandardSettings;
@@ -58,6 +54,10 @@ import org.treetank.axis.filter.ValueFilter;
 import org.treetank.exception.TTByteHandleException;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
+import org.treetank.testutil.CoreTestHelper;
+import org.treetank.testutil.Holder;
+import org.treetank.testutil.ModuleFactory;
+import org.treetank.testutil.NodeElementTestHelper;
 
 import com.google.inject.Inject;
 
@@ -324,7 +324,7 @@ public class FilterTest {
         return returnVal;
     }
 
-    public static void testFilterConventions(final AbsFilter filter, final boolean expected) {
+    private static void testFilterConventions(final AbsFilter filter, final boolean expected) {
 
         // IFilter Convention 1.
         final long startKey = filter.getNode().getDataKey();

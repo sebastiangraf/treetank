@@ -5,8 +5,8 @@ package org.treetank.io.combined;
 
 import java.util.Properties;
 
-import org.treetank.api.IMetaEntryFactory;
 import org.treetank.api.IDataFactory;
+import org.treetank.api.IMetaEntryFactory;
 import org.treetank.exception.TTException;
 import org.treetank.exception.TTIOException;
 import org.treetank.io.IBackend;

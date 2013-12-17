@@ -39,7 +39,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.testng.annotations.Guice;
-import org.treetank.ModuleFactory;
+import org.treetank.testutil.ModuleFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
