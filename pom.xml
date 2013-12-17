@@ -20,8 +20,7 @@
    OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
    ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
    <modelVersion>4.0.0</modelVersion>
 
    <groupId>org.treetank</groupId>
@@ -71,12 +70,12 @@
    <modules>
       <module>coremodules/commons</module>
       <module>coremodules/core</module>
-      <module>coremodules/node</module>
+<!--      <module>coremodules/node</module>
       <module>interfacemodules/jax-rx</module>
       <module>interfacemodules/xml</module>
       <module>interfacemodules/iscsi</module>
       <module>interfacemodules/filelistener</module>
-      <module>interfacemodules/saxon</module>
+      <module>interfacemodules/saxon</module>-->
    </modules>
 
    <prerequisites>
@@ -102,11 +101,16 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.13</version>
-				<configuration>
-					<argLine>-XX:-UseSplitVerifier</argLine>
-				</configuration>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.9</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>test-jar</goal>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<artifactId>maven-source-plugin</artifactId>
@@ -137,7 +141,11 @@
  				<version>1.4</version>
  				<executions>
  					<execution>
+<<<<<<< HEAD
  						<phase>deploy</phase>
+=======
+ 						<phase>deply</phase>
+>>>>>>> 8809ddfbc29f08adc462f0a9ae802d15121a8eb5
  						<goals>
  							<goal>sign</goal>
  						</goals>
@@ -225,6 +233,13 @@
 							<fileset dir="${site.deploy.dir}" />
 						</copy>
 					</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.13</version>
+				<configuration>
+					<argLine>-XX:-UseSplitVerifier</argLine>
 				</configuration>
 			</plugin>
 		</plugins>
