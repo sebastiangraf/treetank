@@ -48,7 +48,7 @@ import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
 import org.treetank.io.IBackend;
 import org.treetank.io.IOUtils;
-import org.treetank.io.jclouds.JCloudsStorage;
+import org.treetank.io.combined.CombinedStorage;
 import org.treetank.iscsi.data.BlockDataElementFactory;
 import org.treetank.iscsi.data.ISCSIMetaPageFactory;
 import org.treetank.revisioning.IRevisioning;
@@ -171,7 +171,7 @@ public class TreetankTargetServer {
         if (argsMap.get("backendImplementation") != null) {
             backendClass = (Class<? extends IBackend>)Class.forName(argsMap.get("backendImplementation"));
         } else {
-            backendClass = JCloudsStorage.class;
+            backendClass = CombinedStorage.class;
         }
 
         if (argsMap.get("revisioningImplementation") != null) {
@@ -185,12 +185,11 @@ public class TreetankTargetServer {
             if(argsMap.get("create").toLowerCase().equals("true")){
                 create = true;
             }
-        } else {
-            revisioningClass = SlidingSnapshot.class;
         }
 
         if(create){
-            IOUtils.recursiveDelete(config.mFile);
+            Storage.truncateStorage(config);
+        	IOUtils.recursiveDelete(config.mFile);
             Storage.createStorage(config);
         }
 

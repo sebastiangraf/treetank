@@ -29,102 +29,105 @@ import com.google.inject.assistedinject.Assisted;
  */
 public class JCloudsStorage implements IBackend {
 
-    /** Factory for Buckets. */
-    private final BucketFactory mFac;
+	/** Factory for Buckets. */
+	private final BucketFactory mFac;
 
-    /** Handling the byte-representation before serialization. */
-    private final IByteHandlerPipeline mByteHandler;
+	/** Handling the byte-representation before serialization. */
+	private final IByteHandlerPipeline mByteHandler;
 
-    /** Properties of storage. */
-    private final Properties mProperties;
+	/** Properties of storage. */
+	private final Properties mProperties;
 
-    /** Context for the BlobStore. */
-    private final BlobStoreContext mContext;
+	/** Context for the BlobStore. */
+	private final BlobStoreContext mContext;
 
-    /** BlobStore for Cloud Binding. */
-    private final BlobStore mBlobStore;
+	/** BlobStore for Cloud Binding. */
+	private final BlobStore mBlobStore;
 
-    /**
-     * Constructor.
-     * 
-     * @param pProperties
-     *            not only the location of the database
-     * @param pDataFac
-     *            factory for the datas
-     * @param pMetaFac
-     *            factory for meta bucket
-     * @param pByteHandler
-     *            handling any bytes
-     * 
-     */
-    @Inject
-    public JCloudsStorage(@Assisted Properties pProperties, IDataFactory pDataFac,
-        IMetaEntryFactory pMetaFac, IByteHandlerPipeline pByteHandler) {
-        mProperties = pProperties;
-        mFac = new BucketFactory(pDataFac, pMetaFac);
-        mByteHandler = (ByteHandlerPipeline)pByteHandler;
+	/**
+	 * Constructor.
+	 * 
+	 * @param pProperties
+	 *            not only the location of the database
+	 * @param pDataFac
+	 *            factory for the datas
+	 * @param pMetaFac
+	 *            factory for meta bucket
+	 * @param pByteHandler
+	 *            handling any bytes
+	 * 
+	 */
+	@Inject
+	public JCloudsStorage(@Assisted Properties pProperties,
+			IDataFactory pDataFac, IMetaEntryFactory pMetaFac,
+			IByteHandlerPipeline pByteHandler) {
+		mProperties = pProperties;
+		mFac = new BucketFactory(pDataFac, pMetaFac);
+		mByteHandler = (ByteHandlerPipeline) pByteHandler;
 
-        mContext =
-            ContextBuilder.newBuilder(mProperties.getProperty(ConstructorProps.JCLOUDSTYPE)).overrides(
-                mProperties).buildView(BlobStoreContext.class);
-        mBlobStore = mContext.getBlobStore();
+		mContext = ContextBuilder
+				.newBuilder(
+						mProperties.getProperty(ConstructorProps.JCLOUDSTYPE))
+				.overrides(mProperties).buildView(BlobStoreContext.class);
+		mBlobStore = mContext.getBlobStore();
 
-    }
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IBackendWriter getWriter() throws TTException {
-        return new JCloudsWriter(mBlobStore, mFac, mByteHandler, mProperties
-            .getProperty(ConstructorProps.RESOURCE));
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IBackendWriter getWriter() throws TTException {
+		return new JCloudsWriter(mBlobStore, mFac, mByteHandler,
+				mProperties.getProperty(ConstructorProps.RESOURCE));
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IBackendReader getReader() throws TTException {
-        // setup the container name used by the provider (like bucket in S3)
-        return new JCloudsReader(mBlobStore, mFac, mByteHandler, mProperties
-            .getProperty(ConstructorProps.RESOURCE));
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IBackendReader getReader() throws TTException {
+		// setup the container name used by the provider (like bucket in S3)
+		return new JCloudsReader(mBlobStore, mFac, mByteHandler,
+				mProperties.getProperty(ConstructorProps.RESOURCE));
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void close() throws TTException {
-        mContext.close();
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void close() throws TTException {
+		mContext.close();
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IByteHandlerPipeline getByteHandler() {
-        return mByteHandler;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IByteHandlerPipeline getByteHandler() {
+		return mByteHandler;
+	}
 
-    @Override
-    public boolean truncate() throws TTException {
-        boolean returnVal = false;
-        if (mBlobStore.containerExists(mProperties.getProperty(ConstructorProps.RESOURCE))) {
-            mBlobStore.deleteContainer(mProperties.getProperty(ConstructorProps.RESOURCE));
-            returnVal = true;
-        }
-        mContext.close();
-        return returnVal;
-    }
+	@Override
+	public boolean truncate() throws TTException {
+		if (mBlobStore.containerExists(mProperties
+				.getProperty(ConstructorProps.RESOURCE))) {
+			mBlobStore.deleteContainer(mProperties
+					.getProperty(ConstructorProps.RESOURCE));
+		}
+		mContext.close();
+		return true;
+	}
 
-    @Override
-    public void initialize() throws TTIOException {
-        // setup the container name used by the provider (like bucket in S3)
-        final String containerName = mProperties.getProperty(ConstructorProps.RESOURCE);
-        if (!mBlobStore.containerExists(containerName)) {
-            mBlobStore.createContainerInLocation(null, containerName);
-        }
+	@Override
+	public void initialize() throws TTIOException {
+		// setup the container name used by the provider (like bucket in S3)
+		final String containerName = mProperties
+				.getProperty(ConstructorProps.RESOURCE);
+		if (!mBlobStore.containerExists(containerName)) {
+			mBlobStore.createContainerInLocation(null, containerName);
+		}
 
-    }
+	}
 
 }
