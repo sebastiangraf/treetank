@@ -48,7 +48,9 @@ import org.treetank.api.ISession;
 import org.treetank.api.IStorage;
 import org.treetank.io.IBackend;
 import org.treetank.io.IOUtils;
+import org.treetank.io.berkeley.BerkeleyStorage;
 import org.treetank.io.combined.CombinedStorage;
+import org.treetank.io.jclouds.JCloudsStorage;
 import org.treetank.iscsi.data.BlockDataElementFactory;
 import org.treetank.iscsi.data.ISCSIMetaPageFactory;
 import org.treetank.revisioning.IRevisioning;
@@ -171,7 +173,7 @@ public class TreetankTargetServer {
         if (argsMap.get("backendImplementation") != null) {
             backendClass = (Class<? extends IBackend>)Class.forName(argsMap.get("backendImplementation"));
         } else {
-            backendClass = CombinedStorage.class;
+            backendClass = BerkeleyStorage.class;
         }
 
         if (argsMap.get("revisioningImplementation") != null) {
