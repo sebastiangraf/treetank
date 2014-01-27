@@ -14,6 +14,8 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.jclouds.Constants;
 import org.jclouds.filesystem.reference.FilesystemConstants;
+import org.jclouds.imagestore.ImageStoreConstants;
+import org.jclouds.imagestore.imagegenerator.IEncoder;
 import org.treetank.exception.TTIOException;
 
 import com.google.common.hash.HashFunction;
@@ -41,8 +43,13 @@ public class StandardSettings {
             StorageConfiguration.Paths.Data.getFile().getName(), resource).toString());
         properties.setProperty(ConstructorProps.NUMBERTORESTORE, Integer.toString(4));
 
-        // properties.setProperty(ConstructorProps.JCLOUDSTYPE, "aws-s3");
-        properties.setProperty(ConstructorProps.JCLOUDSTYPE, "filesystem");
+//         properties.setProperty(ConstructorProps.JCLOUDSTYPE, "imagestore");
+//        properties.setProperty(ConstructorProps.JCLOUDSTYPE, "filesystem");
+        // properties.setProperty(ImageStoreConstants.PROPERTY_IMAGEHOSTER, "ImageHostFacebook");
+        // properties.setProperty(ImageStoreConstants.PROPERTY_BYTEPAINTER, "BytesToImagePainter");
+        // properties.setProperty(ImageStoreConstants.PROPERTY_ENCODER, "IEncoder.DummyEncoder");
+        // properties.setProperty(ImageStoreConstants.PROPERTY_LAYERS, "4");
+        
         // Path not to main storage but to any to simulate remote cloud location.
 
         properties.setProperty(FilesystemConstants.PROPERTY_BASEDIR, FileSystems.getDefault().getPath(

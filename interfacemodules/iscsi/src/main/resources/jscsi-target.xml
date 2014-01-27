@@ -38,7 +38,7 @@
             <TargetAlias>jSCSI Target</TargetAlias>
             <AsyncFileStorage>
                 <Path>/tmp/vbox.dat</Path>
-                <Create size="5.0" />
+                <Create size="0.5" />
             </AsyncFileStorage>
         </Target>
 <!--         <Target> -->

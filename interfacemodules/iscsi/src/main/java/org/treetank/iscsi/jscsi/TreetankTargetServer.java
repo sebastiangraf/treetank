@@ -173,7 +173,7 @@ public class TreetankTargetServer {
         if (argsMap.get("backendImplementation") != null) {
             backendClass = (Class<? extends IBackend>)Class.forName(argsMap.get("backendImplementation"));
         } else {
-            backendClass = BerkeleyStorage.class;
+            backendClass = CombinedStorage.class;
         }
 
         if (argsMap.get("revisioningImplementation") != null) {
@@ -198,13 +198,13 @@ public class TreetankTargetServer {
         final String resourceName = "bench53473ResourcegraveISCSI9284";
 
         // Guice Stuff for building the module
+        final Properties props = StandardSettings.getProps(config.mFile.getAbsolutePath(), resourceName);
         final Injector injector =
             Guice.createInjector(new ModuleSetter().setDataFacClass(BlockDataElementFactory.class)
                 .setMetaFacClass(ISCSIMetaPageFactory.class).setBackendClass(backendClass)
                 .setRevisioningClass(revisioningClass).createModule());
         final IResourceConfigurationFactory resFac =
             injector.getInstance(IResourceConfigurationFactory.class);
-        final Properties props = StandardSettings.getProps(config.mFile.getAbsolutePath(), resourceName);
         final ResourceConfiguration resConf = resFac.create(props);
 
         final IStorage db = Storage.openStorage(config.mFile);
