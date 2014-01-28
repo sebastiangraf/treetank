@@ -5,12 +5,9 @@ package org.treetank.io.jclouds;
 
 import java.util.Properties;
 
+import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.imagestore.TestAndBenchmarkHelper;
-import org.jclouds.imagestore.imagegenerator.IEncoder;
-import org.jclouds.imagestore.imagegenerator.bytepainter.BytesToImagePainter;
-import org.jclouds.imagestore.imagehoster.facebook.ImageHostFacebook;
 import org.treetank.access.conf.ConstructorProps;
 import org.treetank.api.IDataFactory;
 import org.treetank.api.IMetaEntryFactory;
@@ -67,13 +64,9 @@ public class JCloudsStorage implements IBackend {
         mFac = new BucketFactory(pDataFac, pMetaFac);
         mByteHandler = (ByteHandlerPipeline)pByteHandler;
 
-        // DIRTIEST HACK EVER..
-        mContext =TestAndBenchmarkHelper.createContext(ImageHostFacebook.class, BytesToImagePainter.class,
-            IEncoder.DummyEncoder.class, 4);
-
-        // mContext =
-        // ContextBuilder.newBuilder(mProperties.getProperty(ConstructorProps.JCLOUDSTYPE)).overrides(
-        // mProperties).buildView(BlobStoreContext.class);
+        mContext =
+            ContextBuilder.newBuilder(mProperties.getProperty(ConstructorProps.JCLOUDSTYPE)).overrides(
+                mProperties).buildView(BlobStoreContext.class);
         mBlobStore = mContext.getBlobStore();
 
     }

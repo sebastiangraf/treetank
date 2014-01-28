@@ -64,11 +64,11 @@
             <artifactId>filesystem</artifactId>
             <version>1.7.0</version>
         </dependency>
-        <dependency>
+      <!--   <dependency>
             <groupId>org.apache.jclouds.provider</groupId>
             <artifactId>imagestore</artifactId>
             <version>1.7.0</version>
-        </dependency>
+        </dependency> -->
     </dependencies>
 
     <build>
