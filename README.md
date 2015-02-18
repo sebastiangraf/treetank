@@ -5,7 +5,7 @@ Treetank stores data securely by applying different layers on the stored data. F
 Secure in this context includes integrity-checks, confidentiality with tree-aware key handling, versioning to provide accountability.
 Furthermore, different backends are provided while a binding to different cloud-infrastructures is in progress.
 
-[![Build Status](https://secure.travis-ci.org/disy/treetank.png)](http://travis-ci.org/disy/treetank)
+[![Build Status](https://secure.travis-ci.org/sebastiangraf/treetank.png)](http://travis-ci.org/sebastiangraf/treetank)
 
 ##Content
 
