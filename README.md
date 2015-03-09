@@ -5,7 +5,7 @@ Treetank stores data securely by applying different layers on the stored data. F
 Secure in this context includes integrity-checks, confidentiality with tree-aware key handling, versioning to provide accountability.
 Furthermore, different backends are provided while a binding to different cloud-infrastructures is in progress.
 
-[![Build Status](https://secure.travis-ci.org/disy/treetank.png)](http://travis-ci.org/disy/treetank)
+[![Build Status](https://secure.travis-ci.org/sebastiangraf/treetank.png)](http://travis-ci.org/sebastiangraf/treetank)
 
 ##Content
 
@@ -19,7 +19,7 @@ Furthermore, different backends are provided while a binding to different cloud-
 
 ##Further information
 
-The documentation so far is accessible under http://treetank.org (pointing to http://disy.github.com/treetank/).
+The documentation so far is accessible under http://treetank.org (pointing to http://sebastiangraf.github.com/treetank/).
 
 The framework was presented at various conferences and acted as base for multiple publications and reports:
 
@@ -45,12 +45,9 @@ Treetank is maintained by:
 
 * Sebastian Graf (Treetank Core & Project Lead)
 
-Current subprojects are:
-
-* Andreas Rain (Binding to Filesystems and iSCSI (over jSCSI) and Implementing graphical user interface)
-
 Concluded subprojects were:
 
+* Andreas Rain (Binding to Filesystems and iSCSI (over jSCSI) and Implementing graphical user interface)
 * Nuray Gürler (Maven Websites)
 * Patrick Lang (Encryption layer)
 * Johannes Lichtenberger (Visualization of temporal trees and Evaluation of several versioning approaches)

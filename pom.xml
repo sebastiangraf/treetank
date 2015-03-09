@@ -35,14 +35,14 @@
       <version>7</version>
    </parent>
 
-   <url>http://disy.github.com/treetank/</url>
+   <url>http://sebastiangraf.github.com/treetank/</url>
    <scm>
-      <url>git@github.com:disy/treetank.git</url>
-      <connection>scm:git:git@github.com:disy/treetank.git</connection>
-      <developerConnection>scm:git:git@github.com:disy/treetank.git</developerConnection>
+      <url>git@github.com:sebastiangraf/treetank.git</url>
+      <connection>scm:git:git@github.com:sebastiangraf/treetank.git</connection>
+      <developerConnection>scm:git:git@github.com:sebastiangraf/treetank.git</developerConnection>
    </scm>
    <issueManagement>
-      <url>https://github.com/disy/treetank/issues</url>
+      <url>https://github.com/sebastiangraf/treetank/issues</url>
       <system>GitHub Issues</system>
    </issueManagement>
    <licenses>
@@ -54,7 +54,7 @@
    </licenses>
    <ciManagement>
       <system>Travis CI</system>
-      <url>http://travis-ci.org/#!/disy/treetank</url>
+      <url>http://travis-ci.org/#!/sebastiangraf/treetank</url>
    </ciManagement>
    <developers>
       <developer>
